@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2003/02/17 02:03:10  dgrisby
+  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
+
   Revision 1.1.2.17  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -104,7 +107,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 tcpEndpoint::tcpEndpoint(const IIOP::Address& address) :
   pd_socket(RC_INVALID_SOCKET), pd_address(address),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
-  pd_callback_cookie(0) {
+  pd_callback_cookie(0), pd_poked(0) {
 
   pd_address_string = (const char*) "giop:tcp:255.255.255.255:65535";
   // address string is not valid until bind is called.
@@ -305,11 +308,11 @@ tcpEndpoint::Poke() {
   tcpAddress* target = new tcpAddress(pd_address);
   giopActiveConnection* conn;
   if ((conn = target->Connect()) == 0) {
-    if (omniORB::trace(1)) {
+    if (omniORB::trace(5)) {
       omniORB::logger log;
-      log << "Warning: Fail to connect to myself ("
-	  << (const char*) pd_address_string << ") via tcp!\n";
-      log << "Warning: This is ignored but this may cause the ORB shutdown to hang.\n";
+      log << "Warning: fail to connect to myself ("
+	  << (const char*) pd_address_string << ") via tcp.\n";
+      pd_poked = 1;
     }
   }
   else {
@@ -343,6 +346,8 @@ tcpEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
       return  new tcpConnection(pd_new_conn_socket,this);
     }
+    if (pd_poked)
+      return 0;
   }
   return 0;
 }
