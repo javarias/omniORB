@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14  2000/01/11 12:02:34  djs
+# More tidying up
+#
 # Revision 1.13  2000/01/07 20:31:18  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -108,10 +111,12 @@ def marshall_struct_union(string, environment, type, decl, argname, to="_n"):
    @name@ >>= @to@;""", name = argname, to = to)
     else:
         # do it the normal way
-        marshall(string, environment, type, decl, argname, to)
+        marshall(string, environment, type, decl, argname, to,
+                 exception = "MARSHAL")
         
 
-def marshall(string, environment, type, decl, argname, to="_n"):
+def marshall(string, environment, type, decl, argname, to="_n",
+             exception = "BAD_PARAM"):
     assert isinstance(type, idltype.Type)
     if decl:
         assert isinstance(decl, idlast.Declarator)
@@ -172,8 +177,9 @@ CORBA::TypeCode::marshalTypeCode(@argname@@indexing_string@, @to@);""",
         if deref_type.bound() != 0:
             bounds.out("""\
     if (_len > @n@+1) {
-      throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_MAYBE);
-    }""", n = str(deref_type.bound()))
+      throw CORBA::@exception@(0, CORBA::COMPLETED_MAYBE);
+    }""", n = str(deref_type.bound()),
+                       exception = exception)
 
         string.out("""\
     CORBA::ULong _len = (((const char*) @argname@@indexing_string@)? strlen((const char*) @argname@@indexing_string@) + 1 : 1);
@@ -353,6 +359,14 @@ CdrStreamHelper_unmarshalArray@suffix@(@where@,@typecast@, @num@);""",
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);""",
                        from_where = from_where)
                 to.dec_indent()
+
+            if deref_type.bound() != 0:
+                to.out("""\
+  if (_len > @n@+1) {
+    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+  }""", n = str(deref_type.bound()))
+
+               
             to.out("""\
   if (!(char*)(@element_name@ = CORBA::string_alloc(_len-1)))
     throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
