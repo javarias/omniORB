@@ -28,10 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
-
-#include <iostream.h> // ***
-extern void dumpbuf(unsigned char*,size_t);
-
+// Revision 1.1.2.1  2001/03/13 10:32:10  dpg1
+// Fixed point support.
+//
 
 #include <omniORB4/CORBA.h>
 #include <exceptiondefs.h>
@@ -291,8 +290,15 @@ CORBA::Fixed::truncate(CORBA::UShort scale) const
   if (scale >= pd_scale)
     return *this;
 
-  int cut = pd_scale - scale;
-  return CORBA::Fixed(pd_val + cut, pd_digits - cut, scale, pd_negative);
+  int cut      = pd_scale - scale;
+  int newscale = scale;
+
+  while (pd_val[cut] == 0 && newscale > 0) {
+    ++cut;
+    --newscale;
+  }
+
+  return CORBA::Fixed(pd_val + cut, pd_digits - cut, newscale, pd_negative);
 }
 
 
@@ -415,7 +421,7 @@ CORBA::Fixed::NP_asString() const
 }
 
 void
-CORBA::Fixed::NP_fromString(const char* s)
+CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 {
   // Skip leading white space
   while (isspace(*s)) ++s;
@@ -461,12 +467,15 @@ CORBA::Fixed::NP_fromString(const char* s)
   pd_scale = pd_digits - unscale;
 
   // Check there is no trailing garbage
-  j = i;
-  if (s[i] == 'd' || s[i] == 'D') ++j;
+  if (!ignore_end) {
+    j = i;
+    if (s[i] == 'd' || s[i] == 'D') ++j;
 
-  while (s[j]) {
-    if (!isspace(s[j])) {
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+    while (s[j]) {
+      if (!isspace(s[j])) {
+	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+      }
+      ++j;
     }
   }
 
@@ -525,6 +534,15 @@ CORBA::Fixed::PR_checkLimits()
 
   if (pd_digits - pd_scale > pd_idl_digits - pd_idl_scale)
     OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+}
+
+void
+CORBA::Fixed::PR_changeScale(CORBA::UShort new_scale)
+{
+  if (new_scale > pd_digits)
+    pd_digits = new_scale;
+
+  pd_scale = new_scale;
 }
 
 
@@ -982,90 +1000,63 @@ operator/(const CORBA::Fixed& a, const CORBA::Fixed& b)
 // Comparison operators
 //
 
-CORBA::Boolean
-operator>(const CORBA::Fixed& a, const CORBA::Fixed& b)
+int
+CORBA::Fixed::NP_cmp(const Fixed& a, const Fixed& b)
 {
+  int c;
+
   if (a.PR_negative()) {
     if (b.PR_negative())
-      return absCmp(a, b) < 0;
+      c = absCmp(b, a);
     else
-      return 0;
+      return -1;
   }
   else {
     if (b.PR_negative())
       return 1;
     else
-      return absCmp(a, b) > 0;
+      c = absCmp(a, b);
   }
+  if (c < 0) return -1;
+  if (c > 0) return  1;
+  return 0;
+}
+
+
+CORBA::Boolean
+operator>(const CORBA::Fixed& a, const CORBA::Fixed& b)
+{
+  return CORBA::Fixed::NP_cmp(a, b) > 0;
 }
 
 CORBA::Boolean
 operator<(const CORBA::Fixed& a, const CORBA::Fixed& b)
 {
-  if (a.PR_negative()) {
-    if (b.PR_negative())
-      return absCmp(a, b) > 0;
-    else
-      return 1;
-  }
-  else {
-    if (b.PR_negative())
-      return 0;
-    else
-      return absCmp(a, b) < 0;
-  }
+  return CORBA::Fixed::NP_cmp(a, b) < 0;
 }
 
 CORBA::Boolean
 operator>=(const CORBA::Fixed& a, const CORBA::Fixed& b)
 {
-  if (a.PR_negative()) {
-    if (b.PR_negative())
-      return absCmp(a, b) <= 0;
-    else
-      return 0;
-  }
-  else {
-    if (b.PR_negative())
-      return 1;
-    else
-      return absCmp(a, b) >= 0;
-  }
+  return CORBA::Fixed::NP_cmp(a, b) >= 0;
 }
 
 CORBA::Boolean
 operator<=(const CORBA::Fixed& a, const CORBA::Fixed& b)
 {
-  if (a.PR_negative()) {
-    if (b.PR_negative())
-      return absCmp(a, b) >= 0;
-    else
-      return 1;
-  }
-  else {
-    if (b.PR_negative())
-      return 0;
-    else
-      return absCmp(a, b) <= 0;
-  }
+  return CORBA::Fixed::NP_cmp(a, b) <= 0;
 }
 
 CORBA::Boolean
 operator==(const CORBA::Fixed& a, const CORBA::Fixed& b)
 {
-  if (a.PR_negative() == b.PR_negative())
-    return absCmp(a, b) == 0;
-  else
-    return 0;
+  return CORBA::Fixed::NP_cmp(a, b) == 0;
 }
 
 CORBA::Boolean
 operator!=(const CORBA::Fixed& a, const CORBA::Fixed& b)
 {
-  if (a.PR_negative() == b.PR_negative())
-    return absCmp(a, b) != 0;
-  else
-    return 1;
+  return CORBA::Fixed::NP_cmp(a, b) != 0;
 }
 
 
