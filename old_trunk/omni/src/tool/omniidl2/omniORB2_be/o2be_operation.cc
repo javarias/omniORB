@@ -11,6 +11,10 @@
 
 /*
   $Log$
+  Revision 1.4  1997/01/24 19:40:46  sll
+  The operations for nil object now return properly initialised result values.
+  Fixed a bug in the marshalling of object reference and string as INOUT arg.
+
   Revision 1.3  1997/01/23 17:06:56  sll
   Now do the right thing to initialise typedefed arrays in result and out
   arguments.
@@ -40,6 +44,11 @@ o2be_operation::o2be_operation(AST_Type *rt, AST_Operation::Flags fl,
   o2be_interface *intf = o2be_interface::narrow_from_scope(defined_in());
   if (o2be_interface::check_opname_clash(intf,uqname())) {
     idl_global->err()->operation_name_clash(this);
+  }
+  if (flags() == AST_Operation::OP_oneway) {
+    if (!no_user_exception()) {
+      idl_global->err()->syntax_error(idl_global->parse_state());
+    }
   }
 }
 
@@ -240,7 +249,9 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in)
     }
 
   IND(s); s << "_c.InitialiseRequest(objkey(),objkeysize(),(char *)\""
-	    << uqname() << "\"," << strlen(uqname()) + 1 << ",_msgsize,0);\n";
+	    << uqname() << "\"," << strlen(uqname()) + 1 << ",_msgsize,"
+	    << ((flags() == AST_Operation::OP_oneway)?"1":"0")
+	    << ");\n";
 
   // marshall arguments;
   {
@@ -749,6 +760,13 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
     produce_invoke(s);
     s << ";\n";
   }
+
+  if (flags() == AST_Operation::OP_oneway) {
+    IND(s); s << "_s.ReplyCompleted();\n";
+    IND(s); s << "return 1;\n";
+    return;
+  }
+
   if (!no_user_exception()) {
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n";
