@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.2  2000/09/27 17:35:49  sll
+  Updated include/omniORB3 to include/omniORB4
+
   Revision 1.8.2.1  2000/07/17 10:35:55  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -317,6 +320,49 @@ omniORB::logger::operator<<(omniObjKey& k)
   return *this;
 }
 
+
+omniORB::logger&
+omniORB::logger::operator<<(const omniORB::logger::exceptionStatus& ex)
+{
+  switch (ex.status) {
+  case CORBA::COMPLETED_YES:
+    *this << "YES,";
+    break;
+  case CORBA::COMPLETED_NO:
+    *this << "NO,";
+    break;
+  case CORBA::COMPLETED_MAYBE:
+    *this << "MAYBE,";
+    break;
+  }
+  reserve(30);
+  sprintf(pd_p, "0x%08x", (int)ex.minor);
+  pd_p += strlen(pd_p);
+  return *this;
+}
+
+
+omniORB::logger&
+omniORB::logger::operator<<(const CORBA::SystemException& ex)
+{
+  int sz;
+  *this << ex._NP_repoId(&sz);
+  switch (ex.completed()) {
+  case CORBA::COMPLETED_YES:
+    *this << ",YES,";
+    break;
+  case CORBA::COMPLETED_NO:
+    *this << ",NO,";
+    break;
+  case CORBA::COMPLETED_MAYBE:
+    *this << ",MAYBE,";
+    break;
+  }
+  reserve(30);
+  sprintf(pd_p, "0x%08x", (int)ex.minor());
+  pd_p += strlen(pd_p);
+  return *this;
+}
 
 void
 omniORB::logger::flush()

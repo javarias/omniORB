@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/04/18 17:50:44  sll
+  Big checkin with the brand new internal APIs.
+  Scoped where appropriate with the omni namespace.
+
   Revision 1.2.2.4  2000/11/20 11:59:43  dpg1
   API to configure code sets.
 
@@ -894,6 +898,21 @@ _CORBA_MODULE_BEG
     logger& operator<<(omniLocalIdentity*);
     logger& operator<<(omniIdentity*);
     logger& operator<<(omniObjKey&);
+
+    logger& operator<<(const CORBA::SystemException&);
+
+    class exceptionStatus {
+    public:
+      exceptionStatus(CORBA::CompletionStatus s, CORBA::ULong m) :
+	status(s), minor(m) {}
+      
+      CORBA::CompletionStatus status;
+      CORBA::ULong            minor;
+    private:
+      exceptionStatus();
+    };
+
+    logger& operator<<(const exceptionStatus&);
 
     void flush();
     // Flushes the logger -- it can then be re-used for another
