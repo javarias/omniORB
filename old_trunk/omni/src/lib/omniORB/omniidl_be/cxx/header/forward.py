@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/12/24 18:14:30  djs
+# Fixed handling of #include'd .idl files
+#
 # Revision 1.1  1999/12/01 17:01:46  djs
 # New module to create necessary forward declarations in the header
 #
@@ -84,7 +87,21 @@ def visitUnion(node):
 class _0RL_tcParser_unionhelper_@guard_name@;""",
                    fqname = fqname, guard_name = guard_name)
         
+def visitInterface(node):
+    if not(node.mainFile()):
+        return
 
+    for n in node.declarations():
+        n.accept(self)
+
+
+def visitException(node):
+    if not(node.mainFile()):
+        return
+    
+    for n in node.members():
+        n.accept(self)
+        
 def visitMember(node):
     if not(node.mainFile()):
         return
@@ -95,8 +112,6 @@ def visitMember(node):
 def visitEnum(node):
     pass
 
-def visitInterface(node):
-    pass
 
 def visitTypedef(node):
     pass
@@ -107,6 +122,5 @@ def visitConst(node):
     pass
 def visitDeclarator(node):
     pass
-def visitException(node):
-    pass
+
 

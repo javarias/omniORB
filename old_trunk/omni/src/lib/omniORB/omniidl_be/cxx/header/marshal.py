@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/12/24 18:14:30  djs
+# Fixed handling of #include'd .idl files
+#
 # Revision 1.1  1999/12/01 17:02:11  djs
 # Moved ancillary marshalling and alignment code to this module from header.opers
 #
@@ -84,7 +87,7 @@ def visitInterface(node):
         d.accept(self)
 
     cxxname = idlutil.ccolonName(map(tyutil.mapID, node.scopedName()))
-    idLen = len(node.repoId()) + 1
+    idLen = len(tyutil.mapRepoID(node.repoId())) + 1
     stream.out("""\
 inline size_t
 @name@::_alignedSize(@name@_ptr obj, size_t offset) {

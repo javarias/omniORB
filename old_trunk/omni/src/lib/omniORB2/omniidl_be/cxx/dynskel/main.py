@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/12/24 18:16:39  djs
+# Array handling and TypeCode building fixes (esp. across multiple files)
+#
 # Revision 1.3  1999/12/10 18:26:36  djs
 # Moved most #ifdef buildDesc code into a separate module
 # General tidying up
@@ -59,7 +62,15 @@ self = main
 
 def __init__(stream):
     self.stream = stream
+    self.__names = {}
+    self.__override = 0
     return self
+
+def defineName(name):
+    self.__names[name] = 1
+
+def alreadyDefined(name):
+    return self.__names.has_key(name)
 
 # ------------------------------------
 # Control arrives here
@@ -77,8 +88,11 @@ def visitModule(node):
         n.accept(self)
 
 def visitInterface(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
 
     for n in node.declarations():
         n.accept(self)
@@ -87,6 +101,7 @@ def visitInterface(node):
     env = name.Environment()
     fqname = env.nameToString(scopedName)
     guard_name = tyutil.guardName(scopedName)
+    scopedName = map(tyutil.mapID, scopedName)
 
     objref_name = name.prefixName(scopedName, "_objref_")
     tc_name = name.prefixName(scopedName, "_tc_")
@@ -167,10 +182,15 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _s) {
 """, guard_name = guard_name, fqname = fqname, objref_member = objref_member,
                tc_name = tc_name)
 
+    bdesc.__currentNode = lastNode
+
 
 def visitTypedef(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
     
     aliasType = node.aliasType()
     deref_aliasType = tyutil.deref(aliasType)
@@ -185,8 +205,23 @@ def visitTypedef(node):
         deref_alias_tyname = tyutil.objRefTemplate(deref_aliasType, "Member", env)
     elif tyutil.isString(deref_aliasType):
         alias_tyname = "CORBA::String_member"
+
+
+    bdesc.__init__(stream, env)
+
+    # The old backend does something funny with output order
+    # this helps recreate it
+    first_is_array_decl = node.declarators()[0].sizes() != []
+    #print "first = " + repr(first_is_array_decl)
+    if not(first_is_array_decl):
+        #print repr(node.declarators()[0].scopedName()) + "is not an array"
+        #stream.out("but why? it is = " + repr(node.declarators()[0].sizes()))
+        if type_dims != []:
+            node.accept(bdesc)
         
     for declarator in node.declarators():
+        first_declarator = declarator == node.declarators()[0]
+        
         decl_dims = declarator.sizes()
         full_dims = decl_dims + type_dims
         is_array = full_dims != []
@@ -206,11 +241,10 @@ void _0RL_delete_@guard_name@(void* _data) {
 }
 """, fqname = fqname, guard_name = guard_name)
 
-            # if the alias points to an "anonymous" sequence type
-            # then we need to build it too
-            if tyutil.isSequence(aliasType):
-                stream.out(str(bdesc.sequence(aliasType)))
-            
+            if first_declarator:
+                #stream.out("coming up!")
+                node.accept(bdesc)
+                pass
             stream.out(str(bdesc.array(aliasType, declarator)))
 
             dims_str   = map(str, full_dims)
@@ -275,7 +309,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s) {
 
         # --- sequences
         if not(is_array_declarator) and tyutil.isSequence(aliasType):
-            stream.out(str(bdesc.sequence(deref_aliasType)))
+            if first_declarator:
+                stream.out(str(bdesc.sequence(deref_aliasType)))
             stream.out("""\
 void operator <<= (CORBA::Any& a, const @fqname@& s)
 {
@@ -326,12 +361,16 @@ CORBA::Boolean operator >>= (const CORBA::Any& a, const @fqname@*& s_out)
                        tcname = tc_name,
                        decl_cname = decl_cname,
                        guard_name = guard_name)           
-            
+
+    bdesc.__currentNode = lastNode
 
 
 def visitEnum(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -361,10 +400,15 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@& _s)
                guard_name = guard_name,
                fqname = fqname)
 
+    bdesc.__currentNode = lastNode
+
    
 def visitStruct(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
 
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -429,10 +473,14 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
                member_desc = str(member_desc),
                num_members = str(num_members))    
 
+    bdesc.__currentNode = lastNode
     
 def visitUnion(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -461,7 +509,7 @@ def visitUnion(node):
     
         default_is_array = full_dims != []
         mem_cname = mangler.canonTypeName(default_type, default_decl)
-        mem_name = tyutil.name(default_decl.scopedName())
+        mem_name = tyutil.mapID(tyutil.name(default_decl.scopedName()))
         thing = "_u->pd_" + mem_name
         if default_is_array:
             thing = bdesc.docast(default_type, default_decl, thing)
@@ -478,6 +526,7 @@ def visitUnion(node):
     switch.out("""\
       switch( _u->pd__d ) {""")
 
+
     for c in node.cases():
         caseType = c.caseType()
         declarator = c.declarator()
@@ -485,7 +534,7 @@ def visitUnion(node):
         type_cname = mangler.canonTypeName(caseType, declarator)
         type_name = env.principalID(caseType, fully_scope = 1)
         deref_type_name = env.principalID(deref_caseType, fully_scope = 1)
-        mem_name = tyutil.name(c.declarator().scopedName())
+        mem_name = tyutil.mapID(tyutil.name(c.declarator().scopedName()))
         case_dims = tyutil.typeDims(caseType)
         full_dims = declarator.sizes() + case_dims
         
@@ -499,16 +548,58 @@ def visitUnion(node):
         # handle cases which are themselves anonymous array
         # or sequence declarators
         if tyutil.isSequence(caseType):
+            
+            # recursive sequences are handled by the sequence itself
+            # is the sequence recursive?
+            #seqType = caseType.seqType()
+            #if isinstance(seqType, idltype.Declared) and \
+            #   seqType.decl() == node:
+            #    stream.out(str(bdesc.external(seqType)))
+                
             stream.out(str(bdesc.sequence(caseType)))
+        # handle uses of sequences through typedefs but where the
+        # actual declaration is in anothe file
+        elif tyutil.isSequence(deref_caseType) and \
+             not(caseType.decl().mainFile()):
+            stream.out(str(bdesc.sequence(deref_caseType)))
         if is_array_declarator:
             stream.out(str(bdesc.array(caseType, declarator)))
         if tyutil.isObjRef(caseType):
             stream.out(str(bdesc.interface(caseType)))
+        # FIXME: unify common code with bdesc/member#
+        if tyutil.isStruct(caseType) or \
+           tyutil.isUnion(caseType)  or \
+           tyutil.isEnum(caseType):
+            # only if not defined in this file
+            if not(caseType.decl().mainFile()):
+                stream.out(str(bdesc.external(caseType)))
+            if 0:
+                mem_scopedName = caseType.decl().scopedName()
+                mem_guard_name = tyutil.guardName(mem_scopedName)
+                mem_fqname = env.nameToString(mem_scopedName)
+                fn_name = "_0RL_buildDesc_c" + mem_guard_name
+                if alreadyDefined(fn_name):
+                    return
+                defineName(fn_name)
+                stream.out("""\
+extern void _0RL_buildDesc_c@guard_name@(tcDescriptor &, const @fqname@&);""",
+                           guard_name = mem_guard_name,
+                           fqname = mem_fqname)
+        if tyutil.isString(caseType) and caseType.bound() != 0:
+            stream.out("""\
+#ifndef _0RL_buildDesc_c@bound@string
+#define _0RL_buildDesc_c@bound@string _0RL_buildDesc_cstring
+#endif""", bound = str(caseType.bound()))
+
             
         for l in c.labels():
             if l.default():
                 continue
-            label = tyutil.valueString(switchType, l.value(), env)
+            # FIXME: same problem occurs in header/defs and skel/main and dynskel/bdesc
+            if tyutil.isChar(switchType) and l.value() == '\0':
+                label = "0000"
+            else:
+                label = tyutil.valueString(switchType, l.value(), env)
             switch.out("""\
       case @label@:
         _0RL_buildDesc@type_cname@(_newdesc, @cast@);
@@ -524,6 +615,28 @@ def visitUnion(node):
     if default_case:
         switch.out("""\
     }""")
+
+    # FIXME: see above
+    if tyutil.isStruct(switchType) or \
+       tyutil.isUnion(switchType)  or \
+       tyutil.isEnum(switchType):
+        if not(switchType.decl().mainFile()):
+            stream.out(str(bdesc.external(switchType)))
+        
+        sw_scopedName = switchType.decl().scopedName()
+        sw_guard_name = tyutil.guardName(sw_scopedName)
+        sw_fqname = env.nameToString(sw_scopedName)
+        fn_name = "_0RL_buildDesc_c" + sw_guard_name
+        # something wrong here
+        if 0:
+        
+            if alreadyDefined(fn_name):
+                return
+            defineName(fn_name)
+            stream.out("""\
+extern void _0RL_buildDesc_c@guard_name@(tcDescriptor &, const @fqname@&);""",
+                       guard_name = sw_guard_name,
+                       fqname = sw_fqname)
             
         
     stream.out("""\
@@ -611,7 +724,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
   }
 }
 """, fqname = fqname, guard_name = guard_name)
-    
+
+    bdesc.__currentNode = lastNode
 
 
 def visitForward(node):
@@ -626,8 +740,11 @@ def visitMember(node):
         memberType.decl().accept(self)
         
 def visitException(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
+
+    lastNode = bdesc.__currentNode
+    bdesc.__currentNode = node
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -705,3 +822,6 @@ public:
 static _0RL_insertToAny_Singleton__c@guard_name@ _0RL_insertToAny_Singleton__c@guard_name@_;
 """, fqname = fqname, guard_name = guard_name)
     
+
+
+    bdesc.__currentNode = lastNode

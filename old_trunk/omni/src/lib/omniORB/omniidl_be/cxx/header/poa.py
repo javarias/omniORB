@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/12/24 18:14:30  djs
+# Fixed handling of #include'd .idl files
+#
 # Revision 1.4  1999/12/13 15:40:27  djs
 # Added generation of "flattened" tie templates
 #
@@ -65,15 +68,20 @@ self.__nested = 0
 
 self.__environment = name.Environment()
 
+def addName(name):
+    try:
+        self.__environment.add(name)
+    except KeyError:
+        pass
 def enter(scope):
+    # the exception is thrown in the case of a forward declared interface
+    # being properly defined. Needs tidying up?
+    addName(scope)
     self.__environment = self.__environment.enterScope(scope)
 def leave():
     self.__environment = self.__environment.leaveScope()
 def currentScope():
     return self.__environment.scope()
-def addName(name):
-    self.__environment.add(name)
-
 
 def POA_prefix():
     if not(self.__nested):
@@ -154,10 +162,10 @@ public:
                scopedID = scopedID,
                impl_scopedID = impl_scopedID)
 
-
+    enter(node.identifier())
     if config.TieFlag():
         tie.template(env, node, self.__nested)
-        
+    leave()
     
 #    leave()
 
@@ -181,10 +189,13 @@ typedef @POA_prefix@@base@ @POA_prefix@@name@;""",
 def visitEnum(node):
     pass
 def visitStruct(node):
+    addName(node.identifier())
     pass
 def visitUnion(node):
+    addName(node.identifier())
     pass
 def visitForward(node):
+    addName(node.identifier())
     pass
 def visitConst(node):
     pass
@@ -193,4 +204,5 @@ def visitDeclarator(node):
 def visitMember(node):
     pass
 def visitException(node):
+    addName(node.identifier())
     pass

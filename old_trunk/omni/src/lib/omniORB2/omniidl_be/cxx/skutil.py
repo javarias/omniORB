@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  1999/12/26 16:38:06  djs
+# Support for bounded strings (specifically a bounds check raising
+# CORBA::BAD_PARAM)
+#
 # Revision 1.11  1999/12/16 16:08:02  djs
 # More TypeCode and Any fixes
 #
@@ -79,6 +83,7 @@ from omniidl.be.cxx import util, tyutil
 
 # Code for marshalling and unmarshalling various data types.
 
+# marshalling for struct, union and exception types
 def marshall_struct_union(string, environment, type, decl, argname, to="_n"):
     assert isinstance(type, idltype.Type)
     if decl:
@@ -550,8 +555,9 @@ def unmarshal_string_via_temporary(variable_name, stream_name):
 def sort_exceptions(ex):
     # sort the exceptions into lexicographical order
     def lexicographic(exception_a, exception_b):
-        name_a = tyutil.name(tyutil.mapID(exception_a.scopedName()))
-        name_b = tyutil.name(tyutil.mapID(exception_b.scopedName()))
+        # use their full C++ name
+        name_a = string.join(tyutil.mapID(exception_a.scopedName()))
+        name_b = string.join(tyutil.mapID(exception_b.scopedName()))
         # name_a <=> name_b
         if name_a < name_b: return -1
         if name_a > name_b: return 1

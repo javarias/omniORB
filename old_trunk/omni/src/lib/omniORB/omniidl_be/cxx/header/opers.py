@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/12/24 18:14:30  djs
+# Fixed handling of #include'd .idl files
+#
 # Revision 1.2  1999/12/01 17:01:09  djs
 # Moved ancillary marshalling and alignment code to another module
 # Added operator overloads for Typecodes and Anys
@@ -220,6 +223,10 @@ def visitDeclarator(node):
 def visitException(node):
     if not(node.mainFile()):
         return
+
+    for m in node.members():
+        if m.constrType():
+            m.memberType().decl().accept(self)
     
     # don't need to do anything unless generating TypeCodes and Any
     if not(config.TypecodeFlag()):
