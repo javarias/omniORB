@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4  1998/04/07 19:39:24  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.3  1998/03/13 17:34:16  sll
   Bug fix. No longer reject an IOR with zero length object key.
 
@@ -122,9 +125,13 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   end = begin + 2;
   if (profile.profile_data.length() <= end)
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
-  if (profile.profile_data[begin]   != (CORBA::Octet)IIOP::current_major ||
-      profile.profile_data[begin+1] != (CORBA::Octet)IIOP::current_minor)
+  
+  // iiop_version.major must be 1
+  if (profile.profile_data[begin]   != 1)
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+  
+  // iiop_version.minor is either 0 or above.
+  CORBA::Octet minor_version = profile.profile_data[begin+1];
 
   // profile.profile_data[3] - padding
   // profile.profile_data[4] - profile.profile_data[7] host string length
@@ -195,6 +202,19 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
     if (profile.profile_data.length() < end)
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
 
+    if (minor_version == 0) {
+      // This profile is IIOP 1.0. The encapsulated profile must end exactly
+      // at the end of the object key.
+      if (profile.profile_data.length() != end) {
+	throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+      }
+    }
+    else {
+      // This profile is IIOP 1.1 or above, any data in the profile that
+      // occurs after the object key is silently ignored.
+      // Nothing to do.
+    }
+
     // extract object key
     objkeysize = len;
     objkey = new CORBA::Octet[objkeysize];
@@ -229,8 +249,8 @@ tcpSocketFactoryType::encodeIOPprofile(const Endpoint* addr,
   }
 
   profile.profile_data[0] = omni::myByteOrder;
-  profile.profile_data[1] = IIOP::current_major;
-  profile.profile_data[2] = IIOP::current_minor;
+  profile.profile_data[1] = 1;       // IIOP major version no. = 1
+  profile.profile_data[2] = 0;       // IIOP minor version no. = 0
   profile.profile_data[3] = 0;
   {
     CORBA::ULong &l = (CORBA::ULong &) profile.profile_data[4];
