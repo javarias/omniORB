@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2002/10/28 13:48:50  dgrisby
+  Work around Windows ME 0.0.0.0 interface problem.
+
   Revision 1.1.2.13  2002/04/29 18:22:02  dgrisby
   Yet another Windows fix.
 
@@ -90,7 +93,7 @@
 #include <net/if.h>
 #endif
 
-#if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
+#if defined(NTArchitecture)
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2002/09/08 22:12:22  dgrisby
+  Last checkin broke it.
+
   Revision 1.1.4.5  2002/02/25 11:17:12  dpg1
   Use tracedmutexes everywhere.
 
@@ -74,11 +77,7 @@
 
 
 #if defined(__WIN32__)
-#  if !defined(__ETS_KERNEL__)
-#    include <winsock2.h>
-#  else
-#    include <winsock.h>
-#  endif
+#  include <winsock2.h>
 #else
 #  include <netdb.h>
 #endif
