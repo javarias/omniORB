@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.13  2001/01/10 15:23:37  dpg1
+  Propagate omniConnectionBroken out of HandleRequest().
+
   Revision 1.21.6.12  2000/08/18 12:14:19  dme
   Allow replacement of proxyObjectFactories
   Don't mask omniORB::fatalException on server side
@@ -493,8 +496,12 @@ GIOP_S::dispatcher(Strand *s)
 	} \
 	if (!pd_response_expected) \
 	{ \
-	  SendMsgErrorMessage(); \
           ReplyCompleted(); \
+          if (omniORB::trace(5)) { \
+            omniORB::logger l; \
+            l << "WARNING -- discarded system exception " # exrepoid \
+              << "\n because the operation was oneway.\n"; \
+          } \
 	} \
         else \
         { \
@@ -651,8 +658,14 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
       if( pd_state == RequestIsBeingProcessed )
 	RequestReceived(1);
       if( !pd_response_expected ) {
-	SendMsgErrorMessage();
 	ReplyCompleted();
+	if (omniORB::trace(5)) {
+	  omniORB::logger l;
+	  int dummy;
+	  const char* repoid = ex._NP_repoId(&dummy);
+	  l << "WARNING -- discarded system exception " << repoid
+	    << "\n because the operation was oneway.\n";
+	}
       }
       else {
 	int repoid_size;
@@ -903,6 +916,16 @@ GIOP_S::MaybeMarshalUserException(void* pex)
 
   int i, repoid_size;
   const char* repoid = ex._NP_repoId(&repoid_size);
+
+  if (!pd_response_expected) {
+    if (omniORB::trace(5)) {
+      omniORB::logger l;
+      l << "WARNING -- method '" << operation() << "' on: " << pd_key
+	<< "\n raised the user exception: " << repoid
+	<< "\n but the operation was called oneway.\n";
+    }
+    return;
+  }
 
   // Could turn this into a binary search (list is sorted).
   // Usually a short list though -- probably not worth it.
