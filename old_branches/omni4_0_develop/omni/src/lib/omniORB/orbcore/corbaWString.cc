@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/11/16 12:33:44  dpg1
+  Minor fixes to permit use of UShort as WChar.
+
   Revision 1.1.2.2  2000/11/15 17:20:23  sll
   Removed obsoluted marshalling functions.
 
@@ -96,11 +99,11 @@ _CORBA_WString_member::operator >>= (cdrStream& s) const {
 }
 
 //////////////////////////////////////////////////////////////////////
-////////////////// _CORBA_Unbounded_Sequence__WString /////////////////
+////////////////// _CORBA_Unbounded_Sequence_WString /////////////////
 //////////////////////////////////////////////////////////////////////
 
 void
-_CORBA_Sequence__WString::operator >>= (cdrStream& s) const
+_CORBA_Sequence_WString::operator >>= (cdrStream& s) const
 {
   pd_len >>= s;
 
@@ -112,7 +115,7 @@ _CORBA_Sequence__WString::operator >>= (cdrStream& s) const
 
 
 void
-_CORBA_Sequence__WString::operator <<= (cdrStream& s)
+_CORBA_Sequence_WString::operator <<= (cdrStream& s)
 {
   _CORBA_ULong slen;
   slen <<= s;
