@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.11  1998/04/07 18:39:39  sll
+  Use std::fstream instead of fstream.
+
 // Revision 1.10  1998/03/09  17:14:39  ewc
 // Use new _Forany function to get to underlying array slice. Avoid
 // explicit operator call that caused problems for aC++ on HPUX
@@ -52,6 +55,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #define ADPT_CLASS_TEMPLATE "_CORBA_Array_OUT_arg"
 

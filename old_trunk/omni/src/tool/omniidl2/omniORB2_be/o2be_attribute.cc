@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.17  1998/04/07 18:40:29  sll
+  Use std::fstream instead of fstream.
+  Stub now use omniORB::log to log error messages.
+
   Revision 1.16  1998/03/25 14:39:12  sll
   *** empty log message ***
 
@@ -61,6 +65,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_attribute::o2be_attribute(idl_bool ro,
 			       AST_Type *ft, 

@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.6  1998/08/10 16:55:08  sll
+  Remove redundent quote ' from constant char definition.
+
   Revision 1.5  1998/04/09 19:14:31  sll
   For const integral type, specify the initializer in its declaration.
 
@@ -45,6 +48,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_constant::o2be_constant(AST_Expression::ExprType et,
 			 AST_Expression *v,
