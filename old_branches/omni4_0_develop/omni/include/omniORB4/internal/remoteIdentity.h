@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.4.5  2001/09/19 17:26:47  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.4.4  2001/09/03 16:52:05  sll
   New signature for locateRequest. Now accept a calldescriptor argument.
 
@@ -72,6 +75,8 @@ OMNI_NAMESPACE_END(omni)
 
 class omniRemoteIdentity : public omniIdentity {
 public:
+  static void* thisClassCompare(omniIdentity*, void*);
+
   inline omniRemoteIdentity(omniIOR* ior, 
 			    const CORBA::Octet* key,
 			    CORBA::ULong keysize,
@@ -107,8 +112,6 @@ public:
 
   virtual _CORBA_Boolean inThisAddressSpace();
   // Override omniIdentity.
-
-  static void* thisClassCompare(omniIdentity*, void*);
 
   static inline omniRemoteIdentity* downcast(omniIdentity* id)
   {

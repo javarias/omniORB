@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  2001/11/27 14:36:17  dpg1
+ Local _is_equivalent fix.
+
  Revision 1.1.2.5  2001/09/19 17:26:46  dpg1
  Full clean-up after orb->destroy().
 
@@ -63,6 +66,8 @@ OMNI_NAMESPACE_END(omni)
 
 class omniInProcessIdentity : public omniIdentity {
 public:
+  static void* thisClassCompare(omniIdentity*, void*);
+
   inline ~omniInProcessIdentity() {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     if (--identity_count == 0)
@@ -105,8 +110,6 @@ public:
 
   virtual _CORBA_Boolean inThisAddressSpace();
   // Override omniIdentity.
-
-  static void* thisClassCompare(omniIdentity*, void*);
 
   static inline omniInProcessIdentity* downcast(omniIdentity* id)
   {
