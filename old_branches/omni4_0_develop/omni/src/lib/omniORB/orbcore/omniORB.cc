@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/07/13 15:30:12  sll
+  New configuration variables.
+
   Revision 1.2.2.3  2001/06/07 16:24:10  dpg1
   PortableServer::Current support.
 
@@ -101,6 +104,8 @@ unsigned int             maxInterleavedCallsPerConnection = 5;
 unsigned int             maxServerThreadPoolSize = 100;
 unsigned int             threadPerConnectionUpperLimit = 10000;
 unsigned int             threadPerConnectionLowerLimit = 9000;
+CORBA::Boolean           acceptBiDirectionalGIOP = 0;
+CORBA::Boolean           offerBiDirectionalGIOP = 0;
 CORBA::Boolean           diiThrowsSysExceptions = 0;
 CORBA::Boolean           abortOnInternalError = 0;
 _CORBA_ULong             objectTableSize = 0;
@@ -132,6 +137,8 @@ unsigned int             omniORB::maxInterleavedCallsPerConnection = 5;
 unsigned int             omniORB::maxServerThreadPoolSize = 100;
 unsigned int             omniORB::threadPerConnectionUpperLimit = 10000;
 unsigned int             omniORB::threadPerConnectionLowerLimit = 9000;
+CORBA::Boolean           omniORB::acceptBiDirectionalGIOP = 0;
+CORBA::Boolean           omniORB::offerBiDirectionalGIOP = 0;
 CORBA::Boolean           omniORB::diiThrowsSysExceptions = 0;
 CORBA::Boolean           omniORB::abortOnInternalError = 0;
 _CORBA_ULong             omniORB::objectTableSize = 0;

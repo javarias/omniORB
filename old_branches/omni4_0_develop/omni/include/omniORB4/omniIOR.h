@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/06/13 20:07:25  sll
+  Minor update to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.6  2001/06/11 17:53:23  sll
    The omniIOR ctor used by genior and corbaloc now has the option to
    select whether to call interceptors and what set of interceptors to call.
@@ -113,6 +116,10 @@ public:
     IORExtraInfo(const IOP::ComponentId cid) : compid(cid) {}
     virtual ~IORExtraInfo() {}
     IOP::ComponentId compid;
+  private:
+    IORExtraInfo();
+    IORExtraInfo(const IORExtraInfo&);
+    IORExtraInfo& operator=(const IORExtraInfo&);
   };
   // For each unique ComponentId (e.g., TAG_GROUP) one can add
   // an IORExtraInfo element to the extra_info list.
@@ -258,6 +265,13 @@ public:
   static void  add_TAG_SSL_SEC_TRANS(const IIOP::Address&,
 				     _CORBA_UShort supports,
 				     _CORBA_UShort requires);
+
+  ////
+  static void  unmarshal_TAG_OMNIORB_BIDIR(const IOP::TaggedComponent&,
+					   omniIOR&);
+  static char* dump_TAG_OMNIORB_BIDIR(const IOP::TaggedComponent&);
+  static void  add_TAG_OMNIORB_BIDIR(const char* sendfrom,
+				     omniIOR&);
 
   ///
   static void  add_IIOP_ADDRESS(const IIOP::Address&);
