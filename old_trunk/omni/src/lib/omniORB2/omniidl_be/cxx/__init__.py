@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  1999/11/17 20:37:09  djs
+# General util functions
+#
 # Revision 1.6  1999/11/15 19:10:54  djs
 # Added module for utility functions specific to generating skeletons
 # Union skeletons working
@@ -86,30 +89,3 @@ def run(tree, args):
     
     skel.run(tree)
 
-    #stream = util.Stream(sys.stdout, 2)
-
-    #defs = header.defs.__init__(stream)
-    #tree.accept(defs)
-    
-    
-    #global main_idl_file, imported_files
-    
-    #main_idl_file = tree.file()
-
-    #imported_files[outputFileName(main_idl_file)] = 1
-
-    #checkStubDir(stub_directory)
-
-    #outpybasename = outputFileName(main_idl_file)
-    #outpymodule   = stub_module + outpybasename
-    #outpyname     = os.path.join(stub_directory, outpybasename + ".py")
-
-
-    #st.out(file_start, filename=main_idl_file)
-
-    #pv = PythonVisitor(st, outpymodule)
-    #tree.accept(pv)
-
-    #st.out(file_end)
-
-    #updateModules(exported_modules.keys(), outpymodule)

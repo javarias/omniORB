@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  1999/11/23 18:49:26  djs
+# Lots of fixes, especially marshalling code
+# Added todo list to keep track of issues
+#
 # Revision 1.10  1999/11/19 20:06:30  djs
 # Removed references to a removed utility function
 #
@@ -737,29 +741,6 @@ def sizeCalculation(environment, type, decl, sizevar, argname):
                    sizevar = sizevar, argname = argname)
         return str(string)
 
-    def begin_loop(string = string, full_dims = full_dims):
-        string.out("{")
-        string.inc_indent()
-        index = 0
-        indexing_string = ""
-        for dim in full_dims:
-            string.out("""\
-for (CORBA::ULong _i@n@ = 0;_i@n@ < @dim@;_i@n@++) {""",
-                       n = str(index), dim = str(dim))
-            string.inc_indent()
-            indexing_string = indexing_string + "[_i" + str(index) + "]"
-            index = index + 1
-
-        return indexing_string
-
-    def end_loop(string = string, full_dims = full_dims):
-        for dim in full_dims:
-            string.dec_indent()
-            string.out("}")
-            
-        string.dec_indent()
-        string.out("}")
-        
 
     # thing is an array
     if not(isVariable):
@@ -780,7 +761,7 @@ for (CORBA::ULong _i@n@ = 0;_i@n@ < @dim@;_i@n@++) {""",
             return str(string)
 
         # must be an array of fixed structs or unions
-        indexing_string = begin_loop()
+        indexing_string = util.begin_loop(string, full_dims)
 
         # do the actual calculation
         string.out("""\
@@ -788,13 +769,13 @@ for (CORBA::ULong _i@n@ = 0;_i@n@ < @dim@;_i@n@++) {""",
                    sizevar = sizevar, argname = argname,
                    indexing_string = indexing_string)
 
-        end_loop()
+        end_loop(string, full_dims)
 
         return str(string)
 
 
     # thing is an array of variable sized elements
-    indexing_string = begin_loop()
+    indexing_string = begin_loop(string, full_dims)
 
     if isString(deref_type):
         string.out("""\
@@ -819,7 +800,7 @@ for (CORBA::ULong _i@n@ = 0;_i@n@ < @dim@;_i@n@++) {""",
                    indexing_string = indexing_string)
                
 
-    end_loop()
+    end_loop(string, full_dims)
 
     return str(string)
     

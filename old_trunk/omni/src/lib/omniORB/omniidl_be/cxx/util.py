@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  1999/11/26 18:51:44  djs
+# Generates nicer output when doing blank substitutions
+#
 # Revision 1.6  1999/11/19 20:05:39  djs
 # Removed superfluous function. Added zip.
 #
@@ -225,3 +228,42 @@ def intersect(a, b):
 def zip(a, b):
     if a == [] or b == []: return []
     return [(a[0], b[0])] + zip(a[1:], b[1:])
+
+
+# ------------------------------------------------------------------
+# Useful C++ things
+
+# Build a loop iterating over every element of a multidimensional
+# thing and return the indexing string
+def start_loop(where, dims, prefix = "_i"):
+    index = 0
+    istring = ""
+    for dimension in dims:
+        where.out("""\
+for (CORBA::ULong @prefix@@n@ = 0;@prefix@@n@ < @dim@;_i@n@++) {""",
+                  prefix = prefix,
+                  n = str(index),
+                  dim = str(dimension))
+        where.inc_indent()
+        istring = istring + "[" + prefix + str(index) + "]"
+        index = index + 1
+    return istring
+
+# Finish the loop
+def finish_loop(where, dims):
+    for dummy in dims:
+        where.dec_indent()
+        where.out("}")
+    
+# Create a nested block as a container and call start_loop
+def block_begin_loop(string, full_dims):
+    string.out("{")
+    string.inc_indent()
+    return start_loop(string, full_dims)
+
+# finish the loop and close the nested block
+def block_end_loop(string, full_dims):
+    finish_loop(string, full_dims)
+            
+    string.dec_indent()
+    string.out("}")
