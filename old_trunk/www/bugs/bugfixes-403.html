@@ -67,6 +67,40 @@
             <tr>
               <td>Summary:</td>
               <td>
+                <b>Unions with multiple cases not properly unmarshalled</b>
+            (bug number 9)
+            <a name='bug9'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Thu Jul 29 11:32:51 BST 2004</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Martin Laporte</td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  When a union with multiple case labels for a single member was
+  unmarshalled, its internal initialised flag was not correctly set,
+  meaning the receiver could not change the case label as they should
+  be able to.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
                 <b>Fixed point broken</b>
             (bug number 8)
             <a name='bug8'></a>
