@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.16.2.15  2002/01/16 11:31:58  dpg1
+  Race condition in use of registerNilCorbaObject/registerTrackedObject.
+  (Reported by Teemu Torma).
+
   Revision 1.16.2.14  2002/01/15 16:38:12  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.
@@ -795,11 +799,13 @@ omniOrbBOA::lastInvocationHasCompleted(omniLocalIdentity* id)
       << " id: " << id->servant()->_mostDerivedRepoId() << "\n";
   }
 
+  omniServant* servant = id->servant();
+
   entry->setEtherealising();
   entry->setDead();
 
   omni::internalLock->unlock();
-  delete id->servant();
+  delete servant;
   met_detached_object();
 }
 
