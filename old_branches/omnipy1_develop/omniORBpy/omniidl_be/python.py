@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27  2000/07/12 14:32:13  dpg1
+# New no_package option to omniidl backend
+#
 # Revision 1.26  2000/06/28 12:47:48  dpg1
 # Proper error messages for unsupported IDL constructs.
 #
@@ -699,6 +702,8 @@ class PythonVisitor:
         if len(node.inherits()) > 0:
             inheritl = []
             for i in node.inherits():
+                while isinstance(i, idlast.Declarator):
+                    i = i.alias().aliasType()
                 inheritl.append(dotName(fixupScopedName(i.scopedName())))
             
             inherits = "(" + string.join(inheritl, ", ") + ")"
@@ -762,6 +767,8 @@ class PythonVisitor:
         if len(node.inherits()) > 0:
             inheritl = []
             for i in node.inherits():
+                while isinstance(i, idlast.Declarator):
+                    i = i.alias().aliasType()
                 sn = fixupScopedName(i.scopedName())
                 inheritl.append(dotName(sn[:-1] + ["_objref_" + sn[-1]]))
                 
@@ -817,6 +824,8 @@ class PythonVisitor:
         if len(node.inherits()) > 0:
             inheritl = []
             for i in node.inherits():
+                while isinstance(i, idlast.Declarator):
+                    i = i.alias().aliasType()
                 sn = fixupScopedName(i.scopedName())
                 methods = methods + " + " + \
                           dotName(sn[:-1] + ["_objref_" + sn[-1]]) + \
@@ -833,6 +842,8 @@ class PythonVisitor:
         if len(node.inherits()) > 0:
             inheritl = []
             for i in node.inherits():
+                while isinstance(i, idlast.Declarator):
+                    i = i.alias().aliasType()
                 fsn = fixupScopedName(i.scopedName())
                 dsn = dotName(fsn)
                 ssn = skeletonModuleName(dsn)
