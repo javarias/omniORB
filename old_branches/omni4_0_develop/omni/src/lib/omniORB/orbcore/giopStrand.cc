@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2004/03/30 13:14:47  dgrisby
+  Allow scavenger thread to restart.
+
   Revision 1.1.4.18  2002/09/04 23:29:30  dgrisby
   Avoid memory corruption with multiple list removals.
 
@@ -740,7 +743,6 @@ Scavenger::execute()
     mutex->lock();
     theTask = 0;
     if (shutdown) {
-      shutdown = 0;
       mutex->unlock();
       delete cond;
       delete mutex;
@@ -783,6 +785,7 @@ Scavenger::terminate()
 void
 Scavenger::initialise()
 {
+  Scavenger::shutdown = 0;
   Scavenger::mutex = new omni_tracedmutex();
   Scavenger::cond  = new omni_tracedcondition(Scavenger::mutex);
 }
