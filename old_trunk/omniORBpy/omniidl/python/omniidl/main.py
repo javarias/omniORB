@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  1999/11/08 11:43:34  dpg1
+# Changes for NT support.
+#
 
 import _omniidl
 import sys, getopt, os, os.path, string
@@ -156,18 +159,24 @@ def main(argv=None):
         sys.exit(1)
 
     # Import back-ends, and add any pre-processor arguments
+    bemodules = []
     for backend in backends:
         if verbose:
             print cmdname + ": Importing back-end `" + backend + "'"
 
         try:
-            exec "import omniidl.be." + backend
-            exec "be = omniidl.be." + backend
+            be = __import__("omniidl.be." + backend,
+                            globals(), locals(), backend)
         except ImportError:
-            sys.stderr.write(cmdname + \
-                             ": Could not import back-end `" + backend + "'\n")
-            sys.exit(1)
+            try:
+                be = __import__(backend, globals(), locals(), backend)
+            except ImportError:
+                sys.stderr.write(cmdname + \
+                                 ": Could not import back-end `" + \
+                                 backend + "'\n")
+                sys.exit(1)
 
+        bemodules.append(be)
         if hasattr(be, "cpp_args"):
             preprocessor_args.extend(be.cpp_args)
 
@@ -217,5 +226,5 @@ def main(argv=None):
                 if verbose:
                     print cmdname + ": Running back-end `" + backend + "'"
 
-                exec "omniidl.be." + backend + ".run(tree, backends_args[i])"
+                bemodules[i].run(tree, backends_args[i])
                 i = i + 1
