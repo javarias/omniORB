@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.8  1999/09/29 11:25:55  dpg1
+// Nil objects now map to None. They work too, which is more than can be
+// said for the old mapping...
+//
 // Revision 1.7  1999/09/24 09:22:03  dpg1
 // Added copyright notices.
 //
@@ -183,19 +187,18 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       assert(tup);
 
       CORBA::Object_ptr obj;
-      
+      const char*       repoId;
+
       if (a_o == Py_None) {
 	// Nil object reference
-	obj = CORBA::Object::_nil();
+	obj    = CORBA::Object::_nil();
+	repoId = "";
       }
       else {
 	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+	if (!obj) throw CORBA::BAD_PARAM();
+	repoId = obj->PR_getobj()->NP_IRRepositoryId();
       }
-
-      if (!obj) throw CORBA::BAD_PARAM();
-
-      const char* repoId = obj->PR_getobj()->NP_IRRepositoryId();
-
       msgsize = CORBA::AlignedObjRef(obj, repoId, strlen(repoId) + 1, msgsize);
     }
     break;
@@ -663,17 +666,17 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
   case CORBA::tk_objref: // repoId, name
     {
       CORBA::Object_ptr obj;
+      const char*       repoId;
 
       if (a_o == Py_None) {
 	// Nil object reference
-	obj = CORBA::Object::_nil();
+	obj    = CORBA::Object::_nil();
+	repoId = "";
       }
       else {
-	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+	obj    = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+	repoId = obj->PR_getobj()->NP_IRRepositoryId();
       }
-
-      const char* repoId = obj->PR_getobj()->NP_IRRepositoryId();
-
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }
     break;
@@ -1054,17 +1057,17 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
   case CORBA::tk_objref: // repoId, name
     {
       CORBA::Object_ptr obj;
+      const char*       repoId;
 
       if (a_o == Py_None) {
 	// Nil object reference
-	obj = CORBA::Object::_nil();
+	obj    = CORBA::Object::_nil();
+	repoId = "";
       }
       else {
-	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+	obj    = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+	repoId = obj->PR_getobj()->NP_IRRepositoryId();
       }
-
-      const char* repoId = obj->PR_getobj()->NP_IRRepositoryId();
-
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }
     break;
