@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.6  1999/10/29 13:18:20  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.1.2.5  1999/10/27 17:32:16  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -105,7 +108,7 @@ PortableServer::name::_ptrToObjRef(const char* repoId)  \
 PortableServer::name##_ptr  \
 PortableServer::name::_duplicate(PortableServer::name##_ptr obj)  \
 {  \
-  if( CORBA::is_nil(obj) )  obj->_NP_incrRefCount();  \
+  if( !CORBA::is_nil(obj) )  obj->_NP_incrRefCount();  \
   \
   return obj;  \
 }  \
