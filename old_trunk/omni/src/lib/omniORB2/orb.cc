@@ -11,6 +11,9 @@
  
 /*
   $Log$
+// Revision 1.1  1996/10/10  14:37:53  sll
+// Initial revision
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -22,7 +25,13 @@
 #include <errno.h>
 #endif
 
-#include "tcpSocket.h"
+#if defined(UnixArchitecture)
+#include "tcpSocket_UNIX.h"
+#elif defined(ATMosArchitecture)
+#include "tcpSocket_ATMos.h"
+#else
+#error "No tcpSocket.h header for this architecture."
+#endif
 
 // XXX Some work needs to be done to either remove the explicit reference
 //     (and hence dependency) on tcp socket transport or rewrite to incorporate
@@ -229,6 +238,13 @@ omniORB::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
     keysize = p.object_key.length();
     return r;
   }
+else
+  {
+    // Invalid object reference
+    throw CORBA::INV_OBJREF(0,CORBA::COMPLETED_NO);
+    return 0;  // For NT VC++ 4.2
+  }
+
 }
 
 
