@@ -29,6 +29,9 @@
 
 
 /* $Log$
+ * Revision 1.9  1999/02/18 15:45:39  djr
+ * (Re)Fixed broken insertion/extraction of Object_ptr from Any.
+ *
  * Revision 1.8  1999/02/10 15:14:50  djr
  * Fixed broken implementation of marshalling object references into Anys.
  *
@@ -390,8 +393,8 @@ CORBA::Any::operator<<=(const char* s)
   tcDescriptor tcd;
   tcd.p_string.getLength = tcParser_fromstring_getLength;
   tcd.p_string.getBuffer = tcParser_fromstring_getBuffer;
-  tcd.p_string.opq_string = (void*)s;
-  tcd.p_string.opq_len = strlen(s);
+  tcd.p_string.opq_string = (void*) s;
+  tcd.p_string.opq_len = s ? strlen(s) : 0;
 
   pdAnyP()->setData(CORBA::_tc_string, tcd);
 }  
@@ -404,7 +407,7 @@ CORBA::Any::operator<<=(from_string s)
   tcd.p_string.getLength = tcParser_fromstring_getLength;
   tcd.p_string.getBuffer = tcParser_fromstring_getBuffer;
   tcd.p_string.opq_string = s.val;
-  tcd.p_string.opq_len = strlen(s.val);
+  tcd.p_string.opq_len = s.val ? strlen(s.val) : 0;
 
   if( s.bound ) {
     CORBA::TypeCode_var newtc = CORBA::TypeCode::NP_string_tc(s.bound);
@@ -535,7 +538,7 @@ CORBA::Any::operator>>=(to_octet o) const
 }
 
 
-// Internal functions used when inserting raw string data
+// Internal functions used when extracting string data
 static void
 tcParser_tostring_setLength(tcStringDesc* tcsd, CORBA::ULong len)
 {
