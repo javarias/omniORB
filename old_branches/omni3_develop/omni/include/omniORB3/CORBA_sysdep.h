@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.19  2000/11/23 13:05:04  sll
+ Added support for KAI C++ 4.0.
+
  Revision 1.1.2.18  2000/09/25 11:03:27  dpg1
  Remove use of _T as a template class name
 
@@ -485,6 +488,8 @@
 # define _OMNIORB_HOST_BYTE_ORDER_ 0
 # define _HAS_SIGNAL 1
 # define _USE_GETHOSTNAME 1
+#elif defined(__powerpc__)
+# define _OMNIORB_HOST_BYTE_ORDER_ 0
 #else
 # error "The byte order of this platform is unknown"
 #endif
