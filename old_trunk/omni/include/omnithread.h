@@ -18,6 +18,9 @@
 
 /* 
  * $Log$
+ * Revision 1.2  1995/08/17  10:14:55  tjr
+ * new version of OMNI thread abstraction
+ *
  */
 
 #ifndef __omnithread_h_
@@ -62,6 +65,34 @@ class omni_thread;
 #elif defined(__NT__)
 #include "omnithread/nt.h"
 
+#ifdef _MSC_VER
+
+// Using MSVC++ to compile. If compiling library as a DLL,
+// define _OMNITHREAD_DLL. If compiling as a statuc library, define
+// _WINSTATIC
+// If compiling an application that is to be statically linked to omnithread,
+// define _WINSTATIC (if the application is  to be dynamically linked, 
+// there is no need to define any of these macros).
+
+#if defined (_OMNITHREAD_DLL) && defined(_WINSTATIC)
+#error "Both _OMNITHREAD_DLL and _WINSTATIC are defined."
+#elif defined(_OMNITHREAD_DLL)
+#define _OMNITHREAD_NTDLL_ __declspec(dllexport)
+#elif !defined(_WINSTATIC)
+#define _OMNITHREAD_NTDLL_ __declspec(dllimport)
+#elif defined(_WINSTATIC)
+#define _OMNITHREAD_NTDLL_
+#endif
+ // _OMNITHREAD_DLL && _WINSTATIC
+
+#else
+
+// Not using MSVC++ to compile
+#define _OMNITHREAD_NTDLL
+
+#endif
+ // _MSC_VER
+ 
 #elif defined(__sunos__) && (__OSVERSION__ == 5)
 #ifdef UsePthread
 #include "omnithread/posix.h"
@@ -74,6 +105,10 @@ class omni_thread;
 
 #else
 #error "No implementation header file"
+#endif
+
+#if !defined(__NT__)
+#define _OMNITHREAD_NTDLL
 #endif
 
 #if (!defined(OMNI_MUTEX_IMPLEMENTATION) || \
@@ -90,7 +125,7 @@ class omni_thread;
 //
 ///////////////////////////////////////////////////////////////////////////
 
-class omni_mutex {
+class _OMNITHREAD_NTDLL_ omni_mutex {
 
 public:
     omni_mutex(void);
@@ -119,7 +154,7 @@ OMNI_THREAD_EXPOSE:
 //
 ///////////////////////////////////////////////////////////////////////////
 
-class omni_condition {
+class _OMNITHREAD_NTDLL_ omni_condition {
 
     omni_mutex* mutex;
 
@@ -166,7 +201,7 @@ OMNI_THREAD_EXPOSE:
 //
 ///////////////////////////////////////////////////////////////////////////
 
-class omni_semaphore {
+class _OMNITHREAD_NTDLL_ omni_semaphore {
 
 public:
     omni_semaphore(unsigned int initial = 1);
@@ -195,7 +230,7 @@ OMNI_THREAD_EXPOSE:
 //
 ///////////////////////////////////////////////////////////////////////////
 
-class omni_thread {
+class _OMNITHREAD_NTDLL_ omni_thread {
 
 public:
 
@@ -352,7 +387,7 @@ public:
     // This class plus the instance of it declared below allows us to execute
     // some initialisation code before main() is called.
 
-    class init_t {
+    class _OMNITHREAD_NTDLL_ init_t {
 	static int count;
     public:
 	init_t(void);
