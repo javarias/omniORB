@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.22  2001/08/28 11:07:29  dpg1
+  Deadlock when a worker thread can't be started.
+
   Revision 1.22.6.21  2001/02/19 17:16:43  sll
   poll() on HPUX 10.20 is broken. The performance is terrible. Switch to use
   select().
@@ -645,7 +648,7 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
   }
   
   {
-# if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
+# if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4) || (defined(__openbsd__))
     // GNU C library uses socklen_t * instead of int* in getsockname().
     // This is suppose to be compatible with the upcoming POSIX standard.
     // FreeBSD 4.0 uses it too.
@@ -1402,7 +1405,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
       tcpSocketHandle_t new_sock;
       struct sockaddr_in raddr;
  
-#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
+#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4) || (defined(__openbsd__))
       // GNU C library uses socklen_t * instead of int* in accept ().
       // This is suppose to be compatible with the upcoming POSIX standard.
       // FreeBSD 4.0 uses it too.
@@ -1565,7 +1568,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 
     tcpSocketHandle_t new_sock;
     struct sockaddr_in raddr;
-#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
+#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4) || (defined(__openbsd__))
     // GNU C library uses socklen_t * instead of int* in accept ().
     // This is suppose to be compatible with the upcoming POSIX standard.
     // FreeBSD 4.0 uses it too.
