@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.3  2000/12/04 18:57:23  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.1.2.2  2000/11/22 14:42:56  dpg1
 // Fix segfault in string_to_object and resolve_initial_references with
 // nil objref.
@@ -478,7 +482,6 @@ omniPy::stringToObject(const char* uri)
 CORBA::Object_ptr
 omniPy::UnMarshalObjRef(const char* repoId, cdrStream& s)
 {
-  omniPy::InterpreterUnlocker _u;
   CORBA::String_var           id;
   IOP::TaggedProfileList_var  profiles;
 
@@ -492,6 +495,8 @@ omniPy::UnMarshalObjRef(const char* repoId, cdrStream& s)
     return CORBA::Object::_nil();
   }
   else {
+    omniPy::InterpreterUnlocker _u;
+
     // It is possible that we reach here with the id string = '\0'.
     // That is alright because the actual type of the object will be
     // verified using _is_a() at the first invocation on the object.
