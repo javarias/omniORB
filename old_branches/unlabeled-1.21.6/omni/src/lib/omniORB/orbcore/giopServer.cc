@@ -29,6 +29,15 @@
  
 /*
   $Log$
+  Revision 1.21.6.11  2000/06/22 10:37:50  dpg1
+  Transport code now throws omniConnectionBroken exception rather than
+  CORBA::COMM_FAILURE when things go wrong. This allows the invocation
+  code to distinguish between transport problems and COMM_FAILURES
+  propagated from the server side.
+
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.21.6.10  2000/05/05 16:59:44  dpg1
   Bug in HandleLocateRequest() when catching a LOCATION_FORWARD
 
@@ -702,7 +711,9 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
       CHECK_AND_MAYBE_MARSHALL_SYSTEM_EXCEPTION (UNKNOWN,ex);
     }
   }
-
+  catch(const omniORB::fatalException& ex) {
+      throw; // don't mask bugs!
+  }
   catch(...) {
     if( omniORB::traceLevel > 1 ) {
       omniORB::logger l;

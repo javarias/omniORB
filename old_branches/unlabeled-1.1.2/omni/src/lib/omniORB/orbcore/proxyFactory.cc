@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:27:05  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -85,9 +88,12 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
 
     if( cmp < 0 )       top = middle;
     else if( cmp > 0 )  bottom = middle + 1;
-    else
-      throw omniORB::fatalException(__FILE__, __LINE__,
-			    "Duplicate proxyObjectFactory registered.");
+    else {
+      ofl[middle] = this;
+      if( omniORB::trace(15) )
+	  omniORB::logf("Replaced proxyObjectFactory for %s.", repoId);
+      return;
+    }
   }
 
   OMNIORB_ASSERT(top == bottom);
