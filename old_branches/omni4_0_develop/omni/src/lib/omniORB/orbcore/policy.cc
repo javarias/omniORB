@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.3.2.4  2001/09/19 17:26:52  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.3.2.3  2001/05/31 16:18:15  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -136,8 +139,10 @@ CORBA::Policy::_nil()
   static Policy* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new Policy;
-    registerNilCorbaObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new Policy;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

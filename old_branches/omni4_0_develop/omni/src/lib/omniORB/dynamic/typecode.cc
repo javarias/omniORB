@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.22  2001/11/01 12:04:56  dpg1
+ * Don't return void in void function.
+ *
  * Revision 1.38.2.21  2001/10/29 17:42:36  dpg1
  * Support forward-declared structs/unions, ORB::create_recursive_tc().
  *
@@ -440,8 +443,10 @@ CORBA::TypeCode::_nil()
   static TypeCode* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new TypeCode;
-    registerTrackedObject(new omniNilTypeCodeHolder(_the_nil_ptr));
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new TypeCode;
+      registerTrackedObject(new omniNilTypeCodeHolder(_the_nil_ptr));
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

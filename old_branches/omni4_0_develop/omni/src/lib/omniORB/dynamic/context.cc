@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.12.2.12  2001/11/27 14:35:07  dpg1
+ Context, DII fixes.
+
  Revision 1.12.2.11  2001/11/06 15:41:35  dpg1
  Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -622,8 +625,10 @@ CORBA::Context::_nil()
   static omniNilContext* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new omniNilContext;
-    registerTrackedObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new omniNilContext;
+      registerTrackedObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

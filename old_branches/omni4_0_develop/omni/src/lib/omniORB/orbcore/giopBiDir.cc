@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2001/11/08 16:31:19  dpg1
+  Minor tweaks.
+
   Revision 1.1.2.9  2001/09/19 17:26:49  dpg1
   Full clean-up after orb->destroy().
 
@@ -189,8 +192,10 @@ BiDirPolicy::BidirectionalPolicy::_nil()
   static BidirectionalPolicy* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new BidirectionalPolicy;
-    registerNilCorbaObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new BidirectionalPolicy;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.22  2001/11/27 14:35:09  dpg1
+# Context, DII fixes.
+#
 # Revision 1.3.2.21  2001/11/13 14:14:45  dpg1
 # Bug when no catch by base class.
 #
@@ -239,8 +242,10 @@ interface_class = """\
   static @objref_name@* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new @objref_name@;
-    registerNilCorbaObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new @objref_name@;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

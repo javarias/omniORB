@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.10  2001/10/19 11:05:25  dpg1
+  ObjectId to/from wstring
+
   Revision 1.2.2.9  2001/09/19 17:26:52  dpg1
   Full clean-up after orb->destroy().
 
@@ -183,8 +186,10 @@ PortableServer::name::_nil()  \
   static name* _the_nil_ptr = 0;  \
   if( !_the_nil_ptr ) {  \
     omni::nilRefLock().lock();  \
-    if( !_the_nil_ptr )  _the_nil_ptr = new name;  \
-    registerNilCorbaObject(_the_nil_ptr); \
+    if( !_the_nil_ptr ) { \
+      _the_nil_ptr = new name;  \
+      registerNilCorbaObject(_the_nil_ptr); \
+    } \
     omni::nilRefLock().unlock();  \
   }  \
   return _the_nil_ptr;  \

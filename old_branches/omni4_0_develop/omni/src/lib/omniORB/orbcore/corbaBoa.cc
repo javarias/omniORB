@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.16.2.14  2002/01/15 16:38:12  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.16.2.13  2001/10/19 11:06:44  dpg1
   Principal support for GIOP 1.0. Correct some spelling mistakes.
 
@@ -238,8 +242,10 @@ CORBA::BOA::_nil()
   static omniOrbBOA* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new omniOrbBOA(1 /* is nil */);
-    registerNilCorbaObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new omniOrbBOA(1 /* is nil */);
+      registerNilCorbaObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.33.2.34  2002/01/15 16:38:12  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.33.2.33  2002/01/09 11:35:22  dpg1
   Remove separate omniAsyncInvoker library to save library overhead.
 
@@ -417,8 +421,10 @@ CORBA::ORB::_nil()
   static omniOrbORB* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if( !_the_nil_ptr )  _the_nil_ptr = new omniOrbORB(1 /* is nil */);
-    registerNilCorbaObject(_the_nil_ptr);
+    if( !_the_nil_ptr ) {
+      _the_nil_ptr = new omniOrbORB(1 /* is nil */);
+      registerNilCorbaObject(_the_nil_ptr);
+    }
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;
