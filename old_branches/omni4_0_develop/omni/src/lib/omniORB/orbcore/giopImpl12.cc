@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2001/09/10 17:46:10  sll
+  When a connection is broken, check if it has been shutdown orderly. If so,
+  do a retry.
+
   Revision 1.1.4.11  2001/09/04 14:38:52  sll
   Added the boolean argument to notifyCommFailure to indicate if
   omniTransportLock is held by the caller.
@@ -462,8 +466,10 @@ giopImpl12::inputNewServerMessage(giopStream* g) {
 void
 giopImpl12::inputNewFragment(giopStream* g) {
 
-  g->releaseInputBuffer(g->pd_currentInputBuffer);
-  g->pd_currentInputBuffer = 0;
+  if (g->pd_currentInputBuffer) {
+    g->releaseInputBuffer(g->pd_currentInputBuffer);
+    g->pd_currentInputBuffer = 0;
+  }
 
  again:
   if (!g->pd_input) {
@@ -590,6 +596,11 @@ giopImpl12::inputReplyBegin(giopStream* g,
 			  g->pd_currentInputBuffer->start));
 
   unmarshalHeader(g);
+
+  if (g->inputMessageSize() > orbParameters::giopMaxMsgSize) {
+    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
+		  CORBA::COMPLETED_YES);
+  }
 }
 
 
@@ -654,6 +665,11 @@ giopImpl12::inputMessageBegin(giopStream* g,
 			  g->pd_currentInputBuffer->start));
 
   unmarshalHeader(g);
+
+  if (g->inputMessageSize() > orbParameters::giopMaxMsgSize) {
+    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnServer,
+		  CORBA::COMPLETED_NO);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -997,13 +1013,19 @@ giopImpl12::getInputData(giopStream* g,omni::alignment_t align,size_t sz) {
 
   if (!g->inputFragmentToCome()) {
     inputNewFragment(g);
+    if (g->inputMessageSize() > orbParameters::giopMaxMsgSize) {
+      OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+		    (CORBA::CompletionStatus)g->completion());
+    }
     goto again;
   }
 
   // Reach here if we have some bytes to fetch for the current fragment
+  if (g->pd_currentInputBuffer) {
+    g->releaseInputBuffer(g->pd_currentInputBuffer);
+    g->pd_currentInputBuffer = 0;
+  }
 
-  g->releaseInputBuffer(g->pd_currentInputBuffer);
-  g->pd_currentInputBuffer = 0;
   if (!g->pd_input) {
     g->pd_currentInputBuffer = g->inputChunk(g->inputFragmentToCome());
   }
@@ -1100,6 +1122,10 @@ giopImpl12::copyInputData(giopStream* g,void* b, size_t sz,
 
       if (!g->inputFragmentToCome()) {
 	inputNewFragment(g);
+	if (g->inputMessageSize() > orbParameters::giopMaxMsgSize) {
+	  OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+			(CORBA::CompletionStatus)g->completion());
+	}
 	continue;
       }
 
