@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2000/10/18 16:07:45  djr
+  Moved call to _default_POA() in _do_this().
+
   Revision 1.1.2.11  2000/09/21 11:08:18  dpg1
   Add a user check to RefCountServantBase::_add_ref() which complains if
   it is called when the reference count is zero.
@@ -217,7 +220,7 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   if( 0 /*?? in context of invocation on this servant */ ) {
 
     // Return a reference to the object being invoked.
-#if defined(__DECCXX) && __DECCXX_VER >= 60000000
+#if (defined(__DECCXX) && __DECCXX_VER >= 60000000) || defined(__xlC__)
     // Compaq C++ 6.2 warns about this even though this code 
     // cannot ever execute
     return 0;
