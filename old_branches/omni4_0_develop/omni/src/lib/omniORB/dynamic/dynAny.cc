@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.11.2.8  2001/06/13 20:10:04  sll
+   Minor update to make the ORB compiles with MSVC++.
+
    Revision 1.11.2.7  2001/04/19 09:14:15  sll
    Scoped where appropriate with the omni namespace.
 
@@ -322,10 +325,10 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 
 static DynAnyImplBase*
-create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root);
+internal_create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root);
 
 static DynUnionDisc*
-create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du);
+internal_create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du);
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1521,7 +1524,7 @@ DynAnyConstrBase::setNumComponents(unsigned n)
       for( unsigned i = old_n_components; i < pd_n_components; i++ ) {
 	CORBA::TypeCode_ptr tc =
 	  CORBA::TypeCode::_duplicate(nthComponentTC(i));
-	pd_components[i] = create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
+	pd_components[i] = internal_create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
       }
     }
   }
@@ -1541,7 +1544,7 @@ DynAnyConstrBase::createComponent(unsigned n)
   unsigned i;
   for( i = n; i < pd_n_in_buf; i++ ) {
     CORBA::TypeCode_ptr tc = CORBA::TypeCode::_duplicate(nthComponentTC(i));
-    DynAnyImplBase* da = create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
+    DynAnyImplBase* da = internal_create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
     if( pd_read_index != (int)i )  seekTo(i);
     if( !da->copy_from(pd_buf) ) {
       throw omniORB::fatalException(__FILE__,__LINE__,
@@ -1554,7 +1557,7 @@ DynAnyConstrBase::createComponent(unsigned n)
   // Create uninitialised components for those not yet inserted.
   for( ; i < pd_first_in_comp; i++ ) {
     CORBA::TypeCode_ptr tc = CORBA::TypeCode::_duplicate(nthComponentTC(i));
-    pd_components[i] = create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
+    pd_components[i] = internal_create_dyn_any(ToTcBase(tc), DYNANY_CHILD);
   }
 
   pd_first_in_comp = n;
@@ -1773,7 +1776,7 @@ DynUnionImpl::DynUnionImpl(TypeCode_base* tc, CORBA::Boolean is_root)
 {
   CORBA::TypeCode_ptr tcdup =
     CORBA::TypeCode::_duplicate(actualTc()->NP_discriminator_type());
-  pd_disc = create_dyn_any_discriminator(ToTcBase(tcdup), this);
+  pd_disc = internal_create_dyn_any_discriminator(ToTcBase(tcdup), this);
   pd_disc_type = ToTcBase(tcdup);
   pd_disc_kind = pd_disc_type->NP_kind();
   pd_disc_index = -1;
@@ -2422,7 +2425,7 @@ DynUnionImpl::discriminatorHasChanged()
 
   // Create new member of the appropriate type.
   CORBA::TypeCode_ptr mtc = actualTc()->member_type(pd_disc_index);
-  pd_member = create_dyn_any(ToTcBase(mtc), DYNANY_CHILD);
+  pd_member = internal_create_dyn_any(ToTcBase(mtc), DYNANY_CHILD);
   pd_member_kind = mtc->kind();
 }
 
@@ -3271,7 +3274,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 // <tc> is consumed. Since 2.8.0 it no longer have to alias-expand
 static DynAnyImplBase*
-create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
+internal_create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
 {
   if ( !CORBA::TypeCode::PR_is_valid(tc) )
     OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
@@ -3340,7 +3343,7 @@ create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
 
 // <tc> is consumed. Since 2.8.0 it no longer have to alias-expand
 static DynUnionDisc*
-create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du)
+internal_create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du)
 {
   if ( !CORBA::TypeCode::PR_is_valid(tc) )
     OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
@@ -3376,7 +3379,7 @@ CORBA::ORB::create_dyn_any(const Any& value)
   if( CORBA::is_nil(tc) )
     OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
 
-  DynAnyImplBase* da = _OMNI_NS(create_dyn_any)(ToTcBase_Checked(CORBA::TypeCode::_duplicate(tc)), DYNANY_ROOT);
+  DynAnyImplBase* da = _OMNI_NS(internal_create_dyn_any)(ToTcBase_Checked(CORBA::TypeCode::_duplicate(tc)), DYNANY_ROOT);
   da->from_any(value);
   return da;
 }
