@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.45  2003/08/21 14:57:44  dgrisby
+  Really silly bug broke registry reading on Windows.
+
   Revision 1.33.2.44  2003/07/30 14:23:35  dgrisby
   Fix various race conditions in ORB shutdown.
 
@@ -878,9 +881,9 @@ omniOrbORB::destroy()
 
     // Call detach method of the initialisers in reverse order.
     omni_hooked_initialiser_.detach();
-    omni_uri_initialiser_.attach();
-    omni_poa_initialiser_.attach();
-    omni_orbOptions_initialiser_.attach();
+    omni_uri_initialiser_.detach();
+    omni_poa_initialiser_.detach();
+    omni_orbOptions_initialiser_.detach();
     omni_initRefs_initialiser_.detach();
     omni_ObjRef_initialiser_.detach();
     omni_dynamiclib_initialiser_.detach();
