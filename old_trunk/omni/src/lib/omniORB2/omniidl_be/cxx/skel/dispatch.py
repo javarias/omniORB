@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16  2000/01/19 17:05:15  djs
+# Modified to use an externally stored C++ output template.
+#
 # Revision 1.15  2000/01/17 17:04:12  djs
 # Modified pointer handling in attribute dispatching
 #
@@ -131,7 +134,6 @@ def argument_instance(type):
 
     # all object references and typecodes are _var types
     if tyutil.isObjRef(deref_type) and not(is_array):
-#        name = self.__globalScope.principalID(deref_type)
         name = environment.principalID(deref_type)
         mapping = [name + "_var", name + "_var", name + "_var"]
 
@@ -145,7 +147,6 @@ def argument_instance(type):
 
     # typedefs aren't dereferenced
     if tyutil.isTypedef(type):
-#        name = self.__globalScope.principalID(type)
         name = environment.principalID(type)
         mapping[0] = name
         # out types have storage allocated here
@@ -157,7 +158,6 @@ def argument_instance(type):
         
         return mapping
 
-#    name = self.__globalScope.principalID(type)
     name = environment.principalID(type)
     mapping = [name, name, name]
     if is_variable:
@@ -257,7 +257,6 @@ def operation(operation):
         argument_prefixed_name = prefix + argument_name
         direction = argument.direction()
         argument_type = argument.paramType()
-#        argument_type_name = self.__globalScope.principalID(argument_type)
         argument_type_name = environment.principalID(argument_type)
         argument_is_variable = tyutil.isVariableType(argument_type)
         argument_dims = tyutil.typeDims(argument_type)
@@ -453,9 +452,9 @@ def attribute_read(attribute, id):
     return_is_pointer = 0
     dereference = 0
 
-    if tyutil.isSequence(deref_attrType):
-        return_is_pointer = 1
-        dereference = 1
+    #if tyutil.isSequence(deref_attrType):
+    #    return_is_pointer = 1
+    #    dereference = 1
 
     # similar code exists in skel/main.py, handling pd_result
     # basic types don't have slices
@@ -477,18 +476,19 @@ def attribute_read(attribute, id):
             
         attrib_type_name = attrib_type_name + "_var"
         result_name = "(result.operator->())"
-        if tyutil.isStruct(deref_attrType) or \
-           tyutil.isUnion(deref_attrType)  or \
-           tyutil.isAny(deref_attrType)    or \
-           tyutil.isTypeCode(deref_attrType):
-            return_is_pointer = 1
+        #if tyutil.isStruct(deref_attrType) or \
+        #   tyutil.isUnion(deref_attrType)  or \
+        #   tyutil.isAny(deref_attrType)    or \
+        #   tyutil.isTypeCode(deref_attrType):
+        #    #return_is_pointer = 1#
 
-            if not(tyutil.isTypeCode(deref_attrType)):
-                dereference = 1
+            #if not(tyutil.isTypeCode(deref_attrType)):
+            #    dereference = 1
 
     return_is_pointer = is_pointer(attrType) and not(is_array)
-    dereference = return_is_pointer and not(tyutil.isObjRef(deref_attrType)) \
-                   and not(tyutil.isTypeCode(deref_attrType))
+    dereference = return_is_pointer and \
+                  not(tyutil.isObjRef(deref_attrType)) and \
+                  not(tyutil.isTypeCode(deref_attrType))
     # ---
     size_calc = skutil.sizeCalculation(environment, attrType,
                                        None, "msgsize", result_name, 1,
@@ -498,7 +498,8 @@ def attribute_read(attribute, id):
     if dereference:
         result_name = "*" + result_name
         
-    skutil.marshall(marshal, environment, attrType, None, result_name, "giop_s")
+    skutil.marshall(marshal, environment, attrType, None,
+                    result_name, "giop_s")
     
     stream.out(template.interface_attribute_read_dispatch,
                marshall_result = str(marshal),
