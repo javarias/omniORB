@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.8  1998/04/08 16:06:49  sll
+  Added support for Reliant UNIX 5.43
+
   Revision 1.7  1998/04/07 19:39:40  sll
   Replace cerr with omniORB::log.
 
@@ -918,7 +921,13 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 	omniORB::log.flush();
       }
 
-      if (!(newthr = new tcpSocketWorker(newSt))) {
+      try {
+	newthr = new tcpSocketWorker(newSt);
+      }
+      catch(...) {
+	newthr = 0;
+      }
+      if (!newthr) {
 	// Cannot create a new thread to serve the strand
 	// We have no choice but to shutdown the strand.
 	// The long term solutions are:  start multiplexing the new strand
