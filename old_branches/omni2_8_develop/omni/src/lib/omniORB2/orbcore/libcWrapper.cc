@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.18  1999/06/26 18:08:17  sll
+  HPUX update to separate difference between HPUX 10.20 and HPUX 11.00.
+
   Revision 1.17  1999/03/11 16:25:54  djr
   Updated copyright notice
 
@@ -115,6 +118,7 @@ again:
   // Use gethostbyname_r() on Digital UNIX
   if (!h.pd_buffer) {
     h.pd_buffer = new char[sizeof(struct hostent_data)];
+    memset(h.pd_buffer,0,sizeof(struct hostent_data));
     // XXX Is it possible that the pointer h.pd_buffer is at a wrong alignment
     //     for a struct hostent_data?
     h.pd_buflen = sizeof(struct hostent_data);
