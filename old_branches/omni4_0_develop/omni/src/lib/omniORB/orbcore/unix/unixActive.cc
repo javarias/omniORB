@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/06 15:47:43  sll
+  Added support to use the unix domain socket as the local transport.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -105,8 +108,9 @@ unixActiveCollection::isEmpty() const {
 }
 
 /////////////////////////////////////////////////////////////////////////
-unixActiveConnection::unixActiveConnection(SocketHandle_t sock) : 
-  unixConnection(sock,&myCollection), pd_registered(0) {
+unixActiveConnection::unixActiveConnection(SocketHandle_t sock,
+					   const char* filename) : 
+  unixConnection(sock,&myCollection,filename,1), pd_registered(0) {
 }
 
 /////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/06 15:47:44  sll
+  Added support to use the unix domain socket as the local transport.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -150,7 +153,7 @@ unixEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     pd_new_conn_socket = RC_INVALID_SOCKET;
     if (!Select()) break;
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
-      return  new unixConnection(pd_new_conn_socket,this);
+      return  new unixConnection(pd_new_conn_socket,this,pd_filename,0);
     }
   }
   return 0;
