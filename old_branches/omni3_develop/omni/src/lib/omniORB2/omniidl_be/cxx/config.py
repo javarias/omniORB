@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.2  2000/03/09 15:21:42  djs
+# Better handling of internal compiler exceptions (eg attempts to use
+# wide string types)
+#
 # Revision 1.12.2.1  2000/02/18 23:01:20  djs
 # Updated example implementation code generating module
 #
@@ -218,7 +222,7 @@ def include_file_names():
 
 # completely emulate the old backend, bugs and all
 def EMULATE_BUGS():
-    return 1
+    return 0
 
 # in DEBUG mode, we prefer to throw nasty internal exceptions because then
 # we get to examine the traceback. Otherwise just print a general error mesg
