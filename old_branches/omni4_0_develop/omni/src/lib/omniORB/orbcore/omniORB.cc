@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/07/31 16:10:38  sll
+  Added GIOP BiDir support.
+
   Revision 1.2.2.4  2001/07/13 15:30:12  sll
   New configuration variables.
 
@@ -334,4 +337,14 @@ omniORB::octetSequenceToKey(const omniORB::seqOctets& seq)
     p[i] = seq[i];
   }
   return result;
+}
+
+void
+omniORB::setMainThread()
+{
+  omni_thread* self = omni_thread::self();
+  if (!self)
+    OMNIORB_THROW(INITIALIZE, 0, CORBA::COMPLETED_NO);
+
+  omni::mainThreadId = self->id();
 }

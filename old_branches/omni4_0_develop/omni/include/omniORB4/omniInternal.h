@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2001/05/31 16:18:11  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.2.2.8  2001/05/29 17:03:48  dpg1
   In process identity.
 
@@ -258,6 +262,11 @@ _CORBA_MODULE_BEG
   // These are updated whilst internalLock is held.  However it is
   // suggested that they may be read without locking, since integer
   // reads are likely to be atomic.
+
+  _CORBA_MODULE_VAR _core_attr int                       mainThreadId;
+  // id of the main thread. 0 by default. Can be changed by calling
+  // omniORB::setMainThread().
+
 
   _CORBA_MODULE_FN inline ptr_arith_t align_to(ptr_arith_t p, alignment_t align) {
     return (p + ((int) align - 1)) & ~((int) align - 1);

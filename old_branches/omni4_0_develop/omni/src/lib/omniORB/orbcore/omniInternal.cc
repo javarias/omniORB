@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.13  2001/07/31 16:40:03  sll
+  Added argument to selectRope.
+
   Revision 1.2.2.12  2001/07/13 15:29:59  sll
   Use the variable omniORB::maxServerThreadPoolSize to control invoker thread
   pool size.
@@ -163,13 +166,12 @@ const omni::alignment_t          omni::max_alignment = ALIGN_8;
 
 int                              omni::remoteInvocationCount = 0;
 int                              omni::localInvocationCount = 0;
+int                              omni::mainThreadId = 0;
 
 omni_tracedmutex*                omni::objref_rc_lock = 0;
 // Protects omniObjRef reference counting.
 
 OMNI_NAMESPACE_BEGIN(omni)
-
-omniAsyncInvoker*                orbAsyncInvoker = 0;
 
 // The local object table.  This is a dynamically resized
 // open hash table.
@@ -1049,15 +1051,9 @@ public:
 
     objectTable = new omniLocalIdentity* [objectTableSize];
     for( CORBA::ULong i = 0; i < objectTableSize; i++ )  objectTable[i] = 0;
-
-    orbAsyncInvoker = new omniAsyncInvoker(omniORB::maxServerThreadPoolSize);
   }
 
   void detach() {
-    if (orbAsyncInvoker) {
-      delete orbAsyncInvoker;
-      orbAsyncInvoker = 0;
-    }
   }
 };
 

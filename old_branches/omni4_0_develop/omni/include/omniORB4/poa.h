@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.8  2001/07/31 16:04:07  sll
+  Added ORB::create_policy() and associated types and operators.
+
   Revision 1.2.2.7  2001/06/07 16:24:08  dpg1
   PortableServer::Current support.
 
@@ -325,7 +328,8 @@ _CORBA_MODULE_BEG
 
   enum ThreadPolicyValue {
     ORB_CTRL_MODEL,  // default
-    SINGLE_THREAD_MODEL
+    SINGLE_THREAD_MODEL,
+    MAIN_THREAD_MODEL
   };
 
 _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
