@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.31  1999/05/26 12:23:11  sll
+ Enable IR client support when namespace is supported.
+
  Revision 1.30  1999/04/06 08:30:03  djr
  MSVC 6.0 is also not FD compliant regarding declaration of static const
  integral and enum types.
@@ -129,7 +132,6 @@
 #  if __GNUC_MINOR__ >= 91
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Cplusplus_Bool
-#     define ENABLE_CLIENT_IR_SUPPORT
 #  endif
 
 #elif defined(__DECCXX)
@@ -147,7 +149,6 @@
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Std_Namespace
 #     define HAS_pch
-#     define ENABLE_CLIENT_IR_SUPPORT
 // Uncomment the following lines to enable the use of namespace with cxx v5.6
 // Notice that the source code may have to be patched to compile.
 //#  elif __DECCXX_VER >= 50600000
@@ -190,7 +191,6 @@
 #  endif
 #define HAS_Cplusplus_Namespace
 #define HAS_Std_Namespace
-#define ENABLE_CLIENT_IR_SUPPORT
 #endif
 #define _HAS_NOT_GOT_strcasecmp
 #define _HAS_NOT_GOT_strncasecmp
@@ -365,6 +365,8 @@ strdup (char* str)
 #endif
 
 #ifdef HAS_Cplusplus_Namespace
+
+#define ENABLE_CLIENT_IR_SUPPORT
 
 #ifndef _CORBA_MODULE
 #define _CORBA_MODULE namespace
