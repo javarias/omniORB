@@ -8,10 +8,7 @@
 //	IDL interfaces for COSS Naming Service
 //	
 
-/*
-  $Log$
-
-*/
+#pragma prefix "omg.org"
 
 
 module CosNaming {
