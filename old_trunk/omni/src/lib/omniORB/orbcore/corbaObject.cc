@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.14  1998/08/26 11:05:05  sll
+  Test for NEED_DUMMY_RETURN in _get_interface and _get_implementation.
+
   Revision 1.13  1998/08/14 13:44:30  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -61,7 +64,8 @@
 #include <ropeFactory.h>
 #include <objectManager.h>
 
-CORBA::Object       CORBA::Object::CORBA_Object_nil;
+
+CORBA::Object CORBA::Object::CORBA_Object_nil;
 
 
 CORBA::
@@ -70,6 +74,9 @@ Object::Object()
   pd_obj = 0;
   return;
 }
+
+
+CORBA::Object::~Object() {}
 
 
 CORBA::Object_ptr
@@ -102,10 +109,7 @@ void
 CORBA::
 Object::NP_release()
 { 
-  if (!NP_is_nil()) {
-    omni::objectRelease(pd_obj); 
-  }
-  return;
+  if( pd_obj )  omni::objectRelease(pd_obj);
 }
 
 void
@@ -350,24 +354,12 @@ CORBA::
 Object::_get_implementation()
 {
   // XXX not implemented yet
-  throw omniORB::fatalException(__FILE__,__LINE__,
-				"CORBA::Object::_get_implementation() has not been implemeted yet.");
+  throw NO_IMPLEMENT(0, COMPLETED_NO);
 #ifdef NEED_DUMMY_RETURN
   return 0;
 #endif
 }
 
-CORBA::InterfaceDef_ptr
-CORBA::
-Object::_get_interface()
-{
-  // XXX not implemented yet
-  throw omniORB::fatalException(__FILE__,__LINE__,
-				"CORBA::Object::_get_interface() has not been implemeted yet.");
-#ifdef NEED_DUMMY_RETURN
-  return 0;
-#endif
-}
 
 size_t
 CORBA::
