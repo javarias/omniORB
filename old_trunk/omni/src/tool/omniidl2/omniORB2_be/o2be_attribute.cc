@@ -10,6 +10,11 @@
 
 /*
   $Log$
+// Revision 1.2  1997/01/13  15:34:22  sll
+// Don't use operator->() if the return value is array_slice.
+// Don't use new (type)[i]. The brackets are unnecessary.
+// /
+//
   Revision 1.1  1997/01/08 17:32:59  sll
   Initial revision
 
@@ -150,15 +155,13 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
       o2be_operation::argMapping mapping;
       o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
       if (mapping.is_arrayslice) {
-	IND(s); s << "_result = new ";
-	o2be_operation::declareVarType(s,field_type(),0,1);
+	IND(s); s << "_result = ";
 	AST_Decl *truetype = field_type();
 	while (truetype->node_type() == AST_Decl::NT_typedef) {
 	  truetype = o2be_typedef::narrow_from_decl(truetype)->base_type();
 	}
-	s << "[";
-	s << o2be_array::narrow_from_decl(truetype)->getSliceDim();
-	s  << "];\n";
+	s << o2be_array::narrow_from_decl(truetype)->fqname();
+	s  << "_alloc();\n";
       }
       else if (mapping.is_pointer) {
 	IND(s); s << "_result = new ";
