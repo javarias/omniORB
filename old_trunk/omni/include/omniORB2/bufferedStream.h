@@ -29,6 +29,8 @@
 
 /*
   $Log$
+  Revision 1.21  1999/05/25 13:22:25  sll
+
   Revision 1.20  1999/03/22 13:31:58  djr
   Do proper conversion between Char and Boolean for pd_byte_order.
 
@@ -1845,9 +1847,9 @@ _CORBA_Bounded_Sequence_Array__Boolean<T,T_slice,dimension,max>::
 #endif
 
 
-template <class T, class ElemT>
+template <class T, class ElemT,class T_Helper>
 inline void
-_CORBA_Sequence_ObjRef<T,ElemT>::operator>>= (NetBufferedStream& s) const
+_CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (NetBufferedStream& s) const
 {
   ::operator>>=(_CORBA_ULong(pd_len), s);
   for( int i = 0; i < (int)pd_len; i++ )
@@ -1855,9 +1857,9 @@ _CORBA_Sequence_ObjRef<T,ElemT>::operator>>= (NetBufferedStream& s) const
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT,class T_Helper>
 inline void
-_CORBA_Sequence_ObjRef<T,ElemT>::operator<<= (NetBufferedStream& s)
+_CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (NetBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
@@ -1871,9 +1873,9 @@ _CORBA_Sequence_ObjRef<T,ElemT>::operator<<= (NetBufferedStream& s)
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT,class T_Helper>
 inline void
-_CORBA_Sequence_ObjRef<T,ElemT>::operator>>= (MemBufferedStream& s) const
+_CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (MemBufferedStream& s) const
 {
   pd_len >>= s;
   for (int i=0; i<(int)pd_len; i++)
@@ -1881,9 +1883,9 @@ _CORBA_Sequence_ObjRef<T,ElemT>::operator>>= (MemBufferedStream& s) const
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline void
-_CORBA_Sequence_ObjRef<T,ElemT>::operator<<= (MemBufferedStream& s)
+_CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (MemBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
@@ -1897,10 +1899,10 @@ _CORBA_Sequence_ObjRef<T,ElemT>::operator<<= (MemBufferedStream& s)
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline
 size_t
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::NP_alignedSize(size_t initialoffset) const 
+_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
   for (unsigned long i=0; i < length(); i++) {
@@ -1909,45 +1911,45 @@ _CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::NP_alignedSize(size_t initialoffset) 
   return alignedsize;
 }
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline 
 void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::operator>>= (NetBufferedStream& s) const
+_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (NetBufferedStream& s) const
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator>>=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline
 void
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::operator<<= (NetBufferedStream& s)
+_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (NetBufferedStream& s)
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator<<=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<=(s);
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline
 void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::operator>>= (MemBufferedStream& s) const
+_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (MemBufferedStream& s) const
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator>>=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
 }
 
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 inline
 void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT>::operator<<= (MemBufferedStream& s)
+_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (MemBufferedStream& s)
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator<<=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<=(s);
 }
 
-template <class T,class ElemT,int max>
+template <class T,class ElemT,class T_Helper,int max>
 inline 
 size_t
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::NP_alignedSize(size_t initialoffset) const 
+_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
   for (unsigned long i=0; i < length(); i++) {
@@ -1957,18 +1959,18 @@ _CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::NP_alignedSize(size_t initialoffset
 }
 
 
-template <class T,class ElemT,int max>
+template <class T,class ElemT,class T_Helper,int max>
 inline 
 void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::operator>>= (NetBufferedStream& s) const
+_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator>>= (NetBufferedStream& s) const
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator>>=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
 }
 
 
-template <class T,class ElemT,int max>
+template <class T,class ElemT,class T_Helper,int max>
 inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::operator<<= (NetBufferedStream& s)
+_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator<<= (NetBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
@@ -1985,17 +1987,17 @@ _CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::operator<<= (NetBufferedStream& s)
 }
 
 
-template <class T,class ElemT,int max>
+template <class T,class ElemT,class T_Helper,int max>
 inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::operator>>= (MemBufferedStream& s) const 
+_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator>>= (MemBufferedStream& s) const 
 {
-  _CORBA_Sequence_ObjRef<T,ElemT>::operator>>=(s);
+  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
 }
 
 
-template <class T,class ElemT,int max>
+template <class T,class ElemT,class T_Helper,int max>
 inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,max>::operator<<= (MemBufferedStream& s)
+_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator<<= (MemBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
