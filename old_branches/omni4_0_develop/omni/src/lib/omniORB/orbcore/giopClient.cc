@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.13.2.2  2000/09/27 18:21:35  sll
+  Use the new GIOP engine to drive a remote call.
+
   Revision 1.13.2.1  2000/07/17 10:35:53  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -180,7 +183,7 @@ GIOP_C::ReceiveReply()
     // Should never receive anything other that the above
     // Same treatment as wrong header
     pd_cdrStream->setTerminalError();
-    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
   }
   return rc;
 }
@@ -233,7 +236,7 @@ GIOP_C::IssueLocateRequest()
     // Should never receive anything other that the above
     // Same treatment as wrong header
     pd_cdrStream->setTerminalError();
-    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
   }
   return rc;
 }

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/10/06 16:36:07  sll
+  Removed omniConnectionBroken. Has been superceded by raiseException() in
+  the strand interface.
+
   Revision 1.2.2.2  2000/09/27 17:42:38  sll
   Updated to use the new cdrStream abstraction
 
@@ -74,25 +78,17 @@ public:
 
 #undef OMNIORB_EX
 
-  static void omniConnectionBroken(const char*, int, CORBA::ULong,
-				   CORBA::CompletionStatus);
 };
 
 
 #define OMNIORB_THROW(name, minor, completion) \
   omniExHelper::name(__FILE__, __LINE__, minor, completion)
 
-#define OMNIORB_THROW_CONNECTION_BROKEN(minor, completion) \
-  omniExHelper::omniConnectionBroken(__FILE__, __LINE__, minor, completion)
-
 #else
 
 
 #define OMNIORB_THROW(name, minor, completion) \
   throw CORBA::name(minor, completion)
-
-#define OMNIORB_THROW_CONNECTION_BROKEN(minor, completion) \
-  throw omniConnectionBroken(minor, completion)
 
 #endif
 
