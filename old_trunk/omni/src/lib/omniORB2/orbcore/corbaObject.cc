@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.11  1998/03/25 14:20:51  sll
+  Temporary work-around for egcs compiler.
+
   Revision 1.10  1998/02/27 13:58:55  sll
   _is_equivalent() now returns the correct answer when a proxy object
   is tested against its colocated object implmentation. This situation will
@@ -274,7 +277,8 @@ while(1) {
 	    _c.RequestCompleted();
 	    if (CORBA::is_nil(obj)) {
 	      if (omniORB::traceLevel > 10) {
-		cerr << "Received GIOP::LOCATION_FORWARD message that contains a nil object reference." << endl;
+		omniORB::log << "Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\n";
+		omniORB::log.flush();
 	      }
 	      throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);
 	    }
@@ -283,7 +287,8 @@ while(1) {
 	    objptr->setRopeAndKey(_0RL_r);
 	  }
 	  if (omniORB::traceLevel > 10) {
-	    cerr << "GIOP::LOCATION_FORWARD: retry request." << endl;
+	    omniORB::log << "GIOP::LOCATION_FORWARD: retry request.\n";
+	    omniORB::log.flush();
 	  }
 	  break;
 	}
