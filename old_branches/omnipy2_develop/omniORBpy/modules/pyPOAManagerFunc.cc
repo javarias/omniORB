@@ -30,12 +30,6 @@
 // $Id$
 
 // $Log$
-// Revision 1.2  2000/03/06 18:46:55  dpg1
-// (char*)s for Solaris.
-//
-// Revision 1.1  2000/03/03 17:41:41  dpg1
-// Major reorganisation to support omniORB 3.0 as well as 2.8.
-//
 
 #include <omnipy.h>
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29  2000/10/02 17:34:58  dpg1
+# Merge for 1.2 release
+#
 # Revision 1.27.2.3  2000/08/22 11:52:28  dpg1
 # Generate inherited classes for typedef to struct/union.
 #
@@ -172,7 +175,7 @@ import omniORB, _omnipy
 from omniORB import CORBA, PortableServer
 _0_CORBA = CORBA
 
-_omnipy.checkVersion(0,5, __file__)
+_omnipy.checkVersion(2,0, __file__)
 """
 
 file_end = """\

@@ -28,23 +28,11 @@
 //    omniORB API functions
 
 // $Id$
+
 // $Log$
-// Revision 1.1.2.3  2000/09/19 09:24:16  dpg1
-// More paranoid about clearing Python error status
-//
-// Revision 1.1.2.2  2000/08/18 11:40:01  dpg1
-// New omniORB.traceLevel function
-//
-// Revision 1.1.2.1  2000/08/14 16:10:32  dpg1
-// Missed out some explicit casts to (char*) for string constants.
-//
-// Revision 1.1  2000/06/12 15:36:08  dpg1
-// Support for exception handler functions. Under omniORB 3, local
-// operation dispatch modified so exceptions handlers are run.
-//
 
 #include <omnipy.h>
-#include <common/pyThreadCache.h>
+#include <pyThreadCache.h>
 
 
 static PyObject* transientEHtuple   = 0;
