@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/09/27 16:54:08  sll
+  *** empty log message ***
+
 */
 
 #ifndef __GIOPSTREAM_H__
@@ -561,10 +564,10 @@ private:
 	       
 public:
   // The following implement the abstract functions defined in cdrStream
-  void put_char_array(const _CORBA_Char*, int,
-		      omni::alignment_t align=omni::ALIGN_1);
-  void get_char_array(_CORBA_Char*,int,
-		      omni::alignment_t align=omni::ALIGN_1);
+  void put_octet_array(const _CORBA_Octet* b, int size,
+		       omni::alignment_t align=omni::ALIGN_1);
+  void get_octet_array(_CORBA_Octet* b,int size,
+		       omni::alignment_t align=omni::ALIGN_1);
   void skipInput(_CORBA_ULong);
   _CORBA_Boolean checkInputOverrun(_CORBA_ULong, _CORBA_ULong,
 				   omni::alignment_t align=omni::ALIGN_1);

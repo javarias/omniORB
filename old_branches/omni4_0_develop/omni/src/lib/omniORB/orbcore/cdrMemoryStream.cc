@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2000/10/10 10:14:27  sll
+  Extra ctor for cdrEncapsulationStream which initialise the buffer by
+  fetching data from the argument cdrStream.
+
   Revision 1.1.4.1  2000/09/27 17:30:28  sll
   *** empty log message ***
 
@@ -66,7 +70,7 @@ cdrMemoryStream::~cdrMemoryStream()
 }
 
 void
-cdrMemoryStream::put_char_array(const CORBA::Char* b, int size,
+cdrMemoryStream::put_octet_array(const CORBA::Octet* b, int size,
 				omni::alignment_t align)
 {
   (void) reserveOutputSpace(align,size);
@@ -76,8 +80,8 @@ cdrMemoryStream::put_char_array(const CORBA::Char* b, int size,
 }
 
 void
-cdrMemoryStream::get_char_array(CORBA::Char* b,int size,
-				omni::alignment_t align)
+cdrMemoryStream::get_octet_array(CORBA::Octet* b,int size,
+				 omni::alignment_t align)
 {
   fetchInputData(align,size);
   omni::ptr_arith_t p1 = omni::align_to((omni::ptr_arith_t)pd_inb_mkr,align);
@@ -340,7 +344,7 @@ cdrEncapsulationStream::cdrEncapsulationStream(CORBA::ULong initialBufsize,
 					       CORBA::Boolean clearMemory)
   : cdrMemoryStream(initialBufsize,clearMemory)
 {
-  ::operator>>=(omni::myByteOrder,*this);
+  marshalOctet(omni::myByteOrder);
 }
 
 
@@ -367,12 +371,11 @@ cdrEncapsulationStream::cdrEncapsulationStream(const CORBA::Octet* databuffer,
       pd_bufp     = pd_inline_buffer;
       pd_outb_end = (pd_inline_buffer + sizeof(pd_inline_buffer));
       rewindPtrs();
-      put_char_array((const CORBA::Char*)databuffer,bufsize);
+      put_octet_array((const CORBA::Char*)databuffer,bufsize);
     }
 
   {
-    CORBA::Boolean endian;
-    ::operator<<=(endian,*this);
+    CORBA::Boolean endian = unmarshalBoolean();
     setByteSwapFlag(endian);
   }
 }
@@ -384,8 +387,7 @@ cdrEncapsulationStream::cdrEncapsulationStream(cdrStream& s,
   s.copy_to(*this,fetchsize);
   rewindInputPtr();
   {
-    CORBA::Boolean endian;
-    ::operator<<=(endian,*this);
+    CORBA::Boolean endian = unmarshalBoolean();
     setByteSwapFlag(endian);
   }
 }
@@ -415,7 +417,7 @@ cdrEncapsulationStream::getOctetStream(CORBA::Octet*& databuffer,
 
 /////////////////////////////////////////////////////////////////////////////
 void
-cdrCountingStream::put_char_array(const CORBA::Char* b, int size,
+cdrCountingStream::put_octet_array(const CORBA::Octet* b, int size,
 				  omni::alignment_t align)
 {
   omni::ptr_arith_t p1 = omni::align_to((omni::ptr_arith_t)pd_total,align);
@@ -446,7 +448,7 @@ cdrCountingStream::checkOutputOverrun(CORBA::ULong,
 
 
 void
-cdrCountingStream::get_char_array(CORBA::Char*,int,omni::alignment_t)
+cdrCountingStream::get_octet_array(CORBA::Octet*,int,omni::alignment_t)
 {
 }
 
