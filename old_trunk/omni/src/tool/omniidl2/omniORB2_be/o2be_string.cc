@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include "idl.hh"
@@ -71,6 +74,13 @@ const char *
 o2be_string::fieldMemberTypeName()
 {
   return "CORBA::String_member";
+}
+
+void
+o2be_string::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+{
+  IND(s); s << "typedef char* " << tdef->uqname() << ";\n";
+  IND(s); s << "typedef CORBA::String_var " << tdef->uqname() << "_var;\n";
 }
 
 size_t

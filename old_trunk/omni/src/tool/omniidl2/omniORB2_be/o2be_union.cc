@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 /*
@@ -1651,6 +1654,13 @@ o2be_union::produce_skel(fstream &s)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n\n";
 
+}
+
+void
+o2be_union::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+{
+  IND(s); s << "typedef " << fqname() << " " << tdef->uqname() << ";\n";
+  IND(s); s << "typedef " << fqname() << "_var " << tdef->uqname() << "_var;\n";
 }
 
 idl_bool

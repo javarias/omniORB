@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 /*
@@ -527,6 +530,14 @@ o2be_structure::produce_skel(fstream &s)
   IND(s); s << "}\n\n";
 
 
+}
+
+
+void
+o2be_structure::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+{
+  IND(s); s << "typedef " << fqname() << " " << tdef->uqname() << ";\n";
+  IND(s); s << "typedef " << fqname() << "_var " << tdef->uqname() << "_var;\n";
 }
 
 IMPL_NARROW_METHODS1(o2be_structure, AST_Structure)

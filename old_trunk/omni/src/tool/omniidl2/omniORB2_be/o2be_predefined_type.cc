@@ -10,6 +10,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include <idl.hh>
@@ -102,6 +105,21 @@ o2be_predefined_type::o2be_predefined_type(AST_PredefinedType::PredefinedType t,
   strcpy(n,scopename());
   set__scopename(n);
   return;
+}
+
+void
+o2be_predefined_type::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+{
+  switch(pt())
+    {
+    case AST_PredefinedType::PT_any:
+      IND(s); s << "typedef " << fqname() << " " << tdef->uqname() << ";\n";
+      IND(s); s << "typedef " << fqname() << "_var " << tdef->uqname() << ";\n";
+      break;
+    default:
+      IND(s); s << "typedef " << fqname() << " " << tdef->uqname() << ";\n";
+      break;
+    }
 }
 
 // Narrowing
