@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:16:26  sll
+  New transport interface to support the monitoring of active connections.
+
 */
 
 #ifndef __SOCKETCOLLECTION_H__
@@ -155,7 +158,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 
 #if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
 #  define SOCKNAME_SIZE_T  socklen_t
-#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__) || defined(__sunos__)
+#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__) || ( defined(__sunos__) && defined(_XPG4_2) )
 #  define SOCKNAME_SIZE_T  size_t
 #else
 #  define SOCKNAME_SIZE_T  int
