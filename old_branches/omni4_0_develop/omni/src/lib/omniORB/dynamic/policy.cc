@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.5  2003/02/17 02:03:08  dgrisby
+  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
+
   Revision 1.1.2.4  2001/11/08 16:33:50  dpg1
   Local servant POA shortcut policy.
 
@@ -130,11 +133,8 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
 
   // omniORB specific policies
   CASE_CPFN_OMNI(/*LOCAL_SHORTCUT_POLICY_TYPE*/0x41545401, LocalShortcutPolicy)
-
-  // Anything else we do not know
-  default:
-    throw CORBA::PolicyError(CORBA::BAD_POLICY);
   }
+  throw CORBA::PolicyError(CORBA::BAD_POLICY);
 }
 
 //////////////////////////////////////////////////////////////////////

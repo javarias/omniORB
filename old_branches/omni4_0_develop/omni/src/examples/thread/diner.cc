@@ -16,6 +16,9 @@
 
 /*
  $Log$
+ Revision 1.6  1999/03/11 16:26:15  djr
+ Updated copyright notice
+
  Revision 1.5  1997/12/09 20:21:58  sll
  Replaced macro __NT__ with __WIN32__
 
@@ -33,7 +36,12 @@
 //
  */
 
-#include <iostream.h>
+#ifdef HAVE_STD
+#  include <iostream>
+   using namespace std;
+#else
+#  include <iostream.h>
+#endif
 #include <stdlib.h>
 #include <omnithread.h>
 

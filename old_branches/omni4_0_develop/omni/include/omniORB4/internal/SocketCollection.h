@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2004/04/08 10:02:19  dgrisby
+  In thread pool mode, close connections that will not be selectable.
+
   Revision 1.1.2.17  2003/11/12 16:04:18  dgrisby
   Set sockets to close on exec.
 
@@ -183,9 +186,7 @@ OMNI_NAMESPACE_END(omni)
 #    include <poll.h>
 #  endif
 
-#  if !defined(__VMS)
-#    include <fcntl.h>
-#  endif
+#  include <fcntl.h>
 
 #  if defined (__uw7__)
 #    ifdef shutdown

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2003/08/21 15:00:32  dgrisby
+  Patches for Borland compiler.
+
   Revision 1.1.2.7  2003/02/17 02:03:09  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -197,7 +200,7 @@ static char* extractIPv4(const char* endpoint) {
       else if (strncmp(endpoint,"giop",4) == 0) {
 	// try treating this as a hostname
 	LibcWrapper::AddrInfo_var ai;
-	ai = LibcWrapper::getaddrinfo(ipv4, 0);
+	ai = LibcWrapper::getAddrInfo(ipv4, 0);
 	if ((LibcWrapper::AddrInfo*)ai)
 	  return ai->asString();
       }

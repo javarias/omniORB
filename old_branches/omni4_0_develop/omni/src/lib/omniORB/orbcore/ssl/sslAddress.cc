@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2003/12/03 14:40:23  dgrisby
+  Fix timeout bug with ssl transport; fix ssl configure issues.
+
   Revision 1.1.2.14  2003/01/14 12:20:33  dgrisby
   Verify that a connect really has connected.
 
@@ -236,7 +239,7 @@ sslAddress::Connect(unsigned long deadline_secs,
   if (pd_address.port == 0) return 0;
 
   LibcWrapper::AddrInfo_var ai;
-  ai = LibcWrapper::getaddrinfo(pd_address.host, pd_address.port);
+  ai = LibcWrapper::getAddrInfo(pd_address.host, pd_address.port);
 
   if ((LibcWrapper::AddrInfo*)ai == 0)
     return 0;

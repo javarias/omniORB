@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.35  2004/07/23 13:25:44  dgrisby
+  New traceExceptions option.
+
   Revision 1.2.2.34  2004/03/02 15:31:22  dgrisby
   Support for persistent server identifier.
 
@@ -1030,7 +1033,7 @@ omni::createObjRef(const char* targetRepoId,
 
     for (CORBA::ULong index = 0; index < extra.length(); index++) {
 
-      if (extra[index]->compid == IOP::TAG_OMNIORB_PERSISTENT_ID)
+      if (extra[index]->compid == IOP::TAG_OMNIORB_PERSISTENT_ID) {
 
 	if (!id->inThisAddressSpace()) {
 
@@ -1048,7 +1051,8 @@ omni::createObjRef(const char* targetRepoId,
 	  releaseObjRef(objref);
 	  objref = new_objref;
 	}
-      break;
+	break;
+      }
     }
   }
   return objref;

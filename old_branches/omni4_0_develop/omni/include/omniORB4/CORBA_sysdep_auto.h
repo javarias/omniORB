@@ -30,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  2003/10/17 15:22:44  dgrisby
+ Cope with (lack of) long double on some platforms.
+
  Revision 1.1.2.2  2002/02/18 11:59:12  dpg1
  Full autoconf support.
 
@@ -53,6 +56,10 @@
 
 #ifdef HAVE_CONST_CAST
 #  define HAS_Cplusplus_const_cast
+#endif
+
+#ifdef HAVE_REINTERPRET_CAST
+#  define HAS_Cplusplus_reinterpret_cast
 #endif
 
 #ifdef HAVE_NAMESPACES

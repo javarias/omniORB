@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.8  2001/10/22 10:48:22  dpg1
+// Cope with DOS line endings in all IDL situations.
+//
 // Revision 1.9.2.7  2001/10/17 16:48:32  dpg1
 // Minor error message tweaks
 //
@@ -108,11 +111,7 @@
 #include <idlexpr.h>
 #include <idlast.h>
 
-#ifndef __VMS
 #include <y.tab.h>
-#else
-#include <y_tab.h>
-#endif
 
 char*       currentFile;
 IDL_Boolean mainFile  = 1; // Are we processing the main file

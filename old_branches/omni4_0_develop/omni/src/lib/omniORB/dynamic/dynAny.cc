@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.11.2.18  2003/11/20 13:37:13  dgrisby
+   Remove incorrect warning message in DynAny destruction.
+
    Revision 1.11.2.17  2002/12/18 15:59:14  dgrisby
    Proper clean-up of recursive TypeCodes.
 
@@ -741,7 +744,9 @@ DynAnyImpl::get_string()
     else
       throw;
   }
+#ifndef __DECCXX
   return 0;
+#endif
 }
 
 
@@ -1098,7 +1103,9 @@ DynFixedImpl::set_value(const char* val)
     else
       throw DynamicAny::DynAny::TypeMismatch();
   }
+#ifndef __DECCXX
   return 0; // Never reach here
+#endif
 }
 
 ///////////////////////////////
@@ -1702,7 +1709,9 @@ DynAnyConstrBase::get_string()
     else
       throw;
   }
+#ifndef __DECCXX
   return 0;
+#endif
 }
 
 
