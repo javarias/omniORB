@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.17  1998/08/15 14:31:41  sll
+  Added using omniORB::operator== when the compiler supports namespace but
+  no the Koenig Lookup rule.
+
   Revision 1.16  1998/08/14 13:50:28  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -72,7 +76,7 @@
 #include <omniORB2/proxyFactory.h>
 #include <ropeFactory.h>
 
-#if defined(HAS_Cplusplus_Namespace) && defined(NO_Koenig_Lookup)
+#if defined(HAS_Cplusplus_Namespace)
 using omniORB::operator==;
 #endif
 
