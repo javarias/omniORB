@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.18  2000/07/26 15:29:08  djs
+# Missing typedef and forward when generating BOA skeletons
+#
 # Revision 1.31.2.17  2000/07/18 15:34:25  djs
 # Added -Wbvirtual_objref option to make attribute and operation _objref
 # methods virtual
@@ -434,7 +437,7 @@ def visitInterface(node):
     if config.state['Virtual Objref Methods']:
         # non-abstract virtual functions
         objref_operations_str = string.join(
-            map( lambda x: "virtual " + x + ";\n", virtual_operations ), "")
+            map( lambda x: "virtual " + x + ";\n", operations ), "")
         objref_attributes_str = string.join(
             map( lambda x: "virtual " + x + ";\n", attributes ), "")
         
