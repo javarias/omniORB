@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2001/09/19 17:26:50  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.2.9  2001/08/21 10:49:39  dpg1
   Fix incorrect sequence expansion.
 
@@ -174,7 +177,7 @@ omniIOR::omniIOR(const char* repoId,
 
   pd_iopProfiles = new IOP::TaggedProfileList();
 
-  if (callInterceptors == NoInterceptor) {
+  if (callInterceptors != NoInterceptor) {
     _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,
 				(callInterceptors == DefaultInterceptors));
     omniORB::getInterceptors()->encodeIOR.visit(info);

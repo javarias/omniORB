@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.12  2001/08/18 17:28:38  sll
+// Fixed minor bug introduced by the previous update.
+//
 // Revision 1.2.2.11  2001/08/17 17:14:54  sll
 // Moved handler initialisation into static initialisers.
 //
@@ -581,7 +584,8 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 
     IIOP::Address* addrlist = new IIOP::Address[parsed.addr_count_];
 
-    GIOP::Version ver = { 1, 0 };
+    GIOP::Version ver;
+    ver.major = 127; ver.minor = 127;
 
     ObjAddr* addr;
     int i;
@@ -595,8 +599,8 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 	    IiopObjAddr* iaddr = (IiopObjAddr*)addr;
 	    addrlist[i].host = iaddr->host();
 	    addrlist[i].port = iaddr->port();
-	    if (iaddr->majver() >= ver.major &&
-		iaddr->minver() >= ver.minor) {
+	    if (iaddr->majver() < ver.major ||
+		iaddr->minver() < ver.minor) {
 	      ver.major = iaddr->majver();
 	      ver.minor = iaddr->minver();
 	    }
@@ -612,10 +616,10 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 		parsed.key_size_,
 		(CORBA::Octet*)(const char*)parsed.key_,0);
 
-    omniIOR* ior= new omniIOR((const char*)"",
-			      key,
-			      addrlist,parsed.addr_count_,
-			      ver,omniIOR::NoInterceptor);
+    omniIOR* ior = new omniIOR((const char*)"",
+			       key,
+			       addrlist,parsed.addr_count_,
+			       ver,omniIOR::NoInterceptor);
     delete [] addrlist;
 
     omniObjRef* objref = omni::createObjRef(CORBA::Object::_PD_repoId,ior,0);
