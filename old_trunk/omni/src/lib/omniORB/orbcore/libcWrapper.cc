@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.2  1997/01/08  18:10:50  ewc
+// Added support for ATMos, added IP check function
+//
 // Revision 1.1  1996/10/10  14:37:53  sll
 // Initial revision
 //
@@ -19,8 +22,6 @@
 #include <omniORB2/CORBA.h>
 #include <errno.h>
 #include "libcWrapper.h"
-
-static omni_mutex non_reentrant;
 
 int
 LibcWrapper::gethostbyname(const char *name,
