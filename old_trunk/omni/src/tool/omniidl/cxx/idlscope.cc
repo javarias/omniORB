@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9  1999/11/17 17:17:00  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.8  1999/11/11 10:20:30  dpg1
 // Bug in marking use of fully-scoped names.
 //
@@ -644,6 +647,7 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
 	IdlErrorCont(e->file(), e->line(), "(`%s' defined here)",
 		     e->identifier());
 	delete [] ssn;
+	return 0;
       }
     }
   }
