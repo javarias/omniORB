@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.28  1999/05/26 11:05:24  sll
+  Added code to support context.
+  Added code to generate typecode constant for anonymous bounded string
+  used as arguments.
+
   Revision 1.27  1999/03/11 16:26:08  djr
   Updated copyright notice
 
@@ -2818,7 +2823,7 @@ o2be_operation::check_and_produce_unnamed_argument_tc_decl(std::fstream&s,
       << o2be_string::narrow_from_decl(d)->tcname()
       << "__\n";
     IND(s); s << o2be_global::root()->variable_qualifier()
-	      << " const CORBA::TypeCode_ptr " 
+	      << " _dyn_attr const CORBA::TypeCode_ptr " 
 	      << o2be_string::narrow_from_decl(d)->tcname() << ";\n";
     s << "#endif\n\n";
   }

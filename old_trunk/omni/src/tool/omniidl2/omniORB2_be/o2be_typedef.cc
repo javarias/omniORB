@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.12  1999/03/11 16:26:08  djr
+  Updated copyright notice
+
   Revision 1.11  1999/01/07 09:35:57  djr
   Changes to support new TypeCode/Any implementation, which is now
   placed in a new file ...DynSK.cc (by default).
@@ -136,7 +139,7 @@ o2be_typedef::produce_hdr(std::fstream &s)
   if (idl_global->compile_flags() & IDL_CF_ANY) {
     // TypeCode_ptr declaration
     IND(s); s << variable_qualifier()
-	      << " const CORBA::TypeCode_ptr " << tcname() << ";\n";
+	      << " _dyn_attr const CORBA::TypeCode_ptr " << tcname() << ";\n";
   }
 
   switch (decl->node_type())
