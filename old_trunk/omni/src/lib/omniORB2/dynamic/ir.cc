@@ -32,9 +32,6 @@
 #include <bootstrap_i.h>
 
 
-#if defined(ENABLE_CLIENT_IR_SUPPORT)
-
-
 CORBA::InterfaceDef_ptr
 CORBA::
 Object::_get_interface()
@@ -56,7 +53,7 @@ Object::_get_interface()
 }
 
 
-#else
+#if 0
 
 
 CORBA::InterfaceDef_ptr
