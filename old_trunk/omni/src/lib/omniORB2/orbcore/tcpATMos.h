@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1  1997/12/09 18:43:20  sll
+ Initial revision
+
 */
 
 #ifndef __TCPATMos_H__
@@ -178,6 +181,7 @@ public:
 private:
   tcpATMosHandle_t pd_filehandle;
   CORBA::Boolean    pd_send_giop_closeConnection;
+  tcpATMosEndpoint* pd_delay_connect;
 };
 
 
