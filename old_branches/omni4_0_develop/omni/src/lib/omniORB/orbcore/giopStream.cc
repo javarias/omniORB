@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2001/08/03 17:41:21  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.1.4.13  2001/07/31 16:20:29  sll
   New primitives to acquire read lock on a connection.
 
@@ -1059,7 +1063,6 @@ giopStream::errorOnSend(int rc, const char* filename, CORBA::ULong lineno) {
   }
   else if (rc == TRANSIENT_ConnectFailed) {
     pd_strand->state(giopStrand::DYING);
-    retry = 0;
     minor = rc;
   }
   else {
