@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  2000/06/02 14:25:51  dpg1
+// orb.run() now properly exits when the ORB is shut down
+//
 // Revision 1.6  2000/05/26 15:33:32  dpg1
 // Python thread states are now cached. Operation dispatch time is
 // roughly halved!
@@ -166,7 +169,7 @@ extern "C" {
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
-    if (!objref->_NP_is_pseudo()) {
+    if (!(CORBA::is_nil(objref) || objref->_NP_is_pseudo())) {
       omniObjRef* cxxref = objref->_PR_getobj();
       omniObjRef* pyref  = omniPy::createObjRef(cxxref->_mostDerivedRepoId(),
 						CORBA::Object::_PD_repoId,
