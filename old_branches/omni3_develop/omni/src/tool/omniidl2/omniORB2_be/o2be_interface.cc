@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.3  1999/09/27 11:41:27  djr
+  Generate old BOA-style tie templates.
+
   Revision 1.39.6.2  1999/09/24 15:35:13  djr
   Removed 'else if' nesting in ::_dispatch routine in stubs.  Makes life
   easier for brain-dead compilers.
@@ -553,7 +556,10 @@ o2be_interface::produce_hdr(std::fstream& s)
     while( !i.is_done() ) {
       o2be_operation* op = i.item();
       IND(s); s << "virtual ";
-      op->produce_decl(s, module);
+      if( idl_global->compile_flags() & IDL_BE_OLD_SKEL_SIGNATURES )
+	op->produce_decl(s, module);
+      else
+	op->produce_client_decl(s, module);
       s << " = 0;\n";
       i.next();
     }
