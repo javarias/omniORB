@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.12  2001/07/13 15:29:59  sll
+  Use the variable omniORB::maxServerThreadPoolSize to control invoker thread
+  pool size.
+
   Revision 1.2.2.11  2001/05/31 16:18:13  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -667,7 +671,7 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
   Rope* rope;
 
   if (_OMNI_NS(giopRope)::selectRope(ior->getIORInfo()->addresses(),
-				     rope,is_local) == 0) {
+				     info,rope,is_local) == 0) {
     return 0;
   }
 
