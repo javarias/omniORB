@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.1.2.3  2001/10/29 17:42:38  dpg1
+ * Support forward-declared structs/unions, ORB::create_recursive_tc().
+ *
  * Revision 1.1.2.2  2001/06/08 17:12:10  dpg1
  * Merge all the bug fixes from omni3_develop.
  *
@@ -1077,6 +1080,18 @@ public:
 		    BAD_TYPECODE_UnresolvedRecursiveTC,
 		    CORBA::COMPLETED_NO);
     return pd_resolved;
+  }
+
+  static inline const TypeCode_base* strip(const TypeCode_base* tc) {
+    while (tc->NP_kind() == CORBA::_np_tk_indirect)
+      tc = ((TypeCode_indirect*)tc)->NP_resolved();
+    return tc;
+  }
+
+  static inline TypeCode_base* strip(TypeCode_base* tc) {
+    while (tc->NP_kind() == CORBA::_np_tk_indirect)
+      tc = ((TypeCode_indirect*)tc)->NP_resolved();
+    return tc;
   }
 
 private:
