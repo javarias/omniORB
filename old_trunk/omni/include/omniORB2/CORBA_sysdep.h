@@ -12,6 +12,9 @@
 
 /*
  $Log$
+ * Revision 1.1  1997/01/08  17:28:30  sll
+ * Initial revision
+ *
 */
 
 #ifndef __CORBA_SYSDEP_H__
@@ -77,6 +80,8 @@
 #elif defined(_X86_) || defined(__i386__)
 #define _OMNIORB_HOST_BYTE_ORDER_ 1
 #define _HAS_SIGNAL 1
+#elif defined(__NT__)
+#define _OMNIORB_HOST_BYTE_ORDER_ 1
 #else
 #error "The byte order of this platform is unknown"
 #endif
