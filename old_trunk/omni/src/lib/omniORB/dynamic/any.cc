@@ -29,6 +29,9 @@
 
 
 /* $Log$
+ * Revision 1.8  1999/02/10 15:14:50  djr
+ * Fixed broken implementation of marshalling object references into Anys.
+ *
  * Revision 1.7  1999/01/07 16:47:03  djr
  * New implementation
  *
@@ -60,6 +63,7 @@
  */
 
 #include <anyP.h>
+#include <typecode.h>
 
 
 #define pdAnyP() ((AnyP*) (NP_pd()))
@@ -106,7 +110,14 @@ Any::Any(TypeCode_ptr tc, void* value, Boolean release)
 void
 CORBA::Any::operator>>= (NetBufferedStream& s) const
 {
-  CORBA::TypeCode::marshalTypeCode(pdAnyP()->getTC_parser()->getTC(), s);
+  if( omniORB::tcAliasExpand ) {
+    CORBA::TypeCode_var tc =
+      TypeCode_base::aliasExpand(ToTcBase(pdAnyP()->getTC_parser()->getTC()));
+    CORBA::TypeCode::marshalTypeCode(tc, s);
+  }
+  else
+    CORBA::TypeCode::marshalTypeCode(pdAnyP()->getTC_parser()->getTC(), s);
+
   pdAnyP()->getTC_parser()->copyTo(s);
 }
 
@@ -122,7 +133,14 @@ CORBA::Any::operator<<= (NetBufferedStream& s)
 void
 CORBA::Any::operator>>= (MemBufferedStream& s) const
 {
-  CORBA::TypeCode::marshalTypeCode(pdAnyP()->getTC_parser()->getTC(), s);
+  if( omniORB::tcAliasExpand ) {
+    CORBA::TypeCode_var tc =
+      TypeCode_base::aliasExpand(ToTcBase(pdAnyP()->getTC_parser()->getTC()));
+    CORBA::TypeCode::marshalTypeCode(tc, s);
+  }
+  else
+    CORBA::TypeCode::marshalTypeCode(pdAnyP()->getTC_parser()->getTC(), s);
+
   pdAnyP()->getTC_parser()->copyTo(s);
 }
 
@@ -319,7 +337,6 @@ CORBA::Any::operator<<=(Object_ptr obj)
 {
   tcDescriptor tcd;
   tcd.p_objref.opq_objref = (void*) &obj;
-  tcd.p_objref.setObjectPtr = setObjectPtr;
   tcd.p_objref.getObjectPtr = getObjectPtr;
   pdAnyP()->setData(CORBA::_tc_Object, tcd);
 }
@@ -487,10 +504,7 @@ CORBA::Any::operator>>=(Object_ptr& obj) const
   tcDescriptor tcd;
   tcd.p_objref.opq_objref = (void*) &obj;
   tcd.p_objref.setObjectPtr = setObjectPtr;
-  tcd.p_objref.getObjectPtr = getObjectPtr;
-  CORBA::Boolean ret = pdAnyP()->getData(CORBA::_tc_Object, tcd);
-  if( !ret )  obj = CORBA::Object::_nil();
-  return ret;
+  return pdAnyP()->getData(CORBA::_tc_Object, tcd);
 }
 
 
@@ -589,22 +603,13 @@ CORBA::Any::operator>>=(to_string s) const
 }
 
 
-// Internal function used when inserting base object pointers
-void
-tcParser_toobject_setObjectPtr(tcObjrefDesc* tcsd,
-			       CORBA::Object_ptr _ptr)
-{
-  *((CORBA::Object_ptr*) tcsd->opq_objref) = _ptr;
-}
-
-
 CORBA::Boolean
 CORBA::Any::operator>>=(to_object o) const
 {
   tcDescriptor tcd;
-  tcd.p_objref.setObjectPtr = tcParser_toobject_setObjectPtr;
-  tcd.p_objref.opq_objref = &o.ref;
-  return pdAnyP()->getData(CORBA::_tc_Object, tcd);
+  tcd.p_objref.opq_objref = (void*) &o.ref;
+  tcd.p_objref.setObjectPtr = setObjectPtr;
+  return pdAnyP()->getObjRef(tcd);
 }
 
 
