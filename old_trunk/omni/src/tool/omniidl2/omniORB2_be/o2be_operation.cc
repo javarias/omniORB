@@ -28,9 +28,15 @@
 
 /*
   $Log$
-// Revision 1.17  1997/12/23  19:30:37  sll
-// Now generate correct stub for multi-dimensional array of object references.
+// Revision 1.18  1998/01/21  12:14:16  sll
+// Now accepts null pointer as marshalling argument. Substituted with a
+// proper nil string.  Print a warning if traceLevel > 1.
+// Now unmarshal zero size string. Substituted with a proper nil string.
+// Print a warning if traceLevel > 1.
 //
+  Revision 1.17  1997/12/23 19:30:37  sll
+  Now generate correct stub for multi-dimensional array of object references.
+
   Revision 1.16  1997/12/10 11:35:30  sll
   Updated life cycle service stub.
 
@@ -110,6 +116,18 @@ o2be_operation::produce_decl(fstream &s,
       else if (ntype == tString) {
 	s << "char *";
       }
+      else if (ntype == tTypeCode) {
+	AST_Decl *decl = return_type();
+	while (decl->node_type() == AST_Decl::NT_typedef) {
+	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	}
+	if (use_fully_qualified_names) {
+	  s << o2be_name::narrow_and_produce_unambiguous_name(decl,this,I_TRUE);
+	}
+	else {
+	  s << o2be_name::narrow_and_produce_unambiguous_name(decl,this);
+	}
+      }	
       else {
 	if (use_fully_qualified_names) {
 	  s << o2be_name::narrow_and_produce_unambiguous_name(return_type(),this,I_TRUE);
@@ -171,6 +189,18 @@ o2be_operation::produce_decl(fstream &s,
 	else if (ntype == tString) {
 	  s << "char *";
 	}
+	else if (ntype == tTypeCode) {
+	  AST_Decl *decl = a->field_type();
+	  while (decl->node_type() == AST_Decl::NT_typedef) {
+	    decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	  }
+	  if (use_fully_qualified_names) {
+	    s << o2be_name::narrow_and_produce_unambiguous_name(decl,this,I_TRUE);
+	  }
+	  else {
+	  s << o2be_name::narrow_and_produce_unambiguous_name(decl,this);
+	  }
+	}		
 	else {
 	  if (use_fully_qualified_names) {
 	    s << o2be_name::narrow_and_produce_unambiguous_name(a->field_type(),this,I_TRUE);
@@ -239,7 +269,7 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	if (a->direction() == AST_Argument::dir_OUT)
 	  {
 	    ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	    if (ntype == tObjref || ntype == tString ||
+	    if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 		(mapping.is_arrayslice) ||
 		(mapping.is_reference && mapping.is_pointer)) 
 	      {
@@ -247,8 +277,11 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 		// Declare a local pointer variable
 		IND(s);
 		declareVarType(s,a->field_type(),this,0,mapping.is_arrayslice);
-		s << ((ntype != tObjref && ntype != tString)?" *":"") 
-		  << " _" << a->uqname() << "= 0;\n";
+		s << ((ntype != tObjref && ntype != tString && 
+		       ntype != tTypeCode)?" *":"") << " _" << a->uqname() 
+		  << " = " 
+		  << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+		  << ";\n";
 	      }
 	  }
 	i.next();
@@ -258,15 +291,18 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  hasVariableLenOutArgs = I_TRUE;
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != tObjref && ntype != tString && ntype != tTypeCode)?" *":"") 
+	    << " _0RL_result = "
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
 	}
       else
 	{
@@ -398,6 +434,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 		  declareVarType(s,a->field_type(),this);
 		  s << ";\n";
 		}
+		else if (ntype == tTypeCode) {
+		    IND(s); s << "_" << a->uqname() 
+			      << " = new CORBA::TypeCode(CORBA::tk_null);\n";
+		  }
 	      }
 	    i.next();
 	  }
@@ -421,6 +461,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	    declareVarType(s,return_type(),this);
 	    s << ";\n";
 	  }
+	  else if (ntype == tTypeCode) {
+	      IND(s); 
+	      s << "_0RL_result = new CORBA::TypeCode(CORBA::tk_null);\n";
+	    }
 	}
     }
 
@@ -494,7 +538,7 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if (ntype == tObjref || ntype == tString ||
+	      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 		  (mapping.is_arrayslice) ||
 		  (mapping.is_reference && mapping.is_pointer)) 
 		{
@@ -538,8 +582,8 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	    if (a->direction() == AST_Argument::dir_OUT)
 	      {
 		ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-		if (ntype == tObjref || ntype == tString ||
-		    (mapping.is_arrayslice) ||
+		if (ntype == tObjref || ntype == tString || 
+		    ntype == tTypeCode  || (mapping.is_arrayslice) ||
 		    (mapping.is_reference && mapping.is_pointer)) 
 		  {
 		    IND(s); s << a->uqname() << " = _" << a->uqname() << ";\n";
@@ -707,12 +751,17 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	      {
 		IND(s); s << "if (_" << a->uqname() 
 			  << ") CORBA::release(_" << a->uqname() <<");\n";
-		  }	
+	      }	
 	    else if (ntype == tString)
 	      {
 		IND(s); s << "if (_" << a->uqname() 
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
+	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
 	      }
 	  }
 	i.next();
@@ -738,6 +787,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
 
@@ -798,6 +851,11 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -822,6 +880,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
 
@@ -865,6 +927,11 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -889,6 +956,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
 
@@ -946,6 +1017,11 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -970,6 +1046,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
   IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
@@ -1011,6 +1091,11 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -1036,6 +1121,10 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
 	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+	}
     }
   IND(s); s << "throw;\n";
   DEC_INDENT_LEVEL();
@@ -1051,14 +1140,18 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
       IND(s); s << "// never reach here! Dummy return to keep some compilers happy.\n";
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != tObjref && ntype != tString && ntype != tTypeCode)?" *":"") 
+	    << " _0RL_result" << " = "
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
+
 	}
       else
 	{
@@ -1143,12 +1236,17 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 	  case AST_Argument::dir_IN:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wIN,mapping);
-	      if (ntype == tObjref || ntype == tString) 
+	      if (ntype == tObjref || ntype == tString || ntype == tTypeCode) 
 		// declare a <type>_var variable to manage the pointer type
 		declareVarType(s,a->field_type(),this,1);
 	      else
 		declareVarType(s,a->field_type(),this);
-	      s << " " << a->uqname() << ";\n";
+	      s << " " << a->uqname();
+	      
+	      if (ntype == tTypeCode) 
+		s << "(new CORBA::TypeCode(CORBA::tk_null));\n";
+	      else s << ";\n";
+
 	      produceUnMarshalCode(s,a->field_type(),
 				   (AST_Decl*)&def_in,
 				   "_0RL_s",a->uqname(),
@@ -1158,7 +1256,7 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if (ntype == tObjref || ntype == tString ||
+	      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 		  (mapping.is_arrayslice) ||
 		  (mapping.is_reference && mapping.is_pointer)) 
 		{
@@ -1167,20 +1265,26 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 		}
 	      else 
 		declareVarType(s,a->field_type(),this);
-	      s << " " << a->uqname() << ";\n";
+	      s << " " << a->uqname();
+	      if (ntype == tTypeCode) 
+		s << "(new CORBA::TypeCode(CORBA::tk_null));\n";
+	      else s << ";\n";
 	      break;
 	    }
 	  case AST_Argument::dir_INOUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wINOUT,mapping);
-	      if (ntype == tObjref || ntype == tString) 
+	      if (ntype == tObjref || ntype == tString || ntype == tTypeCode) 
 		{
 		  // declare a <type>_var variable to manage the pointer type
 		  declareVarType(s,a->field_type(),this,1);
 		}
 	      else
 		  declareVarType(s,a->field_type(),this);
-	      s << " " << a->uqname() << ";\n";
+	      s << " " << a->uqname();
+	      if (ntype == tTypeCode) 
+		s << "(new CORBA::TypeCode(CORBA::tk_null));\n";
+	      else s << ";\n";
 	      produceUnMarshalCode(s,a->field_type(),
 				   (AST_Decl*)&def_in,
 				   "_0RL_s",a->uqname(),
@@ -1198,7 +1302,7 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
   if (!return_is_void()) {
     argMapping mapping;
     argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-    if (ntype == tObjref || ntype == tString ||
+    if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer)) 
       {
@@ -1209,7 +1313,10 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
       {
 	declareVarType(s,return_type(),this);
       }
-    s << " _0RL_result;\n";
+    s << " _0RL_result";
+    if (ntype == tTypeCode) 
+      s << "(new CORBA::TypeCode(CORBA::tk_null));\n";
+    else s << ";\n";
   }
 
   if (!no_user_exception()) {
@@ -1282,8 +1389,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if ((ntype == tObjref || ntype == tString || mapping.is_pointer)
-	  && !mapping.is_arrayslice) 
+      if ((ntype == tObjref || ntype == tString || ntype == tTypeCode ||
+	   mapping.is_pointer) && !mapping.is_arrayslice) 
 	{
 	  // These are declared as <type>_var variable 
 	  if (ntype == tString) {
@@ -1322,7 +1429,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if ((ntype == tObjref || ntype == tString ||
+	      if ((ntype == tObjref || ntype == tString || 
+		   ntype == tTypeCode ||
 		   (mapping.is_reference && mapping.is_pointer))
 		  && !mapping.is_arrayslice)
 		{
@@ -1379,7 +1487,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if ((ntype == tObjref || ntype == tString || mapping.is_pointer)
+      if ((ntype == tObjref || ntype == tString || ntype == tTypeCode ||
+	   mapping.is_pointer)
 	  && !mapping.is_arrayslice) 
 	{
 	  // These are declared as <type>_var variable 
@@ -1417,8 +1526,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if ((ntype == tObjref || ntype == tString ||
-		   (mapping.is_reference && mapping.is_pointer))
+	      if ((ntype == tObjref || ntype == tString || ntype == tTypeCode
+		   || (mapping.is_reference && mapping.is_pointer))
 		  && !mapping.is_arrayslice)
 		{
 		  // These are declared as <type>_var variable 
@@ -1485,14 +1594,17 @@ o2be_operation::produce_nil_skel(fstream &s,const char* alias_prefix)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != tObjref && ntype != tString && ntype != tTypeCode)?" *":"") 
+	    << " _0RL_result" << " = "
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
 	}
       else
 	{
@@ -1574,7 +1686,7 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	if (a->direction() == AST_Argument::dir_OUT)
 	  {
 	    ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	    if (ntype == tObjref || ntype == tString ||
+	    if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 		(mapping.is_arrayslice) ||
 		(mapping.is_reference && mapping.is_pointer)) 
 	      {
@@ -1582,8 +1694,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 		// Declare a local pointer variable
 		IND(s);
 		declareVarType(s,a->field_type(),this,0,mapping.is_arrayslice);
-		s << ((ntype != tObjref && ntype != tString)?" *":"") 
-		  << " _" << a->uqname() << "= 0;\n";
+		s << ((ntype != tObjref && ntype != tString && 
+		       ntype != tTypeCode)?" *":"") 
+		  << " _" << a->uqname() << " = "
+		  << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+		  << ";\n";
 	      }
 	  }
 	i.next();
@@ -1593,15 +1708,19 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  hasVariableLenOutArgs = I_TRUE;
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != tObjref && ntype != tString && ntype != tTypeCode)?" *":"") 
+	    << " _0RL_result = " 
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
+
 	}
       else
 	{
@@ -1616,7 +1735,7 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 
   IND(s); s << "GIOP_C _0RL_c(_0RL_r.rope());\n";
   IND(s); s << "_0RL_reuse = _0RL_c.isReUsingExistingConnection();\n";
-
+  
   // calculate request message size
   IND(s); s << "CORBA::ULong _0RL_msgsize = GIOP_C::RequestHeaderSize(_0RL_r.keysize(),"
 	    << strlen(local_name()->get_string()) + 1 
@@ -1733,6 +1852,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 		  declareVarType(s,a->field_type(),this);
 		  s << ";\n";
 		}
+		else if (ntype == tTypeCode) {
+		  IND(s); s << "_" << a->uqname() 
+			    << " = new CORBA::TypeCode(CORBA::tk_null);\n";
+		}
 	      }
 	    i.next();
 	  }
@@ -1756,6 +1879,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	    declareVarType(s,return_type(),this);
 	    s << ";\n";
 	  }
+	  else if (ntype == tTypeCode) {
+	      IND(s); 
+	      s << "_0RL_result = new CORBA::TypeCode(CORBA::tk_null);\n";
+	    }
 	}
     }
 
@@ -1829,7 +1956,7 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if (ntype == tObjref || ntype == tString ||
+	      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 		  (mapping.is_arrayslice) ||
 		  (mapping.is_reference && mapping.is_pointer)) 
 		{
@@ -1873,8 +2000,8 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	    if (a->direction() == AST_Argument::dir_OUT)
 	      {
 		ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-		if (ntype == tObjref || ntype == tString ||
-		    (mapping.is_arrayslice) ||
+		if (ntype == tObjref || ntype == tString || ntype == tTypeCode
+		    || (mapping.is_arrayslice) ||
 		    (mapping.is_reference && mapping.is_pointer)) 
 		  {
 		    IND(s); s << a->uqname() << " = _" << a->uqname() << ";\n";
@@ -2059,6 +2186,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -2083,6 +2215,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
 
@@ -2174,6 +2310,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -2198,6 +2339,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
 
@@ -2240,6 +2385,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -2265,6 +2415,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
 	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+	}
     }
 
   IND(s); s << def_in.wrapproxy_uqname()
@@ -2272,7 +2426,7 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
   IND(s); s << "if (_0RL_w->_forwarded()) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_0RL_w->_reset_proxy();\n";
-
+  
   IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
 
   IND(s); s << "if (_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2)) {\n";
@@ -2343,6 +2497,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -2367,6 +2526,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
       else if (mapping.is_pointer)
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
 	}
     }
   IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
@@ -2408,6 +2571,11 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 			  << ") CORBA::string_free(_"
 			  << a->uqname() << ");\n";
 	      }
+	    else if (ntype == tTypeCode)
+	      {
+		IND(s); s << "if (!CORBA::is_nil(_" << a->uqname() << ")) "
+			  << "CORBA::release(_" << a->uqname() << ");\n";
+	      }
 	  }
 	i.next();
       }
@@ -2433,6 +2601,10 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 	{
 	  IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
 	}
+      else if (ntype == tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+	}
     }
   IND(s); s << "throw;\n";
   DEC_INDENT_LEVEL();
@@ -2448,14 +2620,17 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
       IND(s); s << "// never reach here! Dummy return to keep some compilers happy.\n";
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != tObjref && ntype != tString && ntype != tTypeCode)?" *":"") 
+	    << " _0RL_result = "
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
 	}
       else
 	{
@@ -2520,14 +2695,17 @@ o2be_operation::produce_dead_skel(fstream& s, const char* alias_prefix)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
+      if (ntype == tObjref || ntype == tString || ntype == tTypeCode ||
 	  (mapping.is_arrayslice) ||
 	  (mapping.is_pointer))
 	{
 	  IND(s);
 	  declareVarType(s,return_type(),this,0,mapping.is_arrayslice);
-	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
-	    << " _0RL_result" << "= 0;\n";
+	  s << 
+	 ((ntype != tObjref && ntype != tString && ntype !=tTypeCode)?" *":"") 
+	    << " _0RL_result = "
+	    << ((ntype == tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
 	}
       else
 	{
@@ -2647,6 +2825,10 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	s << "char *";
 	indent_pos += 6;
       }
+      else if (ntype == tTypeCode) {
+	s << "CORBA::TypeCode_ptr";
+	indent_pos += 19;
+      }
       else {
 	str = o2be_name::narrow_and_produce_unambiguous_name(return_type(),this);
 	s << str;
@@ -2700,6 +2882,7 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	    switch(ntype) {
 	    case tObjref:
 	    case tString:
+	    case tTypeCode:
 	      inoutptr = I_TRUE;
 	      break;
 	    default:
@@ -2716,6 +2899,7 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	    case tSequence:
 	    case tArrayVariable:
 	    case tAny:
+	    case tTypeCode:
 	      outvar = I_TRUE;
 	      break;
 	    default:
@@ -2736,6 +2920,13 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	    }
 	    else if (ntype == tString) {
 	      s << "char *";
+	    }
+	    else if (ntype == tTypeCode) {
+	      AST_Decl *decl = a->field_type();
+	      while (decl->node_type() == AST_Decl::NT_typedef) {
+		decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	      }
+	      s << o2be_name::narrow_and_produce_unambiguous_name(decl,this);
 	    }
 	    else {
 	      s << o2be_name::narrow_and_produce_unambiguous_name(a->field_type(),this);
@@ -2778,6 +2969,16 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	      {
 		if (a->direction() == AST_Argument::dir_OUT) {
 		  s << "CORBA::Any_OUT_arg ";
+		}
+		break;
+	      }
+	    case tTypeCode:
+	      {
+		if (a->direction() == AST_Argument::dir_INOUT) {
+		  s << "CORBA::TypeCode_INOUT_arg ";
+		}
+		else {
+		  s << "CORBA::TypeCode_OUT_arg ";
 		}
 		break;
 	      }
@@ -2873,7 +3074,7 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	s << a->uqname();
 	if (a->direction() == AST_Argument::dir_INOUT) {
 	  ntype = ast2ArgMapping(a->field_type(),wINOUT,mapping);
-	  if (ntype == tObjref || ntype == tString) {
+	  if (ntype == tObjref || ntype == tString || ntype == tTypeCode) {
 	    s << "._data";
 	  }
 	}
@@ -2887,6 +3088,7 @@ o2be_operation::produce_mapping_with_indirection(fstream& s,
 	  case tSequence:
 	  case tArrayVariable:
 	  case tAny:
+	  case tTypeCode:
 	    s << "._data";
 	  default:
 	    break;
@@ -2946,6 +3148,7 @@ o2be_operation::has_variable_out_arg()
 	  case tSequence:
 	  case tArrayVariable:
 	  case tAny:
+	  case tTypeCode:
 	    hasvar = I_TRUE;
 	    break;
 	  default:
@@ -2978,6 +3181,7 @@ o2be_operation::has_pointer_inout_arg()
 	  switch (ntype) {
 	  case tObjref:
 	  case tString:
+	  case tTypeCode:
 	    hasptr = I_TRUE;
 	    break;
 	  default:
@@ -3023,6 +3227,7 @@ const o2be_operation::argMapping
   { I_TRUE,  I_FALSE, I_FALSE, I_FALSE }, // tArrayFixed
   { I_TRUE,  I_FALSE, I_FALSE, I_FALSE }, // tArrayVariable
   { I_TRUE,  I_TRUE,  I_FALSE, I_FALSE }, // tAny
+  { I_FALSE, I_FALSE, I_FALSE, I_FALSE }, // tTypeCode
 };
 
 static
@@ -3052,6 +3257,7 @@ const o2be_operation::argMapping
   { I_FALSE, I_FALSE, I_FALSE, I_FALSE }, // tArrayFixed
   { I_FALSE, I_TRUE,  I_TRUE,  I_TRUE  }, // tArrayVariable
   { I_FALSE, I_TRUE,  I_TRUE,  I_FALSE }, // tAny
+  { I_FALSE, I_TRUE,  I_FALSE, I_FALSE }, // tTypeCode
 };
 
 static
@@ -3081,6 +3287,7 @@ const o2be_operation::argMapping
   { I_FALSE, I_FALSE, I_FALSE, I_FALSE }, // tArrayFixed
   { I_FALSE, I_FALSE, I_FALSE, I_FALSE }, // tArrayVariable
   { I_FALSE, I_TRUE,  I_FALSE, I_FALSE }, // tAny
+  { I_FALSE, I_TRUE,  I_FALSE, I_FALSE }, // tTypeCode
 };
 
 static
@@ -3110,6 +3317,7 @@ const o2be_operation::argMapping
   { I_FALSE, I_FALSE, I_TRUE,  I_TRUE  }, // tArrayFixed
   { I_FALSE, I_FALSE, I_TRUE,  I_TRUE  }, // tArrayVariable
   { I_FALSE, I_FALSE, I_TRUE,  I_FALSE }, // tAny
+  { I_FALSE, I_FALSE, I_FALSE, I_FALSE }, // tTypeCode
 };
 
 o2be_operation::argType
@@ -3158,6 +3366,9 @@ o2be_operation::ast2ArgMapping(AST_Decl *decl,
 	    break;
 	  case AST_PredefinedType::PT_any:
 	    ntype = tAny;
+	    break;
+	  case AST_PredefinedType::PT_TypeCode:
+	    ntype = tTypeCode;
 	    break;
 	  case AST_PredefinedType::PT_longlong:
 	  case AST_PredefinedType::PT_ulonglong:
@@ -3252,6 +3463,25 @@ o2be_operation::declareVarType(fstream &s,AST_Decl *decl,AST_Decl* used_in,
 	  s << "CORBA::String_var";
       }
   else
+    if (truetype->node_type() == AST_Decl::NT_pre_defined)
+      {
+	    if (AST_PredefinedType::narrow_from_decl(truetype)->pt()
+		== AST_PredefinedType::PT_TypeCode)
+	      {
+		if (is_var)  s << "CORBA::TypeCode_var";
+		else s << "CORBA::TypeCode_ptr";
+	      }
+	    else
+	      {
+		s << 
+		  o2be_name::narrow_and_produce_unambiguous_name(decl,used_in);
+		if (is_var)
+		  s << "_var";
+		else if (is_arrayslice)
+		  s << "_slice";
+	      }
+      }
+  else
     {
       s << o2be_name::narrow_and_produce_unambiguous_name(decl,used_in);
       if (is_var)
@@ -3297,6 +3527,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
     case tAny:
     case tObjrefMember:
     case tStringMember:
+    case tTypeCodeMember:
       IND(s); s << ((mapping.is_pointer)?"*":"") << argname << " <<= "
 		<< netstream << ";\n";
       break;
@@ -3371,6 +3602,10 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
       }
       break;
 
+    case tTypeCode:
+      IND(s); s << "*" << argname << " <<= " << netstream << ";\n";
+      break;
+
     case tArrayFixed:
       {
 	argMapping dummymapping;
@@ -3401,7 +3636,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 		{
 		  dimval = next();
-		  IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+		  IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 			    << "_i" << ndim << " < " << dimval << ";"
 			    << "_i" << ndim << "++) {\n";
 		  INC_INDENT_LEVEL();
@@ -3458,7 +3693,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 	  {
 	    dimval = next();
-	    IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+	    IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 		      << "_i" << ndim << " < " << dimval << ";"
 		      << "_i" << ndim << "++) {\n";
 	    INC_INDENT_LEVEL();
@@ -3470,6 +3705,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	  case tUnionVariable:
 	  case tSequence:
 	  case tAny:
+	  case tTypeCode:
 	    {
 	      if (!mapping.is_arrayslice) {
 		IND(s); s << argname;
@@ -3610,7 +3846,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 		<< "::unmarshalObjRef(" << netstream << ");\n";
  	    }
 	    break;
-
+ 	    
 	  default:
 	    throw o2be_internal_error(__FILE__,__LINE__,
 				      "Unexpected element type for variable array");
@@ -3667,10 +3903,13 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
     case tAny:
     case tStringMember:
     case tObjrefMember:
+    case tTypeCodeMember:
       IND(s); s << ((mapping.is_pointer)?"*":"") << argname 
 		<< " >>= " << netstream << ";\n";
       break;
-
+    case tTypeCode:
+      IND(s); s << "*" << argname << " >>= " << netstream << ";\n";
+      break;
     case tString:
       {      
 	IND(s); s << "{\n";
@@ -3746,7 +3985,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 		{
 		  dimval = next();
-		  IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+		  IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 			    << "_i" << ndim << " < " << dimval << ";"
 			    << "_i" << ndim << "++) {\n";
 		  INC_INDENT_LEVEL();
@@ -3803,7 +4042,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 	  {
 	    dimval = next();
-	    IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+	    IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 		      << "_i" << ndim << " < " << dimval << ";"
 		      << "_i" << ndim << "++) {\n";
 	    INC_INDENT_LEVEL();
@@ -3956,6 +4195,19 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
  	    }
 	    break;
 
+	  case tTypeCode:
+	    {
+	      IND(s); s << "*(" << argname;
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << "._ptr) >>= " << netstream << ";\n";
+	    }
+	    break;
+	    
 	  default:
 	    throw o2be_internal_error(__FILE__,__LINE__,
 				      "Unexpected element type for variable array");
@@ -4027,9 +4279,15 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
     case tAny:
     case tObjrefMember:
     case tStringMember:
+    case tTypeCodeMember:
       IND(s); s << sizevar << " = "
 		<< argname << ((mapping.is_pointer)?"->":".")
 		<< "NP_alignedSize(" << sizevar << ");\n";
+      break;
+
+    case tTypeCode:
+      IND(s); s << sizevar << " = "
+		<< argname << "->NP_alignedSize(" << sizevar << ");\n";
       break;
 
     case tString:
@@ -4113,7 +4371,7 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 		{
 		  dimval = next();
-		  IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+		  IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 			    << "_i" << ndim << " < " << dimval << ";"
 			    << "_i" << ndim << "++) {\n";
 		  INC_INDENT_LEVEL();
@@ -4171,7 +4429,7 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 	  {
 	    dimval = next();
-	    IND(s); s << "for (unsigned int _i" << ndim << " =0;"
+	    IND(s); s << "for (CORBA::ULong _i" << ndim << " =0;"
 		      << "_i" << ndim << " < " << dimval << ";"
 		      << "_i" << ndim << "++) {\n";
 	    INC_INDENT_LEVEL();
@@ -4264,6 +4522,19 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 		}
 	      s << "._ptr," << sizevar << ");\n";
  	    }
+	    break;
+
+	  case tTypeCode:
+	    {
+	      IND(s); s << sizevar << " = ((" << argname;
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << "._ptr)->NP_alignedSize(" << sizevar << "));\n";
+	    }
 	    break;
 
 	  default:
