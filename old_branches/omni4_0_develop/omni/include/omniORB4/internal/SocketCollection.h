@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.19  2004/10/17 20:14:28  dgrisby
+  Updated support for OpenVMS. Many thanks to Bruce Visscher.
+
   Revision 1.1.2.18  2004/04/08 10:02:19  dgrisby
   In thread pool mode, close connections that will not be selectable.
 
@@ -227,6 +230,11 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 #  define ERRNO              errno
 #  define RC_EINTR           EINTR
 #  define RC_EBADF           EBADF
+#  define RC_EAGAIN          EAGAIN
+#  define RC_EFAULT          EFAULT
+#  define RC_EINVAL          EINVAL
+#  define RC_EPROTO          EPROTO
+#  define RC_ECONNABORTED    ECONNABORTED
 
 
 OMNI_NAMESPACE_BEGIN(omni)
