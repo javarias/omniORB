@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.19  2003/05/02 09:58:13  dgrisby
+  Ensure shutdown happens even if the TCP stack has broken.
+
   Revision 1.1.2.18  2003/02/17 02:03:10  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -312,8 +315,8 @@ tcpEndpoint::Poke() {
       omniORB::logger log;
       log << "Warning: fail to connect to myself ("
 	  << (const char*) pd_address_string << ") via tcp.\n";
-      pd_poked = 1;
     }
+    pd_poked = 1;
   }
   else {
     delete conn;
