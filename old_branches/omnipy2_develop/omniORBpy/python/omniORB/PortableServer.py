@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.8  2002/05/28 22:04:41  dgrisby
+# Incorrect repoIds.
+#
 # Revision 1.7.4.7  2002/03/18 12:40:38  dpg1
 # Support overriding _non_existent.
 #
@@ -94,11 +97,12 @@ class Servant:
     def _get_interface(self):
         omniORB.importIRStubs() # Make sure IR stubs are loaded
         ir = omniORB.orb.resolve_initial_references("InterfaceRepository")
-        ir = ir._narrow(Repository)
+        ir = ir._narrow(CORBA.Repository)
         if ir is None:
-            raise INTF_REPOS(omniORB.INTF_REPOS_NotAvailable, COMPLETED_NO)
+            raise CORBA.INTF_REPOS(omniORB.INTF_REPOS_NotAvailable,
+                                   CORBA.COMPLETED_NO)
         interf = ir.lookup_id(self._NP_RepositoryId)
-        return interf._narrow(InterfaceDef)
+        return interf._narrow(CORBA.InterfaceDef)
 
     def _non_existent(self):
         return 0
