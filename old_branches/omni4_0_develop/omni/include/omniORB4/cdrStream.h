@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2000/12/05 17:39:31  dpg1
+  New cdrStream functions to marshal and unmarshal raw strings.
+
   Revision 1.1.2.6  2000/11/22 14:37:58  dpg1
   Code set marshalling functions now take a string length argument.
 
@@ -90,6 +93,7 @@
 #endif
 #endif
 
+class cdrStreamAdapter;
 
 class cdrStream {
 public:
@@ -651,6 +655,10 @@ public:
 private:
   cdrStream(const cdrStream&);
   cdrStream& operator=(const cdrStream&);
+
+  friend class cdrStreamAdapter;
+  // cdrStreamAdapter needs to access protected pointers and virtual
+  // functions.
 };
 
 #undef CdrMarshal
@@ -789,6 +797,68 @@ private:
 };
 
 
+
+// In some circumstances, for example in omniORBpy, it is necessary to
+// perform some extra work around operations which manage a
+// cdrStream's buffers. cdrStreamAdapter provides a wrapper around a
+// cdrStream object. A class derived from cdrStreamAdapter may do
+// anything it likes in its implementations of the cdrStream virtual
+// functions, as long as it also calls the cdrStreamAdapter versions.
+
+class cdrStreamAdapter : public cdrStream {
+protected:
+  cdrStreamAdapter(cdrStream& stream) :
+    pd_actual(stream)
+  {
+    pd_unmarshal_byte_swap = pd_actual.pd_unmarshal_byte_swap;
+    pd_marshal_byte_swap   = pd_actual.pd_marshal_byte_swap;
+    pd_tcs_c               = pd_actual.pd_tcs_c;
+    pd_tcs_w               = pd_actual.pd_tcs_w;
+    copyStateFromActual();
+  }
+
+  virtual ~cdrStreamAdapter()
+  {
+    copyStateToActual();
+  }
+
+  // Implementations of abstract functions...
+  void put_octet_array(const _CORBA_Octet* b, int size,
+		       omni::alignment_t align=omni::ALIGN_1);
+  void get_octet_array(_CORBA_Octet* b,int size,
+		       omni::alignment_t align=omni::ALIGN_1);
+  void skipInput(_CORBA_ULong size);
+  _CORBA_Boolean checkInputOverrun(_CORBA_ULong itemSize,
+				   _CORBA_ULong nItems,
+				   omni::alignment_t align=omni::ALIGN_1);
+  _CORBA_Boolean checkOutputOverrun(_CORBA_ULong itemSize,
+				    _CORBA_ULong nItems,
+				    omni::alignment_t align=omni::ALIGN_1);
+  void fetchInputData(omni::alignment_t align,size_t required);
+  size_t maxFetchInputData(omni::alignment_t align) const;
+  _CORBA_Boolean reserveOutputSpace(omni::alignment_t align, size_t required);
+  size_t maxReserveOutputSpace(omni::alignment_t align) const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
+
+private:
+  cdrStream& pd_actual;
+
+  inline void copyStateFromActual()
+  {
+    pd_inb_end  = pd_actual.pd_inb_end;
+    pd_inb_mkr  = pd_actual.pd_inb_mkr;
+    pd_outb_end = pd_actual.pd_outb_end;
+    pd_outb_mkr = pd_actual.pd_outb_mkr;
+  }
+  inline void copyStateToActual() const
+  {
+    pd_actual.pd_inb_end  = pd_inb_end;
+    pd_actual.pd_inb_mkr  = pd_inb_mkr;
+    pd_actual.pd_outb_end = pd_outb_end;
+    pd_actual.pd_outb_mkr = pd_outb_mkr;
+  }
+};
 
 
 
