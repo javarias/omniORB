@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  1999/10/21 11:29:45  djr
+  Added _core_attr to declaration of _PD_repoId in exceptions & interfaces.
+
   Revision 1.1.2.4  1999/10/18 17:28:18  djr
   Fixes for building MSVC dlls.
 
@@ -82,9 +85,6 @@ _CORBA_MODULE_BEG
     static inline void marshalObjRef(_ptr_type, MemBufferedStream&) {}
     static inline _ptr_type unmarshalObjRef(MemBufferedStream&) { return 0; }
   };
-
-  //??typedef _CORBA_ObjRef_Var<POA, POA_Helper> POA_var;
-
 
   class ServantBase;
   typedef ServantBase* Servant;
@@ -424,6 +424,10 @@ _CORBA_MODULE_BEG
 
   class POA : public CORBA::Object {
   public:
+
+    typedef POA*                      _ptr_type;
+    typedef _CORBA_PseudoObj_Var<POA> _var_type;
+
     // Exceptions
 
     OMNIORB_DECLARE_USER_EXCEPTION(AdapterAlreadyExists, _core_attr)
@@ -566,7 +570,7 @@ _CORBA_MODULE_BEG
     POA& operator=(const POA&);
   };
 
-  typedef _CORBA_PseudoObj_Var<POA> POA_var;
+  typedef POA::_var_type                        POA_var;
   typedef _CORBA_PseudoObj_Member<POA, POA_var> POA_member;
 
   //////////////////////////////////////////////////////////////////////
