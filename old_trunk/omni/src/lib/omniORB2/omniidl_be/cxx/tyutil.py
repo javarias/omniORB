@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17  1999/12/15 12:12:31  djs
+# Fix building string form of ulong constants
+#
 # Revision 1.16  1999/12/14 17:38:13  djs
 # Fixed anonymous sequences of sequences bug
 #
@@ -968,6 +971,17 @@ def const_qualifier(insideModule, insideClass):
         return "static"
     else:
         return "_CORBA_MODULE_VAR"
+
+# ------------------------------------------------------------------
+
+def allInherits(interface):
+    assert isinstance(interface, idlast.Interface)
+    list = []
+    for inherited in interface.inherits():
+        list.append(inherited)
+        list = list + allInherits(inherited)
+
+    return list
 
 # ------------------------------------------------------------------
 
