@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/27 17:32:14  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.2  1999/10/14 16:22:14  djr
   Implemented logging when system exceptions are thrown.
 
@@ -101,13 +104,6 @@ omniObjRef::_real_is_a(const char* repoId)
 
   if( _ptrToObjRef(repoId) )                   return 1;
   if( !strcmp(repoId, pd_mostDerivedRepoId) )  return 1;
-
-  {
-    omni::internalLock->lock();
-    int tv = pd_flags.type_verified;
-    omni::internalLock->unlock();
-    if( tv )  return 0;
-  }
 
   // Reach here because pd_flags.type_verified == 0, and we could not
   // verify the inheritance relationship using compile-time information.
