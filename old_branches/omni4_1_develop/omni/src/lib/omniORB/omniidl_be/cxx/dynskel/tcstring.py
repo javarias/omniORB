@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.1  2003/03/23 21:02:40  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.4.2.4  2001/06/08 17:12:15  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -63,7 +66,7 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import ast, cxx, output, util, id, types
+from omniidl_be.cxx import ast, cxx, output, util, id, types, config
 from omniidl_be.cxx.dynskel import template
 
 import tcstring
@@ -97,13 +100,13 @@ def visitStringType(type):
     if type.bound() == 0:
         return
     stream.out(template.tc_string,
-               n = str(type.bound()))    
+               n = str(type.bound()), prefix=config.state['Private Prefix'])
 
 def visitWStringType(type):
     if type.bound() == 0:
         return
     stream.out(template.tc_wstring,
-               n = str(type.bound()))    
+               n = str(type.bound()), prefix=config.state['Private Prefix'])
 
 def visitAttribute(node):
     attrType = types.Type(node.attrType())

@@ -28,6 +28,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.2  2003/11/06 11:56:55  dgrisby
+// Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+//
 // Revision 1.1.2.1  2003/09/26 16:12:54  dgrisby
 // Start of valuetype support.
 //
@@ -53,7 +56,7 @@ struct InputTableEntry;
 
 class OutputValueTracker : public ValueIndirectionTracker {
 public:
-  inline OutputValueTracker();
+  OutputValueTracker();
   virtual ~OutputValueTracker();
 
   inline CORBA::Boolean valid()

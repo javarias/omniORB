@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.1  2003/03/23 21:02:39  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.3.2.12  2001/10/29 17:42:39  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -121,6 +124,12 @@ header = """\
 OMNI_USING_NAMESPACE(omni)
 
 static const char* @prefix@_dyn_library_version = @library@;
+
+static CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
+"""
+
+fragment_header = """\
+static CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
 """
 
 # Required symbols:
@@ -691,14 +700,14 @@ static @private_prefix@_insertToAny_Singleton__c@guard_name@ @private_prefix@_in
 tc_string = """\
 #if !defined(___tc_string_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_String_TC)
 #define ___tc_string_@n@_value__
-const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
+const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@, &@prefix@_tcTrack);
 #endif
 """
 
 tc_wstring = """\
 #if !defined(___tc_wstring_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_WString_TC)
 #define ___tc_wstring_@n@_value__
-const CORBA::TypeCode_ptr _tc_wstring_@n@ = CORBA::TypeCode::PR_wstring_tc(@n@);
+const CORBA::TypeCode_ptr _tc_wstring_@n@ = CORBA::TypeCode::PR_wstring_tc(@n@, &@prefix@_tcTrack);
 #endif
 """
 

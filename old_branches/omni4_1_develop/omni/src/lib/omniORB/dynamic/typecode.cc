@@ -1,8 +1,10 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB
 // typecode.cc                Created on: 03/09/98
-//                            Author    : James Weatherall (jnw)
+//                            Author1   : James Weatherall (jnw)
+//                            Author2   : Duncan Grisby (dgrisby)
 //
+//    Copyright (C) 2004 Apasphere Ltd.
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.1  2003/03/23 21:02:44  dgrisby
+ * Start of omniORB 4.1.x development branch.
+ *
  * Revision 1.38.2.30  2003/03/10 11:13:52  dgrisby
  * BAD_PARAM with invalid fixed limits.
  *
@@ -434,6 +439,25 @@ CORBA::TypeCode::parameter(Long index) const
   return ToConstTcBase_Checked(this)->NP_parameter(index);
 }
 
+CORBA::Short
+CORBA::TypeCode::member_visibility(CORBA::ULong index) const
+{
+  return ToConstTcBase_Checked(this)->NP_member_visibility(index);
+}
+
+CORBA::ValueModifier
+CORBA::TypeCode::type_modifier() const
+{
+  return ToConstTcBase_Checked(this)->NP_type_modifier();
+}
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode::concrete_base_type() const
+{
+  return ToConstTcBase_Checked(this)->NP_concrete_base_type();
+}
+
+
 // Static TypeCode member functions
 
 CORBA::TypeCode_ptr
@@ -642,15 +666,20 @@ OMNI_NAMESPACE_BEGIN(omni)
 static void check_static_data_is_initialised();
 
 
-// The omniTypeCodeList singleton is used to track all "static"
-// TypeCode objects created in the DynSK files, so they can be deleted
-// on clean shutdown.
+// The omniTypeCodeList singleton is used to track internal
+// TypeCodes created in this file.
 class omniTypeCodeList : public omniTrackedObject {
 public:
+  omniTypeCodeList() {
+    pd_tracker = new CORBA::TypeCode::_Tracker(__FILE__);
+  }
+  void add(CORBA::TypeCode_ptr tc) {
+    pd_tracker->add(tc);
+  }
+
   virtual ~omniTypeCodeList();
-  void add(CORBA::TypeCode_ptr tc) { pd_list.push_back(tc); }
-private:
-  omnivector<CORBA::TypeCode_ptr> pd_list;
+
+  CORBA::TypeCode::_Tracker* pd_tracker;
 };
 
 static omniTypeCodeList* the_tc_list = 0;
@@ -661,7 +690,8 @@ OMNI_NAMESPACE_END(omni)
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_struct_tc(const char* id, const char* name,
 			      const PR_structMember* members,
-			      ULong memberCount)
+			      ULong memberCount,
+			      CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
 
@@ -677,7 +707,7 @@ CORBA::TypeCode::PR_struct_tc(const char* id, const char* name,
   CORBA::TypeCode_ptr r = new TypeCode_struct(CORBA::string_dup(id),
 					      CORBA::string_dup(name),
 					      new_members, memberCount);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
@@ -686,21 +716,23 @@ CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_union_tc(const char* id, const char* name,
 			     TypeCode_ptr discriminator_type,
 			     const PR_unionMember* members,
-			     ULong memberCount, Long deflt)
+			     ULong memberCount, Long deflt,
+			     CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
 
   CORBA::TypeCode_ptr r = new TypeCode_union(id, name,
 					     ToTcBase(discriminator_type),
 					     members, memberCount, deflt);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_enum_tc(const char* id, const char* name,
-			    const char** members, ULong memberCount)
+			    const char** members, ULong memberCount,
+			    CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
 
@@ -711,19 +743,20 @@ CORBA::TypeCode::PR_enum_tc(const char* id, const char* name,
     memberSeq[i] = members[i];
 
   CORBA::TypeCode_ptr r = NP_enum_tc(id, name, memberSeq);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_alias_tc(const char* id, const char* name,
-			     CORBA::TypeCode_ptr original_type)
+			     CORBA::TypeCode_ptr original_type,
+			     CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_alias(id, name,
 					     ToTcBase(original_type));
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
@@ -731,7 +764,8 @@ CORBA::TypeCode::PR_alias_tc(const char* id, const char* name,
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_exception_tc(const char* id, const char* name,
 				 const PR_structMember* members,
-				 ULong memberCount)
+				 ULong memberCount,
+				 CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
 
@@ -747,88 +781,86 @@ CORBA::TypeCode::PR_exception_tc(const char* id, const char* name,
   CORBA::TypeCode_ptr r = new TypeCode_except(CORBA::string_dup(id),
 					      CORBA::string_dup(name),
 					      new_members, memberCount);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
-CORBA::TypeCode::PR_interface_tc(const char* id, const char* name)
+CORBA::TypeCode::PR_interface_tc(const char* id, const char* name,
+				 CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_objref(id, name);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
-CORBA::TypeCode::PR_string_tc(CORBA::ULong bound)
+CORBA::TypeCode::PR_string_tc(CORBA::ULong bound,
+			      CORBA::TypeCode::_Tracker* tracker)
 {
   if( bound == 0 )  return PR_string_tc();
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_string(bound);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 CORBA::TypeCode_ptr
-CORBA::TypeCode::PR_wstring_tc(CORBA::ULong bound)
+CORBA::TypeCode::PR_wstring_tc(CORBA::ULong bound,
+			       CORBA::TypeCode::_Tracker* tracker)
 {
   if( bound == 0 )  return PR_wstring_tc();
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_wstring(bound);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 CORBA::TypeCode_ptr
-CORBA::TypeCode::PR_fixed_tc(CORBA::UShort digits, CORBA::UShort scale)
+CORBA::TypeCode::PR_fixed_tc(CORBA::UShort digits, CORBA::UShort scale,
+			     CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_fixed(digits, scale);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_sequence_tc(CORBA::ULong bound,
-				CORBA::TypeCode_ptr element_type)
+				CORBA::TypeCode_ptr element_type,
+				CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_sequence(bound, ToTcBase(element_type));
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_array_tc(CORBA::ULong length,
-		       CORBA::TypeCode_ptr element_type)
+			     CORBA::TypeCode_ptr element_type,
+			     CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_array(length, ToTcBase(element_type));
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_recursive_sequence_tc(CORBA::ULong bound,
-					  CORBA::ULong offset)
+					  CORBA::ULong offset,
+					  CORBA::TypeCode::_Tracker* tracker)
 {
   check_static_data_is_initialised();
   CORBA::TypeCode_ptr r = new TypeCode_sequence(bound, offset);
-  the_tc_list->add(r);
-  return r;
-}
-
-CORBA::TypeCode_ptr
-CORBA::TypeCode::PR_forward_sequence_tc(CORBA::ULong bound)
-{
-  check_static_data_is_initialised();
-  CORBA::TypeCode_ptr r = new TypeCode_sequence(bound);
-  the_tc_list->add(r);
+  tracker->add(r);
   return r;
 }
 
@@ -936,13 +968,6 @@ CORBA::release(TypeCode_ptr o)
 }
 
 
-int
-CORBA::TypeCode::PR_resolve_forward(CORBA::TypeCode_ptr)
-{
-  OMNIORB_ASSERT(0);
-  return 0;
-}
-
 OMNI_NAMESPACE_BEGIN(omni)
 
 //////////////////////////////////////////////////////////////////////
@@ -953,7 +978,8 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   : pd_complete(1), pd_mark(0), pd_ref_count(1),
     pd_loop_member(0), pd_internal_ref_count(0),
     pd_cached_paramlist(0),
-    pd_aliasExpandedTc(0), pd_compactTc(0), pd_tck(tck)
+    pd_aliasExpandedTc(0), pd_compactTc(0), pd_tck(tck),
+    pd_next(0)
 {
   switch( tck ) {
 
@@ -1241,6 +1267,33 @@ TypeCode_base::NP_param_count() const
 
 CORBA::Any*
 TypeCode_base::NP_parameter(CORBA::Long) const
+{
+  throw CORBA::TypeCode::Bounds();
+#ifdef NEED_DUMMY_RETURN
+  return 0;
+#endif
+}
+
+CORBA::Short
+TypeCode_base::NP_member_visibility(CORBA::ULong) const
+{
+  throw CORBA::TypeCode::Bounds();
+#ifdef NEED_DUMMY_RETURN
+  return 0;
+#endif
+}
+
+CORBA::ValueModifier
+TypeCode_base::NP_type_modifier() const
+{
+  throw CORBA::TypeCode::Bounds();
+#ifdef NEED_DUMMY_RETURN
+  return 0;
+#endif
+}
+
+TypeCode_base*
+TypeCode_base::NP_concrete_base_type() const
 {
   throw CORBA::TypeCode::Bounds();
 #ifdef NEED_DUMMY_RETURN
@@ -1592,8 +1645,9 @@ TypeCode_fixed::NP_fixed_scale() const
 // be encoded as an encapsulated octet sequence.  This makes things
 // horrendously difficult, because of the way Indirection typecodes work.
 
-TypeCode_objref::TypeCode_objref(const char* repositoryId, const char* name)
-  : TypeCode_base(CORBA::tk_objref)
+TypeCode_objref::TypeCode_objref(const char* repositoryId, const char* name,
+				 CORBA::TCKind tck)
+  : TypeCode_base(tck)
 {
   pd_repoId = repositoryId;
   pd_name = name;
@@ -1603,8 +1657,8 @@ TypeCode_objref::TypeCode_objref(const char* repositoryId, const char* name)
 }
 
 
-TypeCode_objref::TypeCode_objref()
-  : TypeCode_base(CORBA::tk_objref)
+TypeCode_objref::TypeCode_objref(CORBA::TCKind tck)
+  : TypeCode_base(tck)
 {
   pd_alignmentTable.setNumEntries(1);
   pd_alignmentTable.addNasty(this);
@@ -1935,17 +1989,6 @@ TypeCode_sequence::TypeCode_sequence(CORBA::ULong maxLen,
   pd_alignmentTable.addNasty(this);
 }
 
-TypeCode_sequence::TypeCode_sequence(CORBA::ULong maxLen)
-  : TypeCode_base(CORBA::tk_sequence)
-{
-  pd_length = maxLen;
-  pd_offset = 0;
-
-  pd_alignmentTable.setNumEntries(1);
-  pd_alignmentTable.addNasty(this);
-}
-
-
 TypeCode_sequence::TypeCode_sequence()
   : TypeCode_base(CORBA::tk_sequence)
 {
@@ -2158,15 +2201,6 @@ TypeCode_sequence::removeOptionalNames()
     pd_compactTc = this;
     ToTcBase(pd_content)->removeOptionalNames();
   }
-}
-
-int
-TypeCode_sequence::PR_resolve_forward(CORBA::TypeCode_ptr tc)
-{
-  TypeCode_base* tcb = ToTcBase_Checked(tc);
-  pd_content = TypeCode_collector::duplicateRef(tcb);
-  NP_complete_recursive_sequences(this, 0);
-  return 0;
 }
 
 
@@ -3883,6 +3917,81 @@ TypeCode_union::removeOptionalNames()
 }
 
 //////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_abstract_interface //////////////
+//////////////////////////////////////////////////////////////////////
+
+TypeCode_abstract_interface::
+TypeCode_abstract_interface(const char* repositoryId, const char* name)
+  : TypeCode_objref(repositoryId, name, CORBA::tk_abstract_interface)
+{
+}
+
+
+TypeCode_abstract_interface::TypeCode_abstract_interface()
+  : TypeCode_objref(CORBA::tk_abstract_interface)
+{
+}
+
+
+TypeCode_abstract_interface::~TypeCode_abstract_interface() {}
+
+
+TypeCode_base*
+TypeCode_abstract_interface::
+NP_unmarshalComplexParams(cdrStream &s,
+			  TypeCode_offsetTable* otbl)
+{
+  TypeCode_abstract_interface* _ptr = new TypeCode_abstract_interface;
+
+  otbl->addEntry(otbl->currentOffset(), _ptr);
+
+  _ptr->pd_repoId = s.unmarshalRawString();
+  _ptr->pd_name   = s.unmarshalRawString();
+  _ptr->pd_complete = 1;
+
+  return _ptr;
+}
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_local_interface /////////////////
+//////////////////////////////////////////////////////////////////////
+
+TypeCode_local_interface::
+TypeCode_local_interface(const char* repositoryId, const char* name)
+  : TypeCode_objref(repositoryId, name, CORBA::tk_local_interface)
+{
+}
+
+
+TypeCode_local_interface::TypeCode_local_interface()
+  : TypeCode_objref(CORBA::tk_local_interface)
+{
+}
+
+
+TypeCode_local_interface::~TypeCode_local_interface() {}
+
+
+TypeCode_base*
+TypeCode_local_interface::
+NP_unmarshalComplexParams(cdrStream &s,
+			  TypeCode_offsetTable* otbl)
+{
+  TypeCode_local_interface* _ptr = new TypeCode_local_interface;
+
+  otbl->addEntry(otbl->currentOffset(), _ptr);
+
+  _ptr->pd_repoId = s.unmarshalRawString();
+  _ptr->pd_name   = s.unmarshalRawString();
+  _ptr->pd_complete = 1;
+
+  return _ptr;
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////
 //////////////////////// TypeCode_indirect ///////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -3897,7 +4006,7 @@ TypeCode_indirect::~TypeCode_indirect()
 
 void
 TypeCode_indirect::NP_marshalSimpleParams(cdrStream& s,
-					   TypeCode_offsetTable* tbl) const
+					  TypeCode_offsetTable* tbl) const
 {
   OMNIORB_ASSERT(pd_resolved);
   pd_resolved->NP_marshalSimpleParams(s, tbl);
@@ -3905,7 +4014,7 @@ TypeCode_indirect::NP_marshalSimpleParams(cdrStream& s,
 
 void
 TypeCode_indirect::NP_marshalComplexParams(cdrStream& s,
-					    TypeCode_offsetTable* tbl) const
+					   TypeCode_offsetTable* tbl) const
 {
   OMNIORB_ASSERT(pd_resolved);
   pd_resolved->NP_marshalComplexParams(s, tbl);
@@ -3913,14 +4022,14 @@ TypeCode_indirect::NP_marshalComplexParams(cdrStream& s,
 
 CORBA::Boolean
 TypeCode_indirect::NP_complete_recursive_sequences(TypeCode_base* tc,
-						    CORBA::ULong offset)
+						   CORBA::ULong offset)
 {
   return 0;
 }
 
 CORBA::Boolean
 TypeCode_indirect::NP_complete_recursive(TypeCode_base* tc,
-					  const char* repoId)
+					 const char* repoId)
 {
   if (!pd_complete) {
     if (omni::strMatch(repoId, pd_repoId)) {
@@ -3942,8 +4051,8 @@ TypeCode_indirect::NP_complete_recursive(TypeCode_base* tc,
 
 CORBA::Boolean
 TypeCode_indirect::NP_extendedEqual(const TypeCode_base* TCp,
-				     CORBA::Boolean equivalent,
-				     const TypeCode_pairlist* pl) const
+				    CORBA::Boolean equivalent,
+				    const TypeCode_pairlist* pl) const
 {
   CHECK_RESOLVED;
   return pd_resolved->NP_extendedEqual(TCp, equivalent, pl);
@@ -4045,6 +4154,27 @@ TypeCode_indirect::NP_parameter(CORBA::Long p) const
 {
   CHECK_RESOLVED;
   return pd_resolved->NP_parameter(p);
+}
+
+CORBA::Short
+TypeCode_indirect::NP_member_visibility(CORBA::ULong m) const
+{
+  CHECK_RESOLVED;
+  return pd_resolved->NP_member_visibility(m);
+}
+
+CORBA::ValueModifier
+TypeCode_indirect::NP_type_modifier() const
+{
+  CHECK_RESOLVED;
+  return pd_resolved->NP_type_modifier();
+}
+
+TypeCode_base*
+TypeCode_indirect::NP_concrete_base_type() const
+{
+  CHECK_RESOLVED;
+  return pd_resolved->NP_concrete_base_type();
 }
 
 CORBA::Boolean
@@ -5806,6 +5936,43 @@ CORBA::TypeCode_ptr         CORBA::_tc_longdouble;
 
 #endif
 
+// Stub TypeCode tracker
+
+CORBA::TypeCode::_Tracker::~_Tracker()
+{
+  TypeCode_base *current, *next;
+  int count = 0;
+
+  current = ToTcBase(pd_head);
+  while (current) {
+    next = current->pd_next;
+    CORBA::release(current);
+    current = next;
+    count++;
+  }
+  if (count && omniORB::trace(20)) {
+    const char *i, *f;
+
+    for (i=pd_file, f=pd_file; *i; i++)
+      if (*i == '/' || *i == '\\')
+	f = i+1;
+
+    omniORB::logger l;
+    l << "Released " << count
+      << " stub TypeCode" << (count == 1 ? "" : "s")
+      << " from '" << f << "'.\n";
+  }
+  pd_head = 0;
+}
+
+void
+CORBA::TypeCode::_Tracker::add(CORBA::TypeCode_ptr tc)
+{
+  ToTcBase(tc)->pd_next = ToTcBase(pd_head);
+  pd_head = tc;
+}
+
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 // This is needed to ensure that access to statically initialised
@@ -5896,7 +6063,7 @@ static void check_static_data_is_initialised()
     nvMembers[3].name = "arg_modes";
     nvMembers[3].type = tc_Flags;
 
-    CORBA::_tc_NamedValue = CORBA::TypeCode::PR_struct_tc("IDL:omg.org/CORBA/NamedValue:1.0", "NamedValue",nvMembers, 4);
+    CORBA::_tc_NamedValue = CORBA::TypeCode::PR_struct_tc("IDL:omg.org/CORBA/NamedValue:1.0", "NamedValue",nvMembers, 4, the_tc_list->pd_tracker);
   }
 }
 
@@ -5907,15 +6074,7 @@ omniTypeCodeList::~omniTypeCodeList()
 {
   CORBA::TypeCode_ptr t = CORBA::_tc_short;
 
-  int tcs = 0;
-  omnivector<CORBA::TypeCode_ptr>::iterator i = pd_list.begin();
-  for (; i != pd_list.end(); i++, tcs++)
-    CORBA::release(*i);
-
-  if (omniORB::trace(15)) {
-    omniORB::logger l;
-    l << "Released " << tcs << " static TypeCodes.\n";
-  }
+  delete pd_tracker;
 
   // Delete mutexes
   delete aliasExpandedTc_lock;

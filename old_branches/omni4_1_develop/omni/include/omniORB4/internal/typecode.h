@@ -3,7 +3,9 @@
 // typecode.h                 Created on: 03/09/98
 //                            Author1   : James Weatherall (jnw)
 //                            Author2   : David Riddoch (djr)
+//                            Author3   : Duncan Grisby (dgrisby)
 //
+//    Copyright (C) 2004 Apasphere Ltd.
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -30,6 +32,9 @@
 
 /*
  * $Log$
+ * Revision 1.1.4.1  2003/03/23 21:03:42  dgrisby
+ * Start of omniORB 4.1.x development branch.
+ *
  * Revision 1.1.2.4  2002/12/18 15:58:52  dgrisby
  * Proper clean-up of recursive TypeCodes.
  *
@@ -142,6 +147,11 @@ class TypeCode_struct;
 class TypeCode_except;
 class TypeCode_enum;
 class TypeCode_union;
+
+class TypeCode_value;
+class TypeCode_value_box;
+class TypeCode_abstract_interface;
+class TypeCode_local_interface;
 
 
 // TypeCode parameter list types:
@@ -341,22 +351,25 @@ public:
   //     perform equality test as defined in the CORBA 2.3 TypeCode::equal()
   //     operation.
 
-  virtual const char*    NP_id() const;
-  virtual const char*    NP_name() const;
-  virtual CORBA::ULong   NP_member_count() const;
-  virtual const char*    NP_member_name(CORBA::ULong index) const;
-  virtual TypeCode_base* NP_member_type(CORBA::ULong index) const;
-  virtual CORBA::Any*    NP_member_label(CORBA::ULong index) const;
-  virtual TypeCode_base* NP_discriminator_type() const;
-  virtual CORBA::Long    NP_default_index() const;
-  virtual CORBA::ULong   NP_length() const;
-  virtual TypeCode_base* NP_content_type() const;
-  virtual CORBA::UShort  NP_fixed_digits() const;
-  virtual CORBA::Short   NP_fixed_scale() const;
-  virtual CORBA::Long    NP_param_count() const;
-  virtual CORBA::Any*    NP_parameter(CORBA::Long) const;
+  virtual const char*          NP_id() const;
+  virtual const char*          NP_name() const;
+  virtual CORBA::ULong         NP_member_count() const;
+  virtual const char*          NP_member_name(CORBA::ULong index) const;
+  virtual TypeCode_base*       NP_member_type(CORBA::ULong index) const;
+  virtual CORBA::Any*          NP_member_label(CORBA::ULong index) const;
+  virtual TypeCode_base*       NP_discriminator_type() const;
+  virtual CORBA::Long          NP_default_index() const;
+  virtual CORBA::ULong         NP_length() const;
+  virtual TypeCode_base*       NP_content_type() const;
+  virtual CORBA::UShort        NP_fixed_digits() const;
+  virtual CORBA::Short         NP_fixed_scale() const;
+  virtual CORBA::Long          NP_param_count() const;
+  virtual CORBA::Any*          NP_parameter(CORBA::Long) const;
+  virtual CORBA::Short         NP_member_visibility(CORBA::ULong index) const;
+  virtual CORBA::ValueModifier NP_type_modifier() const;
+  virtual TypeCode_base*       NP_concrete_base_type() const;
 
-  virtual CORBA::Boolean NP_is_nil() const;
+  virtual CORBA::Boolean       NP_is_nil() const;
 
   inline const TypeCode_alignTable& alignmentTable() const {
     return pd_alignmentTable;
@@ -432,6 +445,11 @@ protected:
 
   // The Kind of this TypeCode object
   CORBA::TCKind pd_tck;
+
+  // Linked list within the TypeCode tracker for static TypeCodes
+  // allocated in stubs.
+  TypeCode_base* pd_next;
+  friend class CORBA::TypeCode::_Tracker;
 
 private:
   TypeCode_base();
@@ -551,7 +569,8 @@ private:
 class TypeCode_objref : public TypeCode_base {
 public:
 
-  TypeCode_objref(const char* repositoryId, const char* name);
+  TypeCode_objref(const char* repositoryId, const char* name,
+		  CORBA::TCKind tck=CORBA::tk_objref);
 
   virtual ~TypeCode_objref();
 
@@ -577,8 +596,8 @@ public:
 
   virtual void removeOptionalNames();
 
-private:
-  TypeCode_objref();
+protected:
+  TypeCode_objref(CORBA::TCKind tck=CORBA::tk_objref);
 
   CORBA::String_member pd_repoId;
   CORBA::String_member pd_name;
@@ -650,10 +669,6 @@ public:
   TypeCode_sequence(CORBA::ULong maxLen, CORBA::ULong offset);
   // For recursive sequence members
 
-  TypeCode_sequence(CORBA::ULong maxLen);
-  // For sequence of forward declared struct/union. Resolved later
-  // with PR_resolve_forward().
-
   virtual ~TypeCode_sequence();
 
   // omniORB marshalling routines specific to complex types
@@ -691,8 +706,6 @@ public:
   inline CORBA::Boolean  PR_content_is_assigned() const {
     return !CORBA::is_nil(pd_content);
   }
-
-  virtual int PR_resolve_forward(CORBA::TypeCode_ptr tc);
 
 private:
   TypeCode_sequence();
@@ -1031,6 +1044,99 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_value ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+class TypeCode_value : public TypeCode_base {
+public:
+
+  TypeCode_value(const char* repositoryId, const char* name,
+		 CORBA::ValueModifier type_modifier,
+		 CORBA::TypeCode_ptr concrete_base,
+		 const CORBA::PR_valueMember* members);
+
+  virtual ~TypeCode_value();
+
+  // omniORB marshalling routines specific to complex types
+  virtual void NP_marshalComplexParams(cdrStream&,
+				       TypeCode_offsetTable*) const;
+
+  static TypeCode_base* NP_unmarshalComplexParams(cdrStream &s,
+						  TypeCode_offsetTable* otbl);
+
+  virtual TypeCode_paramListType NP_paramListType() const;
+
+  // OMG Interface:
+  virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
+					  CORBA::Boolean equivalent,
+					  const TypeCode_pairlist* tcpl) const;
+
+  virtual const char*          NP_id() const;
+  virtual const char*          NP_name() const;
+
+  virtual CORBA::ULong         NP_member_count() const;
+  virtual const char*          NP_member_name(CORBA::ULong index) const;
+  virtual TypeCode_base*       NP_member_type(CORBA::ULong index) const;
+  virtual CORBA::Short         NP_member_visibility(CORBA::ULong index) const;
+  virtual CORBA::ValueModifier NP_type_modifier() const;
+  virtual TypeCode_base*       NP_concrete_base_type() const;
+
+  virtual CORBA::Boolean       NP_containsAnAlias();
+  virtual TypeCode_base*       NP_aliasExpand(TypeCode_pairlist*);
+
+  virtual void removeOptionalNames();
+
+protected:
+  TypeCode_value();
+
+  CORBA::String_member 	 pd_repoId;
+  CORBA::String_member 	 pd_name;
+  CORBA::PR_valueMember* pd_members;
+  CORBA::ULong           pd_nmembers;
+  CORBA::ValueModifier   pd_modifier;
+  TypeCode_base*         pd_base;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_abstract_interface //////////////
+//////////////////////////////////////////////////////////////////////
+
+class TypeCode_abstract_interface : public TypeCode_objref {
+public:
+
+  TypeCode_abstract_interface(const char* repositoryId, const char* name);
+
+  virtual ~TypeCode_abstract_interface();
+
+  static TypeCode_base* NP_unmarshalComplexParams(cdrStream &s,
+						  TypeCode_offsetTable* otbl);
+
+private:
+  TypeCode_abstract_interface();
+};
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_local_interface /////////////////
+//////////////////////////////////////////////////////////////////////
+
+class TypeCode_local_interface : public TypeCode_objref {
+public:
+
+  TypeCode_local_interface(const char* repositoryId, const char* name);
+
+  virtual ~TypeCode_local_interface();
+
+  static TypeCode_base* NP_unmarshalComplexParams(cdrStream &s,
+						  TypeCode_offsetTable* otbl);
+
+private:
+  TypeCode_local_interface();
+};
+
+
+//////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_indirect ////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -1058,24 +1164,27 @@ public:
 					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* pl) const;
 
-  virtual const char*    NP_id() const;
-  virtual const char*    NP_name() const;
-  virtual CORBA::ULong   NP_member_count() const;
-  virtual const char*    NP_member_name(CORBA::ULong index) const;
-  virtual TypeCode_base* NP_member_type(CORBA::ULong index) const;
-  virtual CORBA::Any*    NP_member_label(CORBA::ULong index) const;
-  virtual TypeCode_base* NP_discriminator_type() const;
-  virtual CORBA::Long    NP_default_index() const;
-  virtual CORBA::ULong   NP_length() const;
-  virtual TypeCode_base* NP_content_type() const;
-  virtual CORBA::UShort  NP_fixed_digits() const;
-  virtual CORBA::Short   NP_fixed_scale() const;
-  virtual CORBA::Long    NP_param_count() const;
-  virtual CORBA::Any*    NP_parameter(CORBA::Long) const;
+  virtual const char*          NP_id() const;
+  virtual const char*          NP_name() const;
+  virtual CORBA::ULong         NP_member_count() const;
+  virtual const char*          NP_member_name(CORBA::ULong index) const;
+  virtual TypeCode_base*       NP_member_type(CORBA::ULong index) const;
+  virtual CORBA::Any*          NP_member_label(CORBA::ULong index) const;
+  virtual TypeCode_base*       NP_discriminator_type() const;
+  virtual CORBA::Long          NP_default_index() const;
+  virtual CORBA::ULong         NP_length() const;
+  virtual TypeCode_base*       NP_content_type() const;
+  virtual CORBA::UShort        NP_fixed_digits() const;
+  virtual CORBA::Short         NP_fixed_scale() const;
+  virtual CORBA::Long          NP_param_count() const;
+  virtual CORBA::Any*          NP_parameter(CORBA::Long) const;
+  virtual CORBA::Short         NP_member_visibility(CORBA::ULong index) const;
+  virtual CORBA::ValueModifier NP_type_modifier() const;
+  virtual TypeCode_base*       NP_concrete_base_type() const;
 
-  virtual CORBA::Boolean NP_containsAnAlias();
-  virtual TypeCode_base* NP_aliasExpand(TypeCode_pairlist*);
-  virtual void           removeOptionalNames();
+  virtual CORBA::Boolean       NP_containsAnAlias();
+  virtual TypeCode_base*       NP_aliasExpand(TypeCode_pairlist*);
+  virtual void                 removeOptionalNames();
 
   inline TypeCode_base* NP_resolved() {
     if (!pd_resolved)

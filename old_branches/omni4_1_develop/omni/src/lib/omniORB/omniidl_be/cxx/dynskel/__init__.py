@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10.2.1  2003/03/23 21:02:40  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.8.2.4  2003/01/22 12:10:55  dgrisby
 # Explicitly close files in C++ backend.
 #
@@ -111,7 +114,11 @@ def generate(stream, tree):
     stream.out(template.header_comment,
                program = config.state['Program Name'],
                library = config.state['Library Version'])
-    if not config.state['Fragment']:
+
+    if config.state['Fragment']:
+        stream.out(template.fragment_header,
+                   prefix = config.state['Private Prefix'])
+    else:
         stream.out(template.header,
                    basename = config.state['Basename'],
                    hh = config.state['HH Suffix'],

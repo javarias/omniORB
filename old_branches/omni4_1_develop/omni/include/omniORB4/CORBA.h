@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.4  2004/02/16 10:10:28  dgrisby
+ More valuetype, including value boxes. C++ mapping updates.
+
  Revision 1.5.2.3  2003/10/23 11:25:54  dgrisby
  More valuetype support.
 
@@ -394,6 +397,7 @@ _CORBA_MODULE_BEG
 # include "CORBA_ServerRequest.h"
 # include "CORBA_ValueBase.h"
 # include "CORBA_ValueBase_vartypes.h"
+# include "CORBA_AbstractBase.h"
 # include "CORBA_UnknownUserException.h"
 # include "CORBA_Policy.h"
 # include "CORBA_Current.h"
