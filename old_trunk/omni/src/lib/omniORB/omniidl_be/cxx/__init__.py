@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/12/01 17:05:13  djs
+# Backend now supports command line arguments
+#
 # Revision 1.8  1999/11/29 19:26:59  djs
 # Code tidied and moved around. Some redundant code eliminated.
 #
@@ -68,6 +71,7 @@
 # Output generation functions
 from omniidl.be.cxx import header
 from omniidl.be.cxx import skel
+from omniidl.be.cxx import dynskel
 
 from omniidl.be.cxx import config
 
@@ -131,3 +135,7 @@ def run(tree, args):
     
     skel.run(tree)
 
+    # if we're generating code for Typecodes and Any then
+    # we need to create the DynSK.cc file
+    if config.TypecodeFlag():
+        dynskel.run(tree)
