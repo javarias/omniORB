@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.31  1999/07/23 11:27:28  djr
+  Implemented efficient marshalling/unmarshalling of array of basic types.
+
   Revision 1.30  1999/06/28 13:24:25  dpg1
   LifeCycle code updated for proxyCallWrapper and Context support.
 
@@ -2493,7 +2496,6 @@ o2be_operation::produceUnMarshalCode(std::fstream& s, AST_Decl* decl,
 	  }
 	}
 	ptr_to_first_elm += ")";
-	std::cout << "ptr_to_first_elm = " << ptr_to_first_elm << std::endl;
 
 	switch (atype)
 	  {
