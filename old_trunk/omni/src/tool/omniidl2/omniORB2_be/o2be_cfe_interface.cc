@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.21  1999/03/11 16:26:11  djr
+  Updated copyright notice
+
   Revision 1.20  1999/03/04 10:43:20  djr
   Enabled reopen modules by default on a number of platforms.
 
@@ -250,6 +253,7 @@ usage()
   std::cerr << GTDEVEL(" -Idir\t\t\tincludes dir in search path for preprocessor\n");
   std::cerr << GTDEVEL(" -Uname\t\t\tundefines name for preprocessor\n");
   std::cerr << GTDEVEL(" -V\t\t\tprints version info then exits\n");
+  std::cerr << GTDEVEL(" -Y <cpp location>\t\tdefines location of preprocessor\n");
   std::cerr << GTDEVEL(" -a\t\t\tgenerates code required by type any\n");
   std::cerr << GTDEVEL(" -h suffix\t\tspecify suffix for the generated header file(s)\n");
   std::cerr << GTDEVEL(" -l\t\t\tgenerates code required by LifeCycle service\n");
@@ -300,7 +304,7 @@ BE_parse_args(int argc, char **argv)
 
   DRV_cpp_init();
   idl_global->set_prog_name(argv[0]);
-  while ((c = getopt(argc,argv,"D:EI:U:Vuvwh:s:lamt")) != EOF)
+  while ((c = getopt(argc,argv,"D:EI:U:VY:uvwh:s:lamt")) != EOF)
     {
       switch (c) 
 	{
@@ -319,6 +323,11 @@ BE_parse_args(int argc, char **argv)
 	  idl_global->set_compile_flags(idl_global->compile_flags() |
 					IDL_CF_VERSION);
 	  return;
+        case 'Y':
+	  char* cpploc = new char[strlen(optarg)+1];
+	  strcpy(cpploc,optarg);
+	  idl_global->set_cpp_location(cpploc);
+	  break;
 	case 'h':
 	  o2be_global::set_hdrsuffix(optarg);
 	  break;
