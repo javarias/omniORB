@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.6  2001/08/17 17:07:06  sll
+  Remove the use of omniORB::logStream.
+
   Revision 1.8.2.5  2001/08/15 10:26:12  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -112,6 +115,14 @@ omniORB::logger::logger(const char* prefix)
   strcpy(pd_buf, pd_prefix);
   pd_p = pd_buf + strlen(pd_prefix);
   pd_end = pd_buf + INIT_BUF_SIZE;
+
+  if (omniORB::traceThreadId) {
+    omni_thread* self = omni_thread::self();
+    if (self)
+      *this << "(" << self->id() << ") ";
+    else
+      *this << "(?) ";
+  }
 }
 
 
@@ -346,13 +357,19 @@ omniORB::logf(const char* fmt ...)
 {
   char inlinebuf[INLINE_BUF_SIZE];
   char* buf = inlinebuf;
-  size_t fmtlen = strlen(fmt) + sizeof(PREFIX) + 1;
+  size_t fmtlen = strlen(fmt) + sizeof(PREFIX) + 15;
 
   if( fmtlen > INLINE_BUF_SIZE )  buf = new char[fmtlen];
 
-  strcpy(buf, PREFIX);
-  strcpy(buf + sizeof(PREFIX) - 1, fmt);
-  strcat(buf, "\n");
+  if (traceThreadId) {
+    omni_thread* self = omni_thread::self();
+    if (self)
+      sprintf(buf, "%s(%d) %s\n", PREFIX, self->id(), fmt);
+    else
+      sprintf(buf, "%s(?) %s\n", PREFIX, fmt);
+  }
+  else
+    sprintf(buf, "%s%s\n", PREFIX, fmt);
 
   va_list args;
   va_start(args, fmt);
@@ -365,17 +382,23 @@ omniORB::logf(const char* fmt ...)
 
 
 void
-omniORB::do_logs(const char* fmt)
+omniORB::do_logs(const char* mesg)
 {
   char inlinebuf[INLINE_BUF_SIZE];
   char* buf = inlinebuf;
-  size_t fmtlen = strlen(fmt) + sizeof(PREFIX) + 1;
+  size_t fmtlen = strlen(mesg) + sizeof(PREFIX) + 15;
 
   if( fmtlen > INLINE_BUF_SIZE )  buf = new char[fmtlen];
 
-  strcpy(buf, PREFIX);
-  strcpy(buf + sizeof(PREFIX) - 1, fmt);
-  strcat(buf, "\n");
+  if (traceThreadId) {
+    omni_thread* self = omni_thread::self();
+    if (self)
+      sprintf(buf, "%s(%d) %s\n", PREFIX, self->id(), mesg);
+    else
+      sprintf(buf, "%s(?) %s\n", PREFIX, mesg);
+  }
+  else
+    sprintf(buf, "%s%s\n", PREFIX, mesg);
 
   fprintf(stderr, "%s", buf);
 
