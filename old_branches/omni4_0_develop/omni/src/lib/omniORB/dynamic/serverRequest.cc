@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.8  2001/08/15 10:37:59  dpg1
+ Update DSI to use Current, inProcessIdentity.
+
  Revision 1.8.2.7  2001/06/13 20:10:04  sll
  Minor update to make the ORB compiles with MSVC++.
 
@@ -364,9 +367,6 @@ omniServerRequest::do_reply()
 	cdrMemoryStream stream;
 	ex._NP_marshal(stream);
 	pd_handle.call_desc()->userException(stream, 0, repoid);
-
-	// userException() _must_ throw an exception
-	OMNIORB_ASSERT(0);
       }
       break;
     }
