@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.13  1997/12/09 20:40:21  sll
+ Various platform specific updates.
+
  Revision 1.12  1997/08/21 22:22:12  sll
  Support for AIX.
 
@@ -50,7 +53,7 @@
 #if defined(__GNUG__)
 // GNU G++ compiler
 
-#  if defined(__alpha)
+#  if defined(__alpha) && !defined(__VMS)
 #     define SIZEOF_LONG 8
 #     define SIZEOF_INT  4
 #     define SIZEOF_PTR  8
@@ -60,7 +63,7 @@
 // DEC C++ compiler
 #define NEED_DUMMY_RETURN
 
-#  if defined(__alpha)
+#  if defined(__alpha) && !defined(__VMS)
 #     define SIZEOF_LONG 8
 #     define SIZEOF_INT  4
 #     define SIZEOF_PTR  8
@@ -133,7 +136,7 @@
 
 #if defined(__arm__) && defined(__atmos__)
 #define _OMNIORB_HOST_BYTE_ORDER_ 1
-#elif defined(__alpha__)
+#elif defined(__alpha__) && !defined(__VMS)
 #define _OMNIORB_HOST_BYTE_ORDER_ 1
 #define _HAS_SIGNAL 1
 #elif defined(__sunos__) && defined(__sparc__)
@@ -159,6 +162,24 @@
 #define _USE_MACH_SIGNAL 1
 #define _NO_STRDUP 1
 #define _USE_GETHOSTNAME 1
+#elif defined(__VMS)
+#define _OMNIORB_HOST_BYTE_ORDER_ 1
+#if __VMS_VER >= 70000000
+#define _HAS_SIGNAL 1
+#else
+#include <string.h>
+// Pre 7.x VMS does not have strdup.
+inline static char *
+strdup (char* str)
+{
+  char *newstr;
+
+  newstr = (char *) malloc (strlen (str) + 1);
+  if (newstr)
+    strcpy (newstr, str);
+    return newstr;
+}
+#endif
 #else
 #error "The byte order of this platform is unknown"
 #endif
