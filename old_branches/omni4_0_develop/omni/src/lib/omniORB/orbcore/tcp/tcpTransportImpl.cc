@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.16  2003/02/17 02:03:11  dgrisby
+  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
+
   Revision 1.1.2.15  2002/11/06 11:31:21  dgrisby
   Old ETS patches that got lost; updates patches README.
 
@@ -248,6 +251,12 @@ const tcpTransportImpl _the_tcpTransportImpl;
 
 #  if !defined(__vxWorks__)
 
+#ifdef __aix__
+#  define OMNI_SIOCGIFCONF OSIOCGIFCONF
+#else
+#  define OMNI_SIOCGIFCONF SIOCGIFCONF
+#endif
+
 static
 void unix_get_ifinfo(omnivector<const char*>& ifaddrs) {
 
@@ -269,7 +278,7 @@ void unix_get_ifinfo(omnivector<const char*>& ifaddrs) {
     char* buf = (char*) malloc(len);
     ifc.ifc_len = len;
     ifc.ifc_buf = buf;
-    if ( ioctl(sock, SIOCGIFCONF, &ifc) < 0 ) {
+    if ( ioctl(sock, OMNI_SIOCGIFCONF, &ifc) < 0 ) {
       if ( errno != EINVAL || lastlen != 0 ) {
 	if ( omniORB::trace(1) ) {
 	  omniORB::logger log;
