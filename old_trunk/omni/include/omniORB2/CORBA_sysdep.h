@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.33  1999/05/31 14:07:34  sll
+ Added flags for SUN C++ 5.0.
+
  Revision 1.32  1999/05/26 12:41:51  sll
  ENABLE_CLIENT_IR_SUPPORT again.
 
@@ -372,8 +375,6 @@ strdup (char* str)
 
 #ifdef HAS_Cplusplus_Namespace
 
-#define ENABLE_CLIENT_IR_SUPPORT
-
 #ifndef _CORBA_MODULE
 #define _CORBA_MODULE namespace
 #else
@@ -573,5 +574,6 @@ strdup (char* str)
 #include <iostream.h>
 #endif
 
+#define ENABLE_CLIENT_IR_SUPPORT
 
 #endif // __CORBA_SYSDEP_H__
