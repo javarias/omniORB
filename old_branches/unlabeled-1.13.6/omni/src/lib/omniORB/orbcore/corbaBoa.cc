@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.6.2  1999/09/24 10:27:30  djr
+  Improvements to ORB and BOA options.
+
   Revision 1.13.6.1  1999/09/22 14:26:44  djr
   Major rewrite of orbcore to support POA.
 
@@ -552,7 +555,7 @@ omniOrbBOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
 
   omni::internalLock.unlock();
 
-  if( omniORB::trace(10) ) {
+  if( omniORB::traceInvocations ) {
     omniORB::logger l;
     l << "Dispatching remote call \'" << giop_s.operation() << "\' to "
       << id << '\n';
@@ -601,7 +604,7 @@ omniOrbBOA::dispatch(omniCallDescriptor& call_desc, omniLocalIdentity* id)
 
   omni::internalLock.unlock();
 
-  if( omniORB::trace(10) ) {
+  if( omniORB::traceInvocations ) {
     omniORB::logger l;
     l << "Dispatching local call \'" << call_desc.op() << "\' to "
       << id << '\n';

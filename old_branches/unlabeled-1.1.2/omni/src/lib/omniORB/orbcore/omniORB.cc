@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:26:58  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -60,6 +63,7 @@
 namespace omniORB {
 
 int                      traceLevel = 1;
+int                      traceInvocations = 0;
 CORBA::Boolean           strictIIOP = 1;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0;
@@ -76,6 +80,7 @@ objectKey                seed;
 
 #else
 int                      omniORB::traceLevel = 1;
+int                      omniORB::traceInvocations = 0;
 CORBA::Boolean           omniORB::strictIIOP = 1;
 #if defined(HAS_Cplusplus_Namespace)
 char*                    omniORB::serverName = 0;

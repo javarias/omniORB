@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  1999/09/24 15:01:34  djr
+ Added module initialisers, and sll's new scavenger implementation.
+
  Revision 1.1.2.1  1999/09/22 14:26:55  djr
  Major rewrite of orbcore to support POA.
 
@@ -372,8 +375,8 @@ omniObjAdapter::omniObjAdapter()
     pd_nReqActive(0),
     pd_signalOnZeroInvocations(0),
     pd_signal(&omni::internalLock),
-    pd_isActive(0),
     pd_nDetachedObjects(0),
-    pd_signalOnZeroDetachedObjects(0)
+    pd_signalOnZeroDetachedObjects(0),
+    pd_isActive(0)
 {
 }

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.1  1999/09/22 14:26:49  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.21  1999/08/30 16:50:56  sll
   Added calls to Strand::Sync::clicksSet to control how long a call is
   allowed to progress or how long an idle connection is to stay open.
@@ -691,7 +694,7 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
     // a location forward exception to re-direct the request
     // to another location.
 
-    if( omniORB::trace(10) )
+    if( omniORB::traceInvocations )
       omniORB::logf("Implementation of \'%s\' generated LOCATION_FORWARD.",
 		    operation());
 
