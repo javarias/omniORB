@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.21.6.9  2000/04/27 10:48:00  dpg1
+  Interoperable Naming Service
+
+  Include initRefs.h instead of bootreap_i.h.
+
   Revision 1.21.6.8  2000/03/07 18:07:34  djr
   Fixed user-exceptions when can't catch by base class.
 
@@ -769,7 +774,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
 	  status = GIOP::OBJECT_HERE;
       }
       catch(omniORB::LOCATION_FORWARD& lf) {
-	status = GIOP::UNKNOWN_OBJECT;
+	status = GIOP::OBJECT_FORWARD;
 	WrLock();
 	pd_state = ReplyIsBeingComposed;
 
