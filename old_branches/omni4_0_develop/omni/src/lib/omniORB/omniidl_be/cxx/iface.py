@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.11  2002/08/16 15:56:27  dgrisby
+# Bug in generated code with evil IDL that uses the same parameter
+# names as type names.
+#
 # Revision 1.1.4.10  2001/11/08 16:33:51  dpg1
 # Local servant POA shortcut policy.
 #
@@ -283,7 +287,10 @@ class _objref_I(Class):
 
     methods = []
     for method in self.methods():
-      methods.append(method.hh())
+      if config.state['Virtual Objref Methods']:
+        methods.append(method.hh(virtual = 1, pure = 0))
+      else:
+        methods.append(method.hh())
             
     if config.state['Shortcut']:
       shortcut = output.StringStream()
