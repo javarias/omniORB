@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14.6.1  1999/09/22 14:26:43  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.14  1999/05/25 17:22:40  sll
   Added magic number constants for all the pseudo objects.
 
@@ -82,6 +85,7 @@ const IOP::ProfileId       IOP::TAG_MULTIPLE_COMPONENTS = 1;
 const IOP::ServiceID       IOP::TransactionService = 0;
 const CORBA::Char          IIOP::current_major = 1;
 const CORBA::Char          IIOP::current_minor = 0;
+const CORBA::UShort        IIOP::DEFAULT_PORT = 2089;
 
 
 const GIOP_Basetypes::MessageHeader::HeaderType
