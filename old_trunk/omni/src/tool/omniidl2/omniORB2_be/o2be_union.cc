@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.29  1999/08/09 12:27:57  sll
+  Updated how _out name is generated
+
   Revision 1.28  1999/07/02 19:14:38  sll
   Typedef of a typedef of a union now translates to a C++ typedef of a
   typedef.
@@ -1028,7 +1031,7 @@ o2be_union::produce_hdr(std::fstream& s)
   IND(s); s << "void operator<<= (MemBufferedStream&);\n\n";
 
   if (idl_global->compile_flags() & IDL_CF_ANY) {
-    s << "#if defined(__GNUG__) || defined(__DECCXX)\n";
+    s << "#if defined(__GNUG__) || defined(__DECCXX) && (__DECCXX_VER < 60000000))\n";
     IND(s); s << "friend class _0RL_tcParser_unionhelper_" << _idname()
 	      << ";\n";
     s << "#else\n";
