@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/08/20 08:19:22  sll
+  Read the new ORB configuration file format. Can still read old format.
+  Can also set configuration parameters from environment variables.
+
   Revision 1.1.2.1  2001/08/17 17:12:34  sll
   Modularise ORB configuration parameters.
 
@@ -97,9 +101,9 @@ class orbOptions {
 
   protected:
     Handler(const char* k, const char* u,
-	    CORBA::Boolean yesorno, const char* arg_u, 
+	    CORBA::Boolean yesorno, const char* arg_u,
 	    CORBA::Boolean novalue = 0) :
-      key_(k), usage_(u), 
+      key_(k), usage_(u),
       argvYes_(yesorno), argvUsage_(arg_u), argvHasNoValue_(novalue) {}
 
     virtual ~Handler() {}
@@ -120,11 +124,11 @@ class orbOptions {
 
   void registerHandler(Handler& h);
   // Register a handler for an option. The option's name is identified by
-  // h->key().  
+  // h->key().
   //
   // When subsequently this->visit() is called, h->visit() will be called
   // for each of the options that matches the option's name.
-  // 
+  //
   // h->argvYes() if true indicates that this option can be specified in
   // the ORB_init argument list. When this->extractInitOptions() is called,
   // the arguments will be searched and those that match the key of the
@@ -154,7 +158,7 @@ class orbOptions {
 
   ////////////////////////////////////////////////////////////////////////
   void addOption(const char* key, const char* value) throw (Unknown,BadParam);
-  // Add to the internal option list a <key,value> tuple. 
+  // Add to the internal option list a <key,value> tuple.
   // Both arguments are copied.
   //
   // Thread Safety preconditions:
@@ -201,7 +205,7 @@ class orbOptions {
 
   sequenceString* usageArgv() const;
   // Return the list of recognised options that can be specified as the
-  // ORB_Init options. 
+  // ORB_Init options.
   //
   // Caller is responsible for freeing the memory allocated to the
   // returned list.
@@ -245,7 +249,7 @@ class orbOptions {
   //                   correctly.
   //    addKV* functions append to the sequenceString a stringified value
   //                     of the key value pair.
-  //         
+  //
   static CORBA::Boolean getBoolean(const char* value, CORBA::Boolean& result);
   static CORBA::Boolean getULong(const char* value, CORBA::ULong& result);
   static void addKVBoolean(const char* key, CORBA::Boolean,sequenceString&);
@@ -288,7 +292,7 @@ class orbOptions {
   public:
     typedef sequenceString T;
     typedef sequenceString_var T_var;
-    
+
     inline sequenceString_var() : _pd_seq(0) {}
     inline sequenceString_var(T* s) : _pd_seq(s) {}
     inline sequenceString_var(const T_var& s) {
@@ -296,7 +300,7 @@ class orbOptions {
       else             _pd_seq = 0;
     }
     inline ~sequenceString_var() { if( _pd_seq )  delete _pd_seq; }
-    
+
     inline T_var& operator = (T* s) {
       if( _pd_seq )  delete _pd_seq;
       _pd_seq = s;
@@ -324,7 +328,7 @@ class orbOptions {
     inline operator const T& () const { return *_pd_seq; }
     inline operator T& () { return *_pd_seq; }
 #endif
-    
+
     inline const T& in() const { return *_pd_seq; }
     inline T&       inout()    { return *_pd_seq; }
     inline T*&      out() {
@@ -332,7 +336,7 @@ class orbOptions {
       return _pd_seq;
     }
     inline T* _retn() { T* tmp = _pd_seq; _pd_seq = 0; return tmp; }
-    
+
   private:
     T* _pd_seq;
   };
@@ -354,14 +358,14 @@ class orbOptions {
 
   struct HandlerValuePair {
 
-    HandlerValuePair(orbOptions::Handler* h, const char* v) : 
+    HandlerValuePair(Handler* h, const char* v) :
       handler_(h),value_(v) {}
 
-    orbOptions::Handler*   handler_;
+    Handler*               handler_;
     CORBA::String_var      value_;
   };
   omnivector<HandlerValuePair*>   pd_values;
-  
+
   orbOptions();
   ~orbOptions();
 
