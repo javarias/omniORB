@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.15.2.1  2000/07/17 10:35:59  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.16  2000/07/13 15:25:55  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -94,7 +97,7 @@
   */
 
 
-#include <omniORB3/CORBA.h>
+#include <omniORB4/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -119,6 +122,7 @@ static int clientCallTimeLimit_ = INT_MAX;
 static int outIdleTimeLimit_    = 24;
 static int inIdleTimeLimit_     = 36;
 
+#if 0
 
 /////////////////////////////////////////////////////////////////////////////
 // omniORB_Scavenger
@@ -176,6 +180,7 @@ private:
 };
 
 static omniORB_Scavenger* scavenger;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Internal interface to other parts of the ORB
@@ -194,12 +199,12 @@ StrandScavenger::inIdleTimeLimit() { return inIdleTimeLimit_; }
 
 void 
 StrandScavenger::addRopeFactories(ropeFactoryList* l) {
-  scavenger->addRopeFactoryList(l);
+  //  scavenger->addRopeFactoryList(l);
 }
 
 void
 StrandScavenger::removeRopeFactories(ropeFactoryList* l) {
-  scavenger->removeRopeFactoryList(l);
+  //scavenger->removeRopeFactoryList(l);
 }
 
 
@@ -305,9 +310,9 @@ omniORB::scanGranularity(CORBA::ULong sec)
     ScanPeriod = sec;
   }
   
-  if (scavenger) {
-    scavenger->poke();
-  }
+  //  if (scavenger) {
+  //scavenger->poke();
+  //}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -318,6 +323,7 @@ omniORB::scanGranularity()
 }
 
 
+#if 0
 /////////////////////////////////////////////////////////////////////////////
 void*
 omniORB_Scavenger::run_undetached(void*)
@@ -382,6 +388,7 @@ omniORB_Scavenger::run_undetached(void*)
   LOGMESSAGE(15,"","exit.");
   return 0;
 }
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
@@ -391,12 +398,12 @@ class omni_scavenger_initialiser : public omniInitialiser {
 public:
 
   void attach() {
-    scavenger = new omniORB_Scavenger();
+    //    scavenger = new omniORB_Scavenger();
   }
 
   void detach() {
-    scavenger->kill();
-    scavenger = 0;
+    //scavenger->kill();
+    //scavenger = 0;
   }
 };
 

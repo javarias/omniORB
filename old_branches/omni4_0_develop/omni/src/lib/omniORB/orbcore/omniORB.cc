@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:56  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:25:56  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -49,7 +52,7 @@
 
 */
 
-#include <omniORB3/CORBA.h>
+#include <omniORB4/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -92,6 +95,8 @@ CORBA::Boolean           useTypeCodeIndirections = 1;
 CORBA::Boolean           acceptMisalignedTcIndirections = 0;
 CORBA::Boolean           verifyObjectExistsAndType = 1;
 int                      poaHoldRequestTimeout = 0;
+CORBA::Boolean           noFirewallNavigation = 0;
+GIOP::AddressingDisposition giopTargetAddressMode = GIOP::KeyAddr;
 objectKey                seed;
 }
 
@@ -113,6 +118,8 @@ CORBA::Boolean           omniORB::useTypeCodeIndirections = 1;
 CORBA::Boolean           omniORB::acceptMisalignedTcIndirections = 0;
 CORBA::Boolean           omniORB::verifyObjectExistsAndType = 1;
 int                      omniORB::poaHoldRequestTimeout = 0;
+CORBA::Boolean           noFirewallNavigation = 0;
+GIOP::AddressingDisposition giopTargetAddressMode = GIOP::KeyAddr;
 omniORB::objectKey       omniORB::seed;
 #endif
 
