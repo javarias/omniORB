@@ -29,6 +29,14 @@
 
 /*
   $Log$
+  Revision 1.29.6.15  2000/04/27 10:46:30  dpg1
+  Interoperable Naming Service
+
+  Add initialisers for URI and initRefs modules.
+  object_to_string() and string_to_object() use omniURI:: functions.
+  resolve_initial_references() replaced with omniInitialReferences::resolve().
+  Add -ORBInitRef and -ORBDefaultInitRef command-line options.
+
   Revision 1.29.6.14  2000/02/04 18:11:01  djr
   Minor mods for IRIX (casting pointers to ulong instead of int).
 
@@ -539,6 +547,7 @@ omniOrbORB::actual_shutdown()
   omni_strand_initialiser_.detach();
   omni_corbaOrb_initialiser_.detach();
   omni_omniInternal_initialiser_.detach();
+  omni_uri_initialiser_.detach();
 
   proxyObjectFactory::shutdown();
 
@@ -820,6 +829,28 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	continue;
       }
 
+      // -ORBobjectTableSize
+      if (strcmp(argv[idx],"-ORBobjectTableSize") == 0) {
+	if((idx+1) >= argc) {
+	  omniORB::logs(1, "CORBA::ORB_init failed: missing "
+			"-ORBobjectTableSize parameter.");
+	  return 0;
+	}
+	CORBA::ULong sz;
+#if SIZEOF_LONG == 4
+	if (sscanf(argv[idx+1],"%lu",&sz) != 1) {
+#else
+	if (sscanf(argv[idx+1],"%u",&sz) != 1) {
+#endif
+	  omniORB::logs(1, "CORBA::ORB_init failed: invalid"
+			" -ORBobjectTableSize parameter.");
+	  return 0;
+	}
+	omniORB::objectTableSize = sz;
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+	
       // -ORBserverName
       if (strcmp(argv[idx],"-ORBserverName") == 0) {
 	if((idx+1) >= argc) {
@@ -1034,9 +1065,11 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	  "    -ORBstrictIIOP <0|1>\n"
 	  "    -ORBtcAliasExpand <0|1>\n"
 	  "    -ORBgiopMaxMsgSize <n bytes>\n"
+	  "    -ORBobjectTableSize <n entries>\n"
 	  "    -ORBserverName <name>\n"
 	  "    -ORBInitialHost <name>\n"
 	  "    -ORBInitialPort <1-65535>\n"
+	  "    -ORBno_bootstrap_agent\n"
 	  "    -ORBdiiThrowsSysExceptions <0|1>\n"
 	  "    -ORBabortOnInternalError <0|1>\n"
 	  "    -ORBverifyObjectExistsAndType <0|1>\n"
@@ -1126,6 +1159,12 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
         continue;
       }
 
+      // -ORBno_bootstrap_agent
+      if (strcmp(argv[idx],"-ORBno_bootstrap_agent") == 0) {
+	omniObjAdapter::options.noBootstrapAgent = 1;
+	move_args(argc,argv,idx,1);
+	continue;
+      }
 
       // Reach here only if the argument in this form: -ORBxxxxx
       // is not recognised.
