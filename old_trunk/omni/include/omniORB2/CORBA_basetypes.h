@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.8  1998/08/11 16:34:47  sll
+ Changed Float and Double representation on VMS.
+
  Revision 1.7  1998/03/02 14:05:02  ewc
  Patch to fix IDL unions containing structs which contain floats or doubles
  (was broken on OpenVMS).
@@ -119,4 +122,9 @@ extern void _CORBA_bound_check_error();
 extern void _CORBA_marshal_error();
 extern _CORBA_Boolean _CORBA_use_nil_ptr_as_nil_objref();
 extern void _CORBA_null_string_ptr(_CORBA_Boolean);
+extern void _CORBA_invoked_nil_pseudo_ref();
+extern _CORBA_Boolean
+_CORBA_use_nil_ptr_as_nil_pseudo_objref(const char* objType);
+
+
 #endif // __CORBA_BASETYPES_H__
