@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.25  2000/06/27 15:13:11  dpg1
+// New copyObjRefArgument() function
+//
 // Revision 1.24  2000/06/12 15:36:08  dpg1
 // Support for exception handler functions. Under omniORB 3, local
 // operation dispatch modified so exceptions handlers are run.
@@ -118,10 +121,10 @@
 #ifndef _omnipy30_h_
 #define _omnipy30_h_
 
-#if defined(__WIN32__) || defined(__VMS)
+#if defined(__VMS)
 #include <Python.h>
 #else
-#include <python1.5/Python.h>
+#include PYTHON_INCLUDE
 #endif
 
 #include <omniORB3/CORBA.h>
