@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.4  1998/08/14 13:51:58  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.3  1998/04/07 19:37:14  sll
   Replace cerr with omniORB::log.
 
@@ -350,3 +354,18 @@ omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction)
     }
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+// Kill the out scavenger thread.
+
+class OutScavengerThreadKiller {
+public:
+  ~OutScavengerThreadKiller() {
+    StrandScavenger::killOutScavenger();
+  }
+  static OutScavengerThreadKiller theInstance;
+};
+
+OutScavengerThreadKiller OutScavengerThreadKiller::theInstance;
