@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2002/03/14 12:21:49  dpg1
+  Undo accidental scavenger period change, remove invalid assertion.
+
   Revision 1.1.4.13  2002/03/13 16:05:39  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -721,12 +724,15 @@ Scavenger::execute()
  died:
   {
     mutex->lock();
+    theTask = 0;
     if (shutdown) {
       mutex->unlock();
       delete cond;
       delete mutex;
     }
-    theTask = 0;
+    else {
+      mutex->unlock();
+    }
     delete this;
   }
 }
@@ -746,7 +752,6 @@ Scavenger::notify()
 void
 Scavenger::terminate()
 {
-
   mutex->lock();
   if (theTask) {
     shutdown = 1;
