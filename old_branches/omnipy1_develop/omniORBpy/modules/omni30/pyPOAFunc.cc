@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.12.2.3  2001/02/14 15:22:20  dpg1
+// Fix bug using repoId strings after deletion.
+//
 // Revision 1.12.2.2  2000/11/29 17:11:18  dpg1
 // Fix deadlock when trying to lock omniORB internal lock while holding
 // the Python interpreter lock.
@@ -85,8 +88,7 @@ class PYOSReleaseHelper {
 public:
   PYOSReleaseHelper(omniPy::Py_omniServant* pyos) : pyos_(pyos) {}
   ~PYOSReleaseHelper() {
-    omniPy::InterpreterUnlocker _u;
-    pyos_->_remove_ref();
+    pyos_->_locked_remove_ref();
   }
 private:
   omniPy::Py_omniServant* pyos_;
@@ -406,21 +408,28 @@ extern "C" {
     OMNIORB_ASSERT(poa);
 
     try {
-      PortableServer::AdapterActivator_var act = poa->the_activator();
+      CORBA::Object_ptr lobjref;
+      const char*       repoId;
+      {
+	omniPy::InterpreterUnlocker _u;
+	{
+	  PortableServer::AdapterActivator_var act = poa->the_activator();
 
-      if (CORBA::is_nil(act)) {
-	Py_INCREF(Py_None);
-	return Py_None;
+	  if (CORBA::is_nil(act)) {
+	    lobjref = 0;
+	  }
+	  else {
+	    repoId  = act->_PR_getobj()->_mostDerivedRepoId();
+	    lobjref = omniPy::makeLocalObjRef(repoId, act);
+	  }
+	}
+      }
+      if (lobjref) {
+	return omniPy::createPyCorbaObjRef(0, lobjref);
       }
       else {
-	CORBA::Object_ptr lobjref;
-	const char* repoId;
-	{
-	  omniPy::InterpreterUnlocker _u;
-	  repoId  = act->_PR_getobj()->_mostDerivedRepoId();
-	  lobjref = omniPy::makeLocalObjRef(repoId, act);
-	}
-	return omniPy::createPyCorbaObjRef(0, lobjref);
+	Py_INCREF(Py_None);
+	return Py_None;
       }
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
@@ -465,21 +474,28 @@ extern "C" {
     OMNIORB_ASSERT(poa);
 
     try {
-      PortableServer::ServantManager_var sm = poa->get_servant_manager();
+      CORBA::Object_ptr lobjref;
+      const char*       repoId;
+      {
+	omniPy::InterpreterUnlocker _u;
+	{
+	  PortableServer::ServantManager_var sm = poa->get_servant_manager();
 
-      if (CORBA::is_nil(sm)) {
-	Py_INCREF(Py_None);
-	return Py_None;
+	  if (CORBA::is_nil(sm)) {
+	    lobjref = 0;
+	  }
+	  else {
+	    repoId  = sm->_PR_getobj()->_mostDerivedRepoId();
+	    lobjref = omniPy::makeLocalObjRef(repoId, sm);
+	  }
+	}
+      }
+      if (lobjref) {
+	return omniPy::createPyCorbaObjRef(0, lobjref);
       }
       else {
-	CORBA::Object_ptr lobjref;
-	const char*       repoId;
-	{
-	  omniPy::InterpreterUnlocker _u;
-	  repoId  = sm->_PR_getobj()->_mostDerivedRepoId();
-	  lobjref = omniPy::makeLocalObjRef(repoId, sm);
-	}
-	return omniPy::createPyCorbaObjRef(0, lobjref);
+	Py_INCREF(Py_None);
+	return Py_None;
       }
     }
     catch (PortableServer::POA::WrongPolicy& ex) {
@@ -711,12 +727,14 @@ extern "C" {
     OMNIORB_ASSERT(poa);
 
     try {
-      CORBA::Object_var objref;
       CORBA::Object_ptr lobjref;
       {
 	omniPy::InterpreterUnlocker _u;
-	objref  = poa->create_reference(repoId);
-	lobjref = omniPy::makeLocalObjRef(repoId, objref);
+	{
+	  CORBA::Object_var objref;
+	  objref  = poa->create_reference(repoId);
+	  lobjref = omniPy::makeLocalObjRef(repoId, objref);
+	}
       }
       return omniPy::createPyCorbaObjRef(repoId, lobjref);
     }
@@ -744,12 +762,14 @@ extern "C" {
 
     try {
       PortableServer::ObjectId oid(oidlen, oidlen, (CORBA::Octet*)oidstr, 0);
-      CORBA::Object_var objref;
       CORBA::Object_ptr lobjref;
       {
 	omniPy::InterpreterUnlocker _u;
-	objref  = poa->create_reference_with_id(oid, repoId);
-	lobjref = omniPy::makeLocalObjRef(repoId, objref);
+	{
+	  CORBA::Object_var objref;
+	  objref  = poa->create_reference_with_id(oid, repoId);
+	  lobjref = omniPy::makeLocalObjRef(repoId, objref);
+	}
       }
       return omniPy::createPyCorbaObjRef(repoId, lobjref);
     }
@@ -808,12 +828,14 @@ extern "C" {
     PYOSReleaseHelper _r(pyos);
 
     try {
-      CORBA::Object_var objref;
       CORBA::Object_ptr lobjref;
       {
 	omniPy::InterpreterUnlocker _u;
-	objref  = poa->servant_to_reference(pyos);
-	lobjref = omniPy::makeLocalObjRef(pyos->_mostDerivedRepoId(), objref);
+	{
+	  CORBA::Object_var objref;
+	  objref  = poa->servant_to_reference(pyos);
+	  lobjref = omniPy::makeLocalObjRef(pyos->_mostDerivedRepoId(),objref);
+	}
       }
       return omniPy::createPyCorbaObjRef(pyos->_mostDerivedRepoId(), lobjref);
     }
@@ -980,14 +1002,16 @@ extern "C" {
 
     try {
       PortableServer::ObjectId oid(oidlen, oidlen, (CORBA::Octet*)oidstr, 0);
-      CORBA::Object_var objref;
       CORBA::Object_ptr lobjref;
       const char* mdri;
       {
 	omniPy::InterpreterUnlocker _u;
-	objref  = poa->id_to_reference(oid);
-	mdri    = objref->_PR_getobj()->_mostDerivedRepoId();
-	lobjref = omniPy::makeLocalObjRef(mdri, objref);
+	{
+	  CORBA::Object_var objref;
+	  objref  = poa->id_to_reference(oid);
+	  mdri    = objref->_PR_getobj()->_mostDerivedRepoId();
+	  lobjref = omniPy::makeLocalObjRef(mdri, objref);
+	}
       }
       return omniPy::createPyCorbaObjRef(0, lobjref);
     }

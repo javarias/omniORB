@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.3  2001/02/14 15:22:20  dpg1
+// Fix bug using repoId strings after deletion.
+//
 // Revision 1.17.2.2  2000/11/29 17:11:18  dpg1
 // Fix deadlock when trying to lock omniORB internal lock while holding
 // the Python interpreter lock.
@@ -575,8 +578,8 @@ omniPy::stringToObject(const char* uri)
 				  CORBA::Object::_PD_repoId,
 				  cxxobjref->_iopProfiles(),
 				  0, 0);
+    CORBA::release(cxxobj);
   }
-  CORBA::release(cxxobj);
   return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
 
