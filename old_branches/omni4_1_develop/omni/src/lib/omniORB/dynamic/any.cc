@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.21.2.2  2004/07/23 10:29:58  dgrisby
+ * Completely new, much simpler Any implementation.
+ *
  * Revision 1.21.2.1  2003/03/23 21:02:51  dgrisby
  * Start of omniORB 4.1.x development branch.
  *
@@ -346,9 +349,12 @@ CORBA::Any::operator>>= (cdrStream& s) const
     OMNIORB_ASSERT(pd_marshal);
     pd_marshal(s, pd_data);
   }
-  else {
-    OMNIORB_ASSERT(pd_mbuf);
+  else if (pd_mbuf) {
     tcParser::copyMemStreamToStream_rdonly(pd_tc, *pd_mbuf, s);
+  }
+  else {
+    OMNIORB_ASSERT(pd_tc->kind() == CORBA::tk_void ||
+		   pd_tc->kind() == CORBA::tk_null);
   }
 }
 
@@ -370,9 +376,12 @@ CORBA::Any::NP_marshalDataOnly(cdrStream& s) const
     OMNIORB_ASSERT(pd_marshal);
     pd_marshal(s, pd_data);
   }
-  else {
-    OMNIORB_ASSERT(pd_mbuf);
+  else if (pd_mbuf) {
     tcParser::copyMemStreamToStream_rdonly(pd_tc, *pd_mbuf, s);
+  }
+  else {
+    OMNIORB_ASSERT(pd_tc->kind() == CORBA::tk_void ||
+		   pd_tc->kind() == CORBA::tk_null);
   }
 }
 
@@ -955,20 +964,21 @@ CORBA::Any::operator>>=(CORBA::TypeCode_ptr& tc) const
 
 // Object
 
-static void marshalObject_fn(cdrStream& s, void* d)
+static void marshalObject_fn(cdrStream& s, void* v)
 {
-  CORBA::Object_ptr o = (CORBA::Object_ptr)d;
-  CORBA::Object::_marshalObjRef(o, s);
+  omniObjRef* o = (omniObjRef*)v;
+  omniObjRef::_marshal(o, s);
 }
-static void unmarshalObject_fn(cdrStream& s, void*& d)
+static void unmarshalObject_fn(cdrStream& s, void*& v)
 {
-  CORBA::Object_ptr o = CORBA::Object::_unmarshalObjRef(s);
-  d = o;
+  omniObjRef* o = omniObjRef::_unMarshal(CORBA::Object::_PD_repoId, s);
+  v = o;
 }
-static void deleteObject_fn(void* d)
+static void deleteObject_fn(void* v)
 {
-  CORBA::Object_ptr o = (CORBA::Object_ptr)d;
-  CORBA::release(o);
+  omniObjRef* o = (omniObjRef*)v;
+  if (o)
+    omni::releaseObjRef(o);
 }
 
 void
@@ -977,7 +987,9 @@ CORBA::Any::operator<<=(Object_ptr obj)
   if (!CORBA::Object::_PR_is_valid(obj)) {
     OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectRef,CORBA::COMPLETED_NO);
   }
-#if 0
+#if 1
+  // Use the most derived interface for the TypeCode, not base CORBA::Object
+  // *** Is this right?  The C++ mapping is silent on the issue.
   const char* repoid = CORBA::Object::_PD_repoId;
   const char* name   = "";
   if (!CORBA::is_nil(obj))
@@ -988,7 +1000,7 @@ CORBA::Any::operator<<=(Object_ptr obj)
 #endif
 
   CORBA::Object_ptr no = CORBA::Object::_duplicate(obj);
-  PR_insert(tc, marshalObject_fn, deleteObject_fn, no);
+  PR_insert(tc, marshalObject_fn, deleteObject_fn, no->_PR_getobj());
 }
 
 void
@@ -997,7 +1009,7 @@ CORBA::Any::operator<<=(Object_ptr* objp)
   if (!CORBA::Object::_PR_is_valid(*objp)) {
     OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectRef,CORBA::COMPLETED_NO);
   }
-#if 0
+#if 1
   const char* repoid = CORBA::Object::_PD_repoId;
   const char* name   = "";
   if (!CORBA::is_nil(*objp))
@@ -1007,7 +1019,7 @@ CORBA::Any::operator<<=(Object_ptr* objp)
   CORBA::TypeCode_ptr tc = CORBA::_tc_Object;
 #endif
 
-  PR_insert(tc, marshalObject_fn, deleteObject_fn, *objp);
+  PR_insert(tc, marshalObject_fn, deleteObject_fn, (*objp)->_PR_getobj());
   *objp = CORBA::Object::_nil();
 }
 
@@ -1018,7 +1030,11 @@ CORBA::Any::operator>>=(CORBA::Object_ptr& obj) const
   if (PR_extract(CORBA::_tc_Object,
 		 unmarshalObject_fn, marshalObject_fn, deleteObject_fn,
 		 v)) {
-    obj = (CORBA::Object_ptr)v;
+    omniObjRef* r = (omniObjRef*)v;
+    if (r)
+      obj = (CORBA::Object_ptr)r->_ptrToObjRef(CORBA::Object::_PD_repoId);
+    else
+      obj = CORBA::Object::_nil();
     return 1;
   }
   return 0;
@@ -1035,10 +1051,21 @@ CORBA::Any::operator>>=(to_object o) const
   // We call PR_extract giving it our own TypeCode, so its type check
   // always succeeds, whatever specific object reference type we
   // contain.
+  //
+  // Unlike other extraction operators, the caller takes ownership
+  // of the returned reference here.
+
   if (PR_extract(pd_tc,
 		 unmarshalObject_fn, marshalObject_fn, deleteObject_fn,
 		 v)) {
-    o.ref = (CORBA::Object_ptr)v;
+
+    omniObjRef* r = (omniObjRef*)v;
+    if (r)
+      o.ref = CORBA::Object::_duplicate(
+                (CORBA::Object_ptr)r->_ptrToObjRef(CORBA::Object::_PD_repoId));
+    else
+      o.ref = CORBA::Object::_nil();
+
     return 1;
   }
   return 0;
