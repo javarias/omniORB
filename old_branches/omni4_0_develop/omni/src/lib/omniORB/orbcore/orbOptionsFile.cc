@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/08/29 17:54:00  sll
+  Make the old configuration parameter GATEKEEPER_ALLOWFILE and
+  GATEKEEPER_DENYFILE obsolute.
+
   Revision 1.1.2.3  2001/08/21 11:02:17  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -186,14 +190,19 @@ void
 oldconfig_warning(const char* key, const char* newkey) {
   static CORBA::Boolean said_warning = 0;
 
-  if (!said_warning && omniORB::trace(1)) {
-    omniORB::logger log;
-    log << "Warning: the config file is in the old pre-omniORB4 format.\n"
- "omniORB: For the moment this is accepted to maintain backward compatibility.\n"
- "omniORB: Please update to the new config file format ASAP.\n";
+  if (!said_warning) {
+    if (omniORB::trace(1)) {
+      omniORB::logger log;
+      log << "Warning: the config file is in the old pre-omniORB4 format.\n";
+    }
+    if (omniORB::trace(2)) {
+      omniORB::logger log;
+      log << "For the moment this is accepted to maintain backward compatibility.\n"
+	  << "omniORB: Please update to the new config file format ASAP.\n";
+    }
     said_warning = 1;
   }
-  if (omniORB::trace(1)) {
+  if (omniORB::trace(2)) {
     omniORB::logger log;
     log << "Warning: translated (" << key << ") to (" << newkey << ")\n";
   }
