@@ -29,6 +29,10 @@
 
 /*
    $Log$
+   Revision 1.2  1998/08/14 13:46:01  sll
+   Added pragma hdrstop to control pre-compile header if the compiler feature
+   is available.
+
    Revision 1.1  1998/08/05 18:03:51  sll
    Initial revision
 
@@ -178,7 +182,7 @@ dynAnyP::totalComponents(CORBA::ULong v)
       pd_total_components = v;
       internal_write_seqlen_into_buffer(pd_buf,tc(),pd_total_components);
 
-      if (pd_components.length() > pd_total_components) {
+      if (pd_components.length() > (CORBA::ULong)pd_total_components) {
 	// This sequence has been truncated.
 	// pd_components may contain some nodes that has to be
 	// deleted because the sequence has been truncated.
@@ -195,7 +199,7 @@ dynAnyP::totalComponents(CORBA::ULong v)
 	pd_components.length(pd_total_components);
       }
 
-      if (nComponentInBuffer() > pd_total_components) {
+      if (nComponentInBuffer() > (CORBA::ULong)pd_total_components) {
 	// This sequence has been truncated. And some of the truncated
 	// elements have already been written into the buffer.
 	pd_last_index = pd_total_components - 1;
@@ -256,7 +260,7 @@ dynAnyP::currentComponentFromBasetype(CORBA::TCKind k,Bval& v)
   // 2. check if the value can be appended to the end of this node's
   //    buffer.
   //
-  if (pd_components.length() > currentComponentIndex() &&
+  if (pd_components.length() > (CORBA::ULong)currentComponentIndex() &&
       ! CORBA::is_nil(pd_components[currentComponentIndex()]))
     {
       dynAnyP* p = (dynAnyP*)pd_components[currentComponentIndex()]->NP_pd();
@@ -357,7 +361,7 @@ dynAnyP::currentComponentToBasetype(CORBA::TCKind k,Bval& v)
   //    been created for this component.
   // 2. check if the buffer of this node contains the value.
   //
-  if (pd_components.length() > currentComponentIndex() &&
+  if (pd_components.length() > (CORBA::ULong)currentComponentIndex() &&
       ! CORBA::is_nil(pd_components[currentComponentIndex()]))
     {
       dynAnyP* p = (dynAnyP*)pd_components[currentComponentIndex()]->NP_pd();
@@ -463,7 +467,7 @@ dynAnyP::currentComponentFromAny(CORBA::Any& v)
   // 2. check if the value can be appended to the end of this node's
   //    buffer.
   //
-  if (pd_components.length() > currentComponentIndex() &&
+  if (pd_components.length() > (CORBA::ULong)currentComponentIndex() &&
       ! CORBA::is_nil(pd_components[currentComponentIndex()]))
     {
       dynAnyP* p = (dynAnyP*)pd_components[currentComponentIndex()]->NP_pd();
@@ -507,7 +511,7 @@ dynAnyP::currentComponentToAny(CORBA::Any& v)
   //    been created for this component.
   // 2. check if the buffer of this node contains the value.
   //
-  if (pd_components.length() > currentComponentIndex() &&
+  if (pd_components.length() > (CORBA::ULong)currentComponentIndex() &&
       ! CORBA::is_nil(pd_components[currentComponentIndex()]))
     {
       dynAnyP* p = (dynAnyP*)pd_components[currentComponentIndex()]->NP_pd();
@@ -619,7 +623,7 @@ dynAnyP::fromAny(const CORBA::Any& v)
 void
 dynAnyP::toStream(MemBufferedStream& m)
 {
-  int idx;
+  CORBA::ULong idx;
 
   if (pd_components.length() < totalComponents() &&
       nComponentInBuffer() != totalComponents())
@@ -730,7 +734,7 @@ dynAnyP::toAny(CORBA::Any& v)
 CORBA::TypeCode_ptr
 dynAnyP::nthComponentTC(CORBA::ULong index)
 {
-  if (index >= pd_total_components)
+  if (index >= (CORBA::ULong)pd_total_components)
     return CORBA::TypeCode::_nil();
 
   switch (pd_tc->kind()) {
@@ -951,11 +955,11 @@ dynAnyP::beginReadComponent()
       // falls through
     case Ready:
 
-      if (currentComponentIndex() >= nComponentInBuffer())
+      if (currentComponentIndex() >= (int)nComponentInBuffer())
 	return 0;
 
       // Make sure that the buffer pointer is correct
-      if (internal_buffer_getpos(pd_buf) != pd_curr_startpos) {
+      if ((int)internal_buffer_getpos(pd_buf) != pd_curr_startpos) {
 	internal_buffer_setpos(pd_buf,pd_curr_startpos);
       }
 
@@ -1002,11 +1006,11 @@ dynAnyP::beginWriteComponent()
 	pd_last_index = -1;
       }
       else {
-       if (currentComponentIndex() != nComponentInBuffer())
+       if (currentComponentIndex() != (int)nComponentInBuffer())
 	 return 0;
 
        // Make sure that the buffer pointer is correct
-       if (pd_buf.WrMessageAlreadyWritten() != pd_curr_startpos) {
+       if ((int)pd_buf.WrMessageAlreadyWritten() != pd_curr_startpos) {
 	 // A previous write has been done for this component
 	 // Since we cannot remove things that have been written,
 	 // the component's value can only be write into pd_components.
@@ -1047,7 +1051,7 @@ dynAnyP::nextComponent()
     case ReadInProgress:
       // Make sure that the pointer is correct and is the same
       // state as when it is in dynAnyP::Ready state
-      if (internal_buffer_getpos(pd_buf) != pd_curr_startpos) {
+      if ((int)internal_buffer_getpos(pd_buf) != pd_curr_startpos) {
 	internal_buffer_setpos(pd_buf,pd_curr_startpos);
       }
 
@@ -1062,7 +1066,7 @@ dynAnyP::nextComponent()
       // falls through
     case ReadCompleted:
       pd_curr_index++;
-      if (pd_curr_index >= totalComponents()) {
+      if (pd_curr_index >= (int)totalComponents()) {
 	pd_curr_index = -1;
 	pd_state = Invalid;
 	return 0;
@@ -1077,7 +1081,7 @@ dynAnyP::nextComponent()
       // A previous write has not been completed properly.
       // The next beginWriteComponent() will detect this.
       pd_curr_index++;
-      if (pd_curr_index >= totalComponents()) {
+      if (pd_curr_index >= (int)totalComponents()) {
 	pd_curr_index = -1;
 	pd_state = Invalid;
 	return 0;
@@ -1087,7 +1091,7 @@ dynAnyP::nextComponent()
 
     case WriteCompleted:
       pd_curr_index++;
-      if (pd_curr_index >= totalComponents()) {
+      if (pd_curr_index >= (int)totalComponents()) {
 	pd_curr_index = -1;
 	pd_state = Invalid;
 	return 0;
@@ -1830,7 +1834,7 @@ internal_union_value_to_index(CORBA::TypeCode_ptr tc, dynAnyP::Bval v,
 
 
   CORBA::Long defaultindex = tc->default_index();
-  CORBA::ULong total = tc->member_count();
+  CORBA::Long total = (CORBA::Long)tc->member_count();
   for (CORBA::Long index = 0; index < total; index++)
     {
       if (index == defaultindex) continue;
