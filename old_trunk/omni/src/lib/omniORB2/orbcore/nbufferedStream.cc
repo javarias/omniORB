@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.2  1997/01/08  18:15:21  ewc
+// Added work-around for Windows NT / Visual C++ 4.2 nested class bug
+//
 // Revision 1.1  1996/10/10  14:37:53  sll
 // Initial revision
 //
@@ -39,8 +42,8 @@ NetBufferedStream::NetBufferedStream(Strand *s,
   pd_strand = s;
   pd_RdLock = Rdlock;
   pd_WrLock = Wrlock;
-  rewind_inb_mkr((int)omniORB::max_alignment);
-  rewind_outb_mkr((int)omniORB::max_alignment);
+  rewind_inb_mkr((int)omni::max_alignment);
+  rewind_outb_mkr((int)omni::max_alignment);
   pd_rdmsg_size = pd_wrmsg_size = pd_read = pd_written = 0;
   return;
 }
@@ -61,14 +64,14 @@ NetBufferedStream::NetBufferedStream(Rope *r,
 	  if (Rdlock) RdUnlock();
 	  if (Wrlock) WrUnlock();
 	  throw omniORB::fatalException(__FILE__,__LINE__,
-	      "omniORB::NetBufferedStream::NetbufferedStream() cannot allocate the requested buffer size.");
+	      "NetBufferedStream::NetbufferedStream() cannot allocate the requested buffer size.");
 	}
     }
   pd_ideal_buf_size = Bufsize;
   pd_RdLock = Rdlock;
   pd_WrLock = Wrlock;
-  rewind_inb_mkr((int)omniORB::max_alignment);
-  rewind_outb_mkr((int)omniORB::max_alignment);
+  rewind_inb_mkr((int)omni::max_alignment);
+  rewind_outb_mkr((int)omni::max_alignment);
   pd_rdmsg_size = pd_wrmsg_size = pd_read = pd_written = 0;
   return;
 }
@@ -99,11 +102,11 @@ NetBufferedStream::get_char_array(CORBA::Char *b,int size) {
     pd_strand->receive_and_copy(s);
     pd_read += size;
     int newalignment = current_inb_alignment() + size;
-    newalignment = newalignment &((int)omniORB::max_alignment - 1);
-    rewind_inb_mkr((newalignment)?newalignment:(int)omniORB::max_alignment);
+    newalignment = newalignment &((int)omni::max_alignment - 1);
+    rewind_inb_mkr((newalignment)?newalignment:(int)omni::max_alignment);
   }
   else {
-    char * p = (char *)align_and_get_bytes(omniORB::ALIGN_1,size);
+    char * p = (char *)align_and_get_bytes(omni::ALIGN_1,size);
     memcpy((void *)b,p,size);
   }
   return;
@@ -127,11 +130,11 @@ NetBufferedStream::put_char_array(const CORBA::Char *b,int size) {
     pd_strand->reserve_and_copy(s);
     pd_written += size;
     int newalignment = current_outb_alignment() + size;
-    newalignment = newalignment &((int)omniORB::max_alignment - 1);
-    rewind_outb_mkr((newalignment)?newalignment:(int)omniORB::max_alignment);
+    newalignment = newalignment &((int)omni::max_alignment - 1);
+    rewind_outb_mkr((newalignment)?newalignment:(int)omni::max_alignment);
   }
   else {
-    void *p = align_and_put_bytes(omniORB::ALIGN_1,size);
+    void *p = align_and_put_bytes(omni::ALIGN_1,size);
     memcpy(p,(void *)b,size);
   }
   return;
@@ -175,7 +178,7 @@ NetBufferedStream::reserve(size_t minimum) {
 
   b = pd_strand->reserve(bufsize,0,current_outb_alignment());
   pd_outb_mkr = b.buffer;
-  pd_outb_end = (void *) ((omniORB::ptr_arith_t)pd_outb_mkr + b.size);
+  pd_outb_end = (void *) ((omni::ptr_arith_t)pd_outb_mkr + b.size);
   pd_written += b.size;
 
   if (b.size < minimum) {
@@ -184,7 +187,7 @@ NetBufferedStream::reserve(size_t minimum) {
     giveback_reserved();
     b = pd_strand->reserve(minimum,1,current_outb_alignment());
     pd_outb_mkr = b.buffer;
-    pd_outb_end = (void *) ((omniORB::ptr_arith_t)pd_outb_mkr + b.size);
+    pd_outb_end = (void *) ((omni::ptr_arith_t)pd_outb_mkr + b.size);
     pd_written += b.size;
   }
   return;
@@ -198,8 +201,8 @@ NetBufferedStream::giveback_reserved(CORBA::Boolean transmit) {
   ensure_wrlocked();
   int oldalignment = current_outb_alignment();
 
-  pd_strand->giveback_reserved((omniORB::ptr_arith_t)pd_outb_end - 
-			       (omniORB::ptr_arith_t)pd_outb_mkr, transmit);
+  pd_strand->giveback_reserved((omni::ptr_arith_t)pd_outb_end - 
+			       (omni::ptr_arith_t)pd_outb_mkr, transmit);
   pd_written = WrMessageAlreadyWritten();
   rewind_outb_mkr(oldalignment);
   return;
@@ -238,7 +241,7 @@ NetBufferedStream::receive(size_t minimum) {
 
   b = pd_strand->receive(bufsize,0,current_inb_alignment());
   pd_inb_mkr = b.buffer;
-  pd_inb_end = (void *) ((omniORB::ptr_arith_t)pd_inb_mkr + b.size);
+  pd_inb_end = (void *) ((omni::ptr_arith_t)pd_inb_mkr + b.size);
   pd_read += b.size;
 
   if (b.size < minimum) {
@@ -247,7 +250,7 @@ NetBufferedStream::receive(size_t minimum) {
     giveback_received();
     b = pd_strand->receive(minimum,1,current_inb_alignment());
     pd_inb_mkr = b.buffer;
-    pd_inb_end = (void *) ((omniORB::ptr_arith_t)pd_inb_mkr + b.size);
+    pd_inb_end = (void *) ((omni::ptr_arith_t)pd_inb_mkr + b.size);
     pd_read += b.size;
   }
   return;
@@ -261,8 +264,8 @@ NetBufferedStream::giveback_received() {
   ensure_rdlocked();
   int oldalignment = current_inb_alignment();
 
-  pd_strand->giveback_received((omniORB::ptr_arith_t)pd_inb_end -
-			       (omniORB::ptr_arith_t)pd_inb_mkr);
+  pd_strand->giveback_received((omni::ptr_arith_t)pd_inb_end -
+			       (omni::ptr_arith_t)pd_inb_mkr);
   pd_read = RdMessageAlreadyRead();
   rewind_inb_mkr(oldalignment);
   return;
@@ -271,29 +274,29 @@ NetBufferedStream::giveback_received() {
 void
 
 NetBufferedStream::rewind_inb_mkr(int oldalignment) {
-  pd_inb_end = pd_inb_mkr = (void *) ((omniORB::ptr_arith_t) oldalignment);
+  pd_inb_end = pd_inb_mkr = (void *) ((omni::ptr_arith_t) oldalignment);
   return;
 }
 
 void
 
 NetBufferedStream::rewind_outb_mkr(int oldalignment) {
-  pd_outb_end = pd_outb_mkr = (void *)((omniORB::ptr_arith_t) oldalignment);
+  pd_outb_end = pd_outb_mkr = (void *)((omni::ptr_arith_t) oldalignment);
   return;
 }
 
 int
 
 NetBufferedStream::current_outb_alignment() {
-  int align = (omniORB::ptr_arith_t)pd_outb_mkr & ((int)omniORB::max_alignment - 1);
-  return ((align) ? align : (int)omniORB::max_alignment);
+  int align = (omni::ptr_arith_t)pd_outb_mkr & ((int)omni::max_alignment - 1);
+  return ((align) ? align : (int)omni::max_alignment);
 }
 
 int
 
 NetBufferedStream::current_inb_alignment() {
-  int align = (omniORB::ptr_arith_t)pd_inb_mkr & ((int)omniORB::max_alignment - 1);
-  return ((align) ? align : (int)omniORB::max_alignment);
+  int align = (omni::ptr_arith_t)pd_inb_mkr & ((int)omni::max_alignment - 1);
+  return ((align) ? align : (int)omni::max_alignment);
 }
 
 
@@ -322,7 +325,7 @@ void
 NetBufferedStream::RdLock() {
   if (!pd_RdLock) {
     Strand_Sync::RdLock();
-    rewind_inb_mkr((int)omniORB::max_alignment);
+    rewind_inb_mkr((int)omni::max_alignment);
     pd_RdLock = 1;
   }
   return;
@@ -344,7 +347,7 @@ void
 NetBufferedStream::WrLock() {
   if (!pd_WrLock) {
     Strand_Sync::WrLock();
-    rewind_outb_mkr((int)omniORB::max_alignment);
+    rewind_outb_mkr((int)omni::max_alignment);
     pd_WrLock = 1;
   }
   return;
@@ -378,7 +381,7 @@ NetBufferedStream::skip(CORBA::ULong size)
       size_t nbytes = size;
       if (nbytes > pd_strand->max_receive_buffer_size())
 	nbytes = pd_strand->max_receive_buffer_size();
-      (void) align_and_get_bytes(omniORB::ALIGN_1,nbytes);
+      (void) align_and_get_bytes(omni::ALIGN_1,nbytes);
       size -= nbytes;
     }
   return;
@@ -388,7 +391,7 @@ size_t
 
 NetBufferedStream::WrMessageAlreadyWritten() const
 {
-  return (pd_written - ((omniORB::ptr_arith_t)pd_outb_end - (omniORB::ptr_arith_t)pd_outb_mkr));
+  return (pd_written - ((omni::ptr_arith_t)pd_outb_end - (omni::ptr_arith_t)pd_outb_mkr));
 }
 
 size_t
@@ -402,7 +405,7 @@ size_t
 
 NetBufferedStream::RdMessageAlreadyRead() const
 {
-  return (pd_read - ((omniORB::ptr_arith_t)pd_inb_end - (omniORB::ptr_arith_t)pd_inb_mkr));
+  return (pd_read - ((omni::ptr_arith_t)pd_inb_end - (omni::ptr_arith_t)pd_inb_mkr));
 }
 
 size_t

@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.2  1997/02/04 16:35:11  sll
+  string_alloc() should allocate len+1 chars.
+
   Revision 1.1  1997/01/08 17:26:01  sll
   Initial revision
 
@@ -164,7 +167,7 @@ CORBA::String_member::NP_alignedSize(size_t initialoffset) const
 {
   if (!_ptr)
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-  size_t alignedsize = omniORB::align_to(initialoffset,omniORB::ALIGN_4);
+  size_t alignedsize = omni::align_to(initialoffset,omni::ALIGN_4);
   alignedsize += 4 + strlen((char *)_ptr) + 1;
   return alignedsize;
 }

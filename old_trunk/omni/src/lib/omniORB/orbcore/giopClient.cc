@@ -11,6 +11,10 @@
  
 /*
   $Log$
+// Revision 1.2  1997/01/13  15:01:59  sll
+// If the reply message size in the header is too large, throw a COMM_FAILURE
+// instead of omniORB::fatalException.
+//
   Revision 1.1  1997/01/08 17:26:01  sll
   Initial revision
 
@@ -57,24 +61,24 @@ GIOP_C::RequestHeaderSize(const size_t objkeysize, const size_t opnamesize)
   msgsize += sizeof(CORBA::ULong); // XXX 0 length service context
 
   // RequestHeader.request_id
-  // msgsize = omniORB::align_to(msgsize,omniORB::ALIGN_4);
+  // msgsize = omni::align_to(msgsize,omni::ALIGN_4);
   msgsize += sizeof(CORBA::ULong);
 
   // RequestHeader.response_expected
-  // msgsize = omniORB::align_to(msgsize,omniORB::ALIGN_1);
+  // msgsize = omni::align_to(msgsize,omni::ALIGN_1);
   msgsize += sizeof(CORBA::Boolean);
 
   // RequestHeader.object_key
-  msgsize = omniORB::align_to(msgsize,omniORB::ALIGN_4);
+  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
   msgsize += sizeof(CORBA::ULong) + objkeysize;
   
   // RequestHeader.operation
-  msgsize = omniORB::align_to(msgsize,omniORB::ALIGN_4);
+  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
   msgsize += sizeof(CORBA::ULong) + opnamesize;
 
   // RequestHeader.requesting_principal
-  msgsize = omniORB::align_to(msgsize,omniORB::ALIGN_4);
-  msgsize += sizeof(CORBA::ULong) + omniORB::myPrincipalID.length();
+  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
+  msgsize += sizeof(CORBA::ULong) + omni::myPrincipalID.length();
 
   return msgsize;
 }
@@ -127,11 +131,11 @@ GIOP_C::InitialiseRequest(const void          *objkey,
 
   put_char_array((CORBA::Char *) opname,opnamesize);
 
-  CORBA::ULong a = omniORB::myPrincipalID.length();
+  CORBA::ULong a = omni::myPrincipalID.length();
   operator>>= (a,*this);
 
-  put_char_array((CORBA::Char *) omniORB::myPrincipalID.NP_data(),
-		 omniORB::myPrincipalID.length());
+  put_char_array((CORBA::Char *) omni::myPrincipalID.NP_data(),
+		 omni::myPrincipalID.length());
   return;
 }
 
@@ -155,7 +159,7 @@ GIOP_C::ReceiveReply()
     return GIOP::NO_EXCEPTION;
   }
   
-  RdMessageSize(0,omniORB::myByteOrder);
+  RdMessageSize(0,omni::myByteOrder);
 
   MessageHeader::HeaderType hdr;
   get_char_array((CORBA::Char *)hdr,sizeof(MessageHeader::HeaderType));
@@ -177,7 +181,7 @@ GIOP_C::ReceiveReply()
 
   CORBA::ULong msgsize;
   msgsize <<= *this;
-  if (hdr[6] != omniORB::myByteOrder) {
+  if (hdr[6] != omni::myByteOrder) {
     msgsize =  ((((msgsize) & 0xff000000) >> 24) | 
 		(((msgsize) & 0x00ff0000) >> 8)  | 
 		(((msgsize) & 0x0000ff00) << 8)  | 
