@@ -29,6 +29,13 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:21:02  sll
+  Updated to use the new cdrStream abstraction.
+  Replace include/omniORB3 with include/omniORB4.
+  Changed the signatures of the createObjRef() functions to accept the
+  omniIOR* argument.
+  Removed the obsoluted omniRopeAndKey.
+
   Revision 1.2.2.1  2000/07/17 10:35:35  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -153,6 +160,7 @@
 #include <omniORB4/seqTemplatedecls.h>
 #include <omniORB4/templatedecls.h>
 #include <omniORB4/stringtypes.h>
+#include <omniORB4/wstringtypes.h>
 #ifndef __IOP_hh_EXTERNAL_GUARD__
 #include <omniORB4/IOP.h>
 #define __IOP_hh_EXTERNAL_GUARD__
