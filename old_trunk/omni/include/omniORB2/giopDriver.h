@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10  1999/06/18 21:14:44  sll
+  Updated copyright notice.
+
   Revision 1.9  1999/06/18 20:36:18  sll
   Replaced _LC_attr with _core_attr.
 
@@ -370,6 +373,14 @@ public:
   //
   // If an outgoing message exceeds this limit, the CORBA::MARSHAL exception
   // will be raised.
+
+  class terminateProcessing {
+  public:
+    // This exception is thrown when the processing of the current giop
+    // request should terminte.
+    terminateProcessing() {}
+    ~terminateProcessing() {}
+  };
 
 private:
   State pd_state;
