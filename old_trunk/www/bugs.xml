@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB bugs" head="omniORB bugs" id="bugs">
+
+This page should list the bugs that have been fixed in the stable tree
+since the last major release. It's not here yet, though. If you want
+to make sure you've got the latest fixes, just get the <a
+href="development.html">development version</a> from CVS or a
+snapshot.
+
+</page>

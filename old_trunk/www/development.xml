@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB development" head="omniORB development" id="development">
+
+<p>
+omniORB development happens in CVS. See the omniORB <a
+href="http://sourceforge.net/cvs/?group_id=51138">CVS page</a> for
+generic instructions, or <a
+href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/omniorb/">browse</a>
+the repository.
+</p>
+
+<p>
+<em>All</em> omniORB development happens in branches, so you must
+always specify a branch tag when you do a checkout. The trunk of the
+tree always contains the most recent stable release, so you won't see
+much change there.
+</p>
+
+<h2>omniORB core</h2>
+
+<p>
+The omniORB core libraries and tools are in the <code>omni</code> CVS
+package. The branches are
+</p>
+
+  <table border="1" align="center" cellpadding="5">
+    <tr><td><code>omni4_0_develop</code></td><td>omniORB 4.0.x development</td></tr>
+    <tr><td><code>omni3_develop</code></td><td>omniORB 3.0.x development</td></tr>
+    <tr><td><code>omni2_8_develop</code></td><td>Bug fixes for omniORB 2.8.0</td></tr>
+  </table>
+
+<h2>omniORBpy</h2>
+
+<p>
+omniORB for Python has its own CVS package, named
+<code>omniORBpy</code>. You must match the omniORBpy version you use
+with the core omniORB version you have. omniORBpy 1.x goes with
+omniORB 3.0.x; omniORBpy 2.x goes with omniORB 4.0.x.
+</p>
+
+<p>
+The branches in the <code>omniORBpy</code> package are
+</p>
+
+  <table border="1" align="center" cellpadding="5">
+    <tr><td><code>omnipy2_develop</code></td><td>omniORBpy 2.x development</td></tr>
+    <tr><td><code>omnipy1_develop</code></td><td>omniORBpy 1.x development</td></tr>
+  </table>
+
+<p>
+With omniORBpy 1.x you must checkout the <code>omniORBpy</code>
+package within the <code>src/lib</code> directory of an omniORBpy
+3.0.x tree. With omniORBpy 2.x, you must still do that if you use the
+old build system, but you can check it out anywhere you like if you
+use the autoconf based build.
+</p>
+
+</page>

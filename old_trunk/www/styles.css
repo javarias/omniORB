@@ -1,0 +1,7 @@
+body      { background: white; color: black}
+a:link    { color: #0000ff }
+a:visited { color: #000080 }
+a:active  { color: #ff0000 }
+.header   { background: #e0e0f0; font-size: 1.5em }
+.sidebar  { background: #c0c0e0 }
+.main     { background: #e0e0f0 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB download" head="omniORB download" id="download">
+
+<p>
+You can get the latest versions of omniORB from the <a
+href="http://sourceforge.net/project/showfiles.php?group_id=51138">SourceForge
+download page</a>.
+</p>
+
+<p>
+For historical versions, and all sorts of weird and wonderful files,
+try the old <a
+href="ftp://ftp.uk.research.att.com/pub/omniORB/">AT&amp;T Labs
+Cambridge FTP site</a>, now hosted at the <a
+href="http://www-lce.eng.cam.ac.uk/">Laboratory for Communications
+Engineering</a>.
+</p>
+
+</page>

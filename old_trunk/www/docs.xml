@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB documentation" head="Documentation" id="docs">
+
+<h2>omniORB 3.0.x documentation</h2>
+
+<ul>
+  <li>omniORB user's guide
+    <ul>
+      <li>
+        <a href="omni30/omniORB/">html</a>,
+        <a href="omni30/omniORB.pdf">pdf</a>,
+        <a href="omni30/omniORB.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omni thread abstraction
+    <ul>
+      <li>
+	<a href="omni30/omnithread.html">html</a>,
+	<a href="omni30/omnithread.pdf">pdf</a>,
+	<a href="omni30/omnithread.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniNames
+    <ul>
+      <li>
+	<a href="omni30/omniNames.html">html</a>,
+	<a href="omni30/omniNames.pdf">pdf</a>,
+	<a href="omni30/omniNames.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniORB utilities
+    <ul>
+      <li>
+	<a href="omni30/utilities.html">html</a>,
+	<a href="omni30/utilities.pdf">pdf</a>,
+	<a href="omni30/utilities.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniidl for back-end authors
+    <ul>
+      <li>
+	<a href="omni30/omniidl.html">html</a>,
+	<a href="omni30/omniidl.pdf">pdf</a>,
+	<a href="omni30/omniidl.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+</ul>
+
+<h2>omniORB for Python 1.x documentation</h2>
+
+<ul>
+  <li>omniORBpy user's guide
+    <ul>
+      <li>
+	<a href="omnipy1/omniORBpy/">html</a>,
+	<a href="omnipy1/omniORBpy.pdf">pdf</a>,
+	<a href="omnipy1/omniORBpy.ps">PostScript</a>.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</page>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB links" head="omniORB links" id="links">
+
+<h2>Pages about omniORB</h2>
+
+<ul>
+  <li>omniORB's <a
+      href="http://sourceforge.net/projects/omniorb/">SourceForge
+      Project Page</a>.
+  </li>
+  <li>The <a href="http://sourceforge.net/cvs/?group_id=51138">CVS
+      repository</a>.
+  </li>
+</ul>
+
+<h2>Services and tools</h2>
+
+<ul>
+  <li><a
+      href="http://www.research.att.com/~ready/omniNotify/index.html">omniNotify</a>,
+      a scalable implementation of the CORBA Notification Service.
+  </li>
+  <li><a
+      href="http://www.uk.research.att.com/omniORB/contribution/omniEvents.html">omniEvents</a>,
+      an implementation of the CORBA Event Service. This ought to find
+      a new home...
+  </li>
+  <li><a href="http://sourceforge.net/projects/omniifr/">omniifr</a>,
+      an Interface Repository for omniORB.  Looking for developers to
+      maintain it.
+  </li>
+  <li><a href="http://www.ethereal.com/">Ethereal</a>, a network
+      protocol analyser that can decode GIOP traffic. It uses omniidl
+      to generate IDL-specific message decoders.
+  </li>
+  <li><a href="http://rgruet.free.fr/ipy.html">ipy</a>, a tool to
+      build Python implementation skeletons from IDL.
+  </li>
+  <li>A few more things are listed at the old <a
+      href="http://www.uk.research.att.com/omniORB/contribution/index.html">omniORB
+      contributions page</a>, but many of the links are dead.
+  </li>
+</ul>
+
+<h2>Related links</h2>
+
+<ul>
+  <li><a href="http://www.xorl.org/">www.xorl.org</a>, has information
+      about the people who used to work at ORL / AT&amp;T Labs
+      Cambridge.
+  </li>
+  <li>Many people connected to ORL / AT&amp;T Labs Cambridge also have
+      connections with the <a
+      href="http://www-lce.eng.cam.ac.uk/">Laboratory for
+      Communications Engineering</a>.
+  </li>
+  <li>An <a href="http://www.uk.research.att.com/">archive</a> of some
+      of the material on the AT&amp;T Labs Cambridge web site,
+      including the <a
+      href="http://www.uk.research.att.com/omniORB/omniORB.html">omniORB
+      bits</a>.
+  </li>
+  <li>Benchmarks at <a
+      href="http://nenya.ms.mff.cuni.cz/projects.phtml?p=corbac&amp;q=3">Charles
+      University in Prague</a> show that omniORB is very fast.
+  </li>
+</ul>
+
+</page>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB" head="Free High Performance ORB" id="index">
+
+<h2>Latest news</h2>
+
+<p>
+<ul>
+  <li>
+    22 May 2002 - SourceForge web pages installed.
+  </li>
+  <li>
+    24 April 2002 - AT&amp;T Laboratories Cambridge closed. omniORB is
+    now independent.
+  </li>
+</ul>
+</p>
+
+<h2>About omniORB</h2>
+
+<p>
+<b>omniORB</b> is a robust high performance CORBA ORB for C++ and
+Python. It is freely available under the terms of the GNU Lesser
+General Public License (for the libraries), and GNU General Public
+License (for the tools). It is one of only three ORBs to be awarded
+the Open Group's Open Brand for CORBA. This means that omniORB has
+been tested and certified CORBA 2.1 compliant. You can find out more
+about the branding program at the <a
+href="http://www.opengroup.org/regproducts/orm0.htm">Open Group</a>.
+</p>
+
+<p>
+You might want to read more about the <a href="history.html">history
+of omniORB</a>, or see a summary of <a href="features.html">omniORB's
+features</a>
+</p>
+
+<p>
+To get help with using omniORB, or to keep up with the latest
+developments, subscribe to the <a href="list.html">omniORB mailing
+list</a>.
+</p>
+
+<hr width="80%"/>
+
+<p>
+Duncan Grisby <a href="mailto:duncan@grisby.org">(duncan@grisby.org)</a>.
+</p>
+
+</page>
