@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/12/03 18:48:14  dpg1
+  Clean up strange indentation.
+
   Revision 1.1.4.6  2001/09/20 13:26:13  dpg1
   Allow ORB_init() after orb->destroy().
 
@@ -213,11 +216,14 @@ private:
   //
   // Callback functions used by giopWorker
   //
-  void notifyWkDone(giopWorker*,CORBA::Boolean exit_on_error);
+  CORBA::Boolean notifyWkDone(giopWorker*,CORBA::Boolean exit_on_error);
   // Callback by giopWorker when it finishes one upcall.
   //
   // The flag exit_on_error indicates whether the task ends because it
   // was told or trigged by an error.
+  //
+  // Returns true if the worker should continue processing another
+  // upcall; false if it should finish.
   //
   // Thread Safety preconditions:
   //    Caller MUST NOT hold pd_lock. The lock is acquired by this method.
@@ -301,6 +307,8 @@ private:
   connectionState* csInsert(giopStrand*);
 
   void removeConnectionAndWorker(giopWorker* conn);
+  // Thread Safety preconditions:
+  //    Caller MUST NOT hold pd_lock. The lock is acquired by this method.
 
   giopServer();
 };

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.20  2001/10/17 16:33:28  dpg1
+  New downcast mechanism for cdrStreams.
+
   Revision 1.1.4.19  2001/09/26 10:48:11  sll
   Fixed a bug which causes problems when, in a single recv(), the ORB read
   more than one GIOP messages into its buffer and the last of these messages
@@ -731,7 +734,14 @@ giopStream::ensureSaneHeader(const char* filename, CORBA::ULong lineno,
     // never reaches here.
   }
   // Get the message size from the buffer
-  CORBA::ULong msz = *(CORBA::ULong*)(hdr + 8);
+  CORBA::ULong msz;
+
+  // check for 8 byte alignment 
+  if (((long)hdr & 7) == 0)
+    msz = *(CORBA::ULong*)(hdr + 8);
+  else
+    memcpy(&msz, hdr + 8, sizeof(CORBA::ULong));
+
   if ((hdr[6] & 0x1) != _OMNIORB_HOST_BYTE_ORDER_) {
     CORBA::ULong bsz = msz;
     msz = ((((bsz) & 0xff000000) >> 24) |

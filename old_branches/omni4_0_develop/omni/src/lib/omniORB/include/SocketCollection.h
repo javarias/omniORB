@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/01/15 16:38:11  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.1.2.5  2001/12/03 13:39:54  dpg1
   Explicit socket shutdown flag for Windows.
 
@@ -247,6 +251,7 @@ public:
   // set.
   // If data_in_buffer == 1, treat this socket as if there are
   // data available from the connection already.
+  // If hold_lock == 1, pd_fdset_lock is already held.
 
   void clearSelectable(SocketHandle_t);
   // Indicates that this connection need not be watched any more.

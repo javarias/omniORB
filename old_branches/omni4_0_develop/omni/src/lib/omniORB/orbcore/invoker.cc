@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2002/01/09 11:35:23  dpg1
+  Remove separate omniAsyncInvoker library to save library overhead.
+
   Revision 1.1.2.7  2001/11/13 14:14:03  dpg1
   AsyncInvoker properly waits for threads to finish.
 
@@ -140,7 +143,8 @@ public:
 	pd_task->execute();
       }
       catch(...) {
-	omniORB::logs(1, "AsyncInvoker: Warning: unexpected exception caught while executing a task.");
+	omniORB::logs(1, "AsyncInvoker: Warning: unexpected exception "
+		      "caught while executing a task.");
       }
       pd_task = 0;
       pd_pool->pd_lock->lock();
@@ -149,8 +153,7 @@ public:
 	pd_pool->pd_nthreads++;
       }
 
-      if (pd_pool->pd_nthreads >= pd_pool->pd_maxthreads ||
-	  ( immediate && pd_pool->pd_idle_threads != 0 ) ) {
+      if (pd_pool->pd_nthreads >= pd_pool->pd_maxthreads) {
 	// No need to keep this thread
 	break;
       }
@@ -230,15 +233,20 @@ omniAsyncInvoker::insert(omniTask* t) {
 	  try {
 	    pd_nthreads++;
 	    pd_totalthreads++;
-	    omniAsyncWorker* w = new omniAsyncWorker(this,0);
+	    omniAsyncWorker* w = new omniAsyncWorker(this,t);
+	    OMNIORB_ASSERT(w);
 	  }
 	  catch (...) {
 	    // Cannot start a new thread.
 	    pd_nthreads--;
 	    pd_totalthreads--;
+	    omniORB::logs(10, "Exception trying to start new thread.");
+	    t->enq(pd_anytime_tq);
 	  }
 	}
-	t->enq(pd_anytime_tq);
+	else {
+	  t->enq(pd_anytime_tq);
+	}
       }
       break;
     }
@@ -262,6 +270,7 @@ omniAsyncInvoker::insert(omniTask* t) {
 	catch(...) {
 	  // Cannot start a new thread.
 	  pd_totalthreads--;
+	  omniORB::logs(10, "Exception trying to start new thread.");
 	  return 0;
 	}
       }
