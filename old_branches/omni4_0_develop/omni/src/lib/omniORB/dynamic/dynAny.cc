@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.11.2.13  2001/10/17 18:51:50  dpg1
+   Fix inevitable Windows problems.
+
    Revision 1.11.2.12  2001/10/17 16:44:02  dpg1
    Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -1107,6 +1110,19 @@ DynFixedImpl::set_to_initial_value()
   set_value("0");
 }
 
+void
+DynFixedImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynFixedImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
+}
+
+
 void*
 DynFixedImpl::_ptrToObjRef(const char* repoId)
 {
@@ -1253,6 +1269,18 @@ void
 DynEnumImpl::set_to_initial_value()
 {
   set_as_ulong(0);
+}
+
+void
+DynEnumImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynEnumImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
 }
 
 void*
@@ -2562,6 +2590,18 @@ DynStructImpl::prepareSequenceRead(CORBA::TCKind kind)
 }
 
 
+void
+DynStructImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynStructImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
+}
+
 void*
 DynStructImpl::_ptrToObjRef(const char* repoId)
 {
@@ -2964,6 +3004,18 @@ DynUnionEnumDisc::set_value(TypeCode_union::Discriminator v)
   CORBA::ULong(v) >>= pd_buf;
   setValid();
   if( pd_union )  pd_union->discriminatorHasChanged();
+}
+
+void
+DynUnionEnumDisc::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynUnionEnumDisc::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
 }
 
 void*
@@ -3863,6 +3915,18 @@ DynUnionImpl::discriminatorHasChanged()
   pd_member_kind = TypeCode_base::NP_expand(ToTcBase(mtc))->NP_kind();
 }
 
+void
+DynUnionImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynUnionImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
+}
+
 void*
 DynUnionImpl::_ptrToObjRef(const char* repoId)
 {
@@ -4177,6 +4241,18 @@ DynSequenceImpl::prepareSequenceRead(CORBA::TCKind kind)
 }
 
 
+void
+DynSequenceImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynSequenceImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
+}
+
 void*
 DynSequenceImpl::_ptrToObjRef(const char* repoId)
 {
@@ -4399,6 +4475,18 @@ DynArrayImpl::prepareSequenceRead(CORBA::TCKind kind)
 #endif
 }
 
+
+void
+DynArrayImpl::_NP_incrRefCount()
+{
+  DynAnyImplBase::_NP_incrRefCount();
+}
+
+void
+DynArrayImpl::_NP_decrRefCount()
+{
+  DynAnyImplBase::_NP_decrRefCount();
+}
 
 void*
 DynArrayImpl::_ptrToObjRef(const char* repoId)
