@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/11/09 12:27:58  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.2.2.2  2000/09/27 18:02:56  sll
   Updated to use the new cdrStream abstraction.
 
@@ -1299,8 +1302,8 @@ omniOrbPOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
 
   if( omniORB::traceInvocations ) {
     omniORB::logger l;
-    l << "Dispatching remote call \'" << giop_s.invokeInfo().operation() << "\' to: "
-      << id << '\n';
+    l << "Dispatching remote call \'" << giop_s.invokeInfo().operation()
+      << "\' to: " << id << '\n';
   }
 
   if( !id->servant()->_dispatch(giop_s) ) {
@@ -2381,8 +2384,24 @@ omniOrbPOA::dispatch_to_sa(GIOP_S& giop_s, const CORBA::Octet* key,
     servant_activator_lock.unlock();
     exitAdapter();
     throw omniORB::LOCATION_FORWARD(
-			    CORBA::Object::_duplicate(fr.forward_reference),0);
+	               CORBA::Object::_duplicate(fr.forward_reference), 0);
   }
+#ifndef HAS_Cplusplus_catch_exception_by_base
+#define RETHROW_EXCEPTION(name)  \
+  catch (CORBA::name& ex) {  \
+    servant_activator_lock.unlock();  \
+    exitAdapter();  \
+    throw;  \
+  }
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(RETHROW_EXCEPTION)
+#undef RETHROW_EXCEPTION
+#else
+  catch(CORBA::SystemException&) {
+    servant_activator_lock.unlock();
+    exitAdapter();
+    throw;
+  }
+#endif
   catch(...) {
     servant_activator_lock.unlock();
     exitAdapter();
@@ -2470,8 +2489,18 @@ omniOrbPOA::dispatch_to_sl(GIOP_S& giop_s, const CORBA::Octet* key,
   PortableServer::Servant servant;
   PortableServer::ServantLocator::Cookie cookie = 0;
   try {
-    servant = sl->preinvoke(oid, this, giop_s.invokeInfo().operation(), cookie);
+    servant = sl->preinvoke(oid, this, giop_s.invokeInfo().operation(),
+			    cookie);
+#ifndef HAS_Cplusplus_catch_exception_by_base
+#define RETHROW_EXCEPTION(name) catch(CORBA::name&) { exitAdapter(); throw; }
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(RETHROW_EXCEPTION)
+#undef RETHROW_EXCEPTION
+#else
+  catch(CORBA::SystemException&) {
+    exitAdapter();
+    throw;
   }
+#endif
   catch(PortableServer::ForwardRequest& fr) {
     exitAdapter();
     throw omniORB::LOCATION_FORWARD(
