@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.6  2004/03/24 22:28:50  dgrisby
+// TypeCodes / truncation for inherited state members were broken.
+//
 // Revision 1.1.2.5  2004/02/16 10:14:18  dgrisby
 // Use stream based copy for local calls.
 //
@@ -438,6 +441,7 @@ real_marshalPyObjectValue(cdrValueChunkStream& stream,
       CORBA::Long bases = PyTuple_GET_SIZE(baseIds);
       bases >>= stream;
       for (CORBA::Long i=0; i<bases; i++) {
+	stream.alignOutput(omni::ALIGN_4);
 	PyObject* id = PyTuple_GET_ITEM(baseIds, i);
 	pos = tracker->addRepoIds(id, stream.currentOutputPtr());
 	if (pos != -1)
