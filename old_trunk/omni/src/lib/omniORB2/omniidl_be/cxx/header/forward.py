@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  2000/01/17 17:02:14  djs
+# Constructed types in typedef fix
+#
 # Revision 1.4  2000/01/13 15:56:39  djs
 # Factored out private identifier prefix rather than hard coding it all through
 # the code.
@@ -49,8 +52,8 @@
 """Produce ancillary forward declarations for the header file"""
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, util, config, name
+from omniidl.be.cxx.header import template
 
 import forward
 
@@ -93,9 +96,7 @@ def visitUnion(node):
         scopedName = node.scopedName()
         fqname = env.nameToString(scopedName)
         guard_name = tyutil.guardName(scopedName)
-        stream.out("""\
-// Declare helper class for union type @fqname@
-class @private_prefix@_tcParser_unionhelper_@guard_name@;""",
+        stream.out(template.tcParser_unionHelper,
                    fqname = fqname, guard_name = guard_name,
                    private_prefix = config.privatePrefix())
 

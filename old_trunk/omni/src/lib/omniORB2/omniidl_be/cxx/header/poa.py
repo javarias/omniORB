@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/17 17:03:37  djs
+# Support for module continuations
+#
 # Revision 1.11  2000/01/13 14:16:30  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -72,10 +75,9 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, name, env, config, util
-
 from omniidl.be.cxx.header import tie
+from omniidl.be.cxx.header import template
 
 import poa
 
@@ -114,10 +116,7 @@ def visitModule(node):
     name = tyutil.mapID(node.identifier())
 
     if not(config.FragmentFlag()):
-        stream.out("""\
-_CORBA_MODULE @POA_prefix@@name@
-_CORBA_MODULE_BEG
-""",
+        stream.out(template.POA_module_begin,
                    name = name,
                    POA_prefix = POA_prefix())
         stream.inc_indent()
@@ -136,10 +135,7 @@ _CORBA_MODULE_BEG
 
     if not(config.FragmentFlag()):
         stream.dec_indent()
-        stream.out("""\
-_CORBA_MODULE_END
-
-""")
+        stream.out(template.POA_module_end)
     return
 
 def visitInterface(node):
@@ -157,19 +153,7 @@ def visitInterface(node):
     POA_name = POA_prefix() + iname
 
     # build the normal POA class first
-    stream.out("""\
-class @POA_name@ :
-  public virtual @impl_scopedID@,
-  public virtual PortableServer::ServantBase
-{
-public:
-  virtual ~@POA_name@();
-
-  inline @scopedID@_ptr _this() {
-    return (@scopedID@_ptr) _do_this(@scopedID@::_PD_repoId);
-  }
-};
-""",
+    stream.out(template.POA_interface,
                POA_name = POA_name,
                scopedID = scopedID,
                impl_scopedID = impl_scopedID)
