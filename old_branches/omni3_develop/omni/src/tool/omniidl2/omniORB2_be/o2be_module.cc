@@ -26,6 +26,9 @@
 
 /* 
    $Log$
+   Revision 1.15  1999/06/02 16:44:01  sll
+   Added support for -F flag.
+
    Revision 1.14  1999/03/11 16:26:11  djr
    Updated copyright notice
 
@@ -75,6 +78,9 @@
 #pragma hdrstop
 #endif
 
+#include <o2be_util.h>
+
+
 o2be_module::o2be_module(UTL_ScopedName *n, UTL_StrList *p)
                  : AST_Decl(AST_Decl::NT_module, n, p),
 		   UTL_Scope(AST_Decl::NT_module),
@@ -84,7 +90,7 @@ o2be_module::o2be_module(UTL_ScopedName *n, UTL_StrList *p)
 
 
 void
-o2be_module::produce_hdr(std::fstream &s)
+o2be_module::produce_hdr(std::fstream& s)
 {
   if (!(in_main_file()))
     return;
@@ -149,8 +155,52 @@ o2be_module::produce_hdr(std::fstream &s)
     {
       DEC_INDENT_LEVEL();
       s << "\n";
-      IND(s); s << "_CORBA_MODULE_END\n\n";
+      IND(s); s << "_CORBA_MODULE_END\n\n\n";
     }
+}
+
+
+void
+o2be_module::produce_poa_hdr(std::fstream& s)
+{
+  if( !in_main_file() )  return;
+
+  if( defined_in() != 0 &&
+      !(idl_global->compile_flags() & IDL_BE_GENERATE_FRAGMENT) ) {
+    StringBuf mod_name;
+    if( defined_in() == o2be_global::root() )
+      mod_name += "POA_";
+    mod_name += uqname();
+    IND(s); s << "_CORBA_MODULE " << mod_name.c_str() << "\n";
+    IND(s); s << "_CORBA_MODULE_BEG\n\n";
+    INC_INDENT_LEVEL();
+  }
+
+  UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+
+  while( !i.is_done() ) {
+    AST_Decl* decl = i.item();
+    i.next();
+    if( !decl->in_main_file() )  continue;
+
+    switch( decl->node_type() ) {
+    case AST_Decl::NT_module:
+      o2be_module::narrow_from_decl(decl)->produce_poa_hdr(s); 
+      break;
+    case AST_Decl::NT_interface:
+      o2be_interface::narrow_from_decl(decl)->produce_poa_hdr(s);
+      break;
+    case AST_Decl::NT_typedef:
+      o2be_typedef::narrow_from_decl(decl)->produce_poa_hdr(s);
+      break;
+    }
+  }
+
+  if( defined_in() != 0 &&
+      !(idl_global->compile_flags() & IDL_BE_GENERATE_FRAGMENT) ) {
+    DEC_INDENT_LEVEL();
+    IND(s); s << "_CORBA_MODULE_END\n\n\n";
+  }
 }
 
 
@@ -206,6 +256,30 @@ o2be_module::produce_skel(std::fstream &s)
       i.next();
     }
   return;
+}
+
+
+void
+o2be_module::produce_poa_skel(std::fstream& s)
+{
+  if( !in_main_file() )  return;
+
+  UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+
+  while( !i.is_done() ) {
+    AST_Decl* decl = i.item();
+    i.next();
+    if( !decl->in_main_file() )  continue;
+
+    switch( decl->node_type() ) {
+    case AST_Decl::NT_module:
+      o2be_module::narrow_from_decl(decl)->produce_poa_skel(s); 
+      break;
+    case AST_Decl::NT_interface:
+      o2be_interface::narrow_from_decl(decl)->produce_poa_skel(s);
+      break;
+    }
+  }
 }
 
 
@@ -298,6 +372,38 @@ o2be_module::produce_decls_at_global_scope_in_hdr(std::fstream& s)
       case AST_Decl::NT_interface:
 	o2be_interface::narrow_from_decl(decl)
 	  ->produce_decls_at_global_scope_in_hdr(s);
+	break;
+      default:
+	break;
+      }
+
+    }
+  }
+}
+
+
+void
+o2be_module::produce_defns_at_global_scope_in_hdr(std::fstream& s)
+{
+  if( !(in_main_file()) )  return;
+
+  UTL_ScopeActiveIterator i(this, UTL_Scope::IK_decls);
+
+  while( !i.is_done() ) {
+
+    AST_Decl* decl = i.item();
+    i.next();
+
+    if ((decl->in_main_file())) {
+
+      switch(decl->node_type()) {
+      case AST_Decl::NT_module:
+	o2be_module::narrow_from_decl(decl)
+	  ->produce_defns_at_global_scope_in_hdr(s); 
+	break;
+      case AST_Decl::NT_interface:
+	o2be_interface::narrow_from_decl(decl)
+	  ->produce_defns_at_global_scope_in_hdr(s);
 	break;
       default:
 	break;

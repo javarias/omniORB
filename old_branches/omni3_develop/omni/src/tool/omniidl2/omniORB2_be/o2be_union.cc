@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.31  1999/08/20 11:37:57  djr
+  Bug in generated MACRO -- too many )'s.
+
   Revision 1.30  1999/08/15 13:58:27  sll
   Updated for DEC C++ v6.0
 
@@ -125,11 +128,13 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
-#include <o2be_stringbuf.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
 #endif
+
+#include <o2be_util.h>
+
 
 static void
 produce_disc_value(std::fstream& s,AST_ConcreteType *t,AST_Expression *exp,
@@ -1027,7 +1032,7 @@ o2be_union::produce_hdr(std::fstream& s)
 
 
   IND(s); s << "\n";
-  IND(s); s << "size_t NP_alignedSize(size_t initialoffset) const;\n";
+  IND(s); s << "size_t _NP_alignedSize(size_t initialoffset) const;\n";
   IND(s); s << "void operator>>= (NetBufferedStream&) const;\n";
   IND(s); s << "void operator<<= (NetBufferedStream&);\n";
   IND(s); s << "void operator>>= (MemBufferedStream&) const;\n";
@@ -1252,7 +1257,7 @@ o2be_union::produce_skel(std::fstream& s)
   s << "\n";
 
   IND(s); s << "size_t\n";
-  IND(s); s << fqname() << "::NP_alignedSize(size_t initialoffset) const\n";
+  IND(s); s << fqname() << "::_NP_alignedSize(size_t initialoffset) const\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::ULong _msgsize = initialoffset;\n";
