@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2001/08/06 15:50:27  sll
+  In filterAndSortAddressList, make unix transport as the first choice if
+  available. This is just a temporary solution until we have table driven
+  transport selection.
+
   Revision 1.1.4.9  2001/08/03 17:41:21  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -73,10 +78,33 @@
 #include <objectAdapter.h>
 #include <exceptiondefs.h>
 #include <omniORB4/minorCode.h>
+#include <initialiser.h>
+#include <orbOptions.h>
+#include <orbParameters.h>
 
 #include <stdlib.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
+
+////////////////////////////////////////////////////////////////////////////
+//             Configuration options                                      //
+////////////////////////////////////////////////////////////////////////////
+CORBA::Boolean orbParameters::oneCallPerConnection = 1;
+//  1 means only one call can be in progress at any time per connection.
+//
+//  Valid values = 0 or 1
+
+CORBA::ULong orbParameters::maxGIOPConnectionPerServer = 5;
+//  The ORB could open more than one connections to a server
+//  depending on the number of concurrent invocations to the same
+//  server. This variable decide what is the maximum number of
+//  connections to use per server. This variable is read only once
+//  at ORB_init. If the number of concurrent invocations exceed this
+//  number, the extra invocations would be blocked until the
+//  the outstanding ones return.
+//
+//  Valid values = (n >= 1) 
+
 
 ///////////////////////////////////////////////////////////////////////
 RopeLink giopRope::ropes;
@@ -86,8 +114,8 @@ giopRope::giopRope(const giopAddressList& addrlist,
 		   const omnivector<CORBA::ULong>& preferred) :
   pd_refcount(0),
   pd_address_in_use(0),
-  pd_maxStrands(omniORB::maxTcpConnectionPerServer),
-  pd_oneCallPerConnection(omniORB::oneCallPerConnection),
+  pd_maxStrands(orbParameters::maxGIOPConnectionPerServer),
+  pd_oneCallPerConnection(orbParameters::oneCallPerConnection),
   pd_nwaiting(0),
   pd_cond(omniTransportLock)
 {
@@ -116,8 +144,8 @@ giopRope::giopRope(const giopAddressList& addrlist,
 giopRope::giopRope(giopAddress* addr,int initialRefCount) :
   pd_refcount(initialRefCount),
   pd_address_in_use(0),
-  pd_maxStrands(omniORB::maxTcpConnectionPerServer),
-  pd_oneCallPerConnection(omniORB::oneCallPerConnection),
+  pd_maxStrands(orbParameters::maxGIOPConnectionPerServer),
+  pd_oneCallPerConnection(orbParameters::oneCallPerConnection),
   pd_nwaiting(0),
   pd_cond(omniTransportLock)
 {
@@ -576,7 +604,7 @@ giopRope::filterAndSortAddressList(const giopAddressList& addrlist,
     }
   }
 
-  if (omniORB::offerBiDirectionalGIOP) {
+  if (orbParameters::offerBiDirectionalGIOP) {
     // XXX in future, we will be more selective as to which addresses will
     // use bidirectional.
     use_bidir = 1;
@@ -596,5 +624,92 @@ giopRope::filterAndSortAddressList(const giopAddressList& addrlist,
 
 
 }
+
+/////////////////////////////////////////////////////////////////////////////
+//            Handlers for Configuration Options                           //
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+class oneCallPerConnectionHandler : public orbOptions::Handler {
+public:
+
+  oneCallPerConnectionHandler() : 
+    orbOptions::Handler("oneCallPerConnection",
+			"oneCallPerConnection = 0 or 1",
+			1,
+			"-ORBoneCallPerConnection < 0 | 1 >") {}
+
+
+  void visit(const char* value) throw (orbOptions::BadParam) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    orbParameters::oneCallPerConnection = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),orbParameters::oneCallPerConnection,
+			     result);
+  }
+};
+
+static oneCallPerConnectionHandler oneCallPerConnectionHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
+class maxGIOPConnectionPerServerHandler : public orbOptions::Handler {
+public:
+
+  maxGIOPConnectionPerServerHandler() : 
+    orbOptions::Handler("maxGIOPConnectionPerServer",
+			"maxGIOPConnectionPerServer = n > 0",
+			1,
+			"-ORBmaxGIOPConnectionPerServer < n > 0 >") {}
+
+  void visit(const char* value) throw (orbOptions::BadParam) {
+
+    CORBA::ULong v;
+    if (!orbOptions::getULong(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_non_zero_ulong_msg);
+    }
+    orbParameters::maxGIOPConnectionPerServer = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVULong(key(),orbParameters::maxGIOPConnectionPerServer,
+			   result);
+  }
+
+};
+
+static maxGIOPConnectionPerServerHandler maxGIOPConnectionPerServerHandler_;
+
+
+/////////////////////////////////////////////////////////////////////////////
+//            Module initialiser                                           //
+/////////////////////////////////////////////////////////////////////////////
+
+class omni_giopRope_initialiser : public omniInitialiser {
+public:
+
+  omni_giopRope_initialiser() {
+    orbOptions::singleton().registerHandler(oneCallPerConnectionHandler_);
+    orbOptions::singleton().registerHandler(maxGIOPConnectionPerServerHandler_);
+  }
+
+  void attach() {
+  }
+  void detach() {
+  }
+};
+
+
+static omni_giopRope_initialiser initialiser;
+
+omniInitialiser& omni_giopRope_initialiser_ = initialiser;
+
 
 OMNI_NAMESPACE_END(omni)

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/07 16:24:08  dpg1
+  PortableServer::Current support.
+
 */
 
 #ifndef __OMNICURRENT_H__
@@ -38,6 +41,7 @@
 #include <omniORB4/omniORB.h>
 #include <omniORB4/omniInternal.h>
 #include <omniORB4/callDescriptor.h>
+#include <orbParameters.h>
 
 #if !defined(_core_attr)
 # define _core_attr_defined
@@ -61,7 +65,7 @@ public:
 
   static inline omniCurrent* get()
   {
-    if (!omniORB::supportCurrent) return 0;
+    if (!_OMNI_NS(orbParameters)::supportCurrent) return 0;
 
     omni_thread* thr = omni_thread::self();
     if (!thr) return 0;

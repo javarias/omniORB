@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.15  2001/08/17 13:47:30  dpg1
+ * Small bug fixes.
+ *
  * Revision 1.38.2.14  2001/07/25 13:39:46  dpg1
  * Missing wstring case in TypeCode unmarshalling.
  *
@@ -232,6 +235,10 @@
 
 #include <typecode.h>
 #include <tcParser.h>
+#include <orbParameters.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_FORCE_LINK(dynamicLib);
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -3650,11 +3657,10 @@ TypeCode_offsetTable::lookupOffset(CORBA::Long offset)
   // Visibroker's Java ORB gives out TypeCode indirections which are not
   // a multiple of 4. Rounding them up seems to solve the problem ...
 
-  if( omniORB::acceptMisalignedTcIndirections && (offset & 0x3) ) {
+  if( orbParameters::acceptMisalignedTcIndirections && (offset & 0x3) ) {
     if( omniORB::traceLevel > 1 ) {
-      omniORB::log << "omniORB: WARNING - received TypeCode with mis-aligned"
-	"indirection.\n";
-      omniORB::log.flush();
+      omniORB::logger log;
+      log << "omniORB: WARNING - received TypeCode with mis-aligned indirection.\n";
     }
     offset = (offset + 3) & 0xfffffffc;
   }
@@ -3756,7 +3762,7 @@ TypeCode_marshaller::marshal(TypeCode_base* tc,
   // If this _exact_ typecode has already been marshalled into the stream
   // then just put in an indirection
   CORBA::Long tc_offset;
-  if( omniORB::useTypeCodeIndirections && otbl->lookupTypeCode(tc, tc_offset) )
+  if( orbParameters::useTypeCodeIndirections && otbl->lookupTypeCode(tc, tc_offset) )
     {
       // The desired typecode was found, so write out an indirection!
       CORBA::ULong tck_indirect = 0xffffffff;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/01 10:08:20  dpg1
+  Main thread policy.
+
   Revision 1.1.2.2  2001/06/11 11:38:17  dpg1
   Failed to initialise refcount in Current object.
 
@@ -87,7 +90,7 @@ public:
   inline poaCurrentStackInsert(omniCallDescriptor* desc)
     : pd_current(0)
   {
-    if (desc && omniORB::supportCurrent) {
+    if (desc && _OMNI_NS(orbParameters)::supportCurrent) {
       omni_thread* self = omni_thread::self();
       if (self)
 	pd_dummy = 0;

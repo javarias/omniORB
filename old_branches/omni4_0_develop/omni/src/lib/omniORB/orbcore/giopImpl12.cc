@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/07/31 16:20:29  sll
+  New primitives to acquire read lock on a connection.
+
   Revision 1.1.4.7  2001/07/13 15:23:51  sll
   Call notifyCallFullyBuffered when a request has arrived and fully buffered.
 
@@ -71,6 +74,7 @@
 #include <exceptiondefs.h>
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/omniInterceptors.h>
+#include <orbParameters.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -689,7 +693,7 @@ giopImpl12::inputMessageEnd(giopStream* g,CORBA::Boolean disgard) {
 	l << "Garbage left at the end of input message from "
 	  << g->pd_strand->connection->peeraddress() << "\n";
       }
-      if (!omniORB::strictIIOP) {
+      if (!orbParameters::strictIIOP) {
 	disgard = 1;
       }
       else {
@@ -902,7 +906,7 @@ size_t
 giopImpl12::inputRemaining(giopStream* g) {
 
   if (g->inputExpectAnotherFragment()) {
-    return omniORB::MaxMessageSize() - currentInputPtr(g);
+    return orbParameters::giopMaxMsgSize - currentInputPtr(g);
   }
   else {
     return (g->inputFragmentToCome() + ((omni::ptr_arith_t)g->pd_inb_end -
@@ -1663,7 +1667,7 @@ giopImpl12::outputRemaining(const giopStream* g) {
 
   CORBA::ULong total = g->outputFragmentSize();
   if (!total) {
-    CORBA::ULong avail = (CORBA::Long)omniORB::MaxMessageSize() -
+    CORBA::ULong avail = (CORBA::Long)orbParameters::giopMaxMsgSize -
                          (CORBA::Long)currentOutputPtr(g);
     
     // Adjust avail to exactly the same value as calculated in outputFlush().
@@ -1685,7 +1689,7 @@ giopImpl12::outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize) {
   //       size has been pre-calculated and no GIOP Fragment should be
   //       sent! This also means that the message size limit has been
   //       checked and there is no need to check against
-  //       omniORB::MaxMessageSize().
+  //       orbParameters::giopMaxMsgSize.
   //       
 
   omni::ptr_arith_t outbuf_begin = ((omni::ptr_arith_t) 
@@ -1705,7 +1709,7 @@ giopImpl12::outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize) {
       sz = *((CORBA::ULong*)((omni::ptr_arith_t)outbuf_begin + 8));
     }
     g->outputMessageSize(g->outputMessageSize()+sz);
-    if (g->outputMessageSize() > omniORB::MaxMessageSize()) {
+    if (g->outputMessageSize() > orbParameters::giopMaxMsgSize) {
       OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		    (CORBA::CompletionStatus)g->completion());
     }
@@ -1746,9 +1750,9 @@ giopImpl12::outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize) {
     g->pd_outb_mkr = (void*)(outbuf_begin + 16);
 
     // Now determine how much space we have left.
-    // If the message size has already reach omniORB::MaxMessageSize(),
+    // If the message size has already reach orbParameters::giopMaxMsgSize,
     // outputHasReachedLimit() will return TRUE.
-    CORBA::ULong avail = omniORB::MaxMessageSize() - g->outputMessageSize();
+    CORBA::ULong avail = orbParameters::giopMaxMsgSize - g->outputMessageSize();
 
     // Adjust avail to make sure that it a multiple of 8.
     // This preserves our invariant: g->pd_outb_end always align on 8 bytes
@@ -1892,7 +1896,7 @@ giopImpl12::currentOutputPtr(const giopStream* g) {
 void
 giopImpl12::outputSetFragmentSize(giopStream* g,CORBA::ULong msz) {
 
-  if (msz > omniORB::MaxMessageSize()) {
+  if (msz > orbParameters::giopMaxMsgSize) {
     OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		  (CORBA::CompletionStatus)g->completion());
   }

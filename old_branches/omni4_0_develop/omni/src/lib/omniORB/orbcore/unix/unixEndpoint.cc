@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/08 15:58:17  sll
+  Set up the socket with the permission mode set in
+  omniORB::unixTransportPermission.
+
   Revision 1.1.2.2  2001/08/07 15:42:17  sll
   Make unix domain connections distinguishable on both the server and client
   side.
@@ -40,6 +44,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <orbParameters.h>
 #include <SocketCollection.h>
 #include <unix/unixConnection.h>
 #include <unix/unixAddress.h>
@@ -48,6 +53,8 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
+
 #include <omniORB4/linkHacks.h>
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(unixEndpoint);
@@ -109,10 +116,10 @@ unixEndpoint::Bind() {
     return 0;
   }
 
-  if (::chmod(pd_filename,omniORB::unixTransportPermission & 0777) < 0) {
+  if (::chmod(pd_filename,orbParameters::unixTransportPermission & 0777) < 0) {
     omniORB::logger log;
     log << "Error: cannot change permission of " << pd_filename
-	<< " to " << (omniORB::unixTransportPermission & 0777) << "\n";
+	<< " to " << (orbParameters::unixTransportPermission & 0777) << "\n";
     CLOSESOCKET(pd_socket);
     return 0;
   }
@@ -123,6 +130,8 @@ unixEndpoint::Bind() {
   }
 
   pd_address_string = unixConnection::unToString(pd_filename);
+
+
   return 1;
 }
 

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2001/08/03 17:41:20  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.1.2.9  2001/07/26 16:37:20  dpg1
   Make sure static initialisers always run.
 
@@ -65,6 +69,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/linkHacks.h>
 #include <codeSetUtil.h>
+#include <orbParameters.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -502,7 +507,7 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
   _CORBA_ULong len; len <<= stream;
 
   if (len == 0) {
-    if (omniORB::strictIIOP) {
+    if (orbParameters::strictIIOP) {
       if (omniORB::trace(1)) {
 	omniORB::logger l;
 	l << "Error: received an invalid zero length string.\n";
@@ -691,7 +696,7 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
     _CORBA_ULong mlen; mlen <<= stream;
 
     if (mlen == 0) {
-      if (omniORB::strictIIOP) {
+      if (orbParameters::strictIIOP) {
 	if (omniORB::trace(1)) {
 	  omniORB::logger l;
 	  l << "Error: received an invalid zero length string.\n";
@@ -735,7 +740,7 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
     _CORBA_ULong mlen; mlen <<= stream;
 
     if (mlen == 0) {
-      if (omniORB::strictIIOP) {
+      if (orbParameters::strictIIOP) {
 	if (omniORB::trace(1)) {
 	  omniORB::logger l;
 	  l << "Error: received an invalid zero length string.\n";
