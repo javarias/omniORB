@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2001/08/29 17:52:34  sll
+  Make sure that the invariant of the dtor is satisfied in safeDelete.
+
   Revision 1.1.4.8  2001/08/24 15:21:13  sll
   Corrected a bug in the conversion from {in,out}ConScanPeriod to idleclicks.
 
@@ -429,6 +432,7 @@ giopStrand::acquireServer(giopWorker* w)
   sp->TCS_C(0);
   sp->TCS_W(0);
   sp->worker(w);
+  sp->setDeadline(0,0);
   return sp;
 }
 
