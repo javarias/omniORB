@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.12  2000/05/26 15:33:32  dpg1
+// Python thread states are now cached. Operation dispatch time is
+// roughly halved!
+//
 // Revision 1.11  2000/05/24 11:11:24  dpg1
 // POA functions now properly release servant references when exceptions
 // are thrown.
@@ -507,19 +511,15 @@ extern "C" {
     try {
       PortableServer::Servant servant;
       omniPy::Py_omniServant* pyos;
-      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->get_servant();
 	pyos =
 	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
-
-	if (pyos) {
-	  pyservant = pyos->pyServant();
-	  pyos->_remove_ref();
-	}
       }
       if (pyos) {
+	PyObject* pyservant = pyos->pyServant();
+	pyos->_locked_remove_ref();
 	return pyservant;
       }
       else {
@@ -820,19 +820,15 @@ extern "C" {
     try {
       PortableServer::Servant servant;
       omniPy::Py_omniServant* pyos;
-      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->reference_to_servant(objref);
 	pyos =
 	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
-
-	if (pyos) {
-	  pyservant = pyos->pyServant();
-	  pyos->_remove_ref();
-	}
       }
       if (pyos) {
+	PyObject* pyservant = pyos->pyServant();
+	pyos->_locked_remove_ref();
 	return pyservant;
       }
       else {
@@ -907,19 +903,15 @@ extern "C" {
       PortableServer::ObjectId oid(oidlen, oidlen, (CORBA::Octet*)oidstr, 0);
       PortableServer::Servant servant;
       omniPy::Py_omniServant* pyos;
-      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->id_to_servant(oid);
 	pyos =
 	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
-
-	if (pyos) {
-	  pyservant = pyos->pyServant();
-	  pyos->_remove_ref();
-	}
       }
       if (pyos) {
+	PyObject* pyservant = pyos->pyServant();
+	pyos->_locked_remove_ref();
 	return pyservant;
       }
       else {
