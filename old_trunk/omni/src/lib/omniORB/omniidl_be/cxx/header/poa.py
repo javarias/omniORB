@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/19 11:23:28  djs
+# Moved most C++ code to template file
+#
 # Revision 1.12  2000/01/17 17:03:37  djs
 # Support for module continuations
 #
@@ -159,7 +162,7 @@ def visitInterface(node):
                impl_scopedID = impl_scopedID)
 
     if config.TieFlag():
-        tie.template(environment, node, self.__nested)
+        tie.write_template(environment, node, self.__nested)
     return
 
 def visitTypedef(node):
