@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2002/04/29 18:22:02  dgrisby
+  Yet another Windows fix.
+
   Revision 1.1.2.12  2002/04/29 11:52:51  dgrisby
   More fixes for FreeBSD, Darwin, Windows.
 
@@ -351,6 +354,11 @@ void win32_get_ifinfo(omnivector<const char*>& ifaddrs) {
 	struct sockaddr_in* iaddr = &info[i].iiAddress.AddressIn;
 	CORBA::String_var s;
 	s = tcpConnection::ip4ToString(iaddr->sin_addr.s_addr);
+
+	// Just to catch us out, Windows ME apparently sometimes
+	// returns 0.0.0.0 as one of its interfaces...
+	if (omni::strMatch((const char*)s, "0.0.0.0")) continue;
+
 	ifaddrs.push_back(s._retn());
       }
     }
