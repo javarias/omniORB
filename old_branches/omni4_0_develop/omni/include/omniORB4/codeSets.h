@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/09 12:23:04  dpg1
+  Update to compile on Solaris
+
   Revision 1.1.2.1  2000/10/27 15:42:03  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -43,6 +46,23 @@
 class CONV_FRAME {
 public:
   typedef _CORBA_ULong CodeSetId;
+  typedef _CORBA_Unbounded_Sequence_w_FixSizeElement<CodeSetId,4,4> CodeSetIdList;
+
+  struct CodeSetComponent {
+    CodeSetId     native_code_set;
+    CodeSetIdList conversion_code_sets;
+
+    void operator>>= (cdrStream& s) const;
+    void operator<<= (cdrStream& s);
+  };
+
+  struct CodeSetComponentInfo {
+    CodeSetComponent  ForCharData;
+    CodeSetComponent  ForWcharData;
+
+    void operator>>= (cdrStream& s) const;
+    void operator<<= (cdrStream& s);
+  };
 };
 
 
@@ -78,6 +98,7 @@ public:
 // before resorting to UTF-16, in case the TCS can deal with the NCS
 // data directly.
 
+class cdrStream;
 
 class omniCodeSet {
 public:
