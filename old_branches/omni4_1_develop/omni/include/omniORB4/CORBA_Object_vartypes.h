@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:23  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/08/17 13:39:47  dpg1
   Split CORBA.h into separate bits.
 
@@ -49,10 +52,10 @@ class Object_tcDesc_arg;
 
 class Object_var {
 public:
-  typedef Object        T;
-  typedef Object_ptr    T_ptr;
-  typedef Object_var    T_var;
-  typedef Object_Member T_member;
+  typedef Object         T;
+  typedef Object_ptr     T_ptr;
+  typedef Object_var     T_var;
+  typedef Object_Member  T_member;
   typedef Object_Element T_element;
 
   inline Object_var() : pd_ref(T::_nil()) {}
@@ -103,6 +106,10 @@ public:
 
 private:
   T_ptr pd_ref;
+
+  // Not implemented
+  Object_var(const _CORBA_ObjRef_Var_base&);
+  T_var& operator= (const _CORBA_ObjRef_Var_base&);
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -111,10 +118,10 @@ private:
 
 class Object_Member {
 public:
-  typedef Object        T;
-  typedef Object_ptr    T_ptr;
-  typedef Object_var    T_var;
-  typedef Object_Member T_member;
+  typedef Object         T;
+  typedef Object_ptr     T_ptr;
+  typedef Object_var     T_var;
+  typedef Object_Member  T_member;
   typedef Object_Element T_element;
 
   inline Object_Member() : _ptr(T::_nil()) {}
@@ -173,6 +180,11 @@ public:
   }
 
   Object_ptr _ptr;
+
+private:
+  // Not implemented
+  Object_Member(const _CORBA_ObjRef_Var_base&);
+  T_member& operator= (const _CORBA_ObjRef_Var_base&);
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -181,10 +193,10 @@ public:
 
 class Object_Element {
 public:
-  typedef Object        T;
-  typedef Object_ptr    T_ptr;
-  typedef Object_var    T_var;
-  typedef Object_Member T_member;
+  typedef Object         T;
+  typedef Object_ptr     T_ptr;
+  typedef Object_var     T_var;
+  typedef Object_Member  T_member;
   typedef Object_Element T_element;
 
   inline Object_Element(T_ptr& p, _CORBA_Boolean rel)
@@ -257,6 +269,11 @@ public:
 
   _CORBA_Boolean pd_rel;
   T_ptr& pd_data;
+
+private:
+  // Not implemented
+  Object_Element(const _CORBA_ObjRef_Var_base&);
+  T_element& operator= (const _CORBA_ObjRef_Var_base&);
 };
 
 //////////////////////////////////////////////////////////////////////

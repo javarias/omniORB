@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2003/09/26 16:12:54  dgrisby
+  Start of valuetype support.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -371,7 +374,7 @@ unmarshalHeaderAndBody(cdrStream&           stream,
 
   CORBA::ValueBase* result;
 
-  if ((tag & REPOID_MASK) == (REPOID_LIST)) {
+  if ((tag & REPOID_MASK) == REPOID_LIST) {
     CORBA::ULong count;
     count <<= stream;
 

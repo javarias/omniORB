@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.2  2003/09/04 14:00:24  dgrisby
+// ValueType IDL updates.
+//
 // Revision 1.15.2.1  2003/03/23 21:01:47  dgrisby
 // Start of omniORB 4.1.x development branch.
 //
@@ -1150,6 +1153,7 @@ public:
 private:
   IdlType*       boxedType_;
   IDL_Boolean    constrType_;
+  IDL_Boolean    delType_;
   IdlType*       thisType_;
 };
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.2  2003/10/23 11:25:55  dgrisby
+# More valuetype support.
+#
 # Revision 1.8.2.1  2003/03/23 21:02:36  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -799,6 +802,10 @@ struct_variable_out_type = """\
 typedef _CORBA_ConstrType_Variable_OUT_arg< @name@,@name@_var > @name@_out;
 """
 
+struct_array_declarator = """\
+typedef @memtype@ @prefix@_@cxx_id@@dims@;
+typedef @memtype@ _@cxx_id@_slice@tail_dims@;
+"""
 
 struct_nonarray_sequence = """\
 typedef @memtype@ _@cxx_id@_seq;
@@ -859,7 +866,7 @@ private:
 
 exception_array_declarator = """\
 typedef @memtype@ @private_prefix@_@cxx_id@@dims@;
-typedef @memtype@ _@cxx_id@_slice;
+typedef @memtype@ _@cxx_id@_slice@tail_dims@;
 """
 
 exception_member = """\
@@ -1180,6 +1187,18 @@ void @member@ (const _@member@_seq& _value) {
   _pd_@member@ = _value;
 }
 """
+
+union_value = """\
+@type@* @member@() const { return _pd_@member@.in(); }
+void @member@(@type@* _value) {
+  _pd__initialised = 1;
+  _pd__d = @discrimvalue@;
+  _pd__default = @isDefault@;
+  CORBA::add_ref(_value);
+  _pd_@member@ = _value;
+}
+"""
+
 
 union_member = """\
 @type@ _pd_@name@@dims@;

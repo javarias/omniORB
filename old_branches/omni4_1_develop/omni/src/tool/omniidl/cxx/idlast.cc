@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.2  2003/09/04 14:00:24  dgrisby
+// ValueType IDL updates.
+//
 // Revision 1.22.2.1  2003/03/23 21:01:48  dgrisby
 // Start of omniORB 4.1.x development branch.
 //
@@ -2491,14 +2494,19 @@ ValueBox(const char* file, int line, IDL_Boolean mainFile,
     boxedType_(boxedType),
     constrType_(constrType)
 {
-  checkValidType(file, line, boxedType);
+  if (boxedType) {
+    checkValidType(file, line, boxedType);
 
-  IdlType* ubt = boxedType->unalias();
-  if (ubt->kind() == IdlType::tk_value ||
-      ubt->kind() == IdlType::tk_value_box) {
+    IdlType* ubt = boxedType->unalias();
+    if (ubt->kind() == IdlType::tk_value ||
+	ubt->kind() == IdlType::tk_value_box) {
 
-    IdlError(file, line, "Value types cannot be boxed");
+      IdlError(file, line, "Value types cannot be boxed");
+    }
+    delType_ = boxedType->shouldDelete();
   }
+  else
+    delType_ = 0;
 
   thisType_ = new DeclaredType(IdlType::tk_value_box, this, this);
   Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
@@ -2508,6 +2516,7 @@ ValueBox::
 ~ValueBox()
 {
   delete thisType_;
+  if (delType_) delete boxedType_;
 }
 
 ValueInheritSpec::

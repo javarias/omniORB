@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:25  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.5  2003/01/16 12:47:08  dgrisby
   Const cast macro. Thanks Matej Kenda.
 
@@ -62,7 +65,7 @@ public:
 
   Any(const Any& a);
 
-  Any(TypeCode_ptr tc, void* value, Boolean release = 0);	
+  Any(TypeCode_ptr tc, void* value, Boolean release = 0);
 
   // Marshalling operators
   void operator>>= (cdrStream& s) const;
@@ -230,6 +233,14 @@ public:
     to_object(Object_out obj) : ref(obj._data) { }
     Object_ptr& ref;
   };
+//   struct to_abstract_base {
+//     to_abstract_base(AbstractBase_ptr& base) : ref(base) {}
+//     AbstractBase_ptr& ref;
+//   };
+  struct to_value {
+    to_value(ValueBase*& base) : ref(base) {}
+    ValueBase*& ref;
+  };
 
   Boolean operator>>=(to_boolean b) const;
   Boolean operator>>=(to_char c) const;
@@ -241,6 +252,8 @@ public:
   Boolean operator>>=(to_wstring s) const;
   Boolean operator>>=(to_fixed f) const;
   Boolean operator>>=(to_object o) const;
+  //  Boolean operator>>=(to_abstract_base a) const;
+  Boolean operator>>=(to_value v) const;
   Boolean operator>>=(const CORBA::SystemException*& e) const;
 
   void replace(TypeCode_ptr TCp, void* value, Boolean release = 0);

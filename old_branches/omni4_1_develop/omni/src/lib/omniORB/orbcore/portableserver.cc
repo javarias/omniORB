@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:05  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.11  2002/01/16 11:32:00  dpg1
   Race condition in use of registerNilCorbaObject/registerTrackedObject.
   (Reported by Teemu Torma).
@@ -217,6 +220,8 @@ DEFINE_POLICY_OBJECT(RequestProcessingPolicy)
 ///////////////////////////// ServantBase ////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+static omni_tracedmutex ref_count_lock;
+
 PortableServer::ServantBase::~ServantBase() {}
 
 
@@ -241,14 +246,41 @@ PortableServer::ServantBase::_get_interface()
 void
 PortableServer::ServantBase::_add_ref()
 {
-  // empty
+  omni_tracedmutex_lock l(ref_count_lock);
+  // If the reference count is 0, then the object is either in the
+  // process of being deleted by _remove_ref, or has already been
+  // deleted. It is too late to be trying to _add_ref now. If the
+  // reference count is less than zero, then _remove_ref has been
+  // called too many times.
+  OMNIORB_USER_CHECK(_pd_refCount > 0);
+
+  _pd_refCount++;
 }
 
 
 void
 PortableServer::ServantBase::_remove_ref()
 {
-  // empty
+  ref_count_lock.lock();
+  int done = --_pd_refCount > 0;
+  ref_count_lock.unlock();
+  if( done )  return;
+
+  if( _pd_refCount < 0 ) {
+    omniORB::logs(1, "ServantBase has negative ref count!");
+    return;
+  }
+
+  omniORB::logs(15, "ServantBase has zero ref count -- deleted.");
+
+  delete this;
+}
+
+CORBA::ULong
+PortableServer::ServantBase::_refcount_value()
+{
+  omni_tracedmutex_lock l(ref_count_lock);
+  return _pd_refCount;
 }
 
 void*
@@ -333,49 +365,6 @@ PortableServer::ServantBase::_downcast()
   return (Servant) this;
 }
 
-//////////////////////////////////////////////////////////////////////
-///////////////////////// RefCountServantBase ////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-static omni_tracedmutex ref_count_lock;
-
-
-PortableServer::RefCountServantBase::~RefCountServantBase() {}
-
-
-void
-PortableServer::RefCountServantBase::_add_ref()
-{
-  ref_count_lock.lock();
-  // If the reference count is 0, then the object is either in the
-  // process of being deleted by _remove_ref, or has already been
-  // deleted. It is too late to be trying to _add_ref now. If the
-  // reference count is less than zero, then _remove_ref has been
-  // called too many times.
-  OMNIORB_USER_CHECK(pd_refCount > 0);
-
-  pd_refCount++;
-  ref_count_lock.unlock();
-}
-
-
-void
-PortableServer::RefCountServantBase::_remove_ref()
-{
-  ref_count_lock.lock();
-  int done = --pd_refCount > 0;
-  ref_count_lock.unlock();
-  if( done )  return;
-
-  if( pd_refCount < 0 ) {
-    omniORB::logs(1, "RefCountServantBase has negative ref count!");
-    return;
-  }
-
-  omniORB::logs(15, "RefCountServantBase has zero ref count -- deleted.");
-
-  delete this;
-}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////// C++ Mapping Specific ////////////////////////

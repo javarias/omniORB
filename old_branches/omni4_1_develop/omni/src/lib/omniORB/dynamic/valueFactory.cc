@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2003/10/23 11:25:54  dgrisby
+  More valuetype support.
+
   Revision 1.1.2.1  2003/09/26 16:12:54  dgrisby
   Start of valuetype support.
 
@@ -36,6 +39,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/valueType.h>
+#include <omniORB4/objTracker.h>
 #include <initialiser.h>
 
 
@@ -48,10 +52,19 @@ namespace {
   struct ValueFactoryTableEntry {
     CORBA::String_var       repoId;
     CORBA::ValueFactory     factory;
+    CORBA::Boolean          internal;
     ValueFactoryTableEntry* next;
 
-    inline ValueFactoryTableEntry(const char* id, CORBA::ValueFactory f)
-      : repoId(id), factory(f), next(0) {}
+    inline ValueFactoryTableEntry(const char* id,
+				  CORBA::ValueFactory f,
+				  CORBA::Boolean i)
+      : repoId(id), factory(f), internal(i), next(0) {}
+  };
+
+  class valueFactoryTableTracker : public omniTrackedObject {
+  public:
+    valueFactoryTableTracker();
+    virtual ~valueFactoryTableTracker();
   };
 
 #ifdef HAS_Cplusplus_Namespace
@@ -64,47 +77,57 @@ static ValueFactoryTableEntry** vf_table     = 0;
 static CORBA::ULong             vf_tablesize = 131;
 
 
-static void init_table()
+static inline void init_table()
 {
-  omni_mutex_lock sync(vf_lock);
-
-  if (!vf_table) {
-    omniORB::logs(25, "Initialise value factory table.");
-
-    vf_table = new ValueFactoryTableEntry*[vf_tablesize];
-
-    for (CORBA::ULong i=0; i < vf_tablesize; i++)
-      vf_table[i] = 0;
-  }
+  OMNIORB_ASSERT(!vf_table);
+  valueFactoryTableTracker* vft = new valueFactoryTableTracker();
+  registerTrackedObject(vft);
 }
 
-static void free_table()
+valueFactoryTableTracker::
+valueFactoryTableTracker()
 {
-  omni_mutex_lock sync(vf_lock);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(vf_lock, 1);
 
-  if (vf_table) {
-    omniORB::logs(25, "Release value factory table.");
+  omniORB::logs(25, "Initialise value factory table.");
+  vf_table = new ValueFactoryTableEntry*[vf_tablesize];
 
-    for (CORBA::ULong i=0; i < vf_tablesize; i++) {
-      ValueFactoryTableEntry *f, *n;
-      for (f = vf_table[i]; f; f = n) {
-	n = f->next;
-	f->factory->_remove_ref();
-	delete f;
+  for (CORBA::ULong i=0; i < vf_tablesize; i++)
+    vf_table[i] = 0;
+}
+
+
+valueFactoryTableTracker::
+~valueFactoryTableTracker()
+{
+  omni_tracedmutex_lock sync(vf_lock);
+
+  OMNIORB_ASSERT(vf_table);
+
+  omniORB::logs(25, "Release value factory table.");
+
+  for (CORBA::ULong i=0; i < vf_tablesize; i++) {
+    ValueFactoryTableEntry *f, *n;
+    for (f = vf_table[i]; f; f = n) {
+      if (omniORB::trace(26)) {
+	omniORB::logger l;
+	l << "Release internal value factory for '" << f->repoId << "'.\n";
       }
+      n = f->next;
+      f->factory->_remove_ref();
+      delete f;
     }
-    delete [] vf_table;
-    vf_table = 0;
   }
+  delete [] vf_table;
+  vf_table = 0;
 }
 
 
 CORBA::ValueFactory
 _omni_ValueFactoryManager::
-register_factory(const char* id, CORBA::ULong hashval, CORBA::ValueFactory f)
+register_factory(const char* id, CORBA::ULong hashval,
+		 CORBA::ValueFactory f, CORBA::Boolean internal)
 {
-  OMNIORB_ASSERT(vf_table);
-
   if (!id)
     OMNIORB_THROW(BAD_PARAM,
 		  BAD_PARAM_NullStringUnexpected,
@@ -115,12 +138,20 @@ register_factory(const char* id, CORBA::ULong hashval, CORBA::ValueFactory f)
 		  BAD_PARAM_ValueFactoryFailure,
 		  CORBA::COMPLETED_NO);
 
+  if (omniORB::trace(25)) {
+    omniORB::logger l;
+    l << "Register value factory for '" << id << "'.\n";
+  }
+
   CORBA::ValueFactory old = 0;
 
   f->_add_ref();
 
   {
     omni_tracedmutex_lock sync(vf_lock);
+
+    if (!vf_table)
+      init_table();
 
     CORBA::ULong h = hashval % vf_tablesize;
 
@@ -133,7 +164,7 @@ register_factory(const char* id, CORBA::ULong hashval, CORBA::ValueFactory f)
       }
     }
     if (!e) {
-      e = new ValueFactoryTableEntry(id, f);
+      e = new ValueFactoryTableEntry(id, f, internal);
       e->next = vf_table[h];
       vf_table[h] = e;
     }
@@ -155,6 +186,11 @@ unregister_factory(const char* id, CORBA::ULong hashval)
 		  CORBA::COMPLETED_NO);
 
   ValueFactoryTableEntry* e;
+
+  if (omniORB::trace(25)) {
+    omniORB::logger l;
+    l << "Unregister value factory for '" << id << "'.\n";
+  }
 
   {
     omni_tracedmutex_lock sync(vf_lock);
@@ -189,8 +225,6 @@ CORBA::ValueFactory
 _omni_ValueFactoryManager::
 lookup(const char* id, CORBA::ULong hashval)
 {
-  OMNIORB_ASSERT(vf_table);
-
   if (!id)
     OMNIORB_THROW(BAD_PARAM,
 		  BAD_PARAM_NullStringUnexpected,
@@ -198,6 +232,9 @@ lookup(const char* id, CORBA::ULong hashval)
 
   {
     omni_tracedmutex_lock sync(vf_lock);
+
+    if (!vf_table)
+      return 0;
 
     CORBA::ULong h = hashval % vf_tablesize;
 
@@ -217,7 +254,6 @@ CORBA::ValueBase*
 _omni_ValueFactoryManager::
 create_for_unmarshal(const char* id, CORBA::ULong hashval)
 {
-  OMNIORB_ASSERT(vf_table);
   OMNIORB_ASSERT(id);
 
   CORBA::ValueBase*   r;
@@ -225,6 +261,9 @@ create_for_unmarshal(const char* id, CORBA::ULong hashval)
 
   {
     omni_tracedmutex_lock sync(vf_lock);
+
+    if (!vf_table)
+      return 0;
 
     CORBA::ULong h = hashval % vf_tablesize;
 
@@ -280,22 +319,14 @@ CORBA::ValueFactory
 CORBA::ORB::
 register_value_factory(const char* id, CORBA::ValueFactory factory)
 {
-  if (omniORB::trace(25)) {
-    omniORB::logger l;
-    l << "Register value factory for '" << id << "'.\n";
-  }
   CORBA::ULong h = omniValueType::hash_id(id);
-  return _omni_ValueFactoryManager::register_factory(id, h, factory);
+  return _omni_ValueFactoryManager::register_factory(id, h, factory, 0);
 }
 
 void
 CORBA::ORB::
 unregister_value_factory(const char* id)
 {
-  if (omniORB::trace(25)) {
-    omniORB::logger l;
-    l << "Unregister value factory for '" << id << "'.\n";
-  }
   CORBA::ULong h = omniValueType::hash_id(id);
   _omni_ValueFactoryManager::unregister_factory(id, h);
 }
@@ -308,20 +339,51 @@ lookup_value_factory(const char* id)
   return _omni_ValueFactoryManager::lookup(id, h);
 }
 
+//
+// Module initialiser
+//
 
 OMNI_NAMESPACE_BEGIN(omni)
 
 class omni_valueFactory_initialiser : public omniInitialiser {
 public:
-  void attach()
-  {
-    init_table();
-  }
-  void detach()
-  {
-    free_table();
+
+  omni_valueFactory_initialiser() { }
+
+  void attach() { }
+  void detach() {
+    omni_tracedmutex_lock sync(vf_lock);
+
+    if (vf_table) {
+      omniORB::logs(25, "Release registered value factories.");
+
+      for (CORBA::ULong i=0; i < vf_tablesize; i++) {
+
+	ValueFactoryTableEntry *f, *n;
+	ValueFactoryTableEntry** prev = &(vf_table[i]);
+
+	for (f = vf_table[i]; f; f = n) {
+	  n = f->next;
+
+	  if (f->internal) {
+	    // Skip internally registered ones.
+	    prev = &(f->next);
+	  }
+	  else {
+	    if (omniORB::trace(26)) {
+	      omniORB::logger l;
+	      l << "Release value factory for '" << f->repoId << "'.\n";
+	    }
+	    *prev = n;
+	    f->factory->_remove_ref();
+	    delete f;
+	  }
+	}
+      }
+    }
   }
 };
+
 static omni_valueFactory_initialiser initialiser;
 
 omniInitialiser& omni_valueFactory_initialiser_ = initialiser;

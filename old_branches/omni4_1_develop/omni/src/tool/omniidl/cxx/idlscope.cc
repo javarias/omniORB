@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18.2.1  2003/03/23 21:01:44  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.13.2.8  2003/03/20 10:24:27  dgrisby
 // Warn about use of CORBA 3 keywords in IDL.
 //
@@ -782,7 +785,7 @@ findRelativeScope(const ScopedName::Fragment* from,
     result = findRelativeScope(from->next(), to->next(), fromScope, target);
   }
 
-  if (!result) {
+  if (!result && fromScope) {
     ScopedName*         test = new ScopedName(to, 0);
     const Scope::Entry* find = fromScope->findScopedName(test);
 
