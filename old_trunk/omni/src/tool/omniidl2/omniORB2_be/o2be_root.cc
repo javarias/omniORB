@@ -28,6 +28,9 @@
 
 /*
   $Log$
+// Revision 1.3  1997/05/06  14:04:50  sll
+// *** empty log message ***
+//
   */
 
 #include "idl.hh"
@@ -145,6 +148,11 @@ o2be_root::produce_hdr(fstream &hdr)
   hdr << "#ifndef __" << basename << "_hh__\n"
       << "#define __" << basename << "_hh__\n\n"
       << "#include <omniORB2/CORBA.h>\n\n";
+
+  if (idl_global->compile_flags() & IDL_CF_LIFECYCLE) {
+    hdr << "#include <omniORB2/omniLifeCycle.h>\n\n";
+  }
+
   {
     // produce #include for all the included files
     String **filelist = idl_global->include_file_names();
