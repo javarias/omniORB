@@ -49,10 +49,6 @@
 <h2>CORBA links</h2>
 
 <ul>
-  <li>Benchmarks at <a
-      href="http://nenya.ms.mff.cuni.cz/projects.phtml?p=corbac&amp;q=3">Charles
-      University in Prague</a> show that omniORB is very fast.
-  </li>
   <li>The <a href="http://cost.omg.org/">CORBA Open Source Testing</a>
       project has many ORB tests, including the extensive omniORB
       testsuite.
