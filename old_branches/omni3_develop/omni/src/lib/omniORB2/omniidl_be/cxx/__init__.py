@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.9  2000/08/07 15:34:34  dpg1
+# Partial back-port of long long from omni3_1_develop.
+#
 # Revision 1.18.2.8  2000/07/18 15:34:17  djs
 # Added -Wbvirtual_objref option to make attribute and operation _objref
 # methods virtual
@@ -134,6 +137,7 @@ from omniidl_be.cxx import impl
 
 from omniidl_be.cxx import id
 
+from omniidl_be.cxx import support
 from omniidl_be.cxx import config
 
 import re, sys, os.path
@@ -209,6 +213,9 @@ def run(tree, args):
     process_args(args)
 
     try:
+        # Check the input tree only contains stuff we understand
+        support.checkIDL(tree)
+        
         # build the list of include files
         walker = config.WalkTreeForIncludes()
         tree.accept(walker)

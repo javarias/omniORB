@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.9  2000/08/07 15:34:35  dpg1
+# Partial back-port of long long from omni3_1_develop.
+#
 # Revision 1.12.2.8  2000/06/28 13:59:04  dpg1
 # Remove dependency on traceback module.
 #
@@ -140,7 +143,7 @@ def fatalError(explanation):
     
     lines = string.split(explanation, "\n")
     lines = [ "Fatal error in C++ backend", "" ] + lines
-    lines = lines + [ "Debug mode is currently off" ]
+    #lines = lines + [ "Debug mode is currently off" ]
 
     for line in lines:
         sys.stderr.write("omniidl: " + line + "\n")
