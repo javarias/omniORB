@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/10/29 18:19:19  dpg1
+// Added dump() function
+//
 // Revision 1.1  1999/10/29 15:44:45  dpg1
 // First revision.
 //
@@ -202,7 +205,7 @@ visitAST(AST* a)
     d->accept(*this);
     PyList_SetItem(pydecls, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "AST", "N", pydecls);
+  result_ = PyObject_CallMethod(idlast_, "AST", "sN", a->file(), pydecls);
   ASSERT_RESULT;
 }
 
@@ -899,7 +902,8 @@ extern "C" {
 
   static PyMethodDef omniidl_methods[] = {
     {"compile",        IdlPyCompile,        METH_VARARGS},
-    {"dump",           IdlPyDump,           METH_VARARGS}
+    {"dump",           IdlPyDump,           METH_VARARGS},
+    {NULL, NULL}
   };
 
   void init_omniidl()
