@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.14.2.10  2000/10/24 09:53:28  dpg1
+// Clean up omniidl system dependencies. Replace use of _CORBA_ types
+// with IDL_ types.
+//
 // Revision 1.14.2.9  2000/08/29 10:20:26  dpg1
 // Operations and attributes now have repository ids.
 //
@@ -168,7 +172,7 @@ Comment::
 append(const char* commentText)
 {
   if (Config::keepComments) {
-    assert(mostRecent_);
+    assert(mostRecent_ != 0);
     char* newText = new char[(strlen(mostRecent_->commentText_) +
 			      strlen(commentText) + 1)];
     strcpy(newText, mostRecent_->commentText_);
@@ -230,7 +234,7 @@ AST::
 tree()
 {
   if (!tree_) tree_ = new AST();
-  assert(tree_);
+  assert(tree_ != 0);
   return tree_;
 }
 
@@ -284,7 +288,7 @@ void
 AST::
 setDeclarations(Decl* d)
 {
-  assert(!declarations_);
+  assert(declarations_ == 0);
   declarations_ = d;
 
   // Validate the declarations
@@ -1402,7 +1406,7 @@ Attribute(const char* file, int line, IDL_Boolean mainFile,
   else          delType_ = 0;
 
   for (Declarator* d = declarators; d; d = (Declarator*)d->next()) {
-    assert(!d->sizes()); // Enforced by grammar
+    assert(d->sizes() == 0); // Enforced by grammar
     d->setAttribute(this);
     Scope::current()->addCallable(d->eidentifier(), 0, d, file, line);
   }
