@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.16  2000/07/12 17:16:11  djs
+# Minor bugfix to option -Wbsplice-modules
+#
 # Revision 1.31.2.15  2000/06/27 16:15:10  sll
 # New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
 # _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
@@ -414,11 +417,22 @@ def visitInterface(node):
     sk_inherits = string.join(sk_inherits, ", \n")
 
     # Output the _objref_ class definition
+    # Normally these are not virtual, but we can override this with
+    # -Wbvirtual_objref
+    objref_operations_str = operations_str # non-virtual
+    objref_attributes_str = attributes_str # non-virtual
+    if config.state['Virtual Objref Methods']:
+        # non-abstract virtual functions
+        objref_operations_str = string.join(
+            map( lambda x: "virtual " + x + ";\n", virtual_operations ), "")
+        objref_attributes_str = string.join(
+            map( lambda x: "virtual " + x + ";\n", attributes ), "")
+        
     stream.out(template.interface_objref,
                name = cxx_name,
                inherits = objref_inherits,
-               operations = operations_str,
-               attributes = attributes_str)
+               operations = objref_operations_str,
+               attributes = objref_attributes_str)
 
     # Output the _pof_ class definition
     stream.out(template.interface_pof,

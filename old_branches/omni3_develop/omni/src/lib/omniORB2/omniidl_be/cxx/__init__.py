@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.7  2000/06/26 16:23:09  djs
+# Added new backend arguments.
+# Better error handling when encountering unsupported IDL (eg valuetypes)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.18.2.6  2000/05/31 15:11:11  dpg1
 # C++ back-end properly handles Windows paths.
 #
@@ -176,6 +181,8 @@ def process_args(args):
             config.state['Keep Include Path'] = 1
         elif arg == "use_quotes":
             config.state['Use Quotes']        = 1
+        elif arg == "virtual_objref":
+            config.state['Virtual Objref Methods'] = 1
         elif arg == "debug":
             config.state['Debug']             = 1
         elif arg[:2] == "h=":
