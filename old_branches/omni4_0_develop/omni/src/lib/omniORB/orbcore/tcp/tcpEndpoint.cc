@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2002/04/29 11:52:51  dgrisby
+  More fixes for FreeBSD, Darwin, Windows.
+
   Revision 1.1.2.9  2002/03/19 15:42:04  dpg1
   Use list of IP addresses to pick a non-loopback interface if there is one.
 
@@ -70,6 +73,7 @@
 #include <tcp/tcpAddress.h>
 #include <tcp/tcpEndpoint.h>
 #include <stdio.h>
+#include <netinet/tcp.h>
 #include <omniORB4/linkHacks.h>
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpEndpoint);
@@ -139,6 +143,17 @@ tcpEndpoint::Bind() {
   struct sockaddr_in addr;
   if ((pd_socket = socket(INETSOCKET,SOCK_STREAM,0)) == RC_INVALID_SOCKET) {
     return 0;
+  }
+
+  {
+    // Prevent Nagle's algorithm
+    int valtrue = 1;
+    if (setsockopt(pd_socket,SOL_TCP,TCP_NODELAY,
+		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
+      CLOSESOCKET(pd_socket);
+      pd_socket = RC_INVALID_SOCKET;
+      return 0;
+    }
   }
 
   addr.sin_family = INETSOCKET;

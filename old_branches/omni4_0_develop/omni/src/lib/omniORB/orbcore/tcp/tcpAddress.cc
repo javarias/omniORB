@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/08/23 16:47:01  sll
+  Fixed missing cleanup in the switch to use orbParameters to store all
+   configuration parameters.
+
   Revision 1.1.2.6  2001/07/31 16:16:18  sll
   New transport interface to support the monitoring of active connections.
 
@@ -58,6 +62,7 @@
 #include <tcp/tcpConnection.h>
 #include <tcp/tcpAddress.h>
 #include <stdio.h>
+#include <netinet/tcp.h>
 #include <omniORB4/linkHacks.h>
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpAddress);
@@ -148,6 +153,15 @@ tcpAddress::Connect(unsigned long deadline_secs,
 
   if ((sock = socket(INETSOCKET,SOCK_STREAM,0)) == RC_INVALID_SOCKET) {
     return 0;
+  }
+  {
+    // Prevent Nagle's algorithm
+    int valtrue = 1;
+    if (setsockopt(sock,SOL_TCP,TCP_NODELAY,
+		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
+      CLOSESOCKET(sock);
+      return 0;
+    }
   }
 
 #if !defined(USE_NONBLOCKING_CONNECT)
