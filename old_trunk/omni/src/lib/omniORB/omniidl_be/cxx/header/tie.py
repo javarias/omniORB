@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.4  2000/01/10 11:01:57  djs
+# Forgot to keep track of names already defined causing a scoping problem.
+#
 # Revision 1.3  2000/01/07 20:31:29  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -49,7 +52,7 @@ import string
 
 from omniidl import idlast, idltype, idlutil
 
-from omniidl.be.cxx import tyutil, name, config, util
+from omniidl.be.cxx import tyutil, name, env, config, util
 
 import tie
 
@@ -64,22 +67,22 @@ self.__nested = 0
 
 self.__environment = name.Environment()
 
-def add(name):
-    try:
-        self.__environment.add(name)
-    except KeyError:
-        pass    
-    #print "env now = " + str(self.__environment)
-def enter(scope):
-    # the exception is thrown in the case of a forward declared interface
-    # being properly defined. Needs tidying up?
-    add(scope)
-    self.__environment = self.__environment.enterScope(scope)
-
-def leave():
-    self.__environment = self.__environment.leaveScope()
-def currentScope():
-    return self.__environment.scope()
+#def add(name):
+#    try:
+#        self.__environment.add(name)
+#    except KeyError:
+#        pass    
+#    #print "env now = " + str(self.__environment)
+#def enter(scope):
+#    # the exception is thrown in the case of a forward declared interface
+#    # being properly defined. Needs tidying up?
+#    add(scope)
+#    self.__environment = self.__environment.enterScope(scope)
+#
+#def leave():
+#    self.__environment = self.__environment.leaveScope()
+#def currentScope():
+#    return self.__environment.scope()
 
 
 def POA_prefix(nested):
@@ -96,7 +99,7 @@ def visitAST(node):
 
 def visitModule(node):
 
-    enter(node.identifier())
+#    enter(node.identifier())
     
     for n in node.definitions():
         nested = self.__nested
@@ -107,22 +110,21 @@ def visitModule(node):
 
         self.__nested = nested
 
-    leave()
+#    leave()
 
-def template(env, node, nested = self.__nested):
+def template(environment, node, nested = self.__nested):
     
     scope = tyutil.scope(node.scopedName())
     iname = tyutil.mapID(node.identifier())
     prefix = POA_prefix(nested)
-
     if scope == []:
         scope = [prefix]
-        scope_str = env.nameToString(env.relName(scope))
+        scope_str = environment.nameToString(environment.relName(scope))
         POA_name = prefix + "_" + iname
     else:
         if prefix != "": scope[0] = prefix + "_" + scope[0]
         full_name = scope + [iname]
-        POA_name = env.nameToString(env.relName(full_name))
+        POA_name = environment.nameToString(environment.relName(full_name))
     
     flat_scope = string.join(scope, "_")
     if config.FlatTieFlag():        
@@ -135,14 +137,14 @@ def template(env, node, nested = self.__nested):
         
     # FIXME: hack because operationArgumentType strips off outermost
     # scope
-    env = env.enterScope("dummy")
+    environment = environment.enterScope("dummy")
 
     # build methods which bind the interface operations and attributes
     # note that this includes inherited callables since tie
     # templates are outside the normal inheritance structure
     where = util.StringStream()
 
-    def buildCallables(interface, where, env, continuation):
+    def buildCallables(interface, where, environment, continuation):
         global_env = name.Environment()
         callables = interface.callables()
         operations = filter(lambda x:isinstance(x, idlast.Operation),
@@ -163,7 +165,7 @@ def template(env, node, nested = self.__nested):
             for parameter in parameters:
                 paramType = parameter.paramType()
                 dir = parameter.direction() + 1
-                argtypes = tyutil.operationArgumentType(paramType, env,
+                argtypes = tyutil.operationArgumentType(paramType, environment,
                                                         fully_scope = 0,
                                                         virtualFn = 1)
                 param_type_name = argtypes[dir]
@@ -207,12 +209,12 @@ def template(env, node, nested = self.__nested):
                               attr_type_in_name = attrType_name_IN)                    
         # do the recursive bit
         for i in interface.inherits():
-            continuation(i, where, env, continuation)
+            continuation(i, where, environment, continuation)
 
         # done
         return
 
-    buildCallables(node, where, env, buildCallables)
+    buildCallables(node, where, environment, buildCallables)
                 
         
     stream.out("""\
@@ -271,29 +273,30 @@ def visitInterface(node):
     if not(node.mainFile()):
         return
 
-    env = self.__environment
-    enter(node.identifier())
-    template(env, node)
+#    env = self.__environment
+    environment = env.lookup(node)
+#    enter(node.identifier())
+    template(environment, node)
 
     for n in node.declarations():
         n.accept(self)
     
-    leave()
+#    leave()
 
 def visitEnum(node):
     pass
 def visitStruct(node):
     #print "adding " + node.identifier()
-    add(node.identifier())
+#    add(node.identifier())
     for n in node.members():
         n.accept(self)
         
     pass
 def visitUnion(node):
-    add(node.identifier())
+#    add(node.identifier())
     pass
 def visitForward(node):
-    add(node.identifier())
+#    add(node.identifier())
     pass
 def visitConst(node):
     pass
@@ -304,10 +307,10 @@ def visitMember(node):
         node.memberType().decl().accept(self)
     pass
 def visitException(node):
-    add(node.identifier())
+#    add(node.identifier())
     pass
 def visitTypedef(node):
-    for d in node.declarators():
-        add(d.identifier())
+#    for d in node.declarators():
+#        add(d.identifier())
         #add(tyutil.name(d.scopedName()))
     pass

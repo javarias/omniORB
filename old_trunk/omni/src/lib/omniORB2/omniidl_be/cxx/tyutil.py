@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.21  2000/01/07 20:31:18  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.20  1999/12/26 16:40:28  djs
 # Better char value -> C++ char constant handling (needs rewriting)
 # Typedef to Struct / Union passed as operation argument fix
@@ -454,11 +461,11 @@ def objRefTemplate(type, suffix, environment):
 # ------------------------------------------------------------------
 
 def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
-    try:
-        outer_env = environment.leaveScope()
-        environment = outer_env
-    except AttributeError:
-        pass
+    #try:
+    #    outer_env = environment.leaveScope()
+    #    environment = outer_env
+    #except AttributeError:
+    #    pass
     param_type = environment.principalID(type, fully_scope)
     isVariable = isVariableType(type)
     type_dims = typeDims(type)

@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.14  2000/01/07 20:31:33  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.13  1999/12/25 21:47:18  djs
 # Better TypeCode support
 #
@@ -76,7 +83,7 @@ import string
 
 from omniidl import idlast, idltype, idlutil
 
-from omniidl.be.cxx import tyutil, util, name, config, skutil
+from omniidl.be.cxx import tyutil, util, name, env, config, skutil
 
 from omniidl.be.cxx.skel import mangler, dispatch, proxy
 
@@ -86,24 +93,24 @@ self = main
 # ------------------------------------
 # environment handling functions
 
-self.__environment = name.Environment()
+#self.__environment = name.Environment()
 self.__globalScope = name.globalScope()
 self.__insideInterface = 0
 self.__insideModule = 0
 
-def enter(scope):
-    # the exception is thrown in the case of a forward declared interface
-    # being properly defined. Needs tidying up?
-    try:
-        self.__environment.add(scope)
-    except KeyError:
-        pass
-    self.__environment = self.__environment.enterScope(scope)
-
-def leave():
-    self.__environment = self.__environment.leaveScope()
-def currentScope():
-    return self.__environment.scope()
+#def enter(scope):
+#    # the exception is thrown in the case of a forward declared interface
+#    # being properly defined. Needs tidying up?
+#    try:
+#        self.__environment.add(scope)
+#    except KeyError:
+#        pass
+#    self.__environment = self.__environment.enterScope(scope)
+#
+#def leave():
+#    self.__environment = self.__environment.leaveScope()
+#def currentScope():
+#    return self.__environment.scope()
 
 def __init__(stream):
     self.stream = stream
@@ -119,9 +126,13 @@ def visitAST(node):
             n.accept(self)
 
 def visitModule(node):
-    name = tyutil.mapID(node.identifier())
-    enter(name)
-    scope = currentScope()
+    #name = node.identifier()
+    #cxx_name = tyutil.mapID(name)
+    ##name = tyutil.mapID(node.identifier())
+    ##enter(name)
+    ##scope = currentScope()
+    #outer_environment = env.lookup(node)
+    #environment = outer_environment.enterScope(name)
 
     insideModule = self.__insideModule
     self.__insideModule = 1
@@ -130,13 +141,18 @@ def visitModule(node):
 
     self.__insideModule = insideModule
 
-    leave()
+    ##leave()
 
 def visitInterface(node):
-    name = tyutil.mapID(node.identifier())
-    enter(name)
-    scope = currentScope()
-    environment = self.__environment
+    name = node.identifier()
+    cxx_name = tyutil.mapID(name)
+    
+    #name = tyutil.mapID(node.identifier())
+    #enter(name)
+    #scope = currentScope()
+    #environment = self.__environment
+    outer_environment = env.lookup(node)
+    environment = outer_environment.enterScope(name)
 
     insideInterface = self.__insideInterface
     self.__insideInterface = 1
@@ -331,7 +347,7 @@ void*
             
             optypes = tyutil.operationArgumentType(paramType,
 #                                                   self.__globalScope)
-                                                   environment)
+                                                   outer_environment)
             # optypes[0] is return [1] is in [2] is out [3] is inout
             parameter_argmapping.append(optypes[parameter.direction() + 1])
 
@@ -415,7 +431,7 @@ static void
         # we need the type with and without its full scope
         attrTypes = tyutil.operationArgumentType(attrType, self.__globalScope, 0,
                                                  fully_scope = 0)
-        scoped_attrTypes = tyutil.operationArgumentType(attrType, environment, 0,
+        scoped_attrTypes = tyutil.operationArgumentType(attrType, outer_environment, 0,
                                                  fully_scope = 0)
         return_type = attrTypes[0]
 
@@ -630,10 +646,11 @@ const char*
                name = name)
     
 
-    leave()
+    #leave()
 
 def visitTypedef(node):
-    environment = self.__environment
+    #environment = self.__environment
+    environment = env.lookup(node)
     is_global_scope = not(self.__insideModule or self.__insideInterface)
 
     aliasType = node.aliasType()
@@ -717,8 +734,8 @@ extern void @fq_derived@_free( @fq_derived@_slice* p) {
     pass
 
 def visitEnum(node):
-    name = tyutil.name(node.scopedName())
-    self.__environment.add(name)
+    #name = tyutil.name(node.scopedName())
+    #self.__environment.add(name)
     return
 
 def visitMember(node):
@@ -731,12 +748,13 @@ def visitMember(node):
         
 def visitStruct(node):
 
-    environment = self.__environment
+    #environment = self.__environment
+    outer_environment = env.lookup(node)
     
     name = map(tyutil.mapID, node.scopedName())
     name = string.join(name, "::")
 
-    environment.add(tyutil.name(node.scopedName()))
+    #environment.add(tyutil.name(node.scopedName()))
 
     size_calculation = "omni::align_to(_msgsize, omni::ALIGN_4) + 4"
 
@@ -758,14 +776,14 @@ def visitStruct(node):
             # marshall and unmarshall the struct members
             member_name = tyutil.mapID(tyutil.name(d.scopedName()))
 
-            skutil.marshall_struct_union(marshall, environment,
+            skutil.marshall_struct_union(marshall, outer_environment,
                                          memberType, d, member_name)
-            skutil.unmarshall_struct_union(Mem_unmarshall, environment,
+            skutil.unmarshall_struct_union(Mem_unmarshall, outer_environment,
                                            memberType, d, member_name, 0)
-            skutil.unmarshall_struct_union(Net_unmarshall, environment,
+            skutil.unmarshall_struct_union(Net_unmarshall, outer_environment,
                                            memberType, d, member_name, 1)
             # computation of aligned size
-            size = skutil.sizeCalculation(environment, memberType, d,
+            size = skutil.sizeCalculation(outer_environment, memberType, d,
                                           "_msgsize", member_name)
             msgsize.out("""\
   @size_calculation@""", size_calculation = size)
@@ -813,7 +831,8 @@ void
     stream.reset_indent()
     
 def visitUnion(node):
-    environment = self.__environment
+    #environment = self.__environment
+    environment = env.lookup(node)
     
     name = map(tyutil.mapID, node.scopedName())
     name = string.join(name, "::")
@@ -1067,17 +1086,19 @@ void
     
     
 def visitForward(node):
-    name = tyutil.name(node.scopedName())
-    try:
-        self.__environment.add(name)
-    except KeyError:
-        # legal to multiply define these
-        pass
+    #name = tyutil.name(node.scopedName())
+    #try:
+    #    self.__environment.add(name)
+    #except KeyError:
+    #    # legal to multiply define these
+    #    pass
     
     return
 
 def visitConst(node):
-    environment = self.__environment
+    #environment = self.__environment
+    environment = env.lookup(node)
+    
     constType = node.constType()
     deref_constType = tyutil.deref(constType)
     
@@ -1134,9 +1155,15 @@ const @type@ @name@ = @value@;""",
 def visitDeclarator(node):
     pass
 def visitException(node):
-    name = tyutil.mapID(tyutil.name(node.scopedName()))
-    enter(name)
-    environment = self.__environment
+    name = tyutil.name(node.scopedName())
+    cxx_name = tyutil.mapID(name)
+    
+    #name = tyutil.mapID(tyutil.name(node.scopedName()))
+    #enter(name)
+    #environment = self.__environment
+    outer_environment = env.lookup(node)
+    environment = outer_environment.enterScope(name)
+    
     scoped_name = environment.nameToString(node.scopedName())
     name = tyutil.mapID(tyutil.name(node.scopedName()))
     repoID = tyutil.mapRepoID(node.repoId())
@@ -1382,7 +1409,7 @@ void
                    mem_unmarshal = str(mem_unmarshal))
 
 
-    leave()
+    #leave()
             
             
                                            
