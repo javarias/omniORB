@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30  1999/09/01 13:13:55  sll
+  Fixed #ifdef macro so that the code compiles for ETS kernel.
+
   Revision 1.29  1999/08/16 19:24:08  sll
   Added a per-compilation unit initialiser.
 
@@ -353,7 +356,7 @@ void initFile::initialize()
 	}
     }
   if (CORBA::is_nil(NameService) && CORBA::is_nil(InterfaceRepository)) {
-    if ((char*)bootstrapAgentHostname != 0) {
+    if ((const char*)bootstrapAgentHostname != 0) {
       omniInitialReferences::singleton()
 	->initialise_bootstrap_agent(bootstrapAgentHostname,
 				     bootstrapAgentPort);
@@ -362,7 +365,7 @@ void initFile::initialize()
 }
 
 
-int initFile::read_file(char* config_fname)
+int initFile::read_file(const char* config_fname)
 {
   // Test if the specified file exists and is not a directory
 #if defined(UnixArchitecture) || defined(__VMS) || defined(__nextstep__) || defined(__BCPLUSPLUS__)
@@ -467,8 +470,8 @@ int initFile::getnextentry(CORBA::String_var& entryname,
   while (!isspace(fData[currpos]));
 
   entryname = CORBA::string_alloc((currpos-startpos) + 1);
-  strncpy(entryname,(fData+startpos),(currpos-startpos));
-  ((char*)entryname)[currpos-startpos] = '\0';
+  strncpy((char*)(const char*)entryname,(fData+startpos),(currpos-startpos));
+  entryname[currpos-startpos] = '\0';
 
 
   // Skip whitespace between keyword and data:
@@ -498,8 +501,8 @@ int initFile::getnextentry(CORBA::String_var& entryname,
     parseerr();
 
   data = CORBA::string_alloc((currpos - startpos)+1);
-  strncpy(data,(fData+startpos),(currpos-startpos));
-  ((char*)data)[currpos-startpos] = '\0';
+  strncpy((char*)((const char*)data),(fData+startpos),(currpos-startpos));
+  data[currpos-startpos] = '\0';
 
   return 1;
 }
@@ -542,7 +545,7 @@ int initFile::getRegistryEntry(CORBA::String_var& entryname,
 
 // Implementations of inline error-report functions:
 
-void initFile::multerr(char* entryname)
+void initFile::multerr(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
 #ifndef __atmos__
@@ -559,7 +562,7 @@ void initFile::multerr(char* entryname)
 }
 
 
-void initFile::dataerr(char* entryname)
+void initFile::dataerr(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
 #ifndef __atmos__
@@ -589,7 +592,7 @@ void initFile::parseerr()
 }
 
 
-void initFile::invref(char* entryname)
+void initFile::invref(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
 #ifndef __atmos__
