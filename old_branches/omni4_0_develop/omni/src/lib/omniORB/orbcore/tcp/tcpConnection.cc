@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2003/01/06 11:11:55  dgrisby
+  New AddrInfo instead of gethostbyname.
+
   Revision 1.1.2.10  2001/12/03 13:39:55  dpg1
   Explicit socket shutdown flag for Windows.
 
@@ -220,7 +223,8 @@ tcpConnection::Recv(void* buf, size_t sz,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > orbParameters::scanGranularity) {
+      if (orbParameters::scanGranularity > 0 && 
+	  t.tv_sec > orbParameters::scanGranularity) {
 	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
