@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2002/10/14 20:07:11  dgrisby
+  Per objref / per thread timeouts.
+
   Revision 1.1.4.6  2002/04/29 11:52:51  dgrisby
   More fixes for FreeBSD, Darwin, Windows.
 
@@ -414,7 +417,7 @@ public:
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
-    if (!orbOptions::getULong(value,v)) {
+    if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
 			 orbOptions::expect_greater_than_zero_ulong_msg);
     }

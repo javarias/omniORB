@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.24  2003/06/02 09:28:22  dgrisby
+  Segfault in log message when throwing an exception in an interceptor.
+
   Revision 1.1.4.23  2003/02/17 01:20:00  dgrisby
   Avoid deadlock with bidir connection shutdown.
 
@@ -793,7 +796,7 @@ public:
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
-    if (!orbOptions::getULong(value,v)) {
+    if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
 			 orbOptions::expect_greater_than_zero_ulong_msg);
     }
