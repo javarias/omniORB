@@ -17,17 +17,20 @@
 clean::
 	$(CleanRule)
 
-ifneq ($(OMAKE_TARGET),veryclean)
 clean::
 	@$(MakeSubdirs)
-endif
 
+ifeq ($(MAKELEVEL),0)
 veryclean:: clean
+else
+veryclean::
+endif
 	$(VeryCleanRule)
 
 veryclean::
 	@$(MakeSubdirs)
 
+veryclean:: lastveryclean
 
 #############################################################################
 #
@@ -47,7 +50,7 @@ veryclean::
 #
 
 $(CORBA_STUB_HDR_PATTERN) $(CORBA_STUB_SRC_PATTERN) $(CORBA_DYN_STUB_SRC_PATTERN): %.idl
-	$(MKDIRHIER) $(CORBA_STUB_DIR)
+	dir=$(CORBA_STUB_DIR);  $(CreateDir)
 	$(RM) $(CORBA_STUB_DIR)/$(notdir $^)
 	$(CP) $^ $(CORBA_STUB_DIR)
 	chmod +w $(CORBA_STUB_DIR)/$(notdir $^)
