@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:46:29  sll
+  New data member pd_ior and the new ctor signature to match.
+
   Revision 1.2.2.1  2000/07/17 10:35:40  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -53,7 +56,7 @@ class omniRemoteIdentity_RefHolder;
 class omniRemoteIdentity : public omniIdentity {
 public:
   inline omniRemoteIdentity(omniIOR* ior, Rope* rope)
-    : omniIdentity(ior->iiop.object_key.get_buffer(),
+    : omniIdentity((const CORBA::Octet*)ior->iiop.object_key.get_buffer(),
 		   ior->iiop.object_key.length()),
       pd_refCount(0),
       pd_ior(ior),
