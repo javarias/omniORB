@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/01 10:03:40  dpg1
+  AyncInvoker no longer maintains its own dedicated thread queue.
+  Derived classes must provide the implementation.
+
   Revision 1.1.2.4  2001/07/31 15:56:48  sll
   Make sure pd_nthreads is kept in sync with the actual no. of threads
   serving the Anytime tasks.
@@ -47,6 +51,7 @@
 
 #include <omnithread.h>
 #include <omniAsyncInvoker.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 
