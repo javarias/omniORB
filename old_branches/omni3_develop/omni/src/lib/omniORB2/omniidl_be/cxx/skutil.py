@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.6  2000/08/23 15:46:27  djs
+# MSVC5/6 workaround when marshalling a return value which is a
+# multidimensional array of basic things.
+#
 # Revision 1.15.2.5  2000/08/07 15:34:34  dpg1
 # Partial back-port of long long from omni3_1_develop.
 #
@@ -595,13 +599,9 @@ def unmarshal_string_via_temporary(variable_name, stream_name):
 def sort_exceptions(ex):
     # sort the exceptions into lexicographical order
     def lexicographic(exception_a, exception_b):
-        # use their full C++ name
-        name_a = string.join(id.mapID(exception_a.scopedName()))
-        name_b = string.join(id.mapID(exception_b.scopedName()))
-        # name_a <=> name_b
-        if name_a < name_b: return -1
-        if name_a > name_b: return 1
-        return 0
+        name_a = exception_a.repoId()
+        name_b = exception_b.repoId()
+        return cmp(name_a, name_b)
         
     raises = ex[:]
     raises.sort(lexicographic)
