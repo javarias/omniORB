@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.18  2000/03/30 13:01:14  dpg1
+// Locking fixed for ~Py_omniServant().
+//
 // Revision 1.17  2000/03/24 17:10:51  dpg1
 // Work-around for conflict between VC++ and xlC bugs.
 //
@@ -708,7 +711,7 @@ Py_omniServant::local_dispatch(const char* op,
 Py_ServantActivator::Py_ServantActivator(PyObject*   pysa,
 					 PyObject*   opdict,
 					 const char* repoId)
-  : Py_omniServant(pysa, opdict, repoId), pysa_(pysa)
+  : PY_OMNISERVANT_BASE(pysa, opdict, repoId), pysa_(pysa)
 {
   Py_INCREF(pysa);
 }
@@ -866,7 +869,7 @@ Py_ServantActivator::_ptrToInterface(const char* repoId)
 Py_ServantLocator::Py_ServantLocator(PyObject*   pysl,
 				     PyObject*   opdict,
 				     const char* repoId)
-  : Py_omniServant(pysl, opdict, repoId), pysl_(pysl)
+  : PY_OMNISERVANT_BASE(pysl, opdict, repoId), pysl_(pysl)
 {
   Py_INCREF(pysl);
 }
@@ -1041,7 +1044,7 @@ Py_ServantLocator::_ptrToInterface(const char* repoId)
 Py_AdapterActivator::Py_AdapterActivator(PyObject*   pyaa,
 					 PyObject*   opdict,
 					 const char* repoId)
-  : Py_omniServant(pyaa, opdict, repoId), pyaa_(pyaa)
+  : PY_OMNISERVANT_BASE(pyaa, opdict, repoId), pyaa_(pyaa)
 {
   Py_INCREF(pyaa);
 }
