@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/10/17 16:47:08  dpg1
+  New minor codes
+
   Revision 1.1.4.1  2001/04/18 17:18:18  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -50,16 +53,24 @@
 #include <GIOP_S.h>
 #include <GIOP_C.h>
 
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
 
 OMNI_NAMESPACE_BEGIN(omni)
 
 class omniCodeSetUtil {
 public:
 
-  static const GIOP::Version GIOP10;
-  static const GIOP::Version GIOP11;
-  static const GIOP::Version GIOP12;
-
+  static _core_attr const GIOP::Version GIOP10;
+  static _core_attr const GIOP::Version GIOP11;
+  static _core_attr const GIOP::Version GIOP12;
 
   //
   // Memory management
@@ -292,5 +303,7 @@ do { \
 
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __CODESETUTIL_H__
