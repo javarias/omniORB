@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.3  2000/11/03 19:26:01  sll
+# Simplified the marshalling functions.
+#
 # Revision 1.17.2.2  2000/10/12 15:37:48  sll
 # Updated from omni3_1_develop.
 #
@@ -178,8 +181,14 @@ else """,
 
     type_name = d_type.base(environment)
     bounded = ""
+    kind = d_type.type().kind()
+    
     if d_type.objref():
         type_name = string.replace(type_name,"_ptr","")
+        if isinstance(d_type.type().decl(),idlast.Forward):
+            # hack to denote an interface forward declaration
+            # kind is used to index the associative array below
+            kind = idltype.tk_objref * 1000
     elif d_type.string() or d_type.wstring():
         bounded = str(d_type.type().bound())
 
@@ -205,9 +214,11 @@ else """,
       "@type@::_marshalObjRef(@element_name@,@to_where@);",
       idltype.tk_TypeCode:
       "CORBA::TypeCode::marshalTypeCode(@element_name@,@to_where@);",
+      idltype.tk_objref * 1000:
+      "@type@_Helper::marshalObjRef(@element_name@,@to_where@);"
       }
-    if special_marshal_functions.has_key(d_type.type().kind()):
-        out_template = special_marshal_functions[d_type.type().kind()]
+    if special_marshal_functions.has_key(kind):
+        out_template = special_marshal_functions[kind]
     else:
         out_template = "@type_cast@@element_name@ >>= @to_where@;"
 
@@ -266,8 +277,14 @@ def unmarshall(to, environment, type, decl, name, from_where):
     
     type_name = d_type.base(environment)
     bounded = ""
+    kind = d_type.type().kind()
+
     if d_type.objref():
         type_name = string.replace(type_name,"_ptr","")
+        if isinstance(d_type.type().decl(),idlast.Forward):
+            # hack to denote an interface forward declaration
+            # kind is used to index the associative array below
+            kind = idltype.tk_objref * 1000
     elif d_type.string() or d_type.wstring():
         bounded = str(d_type.type().bound())
         
@@ -288,10 +305,12 @@ def unmarshall(to, environment, type, decl, name, from_where):
       "@element_name@ = @type@::_unmarshalObjRef(@where@);",
       idltype.tk_TypeCode:
       "@element_name@ = CORBA::TypeCode::unmarshalTypeCode(@where@);",
+      idltype.tk_objref * 1000:
+      "@element_name@ = @type@_Helper::unmarshalObjRef(@where@);"
       }
 
-    if special_unmarshal_functions.has_key(d_type.type().kind()):
-        out_template = special_unmarshal_functions[d_type.type().kind()]
+    if special_unmarshal_functions.has_key(kind):
+        out_template = special_unmarshal_functions[kind]
     else:
         out_template = "(@type@&)@element_name@ <<= @where@;"
 
