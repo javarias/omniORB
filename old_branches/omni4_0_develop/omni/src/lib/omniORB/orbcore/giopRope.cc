@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/07/31 16:24:23  sll
+  Moved filtering and sorting of available addresses into a separate
+  function. Make acquireClient, decrRefCount and notifyCommFailure virtual.
+
   Revision 1.1.4.6  2001/07/13 15:26:58  sll
   Use safeDelete to remove a strand.
 
@@ -560,6 +564,9 @@ giopRope::filterAndSortAddressList(const giopAddressList& addrlist,
     // XXX in future, we will be more selective as to which addresses will
     // use bidirectional.
     use_bidir = 1;
+  }
+  else {
+    use_bidir = 0;
   }
 }
 
