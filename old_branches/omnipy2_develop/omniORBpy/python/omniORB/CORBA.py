@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.15  2002/06/11 20:21:31  dgrisby
+# Missed out wchar, wstring TypeCodes.
+#
 # Revision 1.28.2.14  2002/05/27 01:02:37  dgrisby
 # Fix bug with scope lookup in generated code. Fix TypeCode clean-up bug.
 #
@@ -166,6 +169,10 @@
 # Revision 1.1  1999/06/08 16:21:52  dpg1
 # Initial revision
 #
+
+"""
+Main omniORB CORBA module
+"""
 
 
 import _omnipy
