@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.11  2001/06/11 13:06:26  dpg1
+// Support for PortableServer::Current.
+//
 // Revision 1.2.4.10  2001/06/01 11:09:26  dpg1
 // Make use of new omni::ptrStrCmp() and omni::strCmp().
 //
@@ -63,6 +66,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/callDescriptor.h>
 #include <exceptiondefs.h>
+#include <objectTable.h>
 #include "omnipy_sysdep.h"
 
 
@@ -260,14 +264,20 @@ public:
 			   omniIOR*           ior,
 			   CORBA::Boolean     locked,
 			   omniIdentity*      id = 0,
-			   omniLocalIdentity* local_id = 0,
 			   CORBA::Boolean     type_verified = 0);
 
   static
-  omniObjRef* createObjRef(const char*        mostDerivedRepoId,
-			   const char*        targetRepoId,
-			   omniLocalIdentity* id,
-			   CORBA::Boolean     type_verified = 0);
+  omniObjRef* createLocalObjRef(const char*        mostDerivedRepoId,
+				const char*        targetRepoId,
+				omniObjTableEntry* entry,
+				CORBA::Boolean     type_verified = 0);
+
+  static
+  omniObjRef* createLocalObjRef(const char* 	    mostDerivedRepoId,
+				const char* 	    targetRepoId,
+				const _CORBA_Octet* key,
+				int                 keysize,
+				CORBA::Boolean      type_verified = 0);
 
   // When a POA creates a reference to a Python servant, it does not
   // have a proxy object factory for it, so it creates an
@@ -501,7 +511,7 @@ public:
     virtual void initialiseCall(cdrStream&);
     virtual void marshalArguments(cdrStream& stream);
     virtual void unmarshalReturnedValues(cdrStream& stream);
-    virtual void userException(_OMNI_NS(IOP_C)& iop_client,
+    virtual void userException(cdrStream& stream, _OMNI_NS(IOP_C)* iop_client,
 			       const char* repoId);
 
     inline void systemException(const CORBA::SystemException& ex) {

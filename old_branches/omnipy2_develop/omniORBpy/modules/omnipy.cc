@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.11  2001/06/22 10:29:26  dpg1
+// Add distribution date to logging.
+//
 // Revision 1.1.2.10  2001/06/11 13:06:25  dpg1
 // Support for PortableServer::Current.
 //
@@ -684,7 +687,7 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 	omniObjRef* oosource = cxxsource->_PR_getobj();
 	omniObjRef* oodest   = omniPy::createObjRef(repoId,
 						    oosource->_getIOR(),
-						    0, 0, 0, 1);
+						    0, 0, 1);
 	cxxdest =
 	  (CORBA::Object_ptr)(oodest->_ptrToObjRef(CORBA::Object::_PD_repoId));
       }
