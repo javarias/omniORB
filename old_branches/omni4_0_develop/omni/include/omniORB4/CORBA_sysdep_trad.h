@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2003/02/17 02:03:07  dgrisby
+  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
+
   Revision 1.1.2.6  2003/01/16 11:08:26  dgrisby
   Patches to support Digital Mars C++. Thanks Christof Meerwald.
 
@@ -78,7 +81,9 @@
 #define HAVE_UNISTD_H 1
 // Unset if no unistd.h header
 
-#define HAVE_GETPID 1
+#ifndef HAVE_GETPID
+#  define HAVE_GETPID 1
+#endif
 // Unset if no getpid() function
 
 #define HAVE_GETTIMEOFDAY 1
