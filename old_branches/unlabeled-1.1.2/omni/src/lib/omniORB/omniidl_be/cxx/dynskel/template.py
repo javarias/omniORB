@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.3  2000/03/24 16:18:25  djs
+# Added missing prefix to CORBA::Any extraction operators used for
+#   typedef sequence<X> Y
+# (typedef sequence<long> a; would not produce C++ which gcc could parse)
+#
 # Revision 1.1.2.2  2000/02/16 18:34:49  djs
 # Fixed problem generating fragments in DynSK.cc file
 #
@@ -324,9 +329,9 @@ void operator <<= (CORBA::Any& _a, const @fqname@& s)
   _a.PR_packFrom(@tcname@, &tcdesc);
 }
 
-void @private_prefix@_seq_delete_@guard_name@(void* data)
+void @private_prefix@_seq_delete_@guard_name@(void* _data)
 {
-  delete (@fqname@*)data;
+  delete (@fqname@*)_data;
 }
 
 CORBA::Boolean operator >>= (const CORBA::Any& _a, @fqname@*& s_out)
