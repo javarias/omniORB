@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/02 10:16:27  dpg1
+  Correct some minor errors in code set implementation. Remove Big5
+  converter since it's wrong.
+
   Revision 1.1.2.1  2000/10/27 15:42:07  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -316,6 +320,38 @@ omniCodeSet::TCS_W::fastUnmarshalWString(cdrStream&     stream,
   return 0;
 }
 
+
+void
+CONV_FRAME::
+CodeSetComponent::operator>>=(cdrStream& s) const
+{
+  native_code_set >>= s;
+  conversion_code_sets >>= s;
+}
+
+void
+CONV_FRAME::
+CodeSetComponent::operator<<=(cdrStream& s)
+{
+  native_code_set <<= s;
+  conversion_code_sets <<= s;
+}
+
+void
+CONV_FRAME::
+CodeSetComponentInfo::operator>>=(cdrStream& s) const
+{
+  ForCharData >>= s;
+  ForWcharData >>= s;
+}
+
+void
+CONV_FRAME::
+CodeSetComponentInfo::operator<<=(cdrStream& s)
+{
+  ForCharData <<= s;
+  ForWcharData <<= s;
+}
 
 //
 // Module initialiser
