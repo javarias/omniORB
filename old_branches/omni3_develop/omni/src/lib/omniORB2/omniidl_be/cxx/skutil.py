@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.5  2000/08/07 15:34:34  dpg1
+# Partial back-port of long long from omni3_1_develop.
+#
 # Revision 1.15.2.4  2000/05/31 18:02:16  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)
@@ -147,9 +150,12 @@ def marshall(string, environment, type, decl, argname, to="_n",
     type_dims = type.dims()
     full_dims = dims + type_dims
 
-    # for some reason, a char[10][20][30] x
-    # becomes put_char_array(.... x[0][0]...)
-    zero_dims_string = "[0]" * (len(full_dims) - 1)
+    # When marshalling a multidimensional array of basic types MSVC5
+    # is unable to resolve the subscript operator overload unless we
+    # cast the index to _CORBA_ULong (exactly as specified in the template)
+    # See: testsuite/idl/bug200823.idl
+    #      include/omniORB3/templatedecls.h: _CORBA_Array_Var
+    zero_dims_string = "[(_CORBA_ULong)0]" * (len(full_dims) - 1)
 
     anonymous_array = dims      != []
     is_array        = full_dims != []
@@ -280,8 +286,7 @@ def unmarshall(to, environment, type, decl, name,
     type_dims = type.dims()
     full_dims = dims + type_dims
 
-    # for some reason, a char[10][20][30] x
-    # becomes put_char_array(.... x[0][0]...)
+    # The MSVC workaround seems not to be required in the unmarshalling case.
     zero_dims_string = "[0]" * (len(full_dims) - 1)
 
     anonymous_array = dims      != []
@@ -601,4 +606,5 @@ def sort_exceptions(ex):
     raises = ex[:]
     raises.sort(lexicographic)
     return raises
+
 
