@@ -1,0 +1,770 @@
+
+Wed Feb  9 11:57:28 GMT 2000 djr
+================================
+
+- Fixed bug in _CORBA_String_member.  When a new string is allocated or
+  consumed the pd_rel flag should be set to avoid a memory leak.
+
+include/omniORB3/stringtypes.h
+src/lib/omniORB2/orbcore/corbaString.cc
+
+- Minor improvements to omni_tracedmutex/condition.  Now checks that mutex
+  is destroyed before associated condvar.  Unnecassary member
+  omni_tracedmutex::pd_m removed.
+
+include/omniORB3/tracedthread.h
+src/lib/omniORB2/orbcore/tracedthread.cc
+
+- Fixed a bug in insertion to/extraction from Anys.  tcParser code now
+  uses a flag to determine whether to free the string, and sets the flag
+  if a new string is allocated (to ensure the String_member releases it
+  properly).
+
+- New optimisation for insert/extraction of sequences of simple types
+  to/from Anys.
+
+include/omniORB3/tcDescriptor.h
+src/lib/omniORB2/dynamic/any.cc
+src/lib/omniORB2/dynamic/tcParser.cc
+src/tool/omniidl2/omniORB2_be/o2be_array.cc
+src/tool/omniidl2/omniORB2_be/o2be_sequence.cc
+
+
+Tue Feb  8 13:20:50 GMT 2000 djr
+================================
+
+- Added a few _core_attr.  Dynamic library should now work on Win(x).
+  (modulo oustanding issue with tcParser and String_member).
+
+include/omniORB3/omniInternal.h
+src/lib/omniORB2/dynamicLib.h
+
+
+Mon Feb  7 15:29:03 GMT 2000 dpg1
+=================================
+
+- Fixed silly bug in _is_equivalent() with pseudo object references.
+
+src/lib/omniORB2/orbcore/corbaObject.cc
+
+
+Fri Feb  4 18:07:05 GMT 2000 djr
+================================
+
+- Minor mods for IRIX, which doesn't like casting from pointers to
+  ints.  This is because pointers are 8bytes and ints are 4.
+
+- Removed _is_a, _is_equivalent and _hash from omniOrbORB, since
+  they are implemented in CORBA::Object (and are not reachable
+  anyway!).
+
+src/lib/omniORB2/orbcore/corbaObject.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/corbaOrb.h
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poamanager.cc
+
+
+Fri Feb  4 14:46:06 GMT 2000 djr
+================================
+
+- Updated a couple of feature test macros.
+
+include/omniORB3/CORBA_sysdep.h
+
+
+Tue Feb  1 19:15:12 GMT 2000 djr
+================================
+
+- Removed debugging output (left in by mistake).
+
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+
+Mon Jan 31 11:10:10 GMT 2000 djr
+================================
+
+- Fixed bug in unmarshalling of strings, which would cause a static
+  string object to be free()d.
+
+src/lib/omniORB2/orbcore/corbaString.cc
+
+
+Fri Jan 28 15:43:09 GMT 2000 djr
+================================
+
+- Removed superflouous reference counting in Strand_iterator.
+
+- Removed flags to indicate whether Ropes and Strands are heap-
+  allocated.  They always are!
+
+- Improved allocation of client requests to strands.  Previously if
+  too many threads needed strands from the same rope, the allocation
+  was performed poorly (late threads all being allocated to the first
+  strand).  Now strands are allocated as the become available.
+
+include/omniORB3/rope.h
+src/lib/omniORB2/orbcore/relStream.cc
+src/lib/omniORB2/orbcore/relStream.h
+src/lib/omniORB2/orbcore/strand.cc
+src/lib/omniORB2/orbcore/tcpSocket.h
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+
+
+Thu Jan 27 18:06:52 GMT 2000 djr
+================================
+
+- Fixed bug in dumpbuf() (doh!).
+
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+
+
+Thu Jan 27 16:27:08 GMT 2000 djr
+================================
+
+- Fixed bug in String_member.  It is now initialised with an
+  empty string by default (rather than null).  This reflects	
+  a change in the mapping.
+
+include/omniORB3/stringtypes.h
+include/omniORB3/omniInternal.h
+src/lib/omniORB2/orbcore/omniInternal.cc
+
+
+Thu Jan 27 10:45:38 GMT 2000 djr
+================================
+
+- Updated the anyExample.
+
+src/examples/anyExample/anyExample_clt.cc
+src/examples/anyExample/anyExample_impl.cc
+src/examples/anyExample/dir.mk
+
+- Added macro OMNIORB_BASE_CTOR() which conditionally provides the
+  fully qualified name for a base class constructor.  This is enabled
+  with the feature test macro OMNI_REQUIRES_FQ_BASE_CTOR.
+   This seems to be required for powerpc_aix at least.
+
+- Other minor mods for powerpc aix.
+
+external_merge/mk/platforms/powerpc_aix_4.2.mk
+include/omniORB3/CORBA_sysdep.h
+include/omniORB3/userexception.h
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poamanager.cc
+src/lib/omniORB2/orbcore/poastubs.cc
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+- Minor mod to example.
+
+src/examples/echo/eg2_clt.cc
+
+
+Wed Jan 26 15:29:24 GMT 2000 djr
+================================
+
+- Fixed a couple of typos.
+
+src/lib/omniORB2/orbcore/sharedlib/dir.mk
+
+
+Sat Jan 22 16:04:14 GMT 2000 djr
+================================
+
+- Added -ORBtraceInvocations to the -ORBhelp summary.
+
+src/lib/omniORB2/orbcore/corbaOrb.cc
+
+
+Thu Jan 20 11:42:59 GMT 2000 djr
+================================
+
+- Pseudo objects should now use omni::poRcLock for reference counting.
+  It is never destroyed, and so should prevent any problems when
+  _var types are destroyed at static de-initialisation.
+
+  NB. Not all yet do!  Eg. TypeCode, DynAny etc.
+
+- New assertion type OMNI_USER_CHECK that detects errors that are likely
+  to be caused by the application (eg. release a reference too many times).
+  It throws up a standard message and points to a comment in the source.
+
+- Fixed deadlock bug for CORBA::ORB.  The <orb_lock> mutex is held when
+  it is destroyed, but a CORBA::ORB_ptr could be released during this
+  process.  Ref counting is now done with a different mutex.
+
+include/omniORB3/omniInternal.h
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/corbaOrb.h
+src/lib/omniORB2/orbcore/omniInternal.cc
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poamanager.cc
+src/lib/omniORB2/orbcore/policy.cc
+
+
+Fri Jan  7 16:19:24 GMT 2000 djr
+================================
+
+- (dme) provide Foo_copy() for array types per CORBA 2.3
+- (dme) make o2be_root.cc compile on non-gcc platforms
+
+src/tool/omniidl2/omniORB2_be/o2be.h
+src/tool/omniidl2/omniORB2_be/o2be_array.cc
+src/tool/omniidl2/omniORB2_be/o2be_root.cc
+
+
+Fri Jan  7 14:47:08 GMT 2000 djr
+================================
+
+- Server and client call timeouts are now disabled by default.
+
+src/lib/omniORB2/orbcore/scavenger.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+doc/tex/omniORB2.tex
+
+
+Wed Jan  5 17:54:30 GMT 2000 djr
+================================
+
+- Added check for re-initialisation of the ORB.  Now prints out a message
+  and throws BAD_INV_ORDER (rather than failing an assertion).
+
+src/lib/omniORB2/orbcore/corbaOrb.cc
+
+
+Mon Jan  3 18:42:05 GMT 2000 djr
+================================
+
+- Fixed bug in ref counting for POA Policy objects.
+
+src/lib/omniORB2/orbcore/policy.cc
+
+
+Fri Dec 17 17:58:57 GMT 1999 dpg1
+=================================
+
+- Fix to name lookup in inherited interfaces
+
+src/tool/omniidl2/util/utl_scope.cc
+
+
+Fri Dec 17 13:27:16 GMT 1999 djr
+================================
+
+- Applied jnw's performance improvement for Any.
+
+
+Thu Dec 16 14:20:49 GMT 1999 djr
+================================
+
+- Fixed pseudo-bug in omniidl3.  Did not have any negative effects, but
+  was unsafe and the method o2be_operation::id_sorted_exn_list() did not
+  do what it said!
+
+src/tool/omniidl2/omniORB2_be/o2be_operation.cc
+
+
+Wed Dec 15 14:47:18 GMT 1999 djr
+================================
+
+- Fixed bug in omniidl3 - scoping incorrect for attribute write arg.
+
+src/tool/omniidl2/omniORB2_be/o2be_attribute.cc
+
+
+Fri Dec 10 12:31:04 GMT 1999 djr
+================================
+
+- Fixed deadlock in bootstrap agent.
+
+src/lib/omniORB2/orbcore/bootstrap_i.cc
+
+
+Tue Dec  7 18:08:27 GMT 1999 djr
+================================
+
+- Fixed bug in omniidl2, involving typedef of sequence of objref
+  in the objrefs definition.
+
+src/tool/omniidl2/omniORB2_be/o2be_sequence.cc
+
+
+Mon Dec  6 13:59:32 GMT 1999 djr
+================================
+
+- Fixed bug in dumpbuf().
+
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+
+
+Thu Dec  2 19:01:41 GMT 1999 djr
+================================
+
+- Fixed bug in marshalling/unmarshalling of arrays.
+
+src/tool/omniidl2/omniORB2_be/o2be_operation.cc
+
+
+Thu Nov 25 11:30:35 GMT 1999 djr
+================================
+
+- CORBA::Policy::destroy() no longer throws an exception.
+
+src/lib/omniORB2/orbcore/policy.cc
+
+
+Tue Nov 23 10:45:38 GMT 1999 djr
+================================
+
+- Added _var_type and _ptr_type to POA.
+
+include/omniORB3/poa.h
+
+
+Mon Nov 22 10:48:48 GMT 1999 djr
+================================
+
+- Fixed bug in omniidl3.  typedef of Object generated incorrect code.
+
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+
+Fri Nov 12 17:02:06 GMT 1999 djr
+================================
+
+- Minor mods for aCC on hp-10.20.
+
+src/lib/omniORB2/orbcore/poa.cc
+
+- Added make files for callback example.
+
+external_merge/src/examples/call_back/GNUmakefile  -- new
+external_merge/src/examples/call_back/dir.mak      -- new
+
+
+Mon Nov  8 09:42:40 GMT 1999 djr
+================================
+
+- Fixed bug in omniObjRef::_real_is_a().  Did not always contact remote
+  object in the case that it was not able to say 'yes' using local
+  information.
+
+src/lib/omniORB2/orbcore/omniObjRef.cc
+
+
+Tue Nov  2 17:38:16 GMT 1999 djr
+================================
+
+- Removed obsolete references to rope factories.
+
+src/lib/omniORB2/orbcore/corbaOrb.cc
+
+
+Fri Oct 29 11:26:38 BST 1999 djr
+================================
+
+- Removed reference to omni::internalLock in destructor of POA objects.
+  This caused the core library to seg-fault on shutdown if ORB_init()
+  was never called.
+
+src/lib/omniORB2/orbcore/poa.cc
+
+- Ensured that all nil objects are dynamically allocated and never
+  destroyed.  omni::nilRefLock is now accessed by a method to ensure
+  that it is properly initialised, even when accessed from static
+  initialisation code.
+
+- Added prefix 'omni' to a number of 'nil' object classes.
+
+include/omniORB3/omniInternal.h
+src/lib/omniORB2/dynamic/context.cc
+src/lib/omniORB2/dynamic/contextList.cc
+src/lib/omniORB2/dynamic/dynAnyNil.cc
+src/lib/omniORB2/dynamic/environment.cc
+src/lib/omniORB2/dynamic/exceptionList.cc
+src/lib/omniORB2/dynamic/namedValue.cc
+src/lib/omniORB2/dynamic/nvList.cc
+src/lib/omniORB2/dynamic/request.cc
+src/lib/omniORB2/dynamic/typecode.cc
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/corbaObject.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/omniInternal.cc
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poamanager.cc
+src/lib/omniORB2/orbcore/poastubs.cc
+src/lib/omniORB2/orbcore/policy.cc
+src/lib/omniORB2/orbcore/portableserver.cc
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+
+Wed Oct 27 19:06:02 BST 1999 sll
+================================
+
+- Fixed a bug which triggers an assertion failure when the ORB cannot spawn
+  a thread to serve a new connection.
+
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+
+
+Wed Oct 27 18:08:28 BST 1999 djr
+================================
+
+- omni::internalLock and objref_rc_lock are now pointers.  This ensures
+  that they are not cleaned up at program termination.  Previously the
+  mutexes could be cleaned up before they were finished with, as they
+  may be used as a result of static object destructors.
+
+include/omniORB3/omniInternal.h
+include/omniORB3/omniObjRef.h
+include/omniORB3/omniServant.h
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/giopServer.cc
+src/lib/omniORB2/orbcore/localIdentity.cc
+src/lib/omniORB2/orbcore/localIdentity.h
+src/lib/omniORB2/orbcore/objectAdapter.cc
+src/lib/omniORB2/orbcore/objectAdapter.h
+src/lib/omniORB2/orbcore/omniInternal.cc
+src/lib/omniORB2/orbcore/omniObjRef.cc
+src/lib/omniORB2/orbcore/omniServant.cc
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/portableserver.cc
+src/lib/omniORB2/orbcore/remoteIdentity.cc
+
+
+Wed Oct 27 16:10:16 BST 1999 djr
+================================
+
+- Changed reference to omniDynamic2 to omniDynamic3.
+
+external_merge/mk/platforms/mips_irix_6.4_6.5_common.mk
+
+
+Tue Oct 26 20:34:57 BST 1999 sll
+================================
+
+- DynAny no longer do alias expand on the typecode. In other words, all
+  aliases are preserved in the typecode.
+
+src/lib/omniORB2/dynamic/dynAny.h
+src/lib/omniORB2/dynamic/dynAny.cc
+src/lib/omniORB2/dynamic/typecode.cc
+
+
+Thu Oct 21 12:00:31 BST 1999 djr
+================================
+
+- Added export rule.
+
+src/examples/boa/dir.mk
+src/examples/poa/implicit_activation/dir.mk
+
+- Added _core_attr to declaration of _PD_repoId in interfaces
+  and exceptions.  This fixes a bug seen on MSVC.
+
+include/omniORB3/CORBA.h
+include/omniORB3/poa.h
+include/omniORB3/poa_defs.h
+include/omniORB3/userexception.h
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+src/tool/omniidl2/omniORB2_be/o2be_exception.cc
+
+
+Mon Oct 18 18:24:41 BST 1999 djr
+================================
+
+- Work-around for MSVC scoping bug in omniidl3.
+
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+- Fixes for MSVC dll building.
+
+include/omniORB3/CORBA.h
+include/omniORB3/poa.h
+include/omniORB3/userexception.h
+
+
+Mon Oct 18 12:00:56 BST 1999 djr
+================================
+
+- New macro OMNIORB_FOR_EACH_SYS_EXCEPTION, which allows another macro
+  to be expanded for each system exception.  This centralises the list
+  of system exceptions.
+
+include/omniORB3/userexception.h
+include/omniORB3/CORBA.h
+src/lib/omniORB2/exception.h
+src/lib/omniORB2/orbcore/exceptn.cc
+src/lib/omniORB2/orbcore/giopClient.cc
+src/lib/omniORB2/orbcore/giopServer.cc
+src/lib/omniORB2/dynamic/dynException.cc
+
+
+Sat Oct 16 14:18:56 BST 1999 djr
+================================
+
+- Various changes for MSVC.
+
+include/omniORB3/CORBA.h
+include/omniORB3/poa.h
+include/omniORB3/poa_defs.h
+src/lib/omniORB2/orbcore/anonObject.h
+src/lib/omniORB2/orbcore/corbaObject.cc
+src/lib/omniORB2/orbcore/gatekeeper.h
+src/lib/omniORB2/orbcore/initFile.cc
+src/lib/omniORB2/orbcore/poastubs.cc
+src/lib/omniORB2/orbcore/policy.cc
+src/lib/omniORB2/orbcore/portableserver.cc
+src/lib/omniORB2/orbcore/tcpSocket.cc
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+src/lib/omniORB2/orbcore/sharedlib/dir.mk
+src/lib/omniORB2/orbcore/sharedlib/msvcdllstub.cc
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+
+Thu Oct 14 16:59:11 BST 1999 djr
+================================
+
+- Added log messages whenever system exceptions are throw, giving
+  source file and line number.  Enabled at trace level 10.  This
+  can be disabled by defining the pre-processor symbol:
+    OMNIORB_NO_EXCEPTION_LOGGING
+
+src/lib/omniORB2/exception.h
+src/lib/omniORB2/orbcore/callDescriptor.cc
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/corbaObject.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/corbaString.cc
+src/lib/omniORB2/orbcore/dynamicLib.cc
+src/lib/omniORB2/orbcore/exception.cc
+src/lib/omniORB2/orbcore/exceptn.cc
+src/lib/omniORB2/orbcore/giopClient.cc
+src/lib/omniORB2/orbcore/giopServer.cc
+src/lib/omniORB2/orbcore/initFile.cc
+src/lib/omniORB2/orbcore/ior.cc
+src/lib/omniORB2/orbcore/localIdentity.cc
+src/lib/omniORB2/orbcore/mbufferedStream.cc
+src/lib/omniORB2/orbcore/nbufferedStream.cc
+src/lib/omniORB2/orbcore/objectAdapter.cc
+src/lib/omniORB2/orbcore/omniInternal.cc
+src/lib/omniORB2/orbcore/omniORB.cc
+src/lib/omniORB2/orbcore/omniObjRef.cc
+src/lib/omniORB2/orbcore/omniServant.cc
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poamanager.cc
+src/lib/omniORB2/orbcore/portableserver.cc
+src/lib/omniORB2/orbcore/relStream.cc
+src/lib/omniORB2/orbcore/remoteIdentity.cc
+src/lib/omniORB2/orbcore/strand.cc
+src/lib/omniORB2/orbcore/tcpSocket.cc
+src/lib/omniORB2/orbcore/tcpSocketMTfactory.cc
+
+src/lib/omniORB2/dynamic/any.cc
+src/lib/omniORB2/dynamic/anyP.cc
+src/lib/omniORB2/dynamic/context.cc
+src/lib/omniORB2/dynamic/contextList.cc
+src/lib/omniORB2/dynamic/dynAny.cc
+src/lib/omniORB2/dynamic/dynAnyNil.cc
+src/lib/omniORB2/dynamic/dynException.cc
+src/lib/omniORB2/dynamic/dynamicImplementation.cc
+src/lib/omniORB2/dynamic/environment.cc
+src/lib/omniORB2/dynamic/exceptionList.cc
+src/lib/omniORB2/dynamic/ir.cc
+src/lib/omniORB2/dynamic/namedValue.cc
+src/lib/omniORB2/dynamic/nvList.cc
+src/lib/omniORB2/dynamic/request.cc
+src/lib/omniORB2/dynamic/serverRequest.cc
+src/lib/omniORB2/dynamic/tcParser.cc
+src/lib/omniORB2/dynamic/typecode.cc
+src/lib/omniORB2/dynamic/typecode.h
+
+
+Wed Oct 13 16:40:34 BST 1999 djr
+================================
+
+- Fixed bug in omniidl3.  Typedef of objref as member of exception
+  caused seg fault.
+
+src/tool/omniidl3/omniORB2_be/o2be_exception.cc
+
+
+Wed Oct 13 16:11:27 BST 1999 sll
+================================
+
+- Added #include <unistd.h> for AIX
+
+
+Wed Oct 13 16:11:27 BST 1999 djr
+================================
+
+src/lib/omnithread/posix.cc
+
+- Fixed omniidl3 bugs:
+
+   Fixed mapping for server-skeleton signatures.  inout parameters
+   should not use _INOUT_arg types.
+
+   Call descriptors for operations and attributes used different naming
+   conventions for members, and had different constructors, but can be
+   used interchangeably (so need to export identical interfaces).
+
+src/too/omniidl2/omniORB2_be/o2be.h
+src/too/omniidl2/omniORB2_be/o2be_attribute.cc
+src/too/omniidl2/omniORB2_be/o2be_interface.cc
+src/too/omniidl2/omniORB2_be/o2be_operation.cc
+
+
+Wed Oct 13 13:38:21 BST 1999 djr
+================================
+
+- Don't use virtual inheritance in examples (not needed).
+
+src/examples/echo/eg1.cc
+src/examples/echo/eg2_impl.cc
+src/examples/echo/eg3_impl.cc
+src/examples/poa/implicit_activation/eg1.cc
+
+- Fixed repository id returned by CORBA::Exception::_NP_repoId().
+  It did not include the version number of system exceptions.
+
+src/lib/omniORB2/orbcore/exceptn.cc
+
+- Out-of-date name for tcDescriptor for CORBA::Object.
+
+include/omniORB3/tcDescriptor.h
+
+- Added typedef for TypeCode_out.
+
+include/omniORB3/CORBA_vartypes.h
+
+
+Mon Oct  4 18:05:57 BST 1999 djr
+================================
+
+- A whole bunch on minor MSVC work-arounds.
+
+include/omniORB3/userexception.h
+src/lib/omniORB2/orbcore/anonObject.h
+src/lib/omniORB2/orbcore/bootstrap_i.cc
+src/lib/omniORB2/orbcore/callDescriptor.cc
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/corbaOrb.cc
+src/lib/omniORB2/orbcore/poaimpl.h
+src/lib/omniORB2/orbcore/poamanager.h
+src/lib/omniORB2/orbcore/poastubs.cc
+src/lib/omniORB2/orbcore/portableserver.cc
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+
+Mon Oct  4 16:39:10 BST 1999 djr
+================================
+
+- Constructor for _objref_foo calls Object rather than CORBA::Object to
+  avoid scoping problem with MSVC.
+
+include/omniORB3/poa_defs.hh
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+- Workaround for MSVC bug (inserting StringBuf into stream).
+
+src/tool/omniidl2/omniORB2_be/o2be_util.cc
+
+- Re-organised macros to avoid dodgy missing parameter.
+
+include/omniORB3/userexception.h
+
+
+Thu Sep 30 12:43:39 BST 1999 djr
+================================
+
+- New MACRO HAS_Cplusplus_catch_exception_by_base.
+
+- Implemented catching user-defined exceptions in stubs for
+  compilers which have no support for catching exceptions by
+  base class.
+
+include/omniORB3/CORBA_sysdep.h
+include/omniORB3/giopDriver.h
+include/omniORB3/omniORB.h
+src/lib/omniORB3/giopServer.cc
+src/tool/omniidl2/omniORB2_be/o2be_operation.cc
+
+- Implemented use of PortableServer::AdapterActivators in POAs.
+
+src/lib/omniORB2/poa.cc
+src/lib/omniORB2/poaimpl.h
+src/lib/omniORB2/poamanager.cc
+src/lib/omniORB2/poamanager.h
+
+- Implemented '_interface' for BOA servants.
+
+src/lib/omniORB2/orbcore/corbaBoa.cc
+
+
+Thu Sep 30 09:58:02 BST 1999 djr
+================================
+
+- Fixed bug in omniNames.  Did not call _remove_ref() on implementation
+  objects after activating them -- so they were not cleaned up.
+
+src/appl/omniNames/log.cc
+src/appl/omniNames/NamingContext_i.cc
+
+
+Wed Sep 29 14:08:03 BST 1999 djr
+================================
+
+- Updated mapping of operation signatures for skeletons to use
+  T_out types for out arguments.  The old signatures can be used
+  by specifying the -Bold_signatures flag.
+
+- Renamed all flags to omniidl3 relating to backwards-compatiblity
+    -c -> -Bold_reserved_prefix
+    -b -> -Bboa
+
+src/tool/omniidl2/include/idl_defines.hh
+src/tool/omniidl2/omniORB2_be/o2be_cfe_interface.cc
+src/tool/omniidl2/omniORB2_be/o2be_interface.cc
+
+- Updated omniNames to use the new mapping.
+
+src/appl/omniNames/BindingIterator_i.h
+src/appl/omniNames/NamingContext_i.h
+src/appl/omniNames/NamingContext_i.cc
+
+
+Tue Sep 28 11:39:14 BST 1999 djr
+================================
+
+- Removed pretty-printing of object keys from object adapters.
+
+src/lib/omniORB2/orbcore/corbaBoa.cc
+src/lib/omniORB2/orbcore/corbaBoa.h
+src/lib/omniORB2/orbcore/logIOstream.cc
+src/lib/omniORB2/orbcore/objectAdapter.h
+src/lib/omniORB2/orbcore/poa.cc
+src/lib/omniORB2/orbcore/poaimpl.h
+src/lib/omniORB2/orbcore/remoteIdentity.cc
+
+
+Tue Sep 28 10:33:30 BST 1999 djr
+================================
+
+- Corrected declaration of ObjectId_to_string and string_to_ObjectId.
+
+include/omniORB3/poa.h
+
+- Properly escape characters in include file guards.
+  Removed dangerous default argument to StringBuf constructor.
+
+src/tool/omniidl2/omniORB2_be/o2be_root.cc
+
+- Check for zero length 'operation' string when unmarshalling GIOP
+  Request header.  Fixed bug -- 'principal' field need not be zero
+  terminated.
+
+src/lib/omniORB2/orbcore/giopServer.cc
+
