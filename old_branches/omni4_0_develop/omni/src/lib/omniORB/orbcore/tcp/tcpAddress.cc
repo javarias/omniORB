@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2002/05/07 12:54:44  dgrisby
+  Fix inevitable Windows header brokenness.
+
   Revision 1.1.2.9  2002/05/07 00:46:26  dgrisby
   Different define for TCP protocol number.
 
@@ -96,7 +99,7 @@ tcpAddress::tcpAddress(const char* address) {
   // OMNIORB_ASSERT(hostlen);
   pd_address.host = CORBA::string_alloc(hostlen);
   strncpy(pd_address.host,host,hostlen);
-  pd_address.host[hostlen] = '\0';
+  ((char*)pd_address.host)[hostlen] = '\0';
   int rc;
   unsigned int v;
   rc = sscanf(port,"%u",&v);

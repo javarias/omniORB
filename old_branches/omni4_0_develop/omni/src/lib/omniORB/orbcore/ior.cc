@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.20  2002/03/18 12:38:26  dpg1
+  Lower trace(0) to trace(1), propagate fatalException.
+
   Revision 1.10.2.19  2002/03/14 14:39:44  dpg1
   Obscure bug in objref creation with unaligned buffers.
 
@@ -657,7 +660,7 @@ omniIOR::unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent& c ,
   CORBA::ULong hostlen = strchr(host,':') - host;
   CORBA::String_var copyhost(CORBA::string_alloc(hostlen));
   strncpy(copyhost,host,hostlen);
-  copyhost[hostlen] = '\0';
+  ((char*)copyhost)[hostlen] = '\0';
 
   IIOP::Address ssladdr;
   ssladdr.host = copyhost._retn();
