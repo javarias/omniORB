@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.8  2001/04/18 18:18:06  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.7  2000/12/05 17:39:31  dpg1
   New cdrStream functions to marshal and unmarshal raw strings.
 
@@ -159,7 +162,10 @@ omniObjRef::_realNarrow(const char* repoId)
 	ior = pd_ior->duplicateNoLock();
       }
 
-      objref = omni::createObjRef(repoId,ior,0,0,_localId());
+      {
+	omni_tracedmutex_lock sync(*omni::internalLock);
+	objref = omni::createObjRef(repoId,ior,1,_identity(),_localId());
+      }
 
       if( objref ) {
 	target = objref->_ptrToObjRef(repoId);
