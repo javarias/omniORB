@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/08/16 09:53:18  sll
+  Added stdlib.h to give abort a prototype.
+
   Revision 1.1.2.5  2001/08/01 10:03:40  dpg1
   AyncInvoker no longer maintains its own dedicated thread queue.
   Derived classes must provide the implementation.
@@ -81,6 +84,14 @@ public:
     if (omniAsyncInvoker::traceLevel >= 10) {
       fprintf(stderr,"omniAsyncInvoker: thread id=%d has exited. Total threads = %d\n",pd_id,pd_pool->pd_totalthreads);
     }
+
+    pd_pool->pd_lock->lock();
+    if (pd_pool->pd_totalthreads == 0) {
+      pd_pool->pd_lock->unlock();
+      pd_pool->pd_cond->signal();
+    }
+    else
+      pd_pool->pd_lock->unlock();
   }
 
   void run(void*) {
@@ -148,9 +159,6 @@ public:
 
     pd_pool->pd_totalthreads--;
     pd_pool->pd_nthreads--;
-    if (pd_pool->pd_totalthreads == 0) {
-      pd_pool->pd_cond->signal();
-    }
     pd_pool->pd_lock->unlock();
   }
 
@@ -199,6 +207,7 @@ omniAsyncInvoker::~omniAsyncInvoker() {
 
   delete pd_cond;
   delete pd_lock;
+  LOG(10, "omniAsyncInvoker: deleted.\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////
