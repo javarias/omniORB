@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.33  1999/08/24 12:37:28  djr
+ * TypeCode_struct and TypeCode_except modified to use 'const char*' properly.
+ *
  * Revision 1.32  1999/08/20 11:41:12  djr
  * Yet another TypeCode alias-expand bug.
  *
@@ -4877,7 +4880,9 @@ template <class buf_t>
 inline TypeCode_union::Discriminator
 internal_unmarshalLabel(CORBA::TypeCode_ptr tc, buf_t& s)
 {
-  switch( tc->kind() ) {
+  const TypeCode_base* aetc = TypeCode_base::NP_expand(ToTcBase_Checked(tc));
+
+  switch( aetc->kind() ) {
   case CORBA::tk_char:
     {
       CORBA::Char c;
