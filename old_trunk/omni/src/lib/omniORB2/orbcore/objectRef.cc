@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21  1999/01/11 09:55:53  djr
+  *** empty log message ***
+
   Revision 1.20  1999/01/07 16:31:43  djr
   Fixed memory leak in CORBA::UnMarshalObjRef().
   New singleton ProxyObjectTableCleaner, which releases proxy objects
@@ -898,8 +901,9 @@ ProxyObjectTableCleaner::~ProxyObjectTableCleaner()
 
       if( omniORB::traceLevel >= 15 ) {
 	const char* repoId = (*p)->NP_IRRepositoryId();
-	CORBA::String_var obj_ref = (char*)
-	  IOP::iorToEncapStr((const CORBA::Char*) repoId, (*p)->iopProfiles());
+	CORBA::String_var obj_ref((char*)
+                            IOP::iorToEncapStr((const CORBA::Char*) repoId,
+					       (*p)->iopProfiles()));
 
 	omniORB::log <<
 	  "omniORB: WARNING - Proxy object not released.\n"
