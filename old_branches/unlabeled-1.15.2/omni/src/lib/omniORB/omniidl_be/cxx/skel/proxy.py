@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.3  2000/03/20 11:50:27  djs
+# Removed excess buffering- output templates have code attached which is
+# lazily evaluated when required.
+#
 # Revision 1.15.2.2  2000/02/16 16:30:04  djs
 # Fix to proxy call descriptor code- failed to handle special case of
 #   Object method(in string x)
@@ -673,6 +677,7 @@ def attribute(attribute):
     fully_scoped_attrTypes = tyutil.operationArgumentType(attrType,
                                                           environment, 0)
     attrTypes = tyutil.operationArgumentType(attrType, environment, 0)
+
 
     return_type = fully_scoped_attrTypes[0]
     if is_array:
