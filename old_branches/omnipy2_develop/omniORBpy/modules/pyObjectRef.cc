@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.17  2003/03/12 11:17:03  dgrisby
+// Registration of external pseudo object creation functions.
+//
 // Revision 1.1.2.16  2002/08/02 13:33:49  dgrisby
 // C++ API didn't allow ORB to be passed from C++ to Python, and required
 // Python to have imported omniORB.
@@ -230,8 +233,8 @@ PyObject*
 omniPy::createPyPseudoObjRef(const CORBA::Object_ptr objref)
 {
   {
-    CORBA::ORB_var orb = CORBA::ORB::_narrow(objref);
-    if (!CORBA::is_nil(orb)) {
+    CORBA::ORB_var orbp = CORBA::ORB::_narrow(objref);
+    if (!CORBA::is_nil(orbp)) {
       OMNIORB_ASSERT(omniPy::orb);
       return PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)"orb");
     }
@@ -259,7 +262,7 @@ omniPy::createPyPseudoObjRef(const CORBA::Object_ptr objref)
       Py_XDECREF(fnlist);
       break;
     }
-    int len = PySequence_Size(fnlist);
+    int len = PySequence_Length(fnlist);
     for (int i=0; i < len; i++) {
       PyObject* pyf = PySequence_GetItem(fnlist, i);
       if (!PyCObject_Check(pyf)) {
