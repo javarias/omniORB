@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2004/04/08 10:02:22  dgrisby
+  In thread pool mode, close connections that will not be selectable.
+
   Revision 1.1.2.8  2003/11/12 16:04:16  dgrisby
   Set sockets to close on exec.
 
@@ -280,6 +283,7 @@ unixConnection::unixConnection(SocketHandle_t sock,
 
 /////////////////////////////////////////////////////////////////////////
 unixConnection::~unixConnection() {
+  pd_belong_to->clearSelectable(pd_socket);
   pd_belong_to->removeSocket(pd_socket);
   CLOSESOCKET(pd_socket);
 }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2004/04/08 10:02:21  dgrisby
+  In thread pool mode, close connections that will not be selectable.
+
   Revision 1.1.2.13  2003/11/12 16:04:17  dgrisby
   Set sockets to close on exec.
 
@@ -363,6 +366,7 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 /////////////////////////////////////////////////////////////////////////
 sslConnection::~sslConnection() {
 
+  pd_belong_to->clearSelectable(pd_socket);
   pd_belong_to->removeSocket(pd_socket);
 
   if(pd_ssl != 0) {
