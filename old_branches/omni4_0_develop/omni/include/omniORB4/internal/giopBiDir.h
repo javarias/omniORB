@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/01/02 18:15:41  dpg1
+  Platform fixes/additions.
+
   Revision 1.1.2.2  2001/08/03 17:43:19  sll
   Make sure dll import spec for win32 is properly done.
 
@@ -110,6 +113,8 @@ class BiDirServerRope : public giopRope {
   // All ropes created by addRope are linked together by this list.
 
   virtual void decrRefCount();
+
+  virtual ~BiDirServerRope();
 
  protected:
   virtual void realIncrRefCount();
