@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.8  1999/05/25 17:24:39  sll
+  CORBA::ORB::ObjectIdList and CORBA_InitialReferences::ObjIdList are
+  now different types. Previously they are the same template type instance.
+
   Revision 1.7  1999/03/11 16:25:51  djr
   Updated copyright notice
 
@@ -66,7 +70,7 @@
 
 
 static omni_mutex lock;
-
+static omniInitialReferences* _singleton;
 
 omniInitialReferences::omniInitialReferences()
 {
@@ -232,9 +236,6 @@ omniInitialReferences::initialise_bootstrap_agent(const char* host,
 }
 
 
-static omniInitialReferences* _singleton;
-
-
 omniInitialReferences*
 omniInitialReferences::singleton()
 {
@@ -251,39 +252,40 @@ _omni_set_NameService(CORBA::Object_ptr ns)
   omniInitialReferences::singleton()->set((const char*)"NameService", ns);
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
-// This singleton lists the set of initial references held
-// by omniInitialReferences.
+/////////////////////////////////////////////////////////////////////////////
+//            Module initialiser                                           //
+/////////////////////////////////////////////////////////////////////////////
 
-class omniInitialRefLister {
-public: // some compilers get upset
-  ~omniInitialRefLister();
-  static omniInitialRefLister theInstance;
-};
-
-omniInitialRefLister omniInitialRefLister::theInstance;
-
-
-omniInitialRefLister::~omniInitialRefLister()
-{
-  if( !_singleton || omniORB::traceLevel < 15 )  return;
-
-  CORBA_InitialReferences::ObjIdList* list = _singleton->list();
-
-  omniORB::log << "omniORB: Initial references:\n";
-
-  for( CORBA::ULong i = 0; i < list->length(); i++ ) {
-    const char* name = (*list)[i];
-    CORBA::Object_var obj(_singleton->get(name));
-    CORBA::String_var sref(omni::objectToString(obj->PR_getobj()));
-    omniORB::log <<
-      "  Name  : " << name << "\n"
-      "  IR ID : " << obj->PR_getobj()->NP_IRRepositoryId() << "\n"
-      "  ObjRef: " << (char*)sref << "\n";
+class omni_bootstrap_i_initialiser : public omniInitialiser {
+public:
+  void attach() {
   }
 
-  omniORB::log.flush();
-}
+  void detach() {
+
+    if( !_singleton || omniORB::traceLevel < 15 )  return;
+
+    CORBA_InitialReferences::ObjIdList* list = _singleton->list();
+
+    omniORB::log << "omniORB: Initial references:\n";
+
+    for( CORBA::ULong i = 0; i < list->length(); i++ ) {
+      const char* name = (*list)[i];
+      CORBA::Object_var obj(_singleton->get(name));
+      CORBA::String_var sref(omni::objectToString(obj->PR_getobj()));
+      omniORB::log <<
+	"  Name  : " << name << "\n"
+	"  IR ID : " << obj->PR_getobj()->NP_IRRepositoryId() << "\n"
+	"  ObjRef: " << (char*)sref << "\n";
+    }
+
+    omniORB::log.flush();
+  }
+};
+
+static omni_bootstrap_i_initialiser initialiser;
+
+omniInitialiser& omni_bootstrap_i_initialiser_ = initialiser;
+
+
