@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/18 17:28:18  djr
+  Fixes for building MSVC dlls.
+
   Revision 1.1.2.3  1999/10/16 13:22:51  djr
   Changes to support compiling on MSVC.
 
@@ -346,7 +349,7 @@ _CORBA_MODULE_BEG
     static name##_ptr _narrow(CORBA::Object_ptr p);  \
     static name##_ptr _nil();  \
     \
-    static const char* _PD_repoId;  \
+    static _core_attr const char* _PD_repoId;  \
     \
   private:  \
     name##Value pd_value;  \
@@ -396,7 +399,7 @@ _CORBA_MODULE_BEG
     static POAManager_ptr _nil();
 
     // omniORB internal.
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
 
   protected:
     inline POAManager(int is_nil = 0) {
@@ -462,7 +465,7 @@ _CORBA_MODULE_BEG
       static _core_attr insertExceptionToAny    insertToAnyFn;
       static _core_attr insertExceptionToAnyNCP insertToAnyFnNCP;
 
-      static const char* _PD_repoId;
+      static _core_attr const char* _PD_repoId;
 
     private:
       virtual CORBA::Exception* _NP_duplicate() const;
@@ -551,7 +554,7 @@ _CORBA_MODULE_BEG
     static POA_ptr _nil();
 
     // omniORB internal.
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
     static POA_ptr _the_root_poa();
 
   protected:
@@ -583,7 +586,7 @@ _CORBA_MODULE_BEG
     static Current_ptr _nil();
 
     // omniORB internal.
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
 
   protected:
     inline Current() {}

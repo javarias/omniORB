@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.5  1999/10/18 17:28:19  djr
+ Fixes for building MSVC dlls.
+
  Revision 1.1.2.4  1999/10/18 11:27:37  djr
  Centralised list of system exceptions.
 
@@ -75,7 +78,7 @@ public:  \
   static attr insertExceptionToAny    insertToAnyFn;  \
   static attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
   \
-  static const char* _PD_repoId; \
+  static attr const char* _PD_repoId; \
   \
 private:  \
   virtual CORBA::Exception* _NP_duplicate() const;  \
@@ -115,7 +118,7 @@ public:  \
   static attr insertExceptionToAny    insertToAnyFn;  \
   static attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
   \
-  static const char* _PD_repoId; \
+  static attr const char* _PD_repoId; \
   \
 private:  \
   virtual Exception* _NP_duplicate() const;  \

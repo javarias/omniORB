@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/16 13:22:52  djr
+  Changes to support compiling on MSVC.
+
   Revision 1.1.2.2  1999/10/04 15:51:51  djr
   Various fixes/MSVC work-arounds.
 
@@ -76,7 +79,7 @@ public:
   static _core_attr insertExceptionToAny    insertToAnyFn;
   static _core_attr insertExceptionToAnyNCP insertToAnyFnNCP;
 
-  static const char* _PD_repoId;
+  static _core_attr const char* _PD_repoId;
 
 private:
   virtual CORBA::Exception* _NP_duplicate() const;
@@ -149,7 +152,7 @@ public:
     return result;
   }
 
-  static const char* _PD_repoId;
+  static _core_attr const char* _PD_repoId;
 
   // Other IDL defined within this scope.
 
@@ -267,7 +270,7 @@ public:
     return result;
   }
 
-  static const char* _PD_repoId;
+  static _core_attr const char* _PD_repoId;
 
   // Other IDL defined within this scope.
 
@@ -383,7 +386,7 @@ public:
     return result;
   }
 
-  static const char* _PD_repoId;
+  static _core_attr const char* _PD_repoId;
 
   // Other IDL defined within this scope.
 
@@ -503,7 +506,7 @@ public:
     return result;
   }
 
-  static const char* _PD_repoId;
+  static _core_attr const char* _PD_repoId;
 
   // Other IDL defined within this scope.
 
