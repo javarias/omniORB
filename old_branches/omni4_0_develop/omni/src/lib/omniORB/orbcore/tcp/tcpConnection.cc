@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.16  2005/02/23 12:27:31  dgrisby
+  Another race in setSelectable with connection shutdown. Thanks Peter
+  Klotz.
+
   Revision 1.1.2.15  2004/04/08 10:02:22  dgrisby
   In thread pool mode, close connections that will not be selectable.
 
@@ -366,7 +370,7 @@ tcpConnection::~tcpConnection() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-tcpConnection::setSelectable(CORBA::Boolean now,
+tcpConnection::setSelectable(int now,
 			     CORBA::Boolean data_in_buffer) {
 
   pd_belong_to->setSelectable(pd_socket,now,data_in_buffer);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2004/04/08 10:02:21  dgrisby
+  In thread pool mode, close connections that will not be selectable.
+
   Revision 1.1.2.5  2001/07/31 16:16:23  sll
   New transport interface to support the monitoring of active connections.
 
@@ -77,7 +80,7 @@ class sslConnection : public giopConnection, public SocketLink {
 
   const char* peeraddress();
 
-  void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
+  void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
 

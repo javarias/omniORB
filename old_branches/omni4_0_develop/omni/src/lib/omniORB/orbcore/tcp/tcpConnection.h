@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2004/04/08 10:02:22  dgrisby
+  In thread pool mode, close connections that will not be selectable.
+
   Revision 1.1.2.7  2001/12/03 13:39:55  dpg1
   Explicit socket shutdown flag for Windows.
 
@@ -80,7 +83,7 @@ public:
 
   const char* peeraddress();
 
-  void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
+  void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
 

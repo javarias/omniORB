@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2005/02/23 12:27:31  dgrisby
+  Another race in setSelectable with connection shutdown. Thanks Peter
+  Klotz.
+
   Revision 1.1.2.14  2004/04/08 10:02:21  dgrisby
   In thread pool mode, close connections that will not be selectable.
 
@@ -383,7 +387,7 @@ sslConnection::~sslConnection() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-sslConnection::setSelectable(CORBA::Boolean now,
+sslConnection::setSelectable(int now,
 			     CORBA::Boolean data_in_buffer) {
 
   if (SSL_pending(ssl_handle())) data_in_buffer = 1;
