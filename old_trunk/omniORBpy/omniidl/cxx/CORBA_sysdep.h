@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1  1999/10/27 14:06:01  dpg1
+ *** empty log message ***
+
  Revision 1.39.2.2  1999/09/22 18:59:40  sll
  Added powerpc linux support.
 
@@ -170,8 +173,10 @@
 #     define HAS_Cplusplus_Bool
 #  endif
 
+#if defined(__x86__)
 #  define HAS_LongLong
 #  define HAS_LongDouble
+#endif
 
 #elif defined(__DECCXX)
 // DEC C++ compiler
