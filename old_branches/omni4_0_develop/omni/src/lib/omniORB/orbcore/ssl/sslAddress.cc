@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/08/16 16:00:53  dgrisby
+  Bugs accessing uninitialised String_vars with [].
+
   Revision 1.1.2.10  2002/05/07 12:54:43  dgrisby
   Fix inevitable Windows header brokenness.
 
@@ -140,6 +143,8 @@ sslAddress::Connect(unsigned long deadline_secs,
   int  rc;
   SocketHandle_t sock;
     
+  if (pd_address.port == 0) return 0;
+
   if (! LibcWrapper::isipaddr(pd_address.host)) {
     if (LibcWrapper::gethostbyname(pd_address.host,h,rc) < 0) {
       return 0;
