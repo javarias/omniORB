@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.2  1999/09/28 15:59:50  djr
+  Ooops -- need to workaround MSVC bug in previous patch.
+
   Revision 1.22.2.1  1999/09/28 09:57:54  djr
   Properly escape characters in include file guards.
   Removed dangerous default argument to StringBuf constructor.
@@ -509,7 +512,7 @@ IMPL_NARROW_FROM_SCOPE(o2be_root)
 static char*
 internal_make_include_filename(const char* bname)
 {
-  char* ep = strrchr(bname, '.');
+  const char* ep = strrchr(bname, '.');
   size_t blen = ep ? (ep - bname) : strlen(bname);
   char* filename = new char[blen + 1 + o2be_global::suffixlen()];
   strncpy(filename, bname, blen);
