@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.3  1998/08/14 13:48:52  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.2  1998/04/18 10:11:47  sll
   Corrected typo (_log instead of log).
 
@@ -113,14 +117,14 @@ omniORB::logStream::operator<<(unsigned int n)
 omniORB::logStream&
 omniORB::logStream::operator<<(long n)
 {
-  fprintf(stderr,"%dl",n);
+  fprintf(stderr,"%ld",n);
   return *this;
 }
 
 omniORB::logStream&
 omniORB::logStream::operator<<(unsigned long n)
 {
-  fprintf(stderr,"%ul",n);
+  fprintf(stderr,"%lu",n);
   return *this;
 }
 
