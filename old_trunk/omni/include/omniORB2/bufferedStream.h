@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.11  1997/12/09 20:38:59  sll
+  Interface extended to provide more hooks to support new transports.
+  Sequence array templates now takes an addition argument to indicate the type
+  of the array slice.
+
   Revision 1.10  1997/08/21 22:22:29  sll
   New templates for sequence of array.
 
@@ -653,7 +658,7 @@ size_t
 _CORBA_Unbounded_Sequence<T>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (unsigned long i=0; i < length(); i++) {
+  for (unsigned long i=0; i < _CORBA_Sequence<T>::length(); i++) {
     alignedsize = NP_data()[i].NP_alignedSize(alignedsize);
   }
   return alignedsize;
@@ -759,9 +764,9 @@ size_t
 _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (length()) {
+  if (_CORBA_Sequence<T>::length()) {
     alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize += length() * elmSize;
+    alignedsize += _CORBA_Sequence<T>::length() * elmSize;
   }
   return alignedsize;
 }
@@ -771,7 +776,7 @@ inline
 void
 _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (NetBufferedStream &s) const
 {
-  _CORBA_ULong l = length();
+  _CORBA_ULong l = _CORBA_Sequence<T>::length();
   l >>= s;
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
@@ -793,7 +798,7 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
     _CORBA_marshal_error();
     // never reach here
   }
-  length(l);
+  _CORBA_Sequence<T>::length(l);
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
     if (s.RdMessageCurrentAlignment() != (int)omni::ALIGN_8)
@@ -831,7 +836,7 @@ inline
 void
 _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (MemBufferedStream &s) const
 {
-  _CORBA_ULong l = length();
+  _CORBA_ULong l = _CORBA_Sequence<T>::length();
   l >>= s;
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
@@ -853,7 +858,7 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
     _CORBA_marshal_error();
     // never reach here
   }
-  length(l);
+  _CORBA_Sequence<T>::length(l);
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
     if (s.rdCurrentAlignment() != (int)omni::ALIGN_8)
@@ -1097,7 +1102,9 @@ size_t
 _CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (_CORBA_ULong i=0; i < length(); i++) {
+  for (_CORBA_ULong i=0; 
+       i < _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length(); 
+       i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
       alignedsize = ((Telm*)(NP_data()[i]) + j)->NP_alignedSize(alignedsize);
     }
@@ -1211,9 +1218,10 @@ size_t
 _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
 {
   size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (length()) {
+  if (_CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length()) {
     alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize += length() * dimension * elmSize;
+    alignedsize +=_CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length() * 
+                   dimension * elmSize;
   }
   return alignedsize;
 }
@@ -1223,7 +1231,7 @@ inline
 void
 _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator>>= (NetBufferedStream &s) const
 {
-  _CORBA_ULong l = length();
+  _CORBA_ULong l = _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length();
   l >>= s;
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
@@ -1245,7 +1253,7 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
     _CORBA_marshal_error();
     // never reach here
   }
-  length(l);
+  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length(l);
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
     if (s.RdMessageCurrentAlignment() != (int)omni::ALIGN_8)
@@ -1285,7 +1293,7 @@ inline
 void
 _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator>>= (MemBufferedStream &s) const
 {
-  _CORBA_ULong l = length();
+  _CORBA_ULong l = _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length();
   l >>= s;
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
@@ -1307,7 +1315,7 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
     _CORBA_marshal_error();
     // never reach here
   }
-  length(l);
+  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length(l);
   if (l==0) return;
   if ((int)elmAlignment == (int)omni::ALIGN_8) {
     if (s.rdCurrentAlignment() != (int)omni::ALIGN_8)
