@@ -836,6 +836,9 @@ char *yytext;
 
 // $Id$
 // $Log$
+// Revision 1.9.2.5  2001/03/13 10:32:10  dpg1
+// Fixed point support.
+//
 // Revision 1.9.2.4  2000/11/01 12:45:55  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -1088,7 +1091,7 @@ YY_DECL
 	register char *yy_cp = NULL, *yy_bp = NULL;
 	register int yy_act;
 
-#line 150 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 153 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 
 
 
@@ -1184,262 +1187,262 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 152 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 155 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return ABSTRACT;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 153 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 156 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return ANY;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 154 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 157 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return ATTRIBUTE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 155 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 158 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return BOOLEAN;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 156 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 159 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return CASE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 157 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 160 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return CHAR;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 158 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 161 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return CONST;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 159 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 162 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return CONTEXT;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 160 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 163 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return CUSTOM;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 161 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 164 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return DEFAULT;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 162 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 165 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return DOUBLE;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 163 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 166 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return ENUM;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 164 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 167 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return EXCEPTION;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 165 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 168 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return FACTORY;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 166 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 169 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return FALSE_;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 167 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 170 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return FIXED;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 168 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 171 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return FLOAT;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 169 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 172 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return IN;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 170 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 173 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return INOUT;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 171 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 174 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return INTERFACE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 172 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 175 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return LOCAL;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 173 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 176 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return LONG;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 174 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 177 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return MODULE;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 175 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 178 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return NATIVE;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 176 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 179 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return OBJECT;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 177 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 180 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return OCTET;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 178 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 181 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return ONEWAY;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 179 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 182 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return OUT;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 180 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 183 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return PRIVATE;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 181 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 184 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return PUBLIC;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 182 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 185 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return RAISES;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 183 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 186 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return READONLY;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 184 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 187 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return SEQUENCE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 185 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 188 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return SHORT;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 186 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 189 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return STRING;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 187 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 190 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return STRUCT;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 188 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 191 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return SUPPORTS;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 189 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 192 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return SWITCH;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 190 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 193 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return TRUE_;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 191 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 194 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return TRUNCATABLE;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 192 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 195 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return TYPEDEF;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 193 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 196 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return UNION;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 194 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 197 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return UNSIGNED;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 195 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 198 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return VALUEBASE;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 196 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 199 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return VALUETYPE;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 197 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 200 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return VOID;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 198 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 201 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return WCHAR;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 199 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 202 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return WSTRING;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 201 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 204 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return LEFT_SHIFT;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 202 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 205 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return RIGHT_SHIFT;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 203 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 206 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 return SCOPE_DELIM;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 205 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 208 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.id_val = idl_strdup(yytext);
   return IDENTIFIER;
@@ -1447,7 +1450,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 210 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 213 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.id_val = idl_strdup(yytext);
   return IDENTIFIER;
@@ -1455,7 +1458,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 215 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 218 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   errno = 0;
   yylval.int_literal_val = idl_strtoul(yytext, 10);
@@ -1468,7 +1471,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 225 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 228 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   errno = 0;
   yylval.int_literal_val = idl_strtoul(yytext, 8);
@@ -1481,7 +1484,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 235 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 238 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   errno = 0;
   yylval.int_literal_val = idl_strtoul(yytext, 16);
@@ -1494,7 +1497,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 245 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 248 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.int_literal_val = 0;
   return INTEGER_LITERAL;
@@ -1502,7 +1505,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 250 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 253 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.char_val = yytext[1];
   return CHARACTER_LITERAL;
@@ -1510,7 +1513,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 255 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 258 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.char_val = octalToChar(yytext + 1);
@@ -1519,7 +1522,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 261 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 264 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.char_val = hexToChar(yytext + 1);
@@ -1528,7 +1531,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 267 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 270 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   IdlError(currentFile, yylineno,
 	   "\\u may only be used in wide characters and strings");
@@ -1538,7 +1541,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 274 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 277 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.char_val = escapeToChar(yytext + 1);
@@ -1547,7 +1550,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 280 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 283 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.wchar_val = yytext[2];
   return WIDE_CHARACTER_LITERAL;
@@ -1555,7 +1558,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 285 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 288 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.wchar_val = octalToWChar(yytext + 2);
@@ -1564,7 +1567,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 291 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 294 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.wchar_val = hexToWChar(yytext + 2);
@@ -1573,7 +1576,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 297 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 300 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.wchar_val = hexToWChar(yytext + 2);
@@ -1582,7 +1585,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 303 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 306 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.wchar_val = escapeToWChar(yytext + 2);
@@ -1591,7 +1594,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 309 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 312 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   // Only deal with floats in INITIAL state, so version pragmas don't
   // get interpreted as floats.
@@ -1601,7 +1604,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 316 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 319 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.float_literal_val = idl_strtod(yytext);
   return FLOATING_PT_LITERAL;
@@ -1609,7 +1612,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 321 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 324 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.float_literal_val = idl_strtod(yytext);
   return FLOATING_PT_LITERAL;
@@ -1617,7 +1620,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 326 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 329 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
   yylval.string_val = escapedStringToString(yytext + 1);
@@ -1626,16 +1629,16 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 332 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 335 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yytext[yyleng-1] = '\0';
-  yylval.wstring_val = escapedStringToWString(yytext + 1);
+  yylval.wstring_val = escapedStringToWString(yytext + 2);
   return WIDE_STRING_LITERAL;
 }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 338 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 341 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.fixed_val = new IDL_Fixed(yytext, currentFile, yylineno);
   return FIXED_PT_LITERAL;
@@ -1643,7 +1646,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 343 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 346 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.fixed_val = new IDL_Fixed(yytext, currentFile, yylineno);
   return FIXED_PT_LITERAL;
@@ -1651,7 +1654,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 348 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 351 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.fixed_val = new IDL_Fixed(yytext, currentFile, yylineno);
   return FIXED_PT_LITERAL;
@@ -1659,12 +1662,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 353 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 356 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { Comment::add(yytext, currentFile, yylineno-1); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 355 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 358 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   Comment::add(yytext, currentFile, yylineno);
   BEGIN(comment);
@@ -1672,27 +1675,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 360 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 363 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { Comment::append(yytext); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 361 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 364 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { Comment::append(yytext); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 362 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 365 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { Comment::append(yytext); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 363 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 366 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { Comment::append(yytext); BEGIN(INITIAL); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 365 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 368 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(omni_pragma);
   return OMNI_PRAGMA;
@@ -1700,7 +1703,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 370 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 373 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(INITIAL);
   return END_PRAGMA;
@@ -1708,7 +1711,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 375 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 378 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.string_val = idl_strdup(yytext);
   return UNKNOWN_PRAGMA_BODY;
@@ -1716,7 +1719,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 379 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 382 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.string_val = idl_strdup(yytext);
   return UNKNOWN_PRAGMA_BODY;
@@ -1724,7 +1727,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 385 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 388 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(known_pragma);
   return PRAGMA_PREFIX;
@@ -1732,7 +1735,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 390 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 393 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(known_pragma);
   return PRAGMA_ID;
@@ -1740,7 +1743,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 395 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 398 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(known_pragma);
   return PRAGMA_VERSION;
@@ -1748,12 +1751,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 400 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 403 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { /* Eat spaces and tabs */ }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 402 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 405 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(unknown_pragma);
   return PRAGMA;
@@ -1761,7 +1764,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 407 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 410 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   yylval.string_val = idl_strdup(yytext);
   return UNKNOWN_PRAGMA_BODY;
@@ -1769,14 +1772,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 412 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 415 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   /* Continue line if it ends with \ */
 }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 416 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 419 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   BEGIN(INITIAL);
   return END_PRAGMA;
@@ -1784,40 +1787,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 421 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 424 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   parseLineDirective(yytext);
 }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 425 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 428 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   parseLineDirective(yytext);
 }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 429 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 432 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   parseLineDirective(yytext);
 }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 433 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 436 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 { /* Eat white space */ }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 435 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 438 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 {
   return yytext[0];
 }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 439 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 442 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 ECHO;
 	YY_BREAK
 			case YY_STATE_EOF(INITIAL):
@@ -2709,7 +2712,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 439 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
+#line 442 "/home/dpg1/omni/cvs/40/src/tool/omniidl/cxx/idl.ll"
 
 
 char octalToChar(char* s) {
@@ -2931,5 +2934,5 @@ void parseLineDirective(char* s) {
 #ifdef __VMS
 // Some versions of DEC C++ for OpenVMS set the module name used by the
 // librarian based on the last #line encountered.
-#line 2933 "lex_yy.cc"
+#line 2936 "lex_yy.cc"
 #endif

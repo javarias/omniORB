@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.5  2001/03/13 10:32:10  dpg1
+// Fixed point support.
+//
 // Revision 1.9.2.4  2000/11/01 12:45:55  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -331,7 +334,7 @@ L"'"\\."'" {
 
 L{STR} {
   yytext[yyleng-1] = '\0';
-  yylval.wstring_val = escapedStringToWString(yytext + 1);
+  yylval.wstring_val = escapedStringToWString(yytext + 2);
   return WIDE_STRING_LITERAL;
 }
 
