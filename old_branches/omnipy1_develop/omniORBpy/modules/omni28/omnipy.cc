@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.37  2000/06/27 15:12:21  dpg1
+// Change error message for version clash
+//
 // Revision 1.36  2000/06/12 15:36:08  dpg1
 // Support for exception handler functions. Under omniORB 3, local
 // operation dispatch modified so exceptions handlers are run.
@@ -291,7 +294,7 @@ extern "C" {
   static PyObject*
   omnipy_coreVersion(PyObject* self, PyObject* args)
   {
-    static char* cv = OMNIORB_VERSION_STRING;
+    static char* cv = (char*)OMNIORB_VERSION_STRING;
 
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
     return Py_BuildValue((char*)"s", cv);

@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  2000/06/12 15:36:08  dpg1
+// Support for exception handler functions. Under omniORB 3, local
+// operation dispatch modified so exceptions handlers are run.
+//
 
 #include <omnipy.h>
 #include <common/pyThreadCache.h>
@@ -59,7 +63,7 @@ static CORBA::Boolean transientEH(void* cookie, CORBA::ULong retries,
   {
     omnipyThreadCache::lock _t;
     PyObject* pyex = omniPy::createPySystemException(ex);
-    r = PyObject_CallFunction(pyfn, "OiN", pycookie, retries, pyex);
+    r = PyObject_CallFunction(pyfn, (char*)"OiN", pycookie, retries, pyex);
     
     if (!r) {
       if (omniORB::trace(1)) {
@@ -103,7 +107,7 @@ static CORBA::Boolean commFailureEH(void* cookie, CORBA::ULong retries,
   {
     omnipyThreadCache::lock _t;
     PyObject* pyex = omniPy::createPySystemException(ex);
-    r = PyObject_CallFunction(pyfn, "OiN", pycookie, retries, pyex);
+    r = PyObject_CallFunction(pyfn, (char*)"OiN", pycookie, retries, pyex);
     
     if (!r) {
       if (omniORB::trace(1)) {
@@ -146,7 +150,7 @@ static CORBA::Boolean systemEH(void* cookie, CORBA::ULong retries,
   {
     omnipyThreadCache::lock _t;
     PyObject* pyex = omniPy::createPySystemException(ex);
-    r = PyObject_CallFunction(pyfn, "OiN", pycookie, retries, pyex);
+    r = PyObject_CallFunction(pyfn, (char*)"OiN", pycookie, retries, pyex);
     
     if (!r) {
       if (omniORB::trace(1)) {
@@ -204,14 +208,14 @@ extern "C" {
 
       RAISE_PY_BAD_PARAM_IF(!objref);
 
-      PyObject* tuple = Py_BuildValue("OO", pyfn, pycookie);
-      PyObject_SetAttrString(pyobjref, "__omni_transient", tuple);
+      PyObject* tuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
+      PyObject_SetAttrString(pyobjref, (char*)"__omni_transient", tuple);
       omniORB::installTransientExceptionHandler(objref, (void*)tuple,
 						transientEH);
     }
     else {
       Py_XDECREF(transientEHtuple);
-      transientEHtuple = Py_BuildValue("OO", pyfn, pycookie);
+      transientEHtuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
       OMNIORB_ASSERT(transientEHtuple);
       omniORB::installTransientExceptionHandler((void*)transientEHtuple,
 						transientEH);
@@ -251,14 +255,14 @@ extern "C" {
 
       RAISE_PY_BAD_PARAM_IF(!objref);
 
-      PyObject* tuple = Py_BuildValue("OO", pyfn, pycookie);
-      PyObject_SetAttrString(pyobjref, "__omni_commfailure", tuple);
+      PyObject* tuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
+      PyObject_SetAttrString(pyobjref, (char*)"__omni_commfailure", tuple);
       omniORB::installCommFailureExceptionHandler(objref, (void*)tuple,
 						  commFailureEH);
     }
     else {
       Py_XDECREF(commFailureEHtuple);
-      commFailureEHtuple = Py_BuildValue("OO", pyfn, pycookie);
+      commFailureEHtuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
       OMNIORB_ASSERT(commFailureEHtuple);
       omniORB::installCommFailureExceptionHandler((void*)commFailureEHtuple,
 						  commFailureEH);
@@ -299,14 +303,14 @@ extern "C" {
 
       RAISE_PY_BAD_PARAM_IF(!objref);
 
-      PyObject* tuple = Py_BuildValue("OO", pyfn, pycookie);
-      PyObject_SetAttrString(pyobjref, "__omni_systemex", tuple);
+      PyObject* tuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
+      PyObject_SetAttrString(pyobjref, (char*)"__omni_systemex", tuple);
       omniORB::installSystemExceptionHandler(objref, (void*)tuple,
 					     systemEH);
     }
     else {
       Py_XDECREF(systemEHtuple);
-      systemEHtuple = Py_BuildValue("OO", pyfn, pycookie);
+      systemEHtuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
       OMNIORB_ASSERT(systemEHtuple);
       omniORB::installSystemExceptionHandler((void*)systemEHtuple,
 					     systemEH);
