@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/07/31 16:16:18  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.5  2001/07/13 15:31:21  sll
   Error in setblocking and setnonblocking now causes the socket to be closed
   as well.
@@ -51,6 +54,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <orbParameters.h>
 #include <tcp/tcpConnection.h>
 #include <tcp/tcpAddress.h>
 #include <stdio.h>
@@ -183,14 +187,14 @@ tcpAddress::Connect(unsigned long deadline_secs,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > giopStrand::scanPeriod) {
-	t.tv_sec = giopStrand::scanPeriod;
+      if (t.tv_sec > orbParameters::scanGranularity) {
+	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
     }
     else {
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      t.tv_sec = giopStrand::scanPeriod;
+      t.tv_sec = orbParameters::scanGranularity;
       t.tv_usec = 0;
 #else
       t.tv_sec = t.tv_usec = 0;
