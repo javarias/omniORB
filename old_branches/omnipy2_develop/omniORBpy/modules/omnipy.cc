@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.23  2003/07/29 14:49:28  dgrisby
+// Changes to compile with debug Python 2.3.
+//
 // Revision 1.1.2.22  2003/07/24 15:04:34  dgrisby
 // Python 2.3's threading.Thread is a new-style class.
 //
@@ -871,10 +874,11 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     PyDict_SetItemString(d, (char*)"API", api);
     Py_DECREF(api);
 
-    // Create an empty list for extrernal modules to register
+    // Create an empty list for external modules to register
     // additional pseudo object creation functions.
     PyObject* pseudolist = PyList_New(0);
     PyDict_SetItemString(d, (char*)"pseudoFns", pseudolist);
+    Py_DECREF(pseudolist);
 
     omniInitialiser::install(&the_omni_python_initialiser);
   }
