@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2003/01/22 11:40:12  dgrisby
+  Correct serverSendException interceptor use.
+
   Revision 1.1.4.18  2002/11/26 16:54:35  dgrisby
   Fix exception interception.
 
@@ -221,8 +224,11 @@ giopImpl11::inputMessageBegin(giopStream* g,
       g->impl()->inputMessageBegin(g,g->impl()->unmarshalWildCardRequestHeader);
       return;
     }
-    inputTerminalProtocolError(g);
-    // never reaches here.
+    // We accept a CloseConnection message with any GIOP version.
+    if ((GIOP::MsgType)hdr[7] != GIOP::CloseConnection) {
+      inputTerminalProtocolError(g);
+      // never reaches here.
+    }
   }
 
   g->pd_unmarshal_byte_swap = (((hdr[6] & 0x1) == _OMNIORB_HOST_BYTE_ORDER_)

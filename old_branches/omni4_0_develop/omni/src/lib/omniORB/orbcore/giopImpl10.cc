@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2003/01/22 11:40:12  dgrisby
+  Correct serverSendException interceptor use.
+
   Revision 1.1.4.18  2002/11/26 16:54:34  dgrisby
   Fix exception interception.
 
@@ -212,8 +215,11 @@ giopImpl10::inputMessageBegin(giopStream* g,
                      g->pd_currentInputBuffer->start;
 
   if (hdr[4] != 1 || hdr[5] != 0) {
-    inputTerminalProtocolError(g);
-    // never reaches here.
+    // We accept a CloseConnection message with any GIOP version.
+    if ((GIOP::MsgType)hdr[7] != GIOP::CloseConnection) {
+      inputTerminalProtocolError(g);
+      // never reaches here.
+    }
   }
 
   g->pd_unmarshal_byte_swap = (((hdr[6] & 0x1) == _OMNIORB_HOST_BYTE_ORDER_)
@@ -965,8 +971,8 @@ giopImpl10::sendMsgErrorMessage(giopStream* g) {
   if (omniORB::trace(1)) {
     omniORB::logger l;
     l << "To endpoint: " << g->pd_strand->connection->peeraddress()
-      <<". Send GIOP 1.0 MessageError because a protocol error has been detected. "
-      << "Connection is closed.\n";
+      << ". Send GIOP 1.0 MessageError because a protocol error has "
+      << "been detected. Connection is closed.\n";
   }
 
   if (!g->pd_currentOutputBuffer) {
