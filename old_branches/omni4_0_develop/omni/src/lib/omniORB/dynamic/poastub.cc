@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/08/03 18:11:41  sll
+  Added MAIN_THREAD_MODEL to the typecode of ThreadPolicyValue.
+
   Revision 1.1.2.1  2001/07/31 16:04:06  sll
   Added ORB::create_policy() and associated types and operators.
 
@@ -120,7 +123,8 @@ const CORBA::TypeCode_ptr PortableServer::_tc_RequestProcessingPolicyValue = _0R
 
 void _0RL_buildDesc_cPortableServer_mThreadPolicyValue(tcDescriptor& _desc, const PortableServer::ThreadPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::ThreadPolicyValue _s)
@@ -139,7 +143,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::ThreadPolicyVal
 
 void _0RL_buildDesc_cPortableServer_mLifespanPolicyValue(tcDescriptor& _desc, const PortableServer::LifespanPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::LifespanPolicyValue _s)
@@ -158,7 +163,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::LifespanPolicyV
 
 void _0RL_buildDesc_cPortableServer_mIdUniquenessPolicyValue(tcDescriptor& _desc, const PortableServer::IdUniquenessPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::IdUniquenessPolicyValue _s)
@@ -177,7 +183,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::IdUniquenessPol
 
 void _0RL_buildDesc_cPortableServer_mIdAssignmentPolicyValue(tcDescriptor& _desc, const PortableServer::IdAssignmentPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::IdAssignmentPolicyValue _s)
@@ -196,7 +203,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::IdAssignmentPol
 
 void _0RL_buildDesc_cPortableServer_mImplicitActivationPolicyValue(tcDescriptor& _desc, const PortableServer::ImplicitActivationPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::ImplicitActivationPolicyValue _s)
@@ -215,7 +223,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::ImplicitActivat
 
 void _0RL_buildDesc_cPortableServer_mServantRetentionPolicyValue(tcDescriptor& _desc, const PortableServer::ServantRetentionPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::ServantRetentionPolicyValue _s)
@@ -234,7 +243,8 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, PortableServer::ServantRetentio
 
 void _0RL_buildDesc_cPortableServer_mRequestProcessingPolicyValue(tcDescriptor& _desc, const PortableServer::RequestProcessingPolicyValue& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size=sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, PortableServer::RequestProcessingPolicyValue _s)

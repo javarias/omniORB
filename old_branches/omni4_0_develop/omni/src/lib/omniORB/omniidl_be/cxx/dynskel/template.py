@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.10  2001/08/22 13:29:48  dpg1
+# Re-entrant Any marshalling.
+#
 # Revision 1.3.2.9  2001/08/15 10:29:53  dpg1
 # Update DSI to use Current, inProcessIdentity.
 #
@@ -453,7 +456,8 @@ CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& _s_out)
 enum = """\
 void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor& _desc, const @fqname@& _data)
 {
-  _desc.p_enum = (CORBA::ULong*)&_data;
+  _desc.p_enum.data = (void*)&_data;
+  _desc.p_enum.size = sizeof(_data);
 }
 
 void operator<<=(CORBA::Any& _a, @fqname@ _s)

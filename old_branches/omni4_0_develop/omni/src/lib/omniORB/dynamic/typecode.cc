@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.16  2001/08/17 17:09:16  sll
+ * Modularise ORB configuration parameters.
+ *
  * Revision 1.38.2.15  2001/08/17 13:47:30  dpg1
  * Small bug fixes.
  *
@@ -4596,7 +4599,8 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
     {
       CORBA::ULong c;
       tcDescriptor enumdesc;
-      enumdesc.p_enum = &c;
+      enumdesc.p_enum.data = &c;
+      enumdesc.p_enum.size = sizeof(c);
       label.PR_unpackTo(dtc, &enumdesc);
       lbl_value = c;
       break;
@@ -4653,7 +4657,8 @@ TypeCode_union_helper::insertLabel(CORBA::Any& label,
     {
       CORBA::ULong val = c;
       tcDescriptor enumdesc;
-      enumdesc.p_enum = &val;
+      enumdesc.p_enum.data = (void*)&val;
+      enumdesc.p_enum.size = sizeof(val);
       label.PR_packFrom((TypeCode_base*) aetc, &enumdesc);
       break;
     }
