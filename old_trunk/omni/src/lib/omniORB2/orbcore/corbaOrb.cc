@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.19  1999/02/01 15:16:14  djr
+  Replace copy-initialisation of _var types with direct initialisation.
+
   Revision 1.18  1999/01/07 15:33:34  djr
   New configuration variable omniORB::diiThrowsSysExceptions
   New command line options -ORBdiiThrowsSysExceptions
@@ -109,16 +112,17 @@
 namespace omniORB {
 
 CORBA::ULong             traceLevel = 1;
-CORBA::Boolean           strictIIOP = 0;
+CORBA::Boolean           strictIIOP = 1;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0;
 unsigned int             maxTcpConnectionPerServer = 5;
 CORBA::Boolean           diiThrowsSysExceptions = 0;
+CORBA::Boolean           useTypeCodeIndirections = 1;
 }
 
 #else
 CORBA::ULong                    omniORB::traceLevel = 1;
-CORBA::Boolean                  omniORB::strictIIOP = 0;
+CORBA::Boolean                  omniORB::strictIIOP = 1;
 #if defined(HAS_Cplusplus_Namespace)
 char*                           omniORB::serverName = 0;
 #else
@@ -127,6 +131,7 @@ CORBA::String_var		omniORB::serverName((const char*) "unknown");
 CORBA::Boolean                  omniORB::tcAliasExpand = 0;
 unsigned int                    omniORB::maxTcpConnectionPerServer = 5;
 CORBA::Boolean                  omniORB::diiThrowsSysExceptions = 0;
+CORBA::Boolean                  omniORB::useTypeCodeIndirections = 1;
 #endif
 
 _CORBA_Unbounded_Sequence_Octet omni::myPrincipalID;
@@ -709,6 +714,13 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
 	continue;
       }
 
+      // -ORBlcdMode
+      if( strcmp(argv[idx],"-ORBlcdMode") == 0 ) {
+	omniORB::enableLcdMode();
+	move_args(argc,argv,idx,1);
+	continue;
+      }
+
       // Reach here only if the argument in this form: -ORBxxxxx
       // is not recognised.
       if (omniORB::traceLevel > 0) {
@@ -727,4 +739,15 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
     return 0;
   }
   return 1;
+}
+
+
+void
+omniORB::enableLcdMode()
+{
+  omniORB::strictIIOP = 0;
+  omniORB::tcAliasExpand = 1;
+  omniORB::idleConnectionScanPeriod(omniORB::idleIncoming, 0);
+  omniORB::idleConnectionScanPeriod(omniORB::idleOutgoing, 0);
+  omniORB::useTypeCodeIndirections = 0;
 }
