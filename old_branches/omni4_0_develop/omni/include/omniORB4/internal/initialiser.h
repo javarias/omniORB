@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:16  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.1  2000/07/17 10:35:40  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -60,6 +64,12 @@ public:
   // Hook to allow modules to add initialisers dynamically. These
   // initialisers are run after all statically declared ones. Not
   // thread safe.
+
+  class init_t {
+    static int count;
+  public:
+    init_t(void);
+  };
 };
 
 OMNI_NAMESPACE_END(omni)
