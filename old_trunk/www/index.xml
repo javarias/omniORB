@@ -8,33 +8,20 @@
 <p>
 <ul>
   <li>
+    <b>14 March 2003</b> - <a
+    href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=146413">omniORB
+    4.0.1</a> and <a
+    href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=146414">omniORBpy
+    2.1</a> released!
+  </li>
+  <br/>
+  <li>
     <b>23 September 2002</b> - <a
     href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=112373">omniORB
     4.0.0</a> and <a
     href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=112375">omniORBpy
     2.0</a> released!  Download them from <a
     href="http://sourceforge.net/project/showfiles.php?group_id=51138">here</a>.
-  </li>
-  <br/>
-  <li>
-    <b>12 September 2002</b> - <a
-    href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=110442">omniORB
-    4.0.0</a> and <a
-    href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=110443">omniORBpy
-    2.0</a> release candidates available.
-  </li>
-  <li>
-    <b>29 August 2002</b> - The omniORB mailing list has moved to <a
-    href="mailto:omniorb-list@omniorb-support.com">omniorb-list@omniorb-support.com</a>.
-    See the <a href="list.html">mailing list page</a> for full
-    details.
-  </li>
-  <li>
-    <b>22 August 2002</b> - <a
-    href="http://sourceforge.net/project/shownotes.php?release_id=106616">omniORB
-    4.0.0 beta 2</a> and <a
-    href="http://sourceforge.net/project/shownotes.php?release_id=106615">omniORBpy
-    2.0 beta 2</a> released.
   </li>
   <li>
     <b>2 August 2002</b> - <a
@@ -44,11 +31,6 @@
   <li>
     <b>2 July 2002</b> - Daily <a href="snapshots/">CVS snapshots</a>
     available.
-  </li>
-  <li>
-    <b>12 June 2002</b> - omniORB 3.0.5 and omniORBpy 1.5 released.
-    Download them from <a
-    href="http://sourceforge.net/project/showfiles.php?group_id=51138">here</a>.
   </li>
   <li>
     <b>24 April 2002</b> - AT&amp;T Laboratories Cambridge closed.
