@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.38.2.6  2000/11/17 19:09:38  dpg1
+ * Support codeset conversion in any.
+ *
  * Revision 1.38.2.5  2000/11/09 12:27:54  dpg1
  * Huge merge from omni3_develop, plus full long long from omni3_1_develop.
  *
@@ -597,6 +600,14 @@ CORBA::TypeCode::PR_string_tc(CORBA::ULong bound)
   if( bound == 0 )  return PR_string_tc();
   check_static_data_is_initialised();
   return new TypeCode_string(bound);
+}
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode::PR_wstring_tc(CORBA::ULong bound)
+{
+  if( bound == 0 )  return PR_wstring_tc();
+  check_static_data_is_initialised();
+  return new TypeCode_wstring(bound);
 }
 
 

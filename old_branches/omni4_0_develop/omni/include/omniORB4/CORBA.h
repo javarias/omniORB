@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.8  2000/11/17 19:09:36  dpg1
+ Support codeset conversion in any.
+
  Revision 1.2.2.7  2000/11/15 17:03:14  sll
  Moved include codeSets.h to omniInternal.h
 
@@ -1810,6 +1813,7 @@ _CORBA_MODULE_BEG
     // but consumes the types.
     static TypeCode_ptr PR_interface_tc(const char* id, const char* name);
     static TypeCode_ptr PR_string_tc(ULong bound);
+    static TypeCode_ptr PR_wstring_tc(ULong bound);
     static TypeCode_ptr PR_sequence_tc(ULong bound, TypeCode_ptr element_type);
     static TypeCode_ptr PR_array_tc(ULong length, TypeCode_ptr element_type);
     static TypeCode_ptr PR_recursive_sequence_tc(ULong bound, ULong offset);
