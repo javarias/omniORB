@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.20  2002/03/27 11:44:51  dpg1
+  Check in interceptors things left over from last week.
+
   Revision 1.1.4.19  2002/03/18 12:38:25  dpg1
   Lower trace(0) to trace(1), propagate fatalException.
 
@@ -613,7 +616,8 @@ GIOP_S::SendReply() {
 
   pd_state = ReplyIsBeingComposed;
   impl()->outputMessageBegin(this,impl()->marshalReplyHeader);
-  calldescriptor()->marshalReturnedValues((cdrStream&)*this);
+  cdrStream& s = *this;
+  calldescriptor()->marshalReturnedValues(s);
   impl()->outputMessageEnd(this);
   pd_state = ReplyCompleted;
 }
@@ -698,7 +702,7 @@ GIOP_S::unmarshalIORAddressingInfo() {
 
   resetKey();
 
-  cdrStream& s = (cdrStream&)*this;
+  cdrStream& s = *this;
 
   vp <<= s;
   if (vp == GIOP::KeyAddr) {
