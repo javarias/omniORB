@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.6  2001/03/13 10:32:10  dpg1
+// Fixed point support.
+//
 // Revision 1.11.2.5  2000/12/05 17:45:18  dpg1
 // omniidl case sensitivity updates from omni3_develop.
 //
@@ -915,9 +918,10 @@ boolean_literal:
 
 positive_int_const:
     const_exp {
-      $$ = $1->evalAsULong();
-      if ($$ < 1)
+      IdlLongVal v = $1->evalAsLongV();
+      if (v.negative || v.u == 0)
 	IdlError(currentFile, yylineno, "Size must be at least 1");
+      $$ = v.u;
     }
     ;
 
@@ -1423,7 +1427,13 @@ param_type_spec:
 
 fixed_pt_type:
     FIXED '<' positive_int_const ',' const_exp '>' {
-      IDL_ULong scale = $5->evalAsULong();
+      IdlLongVal scalev = $5->evalAsLongV();
+
+      if (scalev.negative) {
+	IdlError(currentFile, yylineno,
+		 "Fixed point scale must be >= 0");
+      }
+      IDL_ULong scale = scalev.u;
 
       if ($3 > 31) {
 	IdlError(currentFile, yylineno,
