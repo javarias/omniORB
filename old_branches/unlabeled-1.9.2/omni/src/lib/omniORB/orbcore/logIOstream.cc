@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.9.2.1  2000/08/04 17:10:30  dpg1
+  Long long support
+
   Revision 1.9  2000/07/13 15:25:57  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -293,7 +296,7 @@ omniORB::logger::operator<<(unsigned long n)
   return *this;
 }
 
-#ifdef HAS_LongDouble
+#ifdef HAS_LongLong
 omniORB::logger&
 omniORB::logger::operator<<(_CORBA_LONGLONG_DECL n)
 {
