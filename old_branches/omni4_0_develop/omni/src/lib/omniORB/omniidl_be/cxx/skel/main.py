@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.13  2004/07/29 10:45:22  dgrisby
+# Bug with unmarshalling unions with multiple case labels.
+#
 # Revision 1.29.2.12  2004/07/29 10:36:34  dgrisby
 # Bug with unmarshalling unions with multiple case labels.
 #
@@ -368,7 +371,7 @@ def visitTypedef(node):
 
         fq_derived = scopedName.fullyQualify()
 
-        if d_type.sequence():
+        if d_type.sequence() and not aliasType.typedef():
             seqType = types.Type(d_type.type().seqType())
             d_seqType = seqType.deref()
             if d_seqType.structforward() or d_seqType.unionforward():
