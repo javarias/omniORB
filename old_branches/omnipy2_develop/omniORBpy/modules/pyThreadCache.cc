@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2004/06/15 14:49:50  dgrisby
+// Properly handle exceptions thrown by thread hooks.
+//
 // Revision 1.1.2.5  2003/07/29 14:52:10  dgrisby
 // Reuse Python thread state if possible. (Python 2.3.)
 //
@@ -227,6 +230,18 @@ threadExit()
 
 	  PyObject* tmp = PyEval_CallObject(omniPy::pyWorkerThreadDel,
 					    argtuple);
+	  if (!tmp) {
+	    if (omniORB::trace(1)) {
+	      {
+		omniORB::logger l;
+		l << "Exception trying to delete worker thread.\n";
+	      }
+	      PyErr_Print();
+	    }
+	    else {
+	      PyErr_Clear();
+	    }
+	  }
 	  Py_XDECREF(tmp);
 	  Py_DECREF(argtuple);
 	}
@@ -310,6 +325,18 @@ run_undetached(void*)
 
 		PyObject* tmp = PyEval_CallObject(omniPy::pyWorkerThreadDel,
 						  argtuple);
+		if (!tmp) {
+		  if (omniORB::trace(1)) {
+		    {
+		      omniORB::logger l;
+		      l << "Exception trying to delete worker thread.\n";
+		    }
+		    PyErr_Print();
+		  }
+		  else {
+		    PyErr_Clear();
+		  }
+		}
 		Py_XDECREF(tmp);
 		Py_DECREF(argtuple);
 	      }
