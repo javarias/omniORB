@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.18  1999/06/18 20:52:56  sll
+  Moved Object_var copy ctor and operator= to header.
+
   Revision 1.17  1999/05/25 17:12:22  sll
   Added check for invalid parameter in static member functions.
 
@@ -166,8 +169,11 @@ CORBA::Boolean
 CORBA::
 Object::_is_equivalent(CORBA::Object_ptr other_object)
 {
-  if ( !PR_is_valid(this) || !PR_is_valid(other_object) ) 
+  if ( !PR_is_valid(this) )
     throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
+  if ( !PR_is_valid(other_object) ) 
+    throw CORBA::OBJECT_NOT_EXIST(0,CORBA::COMPLETED_NO);
 
   if (CORBA::is_nil(other_object)) {
     if (NP_is_nil())
