@@ -28,6 +28,13 @@
 
 // $Id$
 // $Log$
+// Revision 1.14.2.1  2000/08/04 11:50:19  dpg1
+// Updates for AIX with xlC
+//
+// Revision 1.14  2000/06/08 14:36:18  dpg1
+// Comments and pragmas are now objects rather than plain strings, so
+// they can have file,line associated with them.
+//
 // Revision 1.8.2.3  2000/06/05 18:13:27  dpg1
 // Comments can be attached to subsequent declarations (with -K). Better
 // idea of most recent decl in operation declarations
@@ -74,6 +81,7 @@
 
 #include <stdio.h>
 
+extern "C" int yyparse();
 class Decl;
 
 // Pragma class stores a list of pragmas:

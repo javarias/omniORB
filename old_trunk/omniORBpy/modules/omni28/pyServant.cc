@@ -31,6 +31,13 @@
 // $Id$
 
 // $Log$
+// Revision 1.17.2.1  2000/08/14 16:10:32  dpg1
+// Missed out some explicit casts to (char*) for string constants.
+//
+// Revision 1.17  2000/05/26 15:33:32  dpg1
+// Python thread states are now cached. Operation dispatch time is
+// roughly halved!
+//
 // Revision 1.16  2000/04/06 14:12:40  dpg1
 // Incorrect format character in PyObject_CallMethod() caused a reference
 // count leak.
@@ -457,8 +464,8 @@ Py_Servant::local_dispatch(const char* op,
       PyObject* excc = PyDict_GetItem(pyCORBAsysExcMap, erepoId);
       if (excc) {
 	PyObject *pyminor, *pycompl;
-	pyminor = PyObject_GetAttrString(evalue, "minor");
-	pycompl = PyObject_GetAttrString(evalue, "completed");
+	pyminor = PyObject_GetAttrString(evalue, (char*)"minor");
+	pycompl = PyObject_GetAttrString(evalue, (char*)"completed");
 	OMNIORB_ASSERT(pyminor && PyInt_Check(pyminor));
 	OMNIORB_ASSERT(pycompl && PyInstance_Check(pycompl));
 	PyObject* exca = Py_BuildValue((char*)"(NN)", pyminor, pycompl);
