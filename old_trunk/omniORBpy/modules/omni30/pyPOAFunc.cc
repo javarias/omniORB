@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  2000/03/30 13:01:14  dpg1
+// Locking fixed for ~Py_omniServant().
+//
 // Revision 1.4  2000/03/24 16:48:57  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -573,8 +576,8 @@ extern "C" {
     char*     oidstr;
     int       oidlen;
 
-    if (!PyArg_ParseTuple(args, (char*)"OOs#",
-			  &pyPOA, &pyServant, &oidstr, &oidlen))
+    if (!PyArg_ParseTuple(args, (char*)"Os#O",
+			  &pyPOA, &oidstr, &oidlen, &pyServant))
       return 0;
 
     PortableServer::POA_ptr poa =
