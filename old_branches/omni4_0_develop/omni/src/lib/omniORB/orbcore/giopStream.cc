@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2001/06/20 18:35:17  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
   Revision 1.1.4.9  2001/05/11 14:25:53  sll
   Added operator for omniORB::logger to report system exception status and
   minor code.
@@ -312,7 +317,7 @@ giopStream::CommFailure::_raise(CORBA::ULong minor,
     l << "throw giopStream::CommFailure from "
       << omniExHelper::strip(filename) 	
       << ":" << linenumber 
-      << "(" << retry << ","
+      << "(" << (int)retry << ","
       << omniORB::logger::exceptionStatus(status,minor)
       << ")\n";
   }
