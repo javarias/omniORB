@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.24  1999/05/25 17:20:44  sll
+  Added check for invalid arguments in static member functions.
+  Default to throw system exception in the DII interface.
+  resolve_initial_reference now deals with InterfaceRepository.
+
   Revision 1.23  1999/05/22 17:40:57  sll
   Added #ifdef __CIAO__ so that CCia would not complain about gnu/linux
   particulars.
@@ -103,6 +108,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <initFile.h>
 #include <bootstrap_i.h>
 #include <scavenger.h>
@@ -130,9 +136,11 @@ CORBA::Boolean           strictIIOP = 1;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0;
 unsigned int             maxTcpConnectionPerServer = 5;
-CORBA::Boolean           diiThrowsSysExceptions = 0;
+CORBA::Boolean           diiThrowsSysExceptions = 1;
 CORBA::Boolean           useTypeCodeIndirections = 1;
 CORBA::Boolean           acceptMisalignedTcIndirections = 0;
+CORBA::Boolean           verifyObjectExistsAndType = 1;
+CORBA::Boolean           abortOnInternalError = 0;
 }
 
 #else
@@ -148,6 +156,8 @@ unsigned int                    omniORB::maxTcpConnectionPerServer = 5;
 CORBA::Boolean                  omniORB::diiThrowsSysExceptions = 1;
 CORBA::Boolean                  omniORB::useTypeCodeIndirections = 1;
 CORBA::Boolean                  omniORB::acceptMisalignedTcIndirections = 0;
+CORBA::Boolean                  omniORB::verifyObjectExistsAndType = 1;
+CORBA::Boolean                  omniORB::abortOnInternalError = 0;
 #endif
 
 _CORBA_Unbounded_Sequence_Octet omni::myPrincipalID;
@@ -707,6 +717,54 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
 	continue;
       }
 
+      // -ORBabortOnInternalError
+      if( strcmp(argv[idx],"-ORBabortOnInternalError") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBabortOnInternalError parameter (0 or 1).\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1],"%u",&v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBabortOnInternalError parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::abortOnInternalError = v ? 1 : 0;
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBverifyObjectExistsAndType
+      if( strcmp(argv[idx],"-ORBverifyObjectExistsAndType") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBverifyObjectExistsAndType parameter (0 or 1).\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1],"%u",&v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBverifyObjectExistsAndType parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::verifyObjectExistsAndType = v ? 1 : 0;
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
       // -ORBinConScanPeriod
       if( strcmp(argv[idx],"-ORBinConScanPeriod") == 0 ) {
 	if( idx + 1 >= argc ) {
@@ -792,4 +850,11 @@ omniORB::enableLcdMode()
   omniORB::idleConnectionScanPeriod(omniORB::idleOutgoing, 0);
   omniORB::useTypeCodeIndirections = 0;
   omniORB::acceptMisalignedTcIndirections = 1;
+}
+
+omniORB::
+fatalException::fatalException(const char *file,int line,const char *errmsg)
+  : pd_file(file), pd_line(line), pd_errmsg(errmsg)
+{
+  if (omniORB::abortOnInternalError) abort();
 }
