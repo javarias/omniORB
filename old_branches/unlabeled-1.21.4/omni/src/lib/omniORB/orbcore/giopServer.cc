@@ -29,6 +29,14 @@
  
 /*
   $Log$
+  Revision 1.21.4.1  1999/09/15 20:18:31  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.21  1999/08/30 16:50:56  sll
   Added calls to Strand::Sync::clicksSet to control how long a call is
   allowed to progress or how long an idle connection is to stay open.
@@ -265,7 +273,7 @@ GIOP_S::HandleRequest()
 
   try {
 
-    if (pd_invokeInfo.keysize() == 0) {
+    if (pd_invokeInfo.keysize() < 0) {
       // This case is only possible with GIOP version 1.2 or
       // above. The target object's identity is encoded in a
       // GIOP::IORAddressingInfo struct. inputRequestHeader() has looked
@@ -277,10 +285,10 @@ GIOP_S::HandleRequest()
       // to look at this request header and if it can return an omniObject
       // we'll use it to dispatch the call.
       if (MapTargetAddressToObjectFunction) {
-	obj = MapTargetAddressToObjectFunction(pd_invokeInfo);
+	obj = MapTargetAddressToObjectFunction(pd_invokeInfo.targetAddress());
       }
     }
-    else if (pd_invokeInfo.keysize() != sizeof(omniObjectKey)) {
+    else if (pd_invokeInfo.keysize() != (int)sizeof(omniObjectKey)) {
 
       // This key did not come from this orb.
 
@@ -485,7 +493,7 @@ GIOP_S::HandleLocateRequest()
 
   try {
 
-    if (pd_invokeInfo.keysize() == 0) {
+    if (pd_invokeInfo.keysize() < 0) {
       // This case is only possible with GIOP version 1.2 or
       // above. The target object's identity is encoded in a
       // GIOP::IORAddressingInfo struct. inputRequestHeader() has looked
@@ -497,10 +505,10 @@ GIOP_S::HandleLocateRequest()
       // to look at this request header and if it can return an omniObject
       // we'll use it to dispatch the call.
       if (MapTargetAddressToObjectFunction) {
-	obj = MapTargetAddressToObjectFunction(pd_invokeInfo);
+	obj = MapTargetAddressToObjectFunction(pd_invokeInfo.targetAddress());
       }
     }
-    else if (pd_invokeInfo.keysize() != sizeof(omniObjectKey)) {
+    else if (pd_invokeInfo.keysize() != (int)sizeof(omniObjectKey)) {
 
       // This key did not come from this orb.
 

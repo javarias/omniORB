@@ -31,6 +31,12 @@
 
 /*
   $Log$
+  Revision 1.7.4.2  1999/10/02 18:21:24  sll
+  Added support to decode optional tagged components in the IIOP profile.
+  Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+  remote objects inside a firewall.
+  Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
   Revision 1.7.4.1  1999/09/15 20:18:15  sll
   Updated to use the new cdrStream abstraction.
   Marshalling operators for NetBufferedStream and MemBufferedStream are now
@@ -158,10 +164,16 @@ public:
     TaggedProfileList_out operator=( const _T_var&);
   };
 
+  
 
   struct IOR {
-    _CORBA_Char       *type_id;
-    TaggedProfileList  profiles;
+    _CORBA_String_member  type_id;
+    TaggedProfileList     profiles;
+
+    // the following are omniORB2 private functions
+    void operator>>= (cdrStream &s);
+    void operator<<= (cdrStream &s);
+    static char* unmarshaltype_id(cdrStream&);
   };
 
   typedef _CORBA_ULong ComponentId;

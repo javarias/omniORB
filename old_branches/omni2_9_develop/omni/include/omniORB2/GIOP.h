@@ -31,6 +31,14 @@
 
 /*
   $Log$
+  Revision 1.3.4.1  1999/09/15 20:18:15  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.3  1999/06/18 21:12:56  sll
   Updated copyright notice.
 
@@ -76,6 +84,12 @@ public:
   static _core_attr const AddressingDisposition KeyAddr;
   static _core_attr const AddressingDisposition ProfileAddr;
   static _core_attr const AddressingDisposition ReferenceAddr;
+
+  struct IORAddressingInfo {
+    _CORBA_ULong  selected_profile_index;
+    IOP::IOR      ior;
+  };
+
 
   class RequestHeader {
   public:

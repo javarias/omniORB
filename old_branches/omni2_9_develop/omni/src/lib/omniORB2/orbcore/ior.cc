@@ -29,6 +29,14 @@
  
 /*
   $Log$
+  Revision 1.9.4.1  1999/09/15 20:18:31  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.9  1999/05/25 17:06:14  sll
   Make sure all padding bytes are converted to 0s in the stringified IOR.
 
@@ -251,6 +259,68 @@ IOP::TaggedComponent::operator<<= (cdrStream& s) {
   component_data <<= s;
 }
 
+void
+IOP::IOR::operator<<= (cdrStream& s) {
+  type_id = unmarshaltype_id(s);
+  profiles <<= s;
+}
+
+void
+IOP::IOR::operator>>= (cdrStream& s) {
+  type_id >>= s;
+  profiles >>= s;
+}
+
+
+char*
+IOP::IOR::unmarshaltype_id(cdrStream& s) {
+  CORBA::ULong idlen;
+  CORBA::String_var id;
+
+  idlen <<= s;
+
+  if (!s.checkInputOverrun(1,idlen))
+    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+
+  switch (idlen) {
+
+  case 0:
+#ifdef NO_SLOPPY_NIL_REFERENCE
+    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+#else
+    // According to the CORBA specification 2.0 section 10.6.2:
+    //   Null object references are indicated by an empty set of
+    //   profiles, and by a NULL type ID (a string which contain
+    //   only *** a single terminating character ***).
+    //
+    // Therefore the idlen should be 1.
+    // Visibroker for C++ (Orbeline) 2.0 Release 1.51 gets it wrong
+    // and sends out a 0 len string.
+    // We quietly accept it here. Turn this off by defining
+    //   NO_SLOPPY_NIL_REFERENCE
+    id = CORBA::string_alloc(1);
+    id[0] = '\0';
+#endif	
+    break;
+
+  case 1:
+    id = CORBA::string_alloc(1);
+    ::operator<<=((CORBA::Char&)id[0],s);
+    if (id[0] != '\0')
+      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+    idlen = 0;
+    break;
+    
+  default:
+    id = CORBA::string_alloc(idlen);
+    s.get_char_array((CORBA::Char*)((const char*)id), idlen);
+    if( id[idlen - 1] != '\0' )
+      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+    break;
+  }
+
+  return id._retn();
+}
 
 #undef Swap16
 #undef Swap32

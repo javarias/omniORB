@@ -29,6 +29,12 @@
  
 /*
   $Log$
+  Revision 1.28.4.2  1999/10/02 18:21:29  sll
+  Added support to decode optional tagged components in the IIOP profile.
+  Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+  remote objects inside a firewall.
+  Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
   Revision 1.28.4.1  1999/09/15 20:18:30  sll
   Updated to use the new cdrStream abstraction.
   Marshalling operators for NetBufferedStream and MemBufferedStream are now
@@ -663,56 +669,15 @@ cdrStream::marshalObjRef(omniObject* obj)
 omniObject*
 cdrStream::unMarshalObjRef(const char* repoId)
 {
-  CORBA::ULong idlen;
   CORBA::String_var id;
   IOP::TaggedProfileList_var profiles;
 
-  ::operator<<=(idlen,*this);
-
-  if (!checkInputOverrun(1,idlen))
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-
-  switch (idlen) {
-
-  case 0:
-#ifdef NO_SLOPPY_NIL_REFERENCE
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-#else
-    // According to the CORBA specification 2.0 section 10.6.2:
-    //   Null object references are indicated by an empty set of
-    //   profiles, and by a NULL type ID (a string which contain
-    //   only *** a single terminating character ***).
-    //
-    // Therefore the idlen should be 1.
-    // Visibroker for C++ (Orbeline) 2.0 Release 1.51 gets it wrong
-    // and sends out a 0 len string.
-    // We quietly accept it here. Turn this off by defining
-    //   NO_SLOPPY_NIL_REFERENCE
-    id = CORBA::string_alloc(1);
-    id[0] = '\0';
-#endif	
-    break;
-
-  case 1:
-    id = CORBA::string_alloc(1);
-    ::operator<<=((CORBA::Char&)id[0],*this);
-    if (id[0] != '\0')
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-    idlen = 0;
-    break;
-    
-  default:
-    id = CORBA::string_alloc(idlen);
-    get_char_array((CORBA::Char*)((const char*)id), idlen);
-    if( id[idlen - 1] != '\0' )
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-    break;
-  }
+  id = IOP::IOR::unmarshaltype_id(*this);
   
   profiles = new IOP::TaggedProfileList();
   (IOP::TaggedProfileList&)profiles <<= *this;
   
-  if (profiles->length() == 0 && idlen == 0) {
+  if (profiles->length() == 0 && strlen(id) == 0) {
     // This is a nil object reference
     return 0;
   }

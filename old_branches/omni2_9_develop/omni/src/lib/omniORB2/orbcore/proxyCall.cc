@@ -35,6 +35,9 @@
 
 /*
   $Log$
+  Revision 1.7.4.2  1999/10/02 18:24:33  sll
+  Reformatted trace messages.
+
   Revision 1.7.4.1  1999/09/15 20:18:29  sll
   Updated to use the new cdrStream abstraction.
   Marshalling operators for NetBufferedStream and MemBufferedStream are now
@@ -47,6 +50,7 @@
 
 #include <omniORB2/CORBA.h>
 #include <omniORB2/proxyCall.h>
+#include <giopObjectInfo.h>
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
@@ -137,8 +141,17 @@ OmniProxyCallWrapper::invoke(omniObject* o, OmniProxyCallDesc& call_desc)
 	break;
 
       case GIOP::NEEDS_ADDRESSING_MODE:
-	giop_client.RequestCompleted();
-	throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);
+	{
+	  GIOP::AddressingDisposition v;
+	  v <<= ((cdrStream&)giop_client);
+	  invokeInfo->addrMode(v);
+	  giop_client.RequestCompleted();
+	  if (omniORB::trace(10)) {
+	    omniORB::logger log("omniORB: ");
+	    log << "OmniProxyCallWrapper: GIOP::NEEDS_ADDRESSING_MODE: "
+		<< (int) v << " retry request.\n";
+	  }
+	}
 	break; // redundent.
 
       default:

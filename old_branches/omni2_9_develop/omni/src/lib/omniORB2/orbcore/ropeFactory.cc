@@ -28,6 +28,12 @@
 
 /*
  $Log$
+ Revision 1.9.4.3  1999/10/02 18:21:29  sll
+ Added support to decode optional tagged components in the IIOP profile.
+ Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+ remote objects inside a firewall.
+ Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
  Revision 1.9.4.2  1999/09/25 17:00:21  sll
  Merged changes from omni2_8_develop branch.
 
@@ -129,6 +135,7 @@ ropeFactory::iopProfilesToRope(GIOPObjectInfo* objectInfo)
 	(void) factorytype->decodeIOPprofile((*profiles)[i],
 					     addr.out(),
 					     objectInfo);
+	objectInfo->addr_selected_profile_index_ = i;
 	{
 	// Determine if this is a local object
 	// In future, we have to partially decode the object key to
