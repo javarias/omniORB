@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.13.2.5  2005/01/06 23:09:45  dgrisby
+   Big merge from omni4_0_develop.
+
    Revision 1.13.2.4  2005/01/06 16:39:24  dgrisby
    DynValue and DynValueBox implementations; misc small fixes.
 
@@ -5738,7 +5741,7 @@ factory_create_dyn_any(const CORBA::Any& value)
     OMNIORB_THROW(BAD_TYPECODE, BAD_TYPECODE_TypeCodeIsNil,
 		  CORBA::COMPLETED_NO);
 
-  DynAnyImplBase* da;
+  DynAnyImplBase* da = 0;
   try {
     da = internal_create_dyn_any(ToTcBase_Checked(CORBA::
 						  TypeCode::_duplicate(tc)),

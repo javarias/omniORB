@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.3  2005/01/06 23:10:36  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.5.2.2  2003/05/20 16:53:17  dgrisby
   Valuetype marshalling support.
 
@@ -471,8 +474,10 @@ omni::releaseObjRef(omniObjRef* objref)
     objref->_setIdentity(0);
   }
 
-  if( omniORB::trace(15) )
-    omniORB::logf("ObjRef(%s) -- deleted.", objref->_mostDerivedRepoId());
+  if( omniORB::trace(15) ) {
+    omniORB::logger l;
+    l << "ObjRef(" << objref->_mostDerivedRepoId() << ") -- deleted.\n";
+  }
 
   // Destroy the reference.
   delete objref;

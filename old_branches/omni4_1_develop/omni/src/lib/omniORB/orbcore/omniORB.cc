@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2005/01/06 23:10:37  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.4.2.1  2003/03/23 21:02:09  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -104,6 +107,23 @@
 #include <exceptiondefs.h>
 
 OMNI_USING_NAMESPACE(omni)
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////// omniORB::version... //////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+const char*
+omniORB::versionString()
+{
+  return OMNIORB_VERSION_STRING;
+}
+
+_CORBA_ULong
+omniORB::versionHex()
+{
+  return OMNIORB_VERSION_HEX;
+}
 
 
 //////////////////////////////////////////////////////////////////////

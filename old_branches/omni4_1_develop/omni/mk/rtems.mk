@@ -13,6 +13,9 @@
 # MODIFICATION/HISTORY:
 #
 # $Log$
+# Revision 1.5.2.1  2003/03/23 21:03:32  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.2.4.4  2003/03/11 15:54:47  dgrisby
 # Bump version number.
 #
@@ -234,10 +237,7 @@ OMNITHREAD_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
 #
 CorbaImplementation = OMNIORB
 
-OMNIORB_VERSION = 4.1.0
-OMNIORB_MAJOR_VERSION = $(word 1,$(subst ., ,$(OMNIORB_VERSION)))
-OMNIORB_MINOR_VERSION = $(word 2,$(subst ., ,$(OMNIORB_VERSION)))
-OMNIORB_MICRO_VERSION = $(word 3,$(subst ., ,$(OMNIORB_VERSION)))
+include $(BASE_OMNI_TREE)/mk/version.mk
 
 lib_depend := $(patsubst %,$(LibPattern),omniORB$(OMNIORB_MAJOR_VERSION))
 omniORB_lib_depend := $(GENERATE_LIB_DEPEND)

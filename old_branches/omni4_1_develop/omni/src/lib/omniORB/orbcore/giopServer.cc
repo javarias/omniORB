@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.5  2005/03/02 12:39:17  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.25.2.4  2005/03/02 12:10:49  dgrisby
   setSelectable / Peek fixes.
 
@@ -1018,7 +1021,7 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
       }
     }
 
-    // Connection is selectable now
+    // If connection is selectable, it's selectable now
     if (!conn->pd_dying)
       conn->setSelectable(2);
 
