@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.21  2003/07/16 14:22:38  dgrisby
+  Speed up oneway handling a little. More tracing for split messages.
+
   Revision 1.1.4.20  2003/01/22 11:40:12  dgrisby
   Correct serverSendException interceptor use.
 
@@ -575,7 +578,7 @@ giopImpl12::inputReplyBegin(giopStream* g,
       if (g->pd_strand->state() == giopStrand::DYING) {
 	CORBA::ULong minor;
 	CORBA::Boolean retry;
-	g->notifyCommFailure(0,minor,retry);
+	g->notifyCommFailure(1,minor,retry);
 	CORBA::CompletionStatus status;
 	if (g->pd_strand->orderly_closed) {
 	  status = CORBA::COMPLETED_NO;
