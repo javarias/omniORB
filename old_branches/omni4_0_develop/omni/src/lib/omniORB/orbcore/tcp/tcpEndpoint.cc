@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/04/18 18:10:43  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -169,9 +172,9 @@ tcpEndpoint::bind() {
   }
 
   const char* format = "giop:tcp:%s:%d";
-  pd_address_string = CORBA::string_alloc(strlen(pd_address.host)+sizeof(format)+6);
+  pd_address_string = CORBA::string_alloc(strlen(pd_address.host)+strlen(format)+6);
   sprintf((char*)pd_address_string,format,
-	  (const char*)pd_address.host,pd_address.port);
+	  (const char*)pd_address.host,(int)pd_address.port);
 
   return 1;
 }
