@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/07/26 16:37:20  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.7  2001/04/18 18:18:09  sll
   Big checkin with the brand new internal APIs.
 
@@ -213,7 +216,7 @@ NCS_W_UTF_16::unmarshalWString(cdrStream& stream,
 #else
   omniCodeSetUtil::HolderU uh(us);
 
-  ws = omniCodeSetUtil::allocW(len);
+  ws = omniCodeSetUtil::allocW(len+1);
   omniCodeSetUtil::HolderW wh(ws);
 
   for (_CORBA_ULong i=0; i<=len; i++)
