@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.17  1999/06/03 17:11:54  sll
+  Updated to CORBA 2.2.
+
   Revision 1.16  1999/03/11 16:26:11  djr
   Updated copyright notice
 
@@ -618,7 +621,7 @@ o2be_array::produce_binary_operators_in_dynskel(std::fstream &s,
   IND(s); s << "} else {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::TypeCode_var _0RL_tc = _a.type();\n";
-  IND(s); s << "if( !_0RL_tc->equal(" << tdef->fqtcname() << ") ) {\n";
+  IND(s); s << "if( !_0RL_tc->equivalent(" << tdef->fqtcname() << ") ) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_s = 0;\n";
   IND(s); s << "return 0;\n";
