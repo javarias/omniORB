@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.13  2001/03/21 16:41:10  dpg1
+# Wrong member count in TypeCode for union with multiple case labels.
+#
 # Revision 1.14.2.12  2001/03/20 17:27:11  dpg1
 # Incorrect TypeCode constants for some recursive sequences.
 #
@@ -206,11 +209,12 @@ def __init__(stream):
     # foo once.
     self.__defined_names = {}
 
-    # Normally when walking over the tree we only consider things defined in
-    # the current file. However if we encounter a dependency between something
-    # in the current file and something defined elsewhere, we set the override
-    # flag and recurse again.
-    self.__override = 0
+    # Normally when walking over the tree we only consider things
+    # defined in the current file. However if we encounter a
+    # dependency between something in the current file and something
+    # defined elsewhere, we set the resolving_dependency flag and
+    # recurse again.
+    self.__resolving_dependency = 0
     
     return self
 
@@ -219,8 +223,9 @@ def __init__(stream):
 def external_linkage(decl, mangled_name = ""):
     assert isinstance(decl, idlast.DeclRepoId)
 
-    # only needed at all if declaration is in the current file
-    if not(decl.mainFile()):
+    # Don't give external linkage if we met this declaration in
+    # resolving an out-of-file dependency
+    if self.__resolving_dependency:
         return
 
     where = bottomhalf
@@ -372,15 +377,11 @@ def mkTypeCode(type, declarator = None, node = None):
 def visitAST(node):
     self.__completedModules = {}
     for n in node.declarations():
-        n.accept(self)
+        if config.shouldGenerateCodeForDecl(n):
+            n.accept(self)
 
 
 def visitModule(node):
-    # no override check required because modules aren't types constructed
-    # inside other things :)
-    if not(node.mainFile()):
-        return
-
     slash_scopedName = string.join(node.scopedName(), '/')
     if self.__completedModules.has_key(slash_scopedName):
         return
@@ -443,8 +444,6 @@ def numMembers(node):
             
 
 def visitStruct(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
     startingNode(node)
     
     # the key here is to redirect the bottom half to a buffer
@@ -456,9 +455,9 @@ def visitStruct(node):
     self.__immediatelyInsideModule = 0
 
     # create the static typecodes for constructed types by setting
-    # the override flag and recursing
-    override = self.__override
-    self.__override = 1
+    # the resolving_dependency flag and recursing
+    save_resolving_dependency = self.__resolving_dependency
+    self.__resolving_dependency = 1
     
     for child in node.members():
         memberType = child.memberType()
@@ -478,7 +477,7 @@ def visitStruct(node):
                 if not(currently_being_defined(decl)):
                     base_type.decl().accept(self)
                         
-    self.__override = override
+    self.__resolving_dependency = save_resolving_dependency
 
     tophalf.out(str(buildMembersStructure(node)))
 
@@ -521,9 +520,6 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_struct_tc("@repo
     
 
 def visitUnion(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     scopedName = node.scopedName()
     mangled_name = mangleName(config.state['Private Prefix'] +\
                               "_tc_", scopedName)
@@ -546,10 +542,10 @@ def visitUnion(node):
     switchType = types.Type(node.switchType())
     deref_switchType = switchType.deref()
     if isinstance(switchType.type(), idltype.Declared):
-        override = self.__override
-        self.__override = 1
+        save_resolving_dependency = self.__resolving_dependency
+        self.__resolving_dependency = 1
         switchType.type().decl().accept(self)
-        self.__override = override
+        self.__resolving_dependency = save_resolving_dependency
         
     numlabels = 0
     numcases = 0
@@ -560,8 +556,8 @@ def visitUnion(node):
         decl = c.declarator()
         caseType = types.Type(c.caseType())
 
-        override = self.__override
-        self.__override = 1
+        save_resolving_dependency = self.__resolving_dependency
+        self.__resolving_dependency = 1
         if isinstance(caseType.type(), idltype.Declared):
             caseType.type().decl().accept(self)
         elif caseType.sequence():
@@ -574,7 +570,7 @@ def visitUnion(node):
                 if not(currently_being_defined(seqType.decl())):
                     seqType.decl().accept(self)
                 
-        self.__override = override
+        self.__resolving_dependency = save_resolving_dependency
         
         typecode = mkTypeCode(caseType, decl, node)
         case_name = id.Name(decl.scopedName()).simple()
@@ -633,9 +629,6 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_union_tc("@repoI
     finishingNode()
 
 def visitEnum(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-    
     scopedName = node.scopedName()
     mangled_name = mangleName(config.state['Private Prefix'] +\
                               "_tc_", scopedName)
@@ -676,8 +669,9 @@ def visitForward(node):
     
 
 def visitInterface(node):
-    if not(node.mainFile()):
+    if node.builtIn():
         return
+
     # interfaces containing members with the type of the interface
     # cause a minor (non fatal) problem with ordering of the outputted
     # declarations. This check only serves to correct this cosmetic flaw
@@ -712,19 +706,19 @@ def recurse(type):
     deref_type = type.deref()
     if isinstance(type.type(), idltype.Declared):
         base_decl = type.type().decl()
-        override = self.__override
-        self.__override = 1
+        save_resolving_dependency = self.__resolving_dependency
+        self.__resolving_dependency = 1
         base_decl.accept(self)
-        self.__override = override
+        self.__resolving_dependency = save_resolving_dependency
     elif deref_type.sequence():
         seqType = deref_type.type().seqType()
         if isinstance(seqType, idltype.Declared):
             base_decl = seqType.decl()
 
-            override = self.__override
-            self.__override = 1
+            save_resolving_dependency = self.__resolving_dependency
+            self.__resolving_dependency = 1
             base_decl.accept(self)
-            self.__override = override
+            self.__resolving_dependency = save_resolving_dependency
         elif types.Type(seqType).sequence():
             # anonymous sequence
             recurse(types.Type(seqType.seqType()))
@@ -766,9 +760,6 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_alias_tc("@repoI
     external_linkage(declarator)    
 
 def visitTypedef(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     aliasType = types.Type(node.aliasType())
 
     prefix = "CORBA::TypeCode::PR_"
@@ -785,9 +776,6 @@ def visitConst(node):
 
 
 def visitException(node):
-    if not(node.mainFile()):
-        return
-
     scopedName = node.scopedName()
     mangled_name = mangleName(config.state['Private Prefix'] +\
                               "_tc_", scopedName)
@@ -803,9 +791,9 @@ def visitException(node):
     self.bottomhalf = util.StringStream()
 
     # create the static typecodes for constructed types by setting
-    # the override flag and recursing
-    override = self.__override
-    self.__override = 1
+    # the resolving_dependency flag and recursing
+    save_resolving_dependency = self.__resolving_dependency
+    self.__resolving_dependency = 1
 
     insideModule = self.__immediatelyInsideModule
     self.__immediatelyInsideModule = 0
@@ -815,7 +803,7 @@ def visitException(node):
         if isinstance(memberType, idltype.Declared):
             memberType.decl().accept(self)
 
-    self.__override = override
+    self.__resolving_dependency = save_resolving_dependency
     self.__immediatelyInsideModule = insideModule
 
     

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.2  2000/04/26 18:22:30  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.3.2.1  2000/02/14 18:34:54  dpg1
 # New omniidl merged in.
 #
@@ -59,28 +63,20 @@ def __init__(stream):
 #
 def visitAST(node):
     for n in node.declarations():
-        n.accept(self)
+        if config.shouldGenerateCodeForDecl(n):
+            n.accept(self)
 
 def visitModule(node):
-    # again check what happens here wrt reopening modules spanning
-    # multiple files
-    if not(node.mainFile()):
-        return
-    
     for n in node.definitions():
         n.accept(self)
 
 
 def visitStruct(node):
-    if not(node.mainFile()):
-        return
-    
     for n in node.members():
         n.accept(self)
 
 def visitUnion(node):
-    if not(node.mainFile()):
-        return
+    pass # *** ?
 
 
 def visitStringType(type):
@@ -105,9 +101,6 @@ def visitOperation(node):
             paramType.type().accept(self)
             
 def visitInterface(node):
-    if not(node.mainFile()):
-        return
-
     for n in node.declarations():
         n.accept(self)
 
@@ -117,16 +110,10 @@ def visitInterface(node):
 
 
 def visitException(node):
-    if not(node.mainFile()):
-        return
-    
     for n in node.members():
         n.accept(self)
         
 def visitMember(node):
-    if not(node.mainFile()):
-        return
-    
     if node.constrType():
         node.memberType().decl().accept(self)
 

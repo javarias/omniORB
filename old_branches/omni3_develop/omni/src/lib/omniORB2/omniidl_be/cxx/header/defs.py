@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.20  2000/09/13 10:53:00  djs
+# Bug in union _d member when an implicit default case is active
+# (after _default() is called)
+#
 # Revision 1.31.2.19  2000/08/03 21:27:39  djs
 # Typo in -Wbvirtual_objref code caused incorrect operation signatures to be
 # generated in the _objref class of an interface.
@@ -249,14 +253,10 @@ def __init__(stream):
 def visitAST(node):
     self.__completedModules = {}
     for n in node.declarations():
-        n.accept(self)
+        if config.shouldGenerateCodeForDecl(n):
+            n.accept(self)
 
 def visitModule(node):
-    # This may be incorrect wrt reopened modules in multiple
-    # files?
-    if not(node.mainFile()):
-        return
-
     # Ensure we only output the definitions once.
     # In particular, when the splice-modules flag is set and this is
     # a reopened module, the node will be marked as completed already.
@@ -295,9 +295,6 @@ def visitModule(node):
         
 
 def visitInterface(node):
-    if not(node.mainFile()):
-        return
-
     # It's legal to have a forward interface declaration after
     # the actual interface definition. Make sure we ignore these.
     self.__interfaces[node] = 1
@@ -485,9 +482,6 @@ def visitInterface(node):
     
 
 def visitForward(node):
-    if not(node.mainFile()):
-        return
-    
     # Note it's legal to have multiple forward declarations
     # of the same name. So ignore the duplicates.
     if self.__interfaces.has_key(node):
@@ -512,9 +506,6 @@ def visitForward(node):
                name = name.unambiguous(environment))
 
 def visitConst(node):
-    if not(node.mainFile()):
-        return
-
     environment = id.lookup(node)
     scope = environment.scope()
 
@@ -560,9 +551,6 @@ def visitConst(node):
 
 
 def visitTypedef(node):
-    if not(node.mainFile()):
-        return
-
     environment = id.lookup(node)
     scope = environment.scope()
     
@@ -871,9 +859,6 @@ def visitTypedef(node):
      
 
 def visitMember(node):
-    if not(node.mainFile()):
-        return
-    
     memberType = node.memberType()
     if node.constrType():
         # if the type was declared here, it must be an instance
@@ -883,9 +868,6 @@ def visitMember(node):
 
 
 def visitStruct(node):
-    if not(node.mainFile()):
-        return
-
     name = node.identifier()
     cxx_name = id.mapID(name)
 
@@ -953,9 +935,6 @@ def visitStruct(node):
 
 
 def visitException(node):
-    if not(node.mainFile()):
-        return
-    
     exname = node.identifier()
 
     cxx_exname = id.mapID(exname)
@@ -1070,9 +1049,6 @@ def visitException(node):
 
 
 def visitUnion(node):
-    if not(node.mainFile()):
-        return
-    
     ident = node.identifier()
 
     cxx_id = id.mapID(ident)
@@ -1639,9 +1615,6 @@ def visitUnion(node):
 
 
 def visitEnum(node):
-    if not(node.mainFile()):
-        return
-
     name = id.mapID(node.identifier())
 
     enumerators = node.enumerators()

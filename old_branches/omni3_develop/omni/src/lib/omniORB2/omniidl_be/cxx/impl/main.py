@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.5  2000/05/16 11:16:01  djs
+# Updated to simplify memory management, correct errors in function prototypes,
+# add missing attribute functions and generate #warnings which the user should
+# remove when they fill in the gaps in the output.
+#
 # Revision 1.1.2.4  2000/04/26 18:22:37  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -137,21 +142,16 @@ class BuildInterfaceImplementations(idlvisitor.AstVisitor):
     # Tree walking code
     def visitAST(self, node):
         for n in node.declarations():
-            n.accept(self)
+            if config.shouldGenerateCodeForDecl(n):
+                n.accept(self)
 
     # modules can contain interfaces
     def visitModule(self, node):
-        if not(node.mainFile()):
-            return
-
         for n in node.definitions():
             n.accept(self)
 
     # interfaces cannot be further nested
     def visitInterface(self, node):
-        if not(node.mainFile()):
-            return
-
         self.__allInterfaces.append(node)
     
         scopedName = id.Name(node.scopedName())

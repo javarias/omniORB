@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11.2.9  2000/10/16 18:05:58  djs
+# Tie templates used wrong operation argument mapping (bug #3)
+#
 # Revision 1.11.2.8  2000/07/17 09:36:40  djs
 # Now handles the case where an interface inherits from a typedef to another
 # interface.
@@ -227,11 +230,11 @@ class BOATieTemplates(idlvisitor.AstVisitor):
     def __init__(self, stream):
         self.stream = stream
     def visitAST(self, node):
-        for d in node.declarations(): d.accept(self)
+        for d in node.declarations():
+            if config.shouldGenerateCodeForDecl(d):
+                d.accept(self)
 
     def visitModule(self, node):
-        if not(node.mainFile()): return
-
         name = id.Name(node.scopedName())
         
         self.stream.out(template.module_begin,
@@ -245,8 +248,6 @@ class BOATieTemplates(idlvisitor.AstVisitor):
         
 
     def visitInterface(self, node):
-        if not(node.mainFile()): return
-        
         name = id.Name(node.scopedName())
 
         tie_name = name.simple()
@@ -264,12 +265,13 @@ class FlatTieTemplates(idlvisitor.AstVisitor):
     def __init__(self, stream):
         self.stream = stream
     def visitAST(self, node):
-        for d in node.declarations(): d.accept(self)
+        for d in node.declarations():
+            if config.shouldGenerateCodeForDecl(d):
+                d.accept(self)
     def visitModule(self, node):
-        for d in node.definitions(): d.accept(self)
+        for d in node.definitions():
+            d.accept(self)
     def visitInterface(self, node):
-        if not(node.mainFile()): return
-        
         self.generate_POA_tie(node)
         if config.state['BOA Skeletons']:
             self.generate_BOA_tie(node)

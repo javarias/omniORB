@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.14  2001/04/03 18:29:47  djs
+# A previous fix of referring to an interface's ancestors by a flat typedef
+# rather than a scoped name fell over when the interface was inherited from
+# a typedef to an interface. The fix is to remove the typedefs and then
+# continue as before.
+#
 # Revision 1.27.2.13  2001/01/29 10:52:45  djs
 # In order to fix interface inheritance name ambiguity problem the
 # call-base-class-by-typedef (rather than direct) MSVC workaround was
@@ -207,7 +213,7 @@ def __init__(stream):
 def visitAST(node):
     for n in node.declarations():
         # Not sure what should happen when modules are reopened
-        if n.mainFile():
+        if config.shouldGenerateCodeForDecl(n):
             n.accept(self)
 
 def visitModule(node):

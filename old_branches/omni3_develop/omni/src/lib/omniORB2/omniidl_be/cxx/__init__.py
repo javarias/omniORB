@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.10  2000/08/14 19:34:44  djs
+# Performs a quick scan of the AST looking for unsupported IDL constructs
+# before doing anything else.
+#
 # Revision 1.18.2.9  2000/08/07 15:34:34  dpg1
 # Partial back-port of long long from omni3_1_develop.
 #
@@ -199,6 +203,8 @@ def process_args(args):
             config.state['SK Suffix']         = arg[2:]
         elif arg[:2] == "d=":
             config.state['DYNSK Suffix']      = arg[2:]
+        elif arg == "inline":
+            config.state['Inline Includes']   = 1
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 
@@ -216,7 +222,8 @@ def run(tree, args):
         # Check the input tree only contains stuff we understand
         support.checkIDL(tree)
         
-        # build the list of include files
+        # build the list of include files, and annotate nodes which
+        # should be processed in this run
         walker = config.WalkTreeForIncludes()
         tree.accept(walker)
         
