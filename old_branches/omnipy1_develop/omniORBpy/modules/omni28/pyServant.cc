@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.17.2.1  2000/08/14 16:10:32  dpg1
+// Missed out some explicit casts to (char*) for string constants.
+//
 // Revision 1.17  2000/05/26 15:33:32  dpg1
 // Python thread states are now cached. Operation dispatch time is
 // roughly halved!
@@ -232,19 +235,26 @@ Py_Servant::dispatch(GIOP_S&        giop_server,
     if (out_l >= 0) {
       CORBA::ULong msgsize = GIOP_S::ReplyHeaderSize();
 
-      if (out_l == 1) {
-	msgsize = omniPy::alignedSize(msgsize,
-				      PyTuple_GET_ITEM(out_d, 0),
-				      result,
-				      CORBA::COMPLETED_MAYBE);
-      }
-      else if (out_l > 1) {
-	for (i=0; i < out_l; i++) {
+      try {
+	if (out_l == 1) {
 	  msgsize = omniPy::alignedSize(msgsize,
-					PyTuple_GET_ITEM(out_d,  i),
-					PyTuple_GET_ITEM(result, i),
+					PyTuple_GET_ITEM(out_d, 0),
+					result,
 					CORBA::COMPLETED_MAYBE);
 	}
+	else if (out_l > 1) {
+	  for (i=0; i < out_l; i++) {
+	    msgsize = omniPy::alignedSize(msgsize,
+					  PyTuple_GET_ITEM(out_d,  i),
+					  PyTuple_GET_ITEM(result, i),
+					  CORBA::COMPLETED_MAYBE);
+	  }
+	}
+      }
+      catch (...) {
+	// alignedSize() can throw BAD_PARAM and others
+	Py_DECREF(result);
+	throw;
       }
       giop_server.InitialiseReply(GIOP::NO_EXCEPTION, msgsize);
 

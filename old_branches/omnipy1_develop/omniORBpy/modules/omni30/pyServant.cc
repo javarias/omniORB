@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.24.2.1  2000/08/17 08:46:06  dpg1
+// Support for omniORB.LOCATION_FORWARD exception
+//
 // Revision 1.24  2000/06/12 15:36:09  dpg1
 // Support for exception handler functions. Under omniORB 3, local
 // operation dispatch modified so exceptions handlers are run.
@@ -487,19 +490,26 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
     if (out_l >= 0) {
       CORBA::ULong msgsize = GIOP_S::ReplyHeaderSize();
 
-      if (out_l == 1) {
-	msgsize = omniPy::alignedSize(msgsize,
-				      PyTuple_GET_ITEM(out_d, 0),
-				      result,
-				      CORBA::COMPLETED_MAYBE);
-      }
-      else if (out_l > 1) {
-	for (i=0; i < out_l; i++) {
+      try {
+	if (out_l == 1) {
 	  msgsize = omniPy::alignedSize(msgsize,
-					PyTuple_GET_ITEM(out_d,  i),
-					PyTuple_GET_ITEM(result, i),
+					PyTuple_GET_ITEM(out_d, 0),
+					result,
 					CORBA::COMPLETED_MAYBE);
 	}
+	else if (out_l > 1) {
+	  for (i=0; i < out_l; i++) {
+	    msgsize = omniPy::alignedSize(msgsize,
+					  PyTuple_GET_ITEM(out_d,  i),
+					  PyTuple_GET_ITEM(result, i),
+					  CORBA::COMPLETED_MAYBE);
+	  }
+	}
+      }
+      catch (...) {
+	// alignedSize() can throw BAD_PARAM and others
+	Py_DECREF(result);
+	throw;
       }
       giop_s.InitialiseReply(GIOP::NO_EXCEPTION, msgsize);
 
