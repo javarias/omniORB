@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22  1999/05/26 15:56:25  sll
+    Added marshalling operators for the new _CORBA_*Sequence_ObjRef templates.
+
   Revision 1.21  1999/05/25 13:22:25  sll
 
   Revision 1.20  1999/03/22 13:31:58  djr
@@ -749,7 +752,7 @@ _CORBA_Sequence<T>::operator<<= (NetBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.RdMessageUnRead()) {
+  if (l > s.RdMessageUnRead() || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -775,7 +778,7 @@ _CORBA_Sequence<T>::operator<<= (MemBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.unRead() < l) {
+  if (s.unRead() < l || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -783,137 +786,6 @@ _CORBA_Sequence<T>::operator<<= (MemBufferedStream& s)
   for (_CORBA_ULong i=0; i<l; i++)
     pd_buf[i] <<= s;
 }
-
-
-template <class T>
-inline
-size_t
-_CORBA_Unbounded_Sequence<T>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (unsigned long i=0; i < _CORBA_Sequence<T>::length(); i++) {
-    alignedsize = _CORBA_Sequence<T>::NP_data()[i].NP_alignedSize(alignedsize);
-  }
-  return alignedsize;
-}
-
-
-template <class T>
-inline 
-void 
-_CORBA_Unbounded_Sequence<T>::operator>>= (NetBufferedStream& s) const
-{
-  _CORBA_Sequence<T>::operator>>=(s);
-}
-
-
-template <class T>
-inline
-void
-_CORBA_Unbounded_Sequence<T>::operator<<= (NetBufferedStream& s)
-{
-  _CORBA_Sequence<T>::operator<<=(s);
-}
-
-
-template <class T>
-inline
-void 
-_CORBA_Unbounded_Sequence<T>::operator>>= (MemBufferedStream& s) const
-{
-  _CORBA_Sequence<T>::operator>>=(s);
-}
-
-
-template <class T>
-inline
-void 
-_CORBA_Unbounded_Sequence<T>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_Sequence<T>::operator<<=(s);
-}
-
-
-template <class T,int max>
-inline 
-size_t
-_CORBA_Bounded_Sequence<T,max>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (unsigned long i=0; i < length(); i++) {
-    alignedsize = _CORBA_Sequence<T>::NP_data()[i].NP_alignedSize(alignedsize);
-  }
-  return alignedsize;
-}
-
-
-template <class T,int max>
-inline 
-void
-_CORBA_Bounded_Sequence<T,max>::operator>>= (NetBufferedStream& s) const
-{
-  _CORBA_Sequence<T>::operator>>=(s);
-}
-
-
-template <class T,int max>
-inline void
-_CORBA_Bounded_Sequence<T,max>::operator<<= (NetBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if (l > s.RdMessageUnRead() || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    _CORBA_Sequence<T>::NP_data()[i] <<= s;
-  }
-  return;
-}
-
-
-template <class T,int max>
-inline void
-_CORBA_Bounded_Sequence<T,max>::operator>>= (MemBufferedStream& s) const 
-{
-  _CORBA_Sequence<T>::operator>>=(s);
-}
-
-
-template <class T,int max>
-inline void
-_CORBA_Bounded_Sequence<T,max>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if ((s.unRead() < l) || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    _CORBA_Sequence<T>::NP_data()[i] <<= s;
-  }
-  return;
-}
-
-
-template <class T,int elmSize,int elmAlignment>
-inline
-size_t
-_CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (_CORBA_Sequence<T>::length()) {
-    alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize += _CORBA_Sequence<T>::length() * elmSize;
-  }
-  return alignedsize;
-}
-
 
 template <class T,int elmSize,int elmAlignment>
 inline
@@ -1036,20 +908,6 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
       }
     }
   }
-}
-
-
-template <class T,int max,int elmSize, int elmAlignment>
-inline
-size_t
-_CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (length()) {
-    alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize += length() * elmSize;
-  }
-  return alignedsize;
 }
 
 
@@ -1200,7 +1058,7 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (NetBufferedStream&
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.RdMessageUnRead()) {
+  if (l > s.RdMessageUnRead() || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1234,7 +1092,7 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (MemBufferedStream&
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.unRead() < l) {
+  if (s.unRead() < l || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1246,148 +1104,6 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (MemBufferedStream&
   }
   return;
 }
-
-
-template <class T,class T_slice,class Telm,int dimension>
-inline
-size_t
-_CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (_CORBA_ULong i=0; 
-       i < _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length(); 
-       i++) {
-    for (_CORBA_ULong j=0; j<dimension; j++) {
-      alignedsize = ((Telm*)(NP_data()[i]) + j)->NP_alignedSize(alignedsize);
-    }
-  }
-  return alignedsize;
-}
-
-
-template <class T,class T_slice,class Telm,int dimension>
-inline 
-void 
-_CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator>>= (NetBufferedStream &s) const
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator>>=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension>
-inline
-void
-_CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (NetBufferedStream &s)
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension>
-inline
-void 
-_CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator>>= (MemBufferedStream& s) const
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator>>=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension>
-inline
-void 
-_CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int max>
-inline 
-size_t
-_CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (_CORBA_ULong i=0; i < length(); i++) {
-    for (_CORBA_ULong j=0; j < dimension; j++) {
-      alignedsize = ((Telm*)(NP_data()[i])+j)->NP_alignedSize(alignedsize);
-    }
-  }
-  return alignedsize;
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int max>
-inline 
-void
-_CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator>>= (NetBufferedStream& s) const
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator>>=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int max>
-inline void
-_CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator<<= (NetBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if (l > s.RdMessageUnRead() || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    for (_CORBA_ULong j=0; j<dimension; j++) {
-      *((Telm*)(NP_data()[i])+j) <<= s;
-    }
-  }
-  return;
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int max>
-inline void
-_CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator>>= (MemBufferedStream& s) const 
-{
-  _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator>>=(s);
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int max>
-inline void
-_CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if ((s.unRead() < l) || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    for (_CORBA_ULong j=0; j<dimension; j++) {
-      *((Telm*)(NP_data()[i])+j) <<= s;
-    }
-  }
-  return;
-}
-
-
-template <class T,class T_slice,class Telm,int dimension,int elmSize,int elmAlignment>
-inline
-size_t
-_CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (_CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length()) {
-    alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize +=_CORBA_Sequence_Array<T,T_slice,Telm,dimension>::length() * 
-                   dimension * elmSize;
-  }
-  return alignedsize;
-}
-
 
 template <class T,class T_slice,class Telm,int dimension,int elmSize,int elmAlignment>
 inline
@@ -1515,21 +1231,6 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
     }
   }
 }
-
-
-template <class T,class T_slice,class Telm,int dimension,int max,int elmSize, int elmAlignment>
-inline
-size_t
-_CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmSize,elmAlignment>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  if (length()) {
-    alignedsize = ((alignedsize+(elmAlignment-1)) & ~(elmAlignment-1));
-    alignedsize += length() * dimension * elmSize;
-  }
-  return alignedsize;
-}
-
 
 template <class T,class T_slice,class Telm,int dimension,int max,int elmSize, int elmAlignment>
 inline
@@ -1853,7 +1554,7 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (NetBufferedStream& s) con
 {
   ::operator>>=(_CORBA_ULong(pd_len), s);
   for( int i = 0; i < (int)pd_len; i++ )
-    pd_buf[i] >>= s;
+    T_Helper::marshalObjRef(pd_data[i],s);
 }
 
 
@@ -1863,13 +1564,13 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (NetBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.RdMessageUnRead()) {
+  if (l > s.RdMessageUnRead() || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
   length(l);
   for( _CORBA_ULong i = 0; i < l; i++ )
-    pd_buf[i] <<= s;
+    operator[](i) = T_Helper::unmarshalObjRef(s);
 }
 
 
@@ -1879,7 +1580,7 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (MemBufferedStream& s) con
 {
   pd_len >>= s;
   for (int i=0; i<(int)pd_len; i++)
-    pd_buf[i] >>= s;
+    T_Helper::marshalObjRef(pd_data[i],s);
 }
 
 
@@ -1889,127 +1590,13 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (MemBufferedStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.unRead() < l) {
+  if (s.unRead() < l || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
   length(l);
   for (_CORBA_ULong i=0; i<l; i++)
-    pd_buf[i] <<= s;
-}
-
-
-template <class T, class ElemT, class T_Helper>
-inline
-size_t
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (unsigned long i=0; i < length(); i++) {
-    alignedsize = (pd_buf)[i].NP_alignedSize(alignedsize);
-  }
-  return alignedsize;
-}
-
-template <class T, class ElemT, class T_Helper>
-inline 
-void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (NetBufferedStream& s) const
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
-}
-
-
-template <class T, class ElemT, class T_Helper>
-inline
-void
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (NetBufferedStream& s)
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<=(s);
-}
-
-
-template <class T, class ElemT, class T_Helper>
-inline
-void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>= (MemBufferedStream& s) const
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
-}
-
-
-template <class T, class ElemT, class T_Helper>
-inline
-void 
-_CORBA_Unbounded_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<=(s);
-}
-
-template <class T,class ElemT,class T_Helper,int max>
-inline 
-size_t
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::NP_alignedSize(size_t initialoffset) const 
-{
-  size_t alignedsize = ((initialoffset+3) & ~((int)3))+sizeof(_CORBA_ULong);
-  for (unsigned long i=0; i < length(); i++) {
-    alignedsize = (pd_buf)[i].NP_alignedSize(alignedsize);
-  }
-  return alignedsize;
-}
-
-
-template <class T,class ElemT,class T_Helper,int max>
-inline 
-void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator>>= (NetBufferedStream& s) const
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
-}
-
-
-template <class T,class ElemT,class T_Helper,int max>
-inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator<<= (NetBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if (l > s.RdMessageUnRead() || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    (pd_buf)[i] <<= s;
-  }
-  return;
-}
-
-
-template <class T,class ElemT,class T_Helper,int max>
-inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator>>= (MemBufferedStream& s) const 
-{
-  _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator>>=(s);
-}
-
-
-template <class T,class ElemT,class T_Helper,int max>
-inline void
-_CORBA_Bounded_Sequence_ObjRef<T,ElemT,T_Helper,max>::operator<<= (MemBufferedStream& s)
-{
-  _CORBA_ULong l;
-  l <<= s;
-  if ((s.unRead() < l) || l > max) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  length(l);
-  for (_CORBA_ULong i=0; i<l; i++) {
-    (pd_buf)[i] <<= s;
-  }
-  return;
+    operator[](i) = T_Helper::unmarshalObjRef(s);
 }
 
 #undef Swap16
