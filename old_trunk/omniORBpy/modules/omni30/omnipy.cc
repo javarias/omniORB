@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.18  1999/10/01 11:07:21  dpg1
+// Error reporting if up-call raises an unexpected exception.
+//
 // Revision 1.17  1999/09/29 15:46:51  dpg1
 // lockWithNewThreadState now creates a dummy threading.Thread object so
 // threading doesn't get upset that it's not there. Very dependent on the
@@ -497,8 +500,6 @@ extern "C" {
 					PyString_AS_STRING(repoId));
     Py_DECREF(repoId);
     Py_DECREF(opdict);
-    //    Py_DECREF(pyboa);
-    Py_DECREF(pyservant);
 
     omniPy_objectIsReady(cxxservant);
 
