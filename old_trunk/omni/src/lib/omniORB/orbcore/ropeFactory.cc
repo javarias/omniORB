@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.6  1999/07/02 19:10:29  sll
+ Added virtual destructors which have been removed from the header.
+
  Revision 1.5  1999/03/11 16:25:55  djr
  Updated copyright notice
 
@@ -170,7 +173,7 @@ ropeFactoryList::~ropeFactoryList() {}
 
 ropeFactoryList_ThreadSafe::~ropeFactoryList_ThreadSafe() {}
 
-ropeFactory_iteractor::~ropeFactory_iterator() { pd_l.unlock(); }
+ropeFactory_iterator::~ropeFactory_iterator() { pd_l.unlock(); }
 
 
 Endpoint::~Endpoint() {
