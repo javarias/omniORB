@@ -11,6 +11,9 @@
  
 /*
   $Log$
+// Revision 1.3  1997/01/21  14:25:35  ewc
+// Added support for initial reference interface.
+//
 // Revision 1.2  1997/01/08  18:21:06  ewc
 // Corrected bug in omniORB::iopProfilesToRope (code assumed that profile
 // tag was IOP::TAG_INTERNET_IOP)
@@ -59,20 +62,6 @@ extern PFV set_terminate(PFV);
 
 #endif
 
-_CORBA_Unbounded_Sequence_w_FixSizeElement<CORBA::Octet,1,1> omniORB::myPrincipalID;
-
-static omni_mutex initLock;
-static CORBA::Boolean orb_initialised = 0;
-static CORBA::Boolean boa_initialised = 0;
-
-static Anchor incomingAnchor;
-static Anchor outgoingAnchor;
-
-static initFile* configFile = NULL;
-
-static size_t          max_giop_message_size = 256 * 1024;
-
-static CORBA::Boolean has_spawned_rendevous_threads = 0;
 class tcpsock_rendezvouser : public omni_thread {
 public:
   tcpsock_rendezvouser(tcpSocketRope *r);
@@ -107,18 +96,13 @@ void
 omniORB::init(int &argc,char **argv,const char *orb_identifier)
 {
   extern void objectRef_init();
-  initLock.lock();
-  if (orb_initialised) {
-    initLock.unlock();
-    return;
-  }
 
   objectRef_init();
 
   // Get configuration information:
   configFile = new initFile;
   configFile->initialize();
-  
+
   CORBA::ULong l = strlen("nobody")+1;
   CORBA::Octet *p = (CORBA::Octet *) "nobody";
   omniORB::myPrincipalID.length(l);
@@ -126,8 +110,6 @@ omniORB::init(int &argc,char **argv,const char *orb_identifier)
   for (i=0; i < l; i++) {
     omniORB::myPrincipalID[i] = p[i];
   }
-
-  orb_initialised = 1;
 
 #ifdef _HAS_SIGNAL
   struct sigaction act;
@@ -139,66 +121,56 @@ omniORB::init(int &argc,char **argv,const char *orb_identifier)
   }
 #endif // _HAS_SIGNAL
 
-  initLock.unlock();
   return;
 }
 
 void
 omniORB::boaInit(int &argc,char **argv,const char *orb_identifier)
 {
-  initLock.lock();
-  if (boa_initialised) {
-    initLock.unlock();
-    return;
-  }
-
   Rope *r;
   {
-    Rope_iterator anchorLocked(&incomingAnchor);
+    Rope_iterator anchorLocked(&Anchor::incomingAnchor);
     tcpSocketEndpoint e ((CORBA::Char *)"",0);
     // let the ctor to initialise the host name and port number
-    r = new tcpSocketRope(&incomingAnchor,0,&e,1,1);
+    r = new tcpSocketRope(&Anchor::incomingAnchor,0,&e,1,1);
   }
-  initLock.unlock();
-  boa_initialised = 1;
   if (!r)
     throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
   return;
 }
 
-
 omniObject* omniORB::resolveInitRef(const char* identifier)
 {
   // Resolve initial references:
 
-if (strcmp(identifier,"InterfaceRepository") == 0)
-  {
-    // No Interface Repository
-    throw CORBA::INTF_REPOS(10426,CORBA::COMPLETED_NO);
-    return NULL;
-  }
-else if (strcmp(identifier,"NameService") == 0)
-  {
-    if (configFile->NameService == NULL)
-      {
-	// Failed to get a reference to the Naming Service during ORB 
-	// initialization
+  if (strcmp(identifier,"InterfaceRepository") == 0)
+    {
+      // No Interface Repository
+      throw CORBA::INTF_REPOS(10426,CORBA::COMPLETED_NO);
+      return NULL;
+    }
+  else if (strcmp(identifier,"NameService") == 0)
+    {
+      if (omniORB::configFile->NameService == NULL)
+	{
+	  // Failed to get a reference to the Naming Service during ORB 
+	  // initialization
 
-	throw CORBA::NO_RESOURCES(0,CORBA::COMPLETED_NO);
-	return NULL;
-      }
-    else 
-      {
-	return configFile->NameService;
-      }
-  }
-else
-  {
-    // No further ObjectIds are defined
-    
-    throw CORBA::ORB::InvalidName();
-    return NULL;
-  }
+	  throw CORBA::NO_RESOURCES(0,CORBA::COMPLETED_NO);
+	  return NULL;
+	}
+      else 
+	{
+	  return omniORB::configFile->NameService;
+	}
+    }
+  else
+    {
+      // No further ObjectIds are defined
+      
+      throw CORBA::ORB::InvalidName();
+      return NULL;
+    }
 }
 
 
@@ -211,7 +183,7 @@ omniORB::listInitServices(char**& servicelist)
 
   servicelist = new char*[number_services];
 
-  if (configFile->NameService != NULL)
+  if (omniORB::configFile->NameService != NULL)
     {
       servicelist[0] = new char[12];
       strcpy(servicelist[0],"NameService");
@@ -222,7 +194,6 @@ omniORB::listInitServices(char**& servicelist)
 
   return number_services;
 }
-
 
 Rope *
 omniORB::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
@@ -256,7 +227,7 @@ omniORB::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
     tcpSocketEndpoint addr(p.host,p.port);
 
     {
-      Rope_iterator next(&incomingAnchor);
+      Rope_iterator next(&Anchor::incomingAnchor);
       while ((r= next())) {
 	Endpoint *addrp = &addr;
 	if (r->this_is(addrp)) {
@@ -280,7 +251,7 @@ omniORB::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
     }
     {
       // This must be a remote object
-      Rope_iterator next(&outgoingAnchor);
+      Rope_iterator next(&Anchor::outgoingAnchor);
       while ((r=next())) {
 	// Do we have a rope to the same address yet?
 	Endpoint *addrp = &addr;
@@ -293,7 +264,7 @@ omniORB::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
       }
       else {
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-	r = new tcpSocketRope(&outgoingAnchor,5,&addr,0,1);
+	r = new tcpSocketRope(&Anchor::outgoingAnchor,5,&addr,0,1);
 	// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	if (!r)
 	  throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
@@ -341,7 +312,7 @@ omniORB::objectToIopProfiles(omniObject *obj)
     if (!p)
       throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
     try {
-      Rope_iterator next(&incomingAnchor);
+      Rope_iterator next(&Anchor::incomingAnchor);
       Rope *r;
       while ((r = next())) {
 	p->length(p->length()+1);
@@ -362,10 +333,10 @@ omniORB::objectToIopProfiles(omniObject *obj)
 void
 omniORB::orbIsReady()
 {
-  initLock.lock();
-  if (!has_spawned_rendevous_threads) 
+  omniORB::initLock.lock();
+  if (!tcpSocketRendezvous::has_spawned_rendevous_threads) 
     {
-      Rope_iterator next(&incomingAnchor);
+      Rope_iterator next(&Anchor::incomingAnchor);
       Rope *r;
       Endpoint *e = 0;
       while ((r = next())) {
@@ -394,14 +365,13 @@ omniORB::orbIsReady()
       //killer *thr = new killer();
       //}
 
-      has_spawned_rendevous_threads = 1;
+      tcpSocketRendezvous::has_spawned_rendevous_threads = 1;
     }
-  initLock.unlock();
+  omniORB::initLock.unlock();
   return;
 }
 
 static int tmp_seed = 1;
-
 void
 omniObjectKey::generateNewKey(omniObjectKey &k)
 {
@@ -409,9 +379,9 @@ omniObjectKey::generateNewKey(omniObjectKey &k)
   // Eventually, this function should initialise the object key to
   // a unique ID that is guarantteed not to repeat on the same machine
   // ever.
-  initLock.lock();
+  omniORB::initLock.lock();
   k.lo = tmp_seed++;
-  initLock.unlock();
+  omniORB::initLock.unlock();
   k.med = k.hi = 0;
   return;
 }
@@ -419,7 +389,7 @@ omniObjectKey::generateNewKey(omniObjectKey &k)
 size_t
 omniORB::MaxMessageSize()
 {
-  return max_giop_message_size;
+  return GIOP_Basetypes::max_giop_message_size;
 }
 
 
@@ -532,7 +502,7 @@ killer::run(void *arg)
       (void) omni_thread::sleep(10,0);
 
       cerr << "Testing code: killer thread wakes up." << endl;
-      Rope_iterator next(&incomingAnchor);
+      Rope_iterator next(&Anchor::incomingAnchor);
       Rope *r;
       Endpoint *e = 0;
       while ((r = next())) {
@@ -558,29 +528,3 @@ killer::run(void *arg)
   return;
 }
 
-#if 0
-ropeFactory::ropeFactory()
-{
-  pd_next = ropeFactories;
-  ropeFactories = this;
-  return;
-}
-
-ropeFactory::~ropeFactory()
-{
-}
-
-ropeFactory_iterator::ropeFactory_iterator()
-{
-  pd_f = ropeFactories;
-}
-
-ropeFactory *
-ropeFactory_iterator::operator() ()
-{
-  ropeFactory *p = pd_f;
-  if (pd_f)
-    pd_f = pd_f->pd_next;
-  return p;
-}
-#endif
