@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.21  2001/10/29 17:42:36  dpg1
+ * Support forward-declared structs/unions, ORB::create_recursive_tc().
+ *
  * Revision 1.38.2.20  2001/10/17 16:44:03  dpg1
  * Update DynAny to CORBA 2.5 spec, const Any exception extraction.
  *
@@ -4026,7 +4029,7 @@ void
 TypeCode_indirect::removeOptionalNames()
 {
   CHECK_RESOLVED;
-  return pd_resolved->removeOptionalNames();
+  pd_resolved->removeOptionalNames();
 }
 
 
