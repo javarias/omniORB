@@ -13,6 +13,9 @@
 
 /*
   $Log$
+  Revision 1.2  1997/01/23 16:57:56  sll
+  New static member has_spawned_rendevous_threads.
+
  * Revision 1.1  1997/01/08  18:33:43  ewc
  * Initial revision
  *
@@ -184,7 +187,10 @@ public:
 private:
 
   void transmit();
-  void fetch();
+  void fetch(CORBA::ULong max=0);
+  // fetch data from the network to the internal buffer.
+  // If <max>=0, fetch as much as possible, otherwise fetch at most <max>
+  // bytes.
 
   tcpSocketHandle_t pd_ipfilep;
   void    *pd_tx_buffer;
