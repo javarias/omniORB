@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.7  2001/08/29 11:54:20  dpg1
+// Clean up const handling in IDL compiler.
+//
 // Revision 1.11.2.6  2001/06/12 11:35:25  dpg1
 // Minor omniidl tweaks for valuetype.
 //
@@ -290,7 +293,7 @@ visitConst(Const* c)
   case IdlType::tk_ulonglong: printf("%Lu", c->constAsULongLong());    break;
 #endif
 #ifdef HAS_LongDouble
-  case IdlType::tk_longdouble:printlongdouble(c->constAsLongDouble()));break;
+  case IdlType::tk_longdouble:printlongdouble(c->constAsLongDouble()); break;
 #endif
   case IdlType::tk_wchar:     printf("'\\u%hx'", c->constAsWChar());   break;
   case IdlType::tk_wstring:   printf("[cannot show wide string]");     break;

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.7  2001/10/29 17:42:39  dpg1
+# Support forward-declared structs/unions, ORB::create_recursive_tc().
+#
 # Revision 1.16.2.6  2001/06/08 17:12:16  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -312,20 +315,21 @@ def mkTypeCode(type, declarator = None, node = None):
     
 
     basic = {
-        idltype.tk_short:     "short",
-        idltype.tk_long:      "long",
-        idltype.tk_ushort:    "ushort",
-        idltype.tk_ulong:     "ulong",
-        idltype.tk_float:     "float",
-        idltype.tk_double:    "double",
-        idltype.tk_boolean:   "boolean",
-        idltype.tk_char:      "char",
-        idltype.tk_wchar:     "wchar",
-        idltype.tk_octet:     "octet",
-        idltype.tk_any:       "any",
-        idltype.tk_TypeCode:  "TypeCode",
-        idltype.tk_longlong:  "longlong",
-        idltype.tk_ulonglong: "ulonglong"
+        idltype.tk_short:      "short",
+        idltype.tk_long:       "long",
+        idltype.tk_ushort:     "ushort",
+        idltype.tk_ulong:      "ulong",
+        idltype.tk_float:      "float",
+        idltype.tk_double:     "double",
+        idltype.tk_boolean:    "boolean",
+        idltype.tk_char:       "char",
+        idltype.tk_wchar:      "wchar",
+        idltype.tk_octet:      "octet",
+        idltype.tk_any:        "any",
+        idltype.tk_TypeCode:   "TypeCode",
+        idltype.tk_longlong:   "longlong",
+        idltype.tk_ulonglong:  "ulonglong",
+        idltype.tk_longdouble: "longdouble"
         }
     if basic.has_key(type.kind()):
         return prefix + basic[type.kind()] + "_tc()"

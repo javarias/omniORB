@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.11  2001/10/17 16:48:33  dpg1
+// Minor error message tweaks
+//
 // Revision 1.17.2.10  2001/08/29 11:55:23  dpg1
 // Enumerator nodes record their value.
 //
@@ -535,7 +538,7 @@ visitConst(Const* c)
   case IdlType::tk_longdouble:
     pyv = PyFloat_FromDouble(c->constAsLongDouble());
     IdlWarning(c->file(), c->line(),
-	       "long double constant truncated to double by Python");
+	       "long double constant truncated to double. Sorry.");
     break;
 #endif
   case IdlType::tk_wchar:   pyv = PyInt_FromLong(c->constAsWChar());  break;
@@ -1483,6 +1486,19 @@ extern "C" {
     Py_INCREF(Py_None); return Py_None;
   }
 
+  static PyObject* IdlPyPlatformDefines(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)"")) return 0;
+    PyObject* l = PyList_New(0);
+#ifdef HAS_LongLong
+    PyList_Append(l, PyString_FromString("-DHAS_LongLong"));
+#endif
+#ifdef HAS_LongDouble
+    PyList_Append(l, PyString_FromString("-DHAS_LongDouble"));
+#endif
+    return l;
+  }
+
   static PyMethodDef omniidl_methods[] = {
     {(char*)"compile",            IdlPyCompile,            METH_VARARGS},
     {(char*)"clear",              IdlPyClear,              METH_VARARGS},
@@ -1493,6 +1509,7 @@ extern "C" {
     {(char*)"relativeScopedName", IdlPyRelativeScopedName, METH_VARARGS},
     {(char*)"runInteractiveLoop", IdlPyRunInteractiveLoop, METH_VARARGS},
     {(char*)"caseSensitive",      IdlPyCaseSensitive,      METH_VARARGS},
+    {(char*)"platformDefines",    IdlPyPlatformDefines,    METH_VARARGS},
     {NULL, NULL}
   };
 
