@@ -334,6 +334,11 @@
 # if !defined(__WIN32__)
 #  define _HAS_SIGNAL 1
 # endif
+# if defined(__nextstep__)
+#  define _USE_MACH_SIGNAL 1
+#  define _NO_STRDUP 1
+#  define _USE_GETHOSTNAME 1
+# endif
 #elif defined(__linux__) && defined(__powerpc__)
 # define _OMNIORB_HOST_BYTE_ORDER_ 0
 # define _HAS_SIGNAL 1
