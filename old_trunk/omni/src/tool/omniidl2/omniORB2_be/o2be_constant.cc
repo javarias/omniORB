@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.8  1998/08/19 15:51:01  sll
+  o2be_name::VarToken is now replaced by a better name
+  o2be_name::variable_qualifier.
+
   Revision 1.7  1998/08/13 22:36:24  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available
@@ -68,7 +72,7 @@ o2be_constant::o2be_constant(AST_Expression::ExprType et,
 }
 
 void
-o2be_constant::produce_hdr(std::fstream &s)
+o2be_constant::produce_hdr(std::fstream& s)
 {
   char *initializer = "_init_in_decl_( ";
   idl_bool intfconst = 0;
@@ -128,8 +132,9 @@ o2be_constant::produce_hdr(std::fstream &s)
   return;
 }
 
+
 void
-o2be_constant::produce_skel(std::fstream &s)
+o2be_constant::produce_skel(std::fstream& s)
 {
   char *quote = "";
   char *initializer = "_init_in_def_( ";
@@ -232,7 +237,13 @@ o2be_constant::produce_skel(std::fstream &s)
   }
 }
 
+
+void
+o2be_constant::produce_dynskel(std::fstream& s)
+{
+}
+
+
 // Narrowing
 IMPL_NARROW_METHODS1(o2be_constant, AST_Constant)
 IMPL_NARROW_FROM_DECL(o2be_constant)
-
