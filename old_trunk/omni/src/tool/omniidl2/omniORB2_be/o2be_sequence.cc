@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.24  1999/06/22 14:55:46  sll
+  Correct type casting in any extraction operator.
+
   Revision 1.23  1999/06/18 20:45:35  sll
   Updated to support CORBA 2.3 mapping.
 
@@ -634,9 +637,9 @@ o2be_sequence::seq_member_name(AST_Decl* used_in)
     case o2be_operation::tSequence:
       {
 	AST_Decl* decl = base_type();
-	while (decl->node_type() == AST_Decl::NT_typedef)
-	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
-	baseclassname = o2be_sequence::narrow_from_decl(decl)->seq_template_name(used_in);
+	if (decl->node_type() != AST_Decl::NT_typedef) {
+	  baseclassname = o2be_sequence::narrow_from_decl(decl)->seq_template_name(used_in);
+	}
 	break;
       }
     default:
