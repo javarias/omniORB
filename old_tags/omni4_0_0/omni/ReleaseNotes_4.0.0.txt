@@ -1,0 +1,42 @@
+RELEASE NOTES for omniORB 4.0.0
+===============================
+
+This is omniORB 4.0.0. It is a stable release.
+
+See README.unix or README.win32 for building instructions.
+
+
+Major new features since omniORB 3.0.x
+--------------------------------------
+
+ - Updated to CORBA 2.6.
+ - Support for GIOP 1.1 and 1.2.
+ - Wide string and codeset negotiation.
+ - Unix domain and SSL transports.
+ - Bidirectional GIOP.
+ - Flexible thread pool mode.
+ - PortableServer::Current.
+ - Interceptors.
+ - Fixed point.
+ - Complete freeing of all heap allocations.
+ - New comprehensive configuration mechanism.
+ - Commercial support. See http://www.omniorb-support.com/
+
+And many other improvements.
+
+
+Known issues
+------------
+
+This release has the following known issues and omissions. They are
+planned for the 4.0.1 release.
+
+ - Some interceptors are not implemented yet.
+
+ - The planned per-thread call timeout is not implemented.
+
+ - iostream insertion and extraction operators for CORBA types are not
+   implemented.
+
+ - Optional locking of proxy object factories, to enable dynamic
+   loading/unloading of stubs is not implemented.
