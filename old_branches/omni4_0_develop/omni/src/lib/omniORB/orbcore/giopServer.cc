@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.32  2004/10/17 20:14:32  dgrisby
+  Updated support for OpenVMS. Many thanks to Bruce Visscher.
+
   Revision 1.22.2.31  2004/09/13 10:03:13  dgrisby
   Fix for giopServer shutdown issue. Thanks Serguei Kolos.
 
@@ -886,7 +889,7 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     giopConnection* conn = w->strand()->connection;
 
     conn->pd_dying = 1; // From now on, the giopServer will not create
-    // any more workers to serve this connection.
+                        // any more workers to serve this connection.
 
     cs = csLocate(conn);
 
@@ -1003,21 +1006,11 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
       if (conn->pd_n_workers > 1 ||
 	  pd_n_temporary_workers > orbParameters::maxServerThreadPoolSize) {
 
-	w->remove();
-	delete w;
-	conn->pd_n_workers--;
-	pd_n_temporary_workers--;
-
 	select_and_return = 1;
       }
     }
-    if (select_and_return) {
-      // Connection is selectable now
-      conn->setSelectable(1);
-      return 0;
-    }
 
-    if (orbParameters::threadPoolWatchConnection) {
+    if (orbParameters::threadPoolWatchConnection && !select_and_return) {
       // Call Peek(). This thread will be used for a short time to
       // monitor the connection. If the connection is available for
       // reading, the callback function peekCallBack is called. We can
@@ -1031,6 +1024,9 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
 	return 1;
       }
     }
+
+    // Connection is selectable now
+    conn->setSelectable(1);
 
     // Worker is no longer needed.
     CORBA::Boolean dying = 0;
@@ -1057,10 +1053,6 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
 	pd_n_temporary_workers--;
       }
     }
-
-    // Connection is selectable now
-    conn->setSelectable(1);
-
     return dying ? 1 : 0;
   }
 #ifndef __DECCXX
