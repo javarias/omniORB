@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.7  2002/02/25 11:17:13  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.19.2.6  2002/01/15 16:38:13  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.
@@ -199,15 +202,27 @@ again:
 
   struct hostent *hp;
 
+#ifdef __WIN32__
+  long ip;
+
+  // avoid using a numeric address with gethostbyname()
+  if ((ip = ::inet_addr(name)) != INADDR_NONE)
+    hp = ::gethostbyaddr((char*)&ip, sizeof(ip), AF_INET);
+  else
+    hp = ::gethostbyname(name);
+#else
+  hp = ::gethostbyname(name);
+#endif
+  
 #ifdef __atmos__
-  if ((hp = ::gethostbyname(name)) <= 0)
+  if (hp <= 0)
     {
       rc = 0;
       non_reentrant.unlock();
       return -1;
     }
 #else
-  if ((hp = ::gethostbyname(name)) == NULL)
+  if (hp == NULL)
     {
 #if defined(__WIN32__) || defined(__vms) && __VMS_VER < 70000000
     rc = 0;
