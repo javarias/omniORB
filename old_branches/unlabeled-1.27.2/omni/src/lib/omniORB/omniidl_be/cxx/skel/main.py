@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.9  2000/06/05 13:04:18  djs
+# Removed union member name clash (x & pd_x, pd__default, pd__d)
+# Removed name clash when a sequence is called "pd_seq"
+#
 # Revision 1.27.2.8  2000/05/31 18:03:38  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)
@@ -245,7 +249,7 @@ def visitInterface(node):
         # does the name have scope :: qualifiers
         return len(name.relName(environment)) > 1
     
-    for i in node.inherits():
+    for i in tyutil.allInherits(node):
         inherits_name = id.Name(i.scopedName())
         if needFlatName(inherits_name):
             guard_name = inherits_name.guard()
