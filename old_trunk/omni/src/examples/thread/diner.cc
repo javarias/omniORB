@@ -16,6 +16,9 @@
 
 /*
  $Log$
+// Revision 1.3  1995/08/17  10:22:27  tjr
+// new thread stuff
+//
 // Revision 1.2  1995/03/13  16:26:44  sll
 // Added mutex around output to STDERR stream.
 //
@@ -26,7 +29,7 @@
 
 #include <iostream.h>
 #include <stdlib.h>
-#include "omnithread.h"
+#include <omnithread.h>
 
 #ifdef __NT__
 static int last_rand = 0;
