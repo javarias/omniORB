@@ -29,8 +29,10 @@
 //    threading.Thread objects
 
 // $Id$
-
 // $Log$
+// Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
+// New omnipy3_develop branch.
+//
 // Revision 1.1.2.1  2000/10/13 13:55:27  dpg1
 // Initial support for omniORB 4.
 //
@@ -57,6 +59,7 @@ public:
 
     CORBA::Boolean used;
     CORBA::Boolean can_scavenge;
+    CORBA::Boolean reused_state;
     int            active;
 
     CacheNode*     next;

@@ -28,8 +28,10 @@
 //    Implementation of Python call descriptor object
 
 // $Id$
-
 // $Log$
+// Revision 1.1.4.2  2003/07/10 22:17:02  dgrisby
+// Track orb core changes, fix bugs.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
