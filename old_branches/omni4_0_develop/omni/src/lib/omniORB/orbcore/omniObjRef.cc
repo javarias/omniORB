@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.28  2002/10/14 20:07:13  dgrisby
+  Per objref / per thread timeouts.
+
   Revision 1.2.2.27  2002/01/02 18:17:41  dpg1
   Segfault during final clean-up if ORB not initialised.
 
@@ -846,7 +849,7 @@ omniObjRef::_marshal(omniObjRef* objref, cdrStream& s)
 char*
 omniObjRef::_toString(omniObjRef* objref)
 {
-  cdrMemoryStream buf(CORBA::ULong(0),1);
+  cdrMemoryStream buf(CORBA::ULong(0),CORBA::Boolean(1));
   buf.marshalOctet(omni::myByteOrder);
   _marshal(objref,buf);
 

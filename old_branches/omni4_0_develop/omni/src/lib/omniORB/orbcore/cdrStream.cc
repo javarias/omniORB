@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2002/11/26 14:51:50  dgrisby
+  Implement missing interceptors.
+
   Revision 1.1.2.13  2002/05/07 12:55:47  dgrisby
   Minor tweak to log message format.
 
@@ -533,7 +536,7 @@ setCodeSetServiceContext(omniInterceptors::clientSendRequest_T::info_T& info) {
   info.giopstream.TCS_W(tcs_w);
   
   if (sendcontext) {
-    cdrEncapsulationStream s(CORBA::ULong(0),1);
+    cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
     tcs_c->id() >>= s;
     if (tcs_w) {
       tcs_w->id() >>= s;

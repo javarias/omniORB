@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2002/09/08 21:12:39  dgrisby
+  Properly handle IORs with no usable profiles.
+
   Revision 1.1.2.12  2002/03/27 11:44:53  dpg1
   Check in interceptors things left over from last week.
 
@@ -172,7 +175,7 @@ omniIOR::omniIOR(const char* repoId,
   if (naddrs > 1) {
     for (CORBA::ULong index = 1; index < naddrs; index++) {
 
-      cdrEncapsulationStream s(CORBA::ULong(0),1);
+      cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
       s.marshalRawString(addrs[index].host);
       addrs[index].port >>= s;
       IOP::TaggedComponent& c = omniIOR::newIIOPtaggedComponent(iiop.components);
