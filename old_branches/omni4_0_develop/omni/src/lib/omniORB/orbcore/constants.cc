@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15.2.4  2001/04/18 18:18:11  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.15.2.3  2000/11/03 19:10:24  sll
   Use OMNIORB_FOR_EACH_SYS_EXCEPTION to define repository IDs.
 
@@ -150,6 +153,9 @@ const IOP::ComponentId IOP::TAG_PRIMARY = 90002; // XXX NEED THE REAL CONSTANT!
 const IOP::ComponentId IOP::TAG_HEARTBEAT_ENABLED = 90003; 
                                                // XXX NEED THE REAL CONSTANT !
 
+const IOP::ComponentId IOP::TAG_OMNIORB_BIDIR = 0x41545401; 
+
+
 
 static struct {
   IOP::ComponentId id;
@@ -181,6 +187,10 @@ static struct {
   { IOP::TAG_DCE_NO_PIPES, "TAG_DCE_NO_PIPES" },
   { IOP::TAG_DCE_SEC_MECH, "TAG_DCE_SEC_MECH" },
   { IOP::TAG_INET_SEC_TRANS, "TAG_INET_SEC_TRANS" },
+  { IOP::TAG_GROUP, "TAG_GROUP" },
+  { IOP::TAG_PRIMARY, "TAG_PRIMARY" },
+  { IOP::TAG_HEARTBEAT_ENABLED, "TAG_HEARTBEAT_ENABLED" },
+  { IOP::TAG_OMNIORB_BIDIR, "TAG_OMNIORB_BIDIR" },
   { 0, 0 }
 };
 
