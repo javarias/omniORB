@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.23  1999/06/18 20:45:35  sll
+  Updated to support CORBA 2.3 mapping.
+
   Revision 1.22  1999/06/03 17:10:58  sll
   Updated to CORBA 2.2
 
@@ -1083,7 +1086,7 @@ o2be_sequence::produce_typedef_binary_operators_in_dynskel(std::fstream& s,
   DEC_INDENT_LEVEL();
   IND(s); s << "} else {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "delete stmp;\n";
+  IND(s); s << "delete (" << tdef->fqname() << " *)stmp;\n";
   IND(s); s << "return 0;\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
