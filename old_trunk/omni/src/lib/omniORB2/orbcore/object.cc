@@ -11,6 +11,14 @@
  
 /*
   $Log$
+// Revision 1.4  1997/04/22  17:49:55  sll
+// - New atomic functions getRopeAndKey, setRopeAndKey, resetRopeAndKey to
+//   get or set the Rope and object key associated with an object.
+// - dispatch() now accepts psuedo object operations _is_a, _non_existent,
+//   _interface, _implementation.
+// - New atomic function assertObjectExistent to assert that the object
+//   exists. This is done via the GIOP LocateRequest message.
+//
 // Revision 1.3  1997/03/11  20:27:36  sll
 // NP_objkey() should also update the IIOP profile list. Fixed.
 //
@@ -132,7 +140,18 @@ omniObject::setRopeAndKey(const omniRopeAndKey& l,
       pd_objkeysize = l.keysize();
       memcpy((void*)pd_objkey.foreign,(void*)l.key(),pd_objkeysize);
       if (!keepIOP) {
-	IOP::TaggedProfileList *np = omni::objectToIopProfiles(this);
+	IOP::TaggedProfileList * np = new IOP::TaggedProfileList(1);
+	if (!np)
+	  throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
+	try {
+	  pd_rope->iopProfile((CORBA::Char *)pd_objkey.foreign,
+			      pd_objkeysize,
+			      ((IOP::TaggedProfileList &) *np)[0]);
+	}	
+	catch (...) {
+	  delete np;
+	  throw;
+	}
 	delete pd_iopprofile;
 	pd_iopprofile = np;
 	pd_forwardlocation = 0;
@@ -148,7 +167,23 @@ omniObject::setRopeAndKey(const omniRopeAndKey& l,
 	     (void*)l.key(),
 	     sizeof(pd_objkey.native));
       if (!keepIOP) {
-	IOP::TaggedProfileList *np = omni::objectToIopProfiles(this);
+	IOP::TaggedProfileList *np = new IOP::TaggedProfileList;
+	if (!np)
+	  throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
+	try {
+	  Rope_iterator next(&Anchor::incomingAnchor);
+	  Rope *r;
+	  while ((r = next())) {
+	    np->length(np->length()+1);
+	    r->iopProfile((CORBA::Char *)&pd_objkey.native,
+			  pd_objkeysize,
+			  ((IOP::TaggedProfileList &)*np)[np->length()-1]);
+	  }
+	}
+	catch (...) {
+	  delete np;
+	  throw;
+	}
 	delete pd_iopprofile;
 	pd_iopprofile = np;
 	pd_forwardlocation = 0;
