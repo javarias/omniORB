@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.13  2000/07/07 10:18:33  sll
+ Fixed unbalanced #if #endif.
+
  Revision 1.1.2.12  2000/07/05 11:13:56  dpg1
  Untested support for AIX with xlC 5.
 
@@ -227,6 +230,7 @@
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Std_Namespace
 #     define HAS_pch
+#     define OMNI_REQUIRES_FQ_BASE_CTOR
 // Uncomment the following lines to enable the use of namespace with cxx v5.6
 // Notice that the source code may have to be patched to compile.
 //#  elif __DECCXX_VER >= 50600000
