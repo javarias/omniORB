@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.3.2.5  2002/01/16 11:32:00  dpg1
+  Race condition in use of registerNilCorbaObject/registerTrackedObject.
+  (Reported by Teemu Torma).
+
   Revision 1.3.2.4  2001/09/19 17:26:52  dpg1
   Full clean-up after orb->destroy().
 
@@ -82,7 +86,7 @@ OMNI_USING_NAMESPACE(omni)
 //////////////////////////// CORBA::Policy ///////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-static omni_mutex ref_count_lock;
+static omni_tracedmutex ref_count_lock;
 
 
 CORBA::Policy::~Policy() {}

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2002/02/11 17:09:48  dpg1
+  Fix Windows brokenness caused by autoconf stuff.
+
   Revision 1.1.4.3  2001/08/24 16:43:25  sll
   Switch to use Winsock 2. Removed reference to winsock.h. Let the pre-processor
   define _WIN32_WINNT=0x0400 to select the right header.
@@ -78,7 +81,7 @@ public:
 #ifdef _HAS_NETDB_
   class hostent_var;
 
-  static omni_mutex non_reentrant;
+  static omni_tracedmutex non_reentrant;
   static int gethostbyname(const char *,hostent_var &,int &);
   static int isipaddr(const char* hname);
 

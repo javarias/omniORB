@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/02/11 17:10:18  dpg1
+  Cast result of pthread_self().
+
   Revision 1.1.2.7  2001/09/13 16:45:03  sll
   Changed thread id callback function for the openssl library.
   Only provide one for non-win32 platform and use pthread_self() directly.
@@ -312,7 +315,7 @@ sslContext::set_ephemeralRSA() {
 }
 
 /////////////////////////////////////////////////////////////////////////
-static omni_mutex *openssl_locks = 0;
+static omni_tracedmutex *openssl_locks = 0;
 
 extern "C" 
 void sslContext_locking_callback(int mode, int type, const char *,int) { 
@@ -350,7 +353,7 @@ unsigned long sslContext_thread_id(void) {
 /////////////////////////////////////////////////////////////////////////
 void
 sslContext::thread_setup() {
-  pd_locks = new omni_mutex[CRYPTO_num_locks()];
+  pd_locks = new omni_tracedmutex[CRYPTO_num_locks()];
   openssl_locks = pd_locks;
   CRYPTO_set_locking_callback(sslContext_locking_callback);
 #ifndef __WIN32__

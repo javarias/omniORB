@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.19.2.6  2002/01/15 16:38:13  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.19.2.5  2001/06/13 20:13:15  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -109,7 +113,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 
-omni_mutex LibcWrapper::non_reentrant;
+omni_tracedmutex LibcWrapper::non_reentrant;
 
 
 int

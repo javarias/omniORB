@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/09/14 11:10:35  sll
+  Do the right dllimport for win32.
+
   Revision 1.1.2.2  2001/09/13 15:36:00  sll
   Provide hooks to openssl for thread safety.
   Switched to select v2 or v3 methods but accept only v3 or tls v1 protocol.
@@ -118,11 +121,11 @@ class sslContext {
 
   virtual void internal_initialise();
 
-  const char* pd_cafile;
-  const char* pd_keyfile;
-  const char* pd_password;
-  SSL_CTX*    pd_ctx;
-  omni_mutex* pd_locks;
+  const char* 	    pd_cafile;
+  const char* 	    pd_keyfile;
+  const char* 	    pd_password;
+  SSL_CTX*    	    pd_ctx;
+  omni_tracedmutex* pd_locks;
 };
 
 #endif // __SSLCONTEXT_H__

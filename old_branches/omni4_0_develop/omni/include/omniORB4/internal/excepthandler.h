@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:17  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.3.2.1  2000/07/17 10:35:53  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -59,7 +63,7 @@ public:
   void*                   sysexcpt_hdr;
   void*                   sysexcpt_cookie;
   static omniExHandlers** Table;
-  static omni_mutex       TableLock;
+  static omni_tracedmutex TableLock;
   friend class omniExHandlers_iterator;
 private:
   omniExHandlers();

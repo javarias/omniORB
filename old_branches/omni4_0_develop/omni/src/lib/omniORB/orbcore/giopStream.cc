@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.21  2002/02/13 16:02:39  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
   Revision 1.1.4.20  2001/10/17 16:33:28  dpg1
   New downcast mechanism for cdrStreams.
 
@@ -1160,8 +1164,8 @@ static inline char printable_char(char c) {
 /////////////////////////////////////////////////////////////////////////
 static void dumpbuf(unsigned char* buf, size_t sz)
 {
-  static omni_mutex lock;
-  omni_mutex_lock sync(lock);
+  static omni_tracedmutex lock;
+  omni_tracedmutex_lock sync(lock);
   unsigned i;
   char row[80];
 

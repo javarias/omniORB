@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.10.2.8  2002/01/15 16:38:13  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.10.2.7  2001/09/20 15:10:47  sll
   Default Transient Handler now checks for the minor code
   TRANSIENT_FailedOnForwarded and do a retry.
@@ -140,7 +144,7 @@ static void* omni_globalSystemExcHandlerCookie = 0;
 
 
 omniExHandlers** omniExHandlers::Table = 0;
-omni_mutex       omniExHandlers::TableLock;
+omni_tracedmutex omniExHandlers::TableLock;
 
 
 static CORBA::Boolean
