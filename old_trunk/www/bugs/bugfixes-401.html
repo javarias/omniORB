@@ -67,6 +67,43 @@
             <tr>
               <td>Summary:</td>
               <td>
+                <b>Deadlock after POA exception</b>
+            (bug number 6)
+            <a name='bug6'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Fri Jun 27 10:26:37 BST 2003</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Vladimir Panov</td>
+            </tr>
+            <tr>
+              <td>Link for this bug:</td>
+              <td>
+                <a href='http://www.omniorb-support.com/pipermail/omniorb-list/2003-June/023803.html'>http://www.omniorb-support.com/pipermail/omniorb-list/2003-June/023803.html</a>
+              </td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>Calling deactivate_object on a destroyed POA would leave a
+  mutex locked after throwing an exception.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
                 <b>Deferred DII requests fail on Windows</b>
             (bug number 5)
             <a name='bug5'></a>

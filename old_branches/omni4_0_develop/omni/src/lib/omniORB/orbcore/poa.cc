@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.38  2003/05/09 15:54:15  dgrisby
+  Fix race in deactivation. Thanks Teemu Torma.
+
   Revision 1.2.2.37  2003/02/17 02:03:08  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -1131,7 +1134,11 @@ omniOrbPOA::deactivate_object(const PortableServer::ObjectId& oid)
   CORBA::ULong hashv = omni::hash(key.key(), key.size());
 
   pd_lock.lock();
-  CHECK_NOT_DESTROYED();
+  if( pd_destroyed ) {
+    pd_lock.unlock();
+    OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_POANotInitialised,
+		  CORBA::COMPLETED_NO);
+  }
   omni::internalLock->lock();
 
   omniObjTableEntry* entry = omniObjTable::locate(key.key(),key.size(),hashv);
