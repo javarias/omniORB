@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2000/11/20 14:41:44  sll
+  Simplified sequence template hierachy and added templates for sequence of
+  wchar and sequence of array of wchar.
+
   Revision 1.1.2.3  2000/11/07 18:19:54  sll
   Revert to use explicit castings in the marshalling operators of sequence of
   arrays.
@@ -119,7 +123,7 @@ _CORBA_Bounded_Sequence<T,max>::operator<<= (cdrStream& s)
 template <class T,int elmSize,int elmAlignment>
 inline
 void
-_CORBA_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
+_CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
 {
   if (s.marshal_byte_swap()) {
     Base_T_seq::operator>>=(s);
@@ -138,7 +142,69 @@ _CORBA_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (cdrStream
 template <class T,int elmSize,int elmAlignment>
 inline
 void
-_CORBA_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= (cdrStream& s)
+_CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= (cdrStream& s)
+{
+  _CORBA_ULong l;
+  l <<= s;
+  if (!s.checkInputOverrun(elmSize,l)) {
+    _CORBA_marshal_error();
+    // never reach here
+  }
+  Base_T_seq::length(l);
+  if (l==0) return;
+  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+		    (int)l*elmSize,
+		    (omni::alignment_t)elmAlignment);
+  if (s.unmarshal_byte_swap() && elmAlignment != 1) {
+    if (elmSize == 2) {
+      for (_CORBA_ULong i=0; i<l; i++) {
+	_CORBA_UShort t = ((_CORBA_UShort*)Base_T_seq::NP_data())[i];
+	((_CORBA_UShort*)Base_T_seq::NP_data())[i] = Swap16(t);
+      }
+    }
+    else if (elmSize == 4) {
+      for (_CORBA_ULong i=0; i<l; i++) {
+	_CORBA_ULong t = ((_CORBA_ULong*)Base_T_seq::NP_data())[i];
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i] = Swap32(t);
+      }
+    }
+    else if (elmSize == 8) {
+      l *= 2;
+      for (_CORBA_ULong i=0; i<l; i+=2) {
+	_CORBA_ULong tl1 = ((_CORBA_ULong*)Base_T_seq::NP_data())[i+1];
+	_CORBA_ULong tl2 = Swap32(tl1);
+	tl1 = ((_CORBA_ULong*)Base_T_seq::NP_data())[i];
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i] = tl2;
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i+1] = Swap32(tl1);
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+template <class T,int max,int elmSize,int elmAlignment>
+inline
+void
+_CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
+{
+  if (s.marshal_byte_swap()) {
+    Base_T_seq::operator>>=(s);
+    return;
+  }
+  _CORBA_ULong l = Base_T_seq::length();
+  l >>= s;
+  if (l==0) return;
+  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+		    (int)l*elmSize,
+		    (omni::alignment_t)elmAlignment);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+template <class T,int max,int elmSize,int elmAlignment>
+inline
+void
+_CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator<<= (cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
@@ -475,7 +541,7 @@ _CORBA_Sequence_Array_WChar<T,T_slice,dimension>::operator<<=(cdrStream& s)
 template <class T,class T_slice,class Telm,int dimension,int elmSize,int elmAlignment>
 inline
 void
-_CORBA_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
+_CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
 {
   if (s.marshal_byte_swap()) {
     Base_T_seq::operator>>=(s);
@@ -495,7 +561,72 @@ _CORBA_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlign
 template <class T,class T_slice,class Telm,int dimension,int elmSize,int elmAlignment>
 inline
 void
-_CORBA_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator<<= (cdrStream& s)
+_CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSize,elmAlignment>::operator<<= (cdrStream& s)
+{
+  _CORBA_ULong l;
+  l <<= s;
+  if (!s.checkInputOverrun(elmSize,l*dimension)) {
+    _CORBA_marshal_error();
+    // never reach here
+  }
+  Base_T_seq::length(l);
+  if (l==0) return;
+  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+		    (int)l*dimension*elmSize,
+		    (omni::alignment_t)elmAlignment);
+  if (s.unmarshal_byte_swap() && elmAlignment != 1) {
+    if (elmSize == 2) {
+      l *= dimension;
+      for (_CORBA_ULong i=0; i<l; i++) {
+	_CORBA_UShort t = ((_CORBA_UShort*)Base_T_seq::NP_data())[i];
+	((_CORBA_UShort*)Base_T_seq::NP_data())[i] = Swap16(t);
+      }
+    }
+    else if (elmSize == 4) {
+      l *= dimension;
+      for (_CORBA_ULong i=0; i<l; i++) {
+	_CORBA_ULong t = ((_CORBA_ULong*)Base_T_seq::NP_data())[i];
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i] = Swap32(t);
+      }
+    }
+    else if (elmSize == 8) {
+      l *= 2*dimension;
+      for (_CORBA_ULong i=0; i<l; i+=2) {
+	_CORBA_ULong tl1 = ((_CORBA_ULong*)Base_T_seq::NP_data())[i+1];
+	_CORBA_ULong tl2 = Swap32(tl1);
+	tl1 = ((_CORBA_ULong*)Base_T_seq::NP_data())[i];
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i] = tl2;
+	((_CORBA_ULong*)Base_T_seq::NP_data())[i+1] = Swap32(tl1);
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+template <class T,class T_slice,class Telm,int dimension,int max,int elmSize,int elmAlignment>
+inline
+void
+_CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
+{
+  if (s.marshal_byte_swap()) {
+    Base_T_seq::operator>>=(s);
+    return;
+  }
+
+  _CORBA_ULong l = Base_T_seq::length();
+  l >>= s;
+  if (l==0) return;
+  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+		    (int)l*dimension*elmSize,
+		    (omni::alignment_t)elmAlignment);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+template <class T,class T_slice,class Telm,int dimension,int max,int elmSize,int elmAlignment>
+inline
+void
+_CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmSize,elmAlignment>::operator<<= (cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
