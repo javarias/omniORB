@@ -835,6 +835,10 @@ char *yytext;
 
 // $Id$
 // $Log$
+// Revision 1.8.2.7  2000/06/08 14:36:19  dpg1
+// Comments and pragmas are now objects rather than plain strings, so
+// they can have file,line associated with them.
+//
 // Revision 1.7.2.4  2000/06/05 18:12:25  dpg1
 // Support for __omni_pragma
 //
@@ -1645,7 +1649,7 @@ YY_RULE_SETUP
 case 75:
 YY_RULE_SETUP
 #line 343 "/home/dpg1/omni/cvs/ins/omni/src/tool/omniidl/cxx/idl.ll"
-{ Comment::add(yytext, currentFile, yylineno); }
+{ Comment::add(yytext, currentFile, yylineno-1); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
