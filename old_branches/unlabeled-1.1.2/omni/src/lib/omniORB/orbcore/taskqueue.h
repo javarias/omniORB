@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:27:09  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #ifndef __OMNIORB_TASKQUEUE_H__
