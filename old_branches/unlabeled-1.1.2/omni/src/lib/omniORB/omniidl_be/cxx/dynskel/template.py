@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.2  2000/02/16 18:34:49  djs
+# Fixed problem generating fragments in DynSK.cc file
+#
 # Revision 1.1.2.1  2000/02/15 15:36:25  djs
 # djr's and jnw's "Super-Hacky Optimisation" patched and added
 #
@@ -48,12 +51,20 @@ header = """\
 static const char* @Config.privatePrefix()@_library_version = @Config.omniORB_Library_Version()@;
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc_cstring
+# Generated symbols:
+#   @private_prefix@_buildDesc_c@n@string
 bdesc_string = """\
 #ifndef @private_prefix@_buildDesc_c@n@string
 #define @private_prefix@_buildDesc_c@n@string @private_prefix@_buildDesc_cstring
 #endif
 """
 
+# Required symbols:
+#   NONE
+# Generated symbols:
+#   @private_prefix@_tcParser_getElementDesc@this_cname@
 getdesc_array = """\
 #ifndef _@private_prefix@_tcParser_getElementDesc@this_cname@__
 #define _@private_prefix@_tcParser_getElementDesc@this_cname@__
@@ -67,6 +78,10 @@ static CORBA::Boolean
 #endif
 """
 
+# Requried symbols:
+#   @private_prefix@_tcParser_getElementDesc@decl_cname@
+# Generated symbols:
+#   @private_prefix@_buildDesc@decl_cname@
 builddesc_array = """\
 #ifndef _@private_prefix@_tcParser_buildDesc@decl_cname@__
 #define _@private_prefix@_tcParser_buildDesc@decl_cname@__
@@ -79,19 +94,41 @@ static void
 #endif
 """
 
+# Required symbols:
+#   NONE
+# Generated symbols:
+#   @private_prefix@_buildDesc@cname@
 builddesc_extern = """\
-extern void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
+@where@ void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
 """
 
+# Required symbols:
+#   NONE
+# Generated symbols:
+#   @private_prefix@_buildDesc@cname@
+builddesc_forward = """\
+void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
+"""
+
+# Required symbols:
+#   NONE
 sequence_elementDesc_contiguous = """\
 _newdesc.p_streamdata = @sequence@->NP_data();
 _contiguous = @sequence@->length() - _index;
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc@thing_cname@
 sequence_elementDesc_noncontiguous = """\
 @private_prefix@_buildDesc@thing_cname@(_newdesc, @thing@);
 """
 
+# Required symbols:
+#   NONE
+# Generated symbolc:
+#   @private_prefix@_tcParser_setElementCount@cname@
+#   @private_prefix@_tcParser_getElementCount@cname@
+#   @private_prefix@_tcParser_getElementDesc@cname@
 anon_sequence = """\
 #ifndef _@private_prefix@_tcParser_buildDesc@cname@__
 #define _@private_prefix@_tcParser_buildDesc@cname@__
@@ -128,6 +165,11 @@ static void
 #endif
 """
 
+# Required symbols:
+#   @private_prefix@_tcParser_getMemberDesc_@guard_name@ 
+# Generated symbols:
+#   @private_prefix@_tcParser_getMemberCount_@guard_name@
+#   @private_prefix@_buildDesc_c@guard_name@
 builddesc_member = """\
 @private_prefix@_tcParser_getMemberCount_@guard_name@(tcStructDesc *_desc)
 {
@@ -142,29 +184,16 @@ void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor &_desc, const @fqname
 }
 """
 
-
-tc_string = """\
-#if !defined(___tc_string_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_String_TC)
-#define ___tc_string_@n@_value__
-const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
-#endif
-"""
-
-external_linkage = """\
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
-// MSVC++ does not give the constant external linkage otherwise.
-  @namespace@
-  namespace @scope@ {
-  const CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
-}
-#else
-const CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
-#endif
-"""
-
-
+# Required symbols:
+#   @private_prefix@_tcParser_setObjectPtr_@guard_name@
+#   @private_prefix@_tcParser_getObjectPtr_@guard_name@
+#   @private_prefix@_buildDesc_c@guard_name@
+# Generated symbols:
+#   @private_prefix@_tcParser_setObjectPtr_@guard_name@
+#   @private_prefix@_tcParser_getObjectPtr_@guard_name@
+#   @private_prefix@_buildDesc_c@guard_name@
+#   @private_prefix@_delete_@guard_name@
 interface = """\
-
 static void
 @private_prefix@_tcParser_setObjectPtr_@guard_name@(tcObjrefDesc *_desc, CORBA::Object_ptr _ptr)
 {
@@ -188,7 +217,6 @@ void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor& _desc, const @objref
   _desc.p_objref.setObjectPtr = @private_prefix@_tcParser_setObjectPtr_@guard_name@;
   _desc.p_objref.getObjectPtr = @private_prefix@_tcParser_getObjectPtr_@guard_name@;
 }
-
 
 void @private_prefix@_delete_@guard_name@(void* _data) {
   CORBA::release((@fqname@_ptr) _data);
@@ -235,6 +263,10 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _s) {
 }
 """
 
+# Required symbols:
+#   NONE
+# Generated symbols:
+#   @private_prefix@_delete_@guard_name@
 typedef_array_decl_delete = """\
 void @private_prefix@_delete_@guard_name@(void* _data) {
   @fqname@_slice* _0RL_t = (@fqname@_slice*) _data;
@@ -242,6 +274,10 @@ void @private_prefix@_delete_@guard_name@(void* _data) {
 }
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc@decl_cname@
+# Generated symbols:
+#   NONE
 typedef_array_decl_oper = """\
 void operator<<=(CORBA::Any& _a, const @fqname@_forany& _s) {
   @fqname@_slice* @private_prefix@_s = _s.NP_getSlice();
@@ -276,12 +312,16 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s) {
 }
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc@decl_cname@
+# Generated symbols:
+#   NONE
 typedef_sequence_oper = """\
-void operator <<= (CORBA::Any& a, const @fqname@& s)
+void operator <<= (CORBA::Any& _a, const @fqname@& s)
 {
   tcDescriptor tcdesc;
   @private_prefix@_buildDesc@decl_cname@(tcdesc, s);
-  a.PR_packFrom(@tcname@, &tcdesc);
+  _a.PR_packFrom(@tcname@, &tcdesc);
 }
 
 void @private_prefix@_seq_delete_@guard_name@(void* data)
@@ -289,21 +329,21 @@ void @private_prefix@_seq_delete_@guard_name@(void* data)
   delete (@fqname@*)data;
 }
 
-CORBA::Boolean operator >>= (const CORBA::Any& a, @fqname@*& s_out)
+CORBA::Boolean operator >>= (const CORBA::Any& _a, @fqname@*& s_out)
 {
-  return a >>= (const @fqname@*&) s_out;
+  return _a >>= (const @fqname@*&) s_out;
 }
 
-CORBA::Boolean operator >>= (const CORBA::Any& a, const @fqname@*& s_out)
+CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& s_out)
 {
   s_out = 0;
-  @fqname@* stmp = (@fqname@*) a.PR_getCachedData();
+  @fqname@* stmp = (@fqname@*) _a.PR_getCachedData();
   if( stmp == 0 ) {
     tcDescriptor tcdesc;
     stmp = new @fqname@;
     @private_prefix@_buildDesc@decl_cname@(tcdesc, *stmp);
-    if( a.PR_unpackTo(@tcname@, &tcdesc)) {
-      ((CORBA::Any*)&a)->PR_setCachedData((void*)stmp, @private_prefix@_seq_delete_@guard_name@);
+    if( _a.PR_unpackTo(@tcname@, &tcdesc)) {
+      ((CORBA::Any*)&_a)->PR_setCachedData((void*)stmp, @private_prefix@_seq_delete_@guard_name@);
       s_out = stmp;
       return 1;
     } else {
@@ -311,7 +351,7 @@ CORBA::Boolean operator >>= (const CORBA::Any& a, const @fqname@*& s_out)
       return 0;
     }
   } else {
-    CORBA::TypeCode_var tctmp = a.type();
+    CORBA::TypeCode_var tctmp = _a.type();
     if( tctmp->equivalent(@tcname@) ) {
       s_out = stmp;
       return 1;
@@ -322,6 +362,10 @@ CORBA::Boolean operator >>= (const CORBA::Any& a, const @fqname@*& s_out)
 }
 """
 
+# Required symbols:
+#   NONE
+# Generated symbols:
+#   @private_prefix@_buildDesc_c@guard_name@
 enum = """\
 void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor& _desc, const @fqname@& _data)
 {
@@ -343,6 +387,10 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@& _s)
 }
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc_c@guard_name@
+# Generated symbols:
+#   @private_prefix@_delete_@guard_name@
 struct = """\
 void @private_prefix@_delete_@guard_name@(void* _data) {
   @fqname@* @private_prefix@_t = (@fqname@*) _data;
@@ -389,7 +437,10 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
   }
 }"""
 
-
+# Required symbols:
+#   @private_prefix@_buildDesc@discrim_cname@
+# Generated symbols:
+#   @private_prefix@_tcParser_unionhelper_@guard_name@
 union_tcParser = """\
 class @private_prefix@_tcParser_unionhelper_@guard_name@ {
 public:
@@ -413,7 +464,13 @@ public:
 };
 """
 
-
+# Required symbols:
+#   @private_prefix@_tcParser_unionhelper_@guard_name@
+#   @private_prefix@_tcParser_unionhelper_@guard_name@
+#   @private_prefix@_tcParser_unionhelper_@guard_name@
+# Generated symbols:
+#   @private_prefix@_buildDesc_c@guard_name@
+#   @private_prefix@_delete_@guard_name@
 union = """\
 void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor& _desc, const @fqname@& _data)
 {
@@ -463,13 +520,15 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
 }
 """
 
+# Required symbols:
+#   @private_prefix@_buildDesc_c@guard_name@
+# Generated symbols:
+#   @private_prefix@_delete_@guard_name   
 exception = """\
 void @private_prefix@_delete_@guard_name@(void* _data) {
   @fqname@* @private_prefix@_t = (@fqname@*) _data;
   delete @private_prefix@_t;
 }
-
-
 
 void operator<<=(CORBA::Any& _a, const @fqname@& _s) {
   tcDescriptor _0RL_tcdesc;
@@ -505,14 +564,14 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a,const @fqname@*& _sp) {
   }
 }
 
-static void @private_prefix@_insertToAny__c@guard_name@(CORBA::Any& a,const CORBA::Exception& e) {
+static void @private_prefix@_insertToAny__c@guard_name@(CORBA::Any& _a,const CORBA::Exception& e) {
   const @fqname@ & _ex = (const @fqname@ &) e;
-  operator<<=(a,_ex);
+  operator<<=(_a,_ex);
 }
 
-static void @private_prefix@_insertToAnyNCP__c@guard_name@ (CORBA::Any& a,const CORBA::Exception* e) {
+static void @private_prefix@_insertToAnyNCP__c@guard_name@ (CORBA::Any& _a,const CORBA::Exception* e) {
   const @fqname@ * _ex = (const @fqname@ *) e;
-  operator<<=(a,_ex);
+  operator<<=(_a,_ex);
 }
 
 class @private_prefix@_insertToAny_Singleton__c@guard_name@ {
@@ -524,3 +583,26 @@ public:
 };
 static @private_prefix@_insertToAny_Singleton__c@guard_name@ @private_prefix@_insertToAny_Singleton__c@guard_name@_;
 """
+
+## TypeCode generation
+##
+tc_string = """\
+#if !defined(___tc_string_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_String_TC)
+#define ___tc_string_@n@_value__
+const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
+#endif
+"""
+
+external_linkage = """\
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the constant external linkage otherwise.
+  @namespace@
+  namespace @scope@ {
+  const CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
+}
+#else
+const CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
+#endif
+"""
+
+
