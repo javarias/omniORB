@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.2  2000/06/08 14:36:21  dpg1
+# Comments and pragmas are now objects rather than plain strings, so
+# they can have file,line associated with them.
+#
 # Revision 1.13.2.1  2000/03/06 15:03:45  dpg1
 # Minor bug fixes to omniidl. New -nf and -k flags.
 #
@@ -938,7 +942,7 @@ Functions:
                                       isinstance(c, Factory)),
                                      contents)
 
-    def accept(self, visitor): visitor.visitValueAbs(self)
+    def accept(self, visitor): visitor.visitValue(self)
 
     def custom(self):       return self.__custom
     def inherits(self):     return self.__inherits
