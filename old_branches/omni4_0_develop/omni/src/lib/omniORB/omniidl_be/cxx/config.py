@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.14.2.4  2001/06/08 17:12:11  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.14.2.3  2000/11/03 19:25:42  sll
 # Updated library name to omniORB4.
 #
@@ -111,6 +114,10 @@ class ConfigurationState:
             'Virtual Objref Methods':0,
             # Are #included files output inline with the main output?
             'Inline Includes':       0,
+
+            # Generate local servant shortcut code?
+            'Shortcut':              0,
+
             # Are we in DEBUG mode?
             'Debug':                 1
                        

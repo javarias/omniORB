@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/09/03 16:52:05  sll
+  New signature for locateRequest. Now accept a calldescriptor argument.
+
   Revision 1.1.4.5  2001/08/22 13:31:31  dpg1
   Christof's fixes for gcc 3.0.1.
 
@@ -153,6 +156,12 @@ public:
     return (omniLocalIdentity*)(id->classCompare()
 				(id, (void*)thisClassCompare));
   }
+
+  inline const _CORBA_Boolean* p_deactivated() const { return &pd_deactivated;}
+  // This evil construction is used in the local shortcut
+  // implementation to detect when the local identity has been
+  // deactivated and the local shortcut can no longer be used. It is,
+  // of course, totally unthreadsafe.
 
 protected:
   int pd_nInvocations;

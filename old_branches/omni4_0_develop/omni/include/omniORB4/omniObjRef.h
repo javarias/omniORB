@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2001/09/19 17:26:43  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.2.2.8  2001/08/15 10:26:08  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -283,6 +286,19 @@ public:
   static void _shutdown();
   // Called during ORB shutdown. Disables all object references.
   //  Must not hold <omni::internalLock>.
+
+  virtual void _enableShortcut(omniServant* svt,
+			       const _CORBA_Boolean* invalid);
+  // If <svt> is non-zero, it is a local activated servant. This
+  // function is called by an object adapter to indicate that it is
+  // acceptable to make future calls directly to the servant, avoiding
+  // the object adapter. If the boolean pointed to by <invalid>
+  // becomes true, the servant is no longer valid and a normal
+  // dispatch through _invoke() should be made. A zero <svt> pointer
+  // indicates that the shortcut can no longer be made. This mechanism
+  // has obvious race conditions, but that's the price you pay for
+  // speed.
+  //  No concurrency control!
 
 protected:
   virtual ~omniObjRef();

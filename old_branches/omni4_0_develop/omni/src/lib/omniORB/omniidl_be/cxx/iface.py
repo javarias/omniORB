@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.9  2001/11/07 15:45:53  dpg1
+# Faster _ptrToInterface/_ptrToObjRef in common cases.
+#
 # Revision 1.1.4.8  2001/08/15 10:26:10  dpg1
 # New object table behaviour, correct POA semantics.
 #
@@ -268,10 +271,22 @@ class _objref_I(Class):
     for method in self.methods():
       methods.append(method.hh())
             
+    if config.state['Shortcut']:
+      shortcut = output.StringStream()
+      shortcut.out(omniidl_be.cxx.header.template.interface_shortcut,
+                   name = self.interface().name().simple())
+      shortcut = str(shortcut)
+      init_shortcut = ": _shortcut(0)"
+    else:
+      shortcut = ""
+      init_shortcut = ""
+
     stream.out(omniidl_be.cxx.header.template.interface_objref,
                name = self.interface().name().simple(),
                inherits = string.join(objref_inherits, ",\n"),
-               operations = string.join(methods, "\n"))
+               operations = string.join(methods, "\n"),
+               shortcut = shortcut,
+               init_shortcut = init_shortcut)
 
   def cc(self, stream):
 
@@ -313,14 +328,38 @@ class _objref_I(Class):
                             ")" + this_inherits_str
       inherits_str = inherits_str + this_inherits_str
 
+    if config.state['Shortcut']:
+      init_shortcut = ", _shortcut(0)"
+    else:
+      init_shortcut = ""
+
     stream.out(omniidl_be.cxx.skel.template.interface_objref,
                name = self.interface().name().fullyQualify(),
                fq_objref_name = self.name().fullyQualify(),
                objref_name = self.name().simple(),
                inherits_str = inherits_str,
                _ptrToObjRef_ptr = _ptrToObjRef_ptr,
-               _ptrToObjRef_str = _ptrToObjRef_str)
-    
+               _ptrToObjRef_str = _ptrToObjRef_str,
+               init_shortcut = init_shortcut)
+
+    if config.state['Shortcut']:
+      inherited = output.StringStream()
+      for i in self.interface().inherits():
+        objref_name = i.name().prefix("_objref_")
+
+        objref_str = objref_name.unambiguous(self._environment)
+
+        if objref_name.needFlatName(self._environment):
+          objref_str = objref_name.flatName()
+
+        inherited.out(omniidl_be.cxx.skel.template.interface_shortcut_inh,
+                      parent=objref_str)
+        
+      stream.out(omniidl_be.cxx.skel.template.interface_shortcut,
+                 name = self.interface().name().fullyQualify(),
+                 basename = self.interface().name().simple(),
+                 fq_objref_name = self.name().fullyQualify(),
+                 inherited = str(inherited))
       
     for method in self.methods():
       callable = self._callables[method]
@@ -346,10 +385,31 @@ class _objref_I(Class):
 
       # produce member function for this operation/attribute.
       body = output.StringStream()
+
       argnames = []
       for parameter in callable.parameters():
         argnames.append(id.mapID(parameter.identifier()))
         
+      if config.state['Shortcut']:
+        if method.return_type().kind() != idltype.tk_void:
+          callreturn = "return "
+          voidreturn = ""
+        else:
+          callreturn = ""
+          voidreturn = " return;"
+
+        objref_class = method.parent_class()
+        interface = objref_class.interface()
+        implname = interface.name().prefix("_impl_").unambiguous(self._environment)
+        
+        body.out(omniidl_be.cxx.skel.template.interface_operation_shortcut,
+                 impl_type = implname,
+                 callreturn = callreturn,
+                 voidreturn = voidreturn,
+                 args = string.join(argnames, ", "),
+                 name = method.name())
+
+
       call_descriptor.out_objrefcall(body,
                                      callable.operation_name(),
                                      argnames,

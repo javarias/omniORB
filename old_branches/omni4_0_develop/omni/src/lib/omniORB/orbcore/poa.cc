@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.23  2001/11/06 16:52:47  dpg1
+  Minor bug with traceLevel >= 10.
+
   Revision 1.2.2.22  2001/10/17 16:44:07  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -476,6 +479,7 @@ omniOrbPOA::create_POA(const char* adapter_name,
   policy.req_processing = RPP_ACTIVE_OBJ_MAP;
   policy.implicit_activation = 0;
   policy.bidirectional_accept = 0;
+  policy.local_shortcut = 0;
 
   transfer_and_check_policies(policy, policies);
 
@@ -1660,6 +1664,14 @@ omniOrbPOA::dispatch(omniCallDescriptor& call_desc, omniLocalIdentity* id)
     }
   }
 
+  if (pd_policy.local_shortcut) {
+    if (omniORB::trace(10)) {
+      omniORB::logger l;
+      l << "Enabling local shortcut for " << id << "\n";
+    }
+    call_desc.objref()->_enableShortcut(id->servant(), id->p_deactivated());
+  }
+
   // Normal case -- do the call here
   call_desc.poa(this);
   _OMNI_NS(poaCurrentStackInsert) insert(&call_desc);
@@ -2132,6 +2144,7 @@ initialise_poa()
   policy.req_processing = omniOrbPOA::RPP_ACTIVE_OBJ_MAP;
   policy.implicit_activation = 1;
   policy.bidirectional_accept = 0;
+  policy.local_shortcut = 0;
 
   omniOrbPOAManager* manager = new omniOrbPOAManager();
 
@@ -2165,14 +2178,15 @@ omniOrbPOA::omniINSPOA()
       ::initialise_poa();
 
     omniOrbPOA::Policies policy;
-    policy.threading           = omniOrbPOA::TP_ORB_CTRL;;
-    policy.transient           = 0;
-    policy.multiple_id         = 0;
-    policy.user_assigned_id    = 1;
-    policy.retain_servants     = 1;
-    policy.req_processing      = omniOrbPOA::RPP_ACTIVE_OBJ_MAP;
-    policy.implicit_activation = 1;
+    policy.threading           	= omniOrbPOA::TP_ORB_CTRL;;
+    policy.transient           	= 0;
+    policy.multiple_id         	= 0;
+    policy.user_assigned_id    	= 1;
+    policy.retain_servants     	= 1;
+    policy.req_processing      	= omniOrbPOA::RPP_ACTIVE_OBJ_MAP;
+    policy.implicit_activation 	= 1;
     policy.bidirectional_accept = 0;
+    policy.local_shortcut       = 0;
 
     omni_tracedmutex_lock sync2(theRootPOA->pd_lock);
 
@@ -3248,6 +3262,7 @@ transfer_and_check_policies(omniOrbPOA::Policies& pout,
   seen.req_processing = 0;
   seen.implicit_activation = 0;
   seen.bidirectional_accept = 0;
+  seen.local_shortcut = 0;
 
   // Check for policies which contradict one-another.
 
@@ -3386,6 +3401,20 @@ transfer_and_check_policies(omniOrbPOA::Policies& pout,
 	seen.bidirectional_accept = 1;
 	if (p->value() == BiDirPolicy::BOTH) {
 	  pout.bidirectional_accept = 1;
+	}
+	break;
+      }
+
+    case /*omniPolicy::LOCAL_SHORTCUT_POLICY_TYPE*/ 0x41545401:
+      {
+	omniPolicy::LocalShortcutPolicy_var p;
+	p = omniPolicy::LocalShortcutPolicy::_narrow(pin[i]);
+	if (seen.local_shortcut) {
+	  throw PortableServer::POA::InvalidPolicy(i);
+	}
+	seen.local_shortcut = 1;
+	if (p->value() == omniPolicy::LOCAL_CALLS_SHORTCUT) {
+	  pout.local_shortcut = 1;
 	}
 	break;
       }

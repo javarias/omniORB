@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.3  2001/06/08 17:12:11  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.20.2.2  2000/10/12 15:37:45  sll
 # Updated from omni3_1_develop.
 #
@@ -214,6 +217,8 @@ def process_args(args):
             config.state['DYNSK Suffix']      = arg[2:]
         elif arg == "inline":
             config.state['Inline Includes']   = 1
+        elif arg == "shortcut":
+            config.state['Shortcut']          = 1
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 

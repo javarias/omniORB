@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/08/17 15:00:48  dpg1
+  Fixes for pre-historic compilers.
+
   Revision 1.1.4.7  2001/08/15 10:26:09  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -209,9 +212,10 @@ public:
     unsigned req_processing         : 2;
     unsigned implicit_activation    : 1;
     unsigned bidirectional_accept   : 1;
+    unsigned local_shortcut         : 1;
   };
 
-  _CORBA_Boolean acceptBiDirectional() const { 
+  inline _CORBA_Boolean acceptBiDirectional() const { 
     return pd_policy.bidirectional_accept;
   }
 

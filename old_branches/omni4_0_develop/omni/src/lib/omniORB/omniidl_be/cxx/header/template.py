@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.17  2001/10/29 17:42:41  dpg1
+# Support forward-declared structs/unions, ORB::create_recursive_tc().
+#
 # Revision 1.5.2.16  2001/10/18 12:45:28  dpg1
 # IDL compiler tweaks.
 #
@@ -367,12 +370,13 @@ class _objref_@name@ :
 public:
   @operations@
 
-  inline _objref_@name@() { _PR_setobj(0); }  // nil
+  inline _objref_@name@() @init_shortcut@ { _PR_setobj(0); }  // nil
   _objref_@name@(omniIOR*, omniIdentity*);
 
 protected:
   virtual ~_objref_@name@();
 
+  @shortcut@
 private:
   virtual void* _ptrToObjRef(const char*);
 
@@ -380,6 +384,12 @@ private:
   _objref_@name@& operator = (const _objref_@name@&);
   // not implemented
 };
+"""
+
+interface_shortcut = """\
+virtual void _enableShortcut(omniServant*, const _CORBA_Boolean*);
+_impl_@name@* _shortcut;
+const _CORBA_Boolean* _invalid;\
 """
 
 interface_pof = """\
