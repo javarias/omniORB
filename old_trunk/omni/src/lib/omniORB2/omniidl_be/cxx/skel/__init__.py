@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  1999/11/12 17:18:57  djs
+# Struct skeleton code added
+#
 
 # -----------------------------
 # Configuration data
@@ -38,6 +41,7 @@ from omniidl.be.cxx import config
 from omniidl.be.cxx import tyutil, util
 
 from omniidl.be.cxx.skel import main
+from omniidl.be.cxx.skel import poa
 
 def monolithic(stream, tree):
     """Creates one large skeleton with all code inside"""
@@ -55,6 +59,9 @@ static const char* @Config.name_prefix()@_library_version = @Config.omniORB_Libr
     skel = main.__init__(stream)
     tree.accept(skel)
 
+    poa_skel = poa.__init__(stream)
+    tree.accept(poa_skel)
+
 
 def run(tree):
     # create somewhere to put the output
@@ -64,3 +71,7 @@ def run(tree):
 
     # generate one big chunk of code
     monolithic(stream, tree)
+
+
+
+
