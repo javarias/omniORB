@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15.2.5  2001/07/31 16:28:01  sll
+  Added GIOP BiDir support.
+
   Revision 1.15.2.4  2001/04/18 18:18:11  sll
   Big checkin with the brand new internal APIs.
 
@@ -153,7 +156,8 @@ const IOP::ComponentId IOP::TAG_PRIMARY = 90002; // XXX NEED THE REAL CONSTANT!
 const IOP::ComponentId IOP::TAG_HEARTBEAT_ENABLED = 90003; 
                                                // XXX NEED THE REAL CONSTANT !
 
-const IOP::ComponentId IOP::TAG_OMNIORB_BIDIR = 0x41545401; 
+const IOP::ComponentId IOP::TAG_OMNIORB_BIDIR      = 0x41545401; 
+const IOP::ComponentId IOP::TAG_OMNIORB_UNIX_TRANS = 0x41545402; 
 
 
 
@@ -191,6 +195,7 @@ static struct {
   { IOP::TAG_PRIMARY, "TAG_PRIMARY" },
   { IOP::TAG_HEARTBEAT_ENABLED, "TAG_HEARTBEAT_ENABLED" },
   { IOP::TAG_OMNIORB_BIDIR, "TAG_OMNIORB_BIDIR" },
+  { IOP::TAG_OMNIORB_UNIX_TRANS, "TAG_OMNIORB_UNIX_TRANS" },
   { 0, 0 }
 };
 
