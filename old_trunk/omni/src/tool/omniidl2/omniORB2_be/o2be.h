@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.24  1999/06/02 16:43:42  sll
+ Added support for -F flag.
+
  Revision 1.23  1999/05/26 10:09:36  sll
  New class o2be_nested_typedef to deal with recursive generation of stub
  code for nested types in struct, union and exception.
@@ -472,7 +475,7 @@ public:
   idl_bool isVariable() { return pd_isvar; }
   idl_bool nodefault() { return pd_nodefault; }
   idl_bool no_missing_disc_value();
-  const char* out_adptarg_name(AST_Decl* used_in) const;
+  const char* out_adptarg_name(AST_Decl* used_in);
 
 private:
   idl_bool pd_isvar;
@@ -530,11 +533,11 @@ public:
 
   idl_bool isVariable() { return pd_isvar; }
 
-  const char* out_adptarg_name(AST_Decl* used_in) const;
+  const char* out_adptarg_name(AST_Decl* used_in);
 
 private:
   idl_bool pd_isvar;
-  char* pd_out_adptarg_name;
+  char*    pd_out_adptarg_name;
 
   o2be_structure();
 
