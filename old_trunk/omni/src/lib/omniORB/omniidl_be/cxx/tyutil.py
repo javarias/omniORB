@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.27  2000/01/13 18:16:19  djs
+# Added check to mapRepoID function- it is only there to emulate broken
+# behaviour.
+#
 # Revision 1.26  2000/01/13 11:45:47  djs
 # Added option to customise C++ reserved word name escaping
 #
@@ -813,7 +817,30 @@ def sequenceTemplate(sequence, environment):
     
 # ------------------------------------------------------------------
 
+digits = map(chr, range(ord('0'), ord('9') + 1))
+lower_case_letters = map(chr, range(ord('a'), ord('z') + 1))
+upper_case_letters = map(chr, range(ord('A'), ord('Z') + 1))
+symbols = list("""`!""£$%^&*()-_+=[{]};:'@#~,<.>/? |""")
+need_escaping = ['\\', '\'']
+
+# (extra quote is to un-confuse emacs)
+
+printable = digits + lower_case_letters + upper_case_letters + symbols +\
+            need_escaping
+
 def valueString(type, value, environment):
+
+    def representChar(c):
+        if not(c in printable):
+            # use the octal representation
+            octal_string = str(oct(ord(c)))
+            return "\\" + "0" * (4 - len(octal_string)) + octal_string
+            
+        if c in need_escaping:
+            return "\\" + str(c) 
+        
+        return str(c)
+    
     type = deref(type)
     # (unsigned) short ints are themselves
     if type.kind() == idltype.tk_short     or \
@@ -834,9 +861,14 @@ def valueString(type, value, environment):
     # chars are single-quoted
     if type.kind() == idltype.tk_char      or \
        type.kind() == idltype.tk_wchar:
-        # FIXME: need isalphanum() fn and proper formatting
-        if ord(value) < 32:
-            return r"'\00" + str(ord(value)) + r"'" 
+        if not(value in printable):
+            # use the octal representation
+            octal_string = str(oct(ord(value)))
+            return "0" * (4 - len(octal_string)) + octal_string
+            #return r"'\00" + str(ord(value)) + r"'"
+        if value in need_escaping:
+            return "'\\" + str(value) + "'"
+        
         return "'" + str(value) + "'"
     # booleans are straightforward
     if type.kind() == idltype.tk_boolean:
@@ -849,7 +881,9 @@ def valueString(type, value, environment):
         rel_name_string = environment.nameToString(rel_name)
         return rel_name_string
     if type.kind() == idltype.tk_string:
-        return "\"" + value + "\""
+        chars = list(value)
+        chars = map(representChar, chars)
+        return "\"" + string.join(chars, "") + "\""
     if type.kind() == idltype.tk_octet:
         return str(value)
 
@@ -1077,12 +1111,23 @@ def const_qualifier(insideModule, insideClass):
 
 def allInherits(interface):
     assert isinstance(interface, idlast.Interface)
-    list = []
-    for inherited in interface.inherits():
-        list.append(inherited)
-        list = list + allInherits(inherited)
+    # breadth first search
+    def bfs(current, bfs):
+        if current == []:
+            return []
+        
+        # extend search one level deeper than current
+        next = []
+        for c in current:
+            next = next + c.inherits()
 
-    return list
+        return next + bfs(next, bfs)
+
+    start = interface.inherits()
+    
+    list = start + bfs(start, bfs)
+
+    return util.setify(list)
 
 # ------------------------------------------------------------------
 
