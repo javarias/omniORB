@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.5  2001/03/13 10:32:07  dpg1
+# Fixed point support.
+#
 # Revision 1.14.2.4  2000/11/20 14:43:24  sll
 # Added support for wchar and wstring.
 #
@@ -151,7 +154,6 @@ def __init__(stream):
     self.__symbols = {}
     initSymbols()
     self.__nodes = []
-    self.__override = 0
 
     return self
 
@@ -197,7 +199,7 @@ def isDefined(name):
 
 def assertDefined(symlist):
     for symbol in symlist:
-        if not(isDefined(symbol)):
+        if not isDefined(symbol):
             raise RuntimeError("Symbol (" + symbol + ") should have been " +\
                                "defined at this point in the output")
 
@@ -217,24 +219,18 @@ def isRecursive(node):
 
 def visitAST(node):
     for n in node.declarations():
-        n.accept(self)
+        if ast.shouldGenerateCodeForDecl(n):
+            n.accept(self)
 
 # ------------------------------------
 
 def visitModule(node):
-    # consider reopening modules spanning files here?
-    if not(node.mainFile()):
-        return
-    
     for n in node.definitions():
         n.accept(self)
 
 # -----------------------------------
 
 def visitInterface(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
 
     for n in node.declarations():
@@ -272,9 +268,6 @@ def visitInterface(node):
 # -----------------------------------
 
 def visitEnum(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
     
     scopedName = id.Name(node.scopedName())
@@ -366,7 +359,9 @@ def visitBaseType(type):
 def visitDeclaredType(type):
     decl = type.decl()
     type = types.Type(type)
-    if decl.mainFile() and not(isRecursive(decl)) and not(type.typedef()):
+
+    if ast.shouldGenerateCodeForDecl(decl) \
+       and not isRecursive(decl) and not type.typedef():
         # types declared in the same file will be handled
         #   unless type is recursive -> forward declaration required
         #   unless type is an alias in this file to something in another file
@@ -464,9 +459,9 @@ def visitSequenceType(type):
     elementDesc = output.StringStream()
     prefix = config.state['Private Prefix']
     # djr and jnw's "Super-Hacky Optimisation"
-    if isinstance(d_seqType.type(), idltype.Base)   and \
-       not(d_seqType.variable()) and \
-       not(is_array):
+    if isinstance(d_seqType.type(), idltype.Base) and \
+       not d_seqType.variable() and \
+       not is_array:
         elementDesc.out(template.sequence_elementDesc_contiguous,
                         sequence = sequence_desc)
     else:
@@ -619,7 +614,7 @@ _desc.p_array.opq_array = &""" + prefix + """_tmp;"""
 
         generated_symbol = prefix +"_tcParser_getElementDesc"+ this_cname
 
-        if not(isDefined(generated_symbol)):
+        if not isDefined(generated_symbol):
             defineSymbols([ generated_symbol ])
         
             stream.out(template.getdesc_array,
@@ -647,7 +642,7 @@ _desc.p_array.opq_array = &""" + prefix + """_tmp;"""
 
     required_symbols = [ prefix + "_tcParser_getElementDesc" + d_cname ]
     generated_symbol = prefix + "_buildDesc" + d_cname
-    if not(isDefined(generated_symbol)):
+    if not isDefined(generated_symbol):
         defineSymbols([ generated_symbol ])
         assertDefined(required_symbols)
     
@@ -752,9 +747,6 @@ case @n@:
 
 
 def visitStruct(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
 
     scopedName = id.Name(node.scopedName())
@@ -794,9 +786,6 @@ def visitStruct(node):
 
     
 def visitTypedef(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
     
     aliasType = types.Type(node.aliasType())
@@ -874,7 +863,7 @@ def visitTypedef(node):
                        guard_name = guard_name)
 
         # --- sequences
-        if not(is_array_declarator) and aliasType.sequence():
+        if not is_array_declarator and aliasType.sequence():
             if first_declarator:
                 deref_aliasType.type().accept(self)
             stream.out(template.typedef_sequence_oper,
@@ -888,9 +877,6 @@ def visitTypedef(node):
 
 
 def visitUnion(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
     
     scopedName = id.Name(node.scopedName())
@@ -1000,7 +986,7 @@ case @label@:
                        private_prefix = prefix)
             switch.dec_indent()
 
-    if not(isExhaustive):
+    if not isExhaustive:
         switch.out("""\
 default: return 0;""")
     switch.dec_indent()
@@ -1033,14 +1019,12 @@ default: return 0;""")
 
 
 def visitForward(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
     scopedName = id.Name(node.scopedName())
     guard_name = scopedName.guard()
     prefix = config.state['Private Prefix']
 
     symbol = prefix + "_buildDesc_c" + guard_name
-    if not(isDefined(symbol)):
+    if not isDefined(symbol):
         stream.out("// forward declaration of interface")
         interface_type = types.Type(idltype.Declared(node, node.scopedName(),
                                           idltype.tk_objref,0))
@@ -1057,9 +1041,6 @@ def visitMember(node):
     pass
 
 def visitException(node):
-    if not(node.mainFile()) and not(self.__override):
-        return
-
     startingNode(node)
     
     scopedName = id.Name(node.scopedName())

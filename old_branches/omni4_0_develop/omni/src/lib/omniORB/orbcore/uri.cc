@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.6  2001/04/18 18:18:04  sll
+// Big checkin with the brand new internal APIs.
+//
 // Revision 1.2.2.5  2000/11/22 14:39:55  dpg1
 // Treat empty host name in corbaloc: as localhost, as per 2.4 spec.
 //
@@ -76,17 +79,13 @@
 #include <initialiser.h>
 #include <exceptiondefs.h>
 #include <omniORB4/omniURI.h>
+#include <omniORB4/minorCode.h>
 #include <initRefs.h>
 #include <ctype.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 
 #define MAX_STRING_TO_OBJECT_CYCLES 10
-
-#define MINOR_BAD_SCHEME_NAME          (CORBA::OMGVMCID | 7)
-#define MINOR_BAD_ADDRESS              (CORBA::OMGVMCID | 8)
-#define MINOR_BAD_SCHEME_SPECIFIC_PART (CORBA::OMGVMCID | 9)
-#define MINOR_OTHER                    (CORBA::OMGVMCID | 10)
 
 
 struct URIHandlerList {
@@ -118,7 +117,7 @@ omniURI::objectToString(CORBA::Object_ptr obj)
 CORBA::Object_ptr
 omniURI::stringToObject(const char* uri, unsigned int cycles)
 {
-  if (!uri) OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+  if (!uri) OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
 
   if (cycles > MAX_STRING_TO_OBJECT_CYCLES) {
     if (omniORB::trace(1)) {
@@ -126,7 +125,7 @@ omniURI::stringToObject(const char* uri, unsigned int cycles)
       l << "string_to_object reached recursion limit processing `"
 	<< uri << "'.\n";
     }
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
   }
 
   URIHandler* handler = 0;
@@ -142,7 +141,7 @@ omniURI::stringToObject(const char* uri, unsigned int cycles)
   if (handler)
     return handler->toObject(uri, cycles);
 
-  OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_NAME, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeName, CORBA::COMPLETED_NO);
   return 0;
 }
 
@@ -226,10 +225,10 @@ CORBA::Object_ptr
 iorURIHandler::toObject(const char* sior, unsigned int)
 {
   omniObjRef* objref = omniObjRef::_fromString(sior);
-  if (objref)
-    return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
-  else
-    return CORBA::Object::_nil();
+  if (!objref)
+    OMNIORB_THROW(INV_OBJREF, 0, CORBA::COMPLETED_NO);
+
+  return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
 
 CORBA::Boolean
@@ -359,7 +358,7 @@ corbalocURIHandler::toObject(const char* uri, unsigned int cycles)
   if (*c != '\0') {
     // uri didn't end with the object key
     CORBA::release(obj);
-    OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 		  CORBA::COMPLETED_NO);
   }
   return obj;
@@ -398,7 +397,7 @@ corbalocURIHandler::ObjAddr::parse(const char*& c)
     c += 4;
     return new corbalocURIHandler::RirObjAddr(c);
   }
-  OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_NAME, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeName, CORBA::COMPLETED_NO);
   return 0;
 }
 
@@ -417,24 +416,24 @@ ParseVersionNumber(const char*& c, CORBA::Char& majver, CORBA::Char& minver)
 
     // Major
     p = c;
-    if (!isdigit(*p)) OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (!isdigit(*p)) OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
     l = strtoul(p, (char**)&p, 10);
-    if (l > 0xff)     OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (l > 0xff)     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
     majver = l;
 
     // Minor
-    if (*p++ != '.')  OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (*p++ != '.')  OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
-    if (!isdigit(*p)) OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (!isdigit(*p)) OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
     l = strtoul(p, (char**)&p, 10);
-    if (l > 0xff)     OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (l > 0xff)     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
     minver = l;
 
-    if (*p != '@')    OMNIORB_THROW(BAD_PARAM, MINOR_BAD_SCHEME_SPECIFIC_PART,
+    if (*p != '@')    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
 				    CORBA::COMPLETED_NO);
     c = p + 1;
   }
@@ -462,7 +461,7 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
   for (p=c; *p && *p != ':' && *p != ',' && *p != '/' && *p != '#'; p++);
 
   if (p == c) OMNIORB_THROW(BAD_PARAM,
-			    MINOR_BAD_SCHEME_SPECIFIC_PART,
+			    BAD_PARAM_BadSchemeSpecificPart,
 			    CORBA::COMPLETED_NO);
 
   host_ = CORBA::string_alloc(1 + p - c);
@@ -478,7 +477,7 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
     if (isdigit(*c)) {
       unsigned long l;
       l = strtoul(c, (char**)&c, 10);
-      if (l > 0xffff) OMNIORB_THROW(BAD_PARAM, MINOR_BAD_ADDRESS,
+      if (l > 0xffff) OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadAddress,
 				    CORBA::COMPLETED_NO);
       port_ = l;
     }
@@ -528,7 +527,7 @@ unescapeKey(const char*& c, unsigned int& key_size)
       else if (*c >= 'a' && *c <= 'f') *k = (*c - 'a' + 10) << 4;
       else {
 	CORBA::string_free(key);
-	OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
       }
       c++;
       if      (*c >= '0' && *c <= '9') *k |= (*c - '0');
@@ -536,12 +535,12 @@ unescapeKey(const char*& c, unsigned int& key_size)
       else if (*c >= 'a' && *c <= 'f') *k |= (*c - 'a' + 10);
       else {
 	CORBA::string_free(key);
-	OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
       }
     }
     else {
       CORBA::string_free(key);
-      OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
     }
   }
   *k = '\0';
@@ -569,7 +568,7 @@ Parsed::Parsed(const char*& c, const char* def_key)
     addrList_.append(addr);
   }
   if (is_rir_ && (addr_count_ != 1))
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
 
   if (*c == '/') {
     // Key string follows
@@ -581,7 +580,7 @@ Parsed::Parsed(const char*& c, const char* def_key)
     key_size_ = strlen(key_);
   }
   else
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
 }
 
 
@@ -596,7 +595,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
       return omniInitialReferences::resolve(parsed.key_, cycles+1);
     }
     catch (CORBA::ORB::InvalidName& ex) {
-      OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
     }
   }
   else {
@@ -643,11 +642,9 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 
     omniObjRef* objref = omni::createObjRef(CORBA::Object::_PD_repoId,ior,0);
 
-    if (objref) {
-      return (CORBA::Object_ptr)objref->
-	                           _ptrToObjRef(CORBA::Object::_PD_repoId);
-    }
-    else return CORBA::Object::_nil();
+    OMNIORB_ASSERT(objref);
+
+    return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
   }
   OMNIORB_ASSERT(0);
   return 0;
@@ -688,7 +685,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
   if (*c != '#') {
     // uri didn't end with the name string
     OMNIORB_THROW(BAD_PARAM,
-		  MINOR_BAD_SCHEME_SPECIFIC_PART,
+		  BAD_PARAM_BadSchemeSpecificPart,
 		  CORBA::COMPLETED_NO);
   }
 
@@ -704,7 +701,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
   }
   catch (CosNaming::NamingContext::InvalidName& ex) {
     OMNIORB_THROW(BAD_PARAM,
-		  MINOR_BAD_SCHEME_SPECIFIC_PART,
+		  BAD_PARAM_BadSchemeSpecificPart,
 		  CORBA::COMPLETED_NO);
   }
   try {
@@ -716,7 +713,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
 	  << "in processing `" << uri << "'\n";
       }
       OMNIORB_THROW(BAD_PARAM,
-		    MINOR_BAD_SCHEME_SPECIFIC_PART,
+		    BAD_PARAM_BadSchemeSpecificPart,
 		    CORBA::COMPLETED_NO);
     }
     if (omniORB::trace(10)) {
@@ -733,7 +730,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
       l << "string_to_object received a NotFound exception trying to "
 	<< "resolve `" << (const char*)sname << "' from naming service\n";
     }
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
   }
   catch (CosNaming::NamingContext::CannotProceed& ex) {
     if (omniORB::trace(10)) {
@@ -741,7 +738,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
       l << "string_to_object received a CannotProceed exception trying to "
 	<< "resolve `" << (const char*)sname << "' from naming service\n";
     }
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
   }
   catch (CosNaming::NamingContext::InvalidName& ex) {
     if (omniORB::trace(10)) {
@@ -749,7 +746,7 @@ corbanameURIHandler::toObject(const char* uri, unsigned int cycles)
       l << "string_to_object received an InvalidName exception trying to "
 	<< "resolve `" << (const char*)sname << "' from naming service\n";
     }
-    OMNIORB_THROW(BAD_PARAM, MINOR_OTHER, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
   }
   // Never reach here
   OMNIORB_ASSERT(0);

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.2  2000/10/12 15:37:52  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.4.2.2  2000/09/27 17:11:28  djs
 # Bugfix
 #
@@ -151,21 +154,16 @@ class BuildInterfaceImplementations(idlvisitor.AstVisitor):
     # Tree walking code
     def visitAST(self, node):
         for n in node.declarations():
-            n.accept(self)
+            if ast.shouldGenerateCodeForDecl(n):
+                n.accept(self)
 
     # modules can contain interfaces
     def visitModule(self, node):
-        if not(node.mainFile()):
-            return
-
         for n in node.definitions():
             n.accept(self)
 
     # interfaces cannot be further nested
     def visitInterface(self, node):
-        if not(node.mainFile()):
-            return
-
         self.__allInterfaces.append(node)
     
         scopedName = id.Name(node.scopedName())
@@ -209,7 +207,7 @@ class BuildInterfaceImplementations(idlvisitor.AstVisitor):
                     inType = attrType.op(types.IN)
                     attributes.append(returnType + " " + attribname + "()")
                     # need a set method if not a readonly attribute
-                    if not(c.readonly()):
+                    if not c.readonly():
                         args = attribname + "(" + inType + ")"
                         declarations.append("void " + args)
                         implementations.append("void " + impl_flat_name +\

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.4  2001/01/25 13:09:11  sll
+# Fixed up cxx backend to stop it from dying when a relative
+# path name is given to the -p option of omniidl.
+#
 # Revision 1.1.4.3  2000/11/07 18:27:51  sll
 # Pass environment to out_objrefcall.
 #
@@ -403,7 +407,7 @@ class _impl_I(Class):
       for method in self.methods():
         callable = self._callables[method]
         operation_name = callable.operation_name()
-        if not(operation_name in dispatched):
+        if operation_name not in dispatched:
           signature = callable.signature()
           call_descriptor = _proxy_call_descriptors[signature]
           localcall_fn = descriptor.local_callback_fn(self.interface().name(),

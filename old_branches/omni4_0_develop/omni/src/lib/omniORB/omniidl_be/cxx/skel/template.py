@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.8  2001/05/31 16:18:12  dpg1
+# inline string matching functions, re-ordered string matching in
+# _ptrToInterface/_ptrToObjRef
+#
 # Revision 1.3.2.7  2001/05/29 17:03:50  dpg1
 # In process identity.
 #
@@ -344,12 +348,9 @@ if( omni::ptrStrMatch(id, @inherited@::_PD_repoId) )
 """
 
 interface_ALIAS = """\
-#ifndef __@guard_name@__ALIAS__
-#define __@guard_name@__ALIAS__
 typedef @fqname@ @flat_fqname@;
 typedef @impl_fqname@ @impl_flat_fqname@;
 typedef @objref_fqname@ @objref_flat_fqname@;
-#endif
 """
 
 interface_impl = """\
@@ -541,12 +542,24 @@ switch(_pd__d) {
 const_namespace = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage othewise.
-namespace @scope@ {
-  extern const @type@ @name@=@value@;
-}
+@open_namespace@
+  extern const @type@ @simple_name@ = @value@;
+@close_namespace@
 #else
-const @type@ @scopedName@ = @value@;
+const @type@ @name@ = @value@;
 #endif
+"""
+
+const_simple = """\
+const @type@ @name@ = @value@;
+"""
+
+const_in_interface = """\
+const @type@ @name@ _init_in_cldef_( = @value@ );
+"""
+
+const_init_in_def = """\
+_init_in_def_( const @type@ @name@ = @value@; )
 """
 
 ##

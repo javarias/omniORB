@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.4  2000/12/05 17:45:19  dpg1
+// omniidl case sensitivity updates from omni3_develop.
+//
 // Revision 1.13.2.3  2000/10/27 16:31:10  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -339,7 +342,7 @@ init()
 {
   const char* file = "<built in>";
 
-  assert(!global_);
+  assert(global_ == 0);
 
   global_  = new Scope(0, Scope::S_GLOBAL, 0, file, 0);
   Scope* s = global_->newModuleScope("CORBA", file, 1);
@@ -355,7 +358,7 @@ void
 Scope::
 clear()
 {
-  assert(global_);
+  assert(global_ != 0);
   delete global_;
   global_ = 0;
 }
@@ -436,9 +439,9 @@ void
 Scope::
 endScope()
 {
-  assert(current_);
+  assert(current_ != 0);
   current_ = current_->parent();
-  assert(current_);
+  assert(current_ != 0);
 }
 
 // Scope creation functions
@@ -1259,7 +1262,7 @@ remEntry(Scope::Entry* re)
   else {
     Entry *e;
     for (e = entries_; e && (e->next() != re); e = e->next());
-    assert(e);
+    assert(e != 0);
     e->next_ = re->next();
     if (!e->next_) last_ = e;
   }

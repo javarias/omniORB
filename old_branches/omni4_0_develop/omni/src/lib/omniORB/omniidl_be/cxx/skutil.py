@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.5  2001/04/19 10:04:13  dpg1
+# Bug in sort_exceptions()
+#
 # Revision 1.17.2.4  2000/11/07 18:28:21  sll
 # Use helper marshal functions if the interface is a forward declaration.
 #
@@ -339,4 +342,3 @@ def sort_exceptions(ex):
     raises = ex[:]
     raises.sort(lexicographic)
     return raises
-

@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.3  2001/04/19 09:39:05  sll
+// Big checkin with the brand new internal APIs.
+//
 // Revision 1.2.2.2  2000/10/09 16:20:56  sll
 // Ported to omniORB 4 API.
 //
@@ -257,15 +260,26 @@ main(int argc, char** argv)
   argv[2] = new char[20];
   sprintf(argv[2], "giop:tcp::%d", port);
 
-  orb = CORBA::ORB_init(argc, argv, "omniORB4");
+  try {
+    orb = CORBA::ORB_init(argc, argv);
+  }
+  catch (CORBA::INITIALIZE& ex) {
+    cerr << "Failed to initialise the ORB." << endl;
+    return 1;
+  }
 
   // Get hold of the INS POA and activate it
-  {
+  try {
     CORBA::Object_var obj = orb->resolve_initial_references("omniINSPOA");
     inspoa                = PortableServer::POA::_narrow(obj);
 
     PortableServer::POAManager_var pm = inspoa->the_POAManager();
     pm->activate();
+  }
+  catch (CORBA::INITIALIZE& ex) {
+    cerr << "Failed to initialise the POA. "
+	 << "Is omniMapper is already running?" << endl;
+    return 1;
   }
 
   // Figure out config file name

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.4  2000/11/20 18:56:39  sll
+ Sequence templates were broken by the previous checkin. They are now fixed.
+
  Revision 1.1.2.3  2000/11/20 14:41:43  sll
  Simplified sequence template hierachy and added templates for sequence of
  wchar and sequence of array of wchar.
@@ -1723,7 +1726,7 @@ public:
     if( i >= pd_len )  _CORBA_bound_check_error();
     return ElemT(pd_data[i],pd_rel);
   }
-  inline const ElemT operator[] (_CORBA_ULong i) const {
+  inline ElemT operator[] (_CORBA_ULong i) const {
     if( i >= pd_len )  _CORBA_bound_check_error();
     return ElemT(pd_data[i],pd_rel);
   }

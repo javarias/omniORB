@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.14.2.3  2000/11/03 19:25:42  sll
+# Updated library name to omniORB4.
+#
 # Revision 1.14.2.2  2000/10/12 15:37:46  sll
 # Updated from omni3_1_develop.
 #
@@ -106,6 +109,8 @@ class ConfigurationState:
             
             # Do we make all the objref methods virtual
             'Virtual Objref Methods':0,
+            # Are #included files output inline with the main output?
+            'Inline Includes':       0,
             # Are we in DEBUG mode?
             'Debug':                 1
                        
@@ -132,8 +137,5 @@ class ConfigurationState:
             print string.ljust(key, max), ":  ", repr(self._config[key])
 
 # Create state-holding singleton object
-if not(hasattr(config, "state")):
+if not hasattr(config, "state"):
     config.state = ConfigurationState()
-
-    
-

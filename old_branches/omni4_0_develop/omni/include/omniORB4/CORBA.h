@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.13  2001/04/18 17:50:45  sll
+ Big checkin with the brand new internal APIs.
+ Scoped where appropriate with the omni namespace.
+
  Revision 1.2.2.12  2001/04/09 15:18:46  dpg1
  Tweak fixed point to make life easier for omniORBpy.
 
@@ -3029,6 +3033,15 @@ _CORBA_MODULE_END
 // put external guards around the include.
 #ifndef __CosNaming_hh_EXTERNAL_GUARD__
 #define __CosNaming_hh_EXTERNAL_GUARD__
+#endif
+
+#ifndef __corbaidl_hh_EXTERNAL_GUARD__
+#define __corbaidl_hh_EXTERNAL_GUARD__
+#endif
+#ifdef ENABLE_CLIENT_IR_SUPPORT
+#ifndef __ir_hh_EXTERNAL_GUARD__
+#define __ir_hh_EXTERNAL_GUARD__
+#endif
 #endif
 
 #endif // __CORBA_H__

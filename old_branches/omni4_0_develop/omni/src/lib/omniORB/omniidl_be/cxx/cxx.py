@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.1  2000/10/12 15:37:46  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.1.2.1  2000/08/21 11:34:33  djs
 # Lots of omniidl/C++ backend changes
 #
@@ -65,7 +68,7 @@ for (CORBA::ULong @i@ = 0;@i@ < @bound@;@i@++){""", i = i, bound = bound)
         self.__stream = stream
         self.__closed = (bounds != [])
     def __del__(self):
-        if not(self.__closed):
+        if not self.__closed:
             warning("Possibly unterminated For loop generated")
     def index(self): return self.__index
     def end(self):
@@ -89,7 +92,7 @@ class Block:
         self.__stream = stream
         self.__closed = 0
     def __del__(self):
-        if not(self.__closed):
+        if not self.__closed:
             warning("Possibly unclosed Block generated")
     def end(self):
         self.__stream.dec_indent()

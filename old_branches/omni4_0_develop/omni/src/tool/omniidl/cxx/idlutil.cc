@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.3  2000/10/27 16:31:10  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.5.2.2  2000/10/10 10:18:51  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -149,6 +152,14 @@ IdlIntLiteral
 idl_strtoul(const char* text, int base)
 {
   return strtoul(text, 0, base);
+}
+
+#  elif defined(__freebsd__)
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtouq(text, 0, base);
 }
 
 #  else

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.5  2001/03/13 10:32:11  dpg1
+// Fixed point support.
+//
 // Revision 1.16.2.4  2000/11/01 12:45:56  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -227,7 +230,7 @@ Comment::
 append(const char* commentText)
 {
   if (Config::keepComments) {
-    assert(mostRecent_);
+    assert(mostRecent_ != 0);
     char* newText = new char[(strlen(mostRecent_->commentText_) +
 			      strlen(commentText) + 1)];
     strcpy(newText, mostRecent_->commentText_);
@@ -289,7 +292,7 @@ AST::
 tree()
 {
   if (!tree_) tree_ = new AST();
-  assert(tree_);
+  assert(tree_ != 0);
   return tree_;
 }
 
@@ -343,7 +346,7 @@ void
 AST::
 setDeclarations(Decl* d)
 {
-  assert(!declarations_);
+  assert(declarations_ == 0);
   declarations_ = d;
 
   // Validate the declarations
@@ -1172,8 +1175,10 @@ Member(const char* file, int line, IDL_Boolean mainFile,
   else if (bareType->kind() == IdlType::tk_sequence) {
     // Look for recursive sequence
     IdlType* t = bareType;
-    while (t->kind() == IdlType::tk_sequence)
+    while (t && t->kind() == IdlType::tk_sequence)
       t = ((SequenceType*)t)->seqType()->unalias();
+
+    if (!t) return; // Sequence of undeclared type
 
     if (t->kind() == IdlType::tk_struct) {
       Struct* s = (Struct*)((DeclaredType*)t)->decl();
@@ -1558,8 +1563,10 @@ UnionCase(const char* file, int line, IDL_Boolean mainFile,
   else if (bareType->kind() == IdlType::tk_sequence) {
     // Look for recursive sequence
     IdlType* t = bareType;
-    while (t->kind() == IdlType::tk_sequence)
+    while (t && t->kind() == IdlType::tk_sequence)
       t = ((SequenceType*)t)->seqType()->unalias();
+
+    if (!t) return; // Sequence of undeclared type
 
     if (t->kind() == IdlType::tk_struct) {
       Struct* s = (Struct*)((DeclaredType*)t)->decl();
@@ -1989,7 +1996,7 @@ Attribute(const char* file, int line, IDL_Boolean mainFile,
     delType_ = 0;
 
   for (Declarator* d = declarators; d; d = (Declarator*)d->next()) {
-    assert(!d->sizes()); // Enforced by grammar
+    assert(d->sizes() == 0); // Enforced by grammar
     d->setAttribute(this);
     Scope::current()->addCallable(d->eidentifier(), 0, d, file, line);
   }
