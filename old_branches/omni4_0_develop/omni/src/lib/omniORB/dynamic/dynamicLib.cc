@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:25:42  sll
+  Changed include/omniORB3 to include/omniORB4.
+
   Revision 1.2.2.1  2000/07/17 10:35:42  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -48,9 +51,7 @@
 
 static void init();
 static void deinit();
-static size_t context_aligned_size(size_t initoffset, CORBA::Context_ptr cxtx,
-				   const char*const* which, int how_many);
-static void marshal_context(NetBufferedStream&, CORBA::Context_ptr cxtx,
+static void marshal_context(cdrStream&, CORBA::Context_ptr cxtx,
 			    const char*const* which, int how_many);
 static void lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt);
 
@@ -58,7 +59,6 @@ static void lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt);
 static omniDynamicLib dynamic_ops = {
   init,
   deinit,
-  context_aligned_size,
   marshal_context,
   lookup_id_lcfn
 };
@@ -89,16 +89,8 @@ deinit()
 }
 
 
-static size_t
-context_aligned_size(size_t initoffset, CORBA::Context_ptr ctxt,
-		     const char*const* which, int how_many)
-{
-  return CORBA::Context::_NP_alignedSize(ctxt, which, how_many, initoffset);
-}
-
-
 static void
-marshal_context(NetBufferedStream& s, CORBA::Context_ptr ctxt,
+marshal_context(cdrStream& s, CORBA::Context_ptr ctxt,
 		const char*const* which, int how_many)
 {
   CORBA::Context::marshalContext(ctxt, which, how_many, s);
