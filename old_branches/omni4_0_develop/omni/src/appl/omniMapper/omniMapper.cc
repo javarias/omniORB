@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.4  2001/06/08 17:12:08  dpg1
+// Merge all the bug fixes from omni3_develop.
+//
 // Revision 1.2.2.3  2001/04/19 09:39:05  sll
 // Big checkin with the brand new internal APIs.
 //
@@ -79,7 +82,7 @@ public:
   Mapper(char* id, CORBA::Object_ptr obj);
   ~Mapper() {}
 
-  CORBA::Boolean _dispatch(_OMNI_NS(IOP_S)&) { do_redir(); return 1; }
+  CORBA::Boolean _dispatch(omniCallHandle&) { do_redir(); return 1; }
   CORBA::Boolean _is_a(const char* id) { do_redir(); return 1; }
 
   void do_redir();
