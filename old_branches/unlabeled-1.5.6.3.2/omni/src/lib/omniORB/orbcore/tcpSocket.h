@@ -29,6 +29,11 @@
 
 /*
  $Log$
+ Revision 1.5.6.3  2000/01/28 15:57:10  djr
+ Removed superflouous ref counting in Strand_iterator.
+ Removed flags to indicate that Ropes and Strands are heap allocated.
+ Improved allocation of client requests to strands.
+
  Revision 1.5.6.2  1999/09/24 15:01:39  djr
  Added module initialisers, and sll's new scavenger implementation.
 
@@ -144,6 +149,7 @@ public:
   friend class nobody;
   friend class tcpSocketRendezvouser;
   friend class tcpSocketWorker;
+  friend class tcpStrandWorker;
 
 private:
   enum { IDLE, ACTIVE, ZOMBIE } pd_state;
