@@ -3,12 +3,15 @@
 # $Id$
 
 # $Log$
+# Revision 1.2  1999/07/19 15:47:05  dpg1
+# TypeCode and Any support.
+#
 # Revision 1.1  1999/06/08 16:21:52  dpg1
 # Initial revision
 #
 
 
-import threading, types
+import threading, types, exceptions
 
 import _omnipy
 import omniORB
@@ -31,7 +34,7 @@ FALSE = 0
 #                                                                           #
 #############################################################################
 
-class Exception:
+class Exception (exceptions.Exception):
     pass
 
 # Completion status:
@@ -46,8 +49,8 @@ completion_status = omniORB.Enum("IDL:omg.org/CORBA/completion_status:1.0",
 
 class SystemException (Exception):
     def __init__(self, minor=0, completed=COMPLETED_NO):
-        self.minor     = minor
-        if type(completed) == type(1):
+        self.minor = minor
+        if type(completed) == types.IntType:
             self.completed = completion_status._item(completed)
         else:
             self.completed = completed
@@ -294,10 +297,6 @@ class TypeCode:
     def member_count(self):             raise TypeCode.BadKind
     def member_name(self, index):       raise TypeCode.BadKind
     def member_type(self, index):       raise TypeCode.BadKind
-
-    # member_label() differs from the normal TypeCode interface -- it
-    # returns the actual label value, not an Any containing the value.
-    # It's OK because TypeCode is PIDL.
     def member_label(self, index):      raise TypeCode.BadKind
 
     def discriminator_type(self):       raise TypeCode.BadKind
@@ -312,8 +311,9 @@ class TypeCode:
     def type_modifier(self):            raise TypeCode.BadKind
     def concrete_base_type(self):       raise TypeCode.BadKind
 
-
 import tcInternal
+
+_d_TypeCode = tcInternal.tv_TypeCode
 
 def typecode(t):
     return tcInternal.typecode(t)
@@ -359,6 +359,7 @@ class Any:
             return self._v
         raise NotImplementedError("Any coercion not yet supported.")
 
+_d_any = tcInternal.tv_any
 
 
 #############################################################################
@@ -394,6 +395,39 @@ class ORB:
     def string_to_object(self, ior):
         return _omnipy.stringToObject(self, ior)
 
+    def object_to_string(self, obj):
+        return _omnipy.objectToString(self, obj)
+
+    # TypeCode operations
+    def create_struct_tc(self, id, name, members):
+        return tcInternal.createStructTC(id, name, members)
+
+    def create_union_tc(self, id, name, discriminator_type, members):
+        return tcInternal.createUnionTC(id, name, discriminator_type, members)
+
+    def create_enum_tc(self, id, name, members):
+        return tcInternal.createEnumTC(id, name, members)
+
+    def create_alias_tc(self, id, name, original_type):
+        return tcInternal.createAliasTC(id, name, original_type)
+
+    def create_exception_tc(self, id, name, members):
+        return tcInternal.createExceptionTC(id, name, members)
+
+    def create_interface_tc(self, id, name):
+        return tcInternal.createInterfaceTC(id, name)
+
+    def create_string_tc(self, bound):
+        return tcInternal.createStringTC(bound)
+
+    def create_sequence_tc(self, bound, element_type):
+        return tcInternal.createSequenceTC(bound, element_type)
+    
+    def create_array_tc(self, length, element_type):
+        return tcInternal.createArrayTC(length, element_type)
+
+    def create_recursive_tc(self, id):
+        return tcInternal.createRecursiveTC(id)
 
 
 
@@ -404,7 +438,8 @@ class ORB:
 #############################################################################
 
 class BOA:
-    """ omnipy BOA object
+    """
+    omnipy BOA object
 
     Soon to be superceded by the POA...
     """
@@ -413,7 +448,12 @@ class BOA:
         _omnipy.BOA_init(self, orb, argv, boa_identifier)
         print "BOA initialised"
 
+    def obj_is_ready(self, obj):
+        _omnipy.objectIsReady(self, obj)
+        print "Object activated"
 
+    def impl_is_ready(self, z=0, noblock=0):
+        _omnipy.implIsReady(self, z, noblock)
 
 
 
@@ -464,6 +504,9 @@ class Object:
     def _narrow(self, dest):
         return _omnipy.narrow(self, dest._NP_RepositoryId)
 
+_d_Object  = (omniORB.tcInternal.tv_objref, None, "Object")
+_tc_Object = omniORB.tcInternal.createTypeCode(_d_Object)
+
 
 class _nil_Object (Object):
     """ Class for all nil objects """
@@ -504,3 +547,92 @@ Object._nil = _nil_Object()
 def is_nil(obj):
     if isinstance(obj, _nil_Object): return TRUE
     return FALSE
+
+
+#############################################################################
+#                                                                           #
+# Interface Repository stuff                                                #
+#                                                                           #
+#############################################################################
+
+# typedef string Identifier
+_d_Identifier  = (tcInternal.tv_string, 0)
+_ad_Identifier = (tcInternal.tv_alias,
+                  "IDL:omg.org/CORBA/Identifier:1.0",
+                  "Identifier", _d_Identifier)
+_tc_Identifier = tcInternal.createTypeCode(_ad_Identifier)
+
+# typedef string ScopedName
+_d_ScopedName  = (tcInternal.tv_string, 0)
+_ad_ScopedName = (tcInternal.tv_alias,
+                  "IDL:omg.org/CORBA/ScopedName:1.0",
+                  "ScopedName", _d_ScopedName)
+_tc_ScopedName = tcInternal.createTypeCode(_ad_ScopedName)
+
+# typedef string RepositoryId
+_d_RepositoryId  = (tcInternal.tv_string, 0)
+_ad_RepositoryId = (tcInternal.tv_alias,
+                    "IDL:omg.org/CORBA/RepositoryId:1.0",
+                    "RepositoryId", _d_RepositoryId)
+_tc_RepositoryId = tcInternal.createTypeCode(_ad_RepositoryId)
+
+# interface IDLType;
+_d_IDLType = (tcInternal.tv_objref,
+              "IDL:omg.org/CORBA/IDLType:2.3",
+              "IDLType")
+
+
+# struct StructMember
+class StructMember:
+    _NP_RepositoryId = "IDL:omg.org/CORBA/StructMember:1.0"
+
+    def __init__(self, name, type, type_def):
+        self.name     = name
+        self.type     = type
+        self.type_def = type_def
+
+_d_StructMember  = (tcInternal.tv_struct, StructMember,
+                    StructMember._NP_RepositoryId, "StructMember",
+                    "name",     _d_Identifier,
+                    "type",     _d_TypeCode,
+                    "type_def", _d_IDLType)
+_tc_StructMember = tcInternal.createTypeCode(_d_StructMember)
+
+# typedef sequence <StructMember> StructMemberSeq;
+_d_StructMemberSeq  = (omniORB.tcInternal.tv_sequence, _d_StructMember, 0)
+_ad_StructMemberSeq = (omniORB.tcInternal.tv_alias,
+                       "IDL:omg.org/CORBA/StructMemberSeq:1.0",
+                       "StructMemberSeq", _d_StructMemberSeq)
+_tc_StructMemberSeq = omniORB.tcInternal.createTypeCode(_ad_StructMemberSeq)
+
+# struct UnionMember
+class UnionMember:
+    _NP_RepositoryId = "IDL:omg.org/CORBA/UnionMember:1.0"
+
+    def __init__(self, name, label, type, type_def):
+        self.name     = name
+        self.label    = label
+        self.type     = type
+        self.type_def = type_def
+
+_d_UnionMember  = (tcInternal.tv_struct, UnionMember,
+                   UnionMember._NP_RepositoryId, "UnionMember",
+                   "name",     _d_Identifier,
+                   "label",    _d_any,
+                   "type",     _d_TypeCode,
+                   "type_def", _d_IDLType)
+_tc_UnionMember = tcInternal.createTypeCode(_d_UnionMember)
+
+# typedef sequence <UnionMember> UnionMemberSeq;
+_d_UnionMemberSeq  = (omniORB.tcInternal.tv_sequence, _d_UnionMember, 0)
+_ad_UnionMemberSeq = (omniORB.tcInternal.tv_alias,
+                      "IDL:omg.org/CORBA/UnionMemberSeq:1.0",
+                      "UnionMemberSeq", _d_UnionMemberSeq)
+_tc_UnionMemberSeq = omniORB.tcInternal.createTypeCode(_ad_UnionMemberSeq)
+
+# typedef sequence <Identifier> EnumMemberSeq;
+_d_EnumMemberSeq  = (omniORB.tcInternal.tv_sequence, _d_Identifier, 0)
+_ad_EnumMemberSeq = (omniORB.tcInternal.tv_alias,
+                     "IDL:omg.org/CORBA/EnumMemberSeq:1.0",
+                     "EnumMemberSeq", _d_EnumMemberSeq)
+_tc_EnumMemberSeq = omniORB.tcInternal.createTypeCode(_ad_EnumMemberSeq)
