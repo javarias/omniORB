@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/11/10 20:19:32  djs
+# Option to emulate scope bug in old backend
+# Array struct element fix
+# Union sequence element fix
+#
 # Revision 1.3  1999/11/04 19:05:02  djs
 # Finished moving code from tmp_omniidl. Regression tests ok.
 #
@@ -81,6 +86,7 @@ class Stream:
 
     def inc_indent(self): self.indent = self.indent + 1
     def dec_indent(self): self.indent = self.indent - 1
+    def reset_indent(self): self.indent = 0
 
     def __wscount(self, text):
         match = self.__wsregex.match(text)

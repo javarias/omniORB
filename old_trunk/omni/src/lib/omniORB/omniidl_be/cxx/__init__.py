@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/11/12 17:17:45  djs
+# Creates output files rather than using stdout
+# Utility functions useful for skeleton generation added
+#
 # Revision 1.4  1999/11/08 19:28:56  djs
 # Rewrite of sequence template code
 # Fixed lots of typedef problems
@@ -48,6 +52,8 @@
 from omniidl.be.cxx import header
 from omniidl.be.cxx import skel
 
+from omniidl.be.cxx import config
+
 import re
 
 cpp_args = ["-D__OMNIIDL_CXX__"]
@@ -63,7 +69,8 @@ def run(tree, args):
         config.setBasename(match.group(2))
     else:
         raise "Unable to work out basename of input file"
-            
+
+       
     header.run(tree)
     
     skel.run(tree)
