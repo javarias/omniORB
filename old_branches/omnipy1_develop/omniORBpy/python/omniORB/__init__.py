@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.24.2.3  2001/04/10 16:33:41  dpg1
+# Minor bugs in Any coercion.
+#
 # Revision 1.24.2.2  2000/08/23 09:22:07  dpg1
 # Fix loading of IfR stubs with "import CORBA"
 #
@@ -372,6 +375,11 @@ def newModule(mname):
         current = current + "."
 
     return mod
+
+# Function to create a new empty class as a scope place-holder
+def newEmptyClass():
+    class __dummy: pass
+    return __dummy
 
 
 # Classes to support IDL type mapping
