@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.19  1998/04/07 19:53:38  sll
+  Replace _OMNIORB2_NTDLL_ on the whole class omni with
+  _OMNIORB_NTDLL_IMPORT on individual constants and variables.
+
   Revision 1.18  1998/02/27 14:00:17  sll
   Changed manager() to _objectManager() in class omniObject to avoid
   potential name clash with application code.
@@ -100,7 +104,7 @@ class omniObjectManager;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern const char* _OMNIORB_NTDLL_IMPORT omniORB_2_5;
+extern const char* _OMNIORB_NTDLL_IMPORT omniORB_2_6;
 
 #include <omniORB2/rope.h>
 
