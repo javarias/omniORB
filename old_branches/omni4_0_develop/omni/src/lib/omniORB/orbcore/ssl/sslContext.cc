@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2002/04/16 12:44:27  dpg1
+  Fix SSL accept bug, clean up logging.
+
   Revision 1.1.2.9  2002/02/25 11:17:14  dpg1
   Use tracedmutexes everywhere.
 
@@ -110,6 +113,7 @@ sslContext::internal_initialise() {
 
   if (pd_ctx) return;
 
+  SSL_library_init();
   set_cipher();
   SSL_load_error_strings();
 
@@ -359,6 +363,10 @@ sslContext::thread_setup() {
 /////////////////////////////////////////////////////////////////////////
 void
 sslContext::thread_cleanup() {
+  CRYPTO_set_locking_callback(NULL);
+#ifndef __WIN32__
+  CRYPTO_set_id_callback(NULL);
+#endif
   if (pd_locks) {
     delete [] pd_locks;
     openssl_locks = 0;
