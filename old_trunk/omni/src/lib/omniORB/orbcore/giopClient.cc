@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.8  1997/12/09 17:37:15  sll
+  Updated to use the new rope and strand interface.
+  Now unmarshal context properly.
+
   Revision 1.7  1997/08/21 21:56:40  sll
   Added system exception TRANSACTION_REQUIRED, TRANSACTION_ROLLEDBACK,
   INVALID_TRANSACTION, WRONG_TRANSACTION.
@@ -59,7 +63,8 @@ GIOP_C::~GIOP_C()
 {
   if (pd_state == GIOP_C::Zombie) {
     if (omniORB::traceLevel >= 15) {
-      cerr << "GIOP_C dtor re-entered." << endl;
+      omniORB::log << "GIOP_C dtor re-entered.\n";
+      omniORB::log.flush();
     }
     return;
   }
@@ -291,7 +296,8 @@ GIOP_C::RequestCompleted(CORBA::Boolean skip_msg)
 	  // If omniORB::strictIIOP non-zero, we expect incoming calls to
 	  // be well behaved and rejects anything that is not.
 	  if (omniORB::traceLevel >= 15) {
-	    cerr << "GIOP_C::RequestCompleted: garbage left at the end of message." << endl;
+	    omniORB::log << "GIOP_C::RequestCompleted: garbage left at the end of message.\n";
+	    omniORB::log.flush();
 	  }
 	  if (!omniORB::strictIIOP) {
 	    skip(RdMessageUnRead(),1);

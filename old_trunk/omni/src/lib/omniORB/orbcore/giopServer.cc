@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.11  1998/02/25 20:37:13  sll
+  Added hooks for dynamic object loader.
+
   Revision 1.10  1997/12/23 19:24:27  sll
   Removed unnecessary token concatination.
 
@@ -139,7 +142,8 @@ GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
 	  // If omniORB::strictIIOP non-zero, we expect incoming calls to
 	  // be well behaved and rejects anything that is not.
 	  if (omniORB::traceLevel >= 15) {
-	    cerr << "GIOP_S::RequestReceived: garbage left at the end of message." << endl;
+	    omniORB::log << "GIOP_S::RequestReceived: garbage left at the end of message.\n";
+	    omniORB::log.flush();
 	  }
 	  if (!omniORB::strictIIOP) {
 	    skip(RdMessageUnRead(),1);

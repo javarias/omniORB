@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.4  1997/12/09 18:19:09  sll
+  New members BOA::impl_shutdown and BOA::destroy
+  Merged code from orb.cc.
+  Updated to use the new rope factory interfaces.
+
 // Revision 1.3  1997/05/06  15:09:04  sll
 // Public release.
 //
@@ -424,8 +429,9 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
   if (orb_identifier && strcmp(orb_identifier,myBOAId) != 0)
     {
       if (omniORB::traceLevel > 0) {
-	cerr << "BOA_init failed: the BOAid ("
-	     << orb_identifier << ") is not " <<  myBOAId << endl;
+	omniORB::log << "BOA_init failed: the BOAid ("
+		     << orb_identifier << ") is not " <<  myBOAId << "\n";
+	omniORB::log.flush();
       }
       return 0;
     }
@@ -446,15 +452,17 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       if (strcmp(argv[idx],"-BOAid") == 0) {
 	if ((idx+1) >= argc) {
 	  if (omniORB::traceLevel > 0) {
-	    cerr << "BOA_init failed: missing -BOAid parameter." << endl;
+	    omniORB::log << "BOA_init failed: missing -BOAid parameter.\n";
+	    omniORB::log.flush();
 	  }
 	  return 0;
 	}
 	if (strcmp(argv[idx+1],myBOAId) != 0)
 	  {
 	    if (omniORB::traceLevel > 0) {
-	      cerr << "BOA_init failed: the BOAid ("
-		   << argv[idx+1] << ") is not " << myBOAId << endl;
+	      omniORB::log << "BOA_init failed: the BOAid ("
+			   << argv[idx+1] << ") is not " << myBOAId << "\n";
+	      omniORB::log.flush();
 	    }
 	    return 0;
 	  }
@@ -467,7 +475,8 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       if (strcmp(argv[idx],"-BOAiiop_port") == 0) {
 	if ((idx+1) >= argc) {
 	  if (omniORB::traceLevel > 0) {
-	    cerr << "BOA_init failed: missing -BOAiiop_port parameter." << endl;
+	    omniORB::log << "BOA_init failed: missing -BOAiiop_port parameter.\n";
+	    omniORB::log.flush();
 	  }
 	  return 0;
 	}
@@ -475,7 +484,8 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	if (sscanf(argv[idx+1],"%u",&port) != 1 ||
             (port == 0 || port >= 65536)) {
 	  if (omniORB::traceLevel > 0) {
-	    cerr << "BOA_init failed: invalid -BOAiiop_port parameter." << endl;
+	    omniORB::log << "BOA_init failed: invalid -BOAiiop_port parameter.\n";
+	    omniORB::log.flush();
 	  }
 	  return 0;
 	}
@@ -493,8 +503,11 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	      if (!factory->isIncoming(&e)) {
 		// This port has not been instantiated
 		factory->instantiateIncoming(&e,1);
-		if (omniORB::traceLevel >= 2)
-		  cerr << "Accept IIOP calls on port " << e.port() << endl;
+		if (omniORB::traceLevel >= 2) {
+		  omniORB::log << "Accept IIOP calls on port " << e.port()
+			       << "\n";
+		  omniORB::log.flush();
+		}
 	      }
 	      break;
 	    }
@@ -502,8 +515,9 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	}
 	catch (...) {
 	  if (omniORB::traceLevel > 0) {
-	    cerr << "BOA_init falied: cannot use port " << port
-		 << " to accept incoming IIOP calls." << endl;
+	    omniORB::log << "BOA_init falied: cannot use port " << port
+			 << " to accept incoming IIOP calls.\n";
+	    omniORB::log.flush();
 	  }
 	  return 0;
 	}
@@ -514,15 +528,17 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       // Reach here only if the argument in this form: -ORBxxxxx
       // is not recognised.
       if (omniORB::traceLevel > 0) {
-	cerr << "BOA_init failed: unknown BOA argument ("
-	     << argv[idx] << ")" << endl;
+	omniORB::log << "BOA_init failed: unknown BOA argument ("
+		     << argv[idx] << ")\n";
+	omniORB::log.flush();
       }
       return 0;
     }
 
   if (!orb_identifier && !orbId_match) {
     if (omniORB::traceLevel > 0) {
-      cerr << "BOA_init failed: BOAid is not specified." << endl;
+      omniORB::log << "BOA_init failed: BOAid is not specified.\n";
+      omniORB::log.flush();
     }
     return 0;
   }

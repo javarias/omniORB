@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2  1997/12/12 18:45:49  sll
+  Added call to print out the version of gatekeeper.
+
   Revision 1.1  1997/12/09 18:43:17  sll
   Initial revision
 
@@ -66,7 +69,9 @@ tcpATMosFactoryType::init()
   ropeFactoryTypeList = singleton;
 
   if (omniORB::traceLevel >= 2) {
-    cerr << "omniORB2 gateKeeper is " << gateKeeper::version() << endl;
+    omniORB::log << "omniORB2 gateKeeper is " << gateKeeper::version()
+		 << "\n";
+    omniORB::log.flush();
   }
 
   // XXX There is no known order in the startup of ATMos processes. In
@@ -76,11 +81,13 @@ tcpATMosFactoryType::init()
   // once at initialisation time, this seems to be a good point to insert
   // the delay.
   if (omniORB::traceLevel >= 10) {
-    cerr << "tcpATMosFactoryType::init(): delay process startup..." << endl;
+    omniORB::log << "tcpATMosFactoryType::init(): delay process startup...\n";
+    omniORB::log.flush();
   }
   omni_thread::sleep(15);
   if (omniORB::traceLevel >= 10) {
-    cerr << "tcpATMosFactoryType::init(): continue with process startup..." << endl;
+    omniORB::log << "tcpATMosFactoryType::init(): continue with process startup...\n";
+    omniORB::log.flush();
   }
 }
 
