@@ -28,9 +28,6 @@
 
 # $Id$
 # $Log$
-# Revision 1.21  2000/07/13 15:26:02  dpg1
-# Merge from omni3_develop for 3.0 release.
-#
 # Revision 1.18.2.8  2000/07/18 15:34:17  djs
 # Added -Wbvirtual_objref option to make attribute and operation _objref
 # methods virtual
@@ -239,8 +236,9 @@ def run(tree, args):
             util.unsupportedIDL()
             
         util.fatalError("An AttributeError exception was caught")
-    except SystemExit:
+    except SystemExit, e:
         # fatalError function throws SystemExit exception
-        pass
+        # *** Should delete partial output files here
+        raise e
     except:
         util.fatalError("An internal exception was caught")

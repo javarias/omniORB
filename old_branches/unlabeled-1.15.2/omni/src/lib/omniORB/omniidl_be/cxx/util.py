@@ -136,8 +136,7 @@ def fatalError(explanation):
             print "Exception:"
             print "-------------------------"
             traceback.print_exc()
-            sys.exit(-1)
-            return
+        sys.exit(1)
     
     lines = string.split(explanation, "\n")
     lines = [ "Fatal error in C++ backend", "" ] + lines
@@ -152,7 +151,7 @@ For more information (mailing list archives, bug reports etc) please visit
 the webpage:
   http://www.uk.research.att.com/omniORB/omniORB.html
 """)
-    sys.exit(-1)
+    sys.exit(1)
 
 # Called whenever an unsupported IDL construct is found in the input
 # (necessary because the front end supports all the new CORBA 2.3
@@ -162,7 +161,7 @@ def unsupportedIDL():
 Unsupported IDL construct encountered in input.
 
 omniORB does not currently support:
-  IDL types longlong, longdouble, wchar, wstring, fixed, valuetype
+  IDL types longdouble, wchar, wstring, fixed, valuetype
 """
     fatalError(e)
     
