@@ -60,6 +60,7 @@ Bugs fixed in:
   <li>
     omniORBpy 2.x
     <ul>
+      <li><a href="pybugs/bugfixes-23.html">omniORBpy 2.3</a></li>
       <li><a href="pybugs/bugfixes-22.html">omniORBpy 2.2</a></li>
       <li><a href="pybugs/bugfixes-21.html">omniORBpy 2.1</a></li>
     </ul>
