@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/11/12 17:18:39  djs
+# Lots of header generation bugfixes
+#
 # Revision 1.3  1999/11/04 19:05:08  djs
 # Finished moving code from tmp_omniidl. Regression tests ok.
 #
@@ -44,6 +47,8 @@ from omniidl.be.cxx import config
 import omniidl.be.cxx.header.defs
 import omniidl.be.cxx.header.opers
 import omniidl.be.cxx.header.poa
+import omniidl.be.cxx.header.forward
+import omniidl.be.cxx.header.marshal
 
 # -----------------------------
 # Utility functions
@@ -120,6 +125,9 @@ def monolithic(stream, tree):
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
 
     # generate the header definitions
+    forward = omniidl.be.cxx.header.forward.__init__(stream)
+    tree.accept(forward)
+    
     defs = omniidl.be.cxx.header.defs.__init__(stream)
     tree.accept(defs)
 
@@ -135,6 +143,9 @@ def monolithic(stream, tree):
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
     opers = omniidl.be.cxx.header.opers.__init__(stream)
     tree.accept(opers)
+
+    marshal = omniidl.be.cxx.header.marshal.__init__(stream)
+    tree.accept(marshal)
 
     # other stuff
     stream.out("""\
