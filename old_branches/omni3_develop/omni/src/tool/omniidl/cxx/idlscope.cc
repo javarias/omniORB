@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.5  2000/08/29 15:20:28  dpg1
+// New relativeScope() function. New -i flag to enter interactive loop
+// after parsing
+//
 // Revision 1.11.2.4  2000/08/24 11:33:00  dpg1
 // Typo in error message % format string
 //
@@ -209,7 +213,7 @@ append(const char* identifier)
 
 Scope::
 Entry::
-Entry(const Scope* container, Kind k, const char* identifier,
+Entry(const Scope* container, EntryKind k, const char* identifier,
       Scope* scope, Decl* decl, IdlType* idltype,
       Scope::Entry* inh_from, const char* file, int line)
 
