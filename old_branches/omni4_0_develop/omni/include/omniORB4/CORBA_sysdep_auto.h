@@ -30,6 +30,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  2002/01/15 16:38:10  dpg1
+ On the road to autoconf. Dependencies refactored, configure.ac
+ written. No makefiles yet.
+
 */
 
 #ifndef __CORBA_SYSDEP_AUTO_H__
@@ -54,14 +58,20 @@
 
 #define SIZEOF_PTR SIZEOF_VOIDP
 
-#if defined(SIZEOF_LONG_LONG) && (SIZEOF_LONG_LONG == 8)
+#if defined(SIZEOF_LONG) && (SIZEOF_LONG == 8)
+#  define HAS_LongLong
+#  define _CORBA_LONGLONG_DECL     long
+#  define _CORBA_ULONGLONG_DECL    unsigned long
+#  define _CORBA_LONGLONG_CONST(x) (x)
+
+#elif defined(SIZEOF_LONG_LONG) && (SIZEOF_LONG_LONG == 8)
 #  define HAS_LongLong
 #  define _CORBA_LONGLONG_DECL     long long
 #  define _CORBA_ULONGLONG_DECL    unsigned long long
 #  define _CORBA_LONGLONG_CONST(x) (x##LL)
 #endif
 
-#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE > 0)
+#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE > 8)
 #  define HAS_LongDouble
 #  define _CORBA_LONGDOUBLE_DECL long double
 #endif

@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.6  2002/01/15 16:38:09  dpg1
+ On the road to autoconf. Dependencies refactored, configure.ac
+ written. No makefiles yet.
+
  Revision 1.2.2.5  2001/08/03 17:46:39  sll
  Replace _CORBA_marshal_error with _CORBA_marshal_sequence_range_check_error.
 
@@ -104,6 +108,7 @@ typedef unsigned short            _CORBA_UShort;
 typedef long                      _CORBA_Long;
 
 typedef unsigned long             _CORBA_ULong;
+
 #elif SIZEOF_INT == 4
 #  ifndef OMNI_LONG_IS_INT
 #    define OMNI_LONG_IS_INT

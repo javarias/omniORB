@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.8  2001/11/14 17:13:43  dpg1
+// Long double support.
+//
 // Revision 1.11.2.7  2001/08/29 11:54:20  dpg1
 // Clean up const handling in IDL compiler.
 //
@@ -268,10 +271,11 @@ visitConst(Const* c)
   printf(" %s = ", c->identifier());
 
   switch(c->constKind()) {
-  case IdlType::tk_short:   printf("%hd",   c->constAsShort());         break;
-  case IdlType::tk_long:    printf("%ld",   c->constAsLong());          break;
-  case IdlType::tk_ushort:  printf("%hu",   c->constAsUShort());        break;
-  case IdlType::tk_ulong:   printf("%lu",   c->constAsULong());         break;
+  case IdlType::tk_short:   printf("%hd", c->constAsShort());           break;
+  case IdlType::tk_long:    printf("%ld", (long)c->constAsLong());      break;
+  case IdlType::tk_ushort:  printf("%hu", c->constAsUShort());          break;
+  case IdlType::tk_ulong:   printf("%lu", (unsigned long)c->constAsULong());
+                                                                        break;
   case IdlType::tk_float:   printdouble(c->constAsFloat());             break;
   case IdlType::tk_double:  printdouble(c->constAsDouble());            break;
   case IdlType::tk_boolean:
@@ -419,10 +423,11 @@ visitCaseLabel(CaseLabel* l)
     printf("case ");
 
   switch(l->labelKind()) {
-  case IdlType::tk_short:  printf("%hd", l->labelAsShort());  break;
-  case IdlType::tk_long:   printf("%ld", l->labelAsLong());   break;
-  case IdlType::tk_ushort: printf("%hu", l->labelAsUShort()); break;
-  case IdlType::tk_ulong:  printf("%lu", l->labelAsULong());  break;
+  case IdlType::tk_short:  printf("%hd", l->labelAsShort());        break;
+  case IdlType::tk_long:   printf("%ld", (long)l->labelAsLong());   break;
+  case IdlType::tk_ushort: printf("%hu", l->labelAsUShort());       break;
+  case IdlType::tk_ulong:  printf("%lu", (unsigned long)l->labelAsULong());
+                                                                    break;
   case IdlType::tk_boolean:
     printf("%s", l->labelAsBoolean() ? "TRUE" : "FALSE");
     break;
@@ -753,7 +758,7 @@ DumpVisitor::
 visitStringType(StringType* t)
 {
   if (t->bound())
-    printf("string<%ld>", t->bound());
+    printf("string<%ld>", (long)t->bound());
   else
     printf("string");
 }
@@ -763,7 +768,7 @@ DumpVisitor::
 visitWStringType(WStringType* t)
 {
   if (t->bound())
-    printf("wstring<%ld>", t->bound());
+    printf("wstring<%ld>", (long)t->bound());
   else
     printf("wstring");
 }
@@ -776,7 +781,7 @@ visitSequenceType(SequenceType* t)
   t->seqType()->accept(*this);
 
   if (t->bound())
-    printf(", %ld>", t->bound());
+    printf(", %ld>", (long)t->bound());
   else
     printf(">");
 }
