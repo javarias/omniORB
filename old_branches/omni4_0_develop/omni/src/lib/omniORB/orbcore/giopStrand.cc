@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.18  2002/09/04 23:29:30  dgrisby
+  Avoid memory corruption with multiple list removals.
+
   Revision 1.1.4.17  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -737,6 +740,7 @@ Scavenger::execute()
     mutex->lock();
     theTask = 0;
     if (shutdown) {
+      shutdown = 0;
       mutex->unlock();
       delete cond;
       delete mutex;
