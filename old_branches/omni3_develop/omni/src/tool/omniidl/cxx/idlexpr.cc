@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4.2.1  2000/06/27 16:00:17  sll
+// Fixes to WIN 32 related build and compiler issues.
+//
 // Revision 1.4  2000/02/04 12:17:09  dpg1
 // Support for VMS.
 //
@@ -517,7 +520,7 @@ _CORBA_LongLong ConstExpr::evalAsLongLong() {
   case IdlType::tk_longlong: r = c_->constAsLongLong(); break;
   case IdlType::tk_ulonglong: {
     _CORBA_ULongLong z = c_->constAsULongLong();
-    r = z; p = (z <= 0x7fffffffffffffffLL);
+    r = z; p = (z <= _CORBA_LONGLONG_CONST(0x7fffffffffffffff));
     break;
   }
   default:

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.7  2000/06/09 11:20:47  dpg1
+// Last fix put __omni_pragma line numbers off by one...
+//
 // Revision 1.7.2.6  2000/06/08 14:58:19  dpg1
 // Line numbers for #pragmas and // comments were off by one
 //
@@ -199,11 +202,7 @@ _{IDENT} {
 
 {DECSTART}{DECDIGIT}* {
   errno = 0;
-#ifdef HAS_LongLong
-  sscanf(yytext, "%Lu", &yylval.int_literal_val);
-#else
-  yylval.int_literal_val = strtoul(yytext, 0, 10);
-#endif
+  yylval.int_literal_val = idl_strtoul(yytext, 10);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
 	     "Integer literal `%s' is too big", yytext);
@@ -213,11 +212,7 @@ _{IDENT} {
 
 {OCTSTART}{OCTDIGIT}+ {
   errno = 0;
-#ifdef HAS_LongLong
-  sscanf(yytext, "%Lo", &yylval.int_literal_val);
-#else
-  yylval.int_literal_val = strtoul(yytext, 0, 8);
-#endif
+  yylval.int_literal_val = idl_strtoul(yytext, 8);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
 	     "Integer literal `%s' is too big", yytext);
@@ -227,11 +222,7 @@ _{IDENT} {
 
 {HEXSTART}{HEXDIGIT}+ {
   errno = 0;
-#ifdef HAS_LongLong
-  int r = sscanf(yytext, "%Lx", &yylval.int_literal_val);
-#else
-  yylval.int_literal_val = strtoul(yytext, 0, 16);
-#endif
+  yylval.int_literal_val = idl_strtoul(yytext, 16);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
 	     "Integer literal `%s' is too big", yytext);
@@ -306,17 +297,17 @@ L"'"\\."'" {
 <INITIAL>{DECDIGIT}+{EXPONENT} {
   // Only deal with floats in INITIAL state, so version pragmas don't
   // get interpreted as floats.
-  yylval.float_literal_val = strtod(yytext, 0);
+  yylval.float_literal_val = idl_strtod(yytext);
   return FLOATING_PT_LITERAL;
 }
 
 <INITIAL>{DECDIGIT}*"."{DECDIGIT}+{EXPONENT}? {
-  yylval.float_literal_val = strtod(yytext, 0);
+  yylval.float_literal_val = idl_strtod(yytext);
   return FLOATING_PT_LITERAL;
 }
 
 <INITIAL>{DECDIGIT}+"."{DECDIGIT}*{EXPONENT}? {
-  yylval.float_literal_val = strtod(yytext, 0);
+  yylval.float_literal_val = idl_strtod(yytext);
   return FLOATING_PT_LITERAL;
 }
 
@@ -474,7 +465,7 @@ char escapeToChar(char* s) {
 _CORBA_UShort octalToWChar(char* s) {
   unsigned long ret = strtoul(s+1, 0, 8);
 
-  if (ret > 255) {
+  if (ret > 255) { // This really is meant to be 255
     IdlError(currentFile, yylineno, "Octal character value `%s' too big", s);
   }
 

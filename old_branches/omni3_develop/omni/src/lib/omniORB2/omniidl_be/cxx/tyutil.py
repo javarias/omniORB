@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.8  2000/07/17 09:36:16  djs
+# Added function to strip typedef chains from AST nodes
+# Fixed allInherits() function to handle inheriting from a typedef to an
+# interface
+#
 # Revision 1.30.2.7  2000/06/26 16:23:11  djs
 # Added new backend arguments.
 # Better error handling when encountering unsupported IDL (eg valuetypes)
@@ -503,7 +508,9 @@ typeSizeAlignMap = {
     idltype.tk_float:   (4, 4),
     idltype.tk_enum:    (4, 4),
     idltype.tk_double:  (8, 8),
-    idltype.tk_octet:   (1, 1)
+    idltype.tk_octet:   (1, 1),
+    idltype.tk_longlong:  (8, 8),
+    idltype.tk_ulonglong: (8, 8)
     }
 
 

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.8  2000/07/18 15:34:17  djs
+# Added -Wbvirtual_objref option to make attribute and operation _objref
+# methods virtual
+#
 # Revision 1.18.2.7  2000/06/26 16:23:09  djs
 # Added new backend arguments.
 # Better error handling when encountering unsupported IDL (eg valuetypes)
@@ -232,8 +236,9 @@ def run(tree, args):
             util.unsupportedIDL()
             
         util.fatalError("An AttributeError exception was caught")
-    except SystemExit:
+    except SystemExit, e:
         # fatalError function throws SystemExit exception
-        pass
+        # *** Should delete partial output files here
+        raise e
     except:
         util.fatalError("An internal exception was caught")

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.7  2000/07/03 14:56:43  djs
+# Fixed bug generating typecodes for struct members which are anonymous
+# sequences.
+#
 # Revision 1.14.2.6  2000/06/26 16:23:27  djs
 # Refactoring of configuration state mechanism.
 #
@@ -293,6 +297,11 @@ def mkTypeCode(type, declarator = None, node = None):
         return prefix + basic[type.kind()] + "_tc()"
 
     if isinstance(type, idltype.Base):
+        if type.kind() in [idltype.tk_longlong, idltype.tk_ulonglong] :
+            util.fatalError("Long long type is not supported with -Wba " \
+                            "in this release")
+            raise "Long long not supported"
+
         util.fatalError("Internal error generating TypeCode data")
         raise "Don't know how to generate TypeCode for Base kind = " +\
               repr(type.kind())

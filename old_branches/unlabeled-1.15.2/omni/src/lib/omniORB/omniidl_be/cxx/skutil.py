@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.4  2000/05/31 18:02:16  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+#
 # Revision 1.15.2.3  2000/04/26 18:22:13  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -312,6 +316,8 @@ def unmarshall(to, environment, type, decl, name,
             idltype.tk_float:  "Float",
             idltype.tk_double: "Double",
             idltype.tk_enum:   "ULong",
+            idltype.tk_longlong: "LongLong",
+            idltype.tk_ulonglong: "ULongLong"
             }
         if array_helper_suffix.has_key(d_type.type().kind()):
             typecast = "((" + type_name + "*) " + element_name + ")"
