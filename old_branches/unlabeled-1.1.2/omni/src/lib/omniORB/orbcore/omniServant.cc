@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/06/22 10:40:16  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.4  1999/10/27 17:32:14  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -58,8 +62,7 @@ omniServant::~omniServant()
 {
   if( pd_identities ) {
     omniORB::logger l;
-    l << "ERROR -- A servant has been deleted that is still activated.\n"
-      " repo id: " << _mostDerivedRepoId() << "\n";
+    l << "ERROR -- A servant has been deleted that is still activated.\n";
 
     omni::internalLock->lock();
     omniLocalIdentity* id = pd_identities;
