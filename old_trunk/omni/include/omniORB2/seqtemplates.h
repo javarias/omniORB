@@ -6,10 +6,15 @@
 // Copyright (C) Olivetti Research Limited, 1996
 //
 // Description:
-
+//	*** PROPRIETORY INTERFACE ***
 
 /*
  $Log$
+ Revision 1.2  1997/01/24 19:26:38  sll
+ Moved the implementations of the inline members of _CORBA_Sequence<T> back
+ into its class definition. This is to work around a bug in Sunpro C++ 4.0
+ which make it fails to compile the runtime when optimisation is on.
+
  Revision 1.1  1997/01/23 15:19:58  sll
  Initial revision
 
