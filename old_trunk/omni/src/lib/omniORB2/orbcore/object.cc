@@ -29,6 +29,9 @@
  
 /*
   $Log$
+// Revision 1.7  1997/05/06  15:25:34  sll
+// Public release.
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -407,6 +410,10 @@ omniObject::~omniObject()
   if (pd_proxy && pd_objkey.foreign) {
     delete [] pd_objkey.foreign;
     pd_objkey.foreign = 0;
+  }
+  if (pd_iopprofile) {
+    delete pd_iopprofile;
+    pd_iopprofile = 0;
   }
   return;
 }
