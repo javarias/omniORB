@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.5  1999/05/25 17:47:09  sll
+ * Changed to use _CORBA_PseudoValue_Sequence.
+ *
  * Revision 1.4  1999/03/11 16:25:59  djr
  * Updated copyright notice
  *
@@ -236,20 +239,38 @@ public:
 
   // omniORB2 equality check support functions
   static const TypeCode_base* NP_expand(const TypeCode_base* tc);
-  inline static CORBA::Boolean NP_namesEqualOrNull(const char* name1,
-						   const char* name2) {
-    return !*name1 || !*name2 || !strcmp(name1, name2);
+  inline static CORBA::Boolean NP_namesEqual(const char* name1,
+					     const char* name2) {
+    // returns 1 if both strings are nil or both strings are non-nil and
+    // with the same content.
+    if (name1 && name2) {
+      return (!strcmp(name1,name2));
+    }
+    else {
+      return (name1 == name2);
+    }
   }
 
   // omniORB2 internal versions of the OMG TypeCode interface
   CORBA::TCKind  NP_kind() const { return pd_tck; }
+
   CORBA::Boolean NP_equal(const TypeCode_base* TCp,
-			  CORBA::Boolean langEquiv,
+			  CORBA::Boolean equivalent,
 			  const TypeCode_pairlist* pl) const;
+  // If equivalent == 1, perform equivalent test as defined in the
+  //                     CORBA 2.3 TypeCode::equivalent() operation.
+  // else
+  //     perform equality test as defined in the CORBA 2.3 TypeCode::equal()
+  //     operation.
 
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* pl) const;
+  // If equivalent == 1, perform equivalent test as defined in the
+  //                     CORBA 2.3 TypeCode::equivalent() operation.
+  // else
+  //     perform equality test as defined in the CORBA 2.3 TypeCode::equal()
+  //     operation.
 
   virtual const char*    NP_id() const;
   virtual const char*    NP_name() const;
@@ -280,6 +301,14 @@ public:
   // if necassary - ie. the instance it is invoked on really does
   // contain an alias. This is necassary to reduce the number of
   // calls to NP_containsAnAlias that are necassary.
+
+  TypeCode_base* NP_compactTc();
+  // Return a TypeCode equivalent to this, but with the optional
+  // name and member_names removed.
+
+  virtual void removeOptionalNames();
+  // This internal function removes any optional names and member_names
+  // from the typecode
 
   static TypeCode_base* aliasExpand(TypeCode_base* tc);
   // Return a duplicate of <tc> with aliases expanded to
@@ -317,6 +346,13 @@ protected:
   // if one has been generated, 0 otherwise. If the alias expanded
   // version == this, then the reference is not duplicated.
   TypeCode_base* pd_aliasExpandedTc;
+
+  // A pointer to the compact version of this typecode if one has
+  // been generated, 0 otherwise. If the compact version == this,
+  // then the reference is not duplicated.
+  // This compact version  has all the optional name and member_name 
+  // field stripped.
+  TypeCode_base* pd_compactTc;
 
 private:
   TypeCode_base();
@@ -360,7 +396,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual CORBA::ULong NP_length() const;
@@ -397,7 +433,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char* NP_id() const;
@@ -405,6 +441,8 @@ public:
 
   virtual CORBA::Long NP_param_count() const;
   virtual CORBA::Any* NP_parameter(CORBA::Long) const;
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_objref();
@@ -443,7 +481,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char* NP_id() const;
@@ -456,6 +494,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_alias() : TypeCode_base(CORBA::tk_alias) {}
@@ -495,7 +535,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual CORBA::ULong   NP_length() const;
@@ -505,6 +545,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_sequence();
@@ -543,7 +585,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual CORBA::ULong NP_length() const;
@@ -553,6 +595,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_array() : TypeCode_base(CORBA::tk_array) {}
@@ -596,7 +640,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char* NP_id() const;
@@ -609,6 +653,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_struct()
@@ -657,7 +703,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char* NP_id() const;
@@ -670,6 +716,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_except()
@@ -710,7 +758,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char* NP_id() const;
@@ -723,6 +771,8 @@ public:
   CORBA::Long NP_member_index(const char* name) const;
   // Return the index of the member with the given name,
   // or -1 if no such member exists.
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_enum();
@@ -772,7 +822,7 @@ public:
 
   // OMG Interface:
   virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
-					  CORBA::Boolean langEquiv,
+					  CORBA::Boolean equivalent,
 					  const TypeCode_pairlist* tcpl) const;
 
   virtual const char*    NP_id() const;
@@ -801,6 +851,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   virtual TypeCode_base* NP_aliasExpand();
+
+  virtual void removeOptionalNames();
 
 private:
   TypeCode_union();

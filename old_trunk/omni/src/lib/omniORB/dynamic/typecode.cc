@@ -30,6 +30,10 @@
 
 /* 
  * $Log$
+ * Revision 1.26  1999/05/25 17:54:48  sll
+ * Added check for invalid arguments using magic numbers.
+ * Perform casting of integer label values in union members.
+ *
  * Revision 1.25  1999/04/21 13:24:57  djr
  * Fixed bug in generation of typecode alignment tables.
  *
@@ -151,12 +155,26 @@ CORBA::TypeCode::kind() const
 }
 
 CORBA::Boolean
-CORBA::TypeCode::equal(CORBA::TypeCode_ptr TCp,
-		       CORBA::Boolean langEquiv) const
+CORBA::TypeCode::equal(CORBA::TypeCode_ptr TCp) const
 {
   if (!PR_is_valid(TCp)) throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
   return ToConstTcBase_Checked(this)
-    ->NP_equal(ToTcBase_Checked(TCp), langEquiv, 0);
+    ->NP_equal(ToTcBase_Checked(TCp),0,0);
+}
+
+CORBA::Boolean
+CORBA::TypeCode::equivalent(CORBA::TypeCode_ptr TCp) const
+{
+  if (!PR_is_valid(TCp)) throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+  return ToConstTcBase_Checked(this)
+    ->NP_equal(ToTcBase_Checked(TCp),1,0);
+}
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode::get_compact_typecode() const
+{
+  TypeCode_base* tp = (TypeCode_base*)ToConstTcBase_Checked(this);
+  return tp->NP_compactTc();
 }
 
 const char*
@@ -634,7 +652,7 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   : pd_complete(0), pd_mark(0), pd_ref_count(1),
     pd_loop_member(0), pd_internal_ref_count(0),
     pd_cached_paramlist(0),
-    pd_aliasExpandedTc(0), pd_tck(tck)
+    pd_aliasExpandedTc(0), pd_compactTc(0), pd_tck(tck)
 {
   switch( tck ) {
 
@@ -642,7 +660,7 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   case CORBA::tk_void:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_1, 0);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
   case CORBA::tk_boolean:
@@ -650,14 +668,14 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   case CORBA::tk_octet:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_1, 1);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
   case CORBA::tk_short:
   case CORBA::tk_ushort:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_2, 2);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
   case CORBA::tk_long:
@@ -665,13 +683,13 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   case CORBA::tk_float:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_4, 4);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
   case CORBA::tk_double:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_8, 8);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
   case CORBA::tk_any:
@@ -679,7 +697,11 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
   case CORBA::tk_Principal:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addNasty(this);
-    pd_aliasExpandedTc = this;
+    pd_aliasExpandedTc = pd_compactTc = this;
+    break;
+
+  case CORBA::tk_string:
+    pd_compactTc = this;
     break;
 
   default:
@@ -693,6 +715,8 @@ TypeCode_base::~TypeCode_base()
   if( pd_cached_paramlist )  delete pd_cached_paramlist;
   if( pd_aliasExpandedTc && pd_aliasExpandedTc != this )
     TypeCode_collector::releaseRef(pd_aliasExpandedTc);
+  if( pd_compactTc && pd_compactTc != this )
+    TypeCode_collector::releaseRef(pd_compactTc);
 }
 
 
@@ -747,13 +771,13 @@ TypeCode_base::NP_expand(const TypeCode_base* tc)
 
 CORBA::Boolean
 TypeCode_base::NP_equal(const TypeCode_base* TCp,
-			CORBA::Boolean langEquiv,
+			CORBA::Boolean is_equivalent,
 			const TypeCode_pairlist* tcpl) const
 {
   // Check for trivial pointer-based equality
   if (this == TCp) return 1;
 
-  // Check the pairlist for a match
+  // Check the pairlist for a match, for recursive typecodes
   const TypeCode_pairlist* tcpl_iterator = tcpl;
   while (tcpl_iterator != 0)
     {
@@ -767,22 +791,22 @@ TypeCode_base::NP_equal(const TypeCode_base* TCp,
   TypeCode_pairlist tcpl_tmp(tcpl, this, TCp);
 
   // Should we expand the aliases?
-  if (langEquiv)
+  if (is_equivalent)
     {
       const TypeCode_base* tc1_tmp = NP_expand(this);
       const TypeCode_base* tc2_tmp = NP_expand(TCp);
 
-      return tc1_tmp->NP_extendedEqual(tc2_tmp, langEquiv, &tcpl_tmp);
+      return tc1_tmp->NP_extendedEqual(tc2_tmp, 1, &tcpl_tmp);
     }
   else
-    return NP_extendedEqual(TCp, langEquiv, &tcpl_tmp);
+    return NP_extendedEqual(TCp, 0, &tcpl_tmp);
 }
 
 
 CORBA::Boolean
 TypeCode_base::NP_extendedEqual(const TypeCode_base* TCp,
-				CORBA::Boolean langEquiv,
-				const TypeCode_pairlist* tcpl) const
+				CORBA::Boolean,
+				const TypeCode_pairlist*) const
 {
   // Base types are equivalent if their Kinds match
   return NP_kind() == TCp->NP_kind();
@@ -935,6 +959,27 @@ TypeCode_base::aliasExpand(TypeCode_base* tc)
   return TypeCode_collector::duplicateRef(tc->pd_aliasExpandedTc);
 }
 
+TypeCode_base*
+TypeCode_base::NP_compactTc()
+{
+  if ( !pd_compactTc ) {
+    // Bounce this typecode off a membufferedstream.
+    // This ensures that any resursive members are duplicated correctly.
+    MemBufferedStream s;
+    CORBA::TypeCode::marshalTypeCode(this,s);
+    pd_compactTc = ToTcBase(CORBA::TypeCode::unmarshalTypeCode(s));
+    // Now remove all names and member_names from the typecode
+    pd_compactTc->removeOptionalNames();
+  }
+  return TypeCode_collector::duplicateRef(pd_compactTc);
+}
+
+void
+TypeCode_base::removeOptionalNames()
+{
+  return;
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_string //////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -1019,8 +1064,8 @@ TypeCode_string::NP_alignedSimpleParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_string::NP_extendedEqual(const TypeCode_base*  TCp,
-				  CORBA::Boolean langEquiv,
-				  const TypeCode_pairlist* tcpl) const
+				  CORBA::Boolean,
+				  const TypeCode_pairlist*) const
 {
   return ((NP_kind() == TCp->NP_kind()) && (NP_length() == TCp->NP_length()));
 }
@@ -1075,7 +1120,6 @@ TypeCode_objref::TypeCode_objref(const char* repositoryId, const char* name)
 {
   pd_repoId = repositoryId;
   pd_name = name;
-
   pd_alignmentTable.setNumEntries(1);
   pd_alignmentTable.addNasty(this);
 }
@@ -1137,12 +1181,18 @@ TypeCode_objref::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_objref::NP_extendedEqual(const TypeCode_base*  TCp,
-				  CORBA::Boolean langEquiv,
+				  CORBA::Boolean is_equivalent,
 				  const TypeCode_pairlist* ) const
 {
-  return (NP_kind() == TCp->NP_kind()) &&
-    (strcmp(NP_id(), TCp->NP_id()) == 0) &&
-    NP_namesEqualOrNull(NP_name(), TCp->NP_name());
+  if ((NP_kind() != TCp->NP_kind()) || (strcmp(NP_id(), TCp->NP_id()) != 0)) {
+    return 0;
+  }
+  else if (!is_equivalent) {
+    return NP_namesEqual(NP_name(), TCp->NP_name());
+  }
+  else {
+    return 1;
+  }
 }
 
 
@@ -1186,6 +1236,15 @@ TypeCode_objref::NP_parameter(CORBA::Long index) const
   }
 
   return rv;
+}
+
+void
+TypeCode_objref::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_name = (const char*)"";
+    pd_compactTc = this;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1272,13 +1331,22 @@ TypeCode_alias::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_alias::NP_extendedEqual(const TypeCode_base*  TCp,
-				 CORBA::Boolean langEquiv,
+				 CORBA::Boolean is_equivalent,
 				 const TypeCode_pairlist* tcpl) const
 {
-  return (NP_kind() == TCp->NP_kind()) &&
-    NP_namesEqualOrNull(NP_id(), TCp->NP_id()) &&
-    NP_namesEqualOrNull(NP_name(), TCp->NP_name()) &&
-    (NP_content_type()->NP_equal(TCp->NP_content_type(), langEquiv, tcpl));
+  if (NP_kind() != TCp->NP_kind())
+    return 0;
+
+  if (is_equivalent) {
+    if (NP_id() && TCp->NP_id())
+      return NP_namesEqual(NP_id(),TCp->NP_id());
+  }
+  else {
+    if (!NP_namesEqual(NP_id(),TCp->NP_id()))
+      return 0;
+  }
+
+  return (NP_equal(TCp->NP_content_type(),is_equivalent, tcpl));
 }
 
 
@@ -1347,6 +1415,16 @@ TypeCode_alias::NP_aliasExpand()
     return ToTcBase(pd_content)->NP_aliasExpand();
   else
     return TypeCode_collector::duplicateRef(ToTcBase(pd_content));
+}
+
+void
+TypeCode_alias::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    pd_name = (const char*)"";
+    ToTcBase(pd_content)->removeOptionalNames();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1470,12 +1548,13 @@ TypeCode_sequence::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_sequence::NP_extendedEqual(const TypeCode_base*  TCp,
-				    CORBA::Boolean langEquiv,
+				    CORBA::Boolean is_equivalent,
 				    const TypeCode_pairlist* tcpl) const
 {
-  return (NP_kind() == TCp->NP_kind()) &&
-    (NP_length() == TCp->NP_length()) &&
-    (NP_content_type()->NP_equal(TCp->NP_content_type(), langEquiv, tcpl));
+  if ((NP_kind() != TCp->NP_kind()) || (NP_length() != TCp->NP_length()))
+    return 0;
+  else
+    return (NP_content_type()->NP_equal(TCp->NP_content_type(),is_equivalent,tcpl));
 }
 
 
@@ -1549,6 +1628,15 @@ TypeCode_sequence::NP_aliasExpand()
   }
 }
 
+void
+TypeCode_sequence::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    ToTcBase(pd_content)->removeOptionalNames();
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_array ///////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -1616,12 +1704,13 @@ TypeCode_array::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_array::NP_extendedEqual(const TypeCode_base*  TCp,
-				 CORBA::Boolean langEquiv,
+				 CORBA::Boolean is_equivalent,
 				 const TypeCode_pairlist* tcpl) const
 {
-  return (NP_kind() == TCp->NP_kind()) &&
-    (NP_length() == TCp->NP_length()) &&
-    (NP_content_type()->NP_equal(TCp->NP_content_type(), langEquiv, tcpl));
+  if ((NP_kind() != TCp->NP_kind()) || (NP_length() != TCp->NP_length()))
+    return 0;
+  else
+    return (NP_content_type()->NP_equal(TCp->NP_content_type(),is_equivalent,tcpl));
 }
 
 
@@ -1725,6 +1814,15 @@ TypeCode_array::NP_aliasExpand()
   return newtc;
 }
 
+void
+TypeCode_array::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    ToTcBase(pd_content)->removeOptionalNames();
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_struct //////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -1738,7 +1836,6 @@ TypeCode_struct::TypeCode_struct(char* repositoryId, char* name,
   pd_name = name;
   pd_nmembers = memberCount;
   pd_members = members;
-
   NP_complete_recursive_sequences(this, 0);
 
   generateAlignmentTable();
@@ -1859,25 +1956,36 @@ TypeCode_struct::NP_alignedComplexParamSize(size_t initialoffset,
 // OMG Interface:
 CORBA::Boolean
 TypeCode_struct::NP_extendedEqual(const TypeCode_base*  TCp,
-				  CORBA::Boolean langEquiv,
+				  CORBA::Boolean is_equivalent,
 				  const TypeCode_pairlist* tcpl) const
 {
-  if ((NP_kind() == TCp->NP_kind()) &&
-      NP_namesEqualOrNull(NP_id(), TCp->NP_id()) &&
-      NP_namesEqualOrNull(NP_name(), TCp->NP_name()) &&
-      (pd_nmembers == TCp->NP_member_count())) {
+  if (NP_kind() != TCp->NP_kind())
+    return 0;
 
-    for( CORBA::ULong i=0; i < pd_nmembers; i++ ) {
-      if ((!NP_namesEqualOrNull(pd_members[i].name, TCp->NP_member_name(i)))
-	  || (!ToTcBase(pd_members[i].type)->NP_equal(TCp->NP_member_type(i),
-						    langEquiv, tcpl)))
-	return 0;
-    }
-
-    return 1;
+  if (is_equivalent) {
+    if (NP_id() && TCp->NP_id())
+      return NP_namesEqual(NP_id(),TCp->NP_id());
+  }
+  else {
+    if (!NP_namesEqual(NP_id(),TCp->NP_id()))
+      return 0;
   }
 
-  return 0;
+  if (pd_nmembers != TCp->NP_member_count())
+    return 0;
+
+  if (!is_equivalent && !NP_namesEqual(NP_name(),TCp->NP_name()))
+    return 0;
+
+  for( CORBA::ULong i=0; i < pd_nmembers; i++ ) {
+    if ((!is_equivalent && !NP_namesEqual(pd_members[i].name, 
+				       TCp->NP_member_name(i))) ||
+	(!ToTcBase(pd_members[i].type)->NP_equal(TCp->NP_member_type(i),
+						 is_equivalent, tcpl)))
+      return 0;
+  }
+
+  return 1;
 }
 
 
@@ -2081,6 +2189,20 @@ TypeCode_struct::NP_aliasExpand()
 			     members, pd_nmembers);
 }
 
+void
+TypeCode_struct::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    pd_name = (const char*)"";
+    for (CORBA::ULong i=0; i< pd_nmembers; i++) {
+      CORBA::string_free(pd_members[i].name);
+      pd_members[i].name = CORBA::string_dup("");
+      ToTcBase(pd_members[i].type)->removeOptionalNames();
+    }
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_except //////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2215,25 +2337,31 @@ TypeCode_except::NP_alignedComplexParamSize(size_t initialoffset,
 // OMG Interface:
 CORBA::Boolean
 TypeCode_except::NP_extendedEqual(const TypeCode_base*  TCp,
-				  CORBA::Boolean langEquiv,
+				  CORBA::Boolean is_equivalent,
 				  const TypeCode_pairlist* tcpl) const
 {
-  if ((NP_kind() == TCp->NP_kind()) &&
-      (strcmp(NP_id(), TCp->NP_id()) == 0) &&
-      NP_namesEqualOrNull(NP_name(), TCp->NP_name()) &&
-      (pd_nmembers == TCp->NP_member_count())) {
+  if (NP_kind() != TCp->NP_kind())
+    return 0;
 
-    for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
-      if ((!NP_namesEqualOrNull(pd_members[i].name, TCp->NP_member_name(i)))
-	  || (!ToTcBase(pd_members[i].type)->NP_equal(TCp->NP_member_type(i),
-						    langEquiv, tcpl)))
-	return 0;
-    }
-
+  if (strcmp(NP_id(), TCp->NP_id()) != 0)
+    return 0;
+  else if (is_equivalent)
     return 1;
+
+  if (pd_nmembers != TCp->NP_member_count())
+    return 0;
+
+  if (!NP_namesEqual(NP_name(),TCp->NP_name()))
+    return 0;
+
+  for( CORBA::ULong i=0; i < pd_nmembers; i++ ) {
+    if ((!NP_namesEqual(pd_members[i].name, TCp->NP_member_name(i))) ||
+	(!ToTcBase(pd_members[i].type)->NP_equal(TCp->NP_member_type(i),
+						 0, tcpl)))
+      return 0;
   }
 
-  return 0;
+  return 1;
 }
 
 
@@ -2437,6 +2565,20 @@ TypeCode_except::NP_aliasExpand()
 			     members, pd_nmembers);
 }
 
+void
+TypeCode_except::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    pd_name = (const char*)"";
+    for (CORBA::ULong i=0; i< pd_nmembers; i++) {
+      CORBA::string_free(pd_members[i].name);
+      pd_members[i].name = CORBA::string_dup("");
+      ToTcBase(pd_members[i].type)->removeOptionalNames();
+    }
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// TypeCode_enum ///////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2449,7 +2591,6 @@ TypeCode_enum::TypeCode_enum(const char* repositoryId,
   pd_repoId = repositoryId;
   pd_name = name;
   pd_members = members;
-
   pd_alignmentTable.setNumEntries(1);
   pd_alignmentTable.addSimple(omni::ALIGN_4, 4);
 }
@@ -2508,25 +2649,37 @@ TypeCode_enum::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_enum::NP_extendedEqual(const TypeCode_base* TCp,
-				CORBA::Boolean langEquiv,
+				CORBA::Boolean is_equivalent,
 				const TypeCode_pairlist*) const
 {
-  if ((NP_kind() == TCp->NP_kind()) &&
-      NP_namesEqualOrNull(NP_id(), TCp->NP_id()) &&
-      NP_namesEqualOrNull(NP_name(), TCp->NP_name()) &&
-      (pd_members.length() == TCp->NP_member_count()))
-    {
-      CORBA::ULong memberCount = pd_members.length();
-      TypeCode_enum* TCe = (TypeCode_enum*) TCp;
+  if (NP_kind() != TCp->NP_kind())
+    return 0;
 
-      for( CORBA::ULong i=0; i < memberCount; i++ )
-	if( !NP_namesEqualOrNull(pd_members[i], TCe->pd_members[i]) )
-	  return 0;
+  if (is_equivalent) {
+    if (NP_id() && TCp->NP_id())
+      return NP_namesEqual(NP_id(),TCp->NP_id());
+  }
+  else {
+    if (!NP_namesEqual(NP_id(),TCp->NP_id()))
+      return 0;
+  }
 
-      return 1;
-    }
+  if (pd_members.length() != TCp->NP_member_count())
+    return 0;
 
-  return 0;
+  if (!is_equivalent) {
+    if (!NP_namesEqual(NP_name(),TCp->NP_name()))
+      return 0;
+
+    CORBA::ULong memberCount = pd_members.length();
+    TypeCode_enum* TCe = (TypeCode_enum*) TCp;
+
+    for( CORBA::ULong i=0; i < memberCount; i++ )
+      if( !NP_namesEqual(pd_members[i], TCe->pd_members[i]) )
+	return 0;
+  }
+
+  return 1;
 }
 
 
@@ -2605,6 +2758,18 @@ TypeCode_enum::NP_member_index(const char* name) const
   return -1;
 }
 
+void
+TypeCode_enum::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    pd_name = (const char*)"";
+    for (CORBA::ULong i=0; i < pd_members.length(); i++) {
+      pd_members[i] = (const char*)"";
+    }
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_union ///////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2637,7 +2802,7 @@ TypeCode_union::TypeCode_union(const char* repositoryId,
 
     CORBA::TypeCode_var lbl_tc = members[i].label.type();
 
-    if( CORBA::_tc_octet->equal(lbl_tc) )
+    if( CORBA::_tc_octet->equivalent(lbl_tc) )
       {
 	if( pd_default >= 0 )
 	  throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
@@ -2833,35 +2998,56 @@ TypeCode_union::NP_alignedComplexParamSize(size_t initialoffset,
 
 CORBA::Boolean
 TypeCode_union::NP_extendedEqual(const TypeCode_base*  TCp,
-				  CORBA::Boolean langEquiv,
+				  CORBA::Boolean is_equivalent,
 				  const TypeCode_pairlist* tcpl) const
 {
-  if( (NP_kind() == TCp->NP_kind()) &&
-      NP_namesEqualOrNull(NP_id(), TCp->NP_id()) &&
-      NP_namesEqualOrNull(NP_name(), TCp->NP_name()) &&
-      (NP_discriminator_type()->NP_equal(TCp->NP_discriminator_type(),
-					 langEquiv, tcpl)) &&
-      (NP_default_index() == TCp->NP_default_index() ||
-       NP_default_index() < 0 && TCp->NP_default_index() < 0) &&
-      (NP_member_count() == TCp->NP_member_count())) {
-    const CORBA::ULong memberCount = pd_members.length();
+  if (NP_kind() != TCp->NP_kind())
+    return 0;
 
-    TypeCode_union* uTCp = (TypeCode_union*)TCp;
-
-    for( CORBA::ULong i = 0; i < memberCount; i++ ) {
-      if( (CORBA::Long(i) != NP_default_index() &&
-	   pd_members[i].alabel != uTCp->pd_members[i].alabel) ||
-	  !NP_namesEqualOrNull(pd_members[i].aname,
-			       uTCp->pd_members[i].aname) ||
-	  !ToTcBase(pd_members[i].atype)->
-	  NP_equal(ToTcBase(uTCp->pd_members[i].atype), langEquiv, tcpl) )
-	return 0;
-    }
-
-    return 1;
+  if (is_equivalent) {
+    if (NP_id() && TCp->NP_id())
+      return NP_namesEqual(NP_id(),TCp->NP_id());
+  }
+  else {
+    if (!NP_namesEqual(NP_id(),TCp->NP_id()))
+      return 0;
   }
 
-  return 0;
+  if (!is_equivalent && !NP_namesEqual(NP_name(),TCp->NP_name()))
+    return 0;
+
+  if (NP_member_count() != TCp->NP_member_count())
+    return 0;
+
+  if (NP_default_index() != TCp->NP_default_index() &&
+      (NP_default_index() >= 0 || TCp->NP_default_index() >= 0)) {
+    return 0;
+  }
+
+  if (!(NP_discriminator_type()->NP_equal(TCp->NP_discriminator_type(),
+					  is_equivalent, tcpl))) {
+    return 0;
+  }
+
+  const CORBA::ULong memberCount = pd_members.length();
+
+  TypeCode_union* uTCp = (TypeCode_union*)TCp;
+
+  for( CORBA::ULong i = 0; i < memberCount; i++ ) {
+    if ((CORBA::Long(i) != NP_default_index() &&
+	 pd_members[i].alabel != uTCp->pd_members[i].alabel) ||
+	!ToTcBase(pd_members[i].atype)->
+	 NP_equal(ToTcBase(uTCp->pd_members[i].atype), is_equivalent, tcpl) ) {
+      return 0;
+    }
+
+    if (!is_equivalent && !NP_namesEqual(pd_members[i].aname,
+				      uTCp->pd_members[i].aname)) {
+      return 0;
+    }
+  }
+
+  return 1;
 }
 
 
@@ -3136,6 +3322,21 @@ TypeCode_union::NP_aliasExpand()
   }
 
   return utc;
+}
+
+void
+TypeCode_union::removeOptionalNames()
+{
+  if (!pd_compactTc) {
+    pd_compactTc = this;
+    pd_name = (const char*)"";
+    ToTcBase(pd_discrim_tc)->removeOptionalNames();
+
+    for (CORBA::ULong i=0; i< pd_members.length(); i++) {
+      pd_members[i].aname = CORBA::string_dup("");
+      ToTcBase(pd_members[i].atype)->removeOptionalNames();
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -4370,7 +4571,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
     case CORBA::tk_enum:
       {
 	// check that <label> is of the correct type
-	if( !tc->equal(lbl_tc) )
+	if( !tc->equivalent(lbl_tc) )
 	  throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
       }
     default:
