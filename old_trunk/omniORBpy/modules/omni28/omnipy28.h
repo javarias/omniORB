@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.8  1999/09/29 09:05:03  dpg1
+// Now releases the Python interpreter lock before invoke's call to
+// _is_a().
+//
 // Revision 1.7  1999/09/28 14:23:30  dpg1
 // Fixed some bugs in handling the Python interpreter lock.
 //
@@ -189,7 +193,6 @@ _CORBA_MODULE_VAR omni_mutex          pyInterpreterLock;
 
 _CORBA_MODULE_VAR PyObject* pyCORBAmodule;	// The CORBA module
 _CORBA_MODULE_VAR PyObject* pyCORBAsysExcMap;	//  The system exception map
-_CORBA_MODULE_VAR PyObject* pyCORBAnilObject;	//  The nil object
 _CORBA_MODULE_VAR PyObject* pyCORBAAnyClass;    //  Any class
 _CORBA_MODULE_VAR PyObject* pyomniORBmodule;	// The omniORB module
 _CORBA_MODULE_VAR PyObject* pyomniORBobjrefMap;	//  The objref class map

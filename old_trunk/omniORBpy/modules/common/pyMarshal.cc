@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/09/24 09:22:03  dpg1
+// Added copyright notices.
+//
 // Revision 1.6  1999/09/22 15:46:12  dpg1
 // Fake POA implemented.
 //
@@ -179,7 +182,15 @@ omniPy::alignedSize(CORBA::ULong msgsize,
     {
       assert(tup);
 
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+      CORBA::Object_ptr obj;
+      
+      if (a_o == Py_None) {
+	// Nil object reference
+	obj = CORBA::Object::_nil();
+      }
+      else {
+	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+      }
 
       if (!obj) throw CORBA::BAD_PARAM();
 
@@ -651,8 +662,17 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
-      const char* repoId    = obj->PR_getobj()->NP_IRRepositoryId();
+      CORBA::Object_ptr obj;
+
+      if (a_o == Py_None) {
+	// Nil object reference
+	obj = CORBA::Object::_nil();
+      }
+      else {
+	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+      }
+
+      const char* repoId = obj->PR_getobj()->NP_IRRepositoryId();
 
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }
@@ -1033,8 +1053,17 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
-      const char* repoId    = obj->PR_getobj()->NP_IRRepositoryId();
+      CORBA::Object_ptr obj;
+
+      if (a_o == Py_None) {
+	// Nil object reference
+	obj = CORBA::Object::_nil();
+      }
+      else {
+	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+      }
+
+      const char* repoId = obj->PR_getobj()->NP_IRRepositoryId();
 
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }

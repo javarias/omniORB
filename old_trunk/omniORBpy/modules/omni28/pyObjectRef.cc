@@ -32,6 +32,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.5  1999/09/24 09:22:03  dpg1
+// Added copyright notices.
+//
 // Revision 1.4  1999/09/22 15:46:12  dpg1
 // Fake POA implemented.
 //
@@ -63,19 +66,12 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 			    const CORBA::Object_ptr objref)
 {
   if (CORBA::is_nil(objref)) {
-    Py_INCREF(pyCORBAnilObject);
-    return pyCORBAnilObject;
+    Py_INCREF(Py_None);
+    return Py_None;
   }
-  omniObject* oobj = objref->PR_getobj();
+  omniObject*    oobj = objref->PR_getobj();
 
-  /*
-  if (!oobj->is_proxy()) {
-    cerr << "Received a non-proxy object. Not yet implemented!" << endl;
-    abort();
-  }
-  */
   const char*    actualRepoId = oobj->NP_IRRepositoryId();
-
   PyObject*      objrefClass;
   CORBA::Boolean fullTypeUnknown = 0;
 
