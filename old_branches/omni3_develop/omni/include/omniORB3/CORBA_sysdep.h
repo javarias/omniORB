@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.21  2001/04/23 14:50:20  dpg1
+ Extend GCC check to cope with GCC 3.
+
  Revision 1.1.2.20  2000/12/04 13:46:43  dpg1
  Support PowerPC Linux.
 
@@ -364,6 +367,10 @@
 #define HAS_Cplusplus_Namespace
 #define HAS_Cplusplus_Bool
 #define OMNI_REQUIRES_FQ_BASE_CTOR
+#define HAS_LongLong
+#define _CORBA_LONGLONG_DECL long long
+#define _CORBA_ULONGLONG_DECL unsigned long long
+#define _CORBA_LONGLONG_CONST(x) (x##LL)
 #endif
 
 #if  _MIPS_SZINT == 64
