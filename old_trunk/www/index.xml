@@ -8,16 +8,22 @@
 <p>
 <ul>
   <li>
-    23 May 2002 - As expected, many uk.research.att.com services,
-    including the omniORB mailing list, are down while they are moved
-    to new locations. Everything should be working again soon...
+    <b>Coming soon</b> - Commercial support for omniORB. Contact <a
+    href="mailto:info@omniorb-support.com">info@omniorb-support.com</a>
+    for more details if you are impatient.
   </li>
   <li>
-    22 May 2002 - SourceForge web pages installed.
+    <b>23 May 2002</b> - As expected, many uk.research.att.com
+    services, including the omniORB mailing list, are down while they
+    are moved to new locations. Everything should be working again
+    soon...
   </li>
   <li>
-    24 April 2002 - AT&amp;T Laboratories Cambridge closed. omniORB is
-    now independent.
+    <b>22 May 2002</b> - SourceForge web pages installed.
+  </li>
+  <li>
+    <b>24 April 2002</b> - AT&amp;T Laboratories Cambridge closed.
+    omniORB is now independent.
   </li>
 </ul>
 </p>
