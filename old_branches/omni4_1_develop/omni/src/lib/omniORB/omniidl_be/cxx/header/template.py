@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.5  2004/07/23 10:29:59  dgrisby
+# Completely new, much simpler Any implementation.
+#
 # Revision 1.8.2.4  2004/07/04 23:53:39  dgrisby
 # More ValueType TypeCode and Any support.
 #
@@ -1248,7 +1251,7 @@ extern CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp);
 
 any_exception = """\
 void operator<<=(CORBA::Any& _a, const @fqname@& _s);
-void operator<<=(CORBA::Any& _a, @fqname@* _sp);
+void operator<<=(CORBA::Any& _a, const @fqname@* _sp);
 CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp);
 """
 
