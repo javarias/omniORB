@@ -10,6 +10,16 @@
 
 /*
   $Log$
+ * Revision 1.4  1997/03/10  11:34:24  sll
+ * - T_var types can now be passed directly as arguments to operations that
+ *   have variable length data types as INOUT and OUT parameters.
+ * - New templates: _CORBA_ObjRef_INOUT_arg, _CORBA_ObjRef_OUT_arg,
+ *                  _CORBA_ConstrType_Variable_OUT_arg,
+ *                  _CORBA_Sequence_OUT_arg, _CORBA_Array_OUT_arg
+ *                  _CORBA_Sequence_Var
+ * - template _CORBA_ObjRef_Member now has the missing operator->
+ * - other minor cleanups.
+ *
   Revision 1.3  1997/02/04 13:56:07  sll
   Backup the previous change when DEC C++ compiler is used.
 
@@ -105,9 +115,9 @@ public:
   inline _CORBA_ObjRef_Var<T,T_Helper> &operator= (T * p);
   inline _CORBA_ObjRef_Var<T,T_Helper> &operator= (const _CORBA_ObjRef_Var<T,T_Helper> &p);
  inline _CORBA_ObjRef_Var<T,T_Helper> &operator= (const _CORBA_ObjRef_Member<T,T_Helper>&);
-  inline T* operator->() { return pd_objref; }
+  inline T* operator->() const { return (T*) pd_objref; }
 
-  inline operator T* () { return pd_objref; }
+  inline operator T* () const { return pd_objref; }
 
   friend class _CORBA_ObjRef_Member<T,T_Helper>;
   friend class _CORBA_ObjRef_INOUT_arg<T,
@@ -139,7 +149,7 @@ public:
   inline _CORBA_ObjRef_Member<T,T_Helper> &operator= (const _CORBA_ObjRef_Member<T,T_Helper> &p);
   inline _CORBA_ObjRef_Member<T,T_Helper> &operator= (const _CORBA_ObjRef_Var<T,T_Helper> &p);
 
-  inline T* operator->() { return _ptr; }
+  inline T* operator->() const { return (T*)_ptr; }
 
   inline size_t NP_alignedSize(size_t initialoffset) const;
   inline void operator>>= (NetBufferedStream &s) const;
@@ -150,7 +160,7 @@ public:
   // The following conversion operators are needed to support the
   // implicit conversion from this type to its T* data member.
   // They are used when this type is used as the rvalue of an expression.
-  inline operator T* () { return _ptr; }
+  inline operator T* () const { return _ptr; }
 
   T *_ptr;
 };
@@ -204,10 +214,10 @@ public:
     pd_data = p;
     return *this;
   }
-  inline T* operator->() { return &pd_data; }
+  inline T* operator->() const { return (T*) &pd_data; }
 
 #if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
-  inline operator T& ()  { return pd_data; }
+  inline operator T& () const { return (T&)pd_data; }
 #else
   inline operator const T& () const { return pd_data; }
   inline operator T& () { return pd_data; }
@@ -239,10 +249,10 @@ public:
   inline ~_CORBA_ConstrType_Variable_Var() {  if (pd_data) delete pd_data; }
   inline _CORBA_ConstrType_Variable_Var<T> &operator= (T* p);
   inline _CORBA_ConstrType_Variable_Var<T> &operator= (const _CORBA_ConstrType_Variable_Var<T> &p);
-  inline T* operator->() { return pd_data; }
+  inline T* operator->() const { return (T*)pd_data; }
 
 #if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
-  inline operator T& () const { return *pd_data; }
+  inline operator T& () const { return (T&) *pd_data; }
 #else
   inline operator const T& () const { return *pd_data; }
   inline operator T& () { return *pd_data; }
@@ -294,7 +304,7 @@ public:
   inline const ElmType &operator[] (_CORBA_ULong index) const {
     return (pd_data->NP_data())[index];
   }
-  inline T* operator->() { return pd_data; }
+  inline T* operator->() const { return (T*)pd_data; }
 
 #if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
   inline operator T& () const { return *pd_data; }
@@ -346,7 +356,7 @@ public:
   inline _CORBA_Array_Var<T_Helper,T> &operator= (const _CORBA_Array_Var<T_Helper,T>& p);
   inline T& operator[] (_CORBA_ULong index) { return *(pd_data + index); }
   inline const T& operator[] (_CORBA_ULong index) const { return *(pd_data + index);  }
-  inline operator T* () { return pd_data; }
+  inline operator T* () const { return pd_data; }
   inline operator const T* () const { return pd_data; }
 
   friend class _CORBA_Array_OUT_arg<T, _CORBA_Array_Var<T_Helper,T> >;
@@ -378,7 +388,7 @@ public:
   }
   inline T& operator[] (_CORBA_ULong index) { return *(pd_data + index); }
   inline const T& operator[] (_CORBA_ULong index) const { return *(pd_data + index); }
-  inline operator T* () { return pd_data; }
+  inline operator T* () const { return pd_data; }
   inline operator const T* () const { return pd_data; }
 private:
   T* pd_data;
