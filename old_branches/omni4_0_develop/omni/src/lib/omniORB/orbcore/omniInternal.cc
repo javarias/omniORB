@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.2.2.3  2000/10/03 17:37:08  sll
+  Changed omniIOR synchronisation mutex from omni::internalLock to its own
+  mutex.
+
   Revision 1.2.2.2  2000/09/27 18:39:33  sll
   Updated to use omniIOR to store and pass the repository ID and IOP profiles
   of an IOR.
@@ -575,10 +579,7 @@ omni::createObjRef(const char* targetRepoId,
   CORBA::Boolean is_local = 0;
 
   if( !ropeFactory::iorToRope(ior, rope, is_local) ) {
-    if (locked)
-      ior->releaseNoLock();
-    else
-      ior->release();
+    ior->release();
     return 0;
   }
 
@@ -633,10 +634,7 @@ omni::createObjRef(const char* targetRepoId,
       target_intf_not_confirmed = 1;
   }
 
-  if (locked)
-    ior->duplicateNoLock();
-  else
-    ior->duplicate();
+  ior->duplicate();
 
   omniRemoteIdentity* id = new omniRemoteIdentity(ior,rope);
 
@@ -704,7 +702,7 @@ omni::createObjRef(const char* targetRepoId,
 	objref_rc_lock->unlock();
 
 	if( !dying ) {
-	  ior->releaseNoLock();
+	  ior->release();
 	  return objref;
 	}
       }
@@ -730,7 +728,7 @@ omni::createObjRef(const char* targetRepoId,
 	<< (const char*)ior->repositoryID << ".\n";
     }
 
-    ior->releaseNoLock();
+    ior->release();
     return 0;
   }
 
@@ -773,7 +771,7 @@ omni::createObjRef(const char* targetRepoId,
     if( !remote_id ) {
       Rope* rope = omniObjAdapter::defaultLoopBack();
       rope->incrRefCount();
-      ior->duplicateNoLock();
+      ior->duplicate();
       remote_id = new omniRemoteIdentity(ior, rope);
     }
   }
