@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/05/07 00:28:32  dgrisby
+  Turn off Nagle's algorithm. Fixes odd Linux loopback behaviour.
+
   Revision 1.1.2.11  2002/04/29 11:52:51  dgrisby
   More fixes for FreeBSD, Darwin, Windows.
 
@@ -155,7 +158,7 @@ sslEndpoint::Bind() {
   {
     // Prevent Nagle's algorithm
     int valtrue = 1;
-    if (setsockopt(pd_socket,SOL_TCP,TCP_NODELAY,
+    if (setsockopt(pd_socket,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
       CLOSESOCKET(pd_socket);
       pd_socket = RC_INVALID_SOCKET;
