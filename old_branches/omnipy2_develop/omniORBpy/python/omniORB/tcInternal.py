@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.10.2.4  2002/03/11 15:40:05  dpg1
+# _get_interface support, exception minor codes.
+#
 # Revision 1.10.2.3  2001/05/14 14:49:39  dpg1
 # Fix get_compact_typecode() and equivalent()
 #
@@ -980,4 +983,4 @@ def removeIndirections(desc):
             removeIndirections(desc[i])
 
     elif k == tv__indirect:
-        del(desc[1][0])
+        desc[1][0] = None
