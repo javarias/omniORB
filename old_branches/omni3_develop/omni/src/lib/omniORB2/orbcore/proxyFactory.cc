@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/08/18 12:14:20  dme
+  Allow replacement of proxyObjectFactories
+  Don't mask omniORB::fatalException on server side
+
   Revision 1.1.2.1  1999/09/22 14:27:05  djr
   Major rewrite of orbcore to support POA.
 
@@ -109,9 +113,9 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
 void
 proxyObjectFactory::shutdown()
 {
-  delete[] ofl;
   ofl_size = 0;
   ofl_len = 0;
+  delete[] ofl;
 }
 
 
@@ -119,8 +123,11 @@ proxyObjectFactory*
 proxyObjectFactory::lookup(const char* repoId)
 {
   // Factories should all be registered before the ORB is initialised,
-  // so at this point the list is read-only -- so concurrent reads
-  // are safe.
+  // so at this point the list is read-only. Concurrent accesses are
+  // safe, except that the list is deleted when the ORB is shutdown.
+  // There is a very small possibility that we will segfault below,
+  // but that can only happen if the application is creating an object
+  // reference at the same time as they are shutting down the ORB.
 
   OMNIORB_ASSERT(repoId);
 
