@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.8  2002/04/25 20:33:20  dgrisby
+# Better job of looking for omnicpp.
+#
 # Revision 1.17.2.7  2002/03/13 17:41:42  dpg1
 # omniidl had problems finding omnicpp on Windows.
 #
@@ -177,7 +180,7 @@ def parseArgs(args):
     try:
         opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:n:kKC:dVuhvqp:iTP")
     except getopt.error, e:
-        sys.stderr.write("Error in arguments: " + e + "\n")
+        sys.stderr.write("Error in arguments: -" + e.opt + "\n")
         sys.stderr.write("Use '" + cmdname + " -u' for usage\n")
         sys.exit(1)
 
