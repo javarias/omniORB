@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.13  2003/05/22 13:41:40  dgrisby
+ HPUX patches.
+
  Revision 1.2.2.12  2003/01/16 12:47:08  dgrisby
  Const cast macro. Thanks Matej Kenda.
 
@@ -208,14 +211,14 @@ public:
 #endif
 
   inline char& operator[] (_CORBA_ULong index_) {
-    if (!_data || (_CORBA_ULong)strlen(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
   }
 
   inline char operator[] (_CORBA_ULong index_) const {
-    if (!_data || (_CORBA_ULong)strlen(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
@@ -308,14 +311,14 @@ public:
   inline _CORBA_String_member& operator=(const _CORBA_String_element& s);
 
   inline char& operator[] (_CORBA_ULong index_) {
-    if (!_ptr || (_CORBA_ULong)strlen(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
   }
 
   inline char operator[] (_CORBA_ULong index_) const {
-    if (!_ptr || (_CORBA_ULong)strlen(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
@@ -423,14 +426,14 @@ public:
   }
 
   inline char& operator[] (_CORBA_ULong index_) {
-    if (!((char*)pd_data) || (_CORBA_ULong)strlen(pd_data) < index_) {
+    if (!((char*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];
   }
 
   inline char operator[] (_CORBA_ULong index_) const {
-    if (!((char*)pd_data) || (_CORBA_ULong)strlen(pd_data) < index_) {
+    if (!((char*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];

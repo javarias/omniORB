@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2003/01/16 12:47:08  dgrisby
+  Const cast macro. Thanks Matej Kenda.
+
   Revision 1.1.2.9  2003/01/14 11:48:16  dgrisby
   Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -178,14 +181,14 @@ public:
 #endif
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!_data || (_CORBA_ULong)_CORBA_WString_helper::len(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!_data || (_CORBA_ULong)_CORBA_WString_helper::len(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
@@ -278,14 +281,14 @@ public:
   inline _CORBA_WString_member& operator=(const _CORBA_WString_element& s);
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!_ptr || (_CORBA_ULong)_CORBA_WString_helper::len(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!_ptr || (_CORBA_ULong)_CORBA_WString_helper::len(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
@@ -392,16 +395,14 @@ public:
   }
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!((_CORBA_WChar*)pd_data) ||
-	(_CORBA_ULong)_CORBA_WString_helper::len(pd_data) < index_) {
+    if (!((_CORBA_WChar*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!((_CORBA_WChar*)pd_data) ||
-	(_CORBA_ULong)_CORBA_WString_helper::len(pd_data) < index_) {
+    if (!((_CORBA_WChar*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];
