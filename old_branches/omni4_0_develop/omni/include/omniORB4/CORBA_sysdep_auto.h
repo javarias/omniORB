@@ -30,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  2002/02/18 11:59:12  dpg1
+ Full autoconf support.
+
  Revision 1.1.2.1  2002/01/15 16:38:10  dpg1
  On the road to autoconf. Dependencies refactored, configure.ac
  written. No makefiles yet.
@@ -71,10 +74,17 @@
 #  define _CORBA_LONGLONG_CONST(x) (x##LL)
 #endif
 
-#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE > 8)
+
+#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE == 16)
 #  define HAS_LongDouble
 #  define _CORBA_LONGDOUBLE_DECL long double
 #endif
+
+#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE == 12) && defined(__i386__)
+#  define HAS_LongDouble
+#  define _CORBA_LONGDOUBLE_DECL long double
+#endif
+
 
 #ifndef _CORBA_WCHAR_DECL
 #  if defined(SIZEOF_WCHAR_T) && (SIZEOF_WCHAR_T > 0)
