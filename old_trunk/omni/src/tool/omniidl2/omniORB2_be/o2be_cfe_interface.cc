@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.14  1998/08/06 16:23:27  sll
+  *** empty log message ***
+
   Revision 1.13  1998/05/20 18:24:13  sll
   New option (-t) enable the generation of tie implementation template.
 
@@ -82,51 +85,48 @@ int optind = 1;
 int
 getopt(int num_args, char* const* args, const char* optstring)
 {
-if (optind == num_args) return EOF;
-char* buf_left = *(args+optind);
+  if (optind == num_args)
+    return EOF;
 
-if (buf_left == NULL || (*buf_left != '-' && *buf_left != '/')) return EOF;
-else if ((optind < (num_args-1)) && strcmp(buf_left,"-") == 0 && strcmp(*(args+optind+1),"-") == 0)
-	{
-		optind+=2;
-		return EOF;
-	}
-else if (strcmp(buf_left,"-") == 0)
-	{
-		optind++;
-		return '?';
-	}
+  char* buf_left = *(args+optind);
 
-for(int count = 0; count < strlen(optstring); count++)
-	{
-	if (optstring[count] == ':') continue;
-	if (buf_left[1] == optstring[count])
-		{
-		 if(optstring[count+1] == ':')
-		  {
-			if (strlen(buf_left) > 2)
-			 {
-				optarg = (buf_left+2);
-				optind++;
-			 }
-			else if (optind < (num_args-1))
-			 {
-				optarg = *(args+optind+1);
-				optind+=2;
-			 }
-			else
-			 {
-				optind++;
-				return '?';
-			 }
-		  }
-		  else optind++;
+  if (buf_left == NULL || (*buf_left != '-' && *buf_left != '/')) 
+    return EOF;
+  else if ((optind < (num_args-1)) && strcmp(buf_left,"-") == 0 
+	   && strcmp(*(args+optind+1),"-") == 0) {
+    optind+=2;
+    return EOF;
+  }
+  else if (strcmp(buf_left,"-") == 0) {
+    optind++;
+    return '?';
+  }
 
-		  return buf_left[1];
-		}
+  for(int count = 0; count < strlen(optstring); count++) {
+    if (optstring[count] == ':') 
+      continue;
+    if (buf_left[1] == optstring[count]) {
+      if(optstring[count+1] == ':') {
+	if (strlen(buf_left) > 2) {
+	  optarg = (buf_left+2);
+	  optind++;
 	}
-optind++;
-return '?';
+	else if (optind < (num_args-1)) {
+	  optarg = *(args+optind+1);
+	  optind+=2;
+	}
+	else {
+	  optind++;
+	  return '?';
+	}
+      }
+      else
+	optind++;
+      return buf_left[1];
+    }
+  }
+  optind++;
+  return '?';
 }
 
 #endif
