@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/09/03 13:28:09  sll
+  In the calldescriptor, in addition to the first address, record the current
+  address in use.
+
   Revision 1.1.4.4  2001/08/03 17:41:17  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -81,6 +85,9 @@ GIOP_C::initialise(const omniIOR* i,
   state(IOP_C::Idle);
   ior(i);
   calldescriptor(calldesc);
+  unsigned long secs,nanosecs;
+  calldesc->getDeadline(secs,nanosecs);
+  setDeadline(secs,nanosecs);
   key(k);
   keysize(ksz);
   requestId(pd_strand->newSeqNumber());
