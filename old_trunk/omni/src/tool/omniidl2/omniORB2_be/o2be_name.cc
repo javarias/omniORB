@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include "idl.hh"
@@ -174,6 +177,7 @@ o2be_name::narrow_and_produce_fqname(AST_Decl *decl)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised argument type");
     }
+return 0; // For MSVC++ 4.2
 }
 
 
@@ -225,6 +229,7 @@ o2be_name::narrow_and_produce__fqname(AST_Decl *decl)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised argument type");
     }
+return 0; // For MSVC++ 4.2
 }
 
 char *
@@ -275,6 +280,7 @@ o2be_name::narrow_and_produce_scopename(AST_Decl *decl)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised argument type");
     }
+return 0; // For MSVC++ 4.2
 }
 
 char *
@@ -325,6 +331,7 @@ o2be_name::narrow_and_produce__scopename(AST_Decl *decl)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised argument type");
     }
+return 0; // For MSVC++ 4.2
 }
 
 
@@ -376,4 +383,5 @@ o2be_name::narrow_and_produce_uqname(AST_Decl *decl)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised argument type");
     }
+return 0; // For MSVC++ 4.2
 }

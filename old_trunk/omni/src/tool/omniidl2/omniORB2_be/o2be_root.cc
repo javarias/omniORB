@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include "idl.hh"
@@ -18,7 +21,12 @@
 #include "o2be.h"
 
 #include <iostream.h>
+
+#ifdef __NT__
+#include <stdio.h>
+#else
 #include <unistd.h>
+#endif
 
 o2be_root::o2be_root(UTL_ScopedName *n, UTL_StrList *p)
   : AST_Root(n,p),
@@ -79,19 +87,38 @@ o2be_root::produce()
 #else
   catch(o2be_fileio_error &ex) {
 #endif
+
+#ifdef __NT__
+	if (pd_hdr.is_open())
+#else
     if (pd_hdr)
+#endif
       {
 	pd_hdr.close();
 	stubfname[baselen] = '\0';
 	strcat(stubfname,o2be_global::hdrsuffix());
+
+#ifdef __NT__
+	_unlink(stubfname);
+#else
 	unlink(stubfname);
-      }
+#endif
+	  }
+
+#ifdef __NT__
+	if (pd_skel.is_open())
+#else
     if (pd_skel)
+#endif
       {
 	pd_skel.close();
 	stubfname[baselen] = '\0';
 	strcat(stubfname,o2be_global::skelsuffix());
+#ifdef __NT__
+	_unlink(stubfname);
+#else
 	unlink(stubfname);
+#endif
       }
     throw;
   }
