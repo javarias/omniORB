@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/12/09 18:43:09  sll
+  Initial revision
+
   */
 
 #include <omniORB2/CORBA.h>
@@ -48,7 +51,8 @@
 #include <ip.h>
 #include <bluelib.h>
 
-#include "libcWrapper.h"
+#include <libcWrapper.h>
+#include <gatekeeper.h>
 
 #define NO_DNS    // Define this while ATMOS doesn't have a proper DNS
                   // implementation
@@ -714,28 +718,34 @@ tcpATMosWorker::run(void *arg)
   if (omniORB::traceLevel >= 5) {
     cerr << "tcpATMosMT Worker thread: starts." << endl;
   }
-  while (1) {
-    try {
-      GIOP_S::dispatcher(s);
-    }
-    catch (const CORBA::COMM_FAILURE &) {
-      if (omniORB::traceLevel >= 5) {
-	cerr << "#### Communication failure. Connection closed." << endl;
+
+  if (!gateKeeper::checkConnect(s)) {
+    s->shutdown();
+  }
+  else {
+    while (1) {
+      try {
+	GIOP_S::dispatcher(s);
       }
-      break;
-    }
-    catch(const omniORB::fatalException &ex) {
-      if (omniORB::traceLevel > 0) {
-	cerr << "#### You have caught an omniORB2 bug, details are as follows:" << endl;
-	cerr << ex.file() << " " << ex.line() << ":" << ex.errmsg() << endl; 
+      catch (const CORBA::COMM_FAILURE &) {
+	if (omniORB::traceLevel >= 5) {
+	  cerr << "#### Communication failure. Connection closed." << endl;
+	}
+	break;
       }
-      break;
-    }
-    catch (...) {
-      if (omniORB::traceLevel > 0) {
-	cerr << "#### A system exception has occured and was caught by tcpATMosMT Worker thread." << endl;
+      catch(const omniORB::fatalException &ex) {
+	if (omniORB::traceLevel > 0) {
+	  cerr << "#### You have caught an omniORB2 bug, details are as follows:" << endl;
+	  cerr << ex.file() << " " << ex.line() << ":" << ex.errmsg() << endl; 
+	}
+	break;
       }
-      break;
+      catch (...) {
+	if (omniORB::traceLevel > 0) {
+	  cerr << "#### A system exception has occured and was caught by tcpATMosMT Worker thread." << endl;
+	}
+	break;
+      }
     }
   }
   if (omniORB::traceLevel >= 5) {
