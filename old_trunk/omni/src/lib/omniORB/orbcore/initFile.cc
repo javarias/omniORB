@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.28  1999/06/18 20:54:00  sll
+  Added include Naming.hh as it is no longer included by default when this
+  runtime library is compiled.
+
   Revision 1.27  1999/05/25 17:00:31  sll
   Added new variable INTERFACE_REPOSITORY in the config file.
 
@@ -629,3 +633,23 @@ void initFile::formaterr(char* entryname)
 }
 
 #endif
+
+/////////////////////////////////////////////////////////////////////////////
+//            Module initialiser                                           //
+/////////////////////////////////////////////////////////////////////////////
+
+class omni_initFile_initialiser : public omniInitialiser {
+public:
+
+  void attach() {
+    initFile configFile;
+    configFile.initialize();
+  }
+
+  void detach() {
+  }
+};
+
+static omni_initFile_initialiser initialiser;
+
+omniInitialiser& omni_initFile_initialiser_ = initialiser;
