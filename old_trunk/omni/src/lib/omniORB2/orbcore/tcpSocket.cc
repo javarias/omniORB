@@ -104,8 +104,8 @@ tcpSocketFactoryType::init()
   singleton = new tcpSocketFactoryType;
 
   if (omniORB::trace(2)) {
-    omniORB::logger log("gateKeeper is ");
-    log << gateKeeper::version() << "\n";
+    omniORB::logger log;
+    log << "gateKeeper is " << gateKeeper::version() << "\n";
   }
 }
 
