@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.6  2001/05/14 12:48:27  dpg1
+# Report exception minor code in hex.
+#
 # Revision 1.28.2.5  2001/04/10 11:11:14  dpg1
 # TypeCode support and tests for Fixed point.
 #
@@ -617,8 +620,18 @@ class Object:
         o.__del__ = dummy
 
     def _get_interface(self):
-        # ***
-        raise NO_IMPLEMENT()
+        import omniORB
+        if omniORB.orb is None:
+            raise BAD_INV_ORDER(0, COMPLETED_NO)
+
+        import omniORB.ir_idl # Make sure IR stubs are loaded
+
+        ir = omniORB.orb.resolve_initial_references("InterfaceRepository")
+        ir = ir._narrow(Repository)
+        if ir is None:
+            raise INTF_REPOS(0, COMPLETED_NO)
+        interf = ir.lookup_id(self._NP_RepositoryId)
+        return interf._narrow(InterfaceDef)
     
     def _is_a(self, repoId):
         return _omnipy.isA(self, repoId)

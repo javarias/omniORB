@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.7  2001/06/01 11:09:26  dpg1
+// Make use of new omni::ptrStrCmp() and omni::strCmp().
+//
 // Revision 1.1.2.6  2001/05/29 17:10:14  dpg1
 // Support for in process identity.
 //
@@ -316,12 +319,14 @@ PyObject*
 omniPy::
 Py_omniServant::py_this()
 {
-  CORBA::Object_var objref;
   CORBA::Object_ptr lobjref;
   {
     omniPy::InterpreterUnlocker _u;
-    objref  = (CORBA::Object_ptr)_do_this(CORBA::Object::_PD_repoId);
-    lobjref = omniPy::makeLocalObjRef(repoId_, objref);
+    {
+      CORBA::Object_var objref;
+      objref  = (CORBA::Object_ptr)_do_this(CORBA::Object::_PD_repoId);
+      lobjref = omniPy::makeLocalObjRef(repoId_, objref);
+    }
   }
   return omniPy::createPyCorbaObjRef(repoId_, lobjref);
 }

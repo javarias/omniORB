@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.4  2001/05/14 15:22:00  dpg1
+# cdrMarshal() / cdrUnmarshal() are back.
+#
 # Revision 1.26.2.3  2001/04/10 16:35:33  dpg1
 # Minor bugs in Any coercion.
 #
@@ -394,6 +397,12 @@ def newModule(mname):
     return mod
 
 
+# Function to create a new empty class as a scope place-holder
+def newEmptyClass():
+    class __dummy: pass
+    return __dummy
+
+ 
 # Classes to support IDL type mapping
 
 class EnumItem:

@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.10  2001/06/11 13:06:26  dpg1
+// Support for PortableServer::Current.
+//
 // Revision 1.1.2.9  2001/06/01 11:09:26  dpg1
 // Make use of new omni::ptrStrCmp() and omni::strCmp().
 //
@@ -451,8 +454,8 @@ omniPy::stringToObject(const char* uri)
     omniPy::InterpreterUnlocker _u;
     objref = omniPy::createObjRef(CORBA::Object::_PD_repoId,
 				  cxxobjref->_getIOR(), 0, 0);
+    CORBA::release(cxxobj);
   }
-  CORBA::release(cxxobj);
   return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
 
