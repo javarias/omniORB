@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2000/10/13 13:55:26  dpg1
+// Initial support for omniORB 4.
+//
 
 #include <omnipy.h>
 
@@ -450,7 +453,7 @@ omniPy::stringToObject(const char* uri)
 
   cxxobj = omniURI::stringToObject(uri);
 
-  if (cxxobj->_NP_is_pseudo()) {
+  if (CORBA::is_nil(cxxobj) || cxxobj->_NP_is_pseudo()) {
     return cxxobj;
   }
   omniObjRef* cxxobjref = cxxobj->_PR_getobj();

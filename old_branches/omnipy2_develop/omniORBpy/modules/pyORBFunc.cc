@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2000/10/13 13:55:25  dpg1
+// Initial support for omniORB 4.
+//
 
 
 #include <omnipy.h>
@@ -144,7 +147,7 @@ extern "C" {
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
-    if (!objref->_NP_is_pseudo()) {
+    if (!(CORBA::is_nil(objref) || objref->_NP_is_pseudo())) {
       omniObjRef* cxxref = objref->_PR_getobj();
       omniObjRef* pyref  = omniPy::createObjRef(CORBA::Object::_PD_repoId,
 						cxxref->_getIOR(), 0, 0);
