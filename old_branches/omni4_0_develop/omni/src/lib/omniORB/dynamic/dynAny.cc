@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.11.2.12  2001/10/17 16:44:02  dpg1
+   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
    Revision 1.11.2.11  2001/09/24 10:41:08  dpg1
    Minor codes for Dynamic library and omniORBpy.
 
@@ -2417,7 +2420,7 @@ DynStructImpl::set_members(const DynamicAny::NameValuePairSeq& nvps)
     throw DynamicAny::DynAny::InvalidValue();
 
   for( unsigned i = 0; i < pd_n_components; i++ ) {
-    if( nvps[i].id[0] != '\0' &&
+    if( ((const char*)(nvps[i].id))[0] != '\0' &&
 	strcmp((const char*)(nvps[i].id), actualTc()->NP_member_name(i)) )
       throw DynamicAny::DynAny::TypeMismatch();
 
@@ -2466,7 +2469,7 @@ DynStructImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
   CORBA::TypeCode_var tc;
 
   for( unsigned i = 0; i < pd_n_components; i++ ) {
-    if( nvps[i].id[0] != '\0' &&
+    if( ((const char*)(nvps[i].id))[0] != '\0' &&
 	strcmp((const char*)(nvps[i].id), actualTc()->NP_member_name(i)) )
       throw DynamicAny::DynAny::TypeMismatch();
 
@@ -4809,6 +4812,7 @@ DynAnyFactoryImpl::_ptrToObjRef(const char* repoId)
   return 0;
 }
 
+OMNI_NAMESPACE_END(omni)
 
 DynamicAny::DynAnyFactory_ptr
 DynamicAny::DynAnyFactory::_narrow(CORBA::Object_ptr o)
@@ -4834,6 +4838,7 @@ DynamicAny::DynAnyFactory::_duplicate(DynamicAny::DynAnyFactory_ptr p)
     return DynamicAny::DynAnyFactory::_nil();
 }
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 static CORBA::Object_ptr resolveDynAnyFactoryFn() {
   return DynAnyFactoryImpl::theFactory();
