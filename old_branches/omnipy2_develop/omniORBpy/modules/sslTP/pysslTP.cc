@@ -29,6 +29,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2002/09/06 21:34:26  dgrisby
+// Add codesets and sslTP modules.
+//
 
 #ifdef __WIN32__
 #define DLL_EXPORT _declspec(dllexport)
@@ -36,14 +39,14 @@
 #define DLL_EXPORT
 #endif
 
+#include <omniORB4/CORBA.h>
+#include <omniORB4/sslContext.h>
+
 #if defined(__VMS)
 #include <Python.h>
 #else
 #include PYTHON_INCLUDE
 #endif
-
-#include <omniORB4/CORBA.h>
-#include <omniORB4/sslContext.h>
 
 
 extern "C" {
