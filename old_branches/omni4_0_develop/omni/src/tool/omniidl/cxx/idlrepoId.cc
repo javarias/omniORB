@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.3  2000/10/27 16:31:09  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.5.2.2  2000/10/10 10:18:51  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -209,10 +212,12 @@ DeclRepoId::
 setRepoId(const char* repoId, const char* file, int line)
 {
   if (set_) {
-    IdlError(file, line, "Cannot set repository id of `%s' to `%s'",
-	     identifier_, repoId);
-    IdlErrorCont(rifile_, riline_,
-		 "Repository id previously set to `%s' here", repoId_);
+    if (strcmp(repoId, repoId_)) {
+      IdlError(file, line, "Cannot set repository id of `%s' to `%s'",
+	       identifier_, repoId);
+      IdlErrorCont(rifile_, riline_,
+		   "Repository id previously set to `%s' here", repoId_);
+    }
   }
   else {
     delete [] repoId_;
