@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.19.2.10  2001/08/22 13:29:45  dpg1
+ * Re-entrant Any marshalling.
+ *
  * Revision 1.19.2.9  2001/08/17 17:08:05  sll
  * Modularise ORB configuration parameters.
  *
@@ -398,7 +401,7 @@ void
 CORBA::Any::operator<<=(TypeCode_ptr tc)
 {
   if (!CORBA::TypeCode::PR_is_valid(tc)) {
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidTypeCode,CORBA::COMPLETED_NO);
   }
   CORBA::TypeCode_member tcm(tc);
   tcDescriptor tcd;
@@ -411,7 +414,7 @@ void
 CORBA::Any::operator<<=(Object_ptr obj)
 {
   if (!CORBA::Object::_PR_is_valid(obj)) {
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectRef,CORBA::COMPLETED_NO);
   }
   const char* repoid = CORBA::Object::_PD_repoId;
   const char* name   = "";

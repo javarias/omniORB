@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.11.2.10  2001/08/22 13:29:46  dpg1
+   Re-entrant Any marshalling.
+
    Revision 1.11.2.9  2001/06/15 10:23:21  sll
    Changed the name of the internal create_dyn_any function to
    internal_create_dyn_any. Compilers which do not support namespace are
@@ -467,7 +470,7 @@ void
 DynAnyImpl::assign(CORBA::DynAny_ptr da)
 {
   if ( !CORBA::DynAny::PR_is_valid(da) )
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_InvalidDynAny, CORBA::COMPLETED_NO);
 
   if( CORBA::is_nil(da) )  throw CORBA::DynAny::Invalid();
 
@@ -619,7 +622,7 @@ void
 DynAnyImpl::insert_reference(CORBA::Object_ptr value)
 {
   if ( !CORBA::Object::_PR_is_valid(value) )
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_InvalidObjectRef, CORBA::COMPLETED_NO);
 
   CORBA::Object::_marshalObjRef(value, doWrite(CORBA::tk_objref));
 }
@@ -629,7 +632,7 @@ void
 DynAnyImpl::insert_typecode(CORBA::TypeCode_ptr value)
 {
   if ( !CORBA::TypeCode::PR_is_valid(value) )
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_InvalidTypeCode, CORBA::COMPLETED_NO);
 
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
@@ -936,10 +939,14 @@ DynEnumImpl::value_as_string()
 void
 DynEnumImpl::value_as_string(const char* value)
 {
-  if( !value )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+  if( !value )  OMNIORB_THROW(BAD_PARAM,
+			      BAD_PARAM_NullStringUnexpected,
+			      CORBA::COMPLETED_NO);
 
   CORBA::Long index = actualTc()->NP_member_index(value);
-  if( index < 0 )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+  if( index < 0 )  OMNIORB_THROW(BAD_PARAM,
+				 BAD_PARAM_InvalidTypeCode,
+				 CORBA::COMPLETED_NO);
 
   pd_buf.rewindPtrs();
   CORBA::ULong(index) >>= pd_buf;
@@ -3279,10 +3286,10 @@ static DynAnyImplBase*
 internal_create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
 {
   if ( !CORBA::TypeCode::PR_is_valid(tc) )
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidTypeCode,CORBA::COMPLETED_NO);
 
   if( CORBA::is_nil(tc) )
-    OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_TYPECODE,BAD_TYPECODE_TypeCodeIsNil,CORBA::COMPLETED_NO);
 
   DynAnyImplBase* da = 0;
 
