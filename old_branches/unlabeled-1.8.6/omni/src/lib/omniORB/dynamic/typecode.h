@@ -30,6 +30,10 @@
 
 /*
  * $Log$
+ * Revision 1.8.6.5  2000/06/22 10:40:13  dpg1
+ * exception.h renamed to exceptiondefs.h to avoid name clash on some
+ * platforms.
+ *
  * Revision 1.8.6.4  2000/02/15 13:43:43  djr
  * Fixed bug in create_union_tc() -- problem if discriminator was an alias.
  *
@@ -150,14 +154,17 @@ public:
 
   struct Alignment {
     InfoType type;
+
+    struct SimpleAlignment {
+      omni::alignment_t alignment;
+      CORBA::ULong      size;
+    };
+    struct NastyAlignment {
+      TypeCode_base*    tc;
+    };
     union {
-      struct {
-	omni::alignment_t alignment;
-	CORBA::ULong      size;
-      } simple;
-      struct {
-	TypeCode_base*    tc;
-      } nasty;
+      SimpleAlignment simple;
+      NastyAlignment  nasty;
     };
   };
 
