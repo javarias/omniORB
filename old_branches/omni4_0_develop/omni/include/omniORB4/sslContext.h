@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2002/02/25 11:17:11  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.1.2.3  2001/09/14 11:10:35  sll
   Do the right dllimport for win32.
 
@@ -44,6 +47,11 @@
 
 #ifndef __SSLCONTEXT_H__
 #define __SSLCONTEXT_H__
+
+#include <omniORB4/linkHacks.h>
+
+OMNI_FORCE_LINK(omnisslTP);
+
 
 #ifdef _core_attr
 # error "A local CPP macro _core_attr has already been defined."
