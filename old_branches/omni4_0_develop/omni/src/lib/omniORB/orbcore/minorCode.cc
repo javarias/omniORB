@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2004/05/05 21:04:01  dgrisby
+  Change COMMA define to avoid clashes with other systems.
+
   Revision 1.1.2.3  2001/10/17 16:47:09  dpg1
   New minor codes
 
@@ -181,10 +184,6 @@ minorCodeLookup TRANSACTION_ROLLEDBACK_LookupTable[] = {
 };
 
 minorCodeLookup INVALID_TRANSACTION_LookupTable[] = { 
-  { 0, 0 } 
-};
-
-minorCodeLookup WRONG_TRANSACTION_LookupTable[] = { 
   { 0, 0 } 
 };
 
