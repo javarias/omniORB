@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.3  2000/03/17 15:57:07  dpg1
+// Correct, and more consistent handling of invalid strings in
+// string_to_object().
+//
 // Revision 1.2  2000/03/07 16:52:17  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -161,6 +165,45 @@ extern "C" {
     return omniPy::createPyCorbaObjRef(0, objref);
   }
 
+  static PyObject*
+  pyORB_shutdown(PyObject* self, PyObject* args)
+  {
+    PyObject* pyorb;
+    int       wait;
+
+    if (!PyArg_ParseTuple(args, (char*)"Oi", &pyorb, &wait)) return NULL;
+
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb, ORB_TWIN);
+    OMNIORB_ASSERT(orb);
+
+    try {
+      CORBA::BOA::getBOA()->impl_shutdown();
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
+  static PyObject*
+  pyORB_destroy(PyObject* self, PyObject* args)
+  {
+    PyObject* pyorb;
+
+    if (!PyArg_ParseTuple(args, (char*)"O", &pyorb)) return NULL;
+
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb, ORB_TWIN);
+    OMNIORB_ASSERT(orb);
+
+    try {
+      orb->NP_destroy();
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   ////////////////////////////////////////////////////////////////////////////
   // Python method table                                                    //
   ////////////////////////////////////////////////////////////////////////////
@@ -172,6 +215,8 @@ extern "C" {
                                 pyORB_list_initial_services,     METH_VARARGS},
     {(char*)"resolve_initial_references",
                                 pyORB_resolve_initial_references,METH_VARARGS},
+    {(char*)"shutdown",         pyORB_shutdown,                  METH_VARARGS},
+    {(char*)"destroy",          pyORB_destroy,                   METH_VARARGS},
     {NULL,NULL}
   };
 }
