@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.11  2001/08/03 17:45:08  sll
+  Moved OMNIORB_THROW so that it can be used in stub headers
+
   Revision 1.2.2.10  2001/08/01 10:08:20  dpg1
   Main thread policy.
 
@@ -701,6 +704,34 @@ _CORBA_MODULE_BEG
   //   	       	       	       	       	       	       	       	        //
   _CORBA_MODULE_VAR _core_attr CORBA::Boolean acceptBiDirectionalGIOP;
   // false by default.		  		                        //
+
+  ////////////////////////////////////////////////////////////////////////
+  // offerBiDirectionalGIOP   	                                        //
+  //   Applies to the server side. Set to TRUE to indicates that the    //
+  //   ORB may choose to accept a clients offer to use bidirectional    //
+  //   GIOP calls on a connection. Set to FALSE means the ORB should    //
+  //   never accept any bidirectional offer and should stick to normal  //
+  //   GIOP.   	       	       	       	       	       	       	        //
+  //   	       	       	       	       	       	       	       	        //
+  _CORBA_MODULE_VAR _core_attr CORBA::Boolean offerBiDirectionalGIOP;
+  // false by default.				                        //
+
+  ////////////////////////////////////////////////////////////////////////
+  // unixTransportDirectory   	                                        //
+  //   Applies to the server side. Determine the directory in which     //
+  //   the unix domain socket is to be created.                         //
+  //   	       	       	       	       	       	       	       	        //
+  _CORBA_MODULE_VAR _core_attr const char* unixTransportDirectory;
+  // Default is /tmp/omni-<uid>/.		                        //
+
+  ////////////////////////////////////////////////////////////////////////
+  // unixTransportPermission   	                                        //
+  //   Applies to the server side. Determine the permission mode bits   //
+  //   the unix domain socket is set to.                                //
+  //   	       	       	       	       	       	       	       	        //
+  _CORBA_MODULE_VAR _core_attr CORBA::UShort unixTransportPermission;
+  // Default is 0777.               		                        //
+
 
   ////////////////////////////////////////////////////////////////////////
   // offerBiDirectionalGIOP   	                                        //

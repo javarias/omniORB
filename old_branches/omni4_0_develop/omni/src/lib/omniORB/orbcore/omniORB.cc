@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/08/03 17:41:23  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.2.2.6  2001/08/01 10:08:22  dpg1
   Main thread policy.
 
@@ -124,6 +128,8 @@ CORBA::Boolean           supportCurrent = 1;
 CORBA::Boolean           noFirewallNavigation = 0;
 GIOP::AddressingDisposition giopTargetAddressMode = GIOP::KeyAddr;
 objectKey                seed;
+const char*              unixTransportDirectory = 0;
+CORBA::UShort            unixTransportPermission = 0777;
 }
 
 #else
@@ -157,6 +163,8 @@ CORBA::Boolean           omniORB::supportCurrent = 1;
 CORBA::Boolean           noFirewallNavigation = 0;
 GIOP::AddressingDisposition giopTargetAddressMode = GIOP::KeyAddr;
 omniORB::objectKey       omniORB::seed;
+const char*              omniORB::unixTransportDirectory = 0;
+CORBA::UShort            omniORB::unixTransportPermission = 0777;
 #endif
 
 

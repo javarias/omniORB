@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.33.2.20  2001/08/03 17:41:19  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.33.2.19  2001/08/01 10:08:21  dpg1
   Main thread policy.
 
@@ -1752,6 +1756,36 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	continue;
       }
 
+      // -ORBunixTransportPermission
+      if( strcmp(argv[idx],"-ORBunixTransportPermission") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  omniORB::logs(1, "CORBA::ORB_init failed: missing"
+			" -ORBunixTransportPermission parameter (mode mask in octal radix).");
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1],"%o",&v) != 1 ) {
+	  omniORB::logs(1, "CORBA::ORB_init failed: invalid"
+			" -ORBunixTransportPermission parameter.");
+	  return 0;
+	}
+	omniORB::unixTransportPermission = (CORBA::UShort)v;
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBunixTransportDirectory
+      if( strcmp(argv[idx],"-ORBunixTransportDirectory") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  omniORB::logs(1, "CORBA::ORB_init failed: missing"
+			" -ORBunixTransportDirectory parameter (mode mask in octal radix).");
+	  return 0;
+	}
+	omniORB::unixTransportDirectory = CORBA::string_dup(argv[idx+1]);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
       // -ORBhelp
       if( strcmp(argv[idx],"-ORBhelp") == 0 ) {
 	omniORB::logger l;
@@ -1806,7 +1840,9 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
           "                            *\"giop:unix:<filename>\"   |\n"
           "                            *\"giop:fd:<no.>\"          |\n"
           "                            *\"<other protocol>:<network protocol>:<options>\"\n"
-	  "                         * may not be supported on the platform.\n";
+	  "                         * may not be supported on the platform.\n"
+          "    -ORBunixTransportPermission <mode mask in octal radix,e.g. 0777>\n"
+          "    -ORBunixTransportDirectory <directory name>\n";
 	move_args(argc,argv,idx,1);
 	continue;
       }
