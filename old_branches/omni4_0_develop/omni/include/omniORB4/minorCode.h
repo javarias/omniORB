@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2002/02/26 14:08:34  dpg1
+  Minor codes for omniORBpy.
+
   Revision 1.1.4.12  2002/01/21 11:51:52  dpg1
   Add TRANSIENT minor code for Python exception.
 
@@ -545,7 +548,7 @@ enum BAD_CONTEXT_minor {
 };
 
 inline CORBA::Boolean is_COMM_FAILURE_minor(CORBA::ULong w) {
-  return (w >= COMM_FAILURE_MarshalResults &&
+  return (w >= COMM_FAILURE_MarshalArguments &&
 	  w <= COMM_FAILURE_WaitingForReply);
 }
 
