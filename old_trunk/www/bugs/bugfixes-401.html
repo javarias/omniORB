@@ -67,6 +67,38 @@
             <tr>
               <td>Summary:</td>
               <td>
+                <b>Race condition in POA destruction</b>
+            (bug number 7)
+            <a name='bug7'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Wed Jul  2 11:54:20 BST 2003</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Emmanuel Taurel</td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  If a call happened in the middle of POA destruction, the servant was
+  sometimes etherealised twice, leading to an assertion failure.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
                 <b>Deadlock after POA exception</b>
             (bug number 6)
             <a name='bug6'></a>
@@ -92,8 +124,9 @@
             </tr>
             <tr valign='top'>
               <td>Description:</td>
-              <td>Calling deactivate_object on a destroyed POA would leave a
-  mutex locked after throwing an exception.
+              <td>
+  Calling deactivate_object on a destroyed POA would leave a mutex
+  locked after throwing an exception.
   </td>
             </tr>
             <tr>
