@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/03 12:06:33  djs
+# Type utility functions now work with the new AST representation
+#
 # Revision 1.1  1999/11/03 11:09:50  djs
 # General module renaming
 #
@@ -84,9 +87,16 @@
 # isObjRef    : type * boolean -> boolean
 # isSequence  : type * boolean -> boolean
 # isTypeCode  : type * boolean -> boolean
+# isTypedef   : type * boolean -> boolean
 #   Type of type :) functions. If boolean argument is true, will
 #   perform a full dereference first. Default is false.
-
+#
+# scope : scoped name -> scope
+#   Returns the scope part of the scoped name
+#
+# name : scoped name -> name
+#   Returns the name part of the scoped name
+#
 from omniidl import idlutil, idltype, idlast
 
 from omniidl.be.cxx import util
@@ -565,3 +575,14 @@ def isTypeCode(type, force_deref = 0):
         type = deref(type)
     return type.kind() == idltype.tk_typecode
 
+# Ignore the force_deref argument
+def isTypedef(type, force_deref = 0):
+    return type.kind() == idltype.tk_alias
+
+# ------------------------------------------------------------------
+
+def scope(scopedName):
+    return scopedName[0:-1]
+
+def name(scopedName):
+    return scopedName[-1]
