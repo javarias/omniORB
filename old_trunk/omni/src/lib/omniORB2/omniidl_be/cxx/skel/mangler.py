@@ -30,6 +30,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  1999/12/13 10:50:07  djs
+# Treats the two call descriptors associated with an attribute separately,
+# since it can happen that one needs to be generated but not the other.
+#
 # Revision 1.6  1999/12/10 18:27:05  djs
 # Fixed bug to do with marshalling arrays of things, mirrored in the old
 # compiler
@@ -114,6 +118,8 @@ name_map = {
     idltype.tk_boolean:     "boolean",
     idltype.tk_octet:       "octet",
     idltype.tk_void:        "void",
+    idltype.tk_any:         "any",
+    idltype.tk_TypeCode:    "TypeCode",
     }
 
 # FIXME: Think of some way of better handling types. Merging

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/12/09 20:40:57  djs
+# Bugfixes and integration with dynskel/ code
+#
 # Revision 1.8  1999/11/29 19:27:05  djs
 # Code tidied and moved around. Some redundant code eliminated.
 #
@@ -1079,13 +1082,24 @@ def visitException(node):
         if m.constrType():
             raise "Doesn't handle types constructed within an exception"
         memberType = m.memberType()
+        deref_memberType = tyutil.deref(memberType)
         memberType_name = environment.principalID(memberType)
+        memberType_fqname = environment.principalID(memberType,
+                                                    fully_scope = 1)
         memberType_name_arg = tyutil.makeConstructorArgumentType(memberType,
                                                                  environment)
         for d in m.declarators():
             decl_name = tyutil.mapID(tyutil.name(d.scopedName()))
             copy_ctor_body.out("""\
 @member_name@ = _s.@member_name@;""", member_name = decl_name)
+
+            if tyutil.isObjRef(deref_memberType):
+                # these are special resources which need to be explicitly
+                # duplicated
+                default_ctor_body.out("""\
+@member_type_name@_Helper::duplicate(_@member_name@);""",
+                                      member_type_name = memberType_fqname,
+                                      member_name = decl_name)
             
             default_ctor_args.append(memberType_name_arg + " _" + decl_name)
             default_ctor_body.out("""\
