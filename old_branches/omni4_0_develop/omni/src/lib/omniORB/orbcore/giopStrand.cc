@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/08/21 11:02:15  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.1.4.6  2001/08/17 17:12:38  sll
   Modularise ORB configuration parameters.
 
@@ -755,7 +759,7 @@ public:
   void attach() {
 
     if (orbParameters::outConScanPeriod && orbParameters::scanGranularity) {
-      if (orbParameters::outConScanPeriod >= orbParameters::scanGranularity) {
+      if (orbParameters::outConScanPeriod <= orbParameters::scanGranularity) {
 	giopStrand::idleOutgoingBeats = 1;
       }
       else {
@@ -767,7 +771,7 @@ public:
       giopStrand::idleOutgoingBeats = INT_MAX;
     }
     if (orbParameters::inConScanPeriod && orbParameters::scanGranularity) {
-      if (orbParameters::inConScanPeriod >= orbParameters::scanGranularity) {
+      if (orbParameters::inConScanPeriod <= orbParameters::scanGranularity) {
 	giopStrand::idleIncomingBeats = 1;
       }
       else {
