@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.7  2000/07/24 10:17:34  djs
+# Added missing BOA skeleton constructor
+#
 # Revision 1.1.2.6  2000/06/05 13:04:20  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
 # Removed name clash when a sequence is called "pd_seq"
@@ -179,7 +182,7 @@ interface_callback = """\
 static void
 @local_call_descriptor@(omniCallDescriptor* cd, omniServant* svnt)
 {
-  @call_descriptor@* tcd = (@call_descriptor@*) cd;
+  @get_call_descriptor@
   @impl_fqname@* impl = (@impl_fqname@*) svnt->_ptrToInterface(@name@::_PD_repoId);
   @result@impl->@cxx_operation_name@(@operation_arguments@);
 }
@@ -330,7 +333,7 @@ if( !strcmp(id, @inherited_name@::_PD_repoId) )
 """
 
 interface_sk = """\
-@sk_fqname@::@sk_fqname@(const omniOrbBoaKey& k): omniOrbBoaServant(k) {}
+@sk_fqname@::@sk_name@(const omniOrbBoaKey& k): omniOrbBoaServant(k) {}
 
 @sk_fqname@::~@sk_name@() {}
 """
