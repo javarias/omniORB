@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.2  2000/02/16 18:34:49  djs
+# Fixed problem generating fragments in DynSK.cc file
+#
 # Revision 1.6.2.1  2000/02/14 18:34:56  dpg1
 # New omniidl merged in.
 #
@@ -92,6 +95,6 @@ def run(tree):
     # create somewhere to put the output
     header_filename = config.basename() + config.dynskelsuffix()
     
-    stream = util.Stream(open(header_filename, "w"), 2)
+    stream = util.LazyStream(open(header_filename, "w"), 2)
 
     generate(stream, tree)
