@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.13  2000/03/03 17:41:41  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.12  1999/12/15 12:17:19  dpg1
 // Changes to compile with SunPro CC 5.0.
 //
@@ -158,6 +161,12 @@ public:
   PortableServer::POA_ptr _default_POA() {
     return omniPy::Py_omniServant::_default_POA();
   }
+  const char* _mostDerivedRepoId() {
+    return omniPy::Py_omniServant::_mostDerivedRepoId();
+  }
+  CORBA::Boolean _dispatch(GIOP_S& giop_s) {
+    return omniPy::Py_omniServant::_dispatch(giop_s);
+  }
 
 private:
   PyObject* pysa_;
@@ -192,6 +201,12 @@ public:
   PortableServer::POA_ptr _default_POA() {
     return omniPy::Py_omniServant::_default_POA();
   }
+  const char* _mostDerivedRepoId() {
+    return omniPy::Py_omniServant::_mostDerivedRepoId();
+  }
+  CORBA::Boolean _dispatch(GIOP_S& giop_s) {
+    return omniPy::Py_omniServant::_dispatch(giop_s);
+  }
 
 private:
   PyObject* pysl_;
@@ -218,6 +233,12 @@ public:
   }
   PortableServer::POA_ptr _default_POA() {
     return omniPy::Py_omniServant::_default_POA();
+  }
+  const char* _mostDerivedRepoId() {
+    return omniPy::Py_omniServant::_mostDerivedRepoId();
+  }
+  CORBA::Boolean _dispatch(GIOP_S& giop_s) {
+    return omniPy::Py_omniServant::_dispatch(giop_s);
   }
 
 private:
