@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.8  1999/03/11 16:25:51  djr
+  Updated copyright notice
+
   Revision 1.7  1998/08/21 19:15:07  sll
   Added new command line option: -BOAno_bootstrap_agent. If this option
   is specified, do not initialise the special object that can respond to
@@ -168,11 +171,13 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier);
 CORBA::
 BOA::BOA()
 {
+  pd_magic = CORBA::BOA::PR_magic;
 }
 
 CORBA::
 BOA::~BOA()
 {
+  pd_magic = 0;
 }
 
 CORBA::BOA_ptr
@@ -357,6 +362,7 @@ CORBA::BOA_ptr
 CORBA::
 BOA::_duplicate(CORBA::BOA_ptr p)
 {
+  if (!PR_is_valid(p)) throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
   return p;
 }
 
@@ -370,7 +376,10 @@ BOA::_nil()
 CORBA::Boolean
 CORBA::is_nil(CORBA::BOA_ptr p)
 {
-  return (p==0) ? 1 : 0;
+  if (!CORBA::BOA::PR_is_valid(p))
+    return 0;
+  else
+    return ((p==0) ? 1 : 0);
 }
 
 void
