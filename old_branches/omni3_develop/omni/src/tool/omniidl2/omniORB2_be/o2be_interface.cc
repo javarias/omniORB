@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.8  1999/10/13 15:18:01  djr
+  Fixed problem with call descriptors shared between ops and attrs.
+
   Revision 1.39.6.7  1999/10/04 17:08:35  djr
   Some more fixes/MSVC work-arounds.
 
@@ -496,7 +499,7 @@ o2be_interface::produce_hdr(std::fstream& s)
   DEC_INDENT_LEVEL();
 
   s << o2be_template(map,
-   "  inline proxy() : Object(0) {}  // nil\n"
+   "  inline proxy() { _PR_setobj(0); }  // nil\n"
    "  proxy(const char*, IOP::TaggedProfileList*, omniIdentity*, "
            "omniLocalIdentity*);\n\n"
 
@@ -908,8 +911,7 @@ o2be_interface::produce_skel(std::fstream &s)
    "fqproxy::~proxy() {}\n\n\n"
 
    "fqproxy::proxy(const char* mdri, IOP::TaggedProfileList* p,\n"
-   "         omniIdentity* id, omniLocalIdentity* lid)\n"
-   " : Object(this),\n"
+   "         omniIdentity* id, omniLocalIdentity* lid) :\n"
   );
   {
     AST_Interface** intftable = inherits();
@@ -923,6 +925,7 @@ o2be_interface::produce_skel(std::fstream &s)
   s << o2be_template(map,
    "   omniObjRef(foo::_PD_repoId, mdri, p, id, lid)\n"
    "{\n"
+   "  _PR_setobj(this);\n"
    "}\n\n\n"
 
   // _ptrToObjRef()

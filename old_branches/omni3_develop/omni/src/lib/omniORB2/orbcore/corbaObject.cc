@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.19.6.4  1999/10/14 16:22:06  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.19.6.3  1999/09/27 11:01:10  djr
   Modifications to logging.
 
@@ -186,7 +189,7 @@ CORBA::Object::_duplicate(CORBA::Object_ptr obj)
 }
 
 
-static CORBA::Object the_nil_object(0);
+static CORBA::Object the_nil_object;
 
 
 CORBA::Object_ptr

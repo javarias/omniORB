@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30.6.3  1999/10/14 16:22:10  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.30.6.2  1999/09/24 15:01:34  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -293,12 +296,22 @@ void initFile::initialize()
       omniInitialReferences::set("InterfaceRepository",
 				 InterfaceRepository);
     }
+#ifdef _MSC_VER
+    //??
+    else if (strcmp(entryname, "GATEKEEPER_ALLOWFILE") == 0) {
+      omniORB::logs(1, "WARNING -- gatekeeper disabled.");
+    }
+    else if (strcmp(entryname, "GATEKEEPER_DENYFILE") == 0) {
+      omniORB::logs(1, "WARNING -- gatekeeper disabled.");
+    }
+#else
     else if (strcmp(entryname, "GATEKEEPER_ALLOWFILE") == 0) {
       gateKeeper::allowFile = CORBA::string_dup(data);	  
     }
     else if (strcmp(entryname, "GATEKEEPER_DENYFILE") == 0) {
       gateKeeper::denyFile = CORBA::string_dup(data);
     }
+#endif
     else if (strcmp(entryname, "ORBInitialHost") == 0) {
       bootstrapAgentHostname = CORBA::string_dup(data);
     }

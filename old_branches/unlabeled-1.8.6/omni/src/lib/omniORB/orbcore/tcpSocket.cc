@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.8.6.3  1999/10/14 16:22:17  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.8.6.2  1999/09/24 15:01:38  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -108,10 +111,13 @@ tcpSocketFactoryType::init()
   if (singleton) return;
   singleton = new tcpSocketFactoryType;
 
+#ifndef _MSC_VER
+  //??
   if (omniORB::trace(2)) {
     omniORB::logger log;
     log << "gateKeeper is " << gateKeeper::version() << "\n";
   }
+#endif
 }
 
 tcpSocketFactoryType::tcpSocketFactoryType()

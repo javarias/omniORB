@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.6.3  1999/09/27 08:48:33  djr
+  Minor corrections to get rid of warnings.
+
   Revision 1.2.6.2  1999/09/24 10:29:34  djr
   CORBA::Object::Object now requires an argument.
 
@@ -113,14 +116,16 @@ CORBA::Policy::_nil()
 
 
 CORBA::Policy::Policy(CORBA::PolicyType type)
-  : Object(0), pd_refCount(1), pd_type(type)
+  : pd_refCount(1), pd_type(type)
 {
+  _PR_setobj((omniObjRef*) 1);
 }
 
 
 CORBA::Policy::Policy()
-  : Object(0), pd_refCount(0), pd_type(0)
+  : pd_refCount(0), pd_type(0)
 {
+  _PR_setobj(0);
 }
 
 
