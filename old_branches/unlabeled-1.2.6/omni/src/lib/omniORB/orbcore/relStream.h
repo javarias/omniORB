@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2  1999/03/11 16:25:55  djr
+ Updated copyright notice
+
  Revision 1.1  1997/12/09 18:43:16  sll
  Initial revision
 
@@ -49,7 +52,7 @@ class reliableStreamStrand : public Strand {
 
 public:
 
-  reliableStreamStrand(size_t buffer_size, Rope* r, CORBA::Boolean h);
+  reliableStreamStrand(size_t buffer_size, Rope* r);
   virtual ~reliableStreamStrand();
 
   size_t MaxMTU() const;
