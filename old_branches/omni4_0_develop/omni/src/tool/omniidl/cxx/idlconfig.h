@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.2  2000/10/27 16:31:08  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.2.2.1  2000/07/17 10:36:03  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //
@@ -54,6 +57,8 @@ public:
   static IDL_Boolean forwardWarning;  // Warn about unresolved forwards
   static IDL_Boolean keepComments;    // Keep comments from source
   static IDL_Boolean commentsFirst;   // Comments come before declarations
+  static IDL_Boolean caseSensitive;   // Do not treat identifiers differing
+                                      //  only in case as errors
 };
 
 

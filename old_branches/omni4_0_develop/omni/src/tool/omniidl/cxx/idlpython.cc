@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.5  2000/11/01 15:57:03  dpg1
+// More updates for 2.4.
+//
 // Revision 1.17.2.4  2000/11/01 12:45:56  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -1446,6 +1449,13 @@ extern "C" {
     return Py_None;
   }
 
+  static PyObject* IdlPyCaseSensitive(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)"")) return 0;
+    Config::caseSensitive = 1;
+    Py_INCREF(Py_None); return Py_None;
+  }
+
   static PyMethodDef omniidl_methods[] = {
     {(char*)"compile",            IdlPyCompile,            METH_VARARGS},
     {(char*)"clear",              IdlPyClear,              METH_VARARGS},
@@ -1455,6 +1465,7 @@ extern "C" {
     {(char*)"keepComments",       IdlPyKeepComments,       METH_VARARGS},
     {(char*)"relativeScopedName", IdlPyRelativeScopedName, METH_VARARGS},
     {(char*)"runInteractiveLoop", IdlPyRunInteractiveLoop, METH_VARARGS},
+    {(char*)"caseSensitive",      IdlPyCaseSensitive,      METH_VARARGS},
     {NULL, NULL}
   };
 

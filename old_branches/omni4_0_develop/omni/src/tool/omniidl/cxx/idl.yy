@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.4  2000/11/01 12:45:55  dpg1
+// Update to CORBA 2.4 specification.
+//
 // Revision 1.11.2.3  2000/10/27 16:31:07  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -1416,15 +1419,26 @@ param_type_spec:
     ;
 
 fixed_pt_type:
-    FIXED '<' positive_int_const ',' positive_int_const '>' {
-      IdlError(currentFile, yylineno, "Fixed is not supported yet");
-      $$ = 0;
+    FIXED '<' positive_int_const ',' const_exp '>' {
+      IDL_ULong scale = $5->evalAsULong();
+
+      if ($3 > 31) {
+	IdlError(currentFile, yylineno,
+		 "Fixed point values may not have more than 31 digits");
+      }
+      if (scale > $3) {
+	IdlError(currentFile, yylineno,
+		 "Fixed point scale factor is greater than "
+		 "the number of digits");
+      }
+      $$ = new FixedType($3, scale);
     }
     ;
 
 fixed_pt_const_type:
     FIXED {
-      IdlError(currentFile, yylineno, "Fixed is not supported yet");
+      IdlError(currentFile, yylineno,
+	       "Fixed point constants are not supported yet");
       $$ = 0;
     }
     ;
