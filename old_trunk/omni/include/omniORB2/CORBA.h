@@ -29,6 +29,13 @@
 
 /*
  $Log$
+ Revision 1.29  1999/01/07 18:14:11  djr
+ Changes to support
+  - New implementation of TypeCode and Any
+  - New implementation of DynAny
+  - DII and DSI
+  - Other minor changes.
+
  Revision 1.28  1998/08/25 18:55:33  sll
  Added dummy marshalling functions in DynAny_member to keep gcc-2.7.2 happy.
 
@@ -1201,6 +1208,9 @@ _CORBA_MODULE_END
 #  undef USE_stub_in_nt_dll
 # endif
 # define _LC_attr _OMNIORB_NTDLL_IMPORT
+#endif
+#ifndef __corbaidl_hh_EXTERNAL_GUARD__
+#define __corbaidl_hh_EXTERNAL_GUARD__
 #endif
 _CORBA_MODULE CORBA
 _CORBA_MODULE_BEG
