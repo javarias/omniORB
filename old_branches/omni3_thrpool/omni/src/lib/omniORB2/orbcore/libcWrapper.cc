@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.18.6.1  1999/09/22 14:26:51  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.18  1999/06/26 18:08:17  sll
   HPUX update to separate difference between HPUX 10.20 and HPUX 11.00.
 
@@ -68,6 +71,10 @@
 // Public release.
 //
   */
+
+#ifdef __WIN32__
+#include <winsock2.h>
+#endif
 
 #include <omniORB3/CORBA.h>
 
