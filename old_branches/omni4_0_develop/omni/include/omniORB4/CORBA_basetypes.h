@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.5  2001/08/03 17:46:39  sll
+ Replace _CORBA_marshal_error with _CORBA_marshal_sequence_range_check_error.
+
  Revision 1.2.2.4  2001/03/13 10:32:05  dpg1
  Fixed point support.
 
@@ -102,7 +105,9 @@ typedef long                      _CORBA_Long;
 
 typedef unsigned long             _CORBA_ULong;
 #elif SIZEOF_INT == 4
-#  define OMNI_LONG_IS_INT
+#  ifndef OMNI_LONG_IS_INT
+#    define OMNI_LONG_IS_INT
+#  endif
 
 typedef int                       _CORBA_Long;
 

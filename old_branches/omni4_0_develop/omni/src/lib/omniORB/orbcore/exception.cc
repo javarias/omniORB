@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.10.2.7  2001/09/20 15:10:47  sll
+  Default Transient Handler now checks for the minor code
+  TRANSIENT_FailedOnForwarded and do a retry.
+
   Revision 1.10.2.6  2001/08/03 17:41:21  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -305,7 +309,7 @@ static int exHandlersTableSize = 103;
 
 
 #ifdef EXHANDLER_HASH
-#undef EXHANDLER_HASH
+#  undef EXHANDLER_HASH
 #endif
 
 #define EXHANDLER_HASH(p) ((omni::ptr_arith_t) p % exHandlersTableSize)

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.3  2000/10/27 16:31:11  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.5.2.2  2000/10/10 10:18:51  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -72,7 +75,7 @@ int        idl_wstrlen(const IDL_WChar* s);
 IDL_WChar* idl_wstrcpy(IDL_WChar* a, const IDL_WChar* b);
 IDL_WChar* idl_wstrcat(IDL_WChar* a, const IDL_WChar* b);
 
-#ifdef NO_STRCASECMP
+#ifndef HAVE_STRCASECMP
 int strcasecmp(const char* s1, const char* s2);
 #endif
 

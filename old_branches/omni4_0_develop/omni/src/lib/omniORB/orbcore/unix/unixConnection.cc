@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/11/28 20:33:43  dpg1
+  Minor Unix transport bugs.
+
   Revision 1.1.2.3  2001/08/24 15:56:45  sll
   Fixed code which made the wrong assumption about the semantics of
   do { ...; continue; } while(0)
@@ -64,7 +67,7 @@ unixConnection::Send(void* buf, size_t sz,
 
 #ifdef __VMS
   // OpenVMS socket library cannot handle more than 64K buffer.
-  // Does OpenVMS has unix socket???
+  // Does OpenVMS have unix socket???
   if (sz > 65535) sz = 65536-8;
 #endif
 

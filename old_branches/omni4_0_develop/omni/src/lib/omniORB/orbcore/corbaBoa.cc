@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.13  2001/10/19 11:06:44  dpg1
+  Principal support for GIOP 1.0. Correct some spelling mistakes.
+
   Revision 1.16.2.12  2001/09/20 09:27:43  dpg1
   Remove assertion failure on exit if not all POAs are deleted.
 
@@ -1191,20 +1194,20 @@ omniORB::generateNewKey(omniORB::objectKey& k)
       // initialise the seed of the objectKey generator
       // Guarantee that no two keys generated on the same machine are the same
       // ever.
-#if !defined(__WIN32__) && !(defined(__VMS) && __VMS_VER < 70000000)
+#ifdef HAVE_GETTIMEOFDAY
       // Use gettimeofday() to obtain the current time. Use this to
       // initialise the 32-bit field hi and med in the seed.
       // On unices, add the process id to med.
       // Initialise lo to 0.
       struct timeval v;
-#ifndef __SINIX__
+#ifdef GETTIMEOFDAY_TIMEZONE
       gettimeofday(&v,0);
 #else
       gettimeofday(&v);
 #endif
       omniORB_seed.hi = v.tv_sec;
       omniORB_seed.med = (v.tv_usec << 12);
-#if defined(UnixArchitecture) || defined(__VMS)
+#ifdef HAVE_GETPID
       omniORB_seed.med += getpid();
 #else
       // without the process id, there is no guarantee that the keys generated

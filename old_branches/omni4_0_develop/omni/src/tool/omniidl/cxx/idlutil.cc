@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.5  2001/06/21 11:17:15  sll
+// Added darwin port.
+//
 // Revision 1.5.2.4  2001/06/08 17:12:24  dpg1
 // Merge all the bug fixes from omni3_develop.
 //
@@ -109,7 +112,7 @@ IDL_WChar* idl_wstrcat(IDL_WChar* a, const IDL_WChar* b)
   return r;
 }
 
-#ifdef NO_STRCASECMP
+#ifndef HAVE_STRCASECMP
 #include <ctype.h>
 
 int strcasecmp(const char* s1, const char* s2)
@@ -149,22 +152,6 @@ idl_strtoul(const char* text, int base)
   return ull;
 }
 
-#  elif defined(__osf1__)
-
-IdlIntLiteral
-idl_strtoul(const char* text, int base)
-{
-  return strtoul(text, 0, base);
-}
-
-#  elif defined(__freebsd__) || defined (__darwin__)
-
-IdlIntLiteral
-idl_strtoul(const char* text, int base)
-{
-  return strtouq(text, 0, base);
-}
-
 #  elif defined(__hpux__)
 
 IdlIntLiteral
@@ -187,12 +174,36 @@ idl_strtoul(const char* text, int base)
   return ull;
 }
 
-#  else
+#  elif defined(HAVE_STRTOUL) && SIZEOF_LONG == 8
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtoul(text, 0, base);
+}
+
+#  elif defined(HAVE_STRTOUQ)
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtouq(text, 0, base);
+}
+
+#  elif defined(HAVE_STRTOULL)
 
 IdlIntLiteral
 idl_strtoul(const char* text, int base)
 {
   return strtoull(text, 0, base);
+}
+
+#  else
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtoul(text, 0, base);
 }
 
 #  endif

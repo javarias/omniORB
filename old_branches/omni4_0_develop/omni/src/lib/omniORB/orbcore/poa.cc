@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.25  2001/11/13 14:11:45  dpg1
+  Tweaks for CORBA 2.5 compliance.
+
   Revision 1.2.2.24  2001/11/08 16:33:52  dpg1
   Local servant POA shortcut policy.
 
@@ -207,18 +210,18 @@
 #include <ctype.h>
 #include <stdio.h>
 #if defined(UnixArchitecture) || defined(__VMS)
-#include <sys/time.h>
-#include <unistd.h>
+#  include <sys/time.h>
+#  include <unistd.h>
 #elif defined(NTArchitecture)
-#include <sys/types.h>
-#include <sys/timeb.h>
-#include <process.h>
+#  include <sys/types.h>
+#  include <sys/timeb.h>
+#  include <process.h>
 #endif
 
 #ifdef __atmos__
-#include <kernel.h>
-#include <timelib.h>
-#include <sys/time.h>
+#  include <kernel.h>
+#  include <timelib.h>
+#  include <sys/time.h>
 #endif
 
 
@@ -332,7 +335,7 @@ PortableServer::POA::_the_root_poa()
 
 
 #ifdef DEFINE_CPFN
-#undef DEFINE_CPFN
+#  undef DEFINE_CPFN
 #endif
 #define DEFINE_CPFN(policy, fn_name)  \
   \
@@ -3525,19 +3528,19 @@ generateUniqueId(CORBA::Octet* k)
 
     CORBA::Short pid;
 
-#if !defined(__WIN32__) && !(defined(__VMS) && __VMS_VER < 70000000)
+#ifdef HAVE_GETTIMEOFDAY
     // Use gettimeofday() to obtain the current time. Use this to
     // initialise the 32-bit field hi and med in the seed.
     // On unices, add the process id to med.
     // Initialise lo to 0.
     struct timeval v;
-# ifndef __SINIX__
+# ifdef GETTIMEOFDAY_TIMEZONE
     gettimeofday(&v,0);
 # else
     gettimeofday(&v);
 # endif
     hi = v.tv_sec;
-# if defined(UnixArchitecture) || defined(__VMS)
+# ifdef HAVE_GETPID
     pid = (CORBA::Short) getpid();
 # else
     pid = (CORBA::Short) v.tv_usec;

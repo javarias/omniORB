@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/11/28 20:33:43  dpg1
+  Minor Unix transport bugs.
+
   Revision 1.1.2.5  2001/08/23 10:11:16  sll
   Use AF_UNIX if AF_LOCAL is not defined.
 
@@ -66,9 +69,9 @@
 OMNI_EXPORT_LINK_FORCE_SYMBOL(unixEndpoint);
 
 #ifndef AF_LOCAL
-#ifdef  AF_UNIX
-#define AF_LOCAL AF_UNIX
-#endif
+#  ifdef  AF_UNIX
+#    define AF_LOCAL AF_UNIX
+#  endif
 #endif
 
 

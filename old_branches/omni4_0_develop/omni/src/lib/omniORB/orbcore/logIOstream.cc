@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.8  2002/01/09 11:39:23  dpg1
+  New omniORB::setLogFunction() function.
+
   Revision 1.8.2.7  2001/09/19 17:30:04  dpg1
   New traceThreadId option to add omni_thread id to log messages.
 
@@ -400,7 +403,7 @@ omniORB::logf(const char* fmt ...)
     char* obuf = oinline;
     int   obufsize = INLINE_BUF_SIZE * 4;
     int   nchars;
-#ifdef HAS_snprintf
+#ifdef HAVE_SNPRINTF
     while (1) {
       nchars = vsnprintf(obuf, obufsize, buf, args);
       if (nchars > -1 && nchars < obufsize)
