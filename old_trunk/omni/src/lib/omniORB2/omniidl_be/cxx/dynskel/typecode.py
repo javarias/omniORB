@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/13 18:16:35  djs
+# A little formatting
+#
 # Revision 1.10  2000/01/13 15:56:35  djs
 # Factored out private identifier prefix rather than hard coding it all through
 # the code.
@@ -75,6 +78,8 @@ from omniidl import idlast, idltype, idlutil
 
 from omniidl.be.cxx import tyutil, util, config, name
 
+from omniidl.be.cxx.dynskel import tcstring
+
 import typecode
 
 self = typecode
@@ -119,6 +124,29 @@ def defineName(mangledname):
 def mangleName(prefix, scopedName):
     mangled = prefix + tyutil.guardName(scopedName)
     return mangled
+
+# We need to be able to detect recursive types so keep track of the current
+# node here
+self.__currentNodes = []
+
+def startingNode(node):
+    self.__currentNodes.append(node)
+def finishingNode():
+    assert(self.__currentNodes != [])
+    self.__currentNodes = self.__currentNodes[0:len(self.__currentNodes)-1]
+def recursive(node):
+    return node in self.__currentNodes
+def recursive_Depth(node):
+    assert recursive(node)
+    outer = self.__currentNodes[:]
+    depth = 1
+
+    while(1):
+        if outer[-1] == node:
+            return depth
+        depth = depth + 1
+        outer = outer[0:len(outer)-1]
+
 
 def __init__(stream):
     self.stream = stream
@@ -250,8 +278,10 @@ def mkTypeCode(type, declarator = None, node = None):
         # is the sequence type the same as the current node being defined
         # (ie is it recursive)
         if isinstance(seqType, idltype.Declared) and \
-           seqType.decl() == node:
-            return prefix + "recursive_sequence_tc(" + str(type.bound()) + ", 1)"
+           recursive(seqType.decl()):
+            depth = recursive_Depth(seqType.decl())
+            return prefix + "recursive_sequence_tc(" + str(type.bound()) +\
+                   ", " + str(depth) + ")"
             
         return prefix + "sequence_tc(" + str(type.bound()) + ", " +\
                mkTypeCode(type.seqType()) + ")"
@@ -283,6 +313,7 @@ def mkTypeCode(type, declarator = None, node = None):
 # Control arrives here
 #
 def visitAST(node):
+    self.__completedModules = {}
     for n in node.declarations():
         n.accept(self)
 
@@ -293,11 +324,22 @@ def visitModule(node):
     if not(node.mainFile()):
         return
 
+    slash_scopedName = string.join(node.scopedName(), '/')
+    if self.__completedModules.has_key(slash_scopedName):
+        return
+    self.__completedModules[slash_scopedName] = 1
+    
     # This has a bearing on making symbols externally visible/ linkable
     insideModule = self.__immediatelyInsideModule
     self.__immediatelyInsideModule = 1
     for n in node.definitions():
         n.accept(self)
+    for c in node.continuations():
+        slash_scopedName = string.join(c.scopedName(), '/')
+        self.__completedModules[slash_scopedName] = 1
+        for n in c.definitions():
+            n.accept(self)
+            
     self.__immediatelyInsideModule = insideModule
 
 # builds an instance of CORBA::PR_structMember containing pointers
@@ -344,7 +386,8 @@ def numMembers(node):
 def visitStruct(node):
     if not(node.mainFile()) and not(self.__override):
         return
-
+    startingNode(node)
+    
     # the key here is to redirect the bottom half to a buffer
     # just for now
     oldbottomhalf = self.bottomhalf
@@ -360,7 +403,8 @@ def visitStruct(node):
     
     for child in node.members():
         memberType = child.memberType()
-        if isinstance(memberType, idltype.Declared):
+        if child.constrType():
+        #if isinstance(memberType, idltype.Declared):
             memberType.decl().accept(self)
 
     self.__override = override
@@ -400,6 +444,7 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_struct_tc("@repo
     # restore the old bottom half
     oldbottomhalf.out(str(self.bottomhalf))
     self.bottomhalf = oldbottomhalf
+    finishingNode()
     return
 
     
@@ -412,11 +457,20 @@ def visitUnion(node):
     mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         return
+
+    startingNode(node)
+    
+    # the key here is to redirect the bottom half to a buffer
+    # just for now
+    oldbottomhalf = self.bottomhalf
+    self.bottomhalf = util.StringStream()
+
     
     # need to build a static array of node members in a similar fashion
     # to structs
     array = []
     switchType = node.switchType()
+    deref_switchType = tyutil.deref(switchType)
     if isinstance(switchType, idltype.Declared):
         override = self.__override
         self.__override = 1
@@ -465,7 +519,7 @@ def visitUnion(node):
             numlabels = numlabels + 1
 
 
-    discrim_tc = mkTypeCode(switchType)
+    discrim_tc = mkTypeCode(deref_switchType)
     repoID = node.repoId()
     if config.EMULATE_BUGS():
         repoID = tyutil.mapRepoID(repoID)
@@ -497,6 +551,11 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_union_tc("@repoI
     
     external_linkage(node)
 
+    # restore the old bottom half
+    oldbottomhalf.out(str(self.bottomhalf))
+    self.bottomhalf = oldbottomhalf
+
+    finishingNode()
 
 def visitEnum(node):
     if not(node.mainFile()) and not(self.__override):
@@ -553,6 +612,8 @@ def visitInterface(node):
         return
     node.already_been_here = 1
 
+    startingNode(node)
+
     insideModule = self.__immediatelyInsideModule
     self.__immediatelyInsideModule = 0
     for n in node.declarations():
@@ -566,7 +627,11 @@ def visitInterface(node):
     typecode = "CORBA::TypeCode::PR_interface_tc(\"" + repoID + "\", \"" +\
                iname + "\")"
 
+    node.accept(tcstring)
+
+
     external_linkage(node, typecode)
+    finishingNode()
 
 
 def recurse(type):
@@ -656,6 +721,8 @@ def visitException(node):
         return
     defineName(mangled_name)
 
+    startingNode(node)
+    
     # the key here is to redirect the bottom half to a buffer
     # just for now
     oldbottomhalf = self.bottomhalf
@@ -705,3 +772,6 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_exception_tc("@r
     # restore the old bottom half
     oldbottomhalf.out(str(self.bottomhalf))
     self.bottomhalf = oldbottomhalf
+
+
+    finishingNode()
