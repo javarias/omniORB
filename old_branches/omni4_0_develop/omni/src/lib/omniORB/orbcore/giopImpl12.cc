@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/05/01 17:56:29  sll
+  Remove user exception check in sendUserException. This has been done by
+  the caller.
+
   Revision 1.1.4.3  2001/05/01 17:15:17  sll
   Non-copy input now works correctly.
 
@@ -1674,7 +1678,7 @@ giopImpl12::outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize) {
     }
     g->outputMessageSize(g->outputMessageSize()+sz);
     if (g->outputMessageSize() > omniORB::MaxMessageSize()) {
-      OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+      OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		    (CORBA::CompletionStatus)g->completion());
     }
   }
@@ -1762,7 +1766,7 @@ giopImpl12::getReserveSpace(giopStream* g,omni::alignment_t align,size_t sz) {
     return;
 
  overflow:
-    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		  (CORBA::CompletionStatus)g->completion());
 }
 
@@ -1773,7 +1777,7 @@ giopImpl12::copyOutputData(giopStream* g,void* b, size_t sz,
 
   if (outputHasReachedLimit(g)) {
     // Already reached the message size limit
-    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		  (CORBA::CompletionStatus)g->completion());
   }
 
@@ -1812,7 +1816,7 @@ giopImpl12::copyOutputData(giopStream* g,void* b, size_t sz,
     if (leftover) {
       if (outputHasReachedLimit(g)) {
 	// Already reached the message size limit
-	OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+	OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		      (CORBA::CompletionStatus)g->completion());
       }
       b = (void*) ((omni::ptr_arith_t)b + sz - leftover);
@@ -1832,7 +1836,7 @@ giopImpl12::copyOutputData(giopStream* g,void* b, size_t sz,
       outputFlush(g);
       if (sz && outputHasReachedLimit(g)) {
 	// Already reached the message size limit
-	OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+	OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		      (CORBA::CompletionStatus)g->completion());
       }
     }
@@ -1861,7 +1865,7 @@ void
 giopImpl12::outputSetFragmentSize(giopStream* g,CORBA::ULong msz) {
 
   if (msz > omniORB::MaxMessageSize()) {
-    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimit,
+    OMNIORB_THROW(MARSHAL,MARSHAL_MessageSizeExceedLimitOnClient,
 		  (CORBA::CompletionStatus)g->completion());
   }
   g->outputFragmentSize(msz);
