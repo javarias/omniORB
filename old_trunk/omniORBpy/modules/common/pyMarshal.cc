@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.16  2000/02/15 09:50:22  dpg1
+// Bug in union unmashalling.
+//
 // Revision 1.15  2000/02/04 12:17:10  dpg1
 // Support for VMS.
 //
@@ -90,10 +93,13 @@ PyObject* omnipyCompaqCxxBug() {
 }
 #endif
 
+#define AS_THROW_BAD_PARAM throw CORBA::BAD_PARAM(0,compstatus)
+
 CORBA::ULong
-omniPy::alignedSize(CORBA::ULong msgsize,
-		    PyObject*    d_o,
-		    PyObject*    a_o)
+omniPy::alignedSize(CORBA::ULong            msgsize,
+		    PyObject*               d_o,
+		    PyObject*               a_o,
+		    CORBA::CompletionStatus compstatus)
 {
   CORBA::ULong   tk;
   CORBA::Boolean tup;
@@ -103,12 +109,12 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   if (PyTuple_Check(d_o)) {
     t_o = PyTuple_GET_ITEM(d_o, 0);
-    assert(PyInt_Check(t_o));
+    OMNIORB_ASSERT(PyInt_Check(t_o));
     tk  = PyInt_AS_LONG(t_o);
     tup = 1;
   }
   else {
-    assert(PyInt_Check(d_o));
+    OMNIORB_ASSERT(PyInt_Check(d_o));
     tk  = PyInt_AS_LONG(d_o);
     tup = 0;
   }
@@ -117,8 +123,13 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
     // Simple types
 
+  case CORBA::tk_null:
+  case CORBA::tk_void:
+    break;
+
   case CORBA::tk_short:
     {
+      if (!PyInt_Check(a_o)) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_2);
       msgsize += 2;
     }
@@ -126,6 +137,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_long:
     {
+      if (!PyInt_Check(a_o)) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
     }
@@ -133,6 +145,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_ushort:
     {
+      if (!PyInt_Check(a_o)) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_2);
       msgsize += 2;
     }
@@ -140,6 +153,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_ulong:
     {
+      if (!(PyInt_Check(a_o) || PyLong_Check(a_o))) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
     }
@@ -147,6 +161,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_float:
     {
+      if (!(PyFloat_Check(a_o) || PyInt_Check(a_o))) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
     }
@@ -154,6 +169,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_double:
     {
+      if (!(PyFloat_Check(a_o) || PyInt_Check(a_o))) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_8);
       msgsize += 8;
     }
@@ -161,50 +177,57 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_boolean:
     {
+      if (!PyInt_Check(a_o)) AS_THROW_BAD_PARAM;
       msgsize += 1;
     }
     break;
 
   case CORBA::tk_char:
     {
+      if (!(PyString_Check(a_o) && (PyString_GET_SIZE(a_o) == 1)))
+	AS_THROW_BAD_PARAM;
       msgsize += 1;
     }
     break;
 
   case CORBA::tk_octet:
     {
+      if (!PyInt_Check(a_o)) AS_THROW_BAD_PARAM;
       msgsize += 1;
     }
     break;
 
   case CORBA::tk_any:
     {
-      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+      if (!PyInstance_Check(a_o)) AS_THROW_BAD_PARAM;
 
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // Size of TypeCode
       t_o             = PyDict_GetItemString(adict, (char*)"_t");
-      if (!(t_o && PyInstance_Check(t_o))) throw CORBA::BAD_PARAM();
+      if (!(t_o && PyInstance_Check(t_o))) AS_THROW_BAD_PARAM;
+
       PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
       PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
-      if (!desc) throw CORBA::BAD_PARAM();
+      if (!desc) AS_THROW_BAD_PARAM;
+
       msgsize         = alignedSizeTypeCode(msgsize, desc);
 
       // Size of Any's contents
       t_o             = PyDict_GetItemString(adict, (char*)"_v");
-      if (!t_o) throw CORBA::BAD_PARAM();
-      msgsize         = alignedSize(msgsize, desc, t_o);
+      if (!t_o) AS_THROW_BAD_PARAM;
+
+      msgsize         = alignedSize(msgsize, desc, t_o, compstatus);
     }
     break;
 
   case CORBA::tk_TypeCode:
     {
-      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+      if (!PyInstance_Check(a_o)) AS_THROW_BAD_PARAM;
 
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
       t_o             = PyDict_GetItemString(tdict, (char*)"_d");
-      if (!t_o) throw CORBA::BAD_PARAM();
+      if (!t_o) AS_THROW_BAD_PARAM;
       msgsize         = alignedSizeTypeCode(msgsize, t_o);
     }
     break;
@@ -213,7 +236,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_objref: // repoId, name
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       CORBA::Object_ptr obj;
       const char*       repoId;
@@ -225,8 +248,12 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       }
       else {
 	obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
-	if (!obj) throw CORBA::BAD_PARAM();
+	if (!obj) AS_THROW_BAD_PARAM;
+#ifdef OMNIORBPY_FOR_28
 	repoId = obj->PR_getobj()->NP_IRRepositoryId();
+#else
+	repoId = obj->_PR_getobj()->_mostDerivedRepoId();
+#endif
       }
       msgsize = CORBA::AlignedObjRef(obj, repoId, strlen(repoId) + 1, msgsize);
     }
@@ -234,7 +261,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_struct: // class, repoId, struct name, name, descriptor, ...
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       // The descriptor tuple has twice the number of struct members,
       // plus 4 -- the typecode kind, the Python class, the repoId,
@@ -253,22 +280,26 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
 
 	for (i=0,j=4; i < cnt; i++) {
-	  name    = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(name));
+	  name    = PyTuple_GET_ITEM(d_o, j++);
+	  OMNIORB_ASSERT(PyString_Check(name));
 	  value   = PyDict_GetItem(sdict, name);
 	  if (!value) {
 	    // Not such a fast case after all
 	    value = PyObject_GetAttr(a_o, name);
-	    if (!value) throw CORBA::BAD_PARAM();
+	    if (!value) AS_THROW_BAD_PARAM;
 	  }
-	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++), value);
+	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++),
+				value, compstatus);
 	}
       }
       else {
 	for (i=0,j=4; i < cnt; i++) {
-	  name    = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(name));
+	  name    = PyTuple_GET_ITEM(d_o, j++);
+	  OMNIORB_ASSERT(PyString_Check(name));
 	  value   = PyObject_GetAttr(a_o, name);
-	  if (!value) throw CORBA::BAD_PARAM();
-	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++), value);
+	  if (!value) AS_THROW_BAD_PARAM;
+	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++),
+				value, compstatus);
 	}
       }
     }
@@ -283,33 +314,35 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 			// default (label, name, descr) or None,
 			// {label: (label, name, descr), ...}
     {
-      assert(tup);
-      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+      OMNIORB_ASSERT(tup);
+      if (!PyInstance_Check(a_o)) AS_THROW_BAD_PARAM;
 
       PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
 
       PyObject* discriminant = PyDict_GetItemString(udict, (char*)"_d");
       PyObject* value        = PyDict_GetItemString(udict, (char*)"_v");
-      if (!(discriminant && value)) throw CORBA::BAD_PARAM();
+      if (!(discriminant && value)) AS_THROW_BAD_PARAM;
 
       t_o = PyTuple_GET_ITEM(d_o, 4); // Discriminant descriptor
-      msgsize = alignedSize(msgsize, t_o, discriminant);
+      msgsize = alignedSize(msgsize, t_o, discriminant, compstatus);
 
       PyObject* cdict = PyTuple_GET_ITEM(d_o, 8);
-      assert(PyDict_Check(cdict));
+      OMNIORB_ASSERT(PyDict_Check(cdict));
 
       t_o = PyDict_GetItem(cdict, discriminant);
       if (t_o) {
 	// Discriminant found in case dictionary
-	assert(PyTuple_Check(t_o));
-	msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 2), value);
+	OMNIORB_ASSERT(PyTuple_Check(t_o));
+	msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 2),
+			      value, compstatus);
       }
       else {
 	// Is there a default case?
 	t_o = PyTuple_GET_ITEM(d_o, 7);
 	if (t_o != Py_None) {
-	  assert(PyTuple_Check(t_o));
-	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 2), value);
+	  OMNIORB_ASSERT(PyTuple_Check(t_o));
+	  msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 2),
+				value, compstatus);
 	}
       }
     }
@@ -317,7 +350,10 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_enum: // repoId, name, item list
     {
-      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+      if (!PyInstance_Check(a_o)) AS_THROW_BAD_PARAM;
+      PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
+					  (char*)"_v");
+      if (!(ev && PyInt_Check(ev))) AS_THROW_BAD_PARAM;
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
     }
@@ -325,16 +361,23 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_string: // max_length
     {
-      assert(tup);
-      t_o                 = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(tup);
+      t_o = PyTuple_GET_ITEM(d_o, 1);
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
-      if (!PyString_Check(a_o)) throw CORBA::BAD_PARAM();
+      if (!PyString_Check(a_o)) AS_THROW_BAD_PARAM;
 
-      if (max_len > 0 && (CORBA::ULong)PyString_GET_SIZE(a_o) > max_len)
-	throw CORBA::BAD_PARAM();
+      CORBA::ULong len = PyString_GET_SIZE(a_o);
+
+      if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
+
+      // Annoyingly, we have to scan the string to check there are no
+      // nulls
+      char* str = PyString_AS_STRING(a_o);
+      for (CORBA::ULong i=0; i<len; i++)
+	if (str[i] == '\0') AS_THROW_BAD_PARAM;
 
       msgsize  = omni::align_to(msgsize, omni::ALIGN_4);
       msgsize += 4 + PyString_GET_SIZE(a_o) + 1;
@@ -343,18 +386,18 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
   case CORBA::tk_sequence: // element_desc, max_length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       // Space for list length
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
 
       t_o                   = PyTuple_GET_ITEM(d_o, 2);
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
       CORBA::ULong max_len  = PyInt_AS_LONG(t_o);
       PyObject*    elm_desc = PyTuple_GET_ITEM(d_o, 1);
 
-      CORBA::ULong len;
+      CORBA::ULong len, i;
 
       if (PyInt_Check(elm_desc)) { // Simple type
 	CORBA::ULong etk = PyInt_AS_LONG(elm_desc);
@@ -362,32 +405,42 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	switch (etk) {
 	case CORBA::tk_octet: // Mapping says octet and char use a string
 	case CORBA::tk_char:
-	  if (!PyString_Check(a_o)) throw CORBA::BAD_PARAM();
+	  if (!PyString_Check(a_o)) AS_THROW_BAD_PARAM;
 	  len = PyString_GET_SIZE(a_o);
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 	  msgsize += len;
 	  break;
 
 	case CORBA::tk_boolean:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 	  msgsize += len;
 	  break;
 
 	case CORBA::tk_short:
 	case CORBA::tk_ushort:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 	  if (len > 0) {
 	    msgsize = omni::align_to(msgsize,omni::ALIGN_2);
 	    msgsize += 2 * len;
@@ -395,15 +448,66 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	  break;
 	  
 	case CORBA::tk_long:
-	case CORBA::tk_ulong:
-	case CORBA::tk_float:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
+	  if (len > 0) {
+	    msgsize = omni::align_to(msgsize,omni::ALIGN_4);
+	    msgsize += 4 * len;
+	  }
+	  break;
+
+	case CORBA::tk_ulong:
+	  if (PyList_Check(a_o)) {
+	    len = PyList_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyLong_Check(itm) || PyInt_Check(itm))) AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
+	    len = PyTuple_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyLong_Check(itm) || PyInt_Check(itm))) AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
+	  if (len > 0) {
+	    msgsize = omni::align_to(msgsize,omni::ALIGN_4);
+	    msgsize += 4 * len;
+	  }
+	  break;
+
+	case CORBA::tk_float:
+	  if (PyList_Check(a_o)) {
+	    len = PyList_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
+	    len = PyTuple_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 	  if (len > 0) {
 	    msgsize = omni::align_to(msgsize,omni::ALIGN_4);
 	    msgsize += 4 * len;
@@ -411,13 +515,24 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	  break;
 
 	case CORBA::tk_double:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 	  if (len > 0) {
 	    msgsize = omni::align_to(msgsize,omni::ALIGN_8);
 	    msgsize += 8 * len;
@@ -425,48 +540,48 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	  break;
 
 	default:
-	  abort();
+	  OMNIORB_ASSERT(0);
 	}
       }
       else {
 	if (PyList_Check(a_o)) {
 	  len = PyList_GET_SIZE(a_o);
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 
 	  if (len > 0) {
 	    for (CORBA::ULong i=0; i < len; i++) {
 	      msgsize = alignedSize(msgsize, elm_desc,
-				    PyList_GET_ITEM(a_o, i));
+				    PyList_GET_ITEM(a_o, i), compstatus);
 	    }
 	  }
 	}
 	else if (PyTuple_Check(a_o)) {
 	  len = PyTuple_GET_SIZE(a_o);
-	  if (max_len > 0 && len > max_len) throw CORBA::BAD_PARAM();
+	  if (max_len > 0 && len > max_len) AS_THROW_BAD_PARAM;
 
 	  if (len > 0) {
 	    for (CORBA::ULong i=0; i < len; i++) {
 	      msgsize = alignedSize(msgsize, elm_desc,
-				    PyTuple_GET_ITEM(a_o, i));
+				    PyTuple_GET_ITEM(a_o, i), compstatus);
 	    }
 	  }
 	}
 	else
-	  throw CORBA::BAD_PARAM();
+	  AS_THROW_BAD_PARAM;
       }
     }
     break;
 
   case CORBA::tk_array: // element_desc, length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       t_o                   = PyTuple_GET_ITEM(d_o, 2);
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
       CORBA::ULong arr_len  = PyInt_AS_LONG(t_o);
       PyObject*    elm_desc = PyTuple_GET_ITEM(d_o, 1);
 
-      CORBA::ULong len;
+      CORBA::ULong len, i;
 
       if (PyInt_Check(elm_desc)) { // Simple type
 	CORBA::ULong etk = PyInt_AS_LONG(elm_desc);
@@ -474,62 +589,130 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 	switch (etk) {
 	case CORBA::tk_octet: // Mapping says octet and char use a string
 	case CORBA::tk_char:
-	  if (!PyString_Check(a_o)) throw CORBA::BAD_PARAM();
+	  if (!PyString_Check(a_o)) AS_THROW_BAD_PARAM;
 	  len = PyString_GET_SIZE(a_o);
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 	  msgsize += len;
 	  break;
 
 	case CORBA::tk_boolean:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 	  msgsize += len;
 	  break;
 
 	case CORBA::tk_short:
 	case CORBA::tk_ushort:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 	  msgsize = omni::align_to(msgsize,omni::ALIGN_2);
 	  msgsize += 2 * len;
 	  break;
 	  
 	case CORBA::tk_long:
-	case CORBA::tk_ulong:
-	case CORBA::tk_float:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyList_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++)
+	      if (!PyInt_Check(PyTuple_GET_ITEM(a_o, i))) AS_THROW_BAD_PARAM;
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
+	  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
+	  msgsize += 4 * len;
+	  break;
+
+	case CORBA::tk_ulong:
+	  if (PyList_Check(a_o)) {
+	    len = PyList_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyLong_Check(itm) || PyInt_Check(itm))) AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
+	    len = PyTuple_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyLong_Check(itm) || PyInt_Check(itm))) AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
+	  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
+	  msgsize += 4 * len;
+	  break;
+
+	case CORBA::tk_float:
+	  if (PyList_Check(a_o)) {
+	    len = PyList_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
+	    len = PyTuple_GET_SIZE(a_o);
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 	  msgsize = omni::align_to(msgsize,omni::ALIGN_4);
 	  msgsize += 4 * len;
 	  break;
 
 	case CORBA::tk_double:
-	  if (PyList_Check(a_o))
+	  if (PyList_Check(a_o)) {
 	    len = PyList_GET_SIZE(a_o);
-	  else if (PyTuple_Check(a_o))
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyList_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else if (PyTuple_Check(a_o)) {
 	    len = PyTuple_GET_SIZE(a_o);
-	  else
-	    throw CORBA::BAD_PARAM();
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	    for (i=0; i<len; i++) {
+	      PyObject* itm = PyTuple_GET_ITEM(a_o, i);
+	      if (!(PyFloat_Check(itm) || PyInt_Check(itm)))
+		AS_THROW_BAD_PARAM;
+	    }
+	  }
+	  else AS_THROW_BAD_PARAM;
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 	  msgsize = omni::align_to(msgsize,omni::ALIGN_8);
 	  msgsize += 8 * len;
 	  break;
-
+	  
 	default:
 	  abort();
 	}
@@ -537,37 +720,38 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       else {
 	if (PyList_Check(a_o)) {
 	  len = PyList_GET_SIZE(a_o);
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 
 	  for (CORBA::ULong i=0; i < len; i++) {
 	    msgsize = alignedSize(msgsize, elm_desc,
-				  PyList_GET_ITEM(a_o, i));
+				  PyList_GET_ITEM(a_o, i), compstatus);
 	  }
 	}
 	else if (PyTuple_Check(a_o)) {
 	  len = PyTuple_GET_SIZE(a_o);
-	  if (len != arr_len) throw CORBA::BAD_PARAM();
+	  if (len != arr_len) AS_THROW_BAD_PARAM;
 
 	  for (CORBA::ULong i=0; i < len; i++) {
 	    msgsize = alignedSize(msgsize, elm_desc,
-				  PyTuple_GET_ITEM(a_o, i));
+				  PyTuple_GET_ITEM(a_o, i), compstatus);
 	  }
 	}
       }
     }
     break;
-
+    
   case CORBA::tk_alias: // repoId, name, descr
     {
-      assert(tup);
-      msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, 3), a_o);
+      OMNIORB_ASSERT(tup);
+      msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, 3),
+			    a_o, compstatus);
     }
     break;
 
   case CORBA::tk_except: // class, repoId, exc name, name, descriptor, ...
     {
-      assert(tup);
-      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+      OMNIORB_ASSERT(tup);
+      if (!PyInstance_Check(a_o)) AS_THROW_BAD_PARAM;
 
       // repoId string:
       msgsize  = omni::align_to(msgsize, omni::ALIGN_4);
@@ -585,20 +769,21 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       int i, j;
       for (i=0,j=4; i < cnt; i++) {
 	name    = PyTuple_GET_ITEM(d_o, j++);
-	assert(PyString_Check(name));
+	OMNIORB_ASSERT(PyString_Check(name));
 	value   = PyDict_GetItem(sdict, name);
-	msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++), value);
+	msgsize = alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++),
+			      value, compstatus);
       }
     }
     break;
 
   case 0xffffffff: // [indirect descriptor]
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyList_Check(t_o));
+      OMNIORB_ASSERT(PyList_Check(t_o));
 
-      msgsize = alignedSize(msgsize, PyList_GET_ITEM(t_o, 0), a_o);
+      msgsize = alignedSize(msgsize, PyList_GET_ITEM(t_o, 0), a_o, compstatus);
     }
     break;
 
@@ -611,6 +796,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
   //  cout << "  alignedSize() returning " << msgsize << "." << endl;
   return msgsize;
 }
+#undef AS_THROW_BAD_PARAM
 
 
 void
@@ -634,9 +820,12 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
     // Simple types
 
+  case CORBA::tk_null:
+  case CORBA::tk_void:
+    break;
+
   case CORBA::tk_short:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Short s = PyInt_AS_LONG(a_o);
       s >>= stream;
     }
@@ -644,7 +833,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_long:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Long l = PyInt_AS_LONG(a_o);
       l >>= stream;
     }
@@ -652,7 +840,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_ushort:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::UShort us = PyInt_AS_LONG(a_o);
       us >>= stream;
     }
@@ -664,9 +851,8 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
       if (PyLong_Check(a_o))
 	ul = PyLong_AsUnsignedLong(a_o);
-      else if (PyInt_Check(a_o))
+      else // It's an int
 	ul = PyInt_AS_LONG(a_o);
-      else throw CORBA::BAD_PARAM();
 
       ul >>= stream;
     }
@@ -678,11 +864,10 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
       if (PyFloat_Check(a_o))
 	f = (CORBA::Float)PyFloat_AS_DOUBLE(a_o);
-      else if (PyInt_Check(a_o)) {
+      else { // It's an int
 	CORBA::Long i = PyInt_AS_LONG(a_o);
 	f = i;
       }
-      else throw CORBA::BAD_PARAM();
 
       f >>= stream;
     }
@@ -694,11 +879,10 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
       if (PyFloat_Check(a_o))
 	d = (CORBA::Double)PyFloat_AS_DOUBLE(a_o);
-      else if (PyInt_Check(a_o)) {
+      else { // It's an int
 	CORBA::Long i = PyInt_AS_LONG(a_o);
 	d = i;
       }
-      else throw CORBA::BAD_PARAM();
 
       d >>= stream;
     }
@@ -706,7 +890,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_boolean:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Boolean b = PyInt_AS_LONG(a_o) ? 1:0;
       b >>= stream;
     }
@@ -714,9 +897,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_char:
     {
-      if (!PyString_Check(a_o))        throw CORBA::BAD_PARAM();
-      if (PyString_GET_SIZE(a_o) != 1) throw CORBA::BAD_PARAM();
-
       char *str = PyString_AS_STRING(a_o);
 
       CORBA::Char c = str[0];
@@ -726,7 +906,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_octet:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Octet o = PyInt_AS_LONG(a_o);
       o >>= stream;
     }
@@ -776,7 +955,11 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
       }
       else {
 	obj    = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+#ifdef OMNIORBPY_FOR_28
 	repoId = obj->PR_getobj()->NP_IRRepositoryId();
+#else
+	repoId = obj->_PR_getobj()->_mostDerivedRepoId();
+#endif
       }
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }
@@ -849,7 +1032,6 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
     {
       PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
 					  (char*)"_v");
-      if (!ev) throw CORBA::BAD_PARAM();
       CORBA::ULong e = PyInt_AS_LONG(ev);
       e >>= stream;
     }
@@ -1053,9 +1235,12 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
     // Simple types
 
+  case CORBA::tk_null:
+  case CORBA::tk_void:
+    break;
+
   case CORBA::tk_short:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Short s = PyInt_AS_LONG(a_o);
       s >>= stream;
     }
@@ -1063,7 +1248,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_long:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Long l = PyInt_AS_LONG(a_o);
       l >>= stream;
     }
@@ -1071,7 +1255,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_ushort:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::UShort us = PyInt_AS_LONG(a_o);
       us >>= stream;
     }
@@ -1083,9 +1266,8 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
       if (PyLong_Check(a_o))
 	ul = PyLong_AsUnsignedLong(a_o);
-      else if (PyInt_Check(a_o))
+      else // It's an int
 	ul = PyInt_AS_LONG(a_o);
-      else throw CORBA::BAD_PARAM();
 
       ul >>= stream;
     }
@@ -1097,11 +1279,10 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
       if (PyFloat_Check(a_o))
 	f = (CORBA::Float)PyFloat_AS_DOUBLE(a_o);
-      else if (PyInt_Check(a_o)) {
+      else { // It's an int
 	CORBA::Long i = PyInt_AS_LONG(a_o);
 	f = i;
       }
-      else throw CORBA::BAD_PARAM();
 
       f >>= stream;
     }
@@ -1113,11 +1294,10 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
       if (PyFloat_Check(a_o))
 	d = (CORBA::Double)PyFloat_AS_DOUBLE(a_o);
-      else if (PyInt_Check(a_o)) {
+      else { // It's an int
 	CORBA::Long i = PyInt_AS_LONG(a_o);
 	d = i;
       }
-      else throw CORBA::BAD_PARAM();
 
       d >>= stream;
     }
@@ -1125,7 +1305,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_boolean:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Boolean b = PyInt_AS_LONG(a_o) ? 1:0;
       b >>= stream;
     }
@@ -1133,9 +1312,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_char:
     {
-      if (!PyString_Check(a_o))        throw CORBA::BAD_PARAM();
-      if (PyString_GET_SIZE(a_o) != 1) throw CORBA::BAD_PARAM();
-
       char *str = PyString_AS_STRING(a_o);
 
       CORBA::Char c = str[0];
@@ -1145,7 +1321,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_octet:
     {
-      if (!PyInt_Check(a_o)) throw CORBA::BAD_PARAM();
       CORBA::Octet o = PyInt_AS_LONG(a_o);
       o >>= stream;
     }
@@ -1173,9 +1348,11 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_TypeCode:
     {
+      //      cout << "about to marshal TypeCode..." << endl;
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
       t_o             = PyDict_GetItemString(tdict, (char*)"_d");
       marshalTypeCode(stream, t_o);
+      //      cout << "TypeCode marshalled." << endl;
     }
     break;
 
@@ -1193,7 +1370,11 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
       }
       else {
 	obj    = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
+#ifdef OMNIORBPY_FOR_28
 	repoId = obj->PR_getobj()->NP_IRRepositoryId();
+#else
+	repoId = obj->_PR_getobj()->_mostDerivedRepoId();
+#endif
       }
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
     }
@@ -1266,7 +1447,6 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
     {
       PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
 					  (char*)"_v");
-      if (!ev) throw CORBA::BAD_PARAM();
       CORBA::ULong e = PyInt_AS_LONG(ev);
       e >>= stream;
     }
@@ -1463,17 +1643,21 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   if (PyTuple_Check(d_o)) {
     t_o = PyTuple_GET_ITEM(d_o, 0);
-    assert(PyInt_Check(t_o));
+    OMNIORB_ASSERT(PyInt_Check(t_o));
     tk  = PyInt_AS_LONG(t_o);
     tup = 1;
   }
   else {
-    assert(PyInt_Check(d_o));
+    OMNIORB_ASSERT(PyInt_Check(d_o));
     tk  = PyInt_AS_LONG(d_o);
     tup = 0;
   }
 
   switch (tk) {
+
+  case CORBA::tk_null:
+  case CORBA::tk_void:
+    break;
 
   case CORBA::tk_short:
     {
@@ -1594,7 +1778,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
 
       const char* targetRepoId;
@@ -1602,7 +1786,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       if (t_o == Py_None)
 	targetRepoId = 0;
       else {
-	assert(PyString_Check(t_o));
+	OMNIORB_ASSERT(PyString_Check(t_o));
 	targetRepoId = PyString_AS_STRING(t_o);
 	if (targetRepoId[0] == '\0') // Empty string => CORBA.Object
 	  targetRepoId = 0;
@@ -1616,9 +1800,9 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_struct: // class, repoId, struct name, name, descriptor, ...
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(strclass));
+      OMNIORB_ASSERT(PyClass_Check(strclass));
 
       int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
       PyObject* strtuple = PyTuple_New(cnt);
@@ -1642,9 +1826,9 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 			// default (label, name, descr) or None,
 			// {label: (label, name, descr), ...}
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       PyObject* unclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(unclass));
+      OMNIORB_ASSERT(PyClass_Check(unclass));
 
       t_o = PyTuple_GET_ITEM(d_o, 4);
 
@@ -1655,14 +1839,14 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       t_o = PyDict_GetItem(cdict, discriminant);
       if (t_o) {
 	// Discriminant found in case dictionary
-	assert(PyTuple_Check(t_o));
+	OMNIORB_ASSERT(PyTuple_Check(t_o));
 	value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
       }
       else {
 	// Is there a default case?
 	t_o = PyTuple_GET_ITEM(d_o, 7);
 	if (t_o != Py_None) {
-	  assert(PyTuple_Check(t_o));
+	  OMNIORB_ASSERT(PyTuple_Check(t_o));
 	  value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
 	}
 	else {
@@ -1682,14 +1866,16 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_enum: // repoId, name, item list
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 3);
 
-      assert(PyTuple_Check(t_o));
+      OMNIORB_ASSERT(PyTuple_Check(t_o));
 
       CORBA::ULong e;
       e <<= stream;
 	
+      if (e > (CORBA::ULong)PyTuple_Size(t_o)) throw CORBA::MARSHAL();
+
       PyObject* ev = PyTuple_GET_ITEM(t_o, e);
       Py_INCREF(ev);
       r_o = ev;
@@ -1698,10 +1884,10 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_string: // max_length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                 = PyTuple_GET_ITEM(d_o, 1);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
@@ -1717,10 +1903,10 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_sequence: // element_desc, max_length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 2);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
@@ -1777,10 +1963,10 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_array: // element_desc, length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 2);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong len = PyInt_AS_LONG(t_o);
 
@@ -1834,7 +2020,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_except: // class, repoId, exc name, name, descriptor, ...
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       // Throw away the repoId. By the time we get here, we already
       // know it.
@@ -1844,7 +2030,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       }
 
       PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(strclass));
+      OMNIORB_ASSERT(PyClass_Check(strclass));
 
       int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
       PyObject* strtuple = PyTuple_New(cnt);
@@ -1861,9 +2047,9 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case 0xffffffff: // [indirect descriptor]
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyList_Check(t_o));
+      OMNIORB_ASSERT(PyList_Check(t_o));
 
       r_o = unmarshalPyObject(stream, PyList_GET_ITEM(t_o, 0));
     }
@@ -1893,17 +2079,21 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   if (PyTuple_Check(d_o)) {
     t_o = PyTuple_GET_ITEM(d_o, 0);
-    assert(PyInt_Check(t_o));
+    OMNIORB_ASSERT(PyInt_Check(t_o));
     tk  = PyInt_AS_LONG(t_o);
     tup = 1;
   }
   else {
-    assert(PyInt_Check(d_o));
+    OMNIORB_ASSERT(PyInt_Check(d_o));
     tk  = PyInt_AS_LONG(d_o);
     tup = 0;
   }
 
   switch (tk) {
+
+  case CORBA::tk_null:
+  case CORBA::tk_void:
+    break;
 
   case CORBA::tk_short:
     {
@@ -2024,7 +2214,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
 
       const char* targetRepoId;
@@ -2032,7 +2222,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       if (t_o == Py_None)
 	targetRepoId = 0;
       else {
-	assert(PyString_Check(t_o));
+	OMNIORB_ASSERT(PyString_Check(t_o));
 	targetRepoId = PyString_AS_STRING(t_o);
 	if (targetRepoId[0] == '\0') // Empty string => CORBA.Object
 	  targetRepoId = 0;
@@ -2046,9 +2236,9 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_struct: // class, repoId, struct name, name, descriptor, ...
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(strclass));
+      OMNIORB_ASSERT(PyClass_Check(strclass));
 
       int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
       PyObject* strtuple = PyTuple_New(cnt);
@@ -2072,9 +2262,9 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 			// default (label, name, descr) or None,
 			// {label: (label, name, descr), ...}
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       PyObject* unclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(unclass));
+      OMNIORB_ASSERT(PyClass_Check(unclass));
 
       t_o = PyTuple_GET_ITEM(d_o, 4);
 
@@ -2085,14 +2275,14 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       t_o = PyDict_GetItem(cdict, discriminant);
       if (t_o) {
 	// Discriminant found in case dictionary
-	assert(PyTuple_Check(t_o));
+	OMNIORB_ASSERT(PyTuple_Check(t_o));
 	value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
       }
       else {
 	// Is there a default case?
 	t_o = PyTuple_GET_ITEM(d_o, 7);
 	if (t_o != Py_None) {
-	  assert(PyTuple_Check(t_o));
+	  OMNIORB_ASSERT(PyTuple_Check(t_o));
 	  value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
 	}
 	else {
@@ -2112,14 +2302,16 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_enum: // repoId, name, item list
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 3);
 
-      assert(PyTuple_Check(t_o));
+      OMNIORB_ASSERT(PyTuple_Check(t_o));
 
       CORBA::ULong e;
       e <<= stream;
-	
+
+      if (e > (CORBA::ULong)PyTuple_Size(t_o)) throw CORBA::MARSHAL();
+
       PyObject* ev = PyTuple_GET_ITEM(t_o, e);
       Py_INCREF(ev);
       r_o = ev;
@@ -2128,10 +2320,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_string: // max_length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                 = PyTuple_GET_ITEM(d_o, 1);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
@@ -2147,10 +2339,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_sequence: // element_desc, max_length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 2);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
@@ -2207,10 +2399,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_array: // element_desc, length
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 2);
 
-      assert(PyInt_Check(t_o));
+      OMNIORB_ASSERT(PyInt_Check(t_o));
 
       CORBA::ULong len = PyInt_AS_LONG(t_o);
 
@@ -2264,7 +2456,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_except: // class, repoId, exc name, name, descriptor, ...
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
 
       // Throw away the repoId. By the time we get here, we already
       // know it.
@@ -2274,7 +2466,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       }
 
       PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyClass_Check(strclass));
+      OMNIORB_ASSERT(PyClass_Check(strclass));
 
       int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
       PyObject* strtuple = PyTuple_New(cnt);
@@ -2291,9 +2483,9 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case 0xffffffff: // [indirect descriptor]
     {
-      assert(tup);
+      OMNIORB_ASSERT(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyList_Check(t_o));
+      OMNIORB_ASSERT(PyList_Check(t_o));
 
       r_o = unmarshalPyObject(stream, PyList_GET_ITEM(t_o, 0));
     }
