@@ -31,6 +31,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/04/27 10:50:04  dpg1
+  Interoperable Naming Service
+
+  Moved from bootstrap_i.cc and extended with INS functions.
+
   Revision 1.9.6.4  1999/12/10 12:33:16  djr
   Fixed deadlock in bootstrap agent.
 
@@ -409,7 +414,7 @@ resolveArgsDefault(const char* id, unsigned int cycles)
     if (omniORB::trace(10)) {
       omniORB::logger l;
       l << "Trying to resolve initial reference `" << id << "'\n";
-      l << " with default `" << uri << "'\n";
+      l << " with default `" << (const char*)uri << "'\n";
     }
     CORBA::Object_ptr obj = omniURI::stringToObject(uri, cycles);
 
@@ -453,7 +458,7 @@ resolveFileDefault(const char* id, unsigned int cycles)
     if (omniORB::trace(10)) {
       omniORB::logger l;
       l << "Trying to resolve initial reference `" << id << "'\n";
-      l << " with configuration file default `" << uri << "'\n";
+      l << " with configuration file default `" << (const char*)uri << "'\n";
     }
     CORBA::Object_ptr obj = omniURI::stringToObject(uri, cycles);
 
