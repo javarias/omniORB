@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2002/11/26 14:51:48  dgrisby
+  Implement missing interceptors.
+
   Revision 1.1.4.6  2001/10/17 16:33:27  dpg1
   New downcast mechanism for cdrStreams.
 
@@ -193,6 +196,7 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
     if (sz > GIOP_S_INLINE_BUF_SIZE) {
       pd_principal = new _CORBA_Octet[sz];
     }
+    pd_principal_len = sz;
   }
 
   //////////////////////////////////////////////////////////////////
