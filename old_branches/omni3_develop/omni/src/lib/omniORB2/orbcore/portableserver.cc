@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.7  2000/01/03 18:43:32  djr
+  Fixed bug in ref counting of POA Policy objects.
+
   Revision 1.1.2.6  1999/10/29 13:18:20  djr
   Changes to ensure mutexes are constructed when accessed.
 
@@ -54,7 +57,7 @@
 #include <poaimpl.h>
 #include <localIdentity.h>
 #include <omniORB3/callDescriptor.h>
-#include <bootstrap_i.h>
+#include <initRefs.h>
 #include <dynamicLib.h>
 #include <exception.h>
 
@@ -243,8 +246,12 @@ PortableServer::ServantBase::_do_get_interface()
   OMNIORB_ASSERT(repoId && *repoId);
 
   // Obtain the object reference for the interface repository.
-  CORBA::Object_var repository =
-    omniInitialReferences::get("InterfaceRepository");
+  CORBA::Object_var repository = CORBA::Object::_nil();
+  try {
+    repository = omniInitialReferences::resolve("InterfaceRepository");
+  }
+  catch (...) {
+  }
   if( CORBA::is_nil(repository) )
     OMNIORB_THROW(INTF_REPOS,0, CORBA::COMPLETED_NO);
 
