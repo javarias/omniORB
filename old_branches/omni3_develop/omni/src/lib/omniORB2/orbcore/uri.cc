@@ -30,6 +30,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.9  2000/11/21 12:24:44  dpg1
+// corbaloc URIs accept an empty object address, to mean localhost on the
+// default port.
+//
 // Revision 1.1.2.8  2000/11/21 10:59:27  dpg1
 // Poperly throw INV_OBJREF for object references containing no profiles
 // we understand.
@@ -295,6 +299,7 @@ public:
   class ObjAddr {
   public:
     ObjAddr() : next_(0) {}
+    virtual ~ObjAddr()   {}
 
     static ObjAddr* parse(const char*& c);
 
