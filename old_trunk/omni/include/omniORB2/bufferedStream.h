@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.12  1997/12/23 19:39:43  sll
+  For all unbounded sequence templates, the calls to length() are
+  made easier for some compiler (HPUX aCC) by specifying the
+  base sequence template member function directly.
+
   Revision 1.11  1997/12/09 20:38:59  sll
   Interface extended to provide more hooks to support new transports.
   Sequence array templates now takes an addition argument to indicate the type
@@ -270,6 +275,11 @@ public:
   // Return the number of bytes in the incoming message that have
   // not been read.
 
+  _CORBA_Boolean overrun(_CORBA_ULong len) const {
+    if (len <= (_CORBA_ULong) RdMessageUnRead()) return 0;
+    else return 1;
+  }
+
   inline int RdMessageCurrentAlignment() const {
     return current_inb_alignment();
   }
@@ -383,8 +393,12 @@ public:
   MemBufferedStream(size_t initialBufsize=0);
   ~MemBufferedStream();
   
-  MemBufferedStream(const MemBufferedStream&);
+  MemBufferedStream(const MemBufferedStream&, _CORBA_Boolean dupl = 0);
+  MemBufferedStream(_CORBA_Char* data);
+
   MemBufferedStream &operator=(const MemBufferedStream&);
+
+  void shallowCopy(const MemBufferedStream&);
 
   friend inline void operator>>= (const _CORBA_Char a,MemBufferedStream &s) {
     MARSHAL(s,_CORBA_Char,omni::ALIGN_1,a);
@@ -517,6 +531,10 @@ public:
     pd_byte_order = b;
   }
 
+  _CORBA_Boolean RdMessageByteOrder() const {
+    return byteOrder();
+  }
+
   size_t alreadyRead() const {
     if (pd_in_mkr < pd_out_mkr)
       return ((omni::ptr_arith_t)pd_in_mkr - 
@@ -526,12 +544,20 @@ public:
 	      (omni::ptr_arith_t)startofstream());
   }
 
+  size_t RdMessageAlreadyRead() const { 
+    return alreadyRead(); 
+  }
+
   size_t unRead() const {
     if (pd_in_mkr < pd_out_mkr)
       return ((omni::ptr_arith_t)pd_out_mkr - 
 	      (omni::ptr_arith_t)pd_in_mkr);
     else
       return 0;
+  }
+
+  size_t RdMessageUnRead() const { 
+    return unRead(); 
   }
 
   int rdCurrentAlignment() const {
@@ -544,16 +570,46 @@ public:
 	    (omni::ptr_arith_t)startofstream());
   }
 
+  size_t WrMessageAlreadyWritten() const { 
+    return alreadyWritten(); 
+  }
+
   int wrCurrentAlignment() const {
     int align=((omni::ptr_arith_t)pd_out_mkr & ((int)omni::max_alignment - 1));
     return ((align)?align:(int)omni::max_alignment);
   }
 
-  void skip(_CORBA_ULong size);
+  _CORBA_Boolean overrun(_CORBA_ULong len) const {
+    if (pd_noboundcheck || len <= (_CORBA_ULong) unRead()) return 0;
+    else return 1;
+  }
+
+  void reset();
+
+  void skip(_CORBA_ULong size,omni::alignment_t align = omni::ALIGN_1);
 
   void *data() const {
     return pd_in_mkr;
   }
+
+  void* setSize(size_t sz) {
+    if (sz > size()) {
+      omni::ptr_arith_t p1 = 
+	omni::align_to((omni::ptr_arith_t)pd_out_mkr,omni::ALIGN_1);
+      omni::ptr_arith_t p2 = p1 + sz;
+      if ((void *)p2 > pd_bufend) {
+	grow(p2 - (omni::ptr_arith_t)pd_bufend);
+	return align_and_put_bytes(omni::ALIGN_1,sz);
+      }
+      pd_out_mkr = (void *) p2;
+      return (void *) p1;
+    }
+
+    pd_out_mkr = (void*) ((omni::ptr_arith_t) pd_in_mkr + sz);
+    return pd_in_mkr;
+  }
+	    
+  size_t size() const;
 
 private:
   void     *pd_bufp;
@@ -564,6 +620,9 @@ private:
   static const int pd_inline_buf_size;
   char      pd_buffer[MEMBUFFEREDSTREAM_INLINE_BUF_SIZE];
   _CORBA_Boolean pd_byte_order;
+  _CORBA_Boolean pd_noboundcheck;
+  _CORBA_Boolean pd_dupl;
+
 
   inline void *align_and_put_bytes(omni::alignment_t align,size_t nbytes) {
     omni::ptr_arith_t p1 = omni::align_to((omni::ptr_arith_t)pd_out_mkr,align);
@@ -579,14 +638,13 @@ private:
   inline void *align_and_get_bytes(omni::alignment_t align,size_t nbytes) {
     omni::ptr_arith_t p1 = omni::align_to((omni::ptr_arith_t)pd_in_mkr,align);
     pd_in_mkr = (void *)(p1 + nbytes);
-    if (pd_in_mkr > pd_out_mkr) {
+    if (pd_in_mkr > pd_out_mkr && !pd_noboundcheck) {
       return overrun_error();
     }
     return (void *)p1;
   }
 
   void * startofstream() const;
-  size_t size();
   void grow(size_t minimum);
   void copy(const MemBufferedStream &);
   void *overrun_error();
@@ -640,7 +698,7 @@ _CORBA_Sequence<T>::operator<<= (MemBufferedStream &s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.unRead()) {
+  if (s.overrun(l)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -747,7 +805,7 @@ _CORBA_Bounded_Sequence<T,max>::operator<<= (MemBufferedStream &s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.unRead() || l > max) {
+  if (s.overrun(l) || l > max) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -854,7 +912,7 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l*elmSize > s.unRead()) {
+  if (s.overrun(l*elmSize)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -991,7 +1049,7 @@ _CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator<<
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l*elmSize > s.unRead() || l > max) {
+  if (s.overrun(l*elmSize) || l > max) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1082,7 +1140,7 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (MemBufferedStream 
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.unRead()) {
+  if (s.overrun(l)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1199,7 +1257,7 @@ _CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator<<= (MemBuf
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l > s.unRead() || l > max) {
+  if (s.overrun(l) || l > max) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1311,7 +1369,7 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l*dimension*elmSize > s.unRead()) {
+  if (s.overrun(l*dimension*elmSize)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -1452,7 +1510,7 @@ _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmS
 {
   _CORBA_ULong l;
   l <<= s;
-  if (l*dimension*elmSize > s.unRead() || l > max) {
+  if (s.overrun(l*dimension*elmSize) || l > max) {
     _CORBA_marshal_error();
     // never reach here
   }

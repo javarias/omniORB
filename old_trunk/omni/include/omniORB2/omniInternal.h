@@ -29,6 +29,9 @@
 
 /*
   $Log$
+ * Revision 1.16  1998/01/20  16:46:18  sll
+ * Removed obsolute variable omni::traceLevel.
+ *
   Revision 1.15  1997/12/15 15:26:32  sll
   Added the missing dllimport/dllexport for WIN32.
 
@@ -505,5 +508,10 @@ private:
 
 #include <omniORB2/bufferedStream.h>
 #include <omniORB2/giopDriver.h>
+
+template <class T>
+class _CORBA_ConstrType_Variable_Var;
+
+class tcParseEngine;
 
 #endif // __OMNIINTERNAL_H__
