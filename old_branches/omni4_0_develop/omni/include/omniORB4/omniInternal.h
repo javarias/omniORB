@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:35  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:05  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -138,20 +141,27 @@
 
 #include <stddef.h>
 
-#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS)
+#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__)
 #include <strings.h>
 #include <string.h>
 #else
 #include <string.h>
 #endif
 #include <omnithread.h>
-#include <omniORB3/CORBA_sysdep.h>
-#include <omniORB3/CORBA_basetypes.h>
-#include <omniORB3/seqtemplates.h>
-#include <omniORB3/GIOP.h>
-#include <omniORB3/IIOP.h>
-#include <omniORB3/omniObjKey.h>
-#include <omniORB3/tracedthread.h>
+#include <omniORB4/CORBA_sysdep.h>
+#include <omniORB4/CORBA_basetypes.h>
+#include <omniORB4/seqTemplatedecls.h>
+#include <omniORB4/templatedecls.h>
+#include <omniORB4/stringtypes.h>
+#ifndef __IOP_hh_EXTERNAL_GUARD__
+#include <omniORB4/IOP.h>
+#define __IOP_hh_EXTERNAL_GUARD__
+#endif
+#include <omniORB4/GIOP.h>
+#include <omniORB4/IIOP.h>
+#include <omniORB4/omniObjKey.h>
+#include <omniORB4/tracedthread.h>
+#include <omniORB4/userexception.h>
 
 
 // Forward declarations.
@@ -161,10 +171,9 @@ class GIOP_C;
 class omniObjRef;
 class omniServant;
 class omniIdentity;
+class omniIOR;
 class omniLocalIdentity;
 class omniObjAdapter;
-class NetBufferedStream;
-class MemBufferedStream;
 
 
 //
@@ -176,10 +185,12 @@ class MemBufferedStream;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern _core_attr const char* omniORB_3_0;
+extern _core_attr const char* omniORB_4_0;
+extern _core_attr const _CORBA_ULong omniORB_TAG_ORB_TYPE; // ATT\x00
 
 
-#include <omniORB3/rope.h>
+
+#include <omniORB4/rope.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -200,7 +211,6 @@ public:
 
   enum alignment_t { ALIGN_1 = 1, ALIGN_2 = 2, ALIGN_4 = 4, ALIGN_8 = 8 };
 
-
   static _core_attr const _CORBA_Char                myByteOrder;
   static _core_attr omni_tracedmutex*                internalLock;
   static _core_attr omni_tracedmutex*                objref_rc_lock;
@@ -212,16 +222,11 @@ public:
   static _core_attr const alignment_t                max_alignment;
   // Maximum value of alignment_t
 
-  static _core_attr const char*const                 empty_string;
-  // Used to initialise empty strings, since some compilers will allocate
-  // a separate instance for each "" in code.
-
   static _core_attr int                              remoteInvocationCount;
   static _core_attr int                              localInvocationCount;
   // These are updated whilst internalLock is held.  However it is
   // suggested that they may be read without locking, since integer
   // reads are likely to be atomic.
-
 
   static inline ptr_arith_t align_to(ptr_arith_t p, alignment_t align) {
     return (p + ((int) align - 1)) & ~((int) align - 1);
@@ -230,16 +235,6 @@ public:
   static _CORBA_ULong hash(const _CORBA_Octet* key, int keysize);
   // Computes a hash of the object key.  The caller must ensure
   // that the returned value is bounded to the required range.
-
-  static inline char* allocString(int len) { return new char[len + 1]; }
-  // Allocate a string -- as CORBA::string_alloc(), except that
-  // we don't initialise to empty string.
-  //  <len> does not include nul terminator.
-
-  static inline void freeString(char* s) { 
-    if (s && s != empty_string) delete[] s; 
-  }
-  // As CORBA::string_free().
 
   static omni_tracedmutex& nilRefLock();
   // This is needed to ensure that the mutex is constructed by the
@@ -299,33 +294,32 @@ public:
   // nor the latter is a derived interface of the former, these
   // methods return 0.
 
-  static omniObjRef* createObjRef(const char* mostDerivedRepoId,
-				  const char* targetRepoId,
-				  IOP::TaggedProfileList* profiles,
-				  _CORBA_Boolean release_profiles,
+  static omniObjRef* createObjRef(const char* targetRepoId,
+				  omniIOR* ior,
 				  _CORBA_Boolean locked);
   // Returns an object reference identified by <profiles>.  If the
   // object is not local, and a suitable outgoing rope could not
   // be instantiated, then 0 is returned.
-  //  If <release_profiles> is true then <profiles> is consumed,
-  // even in the case of error.
+  // <ior> is always consumed.
   //  <locked> =>> hold <internalLock>.
 
   static omniObjRef* createObjRef(const char* mostDerivedRepoId,
 				  const char* targetRepoId,
-				  omniLocalIdentity* id,
-				  IOP::TaggedProfileList* profiles = 0,
-				  _CORBA_Boolean release_profiles = 0,
-				  _CORBA_Octet* key = 0);
+				  omniLocalIdentity* id);
   // Return a reference to the given local object (which may or
   // may not have an entry in the local object table).  May
   // return an existing reference if a suitable one exists, or
   // may create a new one.
-  //  <profiles> and <key> may be passed if the calling context
-  // has dynamically allocated versions available.  This does not
-  // change the semantics in any way.  If given, <key> is consumed.
-  // If <profiles> is given it is consumed if <release_profiles> is
-  // true.  
+  //  Must hold <internalLock>.
+
+  static omniObjRef* createObjRef(const char* targetRepoId,
+				  omniLocalIdentity* id,
+				  omniIOR* ior);
+  // Return a reference to the given local object (which may or
+  // may not have an entry in the local object table).  May
+  // return an existing reference if a suitable one exists, or
+  // may create a new one. 
+  // <ior> must not be 0 and it is always consumed.
   //  Must hold <internalLock>.
 
   static void revertToOriginalProfile(omniObjRef* objref);
@@ -336,11 +330,14 @@ public:
   // someone may have been fiddling with the rope factories).
   //  Must not hold <internalLock>.
 
-  static void locationForward(omniObjRef* obj, omniObjRef* new_location);
+  static void locationForward(omniObjRef* obj, omniObjRef* new_location,
+			      _CORBA_Boolean permanent);
   // This function implements location forwarding.  The implementation
   // of <obj> is replaced by that in <new_location> (subject to the
   // usual type checks).  <new_location> is released before returning.
   //  <new_location> must not be nil.
+  // From GIOP 1.2 onwards, location forward can either be temporary or
+  // permanent. This is indicated by the permanent flag.
   //  Must not hold <internalLock>.
   //?? Error behaviour?
 
@@ -349,38 +346,6 @@ public:
   static void assertFail(const char* file, int line, const char* exp);
   static void ucheckFail(const char* file, int line, const char* exp);
 
-};
-
-//////////////////////////////////////////////////////////////////////
-/////////////////////////// omniRopeAndKey ///////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-class omniRopeAndKey {
-public:
-  inline omniRopeAndKey(Rope* r, const _CORBA_Octet* k, int ksize)
-    : pd_rope(r), pd_key(k, ksize)
-    { r->incrRefCount(); }
-
-  inline omniRopeAndKey() : pd_rope(0)  {}
-
-  inline ~omniRopeAndKey() { if( pd_rope )  pd_rope->decrRefCount(); }
-
-  inline Rope* rope() const { return pd_rope; }
-  inline const _CORBA_Octet* key() const { 
-    return pd_key.key();
-  }
-  inline _CORBA_ULong keysize() const { return pd_key.size(); }
-
-  inline void rope(Rope* r) { pd_rope = r; r->incrRefCount(); }
-  inline void key(const _CORBA_Octet* k, int ksize) { pd_key.copy(k, ksize); }
-
-private:
-  omniRopeAndKey& operator=(const omniRopeAndKey&);
-  omniRopeAndKey(const omniRopeAndKey&);
-  // Not implemented.
-
-  Rope*      pd_rope;
-  omniObjKey pd_key;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -404,11 +369,14 @@ private:
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#include <omniORB3/bufferedStream.h>
-#include <omniORB3/giopDriver.h>
-#include <omniORB3/omniObjRef.h>
-#include <omniORB3/proxyFactory.h>
-#include <omniORB3/omniServant.h>
+#include <omniORB4/cdrStream.h>
+#include <omniORB4/seqTemplatedefns.h>
+#include <omniORB4/giopStream.h>
+#include <omniORB4/giopDriver.h>
+#include <omniORB4/omniObjRef.h>
+#include <omniORB4/omniIOR.h>
+#include <omniORB4/proxyFactory.h>
+#include <omniORB4/omniServant.h>
 
 
 //??
