@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.1  2000/02/14 18:34:55  dpg1
+# New omniidl merged in.
+#
 # Revision 1.14  2000/01/20 18:26:45  djs
 # Moved large C++ output strings into an external template file
 #
@@ -266,6 +269,7 @@ def mkTypeCode(type, declarator = None, node = None):
         return prefix + basic[type.kind()] + "_tc()"
 
     if isinstance(type, idltype.Base):
+        util.fatalError("Internal error generating TypeCode data")
         raise "Don't know how to generate TypeCode for Base kind = " +\
               repr(type.kind())
 
@@ -273,6 +277,7 @@ def mkTypeCode(type, declarator = None, node = None):
         return prefix + "string_tc(" + str(type.bound()) + ")"
 
     if isinstance(type, idltype.WString):
+        util.fatalError("Wide-strings are not supported")
         raise "Don't know how to generate TypeCode for WString"
 
     if isinstance(type, idltype.Sequence):
@@ -289,6 +294,7 @@ def mkTypeCode(type, declarator = None, node = None):
                mkTypeCode(type.seqType()) + ")"
 
     if isinstance(type, idltype.Fixed):
+        util.fatalError("Fixed types are not supported")
         raise "Don't know how to generate TypeCode for Fixed"
 
     assert isinstance(type, idltype.Declared)

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.1  2000/02/14 18:34:57  dpg1
+# New omniidl merged in.
+#
 # Revision 1.15  2000/01/17 16:58:52  djs
 # Marshalling code: exceptions (BAD_PARAM, MARSHAL) and bounded strings
 #
@@ -320,6 +323,7 @@ CdrStreamHelper_unmarshalArray@suffix@(@where@,@typecast@, @num@);""",
             pass
         # not sure how to handle other basic types
         elif isinstance(deref_type, idltype.Base):
+            util.fatalError("Internal error generating marshalling code")
             raise "Don't know how to marshall type: " + repr(deref_type) +\
               "(kind = " + str(deref_type.kind()) + ") array"
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.2  2000/02/18 23:01:25  djs
+# Updated example implementation code generating module
+#
 # Revision 1.1  2000/02/13 15:54:14  djs
 # Beginnings of code to generate example interface implementations
 #
@@ -194,6 +197,7 @@ class BuildInterfaceImplementations(idlvisitor.AstVisitor):
                 operations.append(return_type + " " + cxx_fqname + "_i::" +\
                                   opname + "(" + arguments + ")")
             else:
+                util.fatalError("Internal error generating interface member")
                 raise "No code for interface member: " + repr(c)
 
         # the class definition has no actual code...

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.2  2000/02/18 23:01:20  djs
+# Updated example implementation code generating module
+#
 # Revision 1.12.2.1  2000/02/14 18:34:56  dpg1
 # New omniidl merged in.
 #
@@ -81,7 +84,23 @@
 from omniidl import idlutil, idltype
 from omniidl_be.cxx import config
 
-import re, string
+import sys, re, string
+
+# -----------------------------------------------------------------
+# Fatal error handling function
+def fatalError(explanation):
+    if config.DEBUG():
+        # don't exit the program in debug mode...
+        return
+    
+    lines = string.split(explanation, "\n")
+    lines = [ "Fatal error in C++ backend", "" ] + lines
+
+    for line in lines:
+        sys.stderr.write("omniidl: " + line + "\n")
+
+    sys.exit(-1)
+        
 
 # ------------------------------------------------------------------
 # Generic formatting functions
