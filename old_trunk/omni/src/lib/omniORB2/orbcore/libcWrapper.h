@@ -11,6 +11,9 @@
 
 /*
   $Log$
+ * Revision 1.2  1997/01/08  18:12:39  ewc
+ * Added support for ATMos
+ *
  * Revision 1.1  1996/10/10  14:37:53  sll
  * Initial revision
  *
@@ -35,6 +38,7 @@ public:
 #ifdef _HAS_NETDB_
   class hostent_var;
 
+  static omni_mutex non_reentrant;
   static int gethostbyname(const char *,hostent_var &,int &);
   static int isipaddr(const char* hname);
 
