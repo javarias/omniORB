@@ -31,6 +31,9 @@
 
 /*
  $Log$
+ Revision 1.25  1998/08/15 15:07:08  sll
+ *** empty log message ***
+
  Revision 1.24  1998/08/15 14:22:04  sll
  Remove inline member implementations in _nil_TypeCode and IRObject.
 
@@ -1087,12 +1090,6 @@ typedef _CORBA_Double  Double;
     dk_Primitive, dk_String, dk_Sequence, dk_Array, dk_Repository 
   };
 
-  _CORBA_MODULE_OP void operator>>= (DefinitionKind _e,NetBufferedStream &s);
-  _CORBA_MODULE_OP void operator<<= (DefinitionKind &_e,NetBufferedStream &s);
-  _CORBA_MODULE_OP void operator>>= (DefinitionKind _e,MemBufferedStream &s);
-  _CORBA_MODULE_OP void operator<<= (DefinitionKind &_e,MemBufferedStream &s);
-
-  
   class IRObject;
   typedef IRObject *IRObject_ptr;
   typedef IRObject_ptr IRObjectRef;
@@ -1500,10 +1497,6 @@ typedef _CORBA_Double  Double;
   class DynAny;
   typedef DynAny* DynAny_ptr;
 
-  class DynFixed;
-  typedef DynFixed *DynFixed_ptr;
-  typedef DynFixed_ptr DynFixedRef;
-
   class DynEnum;
   typedef DynEnum *DynEnum_ptr;
   typedef DynEnum_ptr DynEnumRef;
@@ -1544,6 +1537,10 @@ typedef _CORBA_Double  Double;
   };
 
 #if 0
+  class DynFixed;
+  typedef DynFixed *DynFixed_ptr;
+  typedef DynFixed_ptr DynFixedRef;
+
   class	DynFixed_member;
   class DynFixed_var {
   public:
@@ -2702,6 +2699,13 @@ private:
   };
 
 _CORBA_MODULE_END
+
+void operator>>= (CORBA::DefinitionKind _e,NetBufferedStream &s);
+void operator<<= (CORBA::DefinitionKind &_e,NetBufferedStream &s);
+void operator>>= (CORBA::DefinitionKind _e,MemBufferedStream &s);
+void operator<<= (CORBA::DefinitionKind &_e,MemBufferedStream &s);
+
+  
 
 #undef _LC_attr
 
