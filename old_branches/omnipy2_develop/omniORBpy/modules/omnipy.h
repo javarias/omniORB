@@ -30,6 +30,8 @@
 #ifndef _omnipy_h_
 #define _omnipy_h_
 
+// $Log$
+
 #if defined(__VMS)
 #include <Python.h>
 #else
@@ -190,7 +192,9 @@ public:
   // Object reference functions                                             //
   ////////////////////////////////////////////////////////////////////////////
 
-  // Create the Python object relating to a CORBA object reference:
+  // Create the Python object relating to a CORBA object reference
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* createPyCorbaObjRef(const char* targetRepoId,
 				const CORBA::Object_ptr objref);
@@ -201,6 +205,8 @@ public:
 
   // Functions which mirror omni::createObjRef(). These versions don't
   // look for C++ proxy factories, and spot local Python servants.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   omniObjRef* createObjRef(const char*        targetRepoId,
 			   omniIOR*           ior,
@@ -218,6 +224,8 @@ public:
   // omniAnonObjRef. This function converts one of them into a
   // Py_omniObjRef with a reference to the local servant. It
   // decrements the refcount of the original objref.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   CORBA::Object_ptr makeLocalObjRef(const char* targetRepoId,
 				    CORBA::Object_ptr objref);
@@ -227,16 +235,20 @@ public:
   // a new objref of the target type if they are not compatible. Sets
   // Python exception status to BAD_PARAM and returns 0 if the Python
   // object is not an object reference.
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* copyObjRefArgument(PyObject*               pytargetRepoId,
 			       PyObject*               pyobjref,
 			       CORBA::CompletionStatus compstatus);
 
-  // Mirror of omniURI::stringToObject()
+  // Mirror of omniURI::stringToObject(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr stringToObject(const char* uri);
 
-  // Mirror of CORBA::UnMarshalObjRef()
+  // Mirror of CORBA::UnMarshalObjRef(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr UnMarshalObjRef(const char* repoId, cdrStream& s);
 
