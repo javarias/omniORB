@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2004/02/06 16:17:44  dgrisby
+  Properly handle large giopMaxMsgSize settings.
+
   Revision 1.1.2.8  2003/11/05 13:00:33  dgrisby
   Properly set sequence length in dumpSpecified.
 
@@ -374,8 +377,7 @@ orbOptions::dumpCurrentSet() const {
 
   if (!pd_handlers_sorted) ((orbOptions*)this)->sortHandlers();
 
-  sequenceString_var result(new sequenceString(pd_handlers.size()));
-  result->length(pd_values.size());
+  sequenceString_var result(new sequenceString());
 
   omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
   omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
@@ -384,7 +386,6 @@ orbOptions::dumpCurrentSet() const {
     (*i)->dump(result.inout());
   }
   return result._retn();
-  
 }
 
 
