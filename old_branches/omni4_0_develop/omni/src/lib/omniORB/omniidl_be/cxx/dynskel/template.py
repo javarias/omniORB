@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.5  2001/03/13 10:32:08  dpg1
+# Fixed point support.
+#
 # Revision 1.3.2.4  2000/11/20 14:43:24  sll
 # Added support for wchar and wstring.
 #
@@ -92,6 +95,8 @@ header_comment = """\
 header = """\
 #include "@basename@@hh@"
 #include <omniORB4/tcDescriptor.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 static const char* @prefix@_library_version = @library@;
 """

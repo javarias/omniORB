@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.4  2000/11/09 12:27:56  dpg1
+# Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+#
 # Revision 1.3.2.3  2000/11/03 19:23:53  sll
 # Replace the old set of marshalling operators in the generated code with
 # a couple of unified operators for cdrStream. Changed template to correspond
@@ -280,7 +283,7 @@ const char* const @call_descriptor@::_user_exns[] = {
   @exception_namelist@
 };
 
-void @call_descriptor@::userException(GIOP_C& giop_client, const char* repoId)
+void @call_descriptor@::userException(_OMNI_NS(IOP_C)& giop_client, const char* repoId)
 {
   cdrStream& s = (cdrStream&) giop_client;
   @exception_block@
@@ -343,9 +346,9 @@ interface_impl = """\
 
 
 CORBA::Boolean
-@impl_fqname@::_dispatch(GIOP_S& _giop_s)
+@impl_fqname@::_dispatch(_OMNI_NS(IOP_S)& _giop_s)
 {
-  const char* op = _giop_s.invokeInfo().operation();
+  const char* op = _giop_s.operation_name();
 
   @dispatch@
   return 0;

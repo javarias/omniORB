@@ -1,3 +1,14 @@
+Thu Apr 19 10:23:16 BST 2001 sll
+================================
+
+- Big checkin with the brand new internal APIs.
+
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/__init__.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+
 Wed Apr 18 19:01:34 BST 2001 sll
 ================================
 
