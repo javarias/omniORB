@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2003/01/14 11:48:15  dgrisby
+  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+
   Revision 1.1.2.3  2002/01/02 18:13:43  dpg1
   Platform fixes/additions.
 
@@ -122,7 +125,7 @@ public:
     }
     return *this;
   }
-  inline Policy* operator [] (_CORBA_ULong _s) {
+  inline Policy_member& operator [] (_CORBA_ULong _s) {
     return (*_pd_seq)[_s];
   }
   inline PolicyList* operator -> () { return _pd_seq; }
