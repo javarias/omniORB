@@ -1,0 +1,13 @@
+Don't panic!  There is meant to be nothing here.
+
+All omniORBpy development happens on CVS branches. Try the
+omnipy2_develop branch for omniORBpy 2.x and omnipy1_develop for
+omniORBpy 1.x. Use a checkout command like
+
+  cvs checkout -r omnipy2_develop omniORBpy
+
+
+A more complete list of branch tags can be found at
+
+  http://omniorb.sourceforge.net/development.html
+
