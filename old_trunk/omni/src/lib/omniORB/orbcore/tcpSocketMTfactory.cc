@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14  1998/11/09 10:56:57  sll
+  Removed the use of the reserved keyword "export".
+
   Revision 1.13  1998/09/23 15:31:15  sll
   Previously, tcpSocketStrand::shutdown sends an incomplete GIOP
   CloseConnection message (the message length field is missing). Fixed.
@@ -114,7 +117,7 @@
 #define RC_SOCKET_ERROR    (-1)
 #define INETSOCKET         AF_INET
 #define CLOSESOCKET(sock)   close(sock)
-#if defined(__sunsos__) && defined(__sparc__) && __OSVERSION__ >= 5
+#if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
 #define SHUTDOWNSOCKET(sock)  ::shutdown(sock,2)
 #elif defined(__osf1__) && defined(__alpha__)
 #define SHUTDOWNSOCKET(sock)  ::shutdown(sock,2)
