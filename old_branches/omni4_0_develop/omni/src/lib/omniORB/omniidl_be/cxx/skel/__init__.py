@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.6  2001/05/29 17:03:50  dpg1
+# In process identity.
+#
 # Revision 1.7.2.5  2001/04/19 09:30:12  sll
 #  Big checkin with the brand new internal APIs.
 # Scoped where appropriate with the omni namespace.
@@ -157,7 +160,4 @@ def run(tree):
         # generate one big chunk of code
         monolithic(stream, tree)
 
-
-
-
-
+    stream.close()

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.10  2001/07/31 19:25:11  sll
+#  Array _var should be separated into fixed and variable size ones.
+#
 # Revision 1.33.2.9  2001/07/26 11:27:26  dpg1
 # Typo in C++ back-end broke wstring constants.
 #
@@ -1030,10 +1033,7 @@ def visitUnion(node):
         kind = switchType.type().kind()
         if switchType.integer():
             (low, high) = ast.integer_type_ranges[kind]
-            s = str(min_unused(low+1)) # just (low) is fine but use (low+1) to
-                                       # keep g++ from complaining
-                                       # about the constant being too large.
-            if s[-1] == 'L': s = s[:-1]
+            s = switchType.literal(min_unused(low+1))
             return s
 
         # for other types, first compute the set of all legal values

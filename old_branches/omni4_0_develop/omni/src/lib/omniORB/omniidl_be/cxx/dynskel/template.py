@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.8  2001/06/13 17:26:41  sll
+# Remove '+' from 'namespace' in the generated code.
+#
 # Revision 1.3.2.7  2001/06/08 17:12:15  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -105,7 +108,7 @@ header = """\
 
 OMNI_USING_NAMESPACE(omni)
 
-static const char* @prefix@_library_version = @library@;
+static const char* @prefix@_dyn_library_version = @library@;
 """
 
 # Required symbols:

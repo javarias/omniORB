@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.4  2001/04/10 10:55:31  dpg1
+# Minor fix to new output routine.
+#
 # Revision 1.1.4.3  2001/03/26 11:11:54  dpg1
 # Python clean-ups. Output routine optimised.
 #
@@ -51,8 +54,11 @@ import string
 createdFiles = []
 
 def createFile(filename):
-    file = open(filename, "w")
-    createdFiles.append(filename)
+    if filename in createdFiles:
+        file = open(filename, "a")
+    else:
+        file = open(filename, "w")
+        createdFiles.append(filename)
     return file
 
 def listAllCreatedFiles():
@@ -223,6 +229,8 @@ class Stream:
         self.file.write("\n")
         self.do_indent = 1
 
+    def close(self):
+        self.file.close()
 
 class StringStream(Stream):
     """Writes to a string buffer rather than a file."""
