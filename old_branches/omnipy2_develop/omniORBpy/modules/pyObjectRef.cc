@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.15  2001/10/18 15:48:39  dpg1
+// Track ORB core changes.
+//
 // Revision 1.1.2.14  2001/09/24 10:48:27  dpg1
 // Meaningful minor codes.
 //
@@ -221,6 +224,13 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 PyObject*
 omniPy::createPyPseudoObjRef(const CORBA::Object_ptr objref)
 {
+  {
+    CORBA::ORB_var orb = CORBA::ORB::_narrow(objref);
+    if (!CORBA::is_nil(orb)) {
+      OMNIORB_ASSERT(omniPy::orb);
+      return PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)"orb");
+    }
+  }
   {
     PortableServer::POA_var poa = PortableServer::POA::_narrow(objref);
     if (!CORBA::is_nil(poa)) return createPyPOAObject(poa);
