@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/11/04 20:20:20  sll
+  GIOP engines can now do callback to the higher layer to calculate total
+  message size if necessary.
+  Where applicable, changed to use the new server side descriptor-based stub.
+
   Revision 1.1.2.3  1999/10/05 20:35:34  sll
   Added support to GIOP 1.2 to recognise all TargetAddress mode.
   Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
@@ -704,6 +709,16 @@ public:
     if (avail >= (padding+reqsize)) return;
 
     skipInputData(g,padding);
+
+    if (!omniORB::strictIIOP && reqsize == 0) return;
+    // There is no reason for the upper level to call this function, even
+    // when reqsize == 0, *unless* it is expecting more data to come.
+    // If we do not return here, we just let the code below to do a
+    // check on whether there are more data to come. And if not, throws
+    // a marshal exception. 
+    // Now that we return here if reqsize == 0, we are letting sloppy
+    // implementation to slip through undetected!
+    // Only do so if strictIIOP is not set!
 
   again:
     if (g->pd_input_msgfrag_to_come) {
@@ -1681,6 +1696,16 @@ public:
     if (avail >= (padding+reqsize)) return;
 
     skipInputData(g,padding);
+
+    if (!omniORB::strictIIOP && reqsize == 0) return;
+    // There is no reason for the upper level to call this function, even
+    // when reqsize == 0, *unless* it is expecting more data to come.
+    // If we do not return here, we just let the code below to do a
+    // check on whether there are more data to come. And if not, throws
+    // a marshal exception. 
+    // Now that we return here if reqsize == 0, we are letting sloppy
+    // implementation to slip through undetected!
+    // Only do so if strictIIOP is not set!
 
     avail = (omni::ptr_arith_t) g->pd_inb_end - 
             (omni::ptr_arith_t) g->pd_inb_mkr;
