@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.8  1999/03/11 16:25:53  djr
+  Updated copyright notice
+
   Revision 1.7  1998/08/14 13:48:04  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -74,9 +77,19 @@ IOP::iorToEncapStr(const CORBA::Char *type_id,
 {
   MemBufferedStream buf;
 
+  CORBA::ULong l = strlen((const char *)type_id) + 1;
+
+  // lets make an effort to ensure that all the padding bytes are zero'ed.
+  {
+    size_t bufsize = 8 + l;
+    bufsize = profiles->NP_alignedSize(bufsize);
+    CORBA::Char dummy = 0;
+    for (int i=0; i < bufsize; i++) dummy >>= buf;
+    buf.rewind_inout_mkr();
+  }
+
   // create an encapsulation
   omni::myByteOrder >>= buf;
-  CORBA::ULong l = strlen((const char *)type_id) + 1;
   l >>= buf;
   buf.put_char_array(type_id,l);
   *profiles >>= buf;
@@ -116,7 +129,7 @@ IOP::EncapStrToIor(const CORBA::Char *str,
 		   CORBA::Char *&type_id,
 		   IOP::TaggedProfileList *&profiles)
 {
-  size_t s = strlen((const char *)str);
+  size_t s = (str ? strlen((const char *)str) : 0);
   if (s<4)
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
   const char *p = (const char *) str;
