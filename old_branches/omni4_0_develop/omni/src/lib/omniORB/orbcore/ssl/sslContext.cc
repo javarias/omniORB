@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/09/13 15:22:12  sll
+  Correct test macro for WIN32.
+
   Revision 1.1.2.4  2001/08/03 17:41:25  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -77,12 +80,13 @@ sslContext* sslContext::singleton = 0;
 sslContext::sslContext(const char* cafile,
 		       const char* keyfile,
 		       const char* password) :
-  pd_cafile(cafile), pd_keyfile(keyfile), pd_password(password), pd_ctx(0) {
-}
+  pd_cafile(cafile), pd_keyfile(keyfile), pd_password(password), pd_ctx(0),
+  pd_locks(0) {}
+
 
 /////////////////////////////////////////////////////////////////////////
 sslContext::sslContext() :
-  pd_cafile(0), pd_keyfile(0), pd_password(0), pd_ctx(0) {
+  pd_cafile(0), pd_keyfile(0), pd_password(0), pd_ctx(0), pd_locks(0) {
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -100,19 +104,34 @@ sslContext::internal_initialise() {
     OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
 		  CORBA::COMPLETED_NO);
   }
-
+  set_supported_versions();
   seed_PRNG();
   set_certificate();
   set_privatekey();
   set_CA();
   set_DH();
   set_ephemeralRSA();
+  thread_setup();
+}
+
+/////////////////////////////////////////////////////////////////////////
+sslContext::~sslContext() {
+  if (pd_ctx) {
+    SSL_CTX_free(pd_ctx);
+  }
+  thread_cleanup();
 }
 
 /////////////////////////////////////////////////////////////////////////
 SSL_METHOD*
 sslContext::set_method() {
-  return SSLv3_method();
+  return SSLv23_method();
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+sslContext::set_supported_versions() {
+  SSL_CTX_set_options(pd_ctx, SSL_OP_NO_SSLv2);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -283,6 +302,59 @@ sslContext::set_ephemeralRSA() {
   RSA_free(rsa);
 }
 
+/////////////////////////////////////////////////////////////////////////
+static omni_mutex *openssl_locks = 0;
+
+extern "C" 
+void sslContext_locking_callback(int mode, int type, const char *,int) { 
+  
+  if (mode & CRYPTO_LOCK) {
+    {
+      omniORB::logger log;
+      log << "SSL lock mutex no. " << type << "\n";
+    }
+    openssl_locks[type].lock();
+  }
+  else {
+    OMNIORB_ASSERT(mode & CRYPTO_UNLOCK);
+    {
+      omniORB::logger log;
+      log << "SSL unlock mutex no. " << type << "\n";
+    }
+    openssl_locks[type].unlock();
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////
+extern "C"
+unsigned long sslContext_thread_id(void) {
+  omni_thread* t = omni_thread::self();
+  if (t) {
+    return t->id();
+  }
+  else {
+    return (unsigned long) (-1);
+  }
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+void
+sslContext::thread_setup() {
+  pd_locks = new omni_mutex[CRYPTO_num_locks()];
+  openssl_locks = pd_locks;
+  CRYPTO_set_locking_callback(sslContext_locking_callback);
+  CRYPTO_set_id_callback(sslContext_thread_id);
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+sslContext::thread_cleanup() {
+  if (pd_locks) {
+    delete [] pd_locks;
+    openssl_locks = 0;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////
 static void report_error() {
