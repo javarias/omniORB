@@ -13,6 +13,9 @@
 
 /*
   $Log$
+ * Revision 1.1  1997/01/08  18:33:43  ewc
+ * Initial revision
+ *
   */
 
 
@@ -116,6 +119,8 @@ public:
   virtual ~tcpSocketRendezvous();
 
   tcpSocketStrand * accept();
+
+  static CORBA::Boolean has_spawned_rendevous_threads;
 
 private:
   tcpSocketRope    *pd_rope;
