@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/13 21:10:03  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.2  2005/01/06 23:10:55  dgrisby
   Big merge from omni4_0_develop.
 
@@ -86,7 +90,7 @@ public:
 
   const char* peeraddress();
 
-  void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
+  void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
 

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.2  2005/01/06 23:10:52  dgrisby
   Big merge from omni4_0_develop.
 
@@ -373,7 +377,7 @@ sslConnection::~sslConnection() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-sslConnection::setSelectable(CORBA::Boolean now,
+sslConnection::setSelectable(int now,
 			     CORBA::Boolean data_in_buffer) {
 
   if (SSL_pending(ssl_handle())) data_in_buffer = 1;

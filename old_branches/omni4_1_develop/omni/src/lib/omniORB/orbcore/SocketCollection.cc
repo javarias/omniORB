@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2005/01/25 16:43:37  dgrisby
+  Properly handle data_in_buffer indicator.
+
   Revision 1.1.4.4  2005/01/17 14:46:19  dgrisby
   Windows SocketCollection implementation.
 
@@ -486,7 +489,7 @@ SocketCollection::Select() {
 }
 
 void
-SocketHolder::setSelectable(CORBA::Boolean now,
+SocketHolder::setSelectable(int            now,
 			    CORBA::Boolean data_in_buffer,
 			    CORBA::Boolean hold_lock)
 {
@@ -494,6 +497,9 @@ SocketHolder::setSelectable(CORBA::Boolean now,
   ASSERT_OMNI_TRACEDMUTEX_HELD(pd_belong_to->pd_collection_lock, hold_lock);
 
   omni_optional_lock l(pd_belong_to->pd_collection_lock, hold_lock, hold_lock);
+
+  if (now == 2 && !pd_selectable)
+    return;
 
   if (now && !pd_selected) {
     // Add socket to the list of pollfds
@@ -556,16 +562,21 @@ SocketHolder::clearSelectable()
 CORBA::Boolean
 SocketHolder::Peek()
 {
-  if (!pd_selectable) {
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
+  {
+    omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
+
+    if (!pd_selectable) {
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
+      }
+      return 0;
     }
-    return 0;
-  }
-  if (pd_data_in_buffer) {
-    pd_data_in_buffer = 0;
-    return 1;
+    if (pd_data_in_buffer) {
+      pd_data_in_buffer = 0;
+      pd_selectable = 0;
+      return 1;
+    }
   }
 
   int timeout = (SocketCollection::scan_interval_sec * 1000 +
@@ -580,8 +591,11 @@ SocketHolder::Peek()
 
     if (r > 0) {
       if (pfd.revents & POLLIN) {
+	omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
+
 	if (pd_selectable) {
 	  // Still selectable?
+	  pd_selectable = 0;
 	  return 1;
 	}
 	else {
@@ -767,7 +781,7 @@ SocketCollection::Select() {
 }
 
 void
-SocketHolder::setSelectable(CORBA::Boolean now,
+SocketHolder::setSelectable(int            now,
 			    CORBA::Boolean data_in_buffer,
 			    CORBA::Boolean hold_lock)
 {
@@ -775,6 +789,9 @@ SocketHolder::setSelectable(CORBA::Boolean now,
   ASSERT_OMNI_TRACEDMUTEX_HELD(pd_belong_to->pd_collection_lock, hold_lock);
 
   omni_optional_lock l(pd_belong_to->pd_collection_lock, hold_lock, hold_lock);
+
+  if (now == 2 && !pd_selectable)
+    return;
 
   if (now && !pd_selected) {
     // Add socket to the fd_set
@@ -819,17 +836,22 @@ SocketHolder::clearSelectable()
 CORBA::Boolean
 SocketHolder::Peek()
 {
-  if (!pd_selectable) {
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
-    }
-    return 0;
-  }
+  {
+    omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
 
-  if (pd_data_in_buffer) {
-    pd_data_in_buffer = 0;
-    return 1;
+    if (!pd_selectable) {
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
+      }
+      return 0;
+    }
+
+    if (pd_data_in_buffer) {
+      pd_data_in_buffer = 0;
+      pd_selectable = 0;
+      return 1;
+    }
   }
 
   struct timeval timeout;
@@ -846,8 +868,11 @@ SocketHolder::Peek()
 
     if (r > 0) {
       if (FD_ISSET(pd_socket, &rfds)) {
+	omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
+	
 	if (pd_selectable) {
 	  // Still selectable?
+	  pd_selectable = 0;
 	  return 1;
 	}
 	else {
@@ -1035,7 +1060,7 @@ SocketCollection::Select() {
 }
 
 void
-SocketHolder::setSelectable(CORBA::Boolean now,
+SocketHolder::setSelectable(int            now,
 			    CORBA::Boolean data_in_buffer,
 			    CORBA::Boolean hold_lock)
 {
@@ -1043,6 +1068,9 @@ SocketHolder::setSelectable(CORBA::Boolean now,
   ASSERT_OMNI_TRACEDMUTEX_HELD(pd_belong_to->pd_collection_lock, hold_lock);
 
   omni_optional_lock l(pd_belong_to->pd_collection_lock, hold_lock, hold_lock);
+
+  if (now == 2 && !pd_selectable)
+    return;
 
   if (now && !pd_selected) {
     // Add socket to the fd_set
@@ -1102,17 +1130,22 @@ SocketHolder::clearSelectable()
 CORBA::Boolean
 SocketHolder::Peek()
 {
-  if (!pd_selectable) {
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
-    }
-    return 0;
-  }
+  {
+    omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
 
-  if (pd_data_in_buffer) {
-    pd_data_in_buffer = 0;
-    return 1;
+    if (!pd_selectable) {
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "Socket " << (int)pd_socket << " in Peek() is not selectable.\n";
+      }
+      return 0;
+    }
+
+    if (pd_data_in_buffer) {
+      pd_data_in_buffer = 0;
+      pd_selectable = 0;
+      return 1;
+    }
   }
 
   struct timeval timeout;
@@ -1129,8 +1162,11 @@ SocketHolder::Peek()
 
     if (r > 0) {
       if (FD_ISSET(pd_socket, &rfds)) {
+	omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
+
 	if (pd_selectable) {
 	  // Still selectable?
+	  pd_selectable = 0;
 	  return 1;
 	}
 	else {

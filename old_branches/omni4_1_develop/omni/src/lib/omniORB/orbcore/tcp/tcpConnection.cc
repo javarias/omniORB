@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/13 21:10:03  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.2  2005/01/06 23:10:55  dgrisby
   Big merge from omni4_0_develop.
 
@@ -353,7 +357,7 @@ tcpConnection::~tcpConnection() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-tcpConnection::setSelectable(CORBA::Boolean now,
+tcpConnection::setSelectable(int now,
 			     CORBA::Boolean data_in_buffer) {
 
   SocketHolder::setSelectable(now, data_in_buffer);
