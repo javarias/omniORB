@@ -23,6 +23,8 @@ href="mailto:info@omniorb-support.com">info@omniorb-support.com</a>.
 <p>
 Bugs fixed in:
 
+<table border="0" cellspacing="10">
+<tr valign="top"><td>
 <ul>
   <li>
     omniORB 3.0.x:
@@ -42,6 +44,24 @@ Bugs fixed in:
     </ul>
   </li>
 </ul>
+</td>
+<td>
+<ul>
+  <li>
+    omniORBpy 1.x
+    <ul>
+      <li><a href="pybugs/bugfixes15.html">omniORBpy 1.5</a></li>
+      <li><a href="pybugs/bugfixes14.html">omniORBpy 1.4</a></li>
+      <li><a href="pybugs/bugfixes13.html">omniORBpy 1.3</a></li>
+      <li><a href="pybugs/bugfixes12.html">omniORBpy 1.2</a></li>
+      <li><a href="pybugs/bugfixes11.html">omniORBpy 1.1</a></li>
+      <li><a href="pybugs/bugfixes10.html">omniORBpy 1.0</a></li>
+    </ul>
+  </li>
+</ul>
+</td></tr>
+</table>
+
 </p>
 
 </page>
