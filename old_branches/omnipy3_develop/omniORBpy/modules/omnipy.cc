@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.2  2003/05/20 17:10:23  dgrisby
+// Preliminary valuetype support.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -118,9 +121,11 @@ PyObject* omniPy::pyCORBAmodule;	// The CORBA module
 PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
 PyObject* omniPy::pyCORBAAnyClass;	//  Any class
 PyObject* omniPy::pyCORBAContextClass;	//  Context class
+PyObject* omniPy::pyCORBAValueBase;    	//  ValueBase class
 PyObject* omniPy::pyCORBAValueBaseDesc;	//  ValueBase descriptor
 PyObject* omniPy::pyomniORBmodule;	// The omniORB module
 PyObject* omniPy::pyomniORBobjrefMap;	//  The objref class map
+PyObject* omniPy::pyomniORBskeletonMap;	//  The skeleton class map
 PyObject* omniPy::pyomniORBtypeMap;     //  The repoId to descriptor mapping
 PyObject* omniPy::pyomniORBvalueMap;    //  The repoId to value factory mapping
 PyObject* omniPy::pyomniORBwordMap;     //  Reserved word map
@@ -323,20 +328,23 @@ extern "C" {
       PyObject_GetAttrString(omniPy::pyomniORBmodule,
 			     (char*)"sysExceptionMapping");
 
-    temp =
-      PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Object");
-
     omniPy::pyCORBAAnyClass =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Any");
 
     omniPy::pyCORBAContextClass =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Context");
 
+    omniPy::pyCORBAValueBase =
+      PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"ValueBase");
+
     omniPy::pyCORBAValueBaseDesc =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"_d_ValueBase");
 
     omniPy::pyomniORBobjrefMap =
       PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)"objrefMapping");
+
+    omniPy::pyomniORBskeletonMap =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule,(char*)"skeletonMapping");
 
     omniPy::pyomniORBtypeMap =
       PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)"typeMapping");
@@ -379,8 +387,12 @@ extern "C" {
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAContextClass));
     OMNIORB_ASSERT(omniPy::pyCORBAValueBaseDesc);
     OMNIORB_ASSERT(PyTuple_Check(omniPy::pyCORBAValueBaseDesc));
+    OMNIORB_ASSERT(omniPy::pyCORBAValueBase);
+    OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAValueBase));
     OMNIORB_ASSERT(omniPy::pyomniORBobjrefMap);
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBobjrefMap));
+    OMNIORB_ASSERT(omniPy::pyomniORBskeletonMap);
+    OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBskeletonMap));
     OMNIORB_ASSERT(omniPy::pyomniORBtypeMap);
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBtypeMap));
     OMNIORB_ASSERT(omniPy::pyomniORBvalueMap);

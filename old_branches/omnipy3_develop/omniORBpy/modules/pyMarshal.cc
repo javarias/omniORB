@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2003/05/20 17:10:23  dgrisby
+// Preliminary valuetype support.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -1491,13 +1494,7 @@ validateTypeNative(PyObject* d_o, PyObject* a_o,
   OMNIORB_THROW(BAD_TYPECODE, NO_IMPLEMENT_Unsupported, compstatus);
 }
 
-static void
-validateTypeAbstractInterface(PyObject* d_o, PyObject* a_o,
-			      CORBA::CompletionStatus compstatus,
-			      PyObject* track)
-{
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
-}
+// validateTypeAbstractInterface is in pyAbstractIntf.cc
 
 static void
 validateTypeLocalInterface(PyObject* d_o, PyObject* a_o,
@@ -1562,7 +1559,7 @@ const omniPy::ValidateTypeFn omniPy::validateTypeFns[] = {
   omniPy::validateTypeValue,
   omniPy::validateTypeValueBox,
   validateTypeNative,
-  validateTypeAbstractInterface,
+  omniPy::validateTypeAbstractInterface,
   validateTypeLocalInterface
 };
 
@@ -2573,11 +2570,7 @@ marshalPyObjectNative(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   OMNIORB_ASSERT(0);
 }
 
-static void
-marshalPyObjectAbstractInterface(cdrStream& stream, PyObject* d_o, PyObject* a_o)
-{
-  OMNIORB_ASSERT(0);
-}
+// marshalPyObjectAbstractInterface is in pyAbstractIntf.cc
 
 static void
 marshalPyObjectLocalInterface(cdrStream& stream, PyObject* d_o, PyObject* a_o)
@@ -2630,7 +2623,7 @@ const omniPy::MarshalPyObjectFn omniPy::marshalPyObjectFns[] = {
   omniPy::marshalPyObjectValue,
   omniPy::marshalPyObjectValueBox,
   marshalPyObjectNative,
-  marshalPyObjectAbstractInterface,
+  omniPy::marshalPyObjectAbstractInterface,
   marshalPyObjectLocalInterface
 };
 
@@ -3372,13 +3365,7 @@ unmarshalPyObjectNative(cdrStream& stream, PyObject* d_o)
   return 0;
 }
 
-static PyObject*
-unmarshalPyObjectAbstractInterface(cdrStream& stream, PyObject* d_o)
-{
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported,
-		(CORBA::CompletionStatus)stream.completion());
-  return 0;
-}
+// unmarshalPyObjectAbstractInterface is in pyAbstractIntf.cc
 
 static PyObject*
 unmarshalPyObjectLocalInterface(cdrStream& stream, PyObject* d_o)
@@ -3441,7 +3428,7 @@ const omniPy::UnmarshalPyObjectFn omniPy::unmarshalPyObjectFns[] = {
   omniPy::unmarshalPyObjectValue,
   omniPy::unmarshalPyObjectValue, // Same function as value
   unmarshalPyObjectNative,
-  unmarshalPyObjectAbstractInterface,
+  omniPy::unmarshalPyObjectAbstractInterface,
   unmarshalPyObjectLocalInterface
 };
 
@@ -5218,13 +5205,7 @@ copyArgumentNative(PyObject* d_o, PyObject* a_o,
   return 0;
 }
 
-static PyObject*
-copyArgumentAbstractInterface(PyObject* d_o, PyObject* a_o,
-			      CORBA::CompletionStatus compstatus)
-{
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
-  return 0;
-}
+// copyArgumentAbstractInterface is in pyAbstractIntf.cc
 
 static PyObject*
 copyArgumentLocalInterface(PyObject* d_o, PyObject* a_o,
@@ -5289,7 +5270,7 @@ const omniPy::CopyArgumentFn omniPy::copyArgumentFns[] = {
   omniPy::copyArgumentValue,
   omniPy::copyArgumentValueBox,
   copyArgumentNative,
-  copyArgumentAbstractInterface,
+  omniPy::copyArgumentAbstractInterface,
   copyArgumentLocalInterface
 };
 

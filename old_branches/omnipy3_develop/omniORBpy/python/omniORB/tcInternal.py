@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.13.2.2  2003/05/20 17:10:26  dgrisby
+# Preliminary valuetype support.
+#
 # Revision 1.13.2.1  2003/03/23 21:51:43  dgrisby
 # New omnipy3_develop branch.
 #
@@ -310,7 +313,7 @@ def createTypeCode(d, parent=None):
     elif k == tv_wstring:   return TypeCode_wstring(d)
     elif k == tv_fixed:     return TypeCode_fixed(d)
 
-    elif k == tv_objref:
+    elif k in [ tv_objref, tv_abstract_interface ]:
         tc = omniORB.findTypeCode(d[1])
         if tc is None:
             tc = TypeCode_objref(d)
@@ -413,7 +416,6 @@ class TypeCode_base (CORBA.TypeCode):
     def fixed_digits(self):             raise CORBA.TypeCode.BadKind()
     def fixed_scale(self):              raise CORBA.TypeCode.BadKind()
 
-    # Things for types we don't support:
     def member_visibility(self, index): raise CORBA.TypeCode.BadKind()
     def type_modifier(self):            raise CORBA.TypeCode.BadKind()
     def concrete_base_type(self):       raise CORBA.TypeCode.BadKind()
@@ -479,10 +481,10 @@ class TypeCode_fixed (TypeCode_base):
 class TypeCode_objref (TypeCode_base):
     def __init__(self, desc):
         if type(desc) is not types.TupleType or \
-           desc[0] != tv_objref:
+           desc[0] not in [ tv_objref, tv_abstract_interface ]:
             raise CORBA.INTERNAL()
         self._d = desc
-        self._k = CORBA.tk_objref
+        self._k = desc[0]
 
     def id(self):
         if self._d[1] is not None:
@@ -1104,6 +1106,8 @@ def r_getCompactDescriptor(d, seen, ind):
         r = tuple(c)
         seen[d[2]] = r
         seen[id(d)] = r
+
+    elif k == tv_abstract_interface: r = d
 
     elif k == tv__indirect:
         l = [d[1][0]]
