@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.14  2004/05/05 14:03:20  dgrisby
+  Raise INV_OBJREF if setClientCallTimeout is given a nil objref.
+
   Revision 1.2.2.13  2003/01/16 11:08:26  dgrisby
   Patches to support Digital Mars C++. Thanks Christof Meerwald.
 
@@ -101,6 +104,23 @@
 #include <exceptiondefs.h>
 
 OMNI_USING_NAMESPACE(omni)
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////// omniORB::version... //////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+const char*
+omniORB::versionString()
+{
+  return OMNIORB_VERSION_STRING;
+}
+
+_CORBA_ULong
+omniORB::versionHex()
+{
+  return OMNIORB_VERSION_HEX;
+}
 
 
 //////////////////////////////////////////////////////////////////////
