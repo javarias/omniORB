@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  1999/11/25 11:20:33  dpg1
+# Tidy documentation changes.
+#
 # Revision 1.10  1999/11/23 09:52:11  dpg1
 # Dumb bug where maps weren't cleared between runs.
 #
@@ -946,11 +949,6 @@ strings. Raises DeclNotFound if the name is not recognised."""
     return declMap[sname]
 
 
-def clear():
-    """Clear back-end structures ready for another run"""
-    declMap.clear()
-
-
 # Declarations of non-basic `built-in' types
 
 CORBAObject = Interface("<built in>", 0, 0, [],
@@ -962,3 +960,10 @@ registerDecl(["CORBA", "Object"], CORBAObject)
 CORBAModule = Module("<built in>", 0, 0, [], "CORBA", ["CORBA"],
                      "IDL:omg.org/CORBA:1.0", [CORBAObject])
 registerDecl(["CORBA"], CORBAModule)
+
+
+def clear():
+    """Clear back-end structures ready for another run"""
+    declMap.clear()
+    registerDecl(["CORBA", "Object"], CORBAObject)
+    registerDecl(["CORBA"], CORBAModule)
