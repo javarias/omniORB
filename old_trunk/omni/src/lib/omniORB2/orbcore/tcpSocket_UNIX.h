@@ -1,6 +1,6 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB2
-// TCPSocket.h                Created on: 18/3/96
+// TCPSocket_UNIX.h                Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
 // Copyright (C) Olivetti Research Limited, 1996
@@ -11,10 +11,13 @@
 
 /*
   $Log$
+ * Revision 1.1  1997/01/08  17:26:34  sll
+ * Initial revision
+ *
   */
 
-#ifndef __TCPSOCKET_H__
-#define __TCPSOCKET_H__
+#ifndef __TCPSOCKET_UNIX_H__
+#define __TCPSOCKET_UNIX_H__
 
 typedef int tcpSocketHandle_t;
 class tcpSocketRope;
@@ -236,4 +239,4 @@ private:
   tcpSocketRendezvous * pd_rendezvous;
 };
 
-#endif // __TCPSOCKET_H__
+#endif // __TCPSOCKET_UNIX_H__
