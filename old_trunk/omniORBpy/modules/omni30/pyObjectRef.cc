@@ -31,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.12  2000/03/24 16:48:57  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.11  2000/03/17 15:57:07  dpg1
 // Correct, and more consistent handling of invalid strings in
 // string_to_object().
@@ -248,7 +253,8 @@ omniPy::createObjRef(const char*             mostDerivedRepoId,
 				type_verified);
   }
 
-  omniRemoteIdentity* id = new omniRemoteIdentity(rope, key, keysize);
+  if (!release_profiles) profiles = new IOP::TaggedProfileList(*profiles);
+  omniRemoteIdentity*    id       = new omniRemoteIdentity(rope, key, keysize);
 
   if (omniORB::trace(10)) {
     omniORB::logger l;
