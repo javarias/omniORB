@@ -13,6 +13,9 @@
 
 /*
   $Log$
+ * Revision 1.2  1997/03/09  12:18:43  sll
+ * Minor cleanup.
+ *
   Revision 1.1  1997/01/08 17:28:30  sll
   Initial revision
 
@@ -21,7 +24,8 @@
 #ifndef __IIOP_H__
 #define __IIOP_H__
 
-class IIOP {
+class _OMNIORB2_NTDLL_ IIOP {
+
   public:
  
   struct Version { 
