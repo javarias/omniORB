@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.17  2000/11/30 11:40:47  dpg1
+// Add -nc option to omniidl to accept invalid IDL with identifiers
+// differing only by case.
+//
 // Revision 1.15.2.16  2000/10/24 09:53:29  dpg1
 // Clean up omniidl system dependencies. Replace use of _CORBA_ types
 // with IDL_ types.
@@ -1465,7 +1469,7 @@ main(int argc, char** argv)
 "\n"
 "try:\n"
 "    import omniidl.main\n"
-"except ImportError:\n"
+"except ImportError, msg:\n"
 "    sys.stderr.write('\\n\\n')\n"
 "    sys.stderr.write('omniidl: ERROR!\\n\\n')\n"
 "    sys.stderr.write('omniidl: Could not open Python files for IDL compiler\\n')\n"
