@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.21  2002/05/22 15:56:33  dgrisby
+  IRIX, FreeBSD fixes.
+
   Revision 1.1.4.20  2002/03/27 11:44:51  dpg1
   Check in interceptors things left over from last week.
 
@@ -244,7 +247,6 @@ GIOP_S::dispatcher() {
 	<< ex.line() << ", message: "
 	<< ex.errmsg() << "\n";
     }
-    impl()->sendMsgErrorMessage(this);
     return 0;
   }
   catch (...) {
@@ -253,7 +255,6 @@ GIOP_S::dispatcher() {
       l << "Unknown exception caught by a server thread at "
 	<< __FILE__ << ": line " << __LINE__ << "\n";
     }
-    impl()->sendMsgErrorMessage(this);
     return 0;
   }
 }
@@ -539,6 +540,7 @@ GIOP_S::handleCancelRequest() {
   // We do not have the means to asynchronously abort the execution of
   // an upcall by another thread. Therefore it is not possible to
   // cancel a request that has already been in progress. 
+  omniORB::logs(5, "Received and ignored a CancelRequest message.");
   pd_state = ReplyCompleted;
   return 1;
 }
