@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  1999/03/11 16:25:51  djr
+  Updated copyright notice
+
   Revision 1.2  1998/08/25 18:52:09  sll
   Added dummy marshalling functions in serviceRecord to make gcc-2.7.2 happy.
 
@@ -50,7 +53,7 @@ class omniInitialReferences {
  public:
   void set(const char* identifier,CORBA::Object_ptr obj);
   CORBA::Object_ptr get(const char* identifier);
-  CORBA::ORB::ObjectIdList* list();
+  CORBA_InitialReferences::ObjIdList* list();
 
   void initialise_bootstrap_agentImpl();
   CORBA_InitialReferences_i* has_bootstrap_agentImpl();
@@ -95,7 +98,7 @@ public:
   CORBA::Object_ptr get (const char* id) {
     return omniInitialReferences::singleton()->get(id);
   }
-  CORBA::ORB::ObjectIdList* list () {
+  ObjIdList* list () {
     return omniInitialReferences::singleton()->list();
   }
   CORBA_InitialReferences_i(CORBA::BOA_ptr boa) {
