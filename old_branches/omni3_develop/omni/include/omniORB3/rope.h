@@ -29,6 +29,17 @@
 
 /*
   $Log$
+  Revision 1.11.2.1  1999/09/21 20:37:15  sll
+  -Simplified the scavenger code and the mechanism in which connections
+   are shutdown. Now only one scavenger thread scans both incoming
+   and outgoing connections. A separate thread do the actual shutdown.
+  -omniORB::scanGranularity() now takes only one argument as there is
+   only one scan period parameter instead of 2.
+  -Trace messages in various modules have been updated to use the logger
+   class.
+  -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                 -ORBscanIncomingPeriod.
+
   Revision 1.11  1999/08/30 16:55:43  sll
   Replaced WrTestLock and heartbeat in WrLock with clicksDecrAndGet,
   clicksGet and clicksSet.
@@ -82,13 +93,11 @@
 // is asymmetric.  GIOP_C provides the functions to drive the client side
 // protocol.  GIOP_S provides the server side functions.
 
-
 class Rope;
 class Endpoint;
 class NetBufferedStream;
 class Strand_iterator;
 class Rope_iterator;
-
 
 class Strand {
 public:
@@ -327,7 +336,7 @@ public:
   // from those returned in previous calls. A client may use this number
   // to tag the messages sent via a strand.
 
-  virtual void shutdown() = 0;
+  void shutdown();
   // Concurrency Control:
   //    MUTEX = pd_rope->pd_lock
   // Pre-condition:
@@ -338,6 +347,18 @@ public:
   // Signal to any thread currently using this strand to give up because
   // this strand is being shut down.
   // Never returns an exception and never blocks
+
+  virtual void real_shutdown() = 0;
+  // Concurrency Control:
+  //      None
+  //
+  // This helper function is provided by the strand implementation to 
+  // change the state of the network connection to "shutdown". In other
+  // words, any future OS calls to send or receive via the connection
+  // would return an error.
+  // Notice that this function may be called by one thread while another
+  // is blocking on a receive or a send on the network connection.
+
 
   void incrRefCount(_CORBA_Boolean held_rope_mutex = 0);
   // Concurrency Control:
@@ -548,6 +569,9 @@ private:
   _CORBA_ULong    pd_seqNumber;
   int             pd_clicks;
 
+public:
+  Strand         *pd_ripper_next;
+
   // Make the default constructor private. This traps at compile time
   // any attempt to allocate an array of objects using the new operator.
   Strand();
@@ -555,9 +579,7 @@ private:
   Strand &operator=(const Strand&);
 };
 
-
 typedef Strand::Sync Strand_Sync;
-
 
 class Endpoint {
 public:
@@ -596,10 +618,9 @@ public:
   }
 
 private:
-  _CORBA_Char* pd_protocolname;
+  _CORBA_Char * pd_protocolname;
   Endpoint();
 };
-
 
 class Endpoint_var {
 public:
@@ -616,7 +637,6 @@ private:
   Endpoint* pd_p;
   Endpoint_var& operator=(const Endpoint_var&);
 };
-
 
 class Strand_iterator {
 public:
@@ -651,7 +671,6 @@ private:
   Strand_iterator();
 };
 
-
 class Anchor {
 public:
   Anchor();
@@ -664,6 +683,7 @@ private:
   omni_mutex   pd_lock;
   Rope        *pd_head;
 };
+
 
 
 class Rope {
@@ -824,7 +844,6 @@ private:
   Rope();
 };
 
-
 class Rope_var {
 public:
   inline Rope_var() : _ptr(0) {}
@@ -871,9 +890,7 @@ public:
   Rope* _ptr;
 };
 
-
 class ropeFactory;
-
 
 class Rope_iterator {
 public:
@@ -909,6 +926,5 @@ private:
   Rope *pd_r;
   Rope_iterator();
 };
-
 
 #endif // __ROPE_H__

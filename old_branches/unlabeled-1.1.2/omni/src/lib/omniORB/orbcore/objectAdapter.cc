@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  1999/09/22 14:26:55  djr
+ Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -177,7 +180,7 @@ omniObjAdapter::shutdown()
       factory->removeIncoming();
   }
 
-  StrandScavenger::killInScavenger();
+  StrandScavenger::removeRopeFactories(incomingFactories);
 
   if( loopback ) {
     loopback->decrRefCount();
@@ -209,9 +212,8 @@ omniObjAdapter::adapterActive()
       while( (factory = (incomingRopeFactory*) iter()) )
 	factory->startIncoming();
     }
-
-    // NB. This does nothing if already initialised.
-    StrandScavenger::initInScavenger();
+    //?? Hmmm.  What if done adapterActive, adapterInactive, adapterActive?
+    StrandScavenger::addRopeFactories(incomingFactories);
   }
 
   pd_isActive = 1;

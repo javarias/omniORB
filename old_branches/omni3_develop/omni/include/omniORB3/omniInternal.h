@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/24 09:51:45  djr
+  Moved from omniORB2 + some new files.
+
   Revision 1.27  1999/06/26 17:55:41  sll
   Added string.h for all platforms by default.
 
@@ -176,10 +179,6 @@ public:
   static inline ptr_arith_t align_to(ptr_arith_t p, alignment_t align) {
     return (p + ((int) align - 1)) & ~((int) align - 1);
   }
-
-  static void globalInit();
-  // This function is not thread-safe and should only be called
-  // by ORB_init().
 
   static _CORBA_ULong hash(const _CORBA_Octet* key, int keysize);
   // Computes a hash of the object key.  The caller must ensure
