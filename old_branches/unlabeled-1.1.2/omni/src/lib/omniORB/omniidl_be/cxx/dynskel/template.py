@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.5  2000/05/31 18:02:51  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+#
 # Revision 1.1.2.4  2000/03/28 18:28:23  djs
 # Sequence deletion function used unescaped name "data" which could clash with a
 # user identifier
@@ -457,14 +461,14 @@ class @private_prefix@_tcParser_unionhelper_@guard_name@ {
 public:
   static void getDiscriminator(tcUnionDesc* _desc, tcDescriptor& _newdesc, CORBA::PR_unionDiscriminator& _discrim) {
     @fqname@* _u = (@fqname@*)_desc->opq_union;
-    @private_prefix@_buildDesc@discrim_cname@(_newdesc, _u->pd__d);
-    _discrim = (CORBA::PR_unionDiscriminator)_u->pd__d;
+    @private_prefix@_buildDesc@discrim_cname@(_newdesc, _u->_pd__d);
+    _discrim = (CORBA::PR_unionDiscriminator)_u->_pd__d;
   }
 
   static void setDiscriminator(tcUnionDesc* _desc, CORBA::PR_unionDiscriminator _discrim, int _is_default) {
     @fqname@* _u = (@fqname@*)_desc->opq_union;
-    _u->pd__d = (@discrim_type@)_discrim;
-    _u->pd__default = _is_default;
+    _u->_pd__d = (@discrim_type@)_discrim;
+    _u->_pd__default = _is_default;
   }
 
   static CORBA::Boolean getValueDesc(tcUnionDesc* _desc, tcDescriptor& _newdesc) {

@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.5  2000/05/31 18:03:40  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+# Calling an exception "e" resulted in a name clash (and resultant C++
+# compile failure)
+#
 # Revision 1.1.2.4  2000/05/05 16:50:53  djs
 # Existing workaround for MSVC5 scoping problems extended to help with
 # base class initialisers. Instead of using the fully qualified or unambiguous
@@ -495,18 +501,18 @@ void
 ##
 
 union_align_nonexhaustive = """\
-if (pd__default) {
+if (_pd__default) {
   @size_calc@
 }
 else {
-  switch(pd__d){
+  switch(_pd__d){
     @cases@
   }
 }
 """
 
 union_align_exhaustive = """\
-switch(pd__d){
+switch(_pd__d){
   @cases@
 }
 """
@@ -539,15 +545,15 @@ union_operators = """\
 void
 @name@::operator>>= (NetBufferedStream& _n) const
 {
-  pd__d >>= _n;
+  _pd__d >>= _n;
   @marshal_cases@
 }
 
 void
 @name@::operator<<= (NetBufferedStream& _n)
 {
-  pd__d <<= _n;
-  switch(pd__d) {
+  _pd__d <<= _n;
+  switch(_pd__d) {
     @unmarshal_cases@
   }
 }
@@ -555,33 +561,33 @@ void
 void
 @name@::operator>>= (MemBufferedStream& _n) const
 {
-  pd__d >>= _n;
+  _pd__d >>= _n;
   @marshal_cases@
 }
 
 void
 @name@::operator<<= (MemBufferedStream& _n)
 {
-  pd__d <<= _n;
-  switch(pd__d) {
+  _pd__d <<= _n;
+  switch(_pd__d) {
     @unmarshal_cases@
   }
 }
 """
 
 union_operators_nonexhaustive = """\
-if (pd__default) {
+if (_pd__default) {
   @default@
 }
 else {
-  switch(pd__d) {
+  switch(_pd__d) {
     @cases@
   }
 }
 """
 
 union_operators_exhaustive = """\
-switch(pd__d) {
+switch(_pd__d) {
   @cases@
 }
 """

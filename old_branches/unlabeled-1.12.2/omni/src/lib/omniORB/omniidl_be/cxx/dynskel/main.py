@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.7  2000/05/31 18:02:50  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+#
 # Revision 1.12.2.6  2000/04/26 18:22:20  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -869,14 +873,14 @@ def visitUnion(node):
         mem_cname = mangler.canonTypeName(default_type, default_decl)
         default_decl_name = id.Name(default_decl.scopedName())
         mem_name = default_decl_name.simple()
-        thing = "_u->pd_" + mem_name
+        thing = "_u->_pd_" + mem_name
         if default_is_array:
             thing = docast(default_type, default_decl, thing)
 
         required_symbols.append(prefix + "_buildDesc" + mem_cname)
         
         switch.out("""\
-if( _u->pd__default ) {
+if( _u->_pd__default ) {
   @private_prefix@_buildDesc@mem_cname@(_newdesc, @thing@);
 } else {""",
                    mem_cname = mem_cname,
@@ -886,7 +890,7 @@ if( _u->pd__default ) {
 
     # handle the main cases
     switch.out("""\
-switch( _u->pd__d ) {""")
+switch( _u->_pd__d ) {""")
 
     # deal with types
     for c in node.cases():
@@ -909,7 +913,7 @@ switch( _u->pd__d ) {""")
         
         is_array = full_dims != []
         is_array_declarator = declarator.sizes() != []
-        union_member = "_u->pd_" + mem_name
+        union_member = "_u->_pd_" + mem_name
         cast = union_member
         if is_array:
             cast = docast(caseType, declarator, cast)
