@@ -27,7 +27,11 @@
 //	*** PROPRIETORY INTERFACE ***
 //      
 
-/* $Log$
+/* 
+   $Log$
+ * Revision 1.1  1997/12/10 11:52:39  sll
+ * Initial revision
+ *
  * Revision 1.1  1997/09/20  17:41:47  dpg1
  * Initial revision
  *
@@ -108,11 +112,11 @@ public:
     : public virtual _sk_omniLifeCycleInfo
   {
   private:
-    omniLC::_wrap_home *wrap;
+    _wrap_home *wrap;
     CORBA::Object_var  home;
 
   public:
-    LifeCycleInfo_i(omniLC::_wrap_home *w, CORBA::Object_ptr h)
+    LifeCycleInfo_i(_wrap_home *w, CORBA::Object_ptr h)
       : wrap(w)
     {
       home = CORBA::Object::_duplicate(h);
@@ -275,7 +279,7 @@ public:
 
   class ThreadOp {
   public:
-    ThreadOp(omniLC::_threadControl *t)
+    ThreadOp(_threadControl *t)
       : tc(t)
     {
       t->_beginOp();
@@ -293,7 +297,7 @@ public:
 
   class ThreadLC {
   public:
-    ThreadLC(omniLC::_threadControl *t)
+    ThreadLC(_threadControl *t)
       : tc(t)
     {
       t->_beginLC();
