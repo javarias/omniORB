@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/12/16 16:12:33  djs
+# Fix for functions with no arguments or return values but that can
+# raise exceptions (they should have call descriptors)
+#
 # Revision 1.9  1999/12/15 12:14:00  djs
 # Nolonger produces call descriptor if operation has no arguments and no
 # return type
@@ -161,12 +165,17 @@ def argmapping(type):
                                type_name + "_slice*",
                                type_name + "_slice*"]
 
-    if tyutil.isObjRef(deref_type) or \
-       tyutil.isTypeCode(deref_type):
+    if tyutil.isObjRef(deref_type):
         return [deref_type_name + "_ptr",
                 deref_type_name + "_ptr&",
                 deref_type_name + "_ptr&",
                 deref_type_name + "_ptr"]
+    
+    if tyutil.isTypeCode(deref_type):
+        return ["CORBA::TypeCode_ptr",
+                "CORBA::TypeCode_ptr&",
+                "CORBA::TypeCode_ptr&",
+                "CORBA::TypeCode_ptr"]        
 
     if tyutil.isString(deref_type):
         return ["const char*",
@@ -524,7 +533,7 @@ pd_result = new @type@;""", type = return_type_base)
                     temp_init_value = "0"
                 elif tyutil.isTypeCode(deref_param_type):
                     via_tmp = 1
-                    temp_type_name = param_type_name
+                    temp_type_name = "CORBA::TypeCode"
                     temp_init_value = "CORBA::TypeCode::_nil()"
                 elif tyutil.isStruct(deref_param_type) or \
                      tyutil.isUnion(deref_param_type)  or \

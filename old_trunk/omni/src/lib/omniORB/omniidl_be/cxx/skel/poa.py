@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/23 18:48:26  djs
+# Bugfixes, more interface operations and attributes code
+#
 # Revision 1.2  1999/11/19 20:09:40  djs
 # Added trivial POA interface code
 #
@@ -95,6 +98,8 @@ def visitModule(node):
     leave()
 
 def visitInterface(node):
+    if not(node.mainFile()):
+        return
     name = tyutil.mapID(node.identifier())
     environment = self.__environment
     fqname = environment.nameToString(node.scopedName())
