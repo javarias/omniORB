@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.34.6.3  1999/10/13 15:18:03  djr
+  Fixed problem with call descriptors shared between ops and attrs.
+
   Revision 1.34.6.2  1999/09/30 11:49:29  djr
   Implemented catching user-exceptions in GIOP_S for all compilers.
 
@@ -2262,12 +2265,8 @@ o2be_operation::produceUnMarshalCode(std::fstream& s, AST_Decl* decl,
 	ptr_to_first_elm += argname;
 	{
 	  size_t ndim = 0;
-	  o2be_array::dim_iterator next(array);
-	  while( ndim++ < array->getNumOfDims() - 1 ) {
-	    ptr_to_first_elm += '[';
-	    ptr_to_first_elm += (int) next();
-	    ptr_to_first_elm += ']';
-	  }
+	  while( ndim++ < array->getNumOfDims() - 1 )
+	    ptr_to_first_elm += "[0]";
 	}
 	ptr_to_first_elm += ")";
 
@@ -2697,12 +2696,8 @@ o2be_operation::produceMarshalCode(std::fstream& s, AST_Decl* decl,
 	ptr_to_first_elm += argname;
 	{
 	  size_t ndim = 0;
-	  o2be_array::dim_iterator next(array);
-	  while( ndim++ < array->getNumOfDims() - 1 ) {
-	    ptr_to_first_elm += '[';
-	    ptr_to_first_elm += (int) next();
-	    ptr_to_first_elm += ']';
-	  }
+	  while( ndim++ < array->getNumOfDims() - 1 )
+	    ptr_to_first_elm += "[0]";
 	}
 	ptr_to_first_elm += ")";
 
