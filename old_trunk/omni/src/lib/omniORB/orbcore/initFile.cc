@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29  1999/08/16 19:24:08  sll
+  Added a per-compilation unit initialiser.
+
   Revision 1.28  1999/06/18 20:54:00  sll
   Added include Naming.hh as it is no longer included by default when this
   runtime library is compiled.
@@ -158,7 +161,7 @@ initFile::~initFile()
   if (fData) {
     delete [] fData;
   }
-#if defined(NTArchitecture)
+#if defined(__WIN32__) && !defined(__ETS_KERNEL__)
   if (use_registry) {
     RegCloseKey(init_hkey);
   }
