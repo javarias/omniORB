@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.27  1999/07/03 14:37:09  sll
+  *** empty log message ***
+
   Revision 1.26  1999/07/02 19:13:21  sll
   typedef of a typedef of a sequence now translate to a C++ typedef.
   Previously, the sequence is expanded to its real type.
@@ -213,7 +216,6 @@ o2be_sequence::o2be_sequence(AST_Expression* v, AST_Type* t)
 {
   pd_have_produced_tcParser_buildDesc_code = I_FALSE;
   pd_have_calc_rec_seq_offset = I_FALSE;
-  pd_out_adptarg_name = 0;
 }
 
 
@@ -1138,14 +1140,10 @@ o2be_sequence::produce_typedef_binary_operators_in_dynskel(std::fstream& s,
 const char*
 o2be_sequence::out_adptarg_name(o2be_typedef* tdef, AST_Decl* used_in)
 {
-  if( pd_out_adptarg_name )  return pd_out_adptarg_name;
-
   StringBuf out_type;
   out_type += tdef->unambiguous_name(used_in);
   out_type += "_out";
-  pd_out_adptarg_name = out_type.release();
-
-  return pd_out_adptarg_name;
+  return out_type.release();
 }
 
 
