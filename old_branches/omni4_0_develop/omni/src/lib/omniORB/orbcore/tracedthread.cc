@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2001/08/17 13:49:08  dpg1
+  Optional logging for traced mutexes and condition variables.
+
   Revision 1.2.2.2  2000/09/27 17:35:50  sll
   Updated include/omniORB3 to include/omniORB4
 
@@ -90,18 +93,20 @@ omni_tracedmutex::omni_tracedmutex()
 omni_tracedmutex::~omni_tracedmutex()
 {
   if( pd_holder ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- mutex destroyed whilst held.\n" <<
       bug_msg;
-    omniORB::log.flush();
+    log.flush();
 
     BOMB_OUT();
   }
   if( pd_n_conds != 0 ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- mutex destroyed whilst still being used\n"
       " by a condition variable.\n" << bug_msg;
-    omniORB::log.flush();
+    log.flush();
 
     BOMB_OUT();
   }
@@ -122,10 +127,11 @@ omni_tracedmutex::lock()
   omni_mutex_lock sync(pd_lock);
 
   if( me && pd_holder == me ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- attempt to lock mutex when already held.\n"
-      << bug_msg;
-    omniORB::log.flush();
+	<< bug_msg;
+    log.flush();
 
     BOMB_OUT();
   }
@@ -151,10 +157,11 @@ omni_tracedmutex::unlock()
     omni_mutex_lock sync(pd_lock);
 
     if( !pd_holder || me && pd_holder != me ) {
-      omniORB::log <<
+      omniORB::logger log;
+      log <<
 	"omniORB: Assertion failed -- attempt to unlock mutex not held.\n" <<
 	bug_msg;
-      omniORB::log.flush();
+      log.flush();
 
       BOMB_OUT();
     }
@@ -177,12 +184,13 @@ omni_tracedmutex::assert_held(const char* file, int line, int yes)
       return;
   }
 
-  omniORB::log << "omniORB: Assertion failed -- " <<
+  omniORB::logger log;
+  log << "omniORB: Assertion failed -- " <<
     (yes ? "mutex is not held.\n" : "mutex should not be held.\n") <<
     bug_msg <<
     "   file: " << file << "\n"
     "   line: " << line << "\n";
-  omniORB::log.flush();
+  log.flush();
 
   BOMB_OUT();
 }
@@ -202,10 +210,11 @@ omni_tracedcondition::omni_tracedcondition(omni_tracedmutex* m)
   : pd_mutex(*m), pd_cond(&m->pd_lock), pd_n_waiters(0), pd_logname(0)
 {
   if( !m ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- omni_tracedcondition initialised with\n"
       " a nil mutex argument!\n" << bug_msg;
-    omniORB::log.flush();
+    log.flush();
 
     BOMB_OUT();
   }
@@ -218,10 +227,11 @@ omni_tracedcondition::omni_tracedcondition(omni_tracedmutex* m)
 omni_tracedcondition::~omni_tracedcondition()
 {
   if( pd_n_waiters ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: WARNING -- an omni_tracedcondition was destroyed,\n"
       " but there are still threads waiting on it!\n";
-    omniORB::log.flush();
+    log.flush();
   }
   pd_mutex.pd_lock.lock();
   pd_mutex.pd_n_conds--;
@@ -243,11 +253,12 @@ omni_tracedcondition::wait()
   omni_mutex_lock sync(pd_mutex.pd_lock);
 
   if( me && pd_mutex.pd_holder != me ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- attempt to wait on condition variable,\n"
       " but the calling thread does not hold the associated mutex.\n" <<
       bug_msg;
-    omniORB::log.flush();
+    log.flush();
 
     BOMB_OUT();
   }
@@ -282,11 +293,12 @@ omni_tracedcondition::timedwait(unsigned long secs, unsigned long nanosecs)
   omni_mutex_lock sync(pd_mutex.pd_lock);
 
   if( me && pd_mutex.pd_holder != me ) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Assertion failed -- attempt to wait on condition variable,\n"
       " but the calling thread does not hold the associated mutex.\n" <<
       bug_msg;
-    omniORB::log.flush();
+    log.flush();
 
     BOMB_OUT();
   }

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.32.2.5  2001/08/03 17:41:22  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.32.2.4  2001/04/18 18:18:08  sll
   Big checkin with the brand new internal APIs.
 
@@ -384,15 +388,10 @@ void initFile::initialize()
     }
     else {
       if (omniORB::traceLevel > 0) {
-#ifndef __atmos__
-	omniORB::log << "Configuration error:  Unknown field (" 
-		     << (const char*) entryname << ") "
-		     << " found in configuration.\n";
-	omniORB::log.flush();
-#else
-	kprintf("Configuration error:  ");
-	kprintf("Unknown field (%s) found in configuration file.\n",(const char*)entryname);
-#endif
+	omniORB::logger log;
+	log << "Configuration error:  Unknown field (" 
+	    << (const char*) entryname << ") "
+	    << " found in configuration.\n";
       }
       OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		    CORBA::COMPLETED_NO);
@@ -419,9 +418,9 @@ int initFile::read_file(char* config_fname)
     if (stat(config_fname,&stbuf) < 0 || !S_ISREG(stbuf.st_mode)) {
 #endif
       if (omniORB::traceLevel >= 2) {
-	omniORB::log << "omniORB configuration file: "
-	      << config_fname << " either does not exist or is not a file.\n";
-	omniORB::log.flush();
+	omniORB::logger log;
+	log << "omniORB configuration file: "
+	    << config_fname << " either does not exist or is not a file.\n";
       }
       return -1;
     }
@@ -587,16 +586,9 @@ int initFile::getRegistryEntry(CORBA::String_var& entryname,
 void initFile::multerr(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
-#ifndef __atmos__
-    omniORB::log <<
-      "omniORB: Configuration error: Multiple entries found for field\n"
-      " " << entryname << " .\n";
-    omniORB::log.flush();
-#else
-    kprintf("Configuration error: ");
-    kprintf("Multiple entries found for field %s in configuration file.\n",
-	    entryname);
-#endif
+    omniORB::logger log;
+    log << "omniORB: Configuration error: Multiple entries found for field\n "
+	<< entryname << " .\n";
   }
   OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		CORBA::COMPLETED_NO);
@@ -606,16 +598,9 @@ void initFile::multerr(const char* entryname)
 void initFile::dataerr(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
-#ifndef __atmos__
-    omniORB::log <<
-      "omniORB: Configuration error: No data found for field " << entryname <<
-      "\n"
-      " in configuration file.\n";
-    omniORB::log.flush();
-#else
-    kprintf("Configuration error: No data found for field %s",entryname);
-    kprintf(" in configuration file.\n");
-#endif
+    omniORB::logger log;
+    log << "omniORB: Configuration error: No data found for field " 
+	<< entryname << "\n in configuration file.\n";
   }
   OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		CORBA::COMPLETED_NO);
@@ -625,13 +610,8 @@ void initFile::dataerr(const char* entryname)
 void initFile::parseerr()
 {
   if (omniORB::traceLevel > 0) {
-#ifndef __atmos__
-    omniORB::log <<
-      "omniORB: Configuration error: Parse error in config file.\n";
-    omniORB::log.flush();
-#else
-    kprintf("Configuration error: Parse error in config file.\n");
-#endif
+    omniORB::logger log;
+    log << "omniORB: Configuration error: Parse error in config file.\n";
   }
   OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		CORBA::COMPLETED_NO);
@@ -641,14 +621,9 @@ void initFile::parseerr()
 void initFile::invref(const char* entryname)
 {
   if (omniORB::traceLevel > 0) {
-#ifndef __atmos__
-    omniORB::log << "omniORB: Configuration error: Invalid object reference "
-      "supplied for " << entryname << ".\n";
-    omniORB::log.flush();
-#else
-    kprintf("Configuration error: Invalid object reference supplied for %s.\n",
-	    entryname);
-#endif
+    omniORB::logger log;
+    log << "omniORB: Configuration error: Invalid object reference supplied for " 
+	<< entryname << ".\n";
   }
   OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		CORBA::COMPLETED_NO);
@@ -662,7 +637,8 @@ void initFile::invref(const char* entryname)
 void initFile::noValsFound()
 {
   if (omniORB::traceLevel > 0) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Configuration error: No values found in registry key\n" <<
       " HKEY_LOCAL_MACHINE\\" << INIT_REGKEY << "\n"
       " Either set the environment variable OMNIORB_CONFIG to point\n"
@@ -670,7 +646,6 @@ void initFile::noValsFound()
       " naming service in to the registry in the (string) value\n"
       " NAMESERVICE , under the registry entry\n"
       " HKEY_LOCAL_MACHINE\\" << INIT_REGKEY << "\n";
-    omniORB::log.flush();
   }
 }
 
@@ -678,10 +653,10 @@ void initFile::noValsFound()
 void initFile::formaterr(char* entryname)
 {
   if (omniORB::traceLevel > 0) {
-    omniORB::log <<
+    omniORB::logger log;
+    log <<
       "omniORB: Configuration error: Data for value " << entryname << "\n"
       " is not a character string.\n";
-    omniORB::log.flush();
   }
   OMNIORB_THROW(INITIALIZE,INITIALIZE_ConfigFileError,
 		CORBA::COMPLETED_NO);

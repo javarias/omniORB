@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.12.2.7  2001/06/13 20:10:03  sll
+ Minor update to make the ORB compiles with MSVC++.
+
  Revision 1.12.2.6  2001/04/19 09:14:16  sll
  Scoped where appropriate with the omni namespace.
 
@@ -93,8 +96,8 @@
 #include <exceptiondefs.h>
 
 #include <ctype.h>
-#include <dynamicLib.h>
 #include <libcWrapper.h>
+#include <orbParameters.h>
 
 #define INIT_MAX_SEQ_LENGTH  6
 
@@ -180,7 +183,7 @@ ContextImpl::set_one_value(const char* prop_name, const CORBA::Any& value)
 
   insert_single_consume(name._retn(),
 			((omniORB::omniORB_27_CompatibleAnyExtraction)?
-                                (char*)strval:CORBA::string_dup(strval)));
+			 (char*)strval:CORBA::string_dup(strval)));
   RETURN_CORBA_STATUS;
 }
 
@@ -341,11 +344,11 @@ ContextImpl::decrRefCount()
 
     if( !pd_refCount ) {
       if( omniORB::traceLevel > 0 ) {
-	omniORB::log <<
+	omniORB::logger log;
+	log <<
 	  "omniORB: WARNING -- CORBA::release() was called too many times\n"
 	  " for a CORBA::Context object - the object has already been\n"
 	  " destroyed.\n";
-	omniORB::log.flush();
       }
       return;
     }
