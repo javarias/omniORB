@@ -11,6 +11,9 @@
  
 /*
   $Log$
+// Revision 1.1  1997/01/08  17:26:01  sll
+// Initial revision
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -215,6 +218,7 @@ omniORB::locateObject(omniObjectKey &k)
   }
   objectTableLock.unlock();
   throw CORBA::INV_OBJREF(0,CORBA::COMPLETED_NO);
+  return 0;  // MS VC++ 4.0 needs this.
 }
 
 
