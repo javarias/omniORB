@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.17  1998/08/15 14:24:17  sll
+  Removed unnecessary const attribute when calling
+  ::operator>>=(CORBA::ULong,NetBufferedStream&).
+
   Revision 1.16  1998/08/05 18:10:48  sll
   *** empty log message ***
 
@@ -576,7 +580,11 @@ public:
   }
 
   _CORBA_Boolean RdMessageByteOrder() const {
+#ifdef HAS_Cplusplus_Bool
+    return byteOrder()?true:false;
+#else
     return byteOrder();
+#endif
   }
 
   size_t alreadyRead() const {
@@ -730,7 +738,7 @@ template <class T>
 inline void
 _CORBA_Sequence<T>::operator>>= (MemBufferedStream &s) const
 {
-  pd_len >>= s;
+  ::operator>>=(pd_len,s);
   for (int i=0; i<(int)pd_len; i++) {
     pd_buf[i] >>= s;
   }
