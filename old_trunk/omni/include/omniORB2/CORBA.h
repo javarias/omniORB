@@ -31,6 +31,9 @@
 
 /*
  $Log$
+ * Revision 1.12  1997/05/06  16:04:43  sll
+ * Public release.
+ *
 */
 
 #ifndef __CORBA_H__
@@ -275,6 +278,7 @@ typedef _CORBA_Double  Double;
     // Not implemented yet
   };
   typedef class InterfaceDef *InterfaceDef_ptr;
+  typedef InterfaceDef_ptr InterfaceDefRef;
 
 ////////////////////////////////////////////////////////////////////////
 //                   Type Any                                         //
@@ -282,6 +286,7 @@ typedef _CORBA_Double  Double;
 
   class TypeCode;
   typedef class TypeCode *TypeCode_ptr;
+  typedef TypeCode_ptr TypeCodeRef;
   class Any {
   public:
     Any();
@@ -588,6 +593,7 @@ typedef _CORBA_Double  Double;
 
   class Environment;
   typedef Environment *Environment_ptr;
+  typedef Environment_ptr EnvironmentRef;
 
   class Environment {
   public:
@@ -609,6 +615,7 @@ typedef _CORBA_Double  Double;
 
   class NamedValue;
   typedef NamedValue* NamedValue_ptr;
+  typedef NamedValue_ptr NamedValueRef;
 
   class NamedValue {
   public:
@@ -624,6 +631,8 @@ typedef _CORBA_Double  Double;
 
   class NVList;
   typedef NVList *NVList_ptr;
+  typedef NVList_ptr NVListRef;
+
 
   class NVList {
   public:
@@ -649,6 +658,7 @@ typedef _CORBA_Double  Double;
 
   class Context;
   typedef Context *Context_ptr;
+  typedef Context_ptr ContextRef;
 
   class Context {
   public:
@@ -671,6 +681,7 @@ typedef _CORBA_Double  Double;
 
   class ContextList;
   typedef ContextList* ContextList_ptr;
+  typedef ContextList_ptr ContextListRef;
 
   class ContextList {
   public:
@@ -689,6 +700,7 @@ typedef _CORBA_Double  Double;
 
   class Principal;
   typedef Principal* Principal_ptr;
+  typedef Principal_ptr PrincipalRef;
 
   typedef _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Octet,1,1> PrincipalID;
 
@@ -715,6 +727,7 @@ typedef _CORBA_Double  Double;
     ExceptionList(); // Not implemented yet
   };
   typedef ExceptionList* ExceptionList_ptr;
+  typedef ExceptionList_ptr ExceptionListRef;
 
 ////////////////////////////////////////////////////////////////////////
 //                   PIDL Object                                      //
@@ -722,14 +735,17 @@ typedef _CORBA_Double  Double;
 
   class Request;
   typedef Request *Request_ptr;
+  typedef Request_ptr RequestRef;
 
   class Object;
   typedef Object *Object_ptr;
+  typedef Object_ptr ObjectRef;
 
   typedef _CORBA_Unbounded_Sequence_Octet ReferenceData;
 
   class ImplementationDef;
   typedef ImplementationDef* ImplementationDef_ptr;
+  typedef ImplementationDef_ptr ImplementationDefRef;
 
   class ImplementationDef {
   public:
@@ -840,6 +856,7 @@ typedef _CORBA_Double  Double;
 
   class BOA;
   typedef class BOA *BOA_ptr;
+  typedef BOA_ptr BOARef;
 
   class BOA {
   public:
@@ -879,6 +896,7 @@ typedef _CORBA_Double  Double;
 
   class ORB;
   typedef class ORB *ORB_ptr;
+  typedef ORB_ptr ORBRef;
 
   class ORB  {
   public:
