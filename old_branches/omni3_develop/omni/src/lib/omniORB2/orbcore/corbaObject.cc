@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.19.6.1  1999/09/22 14:26:45  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.15  1999/01/07 15:23:42  djr
   Moved CORBA::Object::_get_interface() to ir.cc in dynamic library.
 
@@ -175,7 +178,7 @@ CORBA::Object::_duplicate(CORBA::Object_ptr obj)
 }
 
 
-static CORBA::Object the_nil_object;
+static CORBA::Object the_nil_object(0);
 
 
 CORBA::Object_ptr
