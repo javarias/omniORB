@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2000/02/10 18:28:22  djr
+  omni_tracedmutex/condition now survive if omni_thread::self() returns 0.
+
   Revision 1.1.2.3  2000/02/09 12:06:37  djr
   Additional checks for tracedmutex/conditions.
   Removed superflouous member of omni_tracedmutex.
@@ -174,7 +177,9 @@ omni_tracedcondition::omni_tracedcondition(omni_tracedmutex* m)
 
     BOMB_OUT();
   }
+  pd_mutex.pd_lock.lock();
   pd_mutex.pd_n_conds++;
+  pd_mutex.pd_lock.unlock();
 }
 
 
@@ -186,7 +191,9 @@ omni_tracedcondition::~omni_tracedcondition()
       " but there are still threads waiting on it!\n";
     omniORB::log.flush();
   }
+  pd_mutex.pd_lock.lock();
   pd_mutex.pd_n_conds--;
+  pd_mutex.pd_lock.unlock();
 }
 
 
