@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.6.2  1999/09/25 17:00:20  sll
+ Merged changes from omni2_8_develop branch.
+
  Revision 1.2.4.1  1999/09/21 20:37:16  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -67,8 +70,11 @@ class reliableStreamStrand : public Strand {
 public:
 
   reliableStreamStrand(size_t buffer_size, Rope* r);
+
+protected:
   virtual ~reliableStreamStrand();
 
+public:
   size_t MaxMTU() const;
   Strand::sbuf receive(size_t size,CORBA::Boolean exactly,int align,
 		       CORBA::Boolean startMTU=0);
