@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.30  2000/03/03 17:55:54  dpg1
+// Big swathe of obsolete code removed.
+//
 // Revision 1.29  2000/03/03 17:41:43  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -267,7 +270,7 @@ extern "C" {
     static char* cv = OMNIORB_VERSION_STRING;
 
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
-    return Py_BuildValue("s", cv);
+    return Py_BuildValue((char*)"s", cv);
   }
 
   static PyObject*
@@ -490,7 +493,7 @@ extern "C" {
     size_t op_len;
 
     /*
-    if (!PyArg_ParseTuple(args, "Os#(OOO)O", &pyobjref, &op, &op_len,
+    if (!PyArg_ParseTuple(args, (char*)"Os#(OOO)O", &pyobjref, &op, &op_len,
 			  &in_d, &out_d, &exc_d, &op_args))
       return 0;
     */
