@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.13  2000/01/10 19:58:59  dpg1
+// Struct marshalling is more forgiving. BAD_PARAM exceptions instead of
+// assertion failures with incorrect data.
+//
 // Revision 1.12  1999/12/15 12:17:20  dpg1
 // Changes to compile with SunPro CC 5.0.
 //
@@ -70,7 +74,6 @@
 //
 
 #include <omnipy.h>
-
 
 CORBA::ULong
 omniPy::alignedSize(CORBA::ULong msgsize,
@@ -1541,6 +1544,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       // TypeCode
       PyObject* desc     = unmarshalTypeCode(stream);
       PyObject* argtuple = PyTuple_New(1);
+      Py_INCREF(desc);
       PyTuple_SET_ITEM(argtuple, 0, desc);
       PyObject* tcobj    = PyEval_CallObject(pyCreateTypeCode, argtuple);
       Py_DECREF(argtuple);
@@ -1966,6 +1970,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       // TypeCode
       PyObject* desc     = unmarshalTypeCode(stream);
       PyObject* argtuple = PyTuple_New(1);
+      Py_INCREF(desc);
       PyTuple_SET_ITEM(argtuple, 0, desc);
       PyObject* tcobj    = PyEval_CallObject(pyCreateTypeCode, argtuple);
       Py_DECREF(argtuple);
