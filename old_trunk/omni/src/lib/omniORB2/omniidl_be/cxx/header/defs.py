@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.28  2000/01/14 17:38:27  djs
+# Preliminary support for unions with multiple case labels
+#
 # Revision 1.27  2000/01/13 17:02:00  djs
 # Added support for operation contexts.
 #
@@ -147,6 +150,7 @@ def __init__(stream):
 # Control arrives here
 #
 def visitAST(node):
+    self.__completedModules = {}
     for n in node.declarations():
         n.accept(self)
 
@@ -154,6 +158,9 @@ def visitModule(node):
     # This may be incorrect wrt reopened modules in multiple
     # files
     if not(node.mainFile()):
+        return
+    slash_scopedName = string.join(node.scopedName(), "/")
+    if self.__completedModules.has_key(slash_scopedName):
         return
     
     name = tyutil.mapID(node.identifier())
@@ -169,8 +176,17 @@ _CORBA_MODULE_BEG
     insideModule = self.__insideModule
     self.__insideModule = 1
 
+    self.__completedModules[slash_scopedName] = 1
+
     for n in node.definitions():
         n.accept(self)
+
+    # deal with continuations
+    for c in node.continuations():
+        slash_scopedName = string.join(c.scopedName(), "/")
+        self.__completedModules[slash_scopedName] = 1
+        for n in c.definitions():
+            n.accept(self)
 
     self.__insideModule = insideModule
     if not(config.FragmentFlag()):
@@ -573,6 +589,10 @@ def visitTypedef(node):
     
     aliasType = node.aliasType()
     aliasTypeID = environment.principalID(aliasType)
+
+    # is _this_ type a constructed type?
+    if node.constrType():
+        node.aliasType().decl().accept(self)
     
     # work out the actual type being aliased by walking the list
     derefType = tyutil.deref(aliasType)
@@ -1239,18 +1259,31 @@ public:
             is_array = full_dims != []
             is_array_declarator = decl_dims != []
 
+            if tyutil.isSequence(derefType):
+                sequence_template = tyutil.sequenceTemplate(derefType,
+                                                            environment)
+            elif tyutil.isObjRef(derefType):
+                objref_member = tyutil.objRefTemplate(derefType, "Member",
+                                                      environment)
+
             if is_array:
                 type = environment.principalID(memberType)
-            elif tyutil.isObjRef(derefType):
-                type = tyutil.objRefTemplate(derefType, "Member", environment)
+
             elif tyutil.isTypeCode(derefType):
                 type = "CORBA::TypeCode_member"
             elif tyutil.isString(derefType):
                 type = "CORBA::String_member"
-            elif tyutil.isTypedef(memberType):
-                type = environment.principalID(memberType)
-            elif tyutil.isSequence(derefType):
-                type = tyutil.sequenceTemplate(derefType, environment)
+            elif tyutil.isObjRef(derefType) and \
+                 derefType.decl().scopedName() == ["CORBA", "Object"]:
+                type = "CORBA::Object_member"
+            # direct sequence?
+            elif tyutil.isSequence(memberType):
+                type = sequence_template
+
+            #elif tyutil.isTypedef(memberType):
+            #    type = environment.principalID(memberType)
+            #elif tyutil.isSequence(derefType):
+            #    type = tyutil.sequenceTemplate(derefType, environment)
                 
             else:
                 type = environment.principalID(memberType)
@@ -1262,9 +1295,16 @@ public:
 
             if is_array_declarator:
                 ctor_arg_type = "const " + config.privatePrefix() + "_" + name
+            
+                if tyutil.isSequence(derefType):
+                    type = sequence_template
+                elif tyutil.isObjRef(derefType):
+                    type = objref_member
+                    
                 data.out("""\
     typedef @type@ @private_prefix@_@name@@dims@;
-    typedef @type@ _@name@_slice;""", type = type, name = name, dims = dims,
+    typedef @type@ _@name@_slice;""", type = type, name = name,
+                         dims = dims,
                          private_prefix = config.privatePrefix())
                 
             data.out("""\
@@ -1353,6 +1393,7 @@ def visitUnion(node):
     self.__insideClass = 1
     
     switchType = node.switchType()
+    deref_switchType = tyutil.deref(switchType)
     
     # in the case where there is no default case and an implicit default
     # member, choose a discriminator value to set. Note that attempting
@@ -1383,15 +1424,20 @@ def visitUnion(node):
              switchType.kind() == idltype.tk_longlong  or \
              switchType.kind() == idltype.tk_ulong     or \
              switchType.kind() == idltype.tk_ulonglong:
-            return "1"
+            return "0"
         # CASE <char_type>
         elif tyutil.isChar(switchType):
             # choose the first one not already used
             allcases = map(lambda x: x.value(), allCaseValues)
             possibles = map(chr, range(0, 255))
             difference = util.minus(possibles, allcases)
+            # FIXME: stupid special case. An explicit discriminator
+            # value of \0 -> 0000 whereas an implicit one (valueString)
+            # \0 -> '\000'
+            if difference[0] == '\0':
+                return "'\\000'"
             return tyutil.valueString(switchType, difference[0], None)
-            return "'\\000'"
+
         # CASE <boolean_type>
         elif tyutil.isBoolean(switchType):
             return "0"
@@ -1430,7 +1476,19 @@ def visitUnion(node):
 class @unionname@ {
 public:
 
-  typedef _CORBA_ConstrType_@fixed@_Var<@unionname@> _var_type;
+  typedef _CORBA_ConstrType_@fixed@_Var<@unionname@> _var_type;""",
+               unionname = cxx_name, fixed = fixed)
+
+    # deal with constructed switch type
+    if node.constrType():
+        node.switchType().decl().accept(self)
+        
+    # deal with children defined in this scope
+    for n in node.cases():
+        if n.constrType():
+            n.caseType().decl().accept(self)
+
+    stream.out("""\
   @unionname@() {""",unionname = cxx_name, fixed = fixed)
     stream.inc_indent()
         
@@ -1473,17 +1531,14 @@ public:
         stream.inc_indent()
         # iterate over cases
         for c in node.cases():
-            # FIXME: multiple case labels not taken care of
-            # FIXME: need to represent discriminator value properly
             for l in c.labels():
                 if l.default(): continue
                 # FIXME: stupid special case. An explicit discriminator
                 # value of \0 -> 0000 whereas an implicit one (valueString)
                 # \0 -> '\000'
-                discrimvalue = tyutil.valueString(switchType, l.value(), environment)
-                #discrimvalue = discrimValueToString(switchType, l, environment)
-                if tyutil.isChar(switchType) and l.value() == '\0':
-                    discrimvalue = "0000"
+                discrimvalue = tyutil.valueString(switchType, l.value(),
+                                                  environment)
+                    
                 stream.out("""\
          case @discrimvalue@: @name@(_value.pd_@name@); break;""",
                            discrimvalue = discrimvalue,
@@ -1516,12 +1571,13 @@ public:
 
   ~@unionname@() {}
   """, unionname= cxx_name)
-            # deal with the discriminator
+
+    # deal with the discriminator
     stream.out("""\
   
   @discrimtype@ _d() const { return pd__d;}
   void _d(@discrimtype@ _value) {}
-  """, discrimtype = environment.principalID(switchType))
+  """, discrimtype = environment.principalID(deref_switchType))
 
     if implicitDefault:
         stream.out("""\
@@ -1913,7 +1969,7 @@ private:
                             name = member_name,
                             dims = dims_str)
   
-    discrimtype = environment.principalID(switchType)
+    discrimtype = environment.principalID(deref_switchType)
         
     if tyutil.isVariableDecl(node):
         isVariable = "Variable"
