@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30.6.4  1999/10/16 13:22:53  djr
+  Changes to support compiling on MSVC.
+
   Revision 1.30.6.3  1999/10/14 16:22:10  djr
   Implemented logging when system exceptions are thrown.
 
@@ -116,10 +119,11 @@
 
 #include <initFile.h>
 #include <omniORB3/omniObjRef.h>
-#include <bootstrap_i.h>
+#include <initRefs.h>
 #include <gatekeeper.h>
 #include <initialiser.h>
 #include <exception.h>
+#include <corbaOrb.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -187,8 +191,8 @@ void initFile::initialize()
   // Note: Using standard C file functions for compatibility with ATMos
 
   CORBA::String_var config_fname;
-  CORBA::Object_var NameService;
-  CORBA::Object_var InterfaceRepository;
+  int nameServiceSet         = 0;
+  int interfaceRepositorySet = 0;
 
 // Get filename:
 
@@ -270,31 +274,50 @@ void initFile::initialize()
   CORBA::UShort     bootstrapAgentPort = 900;
 
   while(getnextentry(entryname,data)) {
-    if (strcmp((const char*)entryname,"NAMESERVICE") == 0) {
-      if( !CORBA::is_nil(NameService) )  multerr(entryname);
-      omniObjRef* objptr;
-      if( !omni::stringToObject(objptr, data) )  invref(entryname);
-      NameService = (CORBA::Object_ptr)
-	objptr->_ptrToObjRef(CORBA::Object::_PD_repoId);
-      // We choose not to check whether or not this really is
-      // a CosNaming::NamingContext, since that might involve
-      // talking to the object itself.  This check will be
-      // make when the caller narrows the reference anyway.
-      omniInitialReferences::set("NameService", NameService);
+
+    if (strcmp((const char*)entryname,"ORBInitRef") == 0) {
+      unsigned int slen = strlen(data) + 1;
+      CORBA::String_var id  = CORBA::string_alloc(slen);
+      CORBA::String_var uri = CORBA::string_alloc(slen);
+      if (sscanf(data, "%[^=]=%s", (char*)id, (char*)uri) != 2) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Configuration error: invalid ORBInitRef parameter `"
+	    << data << "'.\n";
+	}
+	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+      }
+      if (!strcmp(id, "NameService")) {
+	if (nameServiceSet) multerr("NameService");
+	nameServiceSet = 1;
+      }
+      else if (!strcmp(id, "InterfaceRepository")) {
+	if (interfaceRepositorySet) multerr("InterfaceRepository");
+	interfaceRepositorySet = 1;
+      }
+      if (!omniInitialReferences::setFromFile(id, uri)) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Configuration error: syntactically incorrect URI `"
+	    << uri << "'\n";
+	}
+	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+      }
+    }
+    else if (strcmp((const char*)entryname,"ORBDefaultInitRef") == 0) {
+      omniInitialReferences::setDefaultInitRefFromFile(data);
+    }
+    else if (strcmp((const char*)entryname,"NAMESERVICE") == 0) {
+      if (nameServiceSet) multerr(entryname);
+      nameServiceSet = 1;
+      if (!omniInitialReferences::setFromFile("NameService", data))
+	invref("NameService");
     }
     else if (strcmp(entryname, "INTERFACE_REPOSITORY") == 0) {
-      if( !CORBA::is_nil(InterfaceRepository) )  multerr(entryname);
-      omniObjRef* objptr;
-      if( !omni::stringToObject(objptr, data) )  invref(entryname);
-      InterfaceRepository = (CORBA::Object_ptr)
-	objptr->_ptrToObjRef(CORBA::Object::_PD_repoId);
-      // We choose not to check whether or not this really is
-      // a CosNaming::NamingContext, since that might involve
-      // talking to the object itself, and also introduce a
-      // dependency on the dynamic library.  This check will be
-      // make when the caller narrows the reference anyway.
-      omniInitialReferences::set("InterfaceRepository",
-				 InterfaceRepository);
+      if (interfaceRepositorySet) multerr(entryname);
+      interfaceRepositorySet = 1;
+      if (!omniInitialReferences::setFromFile("InterfaceRepository", data))
+	invref("InterfaceRepository");
     }
 #ifdef _MSC_VER
     //??
@@ -338,7 +361,7 @@ void initFile::initialize()
       OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
     }
   }
-  if (CORBA::is_nil(NameService) && CORBA::is_nil(InterfaceRepository)) {
+  if (!nameServiceSet && !interfaceRepositorySet) {
     if ((char*)bootstrapAgentHostname != 0) {
       omniInitialReferences::initialise_bootstrap_agent(bootstrapAgentHostname,
 							bootstrapAgentPort);
