@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.10  2003/02/17 02:03:08  dgrisby
+  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
+
   Revision 1.19.2.9  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -235,6 +238,7 @@ LibcWrapper::AddrInfo* LibcWrapper::getaddrinfo(const char* node,
   char* buffer = new char[256];
   int buflen = 256;
   int rc;
+  IP4AddrInfo* ret;
 
 again:
   if (gethostbyname_r(node,&ent,buffer,buflen,&rc) == 0) {
@@ -245,10 +249,15 @@ again:
       buffer = new char [buflen];
       goto again;
     }
-    else
-      return 0;
+    else {
+      ret = 0;
+    }
   }
-  return new IP4AddrInfo(hostent_to_ip4(&ent), port);
+  else {
+    ret = new IP4AddrInfo(hostent_to_ip4(&ent), port);
+  }
+  delete [] buffer;
+  return ret;
 
 #elif defined(__osf1__)
 
@@ -260,10 +269,15 @@ again:
   // XXX Is it possible that the pointer buffer is at a wrong alignment
   //     for a struct hostent_data?
 
-  if (gethostbyname_r(node,&ent,(struct hostent_data *)buffer) < 0)
-    return 0;
+  IP4AddrInfo* ret;
 
-  return new IP4AddrInfo(hostent_to_ip4(&ent), port);
+  if (gethostbyname_r(node,&ent,(struct hostent_data *)buffer) < 0)
+    ret = 0;
+  else
+    ret = new IP4AddrInfo(hostent_to_ip4(&ent), port);
+
+  delete [] buffer;
+  return ret;
 
 #elif defined(__hpux__)
 
@@ -284,11 +298,15 @@ again:
   struct hostent ent;
   char* buffer = new char[sizeof(hostent_data)];
   memset((void*)buffer,0,sizeof(hostent_data));
+  IP4AddrInfo* ret;
 
   if (gethostbyname_r(node,&ent,(hostent_data*)buffer) == -1)
-    return 0;
+    ret = 0;
+  else
+    ret = new IP4AddrInfo(hostent_to_ip4(&ent), port);
 
-  return new IP4AddrInfo(hostent_to_ip4(&ent), port);
+  delete [] buffer;
+  return ret;
 
 # endif
 
