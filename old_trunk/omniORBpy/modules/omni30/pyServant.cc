@@ -30,6 +30,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.16  2000/03/24 16:48:57  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.15  2000/03/06 18:48:28  dpg1
 // Support for our favourite compiler, MSVC.
 //
@@ -166,16 +171,16 @@ public:
   void*                   _ptrToInterface(const char* repoId);
 
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return Py_omniServant::_is_a(logical_type_id);
+    return PY_OMNISERVANT_BASE::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return Py_omniServant::_default_POA();
+    return PY_OMNISERVANT_BASE::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return Py_omniServant::_mostDerivedRepoId();
+    return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return Py_omniServant::_dispatch(giop_s);
+    return PY_OMNISERVANT_BASE::_dispatch(giop_s);
   }
 
 private:
@@ -207,16 +212,16 @@ public:
   void*                   _ptrToInterface(const char* repoId);
 
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return Py_omniServant::_is_a(logical_type_id);
+    return PY_OMNISERVANT_BASE::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return Py_omniServant::_default_POA();
+    return PY_OMNISERVANT_BASE::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return Py_omniServant::_mostDerivedRepoId();
+    return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return Py_omniServant::_dispatch(giop_s);
+    return PY_OMNISERVANT_BASE::_dispatch(giop_s);
   }
 
 private:
@@ -241,16 +246,16 @@ public:
   void*                   _ptrToInterface(const char* repoId);
 
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return Py_omniServant::_is_a(logical_type_id);
+    return PY_OMNISERVANT_BASE::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return Py_omniServant::_default_POA();
+    return PY_OMNISERVANT_BASE::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return Py_omniServant::_mostDerivedRepoId();
+    return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return Py_omniServant::_dispatch(giop_s);
+    return PY_OMNISERVANT_BASE::_dispatch(giop_s);
   }
 
 private:
