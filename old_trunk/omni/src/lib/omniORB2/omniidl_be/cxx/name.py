@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  2000/01/11 12:02:34  djs
+# More tidying up
+#
 # Revision 1.6  2000/01/10 15:39:34  djs
 # Better name and scope handling.
 #
@@ -61,17 +64,19 @@ from omniidl import idltype, idlutil
 from omniidl.be.cxx import tyutil, config
 
 
-def prefixName(scopedName, prefix):
-    env = Environment()
+def prefixName(scopedName, prefix, env = None):
+    if env == None:
+        env = Environment()
     prefix_scopedName = tyutil.scope(scopedName) + [prefix +\
                                                     tyutil.name(scopedName)]
     return env.nameToString(prefix_scopedName)
 
-def suffixName(scopedName, suffix):
-    env = Environment()
+def suffixName(scopedName, suffix, env = None):
+    if env == None:
+        env = Environment()
     suffix_scopedName = tyutil.scope(scopedName) + [tyutil.name(scopedName) +\
                                                     suffix]
-    return env.nameToString(suffix_scopedName)
+    return env.nameToString(env.relName(suffix_scopedName))
 
 
 class Environment:
