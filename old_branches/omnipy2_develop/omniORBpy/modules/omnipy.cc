@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.28  2005/03/02 11:32:45  dgrisby
+// New optional endian parameter to cdrMarshal / cdrUnmarshal.
+//
 // Revision 1.1.2.27  2004/03/24 22:13:05  dgrisby
 // Support reinitialising when the Python interpreter isn't finalized.
 //
@@ -311,10 +314,8 @@ extern "C" {
   static PyObject*
   omnipy_coreVersion(PyObject* self, PyObject* args)
   {
-    static char* cv = (char*)OMNIORB_VERSION_STRING;
-
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
-    return Py_BuildValue((char*)"s", cv);
+    return Py_BuildValue((char*)"s", omniORB::versionString());
   }
 
 #define OMNIPY_ATTR(x) \
