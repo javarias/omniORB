@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/10 18:42:22  djs
+# Removed redundant code, tidied up.
+#
 # Revision 1.12  2000/01/07 20:31:33  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -159,8 +162,8 @@ def argmapping(type):
     is_array = type_dims != []
     is_variable = tyutil.isVariableType(deref_type)
 
-    type_name = environment.principalID(type, fully_scope = 0)
-    deref_type_name = environment.principalID(deref_type, fully_scope = 0)
+    type_name = environment.principalID(type)
+    deref_type_name = environment.principalID(deref_type)
 
     if is_array:
         if is_variable:
@@ -220,7 +223,7 @@ def operation(operation, seed):
     stream = self.__stream
     return_type = operation.returnType()
     deref_return_type = tyutil.deref(return_type)
-    return_type_name = environment.principalID(return_type, fully_scope = 0)
+    return_type_name = environment.principalID(return_type)
     return_dims = tyutil.typeDims(return_type)
     return_is_array = return_dims != []
     has_return_value = not(tyutil.isVoid(deref_return_type))
@@ -346,10 +349,9 @@ def operation(operation, seed):
                 name = "arg_" + str(n)
                 size_calculation.out(skutil.sizeCalculation(
                     environment, param_type, None, "msgsize", name,
-                    fixme = 1, is_pointer = is_pointer, fully_scope = 0))
+                    fixme = 1, is_pointer = is_pointer))
                 skutil.marshall(marshal_block, environment, param_type,
-                                None, name, "giop_client",
-                                fully_scope = 0)
+                                None, name, "giop_client")
                 
         # write the alignment function
         stream.out(alignment_template,
@@ -414,8 +416,7 @@ def operation(operation, seed):
             # type is used in the typedec but a dereferenced slice is used
             # elsewhere. Why?
             if is_array:
-                temp_type_name = environment.principalID(deref_dims_type,
-                                                         fully_scope = 0) +\
+                temp_type_name = environment.principalID(deref_dims_type) +\
                                                          "_slice*"
                 
             if dereference:
@@ -433,7 +434,6 @@ def operation(operation, seed):
             skutil.unmarshall(unmarshal_block, environment, type, None,
                               deref_name, can_throw_marshall = 1,
                               from_where = "giop_client",
-                              fully_scope = 0,
                               string_via_member = 1)
 
             if is_inout and not(is_array):
@@ -466,11 +466,9 @@ CORBA::release(@name@);
             # Need to investigate the array mapping further at a later stage
             # hopefully to remove this oddity
             if return_is_array:
-                return_type_base = environment.principalID(deref_dims_return_type,
-                                                           fully_scope = 0)
+                return_type_base = environment.principalID(deref_dims_return_type)
             else:
-                return_type_base = environment.principalID(return_type,
-                                                           fully_scope = 0)
+                return_type_base = environment.principalID(return_type)
             return_is_variable = tyutil.isVariableType(return_type)
             # we need to allocate storage if the return is an
             # array
@@ -492,7 +490,6 @@ pd_result = new @type@;""", type = return_type_base)
             skutil.unmarshall(unmarshal_block, environment, return_type, None,
                               name, can_throw_marshall = 1,
                               from_where = "giop_client",
-                              fully_scope = 0,
                               string_via_member = 1)
         
         n = -1
@@ -508,10 +505,8 @@ pd_result = new @type@;""", type = return_type_base)
             param_type = parameter.paramType()
             deref_param_type = tyutil.deref(param_type)
             deref_dims_param_type = tyutil.derefKeepDims(param_type)
-            param_type_name = environment.principalID(param_type,
-                                                      fully_scope = 0)
-            deref_dims_name = environment.principalID(deref_dims_param_type,
-                                                      fully_scope = 0)
+            param_type_name = environment.principalID(param_type)
+            deref_dims_name = environment.principalID(deref_dims_param_type)
             dims = tyutil.typeDims(param_type)
             is_array = dims != []
             is_out = direction == 1
@@ -573,7 +568,6 @@ pd_result = new @type@;""", type = return_type_base)
                 skutil.unmarshall(unmarshal_block, environment, param_type, None,
                                   arg_name, can_throw_marshall = 1,
                                   from_where = "giop_client",
-                                  fully_scope = 0,
                                   string_via_member = 1)
 
         # write the unmarshal function
@@ -653,13 +647,11 @@ def attribute(attribute, seed):
     attr_dims = tyutil.typeDims(attrType)
     is_array = attr_dims != []   
     deref_attrType = tyutil.deref(attrType)
-    attrType_name = environment.principalID(attrType, 1)
+    attrType_name = environment.principalID(attrType)
 
     fully_scoped_attrTypes = tyutil.operationArgumentType(attrType,
-                                                          environment, 0,
-                                                          fully_scope = 0)
-    attrTypes = tyutil.operationArgumentType(attrType, environment, 0,
-                                             fully_scope = 0)
+                                                          environment, 0)
+    attrTypes = tyutil.operationArgumentType(attrType, environment, 0)
 
     return_type = fully_scoped_attrTypes[0]
     if is_array:
@@ -676,11 +668,10 @@ def attribute(attribute, seed):
     size = skutil.sizeCalculation(environment, attrType, None ,
                                   "msgsize",
                                   "arg_0", fixme = 1,
-                                  is_pointer = is_pointer,
-                                  fully_scope = 0)
+                                  is_pointer = is_pointer)
     marshal_arg = util.StringStream()
     skutil.marshall(marshal_arg, environment, attrType, None,
-                    "arg_0", "giop_client", fully_scope = 0)
+                    "arg_0", "giop_client")
 
     if is_array:
         s = util.StringStream()
@@ -692,7 +683,7 @@ def attribute(attribute, seed):
             result_string = "((" + attrType_name + "_slice*)" + "pd_result)"
 
         skutil.unmarshall(s, environment, attrType, None, result_string, 1,
-                          "giop_client", fully_scope = 0)
+                          "giop_client")
         unmarshal_ret = str(s)
             
     elif tyutil.isString(deref_attrType):

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23  2000/01/11 11:35:46  djs
+# Removed redundant code
+#
 # Revision 1.22  2000/01/10 15:39:34  djs
 # Better name and scope handling.
 #
@@ -432,8 +435,8 @@ def objRefTemplate(type, suffix, environment):
 
 # ------------------------------------------------------------------
 
-def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
-    param_type = environment.principalID(type, fully_scope)
+def operationArgumentType(type, environment, virtualFn = 0):
+    param_type = environment.principalID(type)
     isVariable = isVariableType(type)
     type_dims = typeDims(type)
     is_array = type_dims != []
@@ -469,7 +472,7 @@ def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
                          param_type + "_ptr",
                          "CORBA::Object_OUT_arg",
                          param_type + "_ptr&" ]
-            param_type = environment.principalID(deref_type, fully_scope)
+            param_type = environment.principalID(deref_type)
             return [ param_type + "_ptr",
                      param_type + "_ptr",
                      "_CORBA_ObjRef_OUT_arg<_objref_" + param_type + "," + \
@@ -518,7 +521,7 @@ def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
                      "CORBA::Object_ptr",
                      "CORBA::Object_OUT_arg",
                      "CORBA::Object_INOUT_arg" ]
-        param_type = environment.principalID(deref_type, fully_scope)
+        param_type = environment.principalID(deref_type)
         return [ param_type + "_ptr",
                  param_type + "_ptr",
                  "_CORBA_ObjRef_OUT_arg<_objref_" + param_type + "," + \
@@ -533,7 +536,7 @@ def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
         # Strangeness: if actually a typedef to a struct or union, the _out
         # type is dereferenced, whilst the others aren't?
         if isTypedef(type) and (isStruct(deref_type) or isUnion(deref_type)):
-            out_base_type = environment.principalID(deref_type, fully_scope)
+            out_base_type = environment.principalID(deref_type)
 
         return [ param_type + "*",
                  "const " + param_type + "& ",

@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/10 17:18:15  djs
+# Removed redundant code.
+#
 # Revision 1.5  2000/01/10 15:38:56  djs
 # Better name and scope handling.
 #
@@ -142,7 +145,6 @@ def template(environment, node, nested = 0):
                 paramType = parameter.paramType()
                 dir = parameter.direction() + 1
                 argtypes = tyutil.operationArgumentType(paramType, environment,
-                                                        fully_scope = 0,
                                                         virtualFn = 1)
                 param_type_name = argtypes[dir]
                 param_id = tyutil.mapID(parameter.identifier())

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/11 11:33:55  djs
+# Tidied up
+#
 # Revision 1.5  2000/01/07 20:31:24  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -534,8 +537,8 @@ def visitUnion(node):
         declarator = c.declarator()
         deref_caseType = tyutil.deref(caseType)
         type_cname = mangler.canonTypeName(caseType, declarator)
-        type_name = env.principalID(caseType, fully_scope = 1)
-        deref_type_name = env.principalID(deref_caseType, fully_scope = 1)
+        type_name = env.principalID(caseType)
+        deref_type_name = env.principalID(deref_caseType)
         mem_name = tyutil.mapID(tyutil.name(c.declarator().scopedName()))
         case_dims = tyutil.typeDims(caseType)
         full_dims = declarator.sizes() + case_dims
