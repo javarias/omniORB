@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/01 10:05:27  dpg1
+// New file attribute to AST.
+// Fix stupid bug in module initialisation.
+//
 // Revision 1.2  1999/10/29 18:19:19  dpg1
 // Added dump() function
 //
@@ -104,8 +108,8 @@ private:
 PythonVisitor::
 PythonVisitor()
 {
-  idlast_  = PyImport_ImportModule("idlast");  ASSERT_PYOBJ(idlast_);
-  idltype_ = PyImport_ImportModule("idltype"); ASSERT_PYOBJ(idltype_);
+  idlast_  = PyImport_ImportModule("omniidl.idlast");  ASSERT_PYOBJ(idlast_);
+  idltype_ = PyImport_ImportModule("omniidl.idltype"); ASSERT_PYOBJ(idltype_);
 }
 
 PythonVisitor::
@@ -416,11 +420,11 @@ visitTypedef(Typedef* t)
 				pyaliasType, (int)t->constrType(),
 				pydeclarators);
 
-  // Give each Declarator a weak reference to the Typedef
-  // *** Check this
+  // Give each Declarator a reference to the Typedef. This creates a
+  // loop which Python's GC won't collect :-(
   for (i=0; i<l; ++i) {
     PyObject_CallMethod(PyList_GetItem(pydeclarators, i),
-			"_setAlias", "N", result_);
+			"_setAlias", "O", result_);
   }
 }
 
@@ -585,17 +589,22 @@ void
 PythonVisitor::
 visitUnion(Union* u)
 {
+  if (u->constrType()) {
+    ((DeclaredType*)u->switchType())->decl()->accept(*this);
+    Py_DECREF(result_);
+  }
   u->switchType()->accept(*this);
   PyObject* pyswitchType = result_;
 
   PyObject* pyunion =
-    PyObject_CallMethod(idlast_, "Union", "siiNsNsNi",
+    PyObject_CallMethod(idlast_, "Union", "siiNsNsNii",
 			u->file(), u->line(), (int)u->mainFile(),
 			pragmasToList(u->pragmas()),
 			u->identifier(),
 			scopedNameToList(u->scopedName()),
 			u->repoId(),
-			pyswitchType, (int)u->recursive());
+			pyswitchType, (int)u->constrType(),
+			(int)u->recursive());
   ASSERT_PYOBJ(pyunion);
   registerPyDecl(u->scopedName(), pyunion);
 

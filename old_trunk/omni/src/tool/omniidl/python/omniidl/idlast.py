@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/11/01 16:39:01  dpg1
+# Small fixes and cosmetic changes.
+#
 # Revision 1.3  1999/11/01 10:05:01  dpg1
 # New file attribute to AST.
 #
@@ -352,12 +355,13 @@ class UnionCase (Decl):
 class Union (Decl, DeclRepoId):
     def __init__(self, file, line, mainFile, pragmas,
                  identifier, scopedName, repoId,
-                 switchType, recursive):
+                 switchType, constrType, recursive):
 
         Decl.__init__(self, file, line, mainFile, pragmas)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__switchType = switchType
+        self.__constrType = constrType
         self.__recursive  = recursive
         #print line, "Union init:", identifier
 
@@ -367,6 +371,9 @@ class Union (Decl, DeclRepoId):
     def accept(self, visitor): visitor.visitUnion(self)
 
     def switchType(self): return self.__switchType
+
+    # True if the switch type is declared inside the switch!
+    def constrType(self): return self.__constrType
     def cases(self):      return self.__cases
 
     # True if the union is recursive

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/01 10:05:01  dpg1
+// New file attribute to AST.
+//
 // Revision 1.3  1999/10/29 15:43:02  dpg1
 // Code to detect recursive structs and unions.
 //
@@ -639,6 +642,7 @@ public:
 
   // Queries
   IdlType*       switchType() const { return switchType_; }
+  _CORBA_Boolean constrType() const { return constrType_; }
   UnionCase*     cases()      const { return cases_; }
   IdlType*       thisType()   const { return thisType_; }
   _CORBA_Boolean recursive()  const { return recursive_; }
@@ -646,11 +650,13 @@ public:
 
   void accept(AstVisitor& visitor) { visitor.visitUnion(this); }
 
-  void finishConstruction(IdlType* switchType, UnionCase* cases);
+  void finishConstruction(IdlType* switchType, _CORBA_Boolean constrType,
+			  UnionCase* cases);
   void setRecursive() { recursive_ = 1; }
 
 private:
   IdlType*       switchType_;
+  _CORBA_Boolean constrType_;
   UnionCase*     cases_;
   IdlType*       thisType_;
   _CORBA_Boolean recursive_;

@@ -28,13 +28,16 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/01 16:39:49  dpg1
+# Cosmetic change.
+#
 # Revision 1.2  1999/11/01 10:06:07  dpg1
 # Various clean-ups.
 #
 
 """Dumps the IDL tree"""
 
-import idlast, idltype, idlutil, idlvisitor, output
+from omniidl import idlast, idltype, idlutil, idlvisitor, output
 import sys, string
 
 class DumpVisitor (idlvisitor.AstVisitor, idlvisitor.TypeVisitor):
@@ -105,6 +108,9 @@ const @type@ @id@ = @value@;""",
 
 
     def visitTypedef(self, node):
+        if node.constrType():
+            node.aliasType().decl().accept(self)
+
         node.aliasType().accept(self)
         type  = self.__result_type
         decll = []
@@ -168,20 +174,31 @@ exception @id@ {""",
             self.st.out("""\
   @type@ @decls@;""",
 
-                   type=type, decls=decls)
+                        type=type, decls=decls)
 
         self.st.out("""\
 };""")
 
 
     def visitUnion(self, node):
-        node.switchType().accept(self)
-        stype = self.__result_type
+        if node.constrType():
 
-        self.st.out("""\
+            self.st.out("""\
+union @id@ switch (""",
+                        id = node.identifier())
+            self.st.inc_indent()
+            node.switchType().decl().accept(self)
+            self.st.out(""") {""")
+            self.st.dec_indent
+
+        else:
+            node.switchType().accept(self)
+            stype = self.__result_type
+
+            self.st.out("""\
 union @id@ switch (@stype@) {""",
 
-               id=node.identifier(), stype=stype)
+                        id=node.identifier(), stype=stype)
 
         for c in node.cases():
             if c.constrType():
