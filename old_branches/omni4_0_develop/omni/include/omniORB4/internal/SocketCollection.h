@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.1.2.11  2002/05/07 12:54:38  dgrisby
   Fix inevitable Windows header brokenness.
 
@@ -115,6 +118,12 @@
 //             win32 API
 //
 #if defined(__WIN32__)
+
+#  if !defined(__ETS_KERNEL__)
+#    include <winsock2.h>
+#  else
+#    include <winsock.h>
+#  endif
 
 #  include <sys/types.h>
 #  include <libcWrapper.h>

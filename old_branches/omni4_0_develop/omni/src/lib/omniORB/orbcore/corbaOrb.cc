@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.33.2.39  2002/03/18 15:13:07  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.33.2.38  2002/03/13 16:05:38  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -329,6 +334,7 @@
 #include <orbOptions.h>
 #include <orbParameters.h>
 #include <omniIdentity.h>
+#include <SocketCollection.h>
 
 #ifdef HAVE_SIGNAL_H
 #  include <signal.h>

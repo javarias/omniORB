@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/03/11 12:21:07  dpg1
+  ETS things.
+
   Revision 1.1.2.11  2001/08/24 16:45:42  sll
   Switch to use Winsock 2. Moved winsock initialisation to this module.
 
@@ -74,6 +77,7 @@
 #include <initialiser.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <SocketCollection.h>
 #include <stdio.h>
 
 //
