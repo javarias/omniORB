@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.7  2001/10/29 17:42:43  dpg1
+// Support forward-declared structs/unions, ORB::create_recursive_tc().
+//
 // Revision 1.13.2.6  2001/10/17 16:48:33  dpg1
 // Minor error message tweaks
 //
@@ -1292,6 +1295,12 @@ keywordClash(const char* identifier, const char* file, int line)
     "valuetype", "void", "wchar", "wstring", 0
   };
 
+  static const char* new_keywords[] = {
+    "component", "consumes", "emits", "eventtype", "finder", "getraises",
+    "home", "import", "multiple", "primarykey", "provides", "publishes",
+    "setraises", "typeid", "typeprefix", "uses", 0
+  };
+
   for (const char** k = keywords; *k; k++) {
     if (Config::caseSensitive) {
       if (!strcmp(*k, identifier)) {
@@ -1304,6 +1313,22 @@ keywordClash(const char* identifier, const char* file, int line)
       if (!strcasecmp(*k, identifier)) {
 	IdlError(file, line, "Identifier '%s' clashes with keyword '%s'",
 		 identifier, *k);
+	return 1;
+      }
+    }
+  }
+  for (const char** k = new_keywords; *k; k++) {
+    if (Config::caseSensitive) {
+      if (!strcmp(*k, identifier)) {
+	IdlWarning(file, line, "Identifier '%s' is identical to "
+		   "CORBA 3 keyword '%s'.", identifier, *k);
+	return 1;
+      }
+    }
+    else {
+      if (!strcasecmp(*k, identifier)) {
+	IdlWarning(file, line, "Identifier '%s' clashes with "
+		   "CORBA 3 keyword '%s'", identifier, *k);
 	return 1;
       }
     }
