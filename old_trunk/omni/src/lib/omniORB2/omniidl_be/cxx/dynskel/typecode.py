@@ -202,13 +202,6 @@ def currently_being_defined(node):
 def recursive_Depth(node):
     return len(self.__currentNodes) - self.__currentNodes.index(node)
 
-    while(1):
-        if outer[-1] == node:
-            return depth
-        depth = depth + 1
-        outer = outer[0:len(outer)-1]
-
-
 def __init__(stream):
     self.stream = stream
     # declarations are built in two halves, this is to allow us

@@ -329,9 +329,6 @@ omniORB_Scavenger::run_undetached(void*)
   unsigned long abs_sec,abs_nsec;
   omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
 
-  if (ScanPeriod)
-    abs_sec += ScanPeriod;
-
   omni_mutex_lock sync(pd_mutex);
 
   while (!pd_isdying) {
