@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.4  2000/05/04 14:34:50  djs
+# Added new flag splice-modules which causes all continuations to be output
+# as one lump. Default is now to output them in pieces following the IDL.
+#
 # Revision 1.18.2.3  2000/04/26 18:22:12  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -121,7 +125,7 @@ import re, sys
 
 cpp_args = ["-D__OMNIIDL_CXX__"]
 usage_string = """\
-  -Wbh=<sufix>      Specify suffix for generated header files
+  -Wbh=<suffix>     Specify suffix for generated header files
   -Wbs=<suffix>     Specify suffix for generated stub files
   -Wba              Generate code for TypeCodes and Any
   -Wbtp             Generate 'tie' implementation skeletons
