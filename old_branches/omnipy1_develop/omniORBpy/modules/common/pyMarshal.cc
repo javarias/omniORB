@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.23  2000/06/27 15:13:11  dpg1
+// New copyObjRefArgument() function
+//
 // Revision 1.22  2000/05/11 11:58:24  dpg1
 // Throw system exceptions with OMNIORB_THROW.
 //
@@ -4278,12 +4281,9 @@ omniPy::copyArgument(PyObject*               d_o,
 		  continue;
 		}
 #endif
-		else {
-		  Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-		  valid = 0;
-		  continue;
-		}
 	      }
+	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      valid = 0;
 	    }
 	    break;
 
@@ -4420,12 +4420,9 @@ omniPy::copyArgument(PyObject*               d_o,
 		  continue;
 		}
 #endif
-		else {
-		  Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-		  valid = 0;
-		  continue;
-		}
 	      }
+	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      valid = 0;
 	    }
 	    break;
 
@@ -4636,12 +4633,9 @@ omniPy::copyArgument(PyObject*               d_o,
 		  continue;
 		}
 #endif
-		else {
-		  Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-		  valid = 0;
-		  continue;
-		}
 	      }
+	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      valid = 0;
 	    }
 	    break;
 
@@ -4778,12 +4772,9 @@ omniPy::copyArgument(PyObject*               d_o,
 		  continue;
 		}
 #endif
-		else {
-		  Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-		  valid = 0;
-		  continue;
-		}
 	      }
+	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      valid = 0;
 	    }
 	    break;
 
