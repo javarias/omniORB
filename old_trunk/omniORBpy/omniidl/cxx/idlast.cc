@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/10/29 10:00:43  dpg1
+// Added code to find a value for the default case in a union.
+//
 // Revision 1.1  1999/10/27 14:05:59  dpg1
 // *** empty log message ***
 //
@@ -303,7 +306,7 @@ Interface(const char* file, int line, _CORBA_Boolean mainFile,
   scope_ = Scope::current()->newInterfaceScope(identifier, file, line);
 
   if (abstract_) {
-    thisType_ = new DeclaredType(IdlType::tk_abstract_interface, this);
+    thisType_ = new DeclaredType(IdlType::tk_abstract_interface, this, this);
 
     // Check that all inherited interfaces are abstract
     for (InheritSpec* inh = inherits; inh; inh = inh->next()) {
@@ -319,7 +322,7 @@ Interface(const char* file, int line, _CORBA_Boolean mainFile,
     }
   }
   else
-    thisType_ = new DeclaredType(IdlType::tk_objref, this);
+    thisType_ = new DeclaredType(IdlType::tk_objref, this, this);
 
   scope_->setInherited(inherits, file, line);
   Scope::current()->addDecl(identifier, scope_, this, thisType_, file, line);
@@ -434,9 +437,9 @@ Forward(const char* file, int line, _CORBA_Boolean mainFile,
   }
   if (reg) {
     if (abstract)
-      thisType_ = new DeclaredType(IdlType::tk_abstract_interface, this);
+      thisType_ = new DeclaredType(IdlType::tk_abstract_interface, this, this);
     else
-      thisType_ = new DeclaredType(IdlType::tk_objref, this);
+      thisType_ = new DeclaredType(IdlType::tk_objref, this, this);
 
     Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
   }
@@ -599,7 +602,7 @@ Declarator::
 setAlias(Typedef* td)
 {
   alias_    = td;
-  thisType_ = new DeclaredType(IdlType::tk_alias, this);
+  thisType_ = new DeclaredType(IdlType::tk_alias, this, this);
 }
 
 // Typedef
@@ -663,6 +666,23 @@ Member(const char* file, int line, _CORBA_Boolean mainFile,
 	       "its own definition", u->identifier());
     }
   }
+  else if (memberType->kind() == IdlType::tk_sequence) {
+    // Look for recursive sequence
+    IdlType* t = memberType;
+    while (t->kind() == IdlType::tk_sequence)
+      t = ((SequenceType*)t)->seqType();
+
+    if (t->kind() == IdlType::tk_struct) {
+      Struct* s = (Struct*)((DeclaredType*)t)->decl();
+      if (!s->finished())
+	s->setRecursive();
+    }
+    else if (t->kind() == IdlType::tk_union) {
+      Union* u = (Union*)((DeclaredType*)t)->decl();
+      if (!u->finished())
+	u->setRecursive();
+    }
+  }
   for (Declarator* d = declarators; d; d = (Declarator*)d->next()) {
     Scope::current()->addInstance(d->eidentifier(), d, memberType,
 				  d->file(), d->line());
@@ -684,10 +704,11 @@ Struct(const char* file, int line, _CORBA_Boolean mainFile,
   : Decl(D_STRUCT, file, line, mainFile),
     DeclRepoId(identifier),
     members_(0),
+    recursive_(0),
     finished_(0)
 {
   Scope* s  = Scope::current()->newStructScope(identifier, file, line);
-  thisType_ = new DeclaredType(IdlType::tk_struct, this);
+  thisType_ = new DeclaredType(IdlType::tk_struct, this, this);
   Scope::current()->addDecl(identifier, s, this, thisType_, file, line);
   Scope::startScope(s);
   Prefix::newScope(identifier);
@@ -844,6 +865,23 @@ UnionCase(const char* file, int line, _CORBA_Boolean mainFile,
 	       "its own definition", u->identifier());
     }
   }
+  else if (caseType->kind() == IdlType::tk_sequence) {
+    // Look for recursive sequence
+    IdlType* t = caseType;
+    while (t->kind() == IdlType::tk_sequence)
+      t = ((SequenceType*)t)->seqType();
+
+    if (t->kind() == IdlType::tk_struct) {
+      Struct* s = (Struct*)((DeclaredType*)t)->decl();
+      if (!s->finished())
+	s->setRecursive();
+    }
+    else if (t->kind() == IdlType::tk_union) {
+      Union* u = (Union*)((DeclaredType*)t)->decl();
+      if (!u->finished())
+	u->setRecursive();
+    }
+  }
   Scope::current()->addInstance(declarator->identifier(), declarator,
 				caseType, declarator->file(),
 				declarator->line());
@@ -877,7 +915,7 @@ Union(const char* file, int line, _CORBA_Boolean mainFile,
     finished_(0)
 {
   Scope* s  = Scope::current()->newUnionScope(identifier, file, line);
-  thisType_ = new DeclaredType(IdlType::tk_union, this);
+  thisType_ = new DeclaredType(IdlType::tk_union, this, this);
   Scope::current()->addDecl(identifier, s, this, thisType_, file, line);
   Scope::startScope(s);
   Prefix::newScope(identifier);
@@ -1017,14 +1055,12 @@ Enumerator(const char* file, int line, _CORBA_Boolean mainFile,
     DeclRepoId(identifier),
     container_(0)
 {
-  if (identifier[0] == '_') identifier;
   Scope::current()->addDecl(identifier, 0, this, 0, file, line);
 }
 
 Enumerator::
 ~Enumerator()
 {
-  delete [] identifier_;
 }
 
 void
@@ -1042,7 +1078,7 @@ Enum(const char* file, int line, _CORBA_Boolean mainFile,
     DeclRepoId(identifier),
     enumerators_(0)
 {
-  thisType_ = new DeclaredType(IdlType::tk_enum, this);
+  thisType_ = new DeclaredType(IdlType::tk_enum, this, this);
   Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
 }
 
@@ -1446,7 +1482,7 @@ ValueForward(const char* file, int line, _CORBA_Boolean mainFile,
     reg = 0;
   }
   if (reg) {
-    thisType_ = new DeclaredType(IdlType::tk_value, this);
+    thisType_ = new DeclaredType(IdlType::tk_value, this, this);
     Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
   }
 }
@@ -1483,7 +1519,7 @@ ValueBox(const char* file, int line, _CORBA_Boolean mainFile,
     boxedType_(boxedType),
     constrType_(constrType)
 {
-  thisType_ = new DeclaredType(IdlType::tk_value_box, this);
+  thisType_ = new DeclaredType(IdlType::tk_value_box, this, this);
   Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
 }
 
@@ -1618,7 +1654,7 @@ ValueAbs(const char* file, int line, _CORBA_Boolean mainFile,
     Scope::current()->remEntry(se);
   }
   scope_    = Scope::current()->newValueScope(identifier, file, line);
-  thisType_ = new DeclaredType(IdlType::tk_value, this);
+  thisType_ = new DeclaredType(IdlType::tk_value, this, this);
 
   // Check that all inherited valuetypes are abstract
   for (ValueInheritSpec* vinh = inherits; vinh; vinh = vinh->next()) {
@@ -1700,7 +1736,7 @@ Value(const char* file, int line, _CORBA_Boolean mainFile,
     Scope::current()->remEntry(se);
   }
   scope_    = Scope::current()->newValueScope(identifier, file, line);
-  thisType_ = new DeclaredType(IdlType::tk_value, this);
+  thisType_ = new DeclaredType(IdlType::tk_value, this, this);
 
   // Check all the various inheritance rules
   if (inherits) {
