@@ -11,6 +11,10 @@
 
 /*
   $Log$
+  Revision 1.5  1997/01/28 18:36:24  sll
+  Fixed the bugs in the proxy and the server skeleton code which only
+  affects oneway operation.
+
   Revision 1.4  1997/01/24 19:40:46  sll
   The operations for nil object now return properly initialised result values.
   Fixed a bug in the marshalling of object reference and string as INOUT arg.
@@ -643,6 +647,72 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
+  if (!return_is_void())
+    {
+      IND(s); s << "{\n";
+      INC_INDENT_LEVEL();
+      IND(s); s << "// never reach here! Dummy return to keep some compilers happy.\n";
+      argMapping mapping;
+      argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
+      if (ntype == tObjref || ntype == tString ||
+	  (mapping.is_arrayslice) ||
+	  (mapping.is_pointer))
+	{
+	  IND(s);
+	  declareVarType(s,return_type(),0,mapping.is_arrayslice);
+	  s << ((ntype != tObjref && ntype != tString)?" *":"") 
+	    << " _result" << "= 0;\n";
+	}
+      else
+	{
+	  IND(s);
+	  declareVarType(s,return_type());
+	  s << " _result";
+	  switch (ntype)
+	    {
+	    case tShort:
+	    case tLong:
+	    case tUShort:
+	    case tULong:
+	    case tFloat:
+	    case tDouble:
+	    case tBoolean:
+	    case tChar:
+	    case tOctet:
+	      s << " = 0;\n";
+	      break;
+	    case tEnum:
+	      {
+		s << " = ";
+		AST_Decl *decl = return_type();
+		while (decl->node_type() == AST_Decl::NT_typedef)
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		UTL_ScopeActiveIterator i(o2be_enum::narrow_from_decl(decl),
+					  UTL_Scope::IK_decls);
+		AST_Decl *eval = i.item();
+		if (strlen(o2be_name::narrow_and_produce_scopename(decl))) {
+		  s << o2be_name::narrow_and_produce_scopename(decl);
+		}
+		else {
+		  s << "::";
+		}
+		s << o2be_name::narrow_and_produce_uqname(eval) << ";\n";
+	      }
+	      break;
+	    case tStructFixed:
+	      s << ";\n";
+	      s << "memset((void *)&_result,0,sizeof(_result));\n";
+	      break;
+	    default:
+	      s << ";\n";
+	      break;
+	    }
+	}
+      IND(s); s << "return _result;\n";
+      DEC_INDENT_LEVEL();
+      IND(s); s << "}\n";
+    }
+    
   DEC_INDENT_LEVEL();
   IND(s);s << "}\n";
   return;
