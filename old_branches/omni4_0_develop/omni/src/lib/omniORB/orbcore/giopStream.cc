@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.26  2003/07/30 14:25:28  dgrisby
+  Increase direct send cut-off to 16k.
+
   Revision 1.1.4.25  2003/07/16 14:22:38  dgrisby
   Speed up oneway handling a little. More tracing for split messages.
 
@@ -1049,9 +1052,15 @@ giopStream::sendChunk(giopStream_Buffer* buf) {
 
   if (!pd_strand->connection) {
     OMNIORB_ASSERT(pd_strand->address);
+      
     if (pd_strand->state() != giopStrand::DYING) {
+      if (omniORB::trace(25)) {
+	omniORB::logger log;
+	log << "Client attempt to connect to "
+	    << pd_strand->address->address() << "\n";
+      }
       giopActiveConnection* c = pd_strand->address->Connect(pd_deadline_secs,
-							    pd_deadline_nanosecs);
+							 pd_deadline_nanosecs);
       if (c) pd_strand->connection = &(c->getConnection());
     }
     if (!pd_strand->connection) {
