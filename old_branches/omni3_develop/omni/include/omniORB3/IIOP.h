@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/24 09:51:40  djr
+  Moved from omniORB2 + some new files.
+
   Revision 1.10  1999/06/18 21:13:24  sll
   Updted to copyright notice.
 
@@ -80,6 +83,7 @@ public:
     ~ProfileBody() { if (host) delete [] host; }
   };
 
+  static const _CORBA_UShort DEFAULT_PORT;
 };
 
 
