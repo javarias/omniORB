@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.16  2001/08/15 10:26:13  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.2.2.15  2001/08/03 17:41:23  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -793,7 +796,8 @@ omni::createObjRef(const char* targetRepoId,
   if (id) {
     omniLocalIdentity* lid = omniLocalIdentity::downcast(id);
 
-    if (lid && !lid->servant()->_ptrToInterface(targetRepoId)) {
+    if (lid && (!lid->servant() ||
+		!lid->servant()->_ptrToInterface(targetRepoId))) {
       // Local id can't be used by the objref
       id = createInProcessIdentity(lid->key(), lid->keysize());
     }
