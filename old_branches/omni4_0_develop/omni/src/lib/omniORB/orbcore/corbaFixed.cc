@@ -28,6 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.2.17  2005/03/03 12:45:56  dgrisby
+// Bug in fixed point multiplication. Thanks Simone Viani.
+//
 // Revision 1.1.2.16  2004/10/17 20:14:32  dgrisby
 // Updated support for OpenVMS. Many thanks to Bruce Visscher.
 //
@@ -242,7 +245,7 @@ CORBA::Fixed::Fixed(const CORBA::Octet* val,
 
   if (pd_digits == 0) pd_negative = 0;
 
-  memcpy(pd_val, val, digits);
+  memcpy(pd_val, val, pd_digits);
   memset(pd_val + pd_digits, 0, OMNI_FIXED_DIGITS - pd_digits);
 }
 
