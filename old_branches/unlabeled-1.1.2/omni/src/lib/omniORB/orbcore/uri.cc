@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.6  2000/06/30 14:12:07  dpg1
+// Minor fixes for FreeBSD.
+//
 // Revision 1.1.2.5  2000/06/27 15:40:58  sll
 // Workaround for Cygnus gcc's inability to recognise _CORBA_Octet*& and
 // CORBA::Octet*& are the same type.
@@ -205,8 +208,8 @@ CORBA::Boolean
 iorURIHandler::supports(const char* uri)
 {
   return ((uri[0] == 'I' || uri[0] == 'i') &&
-	  (uri[1] == 'O' || uri[0] == 'o') &&
-	  (uri[2] == 'R' || uri[0] == 'r') &&
+	  (uri[1] == 'O' || uri[1] == 'o') &&
+	  (uri[2] == 'R' || uri[2] == 'r') &&
 	  (uri[3] == ':'));
 }
 
