@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/12/19 11:49:33  dgrisby
+  Vladimir Panov's SSL fixes.
+
   Revision 1.1.2.10  2002/04/16 12:44:27  dpg1
   Fix SSL accept bug, clean up logging.
 
@@ -175,7 +178,8 @@ sslContext::set_CA() {
     OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,CORBA::COMPLETED_NO);
   }
 
-  SSL_CTX_set_verify_depth(pd_ctx,1);
+  // We no longer set the verify depth to 1, to use the default of 9.
+  //  SSL_CTX_set_verify_depth(pd_ctx,1);
 
 }
 
