@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.21  1999/11/08 11:43:35  dpg1
+// Changes for NT support.
+//
 // Revision 1.20  1999/10/15 17:07:23  dpg1
 // Narrow now properly returns nil if the object is not of the right
 // type.
@@ -853,7 +856,15 @@ extern "C" {
     CORBA::Object_ptr cxxsource =
       (CORBA::Object_ptr)omniPy::getTwin(pysource, OBJREF_TWIN);
 
-    if (cxxsource->_is_a(repoId)) {
+    CORBA::Boolean isa;
+    try {
+      isa = cxxsource->_is_a(repoId);
+    }
+    catch (const CORBA::SystemException& ex) {
+      omniPy::handleSystemException(ex);
+      return 0;
+    }
+    if (isa) {
       omniObject* oosource = cxxsource->PR_getobj();
       omniObject* oodest = omniPy::createObjRef(oosource->NP_IRRepositoryId(),
 						repoId,
