@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/24 15:56:44  sll
+  Fixed code which made the wrong assumption about the semantics of
+  do { ...; continue; } while(0)
+
   Revision 1.1.2.7  2001/07/31 16:16:23  sll
   New transport interface to support the monitoring of active connections.
 
@@ -61,6 +65,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <orbParameters.h>
 #include <omniORB4/sslContext.h>
 #include <SocketCollection.h>
 #include <ssl/sslConnection.h>
@@ -190,14 +195,14 @@ sslConnection::Recv(void* buf, size_t sz,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > giopStrand::scanPeriod) {
-	t.tv_sec = giopStrand::scanPeriod;
+      if (t.tv_sec > orbParameters::scanGranularity) {
+	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
     }
     else {
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      t.tv_sec = giopStrand::scanPeriod;
+      t.tv_sec = orbParameters::scanGranularity;
       t.tv_usec = 0;
 #else
       t.tv_sec = t.tv_usec = 0;
