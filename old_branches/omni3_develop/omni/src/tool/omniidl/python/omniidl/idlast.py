@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.5  2001/01/15 15:56:06  dpg1
+# Potential bug in forward-declared AST nodes.
+#
 # Revision 1.13.2.4  2000/08/29 10:20:29  dpg1
 # Operations and attributes now have repository ids.
 #
@@ -988,7 +991,6 @@ def registerDecl(scopedName, decl):
               isinstance(rdecl, ValueForward)):
             
             # repeat forward declaration
-            decl._fullDecl = rdecl
             rdecl._more.append(decl)
 
         elif (isinstance(decl, Forward) and isinstance(rdecl, Interface)) or \
