@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.23.6.2  1999/10/13 15:18:00  djr
+  Fixed problem with call descriptors shared between ops and attrs.
+
   Revision 1.23.6.1  1999/09/24 10:05:22  djr
   Updated for omniORB3.
 
@@ -374,7 +377,7 @@ o2be_attribute::produce_proxy_wr_skel(std::fstream& s,
   // Generate the actual proxy method.
   IND(s); s << "void " << def_in.proxy_fqname() << "::"
 	    << uqname() << '(';
-  produce_decl_wr(s, o2be_interface::narrow_from_scope(defined_in()), I_TRUE);
+  produce_decl_wr(s, o2be_global::root(), I_TRUE);
   s << " arg_0)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
