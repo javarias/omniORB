@@ -31,6 +31,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.10  1999/09/29 11:25:55  dpg1
+# Nil objects now map to None. They work too, which is more than can be
+# said for the old mapping...
+#
 # Revision 1.9  1999/09/27 09:06:37  dpg1
 # Friendly error message if there is no thread support.
 #
@@ -561,7 +565,7 @@ class Object:
         raise NO_IMPLEMENT
     
     def _is_a(self, repoId):
-        if self._NP_RepositoryId == repoId: return TRUE
+        if omniORB.static_is_a(self.__class__, repoId): return TRUE
         return _omnipy.isA(self, repoId)
     
     def _non_existent(self):

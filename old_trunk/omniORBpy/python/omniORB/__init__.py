@@ -31,6 +31,11 @@
 # $Id$
 
 # $Log$
+# Revision 1.9  1999/09/29 15:46:50  dpg1
+# lockWithNewThreadState now creates a dummy threading.Thread object so
+# threading doesn't get upset that it's not there. Very dependent on the
+# implementation of threading.py.
+#
 # Revision 1.8  1999/09/27 09:06:37  dpg1
 # Friendly error message if there is no thread support.
 #
@@ -370,6 +375,14 @@ def coerceAny(v, fd, td):
         return None
 
     return None
+
+
+# Support for _is_a()
+def static_is_a(cls, repoId):
+    if cls._NP_RepositoryId == repoId: return 1
+    for b in cls.__bases__:
+        if static_is_a(b, repoId): return 1
+    return 0
 
 
 
