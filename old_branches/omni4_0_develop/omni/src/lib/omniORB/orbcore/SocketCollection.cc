@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/02/13 16:02:38  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
   Revision 1.1.2.4  2001/08/24 15:56:44  sll
   Fixed code which made the wrong assumption about the semantics of
   do { ...; continue; } while(0)
@@ -262,7 +266,7 @@ SocketCollection::Select() {
   }
 
   if (nready == RC_SOCKET_ERROR) {
-    if (ERRNO == EBADF) {
+    if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "select() returned EBADF, retrying");
       goto again;
     }
