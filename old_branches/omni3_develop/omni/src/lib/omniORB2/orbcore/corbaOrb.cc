@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.29.6.11  2000/01/20 11:51:34  djr
+  (Most) Pseudo objects now used omni::poRcLock for ref counting.
+  New assertion check OMNI_USER_CHECK.
+
   Revision 1.29.6.10  2000/01/07 14:51:13  djr
   Call timeouts are now disabled by default.
 
@@ -465,11 +469,12 @@ omniOrbORB::shutdown(CORBA::Boolean wait_for_completion)
 void
 omniOrbORB::destroy()
 {
+  if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();
+
   omniOrbORB* orb;
   {
     omni_tracedmutex_lock sync(orb_lock);
 
-    if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();
     if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
 
     if( 0 /*?? in context of invocation */ )
@@ -1026,6 +1031,7 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	  "Valid -ORB<options> are:\n"
 	  "    -ORBid omniORB2\n"
 	  "    -ORBtraceLevel <n>\n"
+	  "    -ORBtraceInvocations\n"
 	  "    -ORBstrictIIOP <0|1>\n"
 	  "    -ORBtcAliasExpand <0|1>\n"
 	  "    -ORBgiopMaxMsgSize <n bytes>\n"
