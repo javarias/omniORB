@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.4  1997/02/19  11:01:26  ewc
+// Fixed a small bug in ATMos code.
+//
   Revision 1.3  1997/01/23 16:41:48  sll
   non_reentrant is now a static member of the LibcWrapper class.
 
@@ -118,7 +121,6 @@ again:
   char **p;
 
   total += strlen(hp->h_name) + 1;
-
 #ifndef __atmos__
   p = hp->h_aliases;
   while (*p) {
@@ -128,7 +130,6 @@ again:
   }
 #endif
   total += naliases * sizeof(char *);
-
   p = hp->h_addr_list;
   while (*p) {
     total += hp->h_length;
@@ -146,7 +147,6 @@ again:
 
   h.pd_ent.h_addrtype = hp->h_addrtype;
   h.pd_ent.h_length = hp->h_length;
-
   char *q = h.pd_buffer;
   h.pd_ent.h_aliases = (char **) q;
   q += naliases * sizeof(char *);
@@ -159,7 +159,6 @@ again:
   strcpy((char *)h.pd_ent.h_name,hp->h_name);
 
   int idx = 0;
-
 #ifndef __atmos__
   p = hp->h_aliases;
   while (*p) {
@@ -180,10 +179,15 @@ again:
     memcpy((void *) h.pd_ent.h_addr_list[idx],(void *)*p,hp->h_length);
     idx++;
     p++;
+#ifdef __atmos__
+    // ATMos h_addr_list is not terminated by a null - and
+    // only has one IP address per hostname.
+    break;
+#endif
   }
-  h.pd_ent.h_addr_list[idx] = 0;
 
-  non_reentrant.unlock();
+  h.pd_ent.h_addr_list[idx] = 0;
+   non_reentrant.unlock();
 #endif
   return 0;
 }
