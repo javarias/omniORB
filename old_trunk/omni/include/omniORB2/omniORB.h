@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.18  1999/06/18 21:16:36  sll
+  Updated copyright notice.
+
   Revision 1.17  1999/06/18 20:37:04  sll
   Replaced _LC_attr with _core_attr and _dyn_attr.
   New variable copyStringInAnyExtraction.
@@ -528,16 +531,21 @@ _CORBA_MODULE_BEG
 
   ////////////////////////////////////////////////////////////////////////
   // In pre-2.8.0 versions, the CORBA::Any extraction operator for     	//
-  // unbounded string ( operator>>= (char*&) ) copy the returned string.//
-  // In other words the caller must free the string later.              //
+  //   1. unbounded string operator>>=(char*&)                          //
+  //   2. bounded string   operator>>=(to_string)                       //
+  //   3. object reference operator>>=(A_ptr&) for interface A          //
+  // Returns a copy of the value. The caller must free the returned     //
+  // value later.                                                       //
+  //                                                                    //
   // With 2.8.0 and later, the semantics becomes non-copy, i.e. the Any //
-  // still own the storage of the returned string.   	       	       	//
+  // still own the storage of the returned value.   	       	       	//
   // This would cause problem in programs that is written to use the    //
   // pre-2.8.0 semantics. To make it easier for the transition,	       	//
-  // set copyStringInAnyExtraction to 1. This would revert the          //
-  // semantics to the pre-2.8.0 versions.                               //
+  // set omniORB_27_CompatibleAnyExtraction to 1.                       //
+  // This would revert the semantics to the pre-2.8.0 versions.         //
   //                                                                    //
-  _CORBA_MODULE_VAR _dyn_attr  CORBA::Boolean copyStringInAnyExtraction;//
+  _CORBA_MODULE_VAR _dyn_attr                                           //
+                      CORBA::Boolean omniORB_27_CompatibleAnyExtraction;//
   ////////////////////////////////////////////////////////////////////////
 
 
