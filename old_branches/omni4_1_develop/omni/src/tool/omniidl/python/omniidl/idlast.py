@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.3  2003/07/10 21:54:47  dgrisby
+# Missed methods in ValueAbs.
+#
 # Revision 1.20.2.2  2003/05/20 16:53:17  dgrisby
 # Valuetype marshalling support.
 #
@@ -869,17 +872,19 @@ Functions:
   parameters() -- list of Parameter objects."""
 
     def __init__(self, file, line, mainFile, pragmas, comments,
-                 identifier, parameters):
+                 identifier, parameters, raises):
 
         Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__identifier = identifier
         self.__parameters = parameters
+        self.__raises     = raises
 
     def accept(self, visitor): visitor.visitFactory(self)
 
     def identifier(): return self.__identifier
     def parameters(): return self.__parameters
+    def raises(self): return self.__raises
 
 
 class ValueForward (Decl, DeclRepoId):

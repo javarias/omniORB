@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.1  2003/03/23 21:01:46  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.11.2.10  2002/02/25 15:02:18  dpg1
 // Dump wstring constants properly.
 //
@@ -672,6 +675,17 @@ visitFactory(Factory* f)
     if (p->next()) printf(", ");
   }
   printf(")");
+  if (f->raises()) {
+    printf(" raises (");
+    char* ssn;
+    for (RaisesSpec* r = f->raises(); r; r = r->next()) {
+      ssn = r->exception()->scopedName()->toString();
+      printf("%s", ssn);
+      delete [] ssn;
+      if (r->next()) printf(", ");
+    }
+    printf(")");
+  }
 }
 
 void

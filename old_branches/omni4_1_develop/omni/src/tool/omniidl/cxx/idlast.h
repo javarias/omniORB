@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.1  2003/03/23 21:01:47  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.10.2.6  2001/08/29 11:55:23  dpg1
 // Enumerator nodes record their value.
 //
@@ -393,6 +396,8 @@ public:
   Decl*          contents() const { return contents_; }
   Scope*         scope()    const { return scope_;    }
   IdlType*       thisType() const { return thisType_; }
+
+  IDL_Boolean    isDerived(const Interface* base) const;
 
   void accept(AstVisitor& visitor) { visitor.visitInterface(this); }
 
@@ -1076,15 +1081,17 @@ public:
   // Queries
   const char* identifier() const { return identifier_; }
   Parameter*  parameters() const { return parameters_; }
+  RaisesSpec* raises()     const { return raises_; }
 
   void accept(AstVisitor& visitor) { visitor.visitFactory(this); }
 
   void closeParens();
-  void finishConstruction(Parameter* parameters);
+  void finishConstruction(Parameter* parameters, RaisesSpec* raises);
 
 private:
   char*       identifier_;
   Parameter*  parameters_;
+  RaisesSpec* raises_;
 };
 
 

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.1  2003/03/23 21:01:45  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.17.2.15  2003/01/16 11:08:27  dgrisby
 // Patches to support Digital Mars C++. Thanks Christof Meerwald.
 //
@@ -1070,11 +1073,19 @@ visitFactory(Factory* f)
     p->accept(*this);
     PyList_SetItem(pyparameters, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, (char*)"Factory", (char*)"siiNNsN",
+
+  RaisesSpec* r;
+  for (i=0, r = f->raises(); r; r = r->next(), ++i);
+  PyObject* pyraises = PyList_New(i);
+
+  for (i=0, r = f->raises(); r; r = r->next(), ++i)
+    PyList_SetItem(pyraises, i, findPyDecl(r->exception()->scopedName()));
+
+  result_ = PyObject_CallMethod(idlast_, (char*)"Factory", (char*)"siiNNsNN",
 				f->file(), f->line(), (int)f->mainFile(),
 				pragmasToList(f->pragmas()),
 				commentsToList(f->comments()),
-				f->identifier(), pyparameters);
+				f->identifier(), pyparameters, pyraises);
   ASSERT_RESULT;
 }
 

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.1  2003/03/23 21:01:48  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.11.2.7  2001/08/29 11:54:19  dpg1
 // Clean up const handling in IDL compiler.
 //
@@ -730,8 +733,8 @@ member_access:
 init_dcl:
     init_dcl_header '(' init_param_decls_opt ')' {
       $1->closeParens();
-    } ';' {
-      $1->finishConstruction($3);
+    } raises_expr_opt ';' {
+      $1->finishConstruction($3, $6);
       $$ = $1;
     }
   | init_dcl_header '(' error ')' {
@@ -739,7 +742,7 @@ init_dcl:
     } ';' {
       IdlSyntaxError(currentFile, yylineno,
 		     "Syntax error in factory parameters");
-      $1->finishConstruction(0);
+      $1->finishConstruction(0, 0);
       $$ = $1;
     }
     ;
