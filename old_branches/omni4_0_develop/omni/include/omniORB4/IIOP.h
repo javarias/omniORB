@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/10/04 16:50:06  sll
+  Updated header comment.
+
   Revision 1.2.2.2  2000/09/27 17:06:43  sll
   New helper functions to decode an IOR.
 
@@ -96,6 +99,8 @@ public:
     Address                 address;
     _CORBA_Unbounded_Sequence_Octet  object_key;
     IOP::MultipleComponentProfile    components;
+
+    ProfileBody() : components(2) {}
   };
 
   static _core_attr const _CORBA_UShort DEFAULT_CORBALOC_PORT;
