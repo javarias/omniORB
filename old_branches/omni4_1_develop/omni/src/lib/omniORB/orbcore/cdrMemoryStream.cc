@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:02:24  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.10  2003/02/17 01:24:04  dgrisby
   Grow cdrMemoryStreams exponentially rather than linearly.
 
@@ -323,6 +326,7 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer)
   pd_tcs_w = orbParameters::anyWCharCodeSet;
 
   pd_readonly_and_external_buffer = 1;
+  pd_clear_memory = 0;
   pd_bufp = databuffer;
 #if (SIZEOF_LONG == SIZEOF_PTR)
   pd_inb_end = (void *) ULONG_MAX;
@@ -341,6 +345,7 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer, size_t maxLen)
   pd_tcs_w = orbParameters::anyWCharCodeSet;
 
   pd_readonly_and_external_buffer = 1;
+  pd_clear_memory = 0;
   pd_bufp = databuffer;
   pd_inb_end = (void*)((omni::ptr_arith_t)pd_bufp + maxLen);
   rewindPtrs();
@@ -354,6 +359,7 @@ cdrMemoryStream::cdrMemoryStream(const cdrMemoryStream& s,
 
   pd_readonly_and_external_buffer = (read_only ||
 				     s.pd_readonly_and_external_buffer);
+  pd_clear_memory = 0;
 
   pd_marshal_byte_swap = pd_unmarshal_byte_swap = s.pd_marshal_byte_swap;
 
