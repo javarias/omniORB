@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.12  2001/03/20 17:27:11  dpg1
+# Incorrect TypeCode constants for some recursive sequences.
+#
 # Revision 1.14.2.11  2001/01/24 13:47:58  sll
 # omniidl cxx backend bug fix.
 #
@@ -606,13 +609,13 @@ def visitUnion(node):
 static CORBA::PR_unionMember @unionmember_mangled_name@[] = {
   @members@
 };
-static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_union_tc("@repoID@", "@name@", @discrim_tc@, @unionmember_mangled_name@, @cases@@default_str@);""",
+static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_union_tc("@repoID@", "@name@", @discrim_tc@, @unionmember_mangled_name@, @labels@@default_str@);""",
                 mangled_name = mangled_name,
                 repoID = repoID,
                 discrim_tc = discrim_tc,
                 unionmember_mangled_name = unionmember_mangled_name,
                 name = union_name,
-                cases = str(numcases),
+                labels = str(numlabels),
                 default_str = default_str,
                 members = string.join(array, ",\n"))
     
