@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.9  1998/01/20  19:13:38  sll
+// Added support for OpenVMS.
+//
   Revision 1.8  1997/12/09 19:55:22  sll
   *** empty log message ***
 
@@ -57,7 +60,7 @@
 
 #if defined(__WIN32__) || defined(__VMS) && __VMS_VER < 60200000
 
-// NT doesn't have an implementation of getopt() - supply a getopt() for this program:
+// Win32 and VMS don't have an implementation of getopt() - supply a getopt() for this program:
 
 char* optarg;
 int optind = 1;
@@ -209,6 +212,7 @@ usage()
   cerr << GTDEVEL(" -v\t\t\ttraces compilation stages\n");
   cerr << GTDEVEL(" -w\t\t\tsuppresses IDL compiler warning messages\n");
   cerr << GTDEVEL(" -l\t\t\tgenerates code required by LifeCycle service\n");
+  cerr << GTDEVEL(" -a\t\t\tgenerates code required by type any\n");
   return;
 }
 
@@ -233,7 +237,7 @@ BE_parse_args(int argc, char **argv)
 
   DRV_cpp_init();
   idl_global->set_prog_name(argv[0]);
-  while ((c = getopt(argc,argv,"D:EI:U:Vuvwh:s:l")) != EOF)
+  while ((c = getopt(argc,argv,"D:EI:U:Vuvwh:s:la")) != EOF)
     {
       switch (c) 
 	{
@@ -275,6 +279,11 @@ BE_parse_args(int argc, char **argv)
 	  // XXX -Life cycle compiler flag
 	  idl_global->set_compile_flags(idl_global->compile_flags() |
 					IDL_CF_LIFECYCLE);
+	  break;
+
+	case 'a':
+	  idl_global->set_compile_flags(idl_global->compile_flags() |
+					IDL_CF_ANY);
 	  break;
 	case '?':
 	  usage();

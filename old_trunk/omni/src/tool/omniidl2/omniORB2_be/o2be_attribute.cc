@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.13  1997/12/10 11:35:10  sll
+  Updated life cycle service stub.
+
   Revision 1.12  1997/12/09 19:54:19  sll
   *** empty log message ***
 
@@ -84,6 +87,9 @@ o2be_attribute::produce_decl_rd(fstream &s,const char *prefix,
   else if (ntype == o2be_operation::tString) {
     s << "char *";
   }
+  else if (ntype == o2be_operation::tTypeCode) {
+    s << "CORBA::TypeCode_ptr";
+  }
   else {
     if (use_fully_qualified_names) {
       s << o2be_name::narrow_and_produce_unambiguous_name(field_type(),this,I_TRUE);
@@ -131,6 +137,9 @@ o2be_attribute::produce_decl_wr(fstream &s,const char *prefix,
   else if (ntype == o2be_operation::tString) {
     s << "char *";
   }
+  else if (ntype == o2be_operation::tTypeCode) {
+    s << "CORBA::TypeCode_ptr";
+  }
   else {
     if (use_fully_qualified_names) {
       s << o2be_name::narrow_and_produce_unambiguous_name(field_type(),this,I_TRUE);
@@ -167,15 +176,19 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	hasVariableLenOutArgs = I_TRUE;
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	  && ntype != o2be_operation::tTypeCode)?" *":"") 
+	    << " _0RL_result = "
+	    << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
       }
     else
       {
@@ -225,6 +238,9 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
 	o2be_operation::declareVarType(s,field_type(),this);
 	s << ";\n";
       }
+      else if (ntype == o2be_operation::tTypeCode) {
+	  IND(s); s << "_0RL_result = new CORBA::TypeCode(CORBA::tk_null);\n";
+	}
     }
 
   {
@@ -323,6 +339,10 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
 
   IND(s); s << "if (_0RL_reuse || _0RL_fwd) {\n";
@@ -372,6 +392,10 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
   IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,ex))\n";
   INC_INDENT_LEVEL();
@@ -401,6 +425,10 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
     else if (ntype == o2be_operation::tString)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
+      }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
       }
   }
 
@@ -448,6 +476,10 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
   IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
   INC_INDENT_LEVEL();
@@ -479,6 +511,10 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
 	{
 	  IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
 	}
+      else if (ntype == o2be_operation::tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+	}
     }
     IND(s); s << "throw;\n";
     DEC_INDENT_LEVEL();
@@ -496,14 +532,18 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+	  s << 
+	((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	  && ntype != o2be_operation::tTypeCode)?" *":"") 
+	    << " _0RL_result" << " = "
+	    << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	    << ";\n";
       }
     else
       {
@@ -753,14 +793,17 @@ o2be_attribute::produce_server_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer)) 
       {
 	// declare a <type>_var variable to manage the pointer type
+	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,1,mapping.is_arrayslice);
       }
     else 
       {
+	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this);
       }
     s << " _0RL_result = " << uqname() << "();\n";
@@ -773,6 +816,7 @@ o2be_attribute::produce_server_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if ((ntype == o2be_operation::tObjref ||
 	 ntype == o2be_operation::tString ||
+	 ntype == o2be_operation::tTypeCode ||
 	 mapping.is_pointer) && !mapping.is_arrayslice)
       {
 	// These are declared as <type>_var variable 
@@ -808,6 +852,7 @@ o2be_attribute::produce_server_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if ((ntype == o2be_operation::tObjref || 
 	 ntype == o2be_operation::tString ||
+	 ntype == o2be_operation::tTypeCode ||
 	 mapping.is_pointer)
 	&& !mapping.is_arrayslice)
       {
@@ -855,11 +900,18 @@ o2be_attribute::produce_server_wr_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argMapping mapping;
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wIN,mapping);
     if (ntype == o2be_operation::tObjref || 
-	ntype == o2be_operation::tString) 
+	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode) 
+      {
       // declare a <type>_var variable to manage the pointer type
-      o2be_operation::declareVarType(s,field_type(),this,1);
+	IND(s);
+	o2be_operation::declareVarType(s,field_type(),this,1);
+      }
     else
-      o2be_operation::declareVarType(s,field_type(),this);
+      {
+	IND(s);
+	o2be_operation::declareVarType(s,field_type(),this);
+      }
     s << " " << "_value;\n";
     o2be_operation::produceUnMarshalCode(s,field_type(),
 					 (AST_Decl*)&defined_in,
@@ -894,15 +946,19 @@ o2be_attribute::produce_nil_rd_skel(fstream &s)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,
 				       0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+	s << 
+       ((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	 && ntype != o2be_operation::tTypeCode)?" *":"") 
+	  << " _0RL_result" << " = "
+	  << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	  << ";\n";
       }
     else
       {
@@ -982,15 +1038,19 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	hasVariableLenOutArgs = I_TRUE;
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+	s << 
+	 ((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	   && ntype != o2be_operation::tTypeCode)?" *":"") 
+	  << " _0RL_result = "
+	  << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	  << ";\n";
       }
     else
       {
@@ -1040,6 +1100,9 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
 	o2be_operation::declareVarType(s,field_type(),this);
 	s << ";\n";
       }
+      else if (ntype == o2be_operation::tTypeCode) {
+	  IND(s); s << "_0RL_result = new CORBA::TypeCode(CORBA::tk_null);\n";
+	}
     }
 
   {
@@ -1137,6 +1200,10 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
 
   IND(s); s << "if (_0RL_reuse) {\n";
@@ -1207,6 +1274,10 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
   IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,ex))\n";
   INC_INDENT_LEVEL();
@@ -1236,6 +1307,10 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
     else if (ntype == o2be_operation::tString)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
+      }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
       }
   }
   IND(s); s << defined_in.wrapproxy_uqname()
@@ -1291,6 +1366,10 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
       {
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
+    else if (ntype == o2be_operation::tTypeCode)
+      {
+	IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+      }
   }
   IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
   INC_INDENT_LEVEL();
@@ -1322,6 +1401,10 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
 	{
 	  IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
 	}
+      else if (ntype == o2be_operation::tTypeCode)
+	{
+	  IND(s); s << "if (!CORBA::is_nil(_0RL_result)) CORBA::release(_0RL_result);\n";
+	}
     }
     IND(s); s << "throw;\n";
     DEC_INDENT_LEVEL();
@@ -1339,14 +1422,18 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+	s << 
+	((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	  && ntype != o2be_operation::tTypeCode)?" *":"") 
+	  << " _0RL_result" << " = "
+	  << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	  << ";\n";
       }
     else
       {
@@ -1417,7 +1504,7 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
 
   IND(s); s << "GIOP_C _0RL_c(_0RL_r.rope());\n";
   IND(s); s << "_0RL_reuse = _0RL_c.isReUsingExistingConnection();\n";
-  
+
   // calculate request message size
   IND(s); s << "CORBA::ULong _0RL_msgsize = GIOP_C::RequestHeaderSize(_0RL_r.keysize(),"
 	    << strlen("_set_") + strlen(local_name()->get_string()) + 1 
@@ -1628,15 +1715,20 @@ o2be_attribute::produce_dead_rd_skel(fstream &s)
     o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
     if (ntype == o2be_operation::tObjref || 
 	ntype == o2be_operation::tString ||
+	ntype == o2be_operation::tTypeCode ||
 	(mapping.is_arrayslice) ||
 	(mapping.is_pointer))
       {
 	IND(s);
 	o2be_operation::declareVarType(s,field_type(),this,
 				       0,mapping.is_arrayslice);
-	s << ((ntype != o2be_operation::tObjref && 
-	       ntype != o2be_operation::tString)?" *":"") 
-	  << " _0RL_result" << "= 0;\n";
+
+	s << 
+	 ((ntype != o2be_operation::tObjref && ntype != o2be_operation::tString
+	   && ntype != o2be_operation::tTypeCode)?" *":"") 
+	  << " _0RL_result" << " = "
+	  << ((ntype == o2be_operation::tTypeCode) ? "CORBA::TypeCode::_nil()" : "0")
+	  << ";\n";
       }
     else
       {
