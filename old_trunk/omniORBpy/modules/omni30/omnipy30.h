@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.13  1999/11/16 17:32:36  dpg1
+// Changes for AIX.
+//
 // Revision 1.12  1999/11/08 12:07:25  dpg1
 // Adding python1.5/ to #include path caused a conflict with thread.h on
 // Solaris.
@@ -493,6 +496,7 @@ public:
 private:
   PyObject* pyservant_;		// Python servant object
   PyObject* opdict_;		// Operation descriptor dictionary
+  PyObject* pyskeleton_;	// Skeleton class object
 
   Py_Servant(const Py_Servant&);
   Py_Servant& operator=(const Py_Servant&);
