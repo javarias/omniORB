@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.11.2.4  2001/01/18 11:52:06  dpg1
+// Silly bug with marshalling TypeCode for CORBA::Object.
+//
 // Revision 1.11.2.3  2000/12/04 18:04:42  dpg1
 // Fix bug with TypeCode indirections.
 //
@@ -353,6 +356,8 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 #endif
 	default:
 	  OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
+	  // Prevent spurious compiler warnings:
+	  dsize = 1; dalign = omni::ALIGN_1;
 	}
 
 	// Default used, count
@@ -1335,7 +1340,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 PyObject*
 r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 {
-  PyObject* d_o; // Descriptor object to build
+  PyObject* d_o = 0; // Descriptor object to build
   PyObject* t_o;
 
   //  cout << "unmarshal typecode... " << flush;
@@ -1878,7 +1883,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 PyObject*
 r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 {
-  PyObject* d_o; // Descriptor object to build
+  PyObject* d_o = 0; // Descriptor object to build
   PyObject* t_o;
 
   //  cout << "unmarshal typecode... " << flush;
