@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2000/10/13 13:55:24  dpg1
+// Initial support for omniORB 4.
+//
 
 #include <omnipy.h>
 
@@ -38,14 +41,9 @@
 PyObject*
 omniPy::handleSystemException(const CORBA::SystemException& ex)
 {
-#ifdef OMNIORBPY_FOR_28
-  PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
-					(char*)ex.NP_RepositoryId());
-#else
   int dummy;
   PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
 					(char*)ex._NP_repoId(&dummy));
-#endif
   OMNIORB_ASSERT(excc);
 
   PyObject* exca = Py_BuildValue((char*)"(ii)", ex.minor(), ex.completed());
@@ -63,14 +61,9 @@ omniPy::handleSystemException(const CORBA::SystemException& ex)
 PyObject*
 omniPy::createPySystemException(const CORBA::SystemException& ex)
 {
-#ifdef OMNIORBPY_FOR_28
-  PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
-					(char*)ex.NP_RepositoryId());
-#else
   int dummy;
   PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
 					(char*)ex._NP_repoId(&dummy));
-#endif
   OMNIORB_ASSERT(excc);
 
   PyObject* exca = Py_BuildValue((char*)"(ii)", ex.minor(), ex.completed());
