@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22  1999/03/19 15:18:00  djr
+  New option acceptMisalignedIndirections
+
   Revision 1.21  1999/03/11 16:25:52  djr
   Updated copyright notice
 
@@ -233,7 +236,7 @@ CORBA::ORB_init(int &argc,char **argv,const char *orb_identifier)
 
     omniORB::seed.hi = omniORB::seed.med = 0;
 
-#ifdef _HAS_SIGNAL
+#if defined(_HAS_SIGNAL) && !defined(__CIAO__)
 #ifndef _USE_MACH_SIGNAL
 #  ifndef __SINIX__
     struct sigaction act;
