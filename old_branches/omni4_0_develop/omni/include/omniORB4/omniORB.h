@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.10  2001/08/01 10:08:20  dpg1
+  Main thread policy.
+
   Revision 1.2.2.9  2001/07/31 16:10:38  sll
   Added GIOP BiDir support.
 
@@ -1023,10 +1026,14 @@ _CORBA_MODULE_BEG
     class exceptionStatus {
     public:
       exceptionStatus(CORBA::CompletionStatus s, CORBA::ULong m) :
-	status(s), minor(m) {}
+	status(s), minor(m), minor_string(0) {}
+
+      exceptionStatus(CORBA::CompletionStatus s, const char* description) :
+	status(s), minor(0), minor_string(description) {}
 
       CORBA::CompletionStatus status;
       CORBA::ULong            minor;
+      const char*             minor_string;
     private:
       exceptionStatus();
     };
@@ -1101,6 +1108,36 @@ private:
 #endif
 
 _CORBA_MODULE_END
+
+#ifndef OMNIORB_NO_EXCEPTION_LOGGING
+
+OMNI_NAMESPACE_BEGIN(omni)
+
+class omniExHelper {
+public:
+
+#define OMNIORB_EX(name) \
+  static void name(const char*, int, CORBA::ULong, CORBA::CompletionStatus);
+
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(OMNIORB_EX)
+
+#undef OMNIORB_EX
+
+  static const char* strip(const char*);
+};
+
+OMNI_NAMESPACE_END(omni)
+
+#define OMNIORB_THROW(name, minor, completion) \
+  _OMNI_NS(omniExHelper)::name(__FILE__, __LINE__, minor, completion)
+
+#else
+
+
+#define OMNIORB_THROW(name, minor, completion) \
+  throw CORBA::name(minor, completion)
+
+#endif
 
 
 #endif // __OMNIORB_H__
