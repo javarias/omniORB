@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.5  2002/01/18 15:49:45  dpg1
+# Context support. New system exception construction. Fix None call problem.
+#
 # Revision 1.7.4.4  2001/09/20 14:51:26  dpg1
 # Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
 #
@@ -81,6 +84,15 @@ class Servant:
         assert(omniORB.orb)
         omniORB.rootPOA = omniORB.orb.resolve_initial_references("RootPOA")
         return omniORB.rootPOA
+
+    def _get_interface(self):
+        omniORB.importIRStubs() # Make sure IR stubs are loaded
+        ir = omniORB.orb.resolve_initial_references("InterfaceRepository")
+        ir = ir._narrow(Repository)
+        if ir is None:
+            raise INTF_REPOS(omniORB.INTF_REPOS_NotAvailable, COMPLETED_NO)
+        interf = ir.lookup_id(self._NP_RepositoryId)
+        return interf._narrow(InterfaceDef)
 
 _d_Servant = omniORB.tcInternal.tv_native
 
@@ -484,7 +496,9 @@ class ThreadPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/ThreadPolicy:1.0"
 
     def __init__(self, value):
-        if value not in ThreadPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in ThreadPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 16
 
@@ -497,7 +511,9 @@ class LifespanPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/LifespanPolicy:1.0"
 
     def __init__(self, value):
-        if value not in LifespanPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in LifespanPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 17
 
@@ -510,7 +526,9 @@ class IdUniquenessPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/IdUniquenessPolicy:1.0"
 
     def __init__(self, value):
-        if value not in IdUniquenessPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in IdUniquenessPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 18
 
@@ -523,7 +541,9 @@ class IdAssignmentPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/IdAssignmentPolicy:1.0"
 
     def __init__(self, value):
-        if value not in IdAssignmentPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in IdAssignmentPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 19
 
@@ -536,7 +556,9 @@ class ImplicitActivationPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/ImplicitActivationPolicy:1.0"
 
     def __init__(self, value):
-        if value not in ImplicitActivationPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in ImplicitActivationPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 20
 
@@ -549,7 +571,9 @@ class ServantRetentionPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/ServantRetentionPolicy:1.0"
 
     def __init__(self, value):
-        if value not in ServantRetentionPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in ServantRetentionPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 21
 
@@ -562,7 +586,9 @@ class RequestProcessingPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/RequestProcessingPolicy:1.0"
 
     def __init__(self, value):
-        if value not in RequestProcessingPolicyValue._items: raise CORBA.BAD_PARAM()
+        if value not in RequestProcessingPolicyValue._items:
+            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
+                                  COMPLETED_NO)
         self._value       = value
         self._policy_type = 22
 
