@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/07/31 16:16:25  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.5  2001/07/26 16:37:21  dpg1
   Make sure static initialisers always run.
 
@@ -115,7 +118,7 @@ matchType(const char* uri,const char*& param,CORBA::Boolean allowShortHand) {
     if (strncmp(protocol,impl->type,len) == 0) {
       if (param == 0) {
 	param = uri + len + 1;
-	if (*param == '\0' || *(param-1) != ':') impl = 0;
+	if (*(param-1) != ':') impl = 0;
       }
       break;
     }
