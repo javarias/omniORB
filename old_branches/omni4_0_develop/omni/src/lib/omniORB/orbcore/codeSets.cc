@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/07/25 10:56:28  dpg1
+  Fix static initialiser problem with codesets.
+
   Revision 1.1.2.7  2001/06/13 20:12:32  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -393,6 +396,7 @@ void
 omniCodeSet::logCodeSets()
 {
   omniCodeSet::Base* cs;
+  GIOP::Version v;
 
   {
     omniORB::logger l;
@@ -403,7 +407,11 @@ omniCodeSet::logCodeSets()
   {
     omniORB::logger l;
     l << "Transmission char code sets:";
-    for (cs = tcs_c_head(); cs; cs = cs->pd_next) l << " " << cs->name();
+    for (cs = tcs_c_head(); cs; cs = cs->pd_next) {
+      v = ((omniCodeSet::TCS_C*)cs)->giopVersion();
+      l << " " << cs->name()
+	<< "(" << ((int)v.major) << "." << ((int)v.minor) << ")";
+    }
     l << ".\n";
   }
   {
@@ -415,7 +423,11 @@ omniCodeSet::logCodeSets()
   {
     omniORB::logger l;
     l << "Transmission wide char code sets:";
-    for (cs = tcs_w_head(); cs; cs = cs->pd_next) l << " " << cs->name();
+    for (cs = tcs_w_head(); cs; cs = cs->pd_next) {
+      v = ((omniCodeSet::TCS_W*)cs)->giopVersion();
+      l << " " << cs->name()
+	<< "(" << ((int)v.major) << "." << ((int)v.minor) << ")";
+    }
     l << ".\n";
   }
 }
