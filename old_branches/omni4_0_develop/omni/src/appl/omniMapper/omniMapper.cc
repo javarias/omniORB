@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.6  2001/10/17 16:49:11  dpg1
+// Minor error message tweaks
+//
 // Revision 1.2.2.5  2001/09/19 17:33:17  dpg1
 // Update omniMapper and omniNames INS mapper to ORB core changes from a
 // while ago.
@@ -263,7 +266,7 @@ main(int argc, char** argv)
   if (port == 0) port = IIOP::DEFAULT_CORBALOC_PORT;
 
   insertArgs(argc, argv, 1, 2);
-  argv[1] = strdup("-ORBendpoint");
+  argv[1] = strdup("-ORBendPoint");
   argv[2] = new char[20];
   sprintf(argv[2], "giop:tcp::%d", port);
 
