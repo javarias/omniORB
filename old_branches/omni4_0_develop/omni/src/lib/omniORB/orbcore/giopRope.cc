@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2001/09/03 13:31:45  sll
+  Removed debug trace.
+
   Revision 1.1.4.14  2001/09/03 13:26:35  sll
   In filterAndSortAddressList, change to use the lowest value to represent
   the highest priority.
@@ -96,6 +99,7 @@
 #include <orbOptions.h>
 #include <orbParameters.h>
 #include <transportRules.h>
+#include <omniORB4/callDescriptor.h>
 
 #include <stdlib.h>
 
@@ -288,7 +292,17 @@ giopRope::acquireClient(const omniIOR* ior,
   else if (pd_oneCallPerConnection || ndying >= max) {
     // Wait for a strand to be unused.
     pd_nwaiting++;
-    pd_cond.wait();   // XXX Should do time want if deadline is set.
+    unsigned long deadline_secs,deadline_nanosecs;
+    calldesc->getDeadline(deadline_secs,deadline_nanosecs);
+    if (deadline_secs || deadline_nanosecs) {
+      if (pd_cond.timedwait(deadline_secs,deadline_nanosecs) == 0) {
+	pd_nwaiting--;
+	OMNIORB_THROW(TRANSIENT,TRANSIENT_CallTimedout,CORBA::COMPLETED_NO);
+      }
+    }
+    else {
+      pd_cond.wait();
+    }
     pd_nwaiting--;
   }
   else {

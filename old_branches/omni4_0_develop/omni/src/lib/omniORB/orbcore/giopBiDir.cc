@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/08/29 17:52:03  sll
+  Consult serverTransportRule to decide whether to accept the switch to
+  bidirectional on the server side.
+
   Revision 1.1.2.5  2001/08/23 10:11:53  sll
   Initialise BiDirPolicy constants properly for compilers with no namespace
   support.
@@ -436,7 +440,10 @@ BiDirClientRope::acquireClient(const omniIOR* ior,
   omni_tracedmutex_lock sync(pd_lock);
   giopStrand& s = (giopStrand&)((giopStream&)(*giop_c));
   if (s.connection == 0 && s.state() != giopStrand::DYING) {
-    giopActiveConnection* c = s.address->Connect(0,0); // XXX no deadline set
+    unsigned long deadline_secs,deadline_nanosecs;
+    giop_c->getDeadline(deadline_secs,deadline_nanosecs);
+    giopActiveConnection* c = s.address->Connect(deadline_secs,
+						 deadline_nanosecs);
     if (c) s.connection = &(c->getConnection());
     if (!s.connection) {
       s.state(giopStrand::DYING);
