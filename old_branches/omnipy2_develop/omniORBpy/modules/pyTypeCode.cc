@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.6  2001/03/13 10:38:08  dpg1
+// Fixes from omnipy1_develop
+//
 // Revision 1.1.2.5  2000/12/05 17:48:36  dpg1
 // Strings in TypeCodes need to be marshalled as raw strings. Fix
 // incorrect offset in recursive indirections.
@@ -69,18 +72,16 @@ public:
   }
 
   inline void add(PyObject* desc, CORBA::Long offset) {
-    PyObject *desc_o = omniPy::newTwin(desc);
-
-    PyObject* oo = PyInt_FromLong(offset + base_);
+    PyObject* desc_o = omniPy::newTwin(desc);
+    PyObject* oo     = PyInt_FromLong(offset + base_);
     PyDict_SetItem(dict_, desc_o, oo);
     Py_DECREF(desc_o);
     Py_DECREF(oo);
   }
 
   inline CORBA::Boolean lookup(PyObject* desc, CORBA::Long& offset) {
-    PyObject *desc_o = omniPy::newTwin(desc);
-
-    PyObject* oo = PyDict_GetItem(dict_, desc_o);
+    PyObject* desc_o = omniPy::newTwin(desc);
+    PyObject* oo     = PyDict_GetItem(dict_, desc_o);
     Py_DECREF(desc_o);
     if (oo) {
       offset = PyInt_AS_LONG(oo) - base_;
@@ -838,6 +839,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	// Static knowledge of the enum
 	Py_INCREF(d_o);
 	Py_DECREF(repoId);
+	odm.add(d_o, tc_offset);
       }
       else {
 	// Don't know this enum
