@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.17  2000/01/13 10:52:04  djs
+# Rewritten argument handling
+# Added options to specify the header and stubs file prefix, mirroring omniidl3
+#
 # Revision 1.16  2000/01/12 19:54:47  djs
 # Added option to generate old CORBA 2.1 signatures for skeletons
 #
@@ -109,7 +113,8 @@ usage_string = """\
   -Wbtf           Generate flattened 'tie' implementation skeletons
   -WbF            Generate code fragments (for expert only)
   -WbBOA          Generate BOA compatible skeletons
-  -Wbold          Generate old CORBA 2.1 signatures for skeletons"""
+  -Wbold          Generate old CORBA 2.1 signatures for skeletons
+  -Wbold_prefix   Map C++ reserved words with prefix _"""
 
 # -----------------------------
 # Process back end specific arguments
@@ -132,6 +137,9 @@ def boa():
 def old():
     config.setOldFlag(1)
 
+def old_prefix():
+    config.setReservedPrefix("_")
+
 def headersuffix(hh):
     config.sethdrsuffix(hh)
 
@@ -153,6 +161,8 @@ def process_args(args):
             boa()
         elif arg == "old":
             old()
+        elif arg == "old_prefix":
+            old_prefix()
         elif arg[:2] == "h=":
             headersuffix(arg[2:])
         elif arg[:2] == "s=":
