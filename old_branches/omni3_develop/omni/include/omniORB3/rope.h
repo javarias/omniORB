@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/01/28 15:57:08  djr
+  Removed superflouous ref counting in Strand_iterator.
+  Removed flags to indicate that Ropes and Strands are heap allocated.
+  Improved allocation of client requests to strands.
+
   Revision 1.1.2.2  1999/09/24 15:01:31  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -562,6 +567,7 @@ public:
 protected:
 
   inline void _setStrandIsDying() { pd_dying = 1; }
+  inline _CORBA_Boolean isOutgoing();
 
   friend class Sync;
   friend class Strand_iterator;
@@ -789,16 +795,9 @@ public:
   friend class Strand;
   friend class Strand_iterator;
   friend class Rope_iterator;
-
-#ifndef __DECCXX
-  // DEC C++ compiler (as of version 5.4) fails to recognise class Strand::Sync
-  // is a friend and allows access to the following protected members.
-
   friend class Strand::Sync;
 
 protected:
-
-#endif
 
   omni_mutex pd_lock;
   omni_condition pd_cond;          // used to wait for a free strand
@@ -943,5 +942,12 @@ private:
   Rope *pd_r;
   Rope_iterator();
 };
+
+
+inline
+_CORBA_Boolean
+Strand::isOutgoing() { 
+  return pd_rope->is_outgoing();
+}
 
 #endif // __ROPE_H__
