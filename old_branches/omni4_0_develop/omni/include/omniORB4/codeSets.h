@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/06/13 20:06:18  sll
+  Minor fix to make the ORB compile with MSVC++.
+
   Revision 1.1.2.5  2000/11/22 14:37:58  dpg1
   Code set marshalling functions now take a string length argument.
 
@@ -133,6 +136,8 @@ public:
   static _core_attr const CONV_FRAME::CodeSetId ID_UTF_8;
   static _core_attr const CONV_FRAME::CodeSetId ID_UTF_16;  // Unicode with
                                                             //  surrogates
+  static _core_attr const CONV_FRAME::CodeSetId ID_CP1251;  // windows-1251
+
 
   class NCS_C; // Native code set for char and string
   class NCS_W; // Native code set for wide char and wide string
