@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.7  2002/09/03 09:32:57  dgrisby
+# C++ back-end bails out if asked to compile more than one file.
+#
 # Revision 1.20.2.6  2002/03/11 12:23:45  dpg1
 # -Wbe option for example code suffix.
 #
@@ -179,7 +182,8 @@ usage_string = """\
   -Wbold_prefix     Map C++ reserved words with prefix _
   -Wbinline         Generate code for #included files inline with the main file
   -Wbkeep_inc_path  Preserve IDL #include path in header #includes
-  -Wbuse_quotes     Use quotes in #includes: \"foo\" rather than <foo>"""
+  -Wbuse_quotes     Use quotes in #includes: "foo" rather than <foo>
+  -Wbdll_includes   Extra support for #included IDL in DLLs"""
 
 # Encountering an unknown AST node will cause an AttributeError exception
 # to be thrown in one of the visitors. Store a list of those not-supported
@@ -230,6 +234,8 @@ def process_args(args):
             config.state['Inline Includes']   = 1
         elif arg == "shortcut":
             config.state['Shortcut']          = 1
+        elif arg == "dll_includes":
+            config.state['DLLIncludes']       = 1
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 

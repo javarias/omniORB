@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.14.2.6  2002/09/03 09:32:57  dgrisby
+# C++ back-end bails out if asked to compile more than one file.
+#
 # Revision 1.14.2.5  2001/11/08 16:33:51  dpg1
 # Local servant POA shortcut policy.
 #
@@ -120,6 +123,9 @@ class ConfigurationState:
 
             # Generate local servant shortcut code?
             'Shortcut':              0,
+
+            # Extra ifdefs for stubs in dlls?
+            'DLLIncludes':           0,
 
             # Are we in DEBUG mode?
             'Debug':                 0
