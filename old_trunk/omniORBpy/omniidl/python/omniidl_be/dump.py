@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/01 10:06:07  dpg1
+# Various clean-ups.
+#
 
 """Dumps the IDL tree"""
 
@@ -187,7 +190,7 @@ union @id@ switch (@stype@) {""",
                 self.st.dec_indent()
 
             for l in c.labels():
-                if l.isDefault():
+                if l.default():
                     self.st.out("""\
   default:""")
                 else:
