@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.43  1999/08/16 19:33:24  sll
+ New method NP_destroy() in class CORBA::ORB.
+
  Revision 1.42  1999/08/15 13:51:33  sll
  Define ImplmentationDef as an empty class to keep some compilers happy.
 
@@ -1511,7 +1514,7 @@ _CORBA_MODULE_BEG
 
   // omniORB2 specific TypeCode support structures, used in stubs.
   struct PR_structMember {
-    char* name;
+    const char*  name;
     TypeCode_ptr type;
   };
 
