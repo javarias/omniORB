@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.1.2.9  2002/03/18 16:50:18  dpg1
   New threadPoolWatchConnection parameter.
 
@@ -99,7 +102,7 @@ int
 SocketSetnonblocking(SocketHandle_t sock) {
 # if !defined(__WIN32__)
   int fl = O_NONBLOCK;
-  if (fcntl(sock,F_SETFL,fl) < RC_SOCKET_ERROR) {
+  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
     return RC_INVALID_SOCKET;
   }
   return 0;
