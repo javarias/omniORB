@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9.8.1  1999/09/22 14:26:50  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.9  1999/03/11 16:25:53  djr
   Updated copyright notice
 
@@ -71,9 +74,9 @@ private:
   long fsize;
   long currpos;
 
-  inline void invref(char* entryname);
-  inline void multerr(char* entryname);      
-  inline void dataerr(char* entryname);
+  inline void invref(const char* entryname);
+  inline void multerr(const char* entryname);      
+  inline void dataerr(const char* entryname);
   inline void parseerr();
  
 #ifdef __WIN32__ 
