@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/09/05 14:29:01  dgrisby
+  Link force mechanism wasn't working with gcc.
+
   Revision 1.1.2.4  2002/02/25 11:17:11  dpg1
   Use tracedmutexes everywhere.
 
@@ -63,7 +66,9 @@ OMNI_FORCE_LINK(omnisslTP);
 #     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
+#define crypt _openssl_broken_crypt
 #include <openssl/ssl.h>
+#undef crypt
 
 OMNI_NAMESPACE_BEGIN(omni)
   class omni_sslTransport_initialiser;
