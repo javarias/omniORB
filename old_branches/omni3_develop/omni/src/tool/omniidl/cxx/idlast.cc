@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.14.2.11  2001/02/20 11:25:12  dpg1
+// Changes for Digital Unix 4.0E.
+//
 // Revision 1.14.2.10  2000/10/24 09:53:28  dpg1
 // Clean up omniidl system dependencies. Replace use of _CORBA_ types
 // with IDL_ types.
@@ -949,8 +952,10 @@ Member(const char* file, int line, IDL_Boolean mainFile,
   else if (memberType->kind() == IdlType::tk_sequence) {
     // Look for recursive sequence
     IdlType* t = memberType;
-    while (t->kind() == IdlType::tk_sequence)
+    while (t && t->kind() == IdlType::tk_sequence)
       t = ((SequenceType*)t)->seqType();
+
+    if (!t) return; // Sequence of undeclared type
 
     if (t->kind() == IdlType::tk_struct) {
       Struct* s = (Struct*)((DeclaredType*)t)->decl();
@@ -1150,8 +1155,10 @@ UnionCase(const char* file, int line, IDL_Boolean mainFile,
   else if (caseType->kind() == IdlType::tk_sequence) {
     // Look for recursive sequence
     IdlType* t = caseType;
-    while (t->kind() == IdlType::tk_sequence)
+    while (t && t->kind() == IdlType::tk_sequence)
       t = ((SequenceType*)t)->seqType();
+
+    if (!t) return; // Sequence of undeclared type
 
     if (t->kind() == IdlType::tk_struct) {
       Struct* s = (Struct*)((DeclaredType*)t)->decl();
