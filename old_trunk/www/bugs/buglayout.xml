@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="html"/>
+
+<!-- This style sheet formats buglist.xml for inclusion on the omniORB -->
+<!-- web pages.                                                        -->
+
+<xsl:template match="/">
+    <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="buglist">
+  <html>
+  <xsl:comment>Automatically generated with XSLT</xsl:comment>
+  <head>
+  <title>omniORB <xsl:value-of select="@version"/> bugs</title>
+  <link rel="stylesheet" href="../styles.css" type="text/css"/>
+  </head>
+
+  <body link='#0000ff' vlink='#000080' bgcolor='#ffffff'
+        alink='#ff0000' text='#000000'>
+
+  <table border="0" width="100%" cellspacing="5" cellpadding="10">
+    <tr>
+      <td width="15%" class="header">
+        <img src="../img/omniORBlogo.gif" width="122" height="92"/>
+      </td>
+      <td class="header">
+        <h1 align="center">omniORB <xsl:value-of select="@version"/> bugs</h1>
+      </td>
+    </tr>
+    <tr>
+      <td width="15%" class="sidebar" valign="top" align="left">
+	<p align="center"><b>Destinations</b></p>
+	<a href="../index.html">omniORB home</a><br/>
+	<a href="../history.html">History</a><br/>
+	<a href="../features.html">Features</a><br/>
+	<a href="../download.html">Download</a><br/>
+	<a href="../docs.html">Documentation</a><br/>
+	<a href="/cgi-bin/moin.cgi">Wiki</a><br/>
+	<a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br/>
+	<a href="../bugs.html">Bugs</a><br/>
+	<a href="../development.html">Development</a><br/>
+        <a href="http://sourceforge.net/projects/omniorb/">SF project</a><br/>
+	<a href="../list.html">Mailing list</a><br/>
+	<a href="../links.html">Links</a><br/>
+	<a href="../contact.html">Contact</a><br/>
+        <br/><hr width="80%"/>
+        <p align="center">
+  	<a href="http://sourceforge.net"><img
+  	src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1"
+  	width="88" height="31" border="0" alt="SourceForge.net
+  	Logo"/></a>
+        <br/>
+  	<img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/{@version}"
+  	     width="1" height="1" alt=""/>
+	</p>
+      </td>
+      <td class="main" valign="top" align="left">
+	<p>
+	  The following bugs in omniORB <xsl:value-of
+	  select="@version"/> have been fixed. Update from <a
+	  href="../development.html">CVS</a> to get the fixes.
+        </p>
+        <table align="center" width="95%">
+          <tr><td colspan="2"><hr/></td></tr>
+          <xsl:apply-templates/>
+	</table>
+      </td>
+    </tr>
+  </table>
+  </body>
+  </html>
+</xsl:template>
+
+<xsl:template match="nobugs">
+    <tr><td>No bugs yet.</td></tr>
+</xsl:template>
+
+
+<xsl:template match="bug">
+    <tr><td>Summary:</td>
+        <td><b><xsl:value-of select="summary"/></b>
+            (bug number <xsl:value-of select="@id"/>)
+            <a><xsl:attribute name="name">bug<xsl:value-of select="@id"/>
+               </xsl:attribute>
+            </a>
+        </td>
+    </tr>
+
+    <tr><td>Date:      </td><td><xsl:value-of select="@date"/></td></tr>
+    <tr><td>Fixed by:  </td><td><xsl:value-of select="@user"/></td></tr>
+
+    <xsl:apply-templates/>
+
+    <tr><td colspan="2"><hr/></td></tr>
+</xsl:template>
+
+<xsl:template match="summary">
+</xsl:template>
+
+<xsl:template match="reported">
+    <tr><td>Reported by:</td><td><xsl:value-of select="."/></td></tr>
+</xsl:template>
+
+<xsl:template match="link">
+<!--      <tr><td>Link for this bug:</td> -->
+<!--          <td><a href="{@href}"><xsl:value-of select="@href"/></a> -->
+<!--          </td> -->
+<!--      </tr> -->
+</xsl:template>
+
+<xsl:template match="text">
+
+    <tr valign="top"><td>Description:</td>
+        <td><xsl:apply-templates/></td>
+    </tr>
+
+</xsl:template>
+
+<!-- This last rule copies all tags from input to output, so (x)html -->
+<!-- can be embedded in <text> tags. -->
+
+<xsl:template match="*|@*|text()">
+      <xsl:copy>
+        <xsl:apply-templates select="*|@*|text()"/>
+      </xsl:copy>
+</xsl:template>
+
+</xsl:stylesheet>

@@ -11,7 +11,7 @@
   <xsl:comment>Automatically generated with XSLT</xsl:comment>
   <head>
   <title><xsl:value-of select="@title"/></title>
-  <link rel="stylesheet" href="styles.css" TYPE="text/css"/>
+  <link rel="stylesheet" href="styles.css" type="text/css"/>
   </head>
 
   <body link='#0000ff' vlink='#000080' bgcolor='#ffffff'
@@ -35,6 +35,7 @@
 	<a href="download.html">Download</a><br/>
 	<a href="docs.html">Documentation</a><br/>
 	<a href="/cgi-bin/moin.cgi">Wiki</a><br/>
+	<a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br/>
 	<a href="bugs.html">Bugs</a><br/>
 	<a href="development.html">Development</a><br/>
         <a href="http://sourceforge.net/projects/omniorb/">SF project</a><br/>
@@ -59,7 +60,7 @@
   </table>
   </body>
   </html>
- </xsl:template>
+</xsl:template>
 
 <xsl:template match="*|@*|text()">
   <xsl:copy>

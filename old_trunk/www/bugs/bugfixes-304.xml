@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet type="text/xml" href="buglayout.xml"?>
+
+<!-- The following bugs have been fixed since the omniORB 3.0.4     -->
+<!-- release. This file is transformed into html with bugfixes.xsl. -->
+
+<!-- Editors: make sure the content you add is well-formed XML.     -->
+
+<buglist version="3.0.4">
+
+<bug id="12" date="Tue May 28 23:04:48 BST 2002" user="dgrisby">
+  <summary>Incorrect repository ids in POA stubs</summary>
+  <reported>Kendall Bailey</reported>
+  <text>
+  Some POA definitions had repoIds with 2.3 in the version field. This
+  caused problems with omniORBpy, which used 1.0.
+  </text>
+</bug>
+
+<bug id="11" date="Fri Apr 26 14:35:31 BST 2002" user="dgrisby">
+  <summary>Incorrect escaping of string constants</summary>
+  <reported>Leandro Fanzone</reported>
+  <link href="http://www.omniorb.org/omniORB/archives/2002-04/0154.html"/>
+  <text>
+  Unprintable characters in strings were escaped wrong.
+  </text>
+</bug>
+
+<bug id="10" date="Tue Feb  5 12:09:40 GMT 2002" user="djr">
+  <summary>Memory leak in string_to_object()</summary>
+  <reported>Jose Hernandez</reported>
+  <text>
+  There was a memory leak in CORBA::ORB::string_to_object() under certain
+  circumstances.  This was due to an base class lacking a virtual
+  destructor.
+  </text>
+</bug>
+
+<bug id="9" date="Fri Oct  5 17:47:54 BST 2001" user="dpg1">
+  <summary>Memory leak in omniNames</summary>
+  <reported>Mathieu de Naurois</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-10/0032.html"/>
+  <text>
+  A silly memory leak was introduced when omniNames was POAfied.
+  Amazing it took this long before someone noticed :-)
+  </text>
+</bug>
+
+<bug id="8" date="Thu Aug 30 10:13:19 BST 2001" user="dpg1">
+  <summary>Incorrect result when assigning unsigned long long
+  consts</summary>
+  <reported>Carl Thompson</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-08/0266.html"/>
+  <text>
+  A cut-and-paste error caused the value of some unsigned long long
+  consts to be damaged.
+  </text>
+</bug>
+
+<bug id="7" date="Tue Aug 28 12:02:05 BST 2001" user="dpg1">
+  <summary>Deadlock when a worker thread can't be started</summary>
+  <reported>Gail Ollis</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-08/0246.html"/>
+  <text>
+  An attempt to re-lock a locked mutex lead to a deadlock when thread
+  creation failed.
+  </text>
+</bug>
+
+<bug id="6" date="Mon Aug 20 14:44:28 BST 2001" user="dpg1">
+  <summary>Wrong _out type for fixed size structs/unions</summary>
+  <reported>Vibhu Rishi</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-08/0130.html"/>
+</bug>
+
+<bug id="5" date="Fri Aug  3 11:09:01 BST 2001" user="dpg1">
+  <summary>Refcount not incremented in find_POA with
+  AdapterActivator.</summary>
+  <reported>Patrick Hubert</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-08/0030.html"/>
+  <text>
+  In the case that find_POA() activated the POA using an
+  AdapterActivator, it failed to increment the POA's reference count.
+  </text>
+</bug>
+
+<bug id="4" date="Fri Jul 27 17:55:52 BST 2001" user="dpg1">
+  <summary>Incorrect omniidl output with repeated names in nested
+  scopes</summary>
+  <reported>Juan Bernabó</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-07/0218.html"/>
+  <text>
+  IDL like <pre>
+         module a {
+	   module b {
+	     interface Address {};
+	   };
+	   module c {
+	     module b {
+	       interface BAddress : a::b::Address { };
+	     };
+	   };
+	 };
+    </pre>
+  would result in invalid C++.
+  </text>
+</bug>
+
+<bug id="3" date="Tue Jul 24 15:53:44 BST 2001" user="dpg1">
+
+  <summary>Incorrect behaviour with incarnate/etherealize</summary>
+  <reported>William H Jones</reported>
+  <link
+  href="http://www.uk.research.att.com/omniORB/archives/2001-07/0116.html"/>
+  <text>
+  Multi-threaded access to servant activators could cause all sorts of
+  grief.
+  </text>
+</bug>
+
+<bug id="2" date="Mon Jul 16 11:25:55 BST 2001" user="sll">
+
+  <summary>HPUX 11.00 shared libraries are not build with -Wl,+s</summary>
+  <reported>David Tiller</reported>
+  <text>
+  HPUX 11.00 shared libraries are not build with -Wl,+s which enable 
+  SHLIB_PATH searching at runtime.
+  </text>
+</bug>
+
+<bug id="1" date="Fri Jul  6 14:30:35 BST 2001" user="dpg1">
+
+  <summary>nameclt fails when passed a nil BindingIterator</summary>
+  <reported>Tilman Skobowsky</reported>
+  <text>
+  Some Naming services return a nil BindingIterator if a context is
+  empty. nameclt would blindly dereference the nil in this case.
+  </text>
+</bug>
+
+</buglist>

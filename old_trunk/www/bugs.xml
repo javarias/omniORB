@@ -3,10 +3,45 @@
 
 <page title="omniORB bugs" head="omniORB bugs" id="bugs">
 
-This page should list the bugs that have been fixed in the stable tree
-since the last major release. It's not here yet, though. If you want
-to make sure you've got the latest fixes, just get the <a
-href="development.html">development version</a> from CVS or a
-snapshot.
+<p>
+We try very hard to make omniORB releases free of bugs, but inevitably
+some are discovered. The pages linked below list the bugs fixed in the
+specified omniORB versions. If a bug in the most recent release is
+affecting you, you should get the current development version from <a
+href="development.html">CVS</a>. Make sure you use the correct branch
+tag (<code>omni3_develop</code> for omniORB 3.0.x).
+</p>
+
+<p>
+If you think you have found a bug in omniORB, please subscribe to the
+<a href="list.html">mailing list</a> and post your bug report there.
+If you have an urgent problem, and you want to pay to have it fixed,
+contact <a
+href="mailto:info@omniorb-support.com">info@omniorb-support.com</a>.
+</p>
+
+<p>
+Bugs fixed in:
+
+<ul>
+  <li>
+    omniORB 3.0.x:
+    <ul>
+      <li><a href="bugs/bugfixes-305.html">omniORB 3.0.5</a></li>
+      <li><a href="bugs/bugfixes-304.html">omniORB 3.0.4</a></li>
+      <li><a href="bugs/bugfixes-303.html">omniORB 3.0.3</a></li>
+      <li><a href="bugs/bugfixes-302.html">omniORB 3.0.2</a></li>
+      <li><a href="bugs/bugfixes-301.html">omniORB 3.0.1</a></li>
+      <li><a href="bugs/bugfixes-300.html">omniORB 3.0.0</a></li>
+    </ul>
+  </li>
+  <li>
+    omniORB 2.8.x:
+    <ul>
+      <li><a href="bugs/bugfixes-280.html">omniORB 2.8.0</a></li>
+    </ul>
+  </li>
+</ul>
+</p>
 
 </page>
