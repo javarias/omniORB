@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:27:00  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -72,6 +75,37 @@
 
 #define SYS_ASSIGNED_ID_SIZE    4
 
+
+//////////////////////////////////////////////////////////////////////
+///////////////////// PortableServer::POA_Helper /////////////////////
+//////////////////////////////////////////////////////////////////////
+
+PortableServer::POA_ptr
+PortableServer::POA_Helper::_nil()
+{
+  return POA::_nil();
+}
+
+
+CORBA::Boolean
+PortableServer::POA_Helper::is_nil(POA_ptr p)
+{
+  return CORBA::is_nil(p);
+}
+
+
+void
+PortableServer::POA_Helper::release(POA_ptr p)
+{
+  CORBA::release(p);
+}
+
+
+void
+PortableServer::POA_Helper::duplicate(POA_ptr obj)
+{
+  if( !CORBA::is_nil(obj) )  obj->_NP_incrRefCount();
+}
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////// PortableServer::POA ////////////////////////
@@ -439,8 +473,7 @@ omniOrbPOA::the_parent()
 }
 
 
-#if 0
-PortableServer::POAList*??
+PortableServer::POAList*
 omniOrbPOA::the_children()
 {
   CHECK_NOT_NIL_OR_DESTROYED();
@@ -457,7 +490,6 @@ omniOrbPOA::the_children()
 
   return childer;
 }
-#endif
 
 
 PortableServer::POAManager_ptr

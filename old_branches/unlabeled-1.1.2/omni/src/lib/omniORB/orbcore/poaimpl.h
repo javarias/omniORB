@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:27:01  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #ifndef __POAIMPL_H__
@@ -65,7 +68,7 @@ public:
 
   virtual char* the_name();
   virtual PortableServer::POA_ptr the_parent();
-  //??virtual PortableServer::POAList* the_children();
+  virtual PortableServer::POAList* the_children();
   virtual PortableServer::POAManager_ptr the_POAManager();
   virtual PortableServer::AdapterActivator_ptr the_activator();
   virtual void the_activator(PortableServer::AdapterActivator_ptr aa);
