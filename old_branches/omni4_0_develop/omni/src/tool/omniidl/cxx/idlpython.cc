@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.9  2001/08/15 10:31:23  dpg1
+// Minor tweaks and fixes.
+//
 // Revision 1.17.2.8  2001/03/13 10:32:12  dpg1
 // Fixed point support.
 //
@@ -866,13 +869,14 @@ PythonVisitor::
 visitEnumerator(Enumerator* e)
 {
   result_ =
-    PyObject_CallMethod(idlast_, (char*)"Enumerator", (char*)"siiNNsNs",
+    PyObject_CallMethod(idlast_, (char*)"Enumerator", (char*)"siiNNsNsi",
 			e->file(), e->line(), (int)e->mainFile(),
 			pragmasToList(e->pragmas()),
 			commentsToList(e->comments()),
 			e->identifier(),
 			scopedNameToList(e->scopedName()),
-			e->repoId());
+			e->repoId(),
+			e->value());
   ASSERT_RESULT;
   registerPyDecl(e->scopedName(), result_);
 }

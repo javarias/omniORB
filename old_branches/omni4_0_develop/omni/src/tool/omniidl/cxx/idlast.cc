@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.7  2001/06/12 11:35:25  dpg1
+// Minor omniidl tweaks for valuetype.
+//
 // Revision 1.16.2.6  2001/06/08 17:12:22  dpg1
 // Merge all the bug fixes from omni3_develop.
 //
@@ -1944,9 +1947,10 @@ Enumerator::
 
 void
 Enumerator::
-finishConstruction(Enum* container)
+finishConstruction(Enum* container, IDL_ULong value)
 {
   container_ = container;
+  value_     = value;
 }
 
 Enum::
@@ -1973,9 +1977,11 @@ Enum::
 finishConstruction(Enumerator* enumerators)
 {
   enumerators_ = enumerators;
+  IDL_ULong count = 0;
 
-  for (Enumerator* e = enumerators; e; e = (Enumerator*)e->next())
-    e->finishConstruction(this);
+  for (Enumerator* e = enumerators; e; e = (Enumerator*)e->next(), ++count)
+    e->finishConstruction(this, count);
+
   mostRecent_ = this;
 }
 

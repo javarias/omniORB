@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.10.2.5  2001/03/13 10:32:11  dpg1
+// Fixed point support.
+//
 // Revision 1.10.2.4  2000/11/01 12:45:56  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -852,14 +855,16 @@ public:
 
   // Queries
   Enum*       container()  const { return container_; }
+  IDL_ULong   value()      const { return value_; }
 
   void accept(AstVisitor& visitor) { visitor.visitEnumerator(this); }
 
-  void finishConstruction(Enum* container);
+  void finishConstruction(Enum* container, IDL_ULong value);
 
 private:
   const char* identifier_;
   Enum*       container_;
+  IDL_ULong   value_;
 };
 
 
