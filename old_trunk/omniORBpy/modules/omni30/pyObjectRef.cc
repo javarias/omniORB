@@ -4,14 +4,17 @@
 // $Id$
 
 // $Log$
+// Revision 1.2  1999/09/20 14:55:04  dpg1
+// GCC 2.95 is more pedantic than egcs.
+//
 // Revision 1.1  1999/07/29 14:20:05  dpg1
 // Initial revision
 //
 
 
 #include <omnipy.h>
-#include <omniORB2/ropeFactory.h>
-#include <omniORB2/objectManager.h>
+#include <ropeFactory.h>   // Internal omniORB interface
+#include <objectManager.h> // Internal omniORB interface
 
 #include <iostream.h>
 
