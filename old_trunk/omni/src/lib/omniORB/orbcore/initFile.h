@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 18:23:18  sll
+  Updated interface to avoid memory leaks.
+
   Revision 1.5  1997/08/27 10:20:33  sll
   Moved from include/omniORB2. New private variables.
 
@@ -74,7 +77,7 @@ private:
   int read_file(char* config_fname);
   int getnextentry(CORBA::String_var& entryname,CORBA::String_var& data);
  
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__ETS_KERNEL__)
   int use_registry;
  
   HKEY init_hkey;
