@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.25  2002/09/06 14:35:55  dgrisby
+ * Work around long long literal bug in MSVC.
+ *
  * Revision 1.38.2.24  2002/02/25 11:17:12  dpg1
  * Use tracedmutexes everywhere.
  *
@@ -298,7 +301,13 @@ CORBA::TypeCode::~TypeCode() {
 CORBA::TCKind
 CORBA::TypeCode::kind() const
 {
-  return ToConstTcBase_Checked(this)->NP_kind();
+  const TypeCode_base* tc = ToConstTcBase_Checked(this);
+  CORBA::TCKind k = tc->NP_kind();
+  while (k == CORBA::_np_tk_indirect) {
+    tc = ((TypeCode_indirect*)tc)->NP_resolved();
+    k = tc->NP_kind();
+  }
+  return k;
 }
 
 CORBA::Boolean
@@ -5487,7 +5496,7 @@ checkValidRepoId(const char* id)
 static void
 checkValidTypeCode(const CORBA::TypeCode_ptr tc)
 {
-  CORBA::TCKind k = tc->kind();
+  CORBA::TCKind k = ToConstTcBase_Checked(tc)->NP_kind();
   if (k == CORBA::tk_null || k == CORBA::tk_void || k == CORBA::tk_except)
     OMNIORB_THROW(BAD_TYPECODE,
 		  BAD_TYPECODE_IllegitimateMember,
