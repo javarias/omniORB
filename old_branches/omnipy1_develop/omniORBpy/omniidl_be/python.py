@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.6  2001/04/23 13:53:08  dpg1
+# Cosmetic output change.
+#
 # Revision 1.27.2.5  2001/03/19 12:01:24  dpg1
 # Invalid stub code generated for typedef to struct/union inside an
 # interface.
@@ -1587,6 +1590,10 @@ def valueToString(val, kind, scope=[]):
 
     elif kind == idltype.tk_long and val == -2147483647 - 1:
         return "-2147483647 - 1"
+
+    elif type(val) is type(1L):
+        return repr(val)
+
     else:
         return str(val)
 
