@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/08/23 10:13:14  sll
+  Cope with the different length type for getsockname and friends on
+  different solaris versions.
+
   Revision 1.1.2.1  2001/07/31 16:16:26  sll
   New transport interface to support the monitoring of active connections.
 
@@ -57,7 +61,7 @@
 #   define USE_FAKE_INTERRUPTABLE_RECV
 #endif
 
-#if defined(__win32__)
+#if defined(__WIN32__)
 #   define USE_FAKE_INTERRUPTABLE_RECV
 #endif
 
