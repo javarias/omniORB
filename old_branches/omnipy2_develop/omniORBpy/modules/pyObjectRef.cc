@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.18  2003/03/14 15:28:43  dgrisby
+// Use Python 1.5.2 sequence length function.
+//
 // Revision 1.1.2.17  2003/03/12 11:17:03  dgrisby
 // Registration of external pseudo object creation functions.
 //
@@ -537,16 +540,17 @@ CORBA::Object_ptr
 omniPy::stringToObject(const char* uri)
 {
   CORBA::Object_ptr cxxobj;
-
-  cxxobj = omniURI::stringToObject(uri);
-
-  if (CORBA::is_nil(cxxobj) || cxxobj->_NP_is_pseudo()) {
-    return cxxobj;
-  }
-  omniObjRef* cxxobjref = cxxobj->_PR_getobj();
   omniObjRef* objref;
+
   {
     omniPy::InterpreterUnlocker _u;
+    cxxobj = omniURI::stringToObject(uri);
+
+    if (CORBA::is_nil(cxxobj) || cxxobj->_NP_is_pseudo()) {
+      return cxxobj;
+    }
+    omniObjRef* cxxobjref = cxxobj->_PR_getobj();
+
     objref = omniPy::createObjRef(CORBA::Object::_PD_repoId,
 				  cxxobjref->_getIOR(), 0, 0);
     CORBA::release(cxxobj);
