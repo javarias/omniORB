@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.2  2000/04/26 18:22:56  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+# Removed superfluous externs in front of function definitions
+#
 # Revision 1.7.2.1  2000/02/14 18:34:53  dpg1
 # New omniidl merged in.
 #
@@ -57,7 +62,7 @@
 # similar to o2be_root::produce_poa_skel in the old C++ BE
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, id, config
+from omniidl_be.cxx import tyutil, util, id
 from omniidl_be.cxx.skel import template
 
 import poa

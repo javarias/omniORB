@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.2.2.2  2000/04/26 18:22:20  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.2.2.1  2000/02/14 18:34:56  dpg1
 # New omniidl merged in.
 #
@@ -41,7 +45,7 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, config, id, types
+from omniidl_be.cxx import tyutil, util, id, types
 from omniidl_be.cxx.dynskel import template
 
 import tcstring

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.5  2000/05/31 18:02:50  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+#
 # Revision 1.6.2.4  2000/04/26 18:22:19  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -87,10 +91,14 @@ import omniidl_be.cxx.dynskel.template
 
 def generate(stream, tree):
     stream.out(template.header_comment,
-               Config = config)
-    if not(config.FragmentFlag()):
+               program = config.state['Program Name'],
+               library = config.state['Library Version'])
+    if not(config.state['Fragment']):
         stream.out(template.header,
-                   Config = config)
+                   basename = config.state['Basename'],
+                   hh = config.state['HH Suffix'],
+                   library = config.state['Library Version'],
+                   prefix = config.state['Private Prefix'])
 
     # This is the bit shared with the header file?
     tcstring = omniidl_be.cxx.dynskel.tcstring.__init__(stream)
@@ -103,7 +111,8 @@ def generate(stream, tree):
 
 def run(tree):
     # create somewhere to put the output
-    header_filename = config.basename() + config.dynskelsuffix()
+    header_filename = config.state['Basename'] +\
+                      config.state['DYNSK Suffix']
     
     stream = util.Stream(open(header_filename, "w"), 2)
 

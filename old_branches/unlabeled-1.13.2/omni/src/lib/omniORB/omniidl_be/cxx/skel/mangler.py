@@ -30,6 +30,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.4  2000/04/26 18:22:56  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+# Removed superfluous externs in front of function definitions
+#
 # Revision 1.13.2.3  2000/03/09 15:21:57  djs
 # Better handling of internal compiler exceptions (eg attempts to use
 # wide string types)
@@ -105,9 +110,10 @@ self = mangler
 # -------------------------
 # Standard prefixes
 
-CALL_DESC_PREFIX            = config.privatePrefix() + "_cd_"
-LCALL_DESC_PREFIX           = config.privatePrefix() + "_lcfn_"
-CTX_DESC_PREFIX             = config.privatePrefix() + "_ctx_"
+private_prefix = config.state['Private Prefix']
+CALL_DESC_PREFIX            = private_prefix + "_cd_"
+LCALL_DESC_PREFIX           = private_prefix + "_lcfn_"
+CTX_DESC_PREFIX             = private_prefix + "_ctx_"
 STD_PROXY_CALL_DESC_PREFIX  = "omniStdCallDesc::"
 
 # -------------------------
