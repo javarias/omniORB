@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.19.6.9  2000/06/22 10:40:14  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.19.6.8  2000/02/07 15:27:36  dpg1
   Silly mistake in _is_equivalent() for pseudo object references.
 
@@ -587,7 +591,7 @@ CORBA::UnMarshalObjRef(const char* repoId, MemBufferedStream& s)
       delete[] id;
       id = 0;
 
-      if( !objref )  OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
+      if( !objref )  OMNIORB_THROW(INV_OBJREF, 0, CORBA::COMPLETED_MAYBE);
       return (CORBA::Object_ptr)  objref->_ptrToObjRef(Object::_PD_repoId);
     }
   }
