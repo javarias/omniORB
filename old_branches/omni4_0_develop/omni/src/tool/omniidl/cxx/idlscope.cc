@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.8  2003/03/20 10:24:27  dgrisby
+// Warn about use of CORBA 3 keywords in IDL.
+//
 // Revision 1.13.2.7  2001/10/29 17:42:43  dpg1
 // Support forward-declared structs/unions, ORB::create_recursive_tc().
 //
@@ -1301,7 +1304,9 @@ keywordClash(const char* identifier, const char* file, int line)
     "setraises", "typeid", "typeprefix", "uses", 0
   };
 
-  for (const char** k = keywords; *k; k++) {
+  const char** k;
+
+  for (k = keywords; *k; k++) {
     if (Config::caseSensitive) {
       if (!strcmp(*k, identifier)) {
 	IdlError(file, line, "Identifier '%s' is identical to keyword '%s'",
@@ -1317,7 +1322,7 @@ keywordClash(const char* identifier, const char* file, int line)
       }
     }
   }
-  for (const char** k = new_keywords; *k; k++) {
+  for (k = new_keywords; *k; k++) {
     if (Config::caseSensitive) {
       if (!strcmp(*k, identifier)) {
 	IdlWarning(file, line, "Identifier '%s' is identical to "
