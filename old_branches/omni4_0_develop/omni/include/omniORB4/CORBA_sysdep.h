@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.1  2000/07/17 10:35:33  sll
+ Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
  Revision 1.3  2000/07/13 15:26:06  dpg1
  Merge from omni3_develop for 3.0 release.
 
@@ -220,6 +223,9 @@
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Cplusplus_Bool
 #  endif
+
+// XXX Temporary define to be removed in final release.
+#define Suppress_Spurious_gcc_Warnings
 
 #elif defined(__DECCXX)
 // DEC C++ compiler
