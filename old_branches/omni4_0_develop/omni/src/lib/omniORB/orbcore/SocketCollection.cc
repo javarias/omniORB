@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.17  2003/11/12 16:57:49  dgrisby
+  Mistake in Windows case.
+
   Revision 1.1.2.16  2003/11/12 16:04:17  dgrisby
   Set sockets to close on exec.
 
@@ -174,8 +177,8 @@ SocketSetblocking(SocketHandle_t sock) {
 /////////////////////////////////////////////////////////////////////////
 int
 SocketSetCloseOnExec(SocketHandle_t sock) {
-# if defined(__vxWorks__)
-  // Not supported on vxWorks
+# if defined(__vxWorks__) || defined(__ETS_KERNEL__)
+  // Not supported on vxWorks or ETS
   return 0;
 # elif defined(__WIN32__)
   SetHandleInformation((HANDLE)sock, HANDLE_FLAG_INHERIT, 0);
