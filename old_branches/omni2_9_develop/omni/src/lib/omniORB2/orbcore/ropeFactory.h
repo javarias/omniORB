@@ -29,6 +29,14 @@
 
 /*
  $Log$
+ Revision 1.7.4.1  1999/09/15 20:18:29  sll
+ Updated to use the new cdrStream abstraction.
+ Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ replaced with just one version for cdrStream.
+ Derived class giopStream implements the cdrStream abstraction over a
+ network connection whereas the cdrMemoryStream implements the abstraction
+ with in memory buffer.
+
  Revision 1.7  1999/08/16 19:27:41  sll
  The ctor of ropeFactory_iterator now takes a pointer argument.
 
@@ -133,7 +141,9 @@ public:
   //
   // This function is thread-safe.
 
-  virtual void encodeIOPprofile(const Endpoint* addr,
+  typedef _CORBA_PseudoValue_Sequence<Endpoint*> EndpointList;
+
+  virtual void encodeIOPprofile(const EndpointList& addr,
 				const CORBA::Octet* objkey,
 				const size_t objkeysize,
 				IOP::TaggedProfile& profile) const = 0;
@@ -144,6 +154,9 @@ public:
   // This function may raise a CORBA::NO_MEMORY exception.
   //
   // This function is thread-safe.
+
+  static ropeFactoryType* findType(const char* protocol_name);
+
 
   friend class ropeFactory;
 
@@ -317,7 +330,7 @@ public:
   //
   // This function is thread-safe.
 
-  virtual Rope*  findOrCreateOutgoing(Endpoint* addr) = 0;
+  virtual Rope* findOrCreateOutgoing(Endpoint* addr,GIOPObjectInfo* g=0) = 0;
   // If <addr> is not the endpoint type supported by this factory, return 0.
   // else
   //     search all outgoing ropes instantiated by this
@@ -325,6 +338,12 @@ public:
   //     If no rope matches the endpoint, instantiate a new outgoing rope 
   //     to connect to that endpoint.
   //     The reference count of the rope returned will be increased by 1.
+  //
+  // The object info <g> may contain additional information to guide the
+  // creation/selection of the rope. If <g> is not nil, the rope member of g
+  // will also be updated. In that case, the Rope's reference count is managed
+  // by g. In other words, caller should not call Rope::decrRefCount on the
+  // return value.
   //
   // This function may raise a CORBA::SystemException.
   //

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9.4.2  1999/09/25 17:00:19  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.9.2.1  1999/09/21 20:37:15  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -248,7 +251,11 @@ omniInitialReferences::initialise_bootstrap_agent(const char* host,
     IOP::TaggedProfileList p;
     p.length(1);
 
-    t->encodeIOPprofile((Endpoint*)&addr,objkey,4,p[0]);
+    ropeFactoryType::EndpointList addrlist(1);
+    addrlist.length(1);
+    addrlist[0] = &addr;
+
+    t->encodeIOPprofile(addrlist,objkey,4,p[0]);
 
     CORBA::String_var ior(IOP::iorToEncapStr(
 			       CORBA_InitialReferences_IntfRepoID,&p));

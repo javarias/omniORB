@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.4.2  1999/09/25 17:00:22  sll
+ Merged changes from omni2_8_develop branch.
+
  Revision 1.5.2.1  1999/09/21 20:37:18  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -112,10 +115,13 @@ public:
 					  // return values:
 					  Endpoint*&     addr,
 				          GIOPObjectInfo* objectInfo) const;
-  void encodeIOPprofile(const Endpoint* addr,
+  void encodeIOPprofile(const ropeFactoryType::EndpointList& addr,
 			const CORBA::Octet* objkey,
 			const size_t objkeysize,
 			IOP::TaggedProfile& profile) const;
+
+  void insertOptionalIOPComponent(IOP::TaggedComponent& c);
+  const IOP::MultipleComponentProfile& getOptionalIOPComponents() const;
 
   static tcpSocketFactoryType* singleton;
   static void init();
@@ -123,6 +129,9 @@ public:
   friend class nobody;
 
 private:
+
+  IOP::MultipleComponentProfile pd_optionalcomponents;
+
   tcpSocketFactoryType();
   ~tcpSocketFactoryType() {}  // Cannot delete a factory type instance
 };
@@ -170,11 +179,18 @@ public:
   }
 
   CORBA::Boolean isOutgoing(Endpoint* addr) const;
-  Rope*  findOrCreateOutgoing(Endpoint* addr);
+  Rope* findOrCreateOutgoing(Endpoint* addr,GIOPObjectInfo* g=0);
 
   friend class nobody;
 
+
 private:
+  CORBA::Boolean auxillaryTransportLookup(Endpoint*,GIOPObjectInfo* g);
+  // Look at the tagged components decoded in <g>. Based on the information,
+  // returns a rope that provides a better way to contact the object than
+  // the default provided by findOrCreateOutgoing.
+  //
+
   ~tcpSocketMToutgoingFactory() {} // Cannot delete a factory instance
 };
 

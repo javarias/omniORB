@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.9.4.2  1999/09/25 17:00:21  sll
+ Merged changes from omni2_8_develop branch.
+
  Revision 1.9.2.1  1999/09/21 20:37:17  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -98,6 +101,19 @@
 ropeFactoryType* ropeFactoryTypeList = 0;
 ropeFactoryList* globalOutgoingRopeFactories;
 
+ropeFactoryType*
+ropeFactoryType::findType(const char* protocol_name)
+{
+  ropeFactoryType* factorytype = ropeFactoryTypeList;
+
+  while (factorytype) {
+    if (factorytype->is_protocol(protocol_name))
+      return factorytype;
+    factorytype = factorytype->next;
+  }
+  return 0;
+}
+
 omniObject*
 ropeFactory::iopProfilesToRope(GIOPObjectInfo* objectInfo)
 {
@@ -151,8 +167,7 @@ ropeFactory::iopProfilesToRope(GIOPObjectInfo* objectInfo)
 	  ropeFactory_iterator iter(globalOutgoingRopeFactories);
 	  outgoingRopeFactory* factory;
 	  while ((factory = (outgoingRopeFactory*) iter())) {
-	    objectInfo->rope_ = factory->findOrCreateOutgoing((Endpoint*)addr);
-	    if (objectInfo->rope()) {
+	    if (factory->findOrCreateOutgoing((Endpoint*)addr,objectInfo)) {
 	      // Got it
 	      return 0;
 	    }

@@ -29,6 +29,14 @@
  
 /*
   $Log$
+  Revision 1.28.4.1  1999/09/15 20:18:30  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.28  1999/08/30 17:10:24  sll
   omniObject::wrappedObjectTable initialiser fixed for MSVC++.
 
@@ -121,6 +129,7 @@
 #endif
 
 #include <ropeFactory.h>
+#include <objectManager.h>
 
 #if defined(HAS_Cplusplus_Namespace)
 using omniORB::operator==;
@@ -558,10 +567,24 @@ omni::objectToString(const omniObject *obj)
     IOP::TaggedProfileList p;
     return (char*) IOP::iorToEncapStr((const char*)"",&p);
   }
-  else {
+
+  if (obj->is_proxy()) {
     CORBA::Boolean fwd;
     GIOPObjectInfo_var objInfo = ((omniObject*)obj)->getInvokeInfo(fwd);
     return IOP::iorToEncapStr(objInfo->repositoryID(),objInfo->iopProfiles());
+  }
+  else {
+    IOP::TaggedProfileList_var pl(new IOP::TaggedProfileList);
+    ropeFactory_iterator iter(obj->_objectManager()->incomingRopeFactories());
+    incomingRopeFactory* rp;
+    omniObjectKey k;
+    obj->getKey(k);
+    while ((rp = (incomingRopeFactory*) iter())) {
+      rp->getIncomingIOPprofiles((CORBA::Octet*)&k,
+				 sizeof(k),
+				 *(pl.operator->()));
+    }
+    return IOP::iorToEncapStr(obj->NP_IRRepositoryId(),pl.operator->());
   }
 }
 
@@ -600,15 +623,41 @@ cdrStream::marshalObjRef(omniObject* obj)
   }
 
   // non-nil object reference
-  CORBA::Boolean fwd;
-  GIOPObjectInfo_var objInfo = obj->getInvokeInfo(fwd);
 
-  const char* repoId = objInfo->repositoryID();
-  size_t repoIdSize = strlen(repoId)+1;
-  ::operator>>= ((CORBA::ULong) repoIdSize,*this);
-  put_char_array((CORBA::Char*) repoId, repoIdSize);
-  const IOP::TaggedProfileList * pl = objInfo->iopProfiles();
-  *pl >>= *this;
+  if (obj->is_proxy()) {
+
+    CORBA::Boolean fwd;
+    GIOPObjectInfo_var objInfo = obj->getInvokeInfo(fwd);
+
+    const char* repoId = objInfo->repositoryID();
+    size_t repoIdSize = strlen(repoId)+1;
+    ::operator>>= ((CORBA::ULong) repoIdSize,*this);
+    put_char_array((CORBA::Char*) repoId, repoIdSize);
+    const IOP::TaggedProfileList * pl = objInfo->iopProfiles();
+    *pl >>= *this;
+
+  }
+  else {
+
+    IOP::TaggedProfileList_var pl(new IOP::TaggedProfileList);
+    ropeFactory_iterator iter(obj->_objectManager()->incomingRopeFactories());
+    incomingRopeFactory* rp;
+    omniObjectKey k;
+    obj->getKey(k);
+    while ((rp = (incomingRopeFactory*) iter())) {
+      rp->getIncomingIOPprofiles((CORBA::Octet*)&k,
+				 sizeof(k),
+				 *(pl.operator->()));
+    }
+
+    const char* repoId = obj->NP_IRRepositoryId();
+    size_t repoIdSize = strlen(repoId)+1;
+    ::operator>>= ((CORBA::ULong) repoIdSize,*this);
+    put_char_array((CORBA::Char*) repoId, repoIdSize);
+    (*(pl.operator->())) >>= *this;
+
+  }
+
 }
 
 omniObject*

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.4.2  1999/09/25 17:00:23  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.22.2.3  1999/09/22 19:56:52  sll
   Correct typo.
 
@@ -183,6 +186,8 @@
 #include <fcntl.h>
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+
 #define RC_INADDR_NONE     ((CORBA::ULong)-1)
 #define RC_INVALID_SOCKET  (-1)
 #define RC_SOCKET_ERROR    (-1)
@@ -221,15 +226,19 @@ extern "C" int gethostname(char *name, int namelen);
 #define send(a,b,c,d) tcpSocketVaxSend(a,b,c,d)
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
+
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("tcpSocketMTfactory " ## prefix ## ": ");\
-	log << message ## "\n";\
+     omniORB::logger log("omniORB: ");\
+	log << "tcpSocketMTfactory " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 
 #define PTRACE(prefix,message) LOGMESSAGE(15,prefix,message)
 
+
+/////////////////////////////////////////////////////////////////////////////
 class tcpSocketRendezvouser : public omni_thread {
 public:
   tcpSocketRendezvouser(tcpSocketIncomingRope *r,
@@ -246,6 +255,8 @@ private:
   tcpSocketRendezvouser();
 };
 
+
+/////////////////////////////////////////////////////////////////////////////
 class tcpSocketWorker : public omni_thread {
 public:
   tcpSocketWorker(tcpSocketStrand* s, tcpSocketMTincomingFactory* f) : 
@@ -272,7 +283,6 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
 tcpSocketMTincomingFactory::tcpSocketMTincomingFactory() 
       : pd_state(IDLE), pd_shutdown_cond(&pd_shutdown_lock),
         pd_shutdown_nthreads(0)
@@ -281,6 +291,7 @@ tcpSocketMTincomingFactory::tcpSocketMTincomingFactory()
   
 }
  
+/////////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
 tcpSocketMTincomingFactory::isIncoming(Endpoint* addr) const
 {
@@ -294,6 +305,7 @@ tcpSocketMTincomingFactory::isIncoming(Endpoint* addr) const
   return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketMTincomingFactory::instantiateIncoming(Endpoint* addr,
 						CORBA::Boolean exportflag)
@@ -318,6 +330,7 @@ tcpSocketMTincomingFactory::instantiateIncoming(Endpoint* addr,
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketMTincomingFactory::startIncoming()
 {
@@ -342,6 +355,7 @@ tcpSocketMTincomingFactory::startIncoming()
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketMTincomingFactory::stopIncoming()
 {
@@ -363,6 +377,7 @@ tcpSocketMTincomingFactory::stopIncoming()
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketMTincomingFactory::removeIncoming()
 {
@@ -423,6 +438,7 @@ tcpSocketMTincomingFactory::removeIncoming()
   PTRACE("removeIncoming","Done");
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Rope*
 tcpSocketMTincomingFactory::findIncoming(Endpoint* addr) const
 {
@@ -441,21 +457,32 @@ tcpSocketMTincomingFactory::findIncoming(Endpoint* addr) const
   return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void 
 tcpSocketMTincomingFactory::getIncomingIOPprofiles(const CORBA::Octet* objkey,
 						   const size_t objkeysize,
 			      IOP::TaggedProfileList& profilelist) const
 {
-  Rope_iterator next_rope(&pd_anchor);
-  tcpSocketIncomingRope* r;
-  while ((r = (tcpSocketIncomingRope*) next_rope()) && r->pd_export) {
-    CORBA::ULong index = profilelist.length();
-    profilelist.length(index+1);
-    tcpSocketFactoryType::singleton->encodeIOPprofile(r->me,objkey,objkeysize,
-						      profilelist[index]);
+  ropeFactoryType::EndpointList endpoints(2);
+
+  {
+    Rope_iterator next_rope(&pd_anchor);
+    tcpSocketIncomingRope* r;
+    CORBA::ULong index = 0;
+    while ((r = (tcpSocketIncomingRope*) next_rope()) && r->pd_export) {
+      endpoints.length(index+1);
+      endpoints[index++] = r->me;
+    }
   }
+
+  CORBA::ULong index = profilelist.length();
+  profilelist.length(index+1);
+  tcpSocketFactoryType::singleton->encodeIOPprofile(endpoints,
+						    objkey,objkeysize,
+						    profilelist[index]);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
 					     unsigned int maxStrands,
 					     tcpSocketEndpoint *e,
@@ -583,6 +610,7 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
   me = new tcpSocketEndpoint(e);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketIncomingRope::~tcpSocketIncomingRope()
 {
   PTRACE("~tcpSocketIncomingRope","called");
@@ -596,6 +624,7 @@ tcpSocketIncomingRope::~tcpSocketIncomingRope()
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketIncomingRope::cancelThreads()
 {
@@ -677,6 +706,7 @@ tcpSocketIncomingRope::cancelThreads()
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Strand *
 tcpSocketIncomingRope::newStrand()
 {
@@ -688,12 +718,12 @@ tcpSocketIncomingRope::newStrand()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
 tcpSocketMToutgoingFactory::tcpSocketMToutgoingFactory()
 {
   tcpSocketFactoryType::init();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
 tcpSocketMToutgoingFactory::isOutgoing(Endpoint* addr) const
 {
@@ -707,27 +737,35 @@ tcpSocketMToutgoingFactory::isOutgoing(Endpoint* addr) const
   return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Rope*
-tcpSocketMToutgoingFactory::findOrCreateOutgoing(Endpoint* addr)
+tcpSocketMToutgoingFactory::findOrCreateOutgoing(Endpoint* addr,
+						 GIOPObjectInfo* g)
 {
   tcpSocketEndpoint* te = tcpSocketEndpoint::castup(addr);
   if (!te) return 0;
 
+  if (g && auxillaryTransportLookup(addr,g)) return g->rope_;
+  
   Rope_iterator next_rope(&pd_anchor);
   Rope* r;
+
   while ((r = next_rope()))
     {
       if (r->remote_is(addr)) {
 	r->incrRefCount(1);
-	return r;
+	g->rope_ = r;
+	return g->rope_;
       }
     }
   r = new tcpSocketOutgoingRope(this,omniORB::maxTcpConnectionPerServer,te);
   r->incrRefCount(1);
+  if (g) g->rope_ = r;
   return r;
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketOutgoingRope::tcpSocketOutgoingRope(tcpSocketMToutgoingFactory* f,
 					     unsigned int maxStrands,
 					     tcpSocketEndpoint *e)
@@ -736,6 +774,7 @@ tcpSocketOutgoingRope::tcpSocketOutgoingRope(tcpSocketMToutgoingFactory* f,
   remote = new tcpSocketEndpoint(e);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketOutgoingRope::~tcpSocketOutgoingRope()
 {
   PTRACE("~tcpSocketOutgoingRope","called");
@@ -745,6 +784,7 @@ tcpSocketOutgoingRope::~tcpSocketOutgoingRope()
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 Strand *
 tcpSocketOutgoingRope::newStrand()
 {
@@ -765,6 +805,7 @@ tcpSocketStrand::buffer_size = 8192 + (int)omni::max_alignment;
 static tcpSocketHandle_t realConnect(tcpSocketEndpoint* r);
 
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketStrand::tcpSocketStrand(tcpSocketOutgoingRope *rope,
 				 tcpSocketEndpoint   *r)
   : reliableStreamStrand(tcpSocketStrand::buffer_size,rope),
@@ -786,6 +827,7 @@ tcpSocketStrand::tcpSocketStrand(tcpSocketOutgoingRope *rope,
   // Do the connect on first call to ll_recv or ll_send.
 }
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketStrand::tcpSocketStrand(tcpSocketIncomingRope *r,
 				 tcpSocketHandle_t sock)
   : reliableStreamStrand(tcpSocketStrand::buffer_size,r),
@@ -794,11 +836,12 @@ tcpSocketStrand::tcpSocketStrand(tcpSocketIncomingRope *r,
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
 tcpSocketStrand::~tcpSocketStrand() 
 {
   if (omniORB::trace(5)) {
-    omniORB::logger log("tcpSocketMTfactory ~tcpScoketStrand: ");
-    log << "close socket no. " << pd_socket << "\n";
+    omniORB::logger log("omniORB: ");
+    log << "tcpSocketMTfactory ~tcpScoketStrand: close socket no. " << pd_socket << "\n";
   }
   if (pd_socket != RC_INVALID_SOCKET)
     CLOSESOCKET(pd_socket);
@@ -808,6 +851,7 @@ tcpSocketStrand::~tcpSocketStrand()
   pd_delay_connect = 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 static omni_mutex dumplock;
 static void dumpbuf(unsigned char* buf, size_t sz)
 {
@@ -833,6 +877,7 @@ static void dumpbuf(unsigned char* buf, size_t sz)
   fprintf(stderr,"\n");
 }
 
+/////////////////////////////////////////////////////////////////////////////
 size_t
 tcpSocketStrand::ll_recv(void* buf, size_t sz)
 {
@@ -890,6 +935,7 @@ tcpSocketStrand::ll_recv(void* buf, size_t sz)
   return (size_t)rx;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketStrand::ll_send(void* buf,size_t sz) 
 {
@@ -952,6 +998,7 @@ tcpSocketStrand::ll_send(void* buf,size_t sz)
 
 
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketStrand::real_shutdown()
 {
@@ -997,12 +1044,13 @@ tcpSocketStrand::real_shutdown()
   _setStrandIsDying();
   SHUTDOWNSOCKET(pd_socket);
   if (omniORB::trace(15)) {
-    omniORB::logger log("tcpSocketMTfactory real_shutdown: ");
-    log << "fd no. " << pd_socket << "\n";
+    omniORB::logger log("omniORB: ");
+    log << "tcpSocketMTfactory real_shutdown: fd no. " << pd_socket << "\n";
   }
   return;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 static
 tcpSocketHandle_t
 realConnect(tcpSocketEndpoint* r)
@@ -1112,6 +1160,7 @@ extern PFV set_terminate(PFV);
 #endif
 #endif
 
+/////////////////////////////////////////////////////////////////////////////
 void*
 tcpSocketRendezvouser::run_undetached(void *arg)
 {
@@ -1320,6 +1369,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
   return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketWorker::run(void *arg)
 {
@@ -1329,6 +1379,7 @@ tcpSocketWorker::run(void *arg)
   // by calling  _realRun(arg) when it is ready.
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void
 tcpSocketWorker::_realRun(void *arg)
 {
@@ -1351,13 +1402,13 @@ tcpSocketWorker::_realRun(void *arg)
 	GIOP_S::dispatcher(s);
       }
       catch (const CORBA::COMM_FAILURE &) {
-	PTRACE("Worker","#### Communication failure. Connection closed.");
+	PTRACE("Worker","Communication failure. Connection closed.");
 	break;
       }
       catch(const omniORB::fatalException &ex) {
 	if (omniORB::trace(0)) {
-	  omniORB::logger log("tcpSocketMTfactory Worker: ");
-	  log << "#### You have caught an omniORB2 bug, details are as follows:\n"
+	  omniORB::logger log("omniORB: tcpSocketMTfactory Worker: ");
+	  log << "You have caught an omniORB2 bug, details are as follows:\n"
 	      << ex.file() << " " << ex.line() << ":" << ex.errmsg()
 	      << "\n";
 	    }
@@ -1365,8 +1416,8 @@ tcpSocketWorker::_realRun(void *arg)
       }
       catch (...) {
 	if (omniORB::trace(0)) {
-	  omniORB::logger log("tcpSocketMTfactory Worker: ");
-	  log << "#### Caught a system exception.\n";
+	  omniORB::logger log("omniORB: tcpSocketMTfactory Worker: ");
+	  log << "Caught a system exception.\n";
 	}
 	break;
       }
