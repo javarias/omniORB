@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/06/26 13:38:45  sll
+  Make ssl compiles with pre-0.9.6a OpenSSL
+
   Revision 1.1.2.2  2001/06/20 18:35:16  sll
   Upper case send,recv,connect,shutdown to avoid silly substutition by
   macros defined in socket.h to rename these socket functions
@@ -291,6 +294,10 @@ sslConnection::sslConnection(tcpSocketHandle_t sock,::SSL* ssl) :
   pd_peeraddress = tcpConnection::ip4ToString(
 			       (CORBA::ULong)addr.sin_addr.s_addr,
 			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
+  if (omniORB::trace(5)) {
+    omniORB::logger l;
+    l << "connect from " << pd_peeraddress << "\n";
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////

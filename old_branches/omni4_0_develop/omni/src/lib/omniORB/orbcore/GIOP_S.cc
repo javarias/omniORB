@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/05/31 16:18:12  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.1.4.5  2001/05/29 17:03:50  dpg1
   In process identity.
 
@@ -349,6 +353,8 @@ GIOP_S::handleLocateRequest() {
     impl()->inputMessageEnd(this,0);
     
     pd_state = WaitingForReply;
+
+    omniORB::logs(10, "Handling a GIOP LOCATE_REQUEST.");
 
     GIOP::LocateStatusType status = GIOP::UNKNOWN_OBJECT;
 
