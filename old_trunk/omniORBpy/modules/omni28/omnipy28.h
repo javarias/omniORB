@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  1999/09/24 09:33:34  dpg1
+// Version numbers now come from make file.
+//
 // Revision 1.5  1999/09/24 09:22:03  dpg1
 // Added copyright notices.
 //
@@ -51,12 +54,11 @@
 #ifndef _omnipy_h_
 #define _omnipy_h_
 
-#include <omniORB2/CORBA.h>
-#include <omniORB2/proxyCall.h>
-
+#include <iostream.h>
 #include <python1.5/Python.h>
 
-#include <iostream.h>
+#include <omniORB2/CORBA.h>
+#include <omniORB2/proxyCall.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -327,7 +329,10 @@ public:
   virtual void userException(GIOP_C& giop_client, const char* repoId);
 
   inline void systemException(const CORBA::SystemException& ex) {
-    if (tstate_) PyEval_RestoreThread(tstate_);
+    if (tstate_) {
+      PyEval_RestoreThread(tstate_);
+      tstate_ = 0;
+    }
     handleSystemException(ex);
   }
 

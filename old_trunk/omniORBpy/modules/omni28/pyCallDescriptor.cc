@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.9  1999/09/24 09:22:02  dpg1
+// Added copyright notices.
+//
 // Revision 1.8  1999/09/20 14:55:37  dpg1
 // GCC 2.95 is more pedantic than egcs.
 //
@@ -64,6 +67,16 @@
 CORBA::ULong
 omniPy::Py_OmniProxyCallDesc::alignedSize(CORBA::ULong msgsize)
 {
+  // If a system exception was handled by a system exception handler,
+  // or we get location forwarded, the proxy call wrapper will re-call
+  // alignedSize() after the Python interpreter lock has been released
+  // by marshalArguments(). We must re-lock it before looking at the
+  // call descriptors.
+  if (tstate_) {
+    PyEval_RestoreThread(tstate_);
+    tstate_ = 0;
+  }
+
   for (int i=0; i < in_l_; i++)
     msgsize = omniPy::alignedSize(msgsize,
 				  PyTuple_GET_ITEM(in_d_,i),
@@ -75,18 +88,23 @@ omniPy::Py_OmniProxyCallDesc::alignedSize(CORBA::ULong msgsize)
 void
 omniPy::Py_OmniProxyCallDesc::marshalArguments(GIOP_C& giop_client)
 {
+  // We should always hold the interpreter lock when entering this
+  // function.
+  assert(!tstate_);
+
   for (int i=0; i < in_l_; i++)
     omniPy::marshalPyObject(giop_client,
 			    PyTuple_GET_ITEM(in_d_,i),
 			    PyTuple_GET_ITEM(args_,i));
 
-  if (!tstate_) tstate_ = PyEval_SaveThread();
+  tstate_ = PyEval_SaveThread();
 }
 
 
 void
 omniPy::Py_OmniProxyCallDesc::unmarshalReturnedValues(GIOP_C& giop_client)
 {
+  assert(tstate_);
   PyEval_RestoreThread(tstate_);
   tstate_ = 0;
 
@@ -118,6 +136,7 @@ void
 omniPy::Py_OmniProxyCallDesc::userException(GIOP_C&     giop_client,
 					    const char* repoId)
 {
+  assert(tstate_);
   PyEval_RestoreThread(tstate_);
   tstate_ = 0;
 
@@ -156,6 +175,11 @@ omniPy::Py_OmniProxyCallDesc::userException(GIOP_C&     giop_client,
 CORBA::ULong
 omniPy::Py_OmniOWProxyCallDesc::alignedSize(CORBA::ULong msgsize)
 {
+  if (tstate_) {
+    PyEval_RestoreThread(tstate_);
+    tstate_ = 0;
+  }
+
   for (int i=0; i < in_l_; i++)
     msgsize = omniPy::alignedSize(msgsize,
 				  PyTuple_GET_ITEM(in_d_,i),
@@ -167,10 +191,12 @@ omniPy::Py_OmniOWProxyCallDesc::alignedSize(CORBA::ULong msgsize)
 void
 omniPy::Py_OmniOWProxyCallDesc::marshalArguments(GIOP_C& giop_client)
 {
+  assert(!tstate_);
+
   for (int i=0; i < in_l_; i++)
     omniPy::marshalPyObject(giop_client,
 			    PyTuple_GET_ITEM(in_d_,i),
 			    PyTuple_GET_ITEM(args_,i));
 
-  if (!tstate_) tstate_ = PyEval_SaveThread();
+  tstate_ = PyEval_SaveThread();
 }
