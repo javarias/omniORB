@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.3.2.3  2000/08/21 11:33:28  djs
+ New stuff for AMI
+
  Revision 1.3.2.2  2000/08/07 09:51:51  dpg1
  Minor long long mistakes.
 
@@ -1100,6 +1103,30 @@ _CORBA_MODULE_BEG
     CORBA::Boolean pd_is_pseudo;
   };
 
+  //////////////////////////////////////////////////////////////////////
+  ///////////////////////////// ValueBase  /////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+
+  class ValueBase {
+  public:
+    virtual ValueBase *_add_ref() = 0;
+    virtual void _remove_ref()    = 0;
+    virtual ValueBase* _copy_value() = 0;
+    virtual ULong _refcount_value() = 0;
+
+    static ValueBase* _downcast(ValueBase*);
+
+  protected:
+    ValueBase(): pd_refcount(1) { }
+    ValueBase(const ValueBase&);
+    virtual ~ValueBase() { }
+
+  private:
+    void operator=(const ValueBase&);
+
+    omni_mutex   pd_state_lock;
+    _CORBA_ULong pd_refcount;
+  };
 
   //////////////////////////////////////////////////////////////////////
   ///////////////////////////// NamedValue /////////////////////////////
