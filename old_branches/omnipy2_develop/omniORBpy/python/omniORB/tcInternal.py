@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.10.2.8  2003/03/12 11:17:50  dgrisby
+# Any / TypeCode fixes.
+#
 # Revision 1.10.2.7  2003/03/07 11:56:04  dgrisby
 # Missing TypeCode creation functions.
 #
@@ -147,7 +150,7 @@ tv_value_box          = 30
 tv_native             = 31
 tv_abstract_interface = 32
 tv_local_interface    = 33
-tv__indirect          = 0xffffffff
+tv__indirect          = -1
 
 
 # Create a TypeCode given a class or a repoId
