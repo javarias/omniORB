@@ -28,6 +28,8 @@
 
 /*
  $Log$
+ Revision 1.17  1999/05/26 14:55:06  sll
+
  Revision 1.16  1999/05/25 13:18:20  sll
  
  Revision 1.15  1999/04/21 13:15:31  djr
@@ -907,7 +909,7 @@ public:
   }
   static inline T** allocbuf(_CORBA_ULong nelems) { 
     T** v = new T*[nelems];
-    for (_CORBA_ULong i=0; i < nelems; i++) v[i] = T::_nil();
+    for (_CORBA_ULong i=0; i < nelems; i++) v[i] = CORBA::Object::_nil();
     return v;
   }
   static inline void freebuf(T** b) { if( b ) delete[] b; }
