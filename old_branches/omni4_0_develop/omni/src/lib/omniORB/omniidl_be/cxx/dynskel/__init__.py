@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.3  2001/06/08 17:12:14  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.8.2.2  2000/10/12 15:37:49  sll
 # Updated from omni3_1_develop.
 #
@@ -129,3 +132,4 @@ def run(tree):
     stream = output.Stream(output.createFile(header_filename), 2)
 
     generate(stream, tree)
+    stream.close()

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.5  2001/10/18 12:45:28  dpg1
+# IDL compiler tweaks.
+#
 # Revision 1.14.2.4  2001/03/26 11:11:54  dpg1
 # Python clean-ups. Output routine optimised.
 #
@@ -299,6 +302,10 @@ def run(tree):
                        config.state['HH Suffix']
         poa_stream = output.Stream(output.createFile(poa_filename), 2)
         poa_fragment(poa_stream, tree)
+
+        defs_stream.close()
+        opers_stream.close()
+        poa_stream.close() 
     else:
         # build the full header file
         header_filename = config.state['Basename']       +\
@@ -307,3 +314,4 @@ def run(tree):
         # generate one big chunk of header
         monolithic(stream, tree)
 
+        stream.close()

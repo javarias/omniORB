@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2.2.1  2000/10/12 15:37:52  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.2.4.1  2000/08/21 11:35:22  djs
 # Lots of tidying
 #
@@ -46,3 +49,5 @@ def run(tree):
     main.__init__(stream, idl_filename, hh_filename)
 
     main.run(tree)
+
+    stream.close()
