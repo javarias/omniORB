@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/05/09 16:59:08  sll
+  Added unmarshalObjectKey() to allow quick extraction of the object key.
+
   Revision 1.2.2.5  2001/04/18 17:52:46  sll
   Rationalise marshalling and unmarshalling routines.
 
@@ -98,6 +101,9 @@ public:
   struct Address {
     _CORBA_String_member    host;
     _CORBA_UShort           port;
+
+    void operator>>=(cdrStream&) const;
+    void operator<<=(cdrStream&);
   };
 
   struct ProfileBody {
