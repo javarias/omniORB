@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 20:36:05  sll
+  Support for system exception handlers.
+  Support for incoming and outgoing rope scavenger threads.
+
  * Revision 1.5  1997/05/06  16:09:39  sll
  * Public release.
  *
@@ -40,6 +44,18 @@
 class _OMNIORB2_NTDLL_ omniORB {
 
 public:
+
+  ////////////////////////////////////////////////////////////////////////
+  // serverName								//
+  //									//
+  // omniORB2's idea of the name of the server.  Set to argv[0] by      //
+  // ORB_init or changed by command-line option -ORBserverName <name>.  //
+  // This name is used in the host-based access control of the IIOP     //
+  // gatekeeper.                                                        //
+  //                                                                    //
+  //									//
+  static CORBA::String_var serverName;					//
+  ////////////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////////
   // Tracing level                                                     //
