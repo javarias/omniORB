@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.28  2004/07/23 14:07:04  dgrisby
+# Subtly incorrect generated code for arrays.
+#
 # Revision 1.3.2.27  2004/07/01 19:13:32  dgrisby
 # Suppress compiler warnings on void methods. Thanks Peter Klotz.
 #
@@ -651,6 +654,7 @@ void
   switch(_pd__d) {
     @unmarshal_cases@
   }
+  _pd__initialised = 1;
 }
 """
 
