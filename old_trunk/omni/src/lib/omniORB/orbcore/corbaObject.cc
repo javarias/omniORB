@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.16  1999/03/11 16:25:52  djr
+  Updated copyright notice
+
   Revision 1.15  1999/01/07 15:23:42  djr
   Moved CORBA::Object::_get_interface() to ir.cc in dynamic library.
 
@@ -75,11 +78,14 @@ CORBA::
 Object::Object()
 {
   pd_obj = 0;
+  pd_magic = CORBA::Object::PR_magic;
   return;
 }
 
 
-CORBA::Object::~Object() {}
+CORBA::Object::~Object() {
+  pd_magic = 0;
+}
 
 
 CORBA::Object_ptr
@@ -102,6 +108,8 @@ CORBA::Object_ptr
 CORBA::
 Object::_duplicate(CORBA::Object_ptr obj)
 {
+  if (!PR_is_valid(obj))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
   if (!CORBA::is_nil(obj)) {
     omni::objectDuplicate(obj->pd_obj);
   }
@@ -134,6 +142,9 @@ CORBA::Boolean
 CORBA::
 Object::_is_a(const char *repoId)
 {
+  if (!PR_is_valid(this))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!repoId)
     return 0;
 
@@ -152,7 +163,10 @@ CORBA::Boolean
 CORBA::
 Object::_is_equivalent(CORBA::Object_ptr other_object)
 {
-  if (other_object->NP_is_nil()) {
+  if ( !PR_is_valid(this) || !PR_is_valid(other_object) ) 
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
+  if (CORBA::is_nil(other_object)) {
     if (NP_is_nil())
       return 1;
     else
@@ -160,6 +174,7 @@ Object::_is_equivalent(CORBA::Object_ptr other_object)
   }
   else {
     omniObject * objptr = PR_getobj();
+    if (!objptr) return 0;
     omniObject * other_objptr = other_object->PR_getobj();
     omniRopeAndKey rak, other_rak;
     objptr->getRopeAndKey(rak);
@@ -243,6 +258,9 @@ CORBA::Boolean
 CORBA::
 Object::_non_existent()
 {
+  if ( !PR_is_valid(this) ) 
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (NP_is_nil()) {
     return 1;
   }
