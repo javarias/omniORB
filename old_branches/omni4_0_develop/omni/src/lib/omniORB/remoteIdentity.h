@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:40  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:03  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -49,21 +52,14 @@ class omniRemoteIdentity_RefHolder;
 
 class omniRemoteIdentity : public omniIdentity {
 public:
-  inline omniRemoteIdentity(const _CORBA_Octet* key, int keysize,
-			    Rope* rope)
-    : omniIdentity(key, keysize),
+  inline omniRemoteIdentity(omniIOR* ior, Rope* rope)
+    : omniIdentity(ior->iiop.object_key.get_buffer(),
+		   ior->iiop.object_key.length()),
       pd_refCount(0),
+      pd_ior(ior),
       pd_rope(rope)
     {}
-  // Consumes <rope>.  Copies <key>.  Constructs an identity
-  // with ref count of 0.
-
-  inline omniRemoteIdentity(Rope* rope, _CORBA_Octet* key, int keysize)
-    : omniIdentity(key, keysize),
-      pd_refCount(0),
-      pd_rope(rope)
-    {}
-  // Consumes <rope> and <key>.  Constructs an identity
+  // Consumes <ior> and <rope>.  Copies <key>.  Constructs an identity
   // with ref count of 0.
 
   virtual void dispatch(omniCallDescriptor&);
@@ -91,9 +87,9 @@ private:
   // Not implemented.
 
 
-  int   pd_refCount;
-
-  Rope* pd_rope;
+  int      pd_refCount;
+  omniIOR* pd_ior;
+  Rope*    pd_rope;
   // Immutable.
 };
 
