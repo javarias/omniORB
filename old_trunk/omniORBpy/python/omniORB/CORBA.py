@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.12  1999/11/10 16:08:21  dpg1
+# Some types weren't registered properly.
+#
 # Revision 1.11  1999/10/18 08:25:57  dpg1
 # _is_a() now works properly for local objects.
 #
@@ -71,7 +74,7 @@
 import _omnipy
 import omniORB
 
-import threading, types, exceptions
+import threading, types, exceptions, time
 
 
 #############################################################################
@@ -503,8 +506,9 @@ class ORB:
 
     def run(self):
         poa = self.resolve_initial_references("RootPOA")
-        _omnipy.implIsReady(poa, 0, 0)
-
+        _omnipy.implIsReady(poa, 0, 1)
+        while 1: # While loop will repeat every 68 years :-)
+            time.sleep(0x7fffffff)
 
     __methods__ = ["string_to_object", "object_to_string",
                    "list_initial_services", "resolve_initial_references",
