@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.14  2001/08/01 10:08:21  dpg1
+  Main thread policy.
+
   Revision 1.2.2.13  2001/07/31 16:40:03  sll
   Added argument to selectRope.
 
@@ -888,7 +891,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
   omniIdentity* id = omni::createIdentity(ior, local_id,
 					  objref->_localServantTarget(), 1);
   if( !id ) {
-    OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INV_OBJREF,INV_OBJREF_CorruptedObjRef, CORBA::COMPLETED_NO);
   }
 
   // For efficiency lets just assume that it exists.  We are

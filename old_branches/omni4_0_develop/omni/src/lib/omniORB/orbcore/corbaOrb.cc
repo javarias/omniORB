@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.19  2001/08/01 10:08:21  dpg1
+  Main thread policy.
+
   Revision 1.33.2.18  2001/07/31 16:28:00  sll
   Added GIOP BiDir support.
 
@@ -399,14 +402,16 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
 
   if( orb_destroyed ) {
     omniORB::logs(1, "The ORB cannot be re-initialised!");
-    OMNIORB_THROW(BAD_INV_ORDER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER, BAD_INV_ORDER_ORBHasShutdown, 
+		  CORBA::COMPLETED_NO);
   }
 
   // URI initialiser must be called before args are parsed
   omni_uri_initialiser_.attach();
 
   if( !parse_ORB_args(argc,argv,orb_identifier) ) {
-    OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE,INITIALIZE_InvalidORBInitArgs,
+		  CORBA::COMPLETED_NO);
   }
   if( the_orb ) {
     the_orb->_NP_incrRefCount();
@@ -461,7 +466,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
     throw;
   }
   catch (...) {
-    OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedORBInit,CORBA::COMPLETED_NO);
   }
 
 #if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
@@ -486,9 +491,9 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
 
 #define CHECK_NOT_NIL_SHUTDOWN_OR_DESTROYED()  \
   if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();  \
-  if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);  \
+  if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch, CORBA::COMPLETED_NO);  \
   if( pd_shutdown  )  OMNIORB_THROW(BAD_INV_ORDER, \
-                                    _OMNI_NS(BAD_INV_ORDER_ORBHasShutdown), \
+                                    BAD_INV_ORDER_ORBHasShutdown, \
                                     CORBA::COMPLETED_NO);  \
 
 
@@ -648,7 +653,9 @@ omniOrbORB::destroy()
   {
     omni_tracedmutex_lock sync(orb_lock);
 
-    if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
+    if( pd_destroyed )  OMNIORB_THROW(BAD_INV_ORDER,
+				      BAD_INV_ORDER_ORBHasShutdown,
+				      CORBA::COMPLETED_NO);
 
     // Complain if in the context of an operation invocation
     omniCurrent* current = omniCurrent::get();
@@ -2005,7 +2012,8 @@ public:
     if (rc != 0)
       {
 	// Couldn't find a usable DLL.
-	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
+		      CORBA::COMPLETED_NO);
       }
 
     // Confirm that the returned Windows Sockets DLL supports 1.1
@@ -2015,7 +2023,8 @@ public:
       {
 	// Couldn't find a usable DLL
 	WSACleanup();
-	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
+		      CORBA::COMPLETED_NO);
       }
 
 #endif

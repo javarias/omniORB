@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2000/11/17 19:11:16  dpg1
+  Rename _CORBA_Sequence__WString to _CORBA_Sequence_WString.
+
   Revision 1.1.2.3  2000/11/16 12:33:44  dpg1
   Minor fixes to permit use of UShort as WChar.
 
@@ -52,6 +55,7 @@
 // the same as wchar_t.
 const _CORBA_WChar*const _CORBA_WString_helper::empty_wstring = {0};
 
+OMNI_USING_NAMESPACE(omni)
 
 _CORBA_WChar*
 CORBA::wstring_alloc(CORBA::ULong len)
@@ -121,7 +125,8 @@ _CORBA_Sequence_WString::operator <<= (cdrStream& s)
   slen <<= s;
 
   if (!s.checkInputOverrun(1,slen) || (pd_bounded && slen > pd_max)) {
-    OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong,
+		  (CORBA::CompletionStatus)s.completion());
   }
 
   if (!pd_rel && slen <= pd_max) {

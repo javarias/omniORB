@@ -28,6 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.2.3  2001/06/13 20:12:32  sll
+// Minor updates to make the ORB compiles with MSVC++.
+//
 // Revision 1.1.2.2  2001/04/09 15:18:46  dpg1
 // Tweak fixed point to make life easier for omniORBpy.
 //
@@ -42,6 +45,7 @@
 #include <string.h>
 #include <ctype.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 CORBA::Fixed::Fixed(int val) :
   pd_digits(0), pd_scale(0), pd_negative(0), pd_idl_digits(0), pd_idl_scale(0)
@@ -131,7 +135,8 @@ CORBA::Fixed::Fixed(CORBA::Double val) :
 {
   if (val > 1e32 || val < -1e32) {
     // Too big
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_RangeError,
+		  CORBA::COMPLETED_NO);
   }
   char buffer[80];
   int len = sprintf(buffer, "%.31f", val);
@@ -195,7 +200,8 @@ CORBA::Fixed::operator CORBA::LongLong() const
     s = r * 10 + pd_val[i];
     if (s < r) {
       // Overflow
-      OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_RangeError, 
+		    CORBA::COMPLETED_NO);
     }
     r = s;
   }
@@ -215,7 +221,8 @@ CORBA::Fixed::operator CORBA::Long() const
     s = r * 10 + pd_val[i];
     if (s < r) {
       // Overflow
-      OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_RangeError,
+		    CORBA::COMPLETED_NO);
     }
     r = s;
   }
@@ -278,7 +285,8 @@ CORBA::Fixed::round(CORBA::UShort scale) const
     }
     if (i == OMNI_FIXED_DIGITS) {
       // Overflow
-      OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_RangeError,
+		    CORBA::COMPLETED_NO);
     }
     return CORBA::Fixed(work + cut, pd_digits - cut, scale, pd_negative);
   }
@@ -443,8 +451,8 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 
   // Check there are some digits
   if (!((*s >= '0' && *s <= '9') || *s == '.')) {
-    //?? Right choice of exception?
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION,
+		  DATA_CONVERSION_BadInput, CORBA::COMPLETED_NO);
   }
 
   // Skip leading zeros:
@@ -457,7 +465,8 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
     if (s[i] == '.') {
       if (unscale != -1) {
 	// Already seen a decimal point
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(DATA_CONVERSION,
+		      DATA_CONVERSION_BadInput, CORBA::COMPLETED_NO);
       }
       unscale = pd_digits;
     }
@@ -476,7 +485,8 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 
     while (s[j]) {
       if (!isspace(s[j])) {
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(DATA_CONVERSION,
+		      DATA_CONVERSION_BadInput, CORBA::COMPLETED_NO);
       }
       ++j;
     }
@@ -497,7 +507,8 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
   }
 
   if (pd_digits > OMNI_FIXED_DIGITS) {
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION,
+		  DATA_CONVERSION_BadInput, CORBA::COMPLETED_NO);
   }
 
   // Scan back through the string, setting the value least
@@ -536,7 +547,8 @@ CORBA::Fixed::PR_checkLimits()
     *this = truncate(pd_idl_scale);
 
   if (pd_digits - pd_scale > pd_idl_digits - pd_idl_scale)
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION,
+		  DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
 }
 
 void
@@ -636,7 +648,8 @@ realAdd(const CORBA::Fixed& a, const CORBA::Fixed& b, CORBA::Boolean negative)
       digits    = OMNI_FIXED_DIGITS;
     }
     else {
-      OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(DATA_CONVERSION,
+		    DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
     }
   }
 
@@ -756,7 +769,8 @@ realMul(const CORBA::Fixed& a, const CORBA::Fixed& b, CORBA::Boolean negative)
       digits    = OMNI_FIXED_DIGITS;
     }
     else {
-      OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(DATA_CONVERSION,
+		    DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
     }
   }
 
@@ -910,7 +924,8 @@ realDiv(const CORBA::Fixed& a, const CORBA::Fixed& b, CORBA::Boolean negative)
 
   // Complain if too many digits before decimal point
   if (unscale > OMNI_FIXED_DIGITS) {
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION,
+		  DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
   }
 
   // Deal with numbers with trailing zeros before the decimal point
@@ -1144,7 +1159,8 @@ CORBA::Fixed::operator<<=(cdrStream& s)
   else if (d == 0xD)
     pd_negative = 1;
   else
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO); // *** fix comp. status
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidFixedValue, 
+		  (CORBA::CompletionStatus)s.completion());
 
   --bi;
 
@@ -1174,7 +1190,8 @@ CORBA::Fixed::operator<<=(cdrStream& s)
       d = buffer[bi/2] >> 4;
 
     if (d > 0x9)
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO); // *** comp. status
+      OMNIORB_THROW(MARSHAL, MARSHAL_InvalidFixedValue, 
+		    (CORBA::CompletionStatus)s.completion());
 
     pd_val[vi] = d;
   }
@@ -1193,7 +1210,8 @@ CORBA::Fixed::operator<<=(cdrStream& s)
   if (pd_digits - pd_scale == pd_idl_digits - pd_idl_scale + 1) {
     // This happens if idl_digits is even, and the sending ORB put a
     // non-zero half-octet as the most-siginificant digit.
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidFixedValue, 
+		  (CORBA::CompletionStatus)s.completion());
   }
 
   OMNIORB_ASSERT(pd_digits <= pd_idl_digits);

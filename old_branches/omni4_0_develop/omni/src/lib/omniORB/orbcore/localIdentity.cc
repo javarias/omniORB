@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/06/07 16:24:10  dpg1
+  PortableServer::Current support.
+
   Revision 1.2.2.4  2001/05/29 17:03:51  dpg1
   In process identity.
 
@@ -143,7 +146,7 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
       l << "WARNING -- method \'" << call_desc.op() << "\' raised an unknown\n"
 	" exception (not a legal CORBA exception).\n";
     }
-    OMNIORB_THROW(UNKNOWN,0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(UNKNOWN,UNKNOWN_UserException, CORBA::COMPLETED_MAYBE);
   }
 #endif
 }

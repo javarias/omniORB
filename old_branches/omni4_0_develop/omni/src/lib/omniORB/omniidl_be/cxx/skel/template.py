@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.10  2001/07/25 13:40:53  dpg1
+# Suppress compiler warning about unused variable in _dispatch() for
+# empty interfaces.
+#
 # Revision 1.3.2.9  2001/06/08 17:12:20  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -307,7 +311,8 @@ void @call_descriptor@::userException(_OMNI_NS(IOP_C)& iop_client, const char* r
   @exception_block@
   else {
     iop_client.RequestCompleted(1);
-    throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(UNKNOWN,UNKNOWN_UserException,
+                  (CORBA::CompletionStatus)s.completion());
   }
 }
 """

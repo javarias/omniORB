@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/06/11 17:53:23  sll
+   The omniIOR ctor used by genior and corbaloc now has the option to
+   select whether to call interceptors and what set of interceptors to call.
+
   Revision 1.2.2.6  2001/06/07 16:24:10  dpg1
   PortableServer::Current support.
 
@@ -183,7 +187,6 @@ CORBA_InitialReferences_i::list()
   CORBA_InitialReferences::ObjIdList* result =
     new CORBA_InitialReferences::ObjIdList(the_argsServiceList.length() +
 					   the_fileServiceList.length());
-  if (!result) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   CORBA_InitialReferences::ObjIdList& l = *result;
 
   l.length(the_argsServiceList.length() + the_fileServiceList.length());
@@ -192,11 +195,9 @@ CORBA_InitialReferences_i::list()
 
   for (i=0,j=0; i < the_argsServiceList.length(); i++,j++) {
     l[j] = CORBA::string_dup(the_argsServiceList[i].id);
-    if (!(char*)l[j]) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   }
   for (i=0; i < the_fileServiceList.length(); i++,j++) {
     l[j] = CORBA::string_dup(the_fileServiceList[i].id);
-    if (!(char*)l[j]) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   }
   // XXX Should we go out to find the listing from the boot agent?
 
@@ -345,7 +346,6 @@ resolveArgs(const char* id, unsigned int cycles)
 	else {
 	  OMNIORB_ASSERT((char*)(the_argsServiceList[i].uri));
 	  uri = CORBA::string_dup(the_argsServiceList[i].uri);
-	  if (!(char*)uri) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 	}
 	break;
       }
@@ -395,7 +395,6 @@ resolveFile(const char* id, unsigned int cycles)
 	else {
 	  OMNIORB_ASSERT((char*)(the_fileServiceList[i].uri));
 	  uri = CORBA::string_dup(the_fileServiceList[i].uri);
-	  if (!(char*)uri) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 	}
 	break;
       }
@@ -438,7 +437,6 @@ resolveArgsDefault(const char* id, unsigned int cycles)
     if (!the_argsDefaultInitRef) return 0;
 
     uri = CORBA::string_alloc(strlen(the_argsDefaultInitRef) + strlen(id) + 2);
-    if (!(char*)uri) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
     strcpy(uri, the_argsDefaultInitRef);
     strcat(uri, "/");
     strcat(uri, id);
@@ -482,7 +480,6 @@ resolveFileDefault(const char* id, unsigned int cycles)
     if (!the_fileDefaultInitRef) return 0;
 
     uri = CORBA::string_alloc(strlen(the_fileDefaultInitRef) + strlen(id) + 2);
-    if (!(char*)uri) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
     strcpy(uri, the_fileDefaultInitRef);
     strcat(uri, "/");
     strcat(uri, id);
@@ -586,7 +583,8 @@ omniInitialReferences::resolve(const char* id, unsigned int cycles)
       !strcmp(id, "SecurityCurrent") ||
       !strcmp(id, "TransactionCurrent"))
     // Resource not found.
-    OMNIORB_THROW(NO_RESOURCES,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_RESOURCES,NO_RESOURCES_InitialRefNotFound,
+		  CORBA::COMPLETED_NO);
 
   // The identifier is not defined.
   if (omniORB::trace(10)) {
@@ -608,7 +606,6 @@ omniInitialReferences::list()
   CORBA::ORB::ObjectIdList* result =
     new CORBA::ORB::ObjectIdList(the_argsServiceList.length() +
 				 the_fileServiceList.length());
-  if (!result) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   CORBA::ORB::ObjectIdList& l = *result;
 
   l.length(the_argsServiceList.length() + the_fileServiceList.length());
@@ -617,11 +614,9 @@ omniInitialReferences::list()
 
   for (i=0,j=0; i < the_argsServiceList.length(); i++,j++) {
     l[j] = CORBA::string_dup(the_argsServiceList[i].id);
-    if (!(char*)l[j]) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   }
   for (i=0; i < the_fileServiceList.length(); i++,j++) {
     l[j] = CORBA::string_dup(the_fileServiceList[i].id);
-    if (!(char*)l[j]) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   }
   return result;
 }
@@ -678,8 +673,6 @@ omniInitialReferences::initialise_bootstrap_agentImpl()
 
   if( !the_bootagentImpl )
     the_bootagentImpl = new CORBA_InitialReferences_i();
-
-  if (!the_bootagentImpl) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 
   ba_lock.unlock();
 }

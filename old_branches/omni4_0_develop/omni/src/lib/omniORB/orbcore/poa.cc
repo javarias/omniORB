@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.12  2001/08/01 10:08:22  dpg1
+  Main thread policy.
+
   Revision 1.2.2.11  2001/07/31 16:10:37  sll
   Added GIOP BiDir support.
 
@@ -361,14 +364,14 @@ PortableServer::POA::InvalidPolicy::operator<<= (cdrStream& _n)
  if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref()
 
 #define CHECK_NOT_DYING()  \
- if( pd_dying )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO)
+ if( pd_dying )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_POANotInitialised, CORBA::COMPLETED_NO)
 
 #define CHECK_NOT_DESTROYED()  \
- if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO)
+ if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_POANotInitialised, CORBA::COMPLETED_NO)
 
 #define CHECK_NOT_NIL_OR_DESTROYED()  \
  if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();  \
- if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO)
+ if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_POANotInitialised, CORBA::COMPLETED_NO)
 
 
 static void transfer_and_check_policies(omniOrbPOA::Policies& pout,
@@ -414,7 +417,7 @@ omniOrbPOA::create_POA(const char* adapter_name,
 {
   CHECK_NOT_NIL();
   if( !adapter_name_is_valid(adapter_name) )
-    OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidPOAName, CORBA::COMPLETED_NO);
 
   // Setup the default policies.
   Policies policy;
@@ -477,7 +480,8 @@ PortableServer::POA_ptr
 omniOrbPOA::find_POA(const char* adapter_name, CORBA::Boolean activate_it)
 {
   CHECK_NOT_NIL_OR_DESTROYED();
-  if( !adapter_name )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+  if( !adapter_name )  OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidPOAName,
+				     CORBA::COMPLETED_NO);
 
   omni_tracedmutex_lock sync(poa_lock);
 
@@ -530,7 +534,9 @@ omniOrbPOA::destroy(CORBA::Boolean etherealize_objects,
   {
     omni_tracedmutex_lock sync(pd_lock);
 
-    if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
+    if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,
+				      OBJECT_NOT_EXIST_POANotInitialised,
+				      CORBA::COMPLETED_NO);
 
     if( pd_dying ) {
       // Need to be able to handle multiple concurrent calls to
@@ -683,14 +689,16 @@ omniOrbPOA::set_servant_manager(PortableServer::ServantManager_ptr imgr)
   if( pd_policy.req_processing != RPP_SERVANT_MANAGER )
     throw WrongPolicy();
   if( CORBA::is_nil(imgr) )
-    OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_POANotInitialised,
+		  CORBA::COMPLETED_NO);
 
   {
     // Check that <imgr> is a local object ...
     omni::internalLock->lock();
     int islocal = imgr->_localId() ? 1 : 0;
     omni::internalLock->unlock();
-    if( !islocal )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+    if( !islocal )  OMNIORB_THROW(BAD_PARAM,BAD_PARAM_LocalObjectExpected,
+				  CORBA::COMPLETED_NO);
   }
 
   omni_tracedmutex_lock sync(pd_lock);

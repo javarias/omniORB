@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/04/18 18:18:09  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.6  2000/12/05 17:43:30  dpg1
   Check for input over-run in string and wstring unmarshalling.
 
@@ -69,16 +72,21 @@ omniCodeSet::NCS_W_16bit::marshalWChar(cdrStream& stream,
 				       omniCodeSet::TCS_W* tcs,
 				       _CORBA_WChar wc)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalWChar(stream, this, wc)) return;
 
 #if (SIZEOF_WCHAR == 4)
   if (wc > 0xffff)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
+		  (CORBA::CompletionStatus)stream.completion());
 #endif
 
   omniCodeSet::UniChar uc = pd_toU[(wc & 0xff00) >> 8][wc & 0x00ff];
-  if (wc && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (wc && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+			       DATA_CONVERSION_BadInput,
+			       (CORBA::CompletionStatus)stream.completion());
 
   tcs->marshalWChar(stream, uc);
 }
@@ -90,11 +98,14 @@ omniCodeSet::NCS_W_16bit::marshalWString(cdrStream&          stream,
 					 _CORBA_ULong        len,
 					 const _CORBA_WChar* ws)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalWString(stream, this, bound, len, ws)) return;
 
   if (bound && len > bound)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
 
   omniCodeSet::UniChar*    us = omniCodeSetUtil::allocU(len+1);
   omniCodeSetUtil::HolderU uh(us);
@@ -104,10 +115,14 @@ omniCodeSet::NCS_W_16bit::marshalWString(cdrStream&          stream,
   for (_CORBA_ULong i=0; i<=len; i++) {
     wc = ws[i];
 #if (SIZEOF_WCHAR == 4)
-    if (wc > 0xffff) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    if (wc > 0xffff) 
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
+		    (CORBA::CompletionStatus)stream.completion());
 #endif
     uc = pd_toU[(wc & 0xff00) >> 8][wc & 0x00ff];
-    if (wc && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (wc && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+				 DATA_CONVERSION_BadInput,
+				 (CORBA::CompletionStatus)stream.completion());
     us[i] = uc;
   }
   tcs->marshalWString(stream, len, us);
@@ -117,14 +132,18 @@ _CORBA_WChar
 omniCodeSet::NCS_W_16bit::unmarshalWChar(cdrStream& stream,
 					 omniCodeSet::TCS_W* tcs)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_WChar wc;
   if (tcs->fastUnmarshalWChar(stream, this, wc)) return wc;
 
   omniCodeSet::UniChar uc = tcs->unmarshalWChar(stream);
 
   wc = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-  if (uc && !wc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (uc && !wc) OMNIORB_THROW(DATA_CONVERSION, 
+			       DATA_CONVERSION_BadInput,
+			       (CORBA::CompletionStatus)stream.completion());
 
   return wc;
 }
@@ -135,7 +154,9 @@ omniCodeSet::NCS_W_16bit::unmarshalWString(cdrStream& stream,
 					   _CORBA_ULong bound,
 					   _CORBA_WChar*& ws)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_ULong len;
   if (tcs->fastUnmarshalWString(stream, this, bound, len, ws)) return len;
 
@@ -154,7 +175,9 @@ omniCodeSet::NCS_W_16bit::unmarshalWString(cdrStream& stream,
   for (_CORBA_ULong i=0; i<=len; i++) {
     uc = us[i];
     wc  = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-    if (uc && !wc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (uc && !wc) OMNIORB_THROW(DATA_CONVERSION, 
+				 DATA_CONVERSION_BadInput,
+				 (CORBA::CompletionStatus)stream.completion());
     ws[i] = wc;
   }
   wh.drop();
@@ -171,7 +194,9 @@ omniCodeSet::TCS_W_16bit::marshalWChar(cdrStream& stream,
 				       omniCodeSet::UniChar uc)
 {
   _CORBA_UShort tc = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-  if (uc && !tc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (uc && !tc) OMNIORB_THROW(DATA_CONVERSION, 
+			       DATA_CONVERSION_BadInput,
+			       (CORBA::CompletionStatus)stream.completion());
 
   // In GIOP 1.2, wchar is encoded as an octet containing a length,
   // followed by that number of octets representing the wchar. The
@@ -213,7 +238,10 @@ omniCodeSet::TCS_W_16bit::marshalWString(cdrStream& stream,
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     tc = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-    if (uc && !tc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (uc && !tc) OMNIORB_THROW(DATA_CONVERSION, 
+				 DATA_CONVERSION_BadInput,
+				 (CORBA::CompletionStatus)stream.completion());
+
     tc >>= stream;
   }
 }
@@ -247,10 +275,13 @@ omniCodeSet::TCS_W_16bit::unmarshalWChar(cdrStream& stream)
     }
     break;
   default:
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidWCharSize,
+		  (CORBA::CompletionStatus)stream.completion());
   }
   omniCodeSet::UniChar uc = pd_toU[(tc & 0xff00) >> 8][tc & 0x00ff];
-  if (tc && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (tc && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+			       DATA_CONVERSION_BadInput,
+			       (CORBA::CompletionStatus)stream.completion());
 
   return uc;
 }
@@ -263,15 +294,20 @@ omniCodeSet::TCS_W_16bit::unmarshalWString(cdrStream& stream,
   _CORBA_ULong mlen; mlen <<= stream;
 
   if (mlen % 2)
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidWCharSize,
+		  (CORBA::CompletionStatus)stream.completion());
 
   _CORBA_ULong len = mlen / 2; // Note no terminating null in marshalled form
 
   if (bound && len > bound)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
+		  
 
   if (!stream.checkInputOverrun(1, mlen))
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
+
 
   us = omniCodeSetUtil::allocU(len + 1);
   omniCodeSetUtil::HolderU uh(us);
@@ -283,7 +319,9 @@ omniCodeSet::TCS_W_16bit::unmarshalWString(cdrStream& stream,
   for (i=0; i < len; i++) {
     tc <<= stream;
     uc = pd_toU[(tc & 0xff00) >> 16][tc & 0x00ff];
-    if (tc && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (tc && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+				 DATA_CONVERSION_BadInput,
+				 (CORBA::CompletionStatus)stream.completion());
     us[i] = uc;
   }
   us[i] = 0; // Null terminator
@@ -301,7 +339,8 @@ omniCodeSet::TCS_W_16bit::fastMarshalWChar(cdrStream&          stream,
   if (ncs->id() == id()) { // Null transformation
 #if (SIZEOF_WCHAR == 4)
     if (wc > 0xffff)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
+		    (CORBA::CompletionStatus)stream.completion());
 #endif
 
     stream.marshalOctet(2);
@@ -333,7 +372,8 @@ omniCodeSet::TCS_W_16bit::fastMarshalWString(cdrStream&          stream,
   if (ncs->id() == id()) { // Null transformation
 
     if (bound && len > bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     _CORBA_ULong mlen = len * 2; mlen >>= stream;
 
@@ -392,7 +432,7 @@ omniCodeSet::TCS_W_16bit::fastUnmarshalWChar(cdrStream&          stream,
       }
       break;
     default:
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL, MARSHAL_InvalidWCharSize, CORBA::COMPLETED_NO);
     }
     return 1;
   }
@@ -411,15 +451,18 @@ omniCodeSet::TCS_W_16bit::fastUnmarshalWString(cdrStream&          stream,
     _CORBA_ULong mlen; mlen <<= stream;
 
     if (mlen % 2)
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_InvalidWCharSize,
+		    (CORBA::CompletionStatus)stream.completion());
 
     len = mlen / 2; // Note no terminating null in marshalled form
 
     if (bound && len > bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     ws = omniCodeSetUtil::allocW(len + 1);
     omniCodeSetUtil::HolderW wh(ws);

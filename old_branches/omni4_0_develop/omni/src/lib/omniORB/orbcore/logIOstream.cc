@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.8.2.3  2001/05/11 14:25:53  sll
+  Added operator for omniORB::logger to report system exception status and
+  minor code.
+
   Revision 1.8.2.2  2000/09/27 17:35:49  sll
   Updated include/omniORB3 to include/omniORB4
 
@@ -335,9 +339,14 @@ omniORB::logger::operator<<(const omniORB::logger::exceptionStatus& ex)
     *this << "MAYBE,";
     break;
   }
-  reserve(30);
-  sprintf(pd_p, "0x%08x", (int)ex.minor);
-  pd_p += strlen(pd_p);
+  if (ex.minor_string) {
+    *this << ex.minor_string;
+  }
+  else {
+    reserve(30);
+    sprintf(pd_p, "0x%08x", (int)ex.minor);
+    pd_p += strlen(pd_p);
+  }
   return *this;
 }
 

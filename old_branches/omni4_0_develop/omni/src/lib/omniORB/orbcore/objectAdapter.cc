@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.8  2001/07/31 16:34:53  sll
+ New function listMyEndpoints(). Remove explicit instantiation of
+ giopServer, do it via interceptor.
+
  Revision 1.2.2.7  2001/06/11 18:01:18  sll
  Fixed silly mistake in debugging message.
 
@@ -200,7 +204,8 @@ omniObjAdapter::initialise()
 		<< (const char*)(*i)->uri
 		<< "\n";
 	  }
-	  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+	  OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+			CORBA::COMPLETED_NO);
 	}
 	oa_endpoints.push_back(address);
 	if ( !(*i)->no_listen ) {
@@ -226,7 +231,8 @@ omniObjAdapter::initialise()
 	      << (const char*)estr
 	      << "\n";
 	}
-	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+		      CORBA::COMPLETED_NO);
       }
       oa_endpoints.push_back(address);
       myendpoints.push_back(address);
@@ -241,7 +247,8 @@ omniObjAdapter::initialise()
     throw;
   }
   catch (...) {
-    OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_POANotInitialised,
+		  CORBA::COMPLETED_NO);
   }
 
   initialised = 1;
@@ -417,7 +424,8 @@ omniObjAdapter::defaultLoopBack()
   if (!oa_loopback) {
     // This is tough!!! Haven't got a loop back!
     // May be the object adaptor has been destroyed!!!
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+		  CORBA::COMPLETED_NO);
   }
   return oa_loopback;
 }

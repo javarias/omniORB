@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/07/31 16:16:22  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.3  2001/07/26 16:37:21  dpg1
   Make sure static initialisers always run.
 
@@ -192,19 +195,22 @@ public:
 	omniORB::logger log;
 	log << "Error: SSL CA certificate file is not set "
 	    << "or cannot be found\n";
-	OMNIORB_THROW(INITIALIZE,TRANSPORT_ERROR,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+		      CORBA::COMPLETED_NO);
       }
       
       if (!sslContext::key_file || stat(sslContext::key_file,&sb) < 0) {
 	omniORB::logger log;
 	log << "Error: SSL private key and certificate file is not set "
 	    << "or cannot be found\n";
-	OMNIORB_THROW(INITIALIZE,TRANSPORT_ERROR,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+		      CORBA::COMPLETED_NO);
       }
       if (!sslContext::key_file_password) {
 	omniORB::logger log;
 	log << "Error: SSL password for private key and certificate file is not set\n";
-	OMNIORB_THROW(INITIALIZE,TRANSPORT_ERROR,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,
+		      CORBA::COMPLETED_NO);
       }
 
       // Create the default singleton

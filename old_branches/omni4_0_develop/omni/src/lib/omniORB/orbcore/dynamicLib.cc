@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2001/04/18 18:18:08  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.2  2000/09/27 17:59:38  sll
   Updated to use the new cdrStream abstraction.
 
@@ -95,12 +98,13 @@ deinit()
 }
 
 static void
-marshal_context(cdrStream&, CORBA::Context_ptr cxtx,
+marshal_context(cdrStream& s, CORBA::Context_ptr cxtx,
 		const char*const* which, int how_many)
 {
   omniORB::logs(1, "Attempt to marshal context, but omniDynamic library"
 		" is not linked!");
-  OMNIORB_THROW(NO_IMPLEMENT,0, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(NO_IMPLEMENT,NO_IMPLEMENT_Unsupported, 
+		(CORBA::CompletionStatus)s.completion());
 }
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/07/31 16:28:01  sll
+  Added GIOP BiDir support.
+
   Revision 1.1.4.2  2001/05/11 14:30:56  sll
   first_use status of the strand is now in use.
 
@@ -247,6 +250,7 @@ GIOP_C::notifyCommFailure(CORBA::ULong& minor,
     minor = COMM_FAILURE_UnMarshalResults;
     break;
   default:
+    minor = TRANSIENT_ConnectionClosed;
     break;
   }
 }

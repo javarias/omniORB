@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/08/01 10:08:22  dpg1
+  Main thread policy.
+
   Revision 1.2.2.5  2001/07/31 16:10:38  sll
   Added GIOP BiDir support.
 
@@ -88,6 +91,7 @@
 #include <sys/time.h>
 #endif
 
+OMNI_USING_NAMESPACE(omni)
 
 // Globals defined in class omniORB
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
@@ -329,7 +333,7 @@ omniORB::objectKey
 omniORB::octetSequenceToKey(const omniORB::seqOctets& seq)
 {
   if (seq.length() != sizeof(omniORB::objectKey)) {
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong, CORBA::COMPLETED_NO);
   }
   omniORB::objectKey result;
   CORBA::Octet* p = (CORBA::Octet*) &result;
@@ -344,7 +348,7 @@ omniORB::setMainThread()
 {
   omni_thread* self = omni_thread::self();
   if (!self)
-    OMNIORB_THROW(INITIALIZE, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE, INITIALIZE_NotOmniThread, CORBA::COMPLETED_NO);
 
   omni::mainThreadId = self->id();
 }

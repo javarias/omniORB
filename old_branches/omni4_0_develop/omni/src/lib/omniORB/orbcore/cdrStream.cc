@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/07/31 17:42:11  sll
+  Cleanup String_var usage.
+
   Revision 1.1.2.5  2001/07/31 16:32:02  sll
   Added virtual function is_giopStream to check if a cdrStream is a giopStream.
   That is, a poor man's substitute for dynamic_cast.
@@ -498,10 +501,13 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 void
 omniORB::nativeCharCodeSet(const char* name)
 {
-  if (cdrStream::ncs_c) OMNIORB_THROW(BAD_INV_ORDER, 0, CORBA::COMPLETED_NO);
+  if (cdrStream::ncs_c)
+    OMNIORB_THROW(BAD_INV_ORDER, BAD_INV_ORDER_CodeSetNotKnownYet,
+		  CORBA::COMPLETED_NO);
 
   omniCodeSet::NCS_C* ncs = omniCodeSet::getNCS_C(name);
-  if (!ncs) OMNIORB_THROW(NO_RESOURCES, 0, CORBA::COMPLETED_NO);
+  if (!ncs) OMNIORB_THROW(NO_RESOURCES, NO_RESOURCES_CodeSetNotSupported, 
+			  CORBA::COMPLETED_NO);
 
   cdrStream::ncs_c = ncs;
 }
@@ -509,10 +515,13 @@ omniORB::nativeCharCodeSet(const char* name)
 void
 omniORB::nativeWCharCodeSet(const char* name)
 {
-  if (cdrStream::ncs_w) OMNIORB_THROW(BAD_INV_ORDER, 0, CORBA::COMPLETED_NO);
+  if (cdrStream::ncs_w) 
+    OMNIORB_THROW(BAD_INV_ORDER, BAD_INV_ORDER_CodeSetNotKnownYet,
+		  CORBA::COMPLETED_NO);
 
   omniCodeSet::NCS_W* ncs = omniCodeSet::getNCS_W(name);
-  if (!ncs) OMNIORB_THROW(NO_RESOURCES, 0, CORBA::COMPLETED_NO);
+  if (!ncs) OMNIORB_THROW(NO_RESOURCES, NO_RESOURCES_CodeSetNotSupported, 
+			  CORBA::COMPLETED_NO);
 
   cdrStream::ncs_w = ncs;
 }
@@ -521,11 +530,14 @@ void
 omniORB::anyCharCodeSet(const char* name)
 {
   if (cdrMemoryStream::default_tcs_c)
-    OMNIORB_THROW(BAD_INV_ORDER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER, BAD_INV_ORDER_CodeSetNotKnownYet,
+		  CORBA::COMPLETED_NO);
+
 
   GIOP::Version ver = giopStreamImpl::maxVersion()->version();
   omniCodeSet::TCS_C* tcs = omniCodeSet::getTCS_C(name, ver);
-  if (!tcs) OMNIORB_THROW(NO_RESOURCES, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(NO_RESOURCES, NO_RESOURCES_CodeSetNotSupported, 
+			  CORBA::COMPLETED_NO);
 
   cdrMemoryStream::default_tcs_c = tcs;
 }
@@ -534,11 +546,13 @@ void
 omniORB::anyWCharCodeSet(const char* name)
 {
   if (cdrMemoryStream::default_tcs_w)
-    OMNIORB_THROW(BAD_INV_ORDER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER, BAD_INV_ORDER_CodeSetNotKnownYet,
+		  CORBA::COMPLETED_NO);
 
   GIOP::Version ver = giopStreamImpl::maxVersion()->version();
   omniCodeSet::TCS_W* tcs = omniCodeSet::getTCS_W(name, ver);
-  if (!tcs) OMNIORB_THROW(NO_RESOURCES, 0, CORBA::COMPLETED_NO);
+  if (!tcs)  OMNIORB_THROW(NO_RESOURCES, NO_RESOURCES_CodeSetNotSupported, 
+			  CORBA::COMPLETED_NO);
 
   cdrMemoryStream::default_tcs_w = tcs;
 }

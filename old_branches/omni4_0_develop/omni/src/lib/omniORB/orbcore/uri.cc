@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.9  2001/07/31 17:42:11  sll
+// Cleanup String_var usage.
+//
 // Revision 1.2.2.8  2001/06/11 17:53:22  sll
 //  The omniIOR ctor used by genior and corbaloc now has the option to
 //  select whether to call interceptors and what set of interceptors to call.
@@ -112,7 +115,7 @@ char*
 omniURI::objectToString(CORBA::Object_ptr obj)
 {
   if (obj && obj->_NP_is_pseudo()) {
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
   }
 
   omniObjRef* objref = obj ? obj->_PR_getobj() : 0;
@@ -178,7 +181,6 @@ omniURI::addURIHandler(URIHandler* handler)
   omni_tracedmutex_lock sync(handler_lock);
 
   URIHandlerList* entry = new URIHandlerList(handler);
-  if (!entry) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 
   if (the_URIHandlerList) {
     the_URIHandlerTail->next = entry;
@@ -233,7 +235,7 @@ iorURIHandler::toObject(const char* sior, unsigned int)
 {
   omniObjRef* objref = omniObjRef::_fromString(sior);
   if (!objref)
-    OMNIORB_THROW(INV_OBJREF, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR, CORBA::COMPLETED_NO);
 
   return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
@@ -473,7 +475,6 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
 
   host_ = CORBA::string_alloc(1 + p - c);
   char* h = (char*)host_;
-  if (!h) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 
   for (; c != p; c++, h++) *h = *c;
   *h = '\0';
@@ -517,7 +518,6 @@ unescapeKey(const char*& c, unsigned int& key_size)
   for (p=c; *p && *p != '#'; p++);
 
   char* key = CORBA::string_alloc(1 + p - c);
-  if (!key) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   char* k   = key;
   key_size  = 0;
 
@@ -562,7 +562,9 @@ Parsed::Parsed(const char*& c, const char* def_key)
   addr_count_ = 1;
 
   addr = ObjAddr::parse(c);
-  if (!addr) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
+  if (!addr) 
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
+
   if (addr->kind() == ObjAddr::rir) is_rir_ = 1;
   addrList_.append(addr);
 
@@ -570,7 +572,8 @@ Parsed::Parsed(const char*& c, const char* def_key)
     c++;
     addr_count_++;
     addr = ObjAddr::parse(c);
-    if (!addr) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
+    if (!addr) 
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
     if (addr->kind() == ObjAddr::rir) is_rir_ = 1;
     addrList_.append(addr);
   }
@@ -796,20 +799,19 @@ omniURI::stringToName(const char* sname)
 {
   // *** This is ugly...
 
-  if (!sname)         OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+  if (!sname)         OMNIORB_THROW(BAD_PARAM,BAD_PARAM_NullStringUnexpected,
+				    CORBA::COMPLETED_NO);
   if (*sname == '\0') throw CosNaming::NamingContext::InvalidName();
 
   unsigned int      i, j;
   unsigned int      component = 0;
   unsigned int      len       = strlen(sname);
   char*             bufp      = CORBA::string_alloc(len+1);
-  if (!bufp) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   CORBA::String_var buf(bufp);
 
   enum { s_id, s_kind } state = s_id;
 
   CosNaming::Name*    namep = new CosNaming::Name;
-  if (!namep) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
   CosNaming::Name_var name(namep);
 
   name->length(1);

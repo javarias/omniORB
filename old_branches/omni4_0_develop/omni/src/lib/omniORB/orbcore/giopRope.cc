@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/08/01 18:12:54  sll
+  In filterAndSortAddressList, use_bidir could be left uninitialised.
+
   Revision 1.1.4.7  2001/07/31 16:24:23  sll
   Moved filtering and sorting of available addresses into a separate
   function. Make acquireClient, decrRefCount and notifyCommFailure virtual.
@@ -564,10 +567,21 @@ giopRope::filterAndSortAddressList(const giopAddressList& addrlist,
     // XXX in future, we will be more selective as to which addresses will
     // use bidirectional.
     use_bidir = 1;
+    // XXX A temporary, ugly and local hack to make sure that we do not
+    //     use bidir to contact our naming service even when 
+    //     offerBiDirectionalGIOP is set. This is done so that our testsuite
+    //     works when using the naming service to pass the IOR. (Our code
+    //     resolves the IOR before initialising a POA.)
+    if (!addrlist.empty() && 
+	strcmp(addrlist[0]->address(),"giop:tcp:158.124.64.61:5009") == 0) {
+      use_bidir = 0;
+    }
   }
   else {
     use_bidir = 0;
   }
+
+
 }
 
 OMNI_NAMESPACE_END(omni)

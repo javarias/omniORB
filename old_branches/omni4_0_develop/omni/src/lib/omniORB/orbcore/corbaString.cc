@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.6  2000/12/05 17:39:31  dpg1
+  New cdrStream functions to marshal and unmarshal raw strings.
+
   Revision 1.17.2.5  2000/11/22 14:37:59  dpg1
   Code set marshalling functions now take a string length argument.
 
@@ -122,6 +125,7 @@
 
 const char*const _CORBA_String_helper::empty_string = "";
 
+OMNI_USING_NAMESPACE(omni)
 
 char*
 CORBA::string_alloc(CORBA::ULong len)
@@ -163,13 +167,15 @@ cdrStream::unmarshalRawString() {
   _CORBA_ULong len; len <<= *this;
 
   if (!checkInputOverrun(1, len))
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong,
+		  (CORBA::CompletionStatus)completion());
 
   char* s = _CORBA_String_helper::alloc(len - 1);
   get_octet_array((_CORBA_Octet*)s, len);
 
   if (s[len-1] != '\0')
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
+		  (CORBA::CompletionStatus)completion());
 
   return s;
 }
@@ -218,7 +224,8 @@ _CORBA_Sequence_String::operator <<= (cdrStream& s)
   slen <<= s;
 
   if (!s.checkInputOverrun(1,slen) || (pd_bounded && slen > pd_max)) {
-    OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong,
+		  (CORBA::CompletionStatus)s.completion());
   }
 
   if (!pd_rel && slen <= pd_max) {
@@ -238,7 +245,7 @@ _CORBA_Sequence_String::operator <<= (cdrStream& s)
   }
 }
 
-
+#if 0
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -253,7 +260,7 @@ unmarshal_zero_length_string()
 		   << "       CORBA::MARSHAL is thrown.\n";
       omniORB::log.flush();
     }
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, CORBA::COMPLETED_NO);
   }
   else {
     if (omniORB::trace(1)) {
@@ -263,3 +270,4 @@ unmarshal_zero_length_string()
     }
   }
 }
+#endif

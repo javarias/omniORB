@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/05/31 16:18:14  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.2.2.5  2001/05/29 17:03:52  dpg1
   In process identity.
 
@@ -167,7 +171,7 @@ omniServant::_dispatch(omniCallHandle& handle)
     omniORB::logs(2,
      "WARNING -- received GIOP request \'_implementation\'.\n"
      " This operation is not supported.  CORBA::NO_IMPLEMENT was raised.");
-    OMNIORB_THROW(NO_IMPLEMENT,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT,NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
   }
   return 0;
 }

@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.20.2.5  2001/05/31 16:18:12  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.20.2.4  2001/04/18 18:18:10  sll
   Big checkin with the brand new internal APIs.
 
@@ -109,6 +113,7 @@
 #pragma hdrstop
 #endif
 
+#include <omniORB4/minorCode.h>
 #include <omniORB4/omniObjRef.h>
 #include <objectAdapter.h>
 #include <anonObject.h>
@@ -146,7 +151,9 @@ CORBA::Object::_is_a(const char* repoId)
 CORBA::Boolean
 CORBA::Object::_non_existent()
 {
-  if ( !_PR_is_valid(this) )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+  if ( !_PR_is_valid(this) )  OMNIORB_THROW(BAD_PARAM,
+					    BAD_PARAM_InvalidObjectRef,
+					    CORBA::COMPLETED_NO);
 
   if( _NP_is_nil()    )  return 1;
   if( _NP_is_pseudo() )  return 0;
@@ -163,10 +170,16 @@ CORBA::Object::_non_existent()
 CORBA::Boolean
 CORBA::Object::_is_equivalent(CORBA::Object_ptr other_object)
 {
-  if ( !_PR_is_valid(this) )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+  if ( !_PR_is_valid(this) )  OMNIORB_THROW(BAD_PARAM,
+					    BAD_PARAM_InvalidObjectRef,
+					    CORBA::COMPLETED_NO);
+
 
   if ( !_PR_is_valid(other_object) ) 
-    OMNIORB_THROW(OBJECT_NOT_EXIST,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,
+		  BAD_PARAM_InvalidObjectRef,
+		  CORBA::COMPLETED_NO);
+
 
   if( other_object == this )  return 1;
 
@@ -255,7 +268,8 @@ void
 CORBA::
 Object::_marshalObjRef(CORBA::Object_ptr obj, cdrStream& s)
 {
-  if (obj->_NP_is_pseudo()) OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_NO);
+  if (obj->_NP_is_pseudo()) OMNIORB_THROW(MARSHAL,MARSHAL_LocalObject,
+					  (CORBA::CompletionStatus)s.completion());
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

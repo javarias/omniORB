@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.6  2001/06/07 16:24:11  dpg1
+  PortableServer::Current support.
+
   Revision 1.2.2.5  2001/05/31 16:18:15  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -262,7 +265,8 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   PortableServer::POA_var poa = this->_default_POA();
 
   if( CORBA::is_nil(poa) )
-    OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_POANotInitialised,
+		  CORBA::COMPLETED_NO);
 
   return ((omniOrbPOA*)(PortableServer::POA_ptr) poa)->
     servant__this(this, repoId);
@@ -292,7 +296,7 @@ PortableServer::ServantBase::_do_get_interface()
   catch (...) {
   }
   if( CORBA::is_nil(repository) )
-    OMNIORB_THROW(INTF_REPOS,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INTF_REPOS,INTF_REPOS_NotAvailable, CORBA::COMPLETED_NO);
 
   // Make a call to the interface repository.
   omniStdCallDesc::_cCORBA_mObject_i_cstring
@@ -367,7 +371,7 @@ PortableServer::ObjectId_to_string(const ObjectId& id)
   for( int i = 0; i < len; i++ )
     if( (char) (s[i] = id[i]) == '\0' ) {
       delete[] s;
-      OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectId, CORBA::COMPLETED_NO);
     }
 
   s[len] = '\0';

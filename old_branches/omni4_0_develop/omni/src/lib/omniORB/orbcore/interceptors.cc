@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/04/18 18:18:08  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.2  2000/11/15 17:23:52  sll
   Added interceptors along the giop request processing path.
 
@@ -180,7 +183,8 @@ OMNI_USING_NAMESPACE(omni)
 omniInterceptors*
 omniORB::getInterceptors() {
   if (!initialiser.pd_interceptors) 
-    OMNIORB_THROW(INITIALIZE,0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
+		  CORBA::COMPLETED_NO);
 
   return initialiser.pd_interceptors;
 }

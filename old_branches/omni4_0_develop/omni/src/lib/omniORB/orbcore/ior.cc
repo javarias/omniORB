@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.13  2001/07/31 16:27:59  sll
+  Added GIOP BiDir support.
+
   Revision 1.10.2.12  2001/06/13 20:13:15  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -185,13 +188,15 @@ IOP::IOR::unmarshaltype_id(cdrStream& s) {
   idlen <<= s;
 
   if (!s.checkInputOverrun(1,idlen))
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong,
+		  (CORBA::CompletionStatus)s.completion());
 
   switch (idlen) {
 
   case 0:
 #ifdef NO_SLOPPY_NIL_REFERENCE
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
+		  (CORBA::CompletionStatus)s.completion());
 #else
     // According to the CORBA specification 2.0 section 10.6.2:
     //   Null object references are indicated by an empty set of
@@ -212,7 +217,8 @@ IOP::IOR::unmarshaltype_id(cdrStream& s) {
     id = CORBA::string_alloc(1);
     ((char*)id)[0] = s.unmarshalOctet();
     if (((char*)id)[0] != '\0')
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
+		    (CORBA::CompletionStatus)s.completion());
     idlen = 0;
     break;
 
@@ -220,7 +226,8 @@ IOP::IOR::unmarshaltype_id(cdrStream& s) {
     id = CORBA::string_alloc(idlen);
     s.get_octet_array((CORBA::Octet*)((const char*)id), idlen);
     if( ((char*)id)[idlen - 1] != '\0' )
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
+		    (CORBA::CompletionStatus)s.completion());
     break;
   }
 
@@ -344,7 +351,7 @@ IIOP::unmarshalProfile(const IOP::TaggedProfile& profile,
   body.version.minor = s.unmarshalOctet();
 
   if (body.version.major != 1)
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 
   body.address.host = s.unmarshalRawString();
   body.address.port <<= s;
@@ -355,7 +362,7 @@ IIOP::unmarshalProfile(const IOP::TaggedProfile& profile,
     total <<= s;
     if (total) {
       if (!s.checkInputOverrun(1,total))
-	OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
       body.components.length(total);
       for (CORBA::ULong index=0; index<total; index++) {
 	body.components[index] <<= s;
@@ -364,7 +371,7 @@ IIOP::unmarshalProfile(const IOP::TaggedProfile& profile,
   }
   // Check if the profile body ends here.
   if (s.checkInputOverrun(1,1))
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 }
 
 void
@@ -381,7 +388,7 @@ IIOP::unmarshalMultiComponentProfile(const IOP::TaggedProfile& profile,
   total <<= s;
   if (total) {
     if (!s.checkInputOverrun(1,total))
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 
     body.length(total);
     for (CORBA::ULong index = 0; index<total; index++) {
@@ -390,7 +397,7 @@ IIOP::unmarshalMultiComponentProfile(const IOP::TaggedProfile& profile,
   }
   // Check if the profile body ends here.
   if (s.checkInputOverrun(1,1))
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 }
 
 
@@ -960,7 +967,7 @@ CORBA::Boolean insertSupportedComponents(omniInterceptors::encodeIOR_T::info_T& 
 
   if (strlen(info.iiop.address.host) == 0) {
     if (strlen(my_address.host) == 0) {
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
     }
     info.iiop.address = my_address;
   }

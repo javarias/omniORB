@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/05/04 11:24:46  sll
+  Wrong bound check in all sequence array templates.
+
   Revision 1.1.2.5  2000/11/20 18:56:39  sll
   Sequence templates were broken by the previous checkin. They are now fixed.
 
@@ -87,7 +90,7 @@ _CORBA_Unbounded_Sequence<T>::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -114,7 +117,7 @@ _CORBA_Bounded_Sequence<T,max>::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (l > max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -150,7 +153,7 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(elmSize,l)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   Base_T_seq::length(l);
@@ -212,7 +215,7 @@ _CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator<<
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(elmSize,l)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   Base_T_seq::length(l);
@@ -266,7 +269,7 @@ _CORBA_Sequence_Char::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -293,7 +296,7 @@ _CORBA_Sequence_Boolean::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -320,7 +323,7 @@ _CORBA_Sequence_Octet::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -347,7 +350,7 @@ _CORBA_Sequence_WChar::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -378,7 +381,7 @@ _CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (cdrStrea
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -413,7 +416,7 @@ _CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator<<= (cdrStr
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (l > max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -446,7 +449,7 @@ _CORBA_Sequence_Array_Char<T,T_slice,dimension>::operator<<=(cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -475,7 +478,7 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator<<=(cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -500,7 +503,7 @@ _CORBA_Sequence_Array_Octet<T,T_slice,dimension>::operator<<=(cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -529,7 +532,7 @@ _CORBA_Sequence_Array_WChar<T,T_slice,dimension>::operator<<=(cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);
@@ -569,7 +572,7 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(elmSize,l*dimension)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   Base_T_seq::length(l);
@@ -634,7 +637,7 @@ _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmS
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(elmSize,l*dimension)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   Base_T_seq::length(l);
@@ -689,7 +692,7 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (cdrStream& s)
   _CORBA_ULong l;
   l <<= s;
   if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
-    _CORBA_marshal_error();
+    _CORBA_marshal_sequence_range_check_error(s);
     // never reach here
   }
   length(l);

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/06/13 20:12:33  sll
+  Minor updates to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.7  2001/04/18 18:18:09  sll
   Big checkin with the brand new internal APIs.
 
@@ -70,11 +73,17 @@ omniCodeSet::NCS_C_8bit::marshalChar(cdrStream& stream,
 				     omniCodeSet::TCS_C* tcs,
 				     _CORBA_Char c)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalChar(stream, this, c)) return;
 
   omniCodeSet::UniChar uc = pd_toU[c];
-  if (c && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (c && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+			      DATA_CONVERSION_BadInput,
+			      (CORBA::CompletionStatus)stream.completion());
+
 
   tcs->marshalChar(stream, uc);
 }
@@ -86,11 +95,16 @@ omniCodeSet::NCS_C_8bit::marshalString(cdrStream&          stream,
 				       _CORBA_ULong        len,
 				       const char*         s)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalString(stream, this, bound, len, s)) return;
 
   if (bound && len > bound)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
+
 
   omniCodeSet::UniChar*    us = omniCodeSetUtil::allocU(len+1);
   omniCodeSetUtil::HolderU uh(us);
@@ -98,7 +112,9 @@ omniCodeSet::NCS_C_8bit::marshalString(cdrStream&          stream,
 
   for (_CORBA_ULong i=0; i<=len; i++) {
     uc = pd_toU[(_CORBA_Char)(s[i])];
-    if (s[i] && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (s[i] && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+				   DATA_CONVERSION_BadInput,
+				   (CORBA::CompletionStatus)stream.completion());
     us[i] = uc;
   }
   tcs->marshalString(stream, len, us);
@@ -108,14 +124,19 @@ _CORBA_Char
 omniCodeSet::NCS_C_8bit::unmarshalChar(cdrStream& stream,
 				       omniCodeSet::TCS_C* tcs)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_Char c;
   if (tcs->fastUnmarshalChar(stream, this, c)) return c;
 
   omniCodeSet::UniChar uc = tcs->unmarshalChar(stream);
 
   c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-  if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 
+			      DATA_CONVERSION_BadInput,
+			      (CORBA::CompletionStatus)stream.completion());
 
   return c;
 }
@@ -125,7 +146,10 @@ omniCodeSet::NCS_C_8bit::unmarshalString(cdrStream& stream,
 					 omniCodeSet::TCS_C* tcs,
 					 _CORBA_ULong bound, char*& s)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_ULong len;
   if (tcs->fastUnmarshalString(stream, this, bound, len, s)) return len;
 
@@ -144,7 +168,9 @@ omniCodeSet::NCS_C_8bit::unmarshalString(cdrStream& stream,
   for (_CORBA_ULong i=0; i<=len; i++) {
     uc = us[i];
     c  = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-    if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 
+				DATA_CONVERSION_BadInput,
+				(CORBA::CompletionStatus)stream.completion());
     s[i] = c;
   }
   h.drop();
@@ -161,7 +187,9 @@ omniCodeSet::TCS_C_8bit::marshalChar(cdrStream& stream,
 				     omniCodeSet::UniChar uc)
 {
   _CORBA_Char c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-  if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+  if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 
+			      DATA_CONVERSION_BadInput,
+			      (CORBA::CompletionStatus)stream.completion());
 
   stream.marshalOctet(c);
 }
@@ -180,7 +208,9 @@ omniCodeSet::TCS_C_8bit::marshalString(cdrStream& stream,
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-    if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (uc && !c)  OMNIORB_THROW(DATA_CONVERSION, 
+				DATA_CONVERSION_BadInput,
+				(CORBA::CompletionStatus)stream.completion());
     stream.marshalOctet(c);
   }
 }
@@ -192,8 +222,9 @@ omniCodeSet::TCS_C_8bit::unmarshalChar(cdrStream& stream)
   c = stream.unmarshalOctet();
 
   omniCodeSet::UniChar uc = pd_toU[c];
-  if (c && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
-
+  if (c && !uc)  OMNIORB_THROW(DATA_CONVERSION, 
+			       DATA_CONVERSION_BadInput,
+			       (CORBA::CompletionStatus)stream.completion());
   return uc;
 }
 
@@ -204,14 +235,31 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
 {
   _CORBA_ULong mlen; mlen <<= stream;  // Includes terminating null
 
-  if (mlen == 0) // Zero length is invalid. *** Maybe treat as zero length?
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+  if (mlen == 0) {
+    if (omniORB::strictIIOP) {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Error: received an invalid zero length string.\n";
+      }
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		    (CORBA::CompletionStatus)stream.completion());
+    }
+    else {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Warning: received an invalid zero length string."
+	  << " Substituted with a proper empty string.\n";
+      }
+    }
+  }
 
   if (bound && mlen >= bound)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
 
   if (!stream.checkInputOverrun(1, mlen))
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
 
   us = omniCodeSetUtil::allocU(mlen);
   omniCodeSetUtil::HolderU uh(us);
@@ -222,11 +270,14 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
   for (_CORBA_ULong i=0; i < mlen; i++) {
     c = stream.unmarshalOctet();
     uc = pd_toU[c];
-    if (c && !uc) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    if (c && !uc) OMNIORB_THROW(DATA_CONVERSION, 
+				DATA_CONVERSION_BadInput,
+				(CORBA::CompletionStatus)stream.completion());
     us[i] = uc;
   }
   if (uc != 0) // String must end with null
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		  (CORBA::CompletionStatus)stream.completion());
 
   uh.drop();
   return mlen - 1; // Length without terminating null
@@ -253,7 +304,8 @@ omniCodeSet::TCS_C_8bit::fastMarshalString(cdrStream&          stream,
 {
   if (ncs->id() == id()) { // Null transformation
     if (bound && len > bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     len++;
     len >>= stream;
@@ -285,20 +337,40 @@ omniCodeSet::TCS_C_8bit::fastUnmarshalString(cdrStream&          stream,
   if (ncs->id() == id()) { // Null transformation
     _CORBA_ULong mlen; mlen <<= stream;
 
-    if (mlen == 0) // Zero length is invalid
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    if (mlen == 0) {
+      if (omniORB::strictIIOP) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Error: received an invalid zero length string.\n";
+	}
+	OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		      (CORBA::CompletionStatus)stream.completion());
+      }
+      else {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Warning: received an invalid zero length string."
+	    << " Substituted with a proper empty string.\n";
+	}
+      }
+    }
 
     if (bound && mlen >= bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     s = omniCodeSetUtil::allocC(mlen);
     omniCodeSetUtil::HolderC h(s);
 
     stream.get_octet_array((_CORBA_Octet*)s, mlen);
-    if (s[mlen-1] != '\0') OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    if (s[mlen-1] != '\0') 
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		    (CORBA::CompletionStatus)stream.completion());
+
 
     h.drop();
     len = mlen - 1; // Return length without terminating null

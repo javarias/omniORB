@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.8  2001/05/09 17:02:25  sll
+  Throw omniORB::LOCATION_FORWARD with the right permanent flag.
+
   Revision 1.2.2.7  2001/04/18 18:18:04  sll
   Big checkin with the brand new internal APIs.
 
@@ -241,7 +244,8 @@ omniRemoteIdentity::locateRequest()
 
   case GIOP::UNKNOWN_OBJECT:
     iop_client->RequestCompleted();
-    OMNIORB_THROW(OBJECT_NOT_EXIST,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch,
+		  CORBA::COMPLETED_NO);
     break;        // dummy break
 
   case GIOP::OBJECT_FORWARD:

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/07/26 16:37:20  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.8  2001/04/18 18:18:09  sll
   Big checkin with the brand new internal APIs.
 
@@ -220,20 +223,29 @@ void
 NCS_C_UTF_8::marshalChar(cdrStream& stream,
 			 omniCodeSet::TCS_C* tcs, _CORBA_Char c)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalChar(stream, this, c)) return;
 
   if ((c & 0x80) == 0)
     tcs->marshalChar(stream, (omniCodeSet::UniChar)c);
   else
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(DATA_CONVERSION, 
+		  DATA_CONVERSION_BadInput,
+		  (CORBA::CompletionStatus)stream.completion());
+
 }
 
 void
 NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 			   _CORBA_ULong bound, _CORBA_ULong len, const char* s)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   if (tcs->fastMarshalString(stream, this, bound, len, s)) return;
 
   omniCodeSetUtil::BufferU ub;
@@ -251,9 +263,13 @@ NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
     // processors. Cases 3, 2 and 1 should drop through with no
     // branching code.
     switch (bytes) {
-    case 6: OMNIORB_THROW(BAD_PARAM,       0, CORBA::COMPLETED_MAYBE);
+    case 6: OMNIORB_THROW(DATA_CONVERSION, 
+			  DATA_CONVERSION_BadInput,
+			  (CORBA::CompletionStatus)stream.completion());
     case 5:
-    case 4: OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    case 4: OMNIORB_THROW(DATA_CONVERSION, 
+			  DATA_CONVERSION_BadInput,
+			  (CORBA::CompletionStatus)stream.completion());
     case 3: c = *s++; lc = (lc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
     case 2: c = *s++; lc = (lc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
     case 1: c = *s++; lc = (lc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
@@ -273,7 +289,9 @@ NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
     // to become available.
     if (error) {
       // At least one extension byte was not of the form 10xxxxxx
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(DATA_CONVERSION, 
+		    DATA_CONVERSION_BadInput,
+		    (CORBA::CompletionStatus)stream.completion());
     }
   }
   // Null terminator
@@ -285,7 +303,10 @@ NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 _CORBA_Char
 NCS_C_UTF_8::unmarshalChar(cdrStream& stream, omniCodeSet::TCS_C* tcs)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_Char c;
   if (tcs->fastUnmarshalChar(stream, this, c)) return c;
 
@@ -294,7 +315,9 @@ NCS_C_UTF_8::unmarshalChar(cdrStream& stream, omniCodeSet::TCS_C* tcs)
   if (uc <= 0x7f)
     return uc;
   else
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION, 
+		  DATA_CONVERSION_BadInput,
+		  (CORBA::CompletionStatus)stream.completion());
 
   return 0; // For broken compilers
 }
@@ -303,7 +326,10 @@ _CORBA_ULong
 NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 			     _CORBA_ULong bound, char*& s)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+  if (!tcs) OMNIORB_THROW(BAD_INV_ORDER, 
+			  BAD_INV_ORDER_CodeSetNotKnownYet,
+			  (CORBA::CompletionStatus)stream.completion());
+
   _CORBA_ULong len;
   if (tcs->fastUnmarshalString(stream, this, bound, len, s)) return len;
 
@@ -335,12 +361,16 @@ NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
       _CORBA_ULong lc = (uc - 0xd800) << 10;
       if (++i == len) {
 	// No second half to surrogate pair
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
       uc = us[i];
       if (uc < 0xdc00 || uc > 0xdfff) {
 	// Value is not a valid second half to a surrogate pair
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
       lc = lc + uc - 0xdc00 + 0x10000;
 
@@ -351,7 +381,9 @@ NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
     }
     else if (uc < 0xe000) {
       // Second half of surrogate pair not allowed on its own
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(BAD_INV_ORDER, 
+		    BAD_INV_ORDER_CodeSetNotKnownYet,
+		    (CORBA::CompletionStatus)stream.completion());
     }
     else {
       b.insert(0xe0 | ((uc & 0xf000) >> 12));
@@ -378,7 +410,9 @@ TCS_C_UTF_8::marshalChar(cdrStream& stream, omniCodeSet::UniChar uc)
     stream.marshalOctet(c);
   }
   else
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(DATA_CONVERSION, 
+		  DATA_CONVERSION_BadInput,
+		  (CORBA::CompletionStatus)stream.completion());
 }
 
 void
@@ -409,12 +443,16 @@ TCS_C_UTF_8::marshalString(cdrStream& stream,
       _CORBA_ULong lc = (uc - 0xd800) << 10;
       if (++i == len) {
 	// No second half to surrogate pair
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
       uc = us[i];
       if (uc < 0xdc00 || uc > 0xdfff) {
 	// Value is not a valid second half to a surrogate pair
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
       lc = lc + uc - 0xdc00 + 0x10000;
 
@@ -425,7 +463,9 @@ TCS_C_UTF_8::marshalString(cdrStream& stream,
     }
     else if (uc < 0xe000) {
       // Second half of surrogate pair not allowed on its own
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(DATA_CONVERSION, 
+		    DATA_CONVERSION_BadInput,
+		    (CORBA::CompletionStatus)stream.completion());
     }
     else {
       b.insert(0xe0 | ((uc & 0xf000) >> 12));
@@ -448,7 +488,9 @@ TCS_C_UTF_8::unmarshalChar(cdrStream& stream)
   if (c < 0x80)
     return c;
   else
-    OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(DATA_CONVERSION, 
+		  DATA_CONVERSION_BadInput,
+		  (CORBA::CompletionStatus)stream.completion());
 
   return 0; // For broken compilers
 }
@@ -459,14 +501,33 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
 {
   _CORBA_ULong len; len <<= stream;
 
-  if (len == 0)
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+  if (len == 0) {
+    if (omniORB::strictIIOP) {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Error: received an invalid zero length string.\n";
+      }
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		    (CORBA::CompletionStatus)stream.completion());
+    }
+    else {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Warning: received an invalid zero length string."
+	  << " Substituted with a proper empty string.\n";
+      }
+    }
+  }
 
   if (bound && len >= bound)
-    OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
+
 
   if (!stream.checkInputOverrun(1, len))
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		  (CORBA::CompletionStatus)stream.completion());
+
 
   omniCodeSetUtil::BufferU ub;
   CORBA::ULong         	   lc;
@@ -483,9 +544,13 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
     // processors. Cases 3, 2 and 1 should drop through with no
     // branching code.
     switch (bytes) {
-    case 6: OMNIORB_THROW(BAD_PARAM,       0, CORBA::COMPLETED_MAYBE);
+    case 6: OMNIORB_THROW(DATA_CONVERSION, 
+			  DATA_CONVERSION_BadInput,
+			  (CORBA::CompletionStatus)stream.completion());
     case 5:
-    case 4: OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+    case 4: OMNIORB_THROW(DATA_CONVERSION, 
+			  DATA_CONVERSION_BadInput,
+			  (CORBA::CompletionStatus)stream.completion());
     case 3:
       c = stream.unmarshalOctet(); i++;
       lc = (lc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
@@ -511,11 +576,14 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
     // to become available.
     if (error) {
       // At least one extension byte was not of the form 10xxxxxx
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(DATA_CONVERSION, 
+		    DATA_CONVERSION_BadInput,
+		    (CORBA::CompletionStatus)stream.completion());
     }
   }
   if (lc != 0) // Check for null-terminator
-    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		  (CORBA::CompletionStatus)stream.completion());
 
   us = ub.extract();
   return ub.length() - 1;
@@ -543,7 +611,9 @@ TCS_C_UTF_8::fastMarshalString(cdrStream&          stream,
 {
   if (ncs->id() == id()) { // Null transformation
     if (bound && len > bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
+
 
     _CORBA_ULong mlen = len + 1;
     mlen >>= stream;
@@ -574,7 +644,9 @@ TCS_C_UTF_8::fastMarshalString(cdrStream&          stream,
       }
       else if (uc < 0xe000) {
 	// Surrogate pairs shouldn't happen
-	OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
       else {
 	b.insert(0xe0 | ((uc & 0xf000) >> 12));
@@ -586,7 +658,8 @@ TCS_C_UTF_8::fastMarshalString(cdrStream&          stream,
     _CORBA_ULong mlen = b.length();
 
     if (bound && mlen >= bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     mlen >>= stream;
     stream.put_octet_array((const _CORBA_Octet*)b.buffer(), mlen);
@@ -617,20 +690,39 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
   if (ncs->id() == id()) { // Null transformation
     _CORBA_ULong mlen; mlen <<= stream;
 
-    if (mlen == 0) // Zero length is invalid
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    if (mlen == 0) {
+      if (omniORB::strictIIOP) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Error: received an invalid zero length string.\n";
+	}
+	OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		      (CORBA::CompletionStatus)stream.completion());
+      }
+      else {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Warning: received an invalid zero length string."
+	    << " Substituted with a proper empty string.\n";
+	}
+      }
+    }
 
     if (bound && mlen >= bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     s = omniCodeSetUtil::allocC(mlen);
     omniCodeSetUtil::HolderC h(s);
 
     stream.get_octet_array((_CORBA_Octet*)s, mlen);
-    if (s[mlen-1] != '\0') OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    if (s[mlen-1] != '\0') 
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     h.drop();
     len = mlen - 1;
@@ -642,14 +734,32 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
 
     _CORBA_ULong mlen; mlen <<= stream;
 
-    if (mlen == 0)
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+    if (mlen == 0) {
+      if (omniORB::strictIIOP) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Error: received an invalid zero length string.\n";
+	}
+	OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		      (CORBA::CompletionStatus)stream.completion());
+      }
+      else {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Warning: received an invalid zero length string."
+	    << " Substituted with a proper empty string.\n";
+	}
+      }
+    }
 
     if (bound && mlen >= bound)
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
+
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     omniCodeSetUtil::BufferC        b; // *** Could initialise to mlen here
     omniCodeSet::UniChar 	    uc;
@@ -666,10 +776,14 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
       // processors. Cases 2 and 1 should drop through with no
       // branching code.
       switch (bytes) {
-      case 6: OMNIORB_THROW(BAD_PARAM,       0, CORBA::COMPLETED_MAYBE);
+      case 6: OMNIORB_THROW(DATA_CONVERSION, 
+			    DATA_CONVERSION_BadInput,
+			    (CORBA::CompletionStatus)stream.completion());
       case 5:
       case 4:
-      case 3: OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+      case 3: OMNIORB_THROW(DATA_CONVERSION, 
+			    DATA_CONVERSION_BadInput,
+			    (CORBA::CompletionStatus)stream.completion());
       case 2:
 	c = stream.unmarshalOctet(); i++;
 	uc = (uc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
@@ -678,16 +792,22 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
 	uc = (uc << 6) | (c & 0x3f); error |= (c & 0xc0) ^ 0x80;
       }
       c = fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
-      if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 0, CORBA::COMPLETED_MAYBE);
+      if (uc && !c) OMNIORB_THROW(DATA_CONVERSION, 
+				  DATA_CONVERSION_BadInput,
+				  (CORBA::CompletionStatus)stream.completion());
+
       b.insert(c);
 
       if (error) {
 	// At least one extension byte was not of the form 10xxxxxx
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(DATA_CONVERSION, 
+		      DATA_CONVERSION_BadInput,
+		      (CORBA::CompletionStatus)stream.completion());
       }
     }
     if (uc != 0) // Check for null-terminator
-      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
+		    (CORBA::CompletionStatus)stream.completion());
 
     s   = b.extract();
     len = b.length() - 1;

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.16  2001/07/31 16:10:37  sll
+  Added GIOP BiDir support.
+
   Revision 1.2.2.15  2001/06/08 17:12:22  dpg1
   Merge all the bug fixes from omni3_develop.
 
@@ -108,6 +111,7 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/minorCode.h>
 #include <omniORB4/callDescriptor.h>
 #include <localIdentity.h>
 #include <objectAdapter.h>
@@ -116,7 +120,6 @@
 #include <objectStub.h>
 #include <giopStrand.h>
 #include <giopStream.h>
-#include <omniORB4/minorCode.h>
 #include <omniCurrent.h>
 #include <poaimpl.h>
 
@@ -253,7 +256,8 @@ omniObjRef::_assertExistsAndTypeVerified()
 	  " A CORBA::INV_OBJREF is raised.\n";
 	omniORB::log.flush();
       }
-      OMNIORB_THROW(INV_OBJREF,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(INV_OBJREF,INV_OBJREF_InterfaceMisMatch,
+		    CORBA::COMPLETED_NO);
     }
     {
       omni::internalLock->lock();
@@ -753,13 +757,13 @@ omniObjRef::_fromString(const char* str)
 {
   size_t s = (str ? strlen(str) : 0);
   if (s<4)
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
   const char *p = str;
   if (!((p[0] == 'I' || p[0] == 'i') &&
 	(p[1] == 'O' || p[1] == 'o') &&
 	(p[2] == 'R' || p[2] == 'r') &&
 	(p[3] == ':')))
-    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 
   s = (s-4)/2;  // how many octets are there in the string
   p += 4;
@@ -780,7 +784,7 @@ omniObjRef::_fromString(const char* str)
       v = ((p[j] - 'A' + 10) << 4);
     }
     else
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 
     if (p[j+1] >= '0' && p[j+1] <= '9') {
       v += (p[j+1] - '0');
@@ -792,7 +796,7 @@ omniObjRef::_fromString(const char* str)
       v += (p[j+1] - 'A' + 10);
     }
     else
-      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
     buf.marshalOctet(v);
   }
 
