@@ -3,7 +3,7 @@
 // valueType.cc               Created on: 2003/09/17
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2004 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2004/07/23 10:29:58  dgrisby
+  Completely new, much simpler Any implementation.
+
   Revision 1.1.2.3  2004/07/04 23:53:37  dgrisby
   More ValueType TypeCode and Any support.
 
@@ -44,6 +47,7 @@
 #include <omniORB4/valueType.h>
 #include <omniORB4/anyStream.h>
 #include <valueTrackerImpl.h>
+#include <unknownValue.h>
 
 //
 // Tag constants
@@ -83,7 +87,7 @@ static CORBA::ValueBase*
 unmarshalHeaderAndBody(cdrStream& stream, cdrValueChunkStream* cstreamp,
 		       InputValueTracker* tracker, CORBA::Long pos,
 		       CORBA::ULong tag, const char* targetId,
-		       CORBA::ULong targetHash);
+		       CORBA::ULong targetHash, CORBA::TypeCode_ptr tc);
 
 void
 omniValueType::
@@ -136,7 +140,7 @@ marshal(CORBA::ValueBase* val, const char* repoId, cdrStream& stream)
   const _omni_ValueIds* valTruncIds;
 
   if (omni::ptrStrMatch(repoId, valRepoId)) {
-    // Value matches IDL type
+    // Value matches IDL / TypeCode type
 
     if (tracker->inTruncatable()) {
       // Nested inside a truncatable value, we always send the repoId(s)
@@ -160,7 +164,7 @@ marshal(CORBA::ValueBase* val, const char* repoId, cdrStream& stream)
     }
   }
   else {
-    // Value is derived from IDL type
+    // Value is derived from IDL / TypeCode type
     valTruncIds = val->_NP_truncatableIds();
     if (valTruncIds)
       tag |= REPOID_LIST;
@@ -299,7 +303,8 @@ unmarshalRepoId(cdrStream& stream, InputValueTracker* tracker)
 
 CORBA::ValueBase*
 omniValueType::
-unmarshal(const char* repoId, CORBA::ULong hashval, cdrStream& stream)
+unmarshal(const char* repoId, CORBA::ULong hashval,
+	  CORBA::TypeCode_ptr tc, cdrStream& stream)
 {
   CORBA::ULong tag; // tag is really Long, but ULong is easier to handle
   tag <<= stream;
@@ -351,14 +356,14 @@ unmarshal(const char* repoId, CORBA::ULong hashval, cdrStream& stream)
   if (tag & CHUNKED) {
     if (cstreamp) {
       result = unmarshalHeaderAndBody(stream, cstreamp, tracker,
-				      pos-4, tag, repoId, hashval);
+				      pos-4, tag, repoId, hashval, tc);
     }
     else {
       cdrValueChunkStream cstream(stream);
       try {
 	cstream.initialiseInput();
 	result = unmarshalHeaderAndBody(cstream, &cstream, tracker,
-					pos-4, tag, repoId, hashval);
+					pos-4, tag, repoId, hashval, tc);
       }
       catch (...) {
 	cstream.exceptionOccurred();
@@ -375,7 +380,7 @@ unmarshal(const char* repoId, CORBA::ULong hashval, cdrStream& stream)
     }
     else {
       result = unmarshalHeaderAndBody(stream, 0, tracker, pos-4, tag,
-				      repoId, hashval);
+				      repoId, hashval, tc);
     }
   }
   return result;
@@ -390,7 +395,8 @@ unmarshalHeaderAndBody(cdrStream&           stream,
 		       CORBA::Long          pos,
 		       CORBA::ULong         tag,
 		       const char*          targetId,
-		       CORBA::ULong         targetHash)
+		       CORBA::ULong         targetHash,
+		       CORBA::TypeCode_ptr  tc)
 {
   if (tag & CODEBASE_URL) { // Skip the codebase URL
     CORBA::ULong length;
@@ -403,6 +409,7 @@ unmarshalHeaderAndBody(cdrStream&           stream,
 
   CORBA::Boolean truncating = 0;
   const char* repoId;
+  const _omni_ValueIds* repoIds = 0;
 
   CORBA::ValueBase* result;
 
@@ -411,8 +418,6 @@ unmarshalHeaderAndBody(cdrStream&           stream,
     count <<= stream;
 
     CORBA::Long idpos = stream.currentInputPtr();
-
-    const _omni_ValueIds* repoIds;
 
     if (count == 0xffffffff) { // Indirection
       CORBA::Long offset;
@@ -448,12 +453,12 @@ unmarshalHeaderAndBody(cdrStream&           stream,
     for (i=0; i < repoIds->idcount; i++) {
       repoId = repoIds->repoIds[i].repoId;
       result = _omni_ValueFactoryManager::
-	create_for_unmarshal(repoId, repoIds->repoIds[i].hashval);
+	             create_for_unmarshal(repoId, repoIds->repoIds[i].hashval);
 
       if (result) {
 	break;
       }
-      else if (omni::ptrStrMatch(repoIds->repoIds[i].repoId, targetId)) {
+      else if (omni::ptrStrMatch(repoId, targetId)) {
 	// We've reached the target id without finding a factory.
 	// Break out here and raise MARSHAL below.
 	break;
@@ -482,10 +487,17 @@ unmarshalHeaderAndBody(cdrStream&           stream,
 
   // After all that, did we manage to create a value?
   if (!result) {
-    // *** HERE: if we're unmarshalling a value inside an Any, create
-    // *** an UnknownValue.
-    OMNIORB_THROW(MARSHAL, MARSHAL_NoValueFactory,
-		  (CORBA::CompletionStatus)stream.completion());
+
+    if (tc && !CORBA::is_nil(tc) && omni::ptrStrMatch(repoId, tc->id())) {
+      // Value is inside an Any so we create an UnknownValue. The
+      // application won't be able to do anything with it except put
+      // it in a DynAny or pass it on inside its Any.
+      result = new UnknownValue(tc);
+    }
+    else {
+      OMNIORB_THROW(MARSHAL, MARSHAL_NoValueFactory,
+		    (CORBA::CompletionStatus)stream.completion());
+    }
   }
 
   // If the value is chunked, tell the chunk stream we're about to
@@ -502,7 +514,8 @@ unmarshalHeaderAndBody(cdrStream&           stream,
   if (truncating) {
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "Truncating input value to " << repoId << "\n";
+      l << "Truncating input value from '"
+	<< repoIds->repoIds[0].repoId << "' to '" << repoId << "'.\n";
     }
 
     if (!cstreamp) {
@@ -519,8 +532,8 @@ unmarshalHeaderAndBody(cdrStream&           stream,
       // Unmarshal a nested value, in case there's a later indirection to it.
 
       try {
-	nested = omniValueType::unmarshal(CORBA::ValueBase::_PD_repoId, 0,
-					  stream);
+	nested = omniValueType::unmarshal(CORBA::ValueBase::_PD_repoId,
+					  0, 0, stream);
 	CORBA::remove_ref(nested);
       }
       catch (CORBA::MARSHAL& ex) {
