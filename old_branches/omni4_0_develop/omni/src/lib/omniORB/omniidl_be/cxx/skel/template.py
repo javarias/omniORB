@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.30  2004/10/17 21:47:40  dgrisby
+# Fully qualify scopes in _ptrToObjRef and _ptrToInterface.
+#
 # Revision 1.3.2.29  2004/07/29 10:45:22  dgrisby
 # Bug with unmarshalling unions with multiple case labels.
 #
@@ -346,7 +349,7 @@ interface_shortcut_inh = """\
 interface_callback = """\
 // Local call call-back function.
 static void
-@local_call_descriptor@(omniCallDescriptor*@cd@, omniServant* svnt)
+@local_call_descriptor@(omniCallDescriptor* cd, omniServant* svnt)
 {
   @get_call_descriptor@
   @impl_fqname@* impl = (@impl_fqname@*) svnt->_ptrToInterface(@name@::_PD_repoId);
