@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  2000/01/12 17:47:38  djs
+# Reverted to simpler output stream design- will probably use dpg1's version
+# in common with the python back end.
+#
 # Revision 1.9  2000/01/07 20:31:18  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -228,9 +232,15 @@ class StringStream(Stream):
         self.__buffer = ""
 
     def write(self, text):
-        if (self.__buffer != ""):
-            self.__buffer = self.__buffer + "\n"
-        self.__buffer = self.__buffer + text
+        strings = string.split(text, '\n')
+        for s in strings:
+            if s != "":
+                
+                if (self.__buffer != ""):
+                    self.__buffer = self.__buffer + "\n"
+                self.__buffer = self.__buffer + s + "\n"
+                
+        #self.__buffer = self.__buffer + text
 
     def __str__(self):
         return self.__buffer
@@ -262,6 +272,14 @@ def intersect(a, b):
         if x in b:
             result.append(x)
     return result
+
+def setify(set):
+    new_set = []
+    for x in set:
+        if not(x in new_set):
+            new_set.append(x)
+
+    return new_set
 
 # ------------------------------------------------------------------
 # List manipulation functions
