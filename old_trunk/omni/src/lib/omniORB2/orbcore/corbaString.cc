@@ -29,6 +29,9 @@
 
 /*
   $Log$
+// Revision 1.7  1998/01/27  15:33:11  ewc
+// Added support for type any
+//
 // Revision 1.6  1998/01/21  12:13:04  sll
 // Now accepts null pointer as marshalling argument. Substituted with a
 // proper nil string.  Print a warning if traceLevel > 1.
@@ -243,14 +246,14 @@ void
 _CORBA_null_string_ptr(_CORBA_Boolean unmarshal)
 {
   if (unmarshal) {
-    cerr << "Warning: unmarshal received a zero size string.\n"
-	 << "         Substituted with a proper nil string \"\\0\"."
-	 << endl;
+    omniORB::log << "Warning: unmarshal received a zero size string.\n"
+		 << "         Substituted with a proper nil string \"\\0\".\n";
+    omniORB::log.flush();
   }
   else {
-    cerr << "Warning: try to marshal a null pointer as a string.\n"
-	 << "         Substituted with a proper nil string \"\\0\"."
-	 << endl;
+    omniORB::log << "Warning: try to marshal a null pointer as a string.\n"
+		 << "         Substituted with a proper nil string \"\\0\".\n";
+    omniORB::log.flush();
   }
 
 }
