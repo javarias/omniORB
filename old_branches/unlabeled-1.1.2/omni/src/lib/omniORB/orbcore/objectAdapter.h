@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  1999/10/27 17:32:13  djr
+ omni::internalLock and objref_rc_lock are now pointers.
+
  Revision 1.1.2.2  1999/09/28 10:54:34  djr
  Removed pretty-printing of object keys from object adapters.
 
@@ -40,6 +43,10 @@
 #define __OMNI_OBJECTADAPTER_H__
 
 #include <omniutilities.h>
+
+#ifndef OMNIORB_USEHOSTNAME_VAR
+#define OMNIORB_USEHOSTNAME_VAR "OMNIORB_USEHOSTNAME"
+#endif
 
 
 class ropeFactoryList;
