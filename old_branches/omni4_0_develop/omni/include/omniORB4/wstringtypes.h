@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2004/04/30 15:58:33  dgrisby
+  Make ptr_arith_t unsigned.
+
   Revision 1.1.2.11  2003/11/06 10:17:36  dgrisby
   Remove calls to strlen in operator[]. Why were they ever considered a
   good idea?
@@ -96,7 +99,7 @@ static inline void free(_CORBA_WChar* s) {
 
 static inline int len(const _CORBA_WChar* s) {
   int i;
-  for (i=0; *s; s++, i++);
+  for (i=0; *s; s++, i++) {};
   return i;
 }
 
