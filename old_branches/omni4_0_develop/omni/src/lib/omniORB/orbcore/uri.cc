@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.14  2002/02/01 11:20:40  dpg1
+// Silly bug in string_to_object wil nil objref.
+//
 // Revision 1.2.2.13  2001/12/04 14:32:27  dpg1
 // Minor corbaloc bugs.
 //
@@ -253,6 +256,8 @@ public:
   class ObjAddr {
   public:
     ObjAddr() : next_(0) {}
+
+    virtual ~ObjAddr() {}
 
     static ObjAddr* parse(const char*& c);
 
