@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1  1999/04/21 11:18:31  djr
+ Initial revision
+
 */
 
 #ifndef __OMNI_STRINGTYPES_H__
@@ -98,7 +101,7 @@ public:
 
   _CORBA_String_var& operator=(const _CORBA_String_member& s);
 
-  inline operator char* () const       { return _data; }
+  inline operator char* ()             { return _data; }
   inline operator const char* () const { return _data; }
 
   char& operator[] (_CORBA_ULong index);
