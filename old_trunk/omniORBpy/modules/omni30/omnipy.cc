@@ -30,6 +30,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.32  2000/03/24 16:48:57  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.31  2000/03/07 16:52:16  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -536,6 +541,7 @@ extern "C" {
     try {
       call_desc.releaseInterpreterLock();
       oobjref->_invoke(call_desc);
+      call_desc.reacquireInterpreterLock();
       if (!is_oneway) {
 	return call_desc.result();
       }
@@ -546,6 +552,7 @@ extern "C" {
     }
 #ifdef HAS_Cplusplus_catch_exception_by_base
     catch (const CORBA::SystemException& ex) {
+      // systemException() reacquires the interpreter lock if necessary
       call_desc.systemException(ex);
     }
 #else
@@ -558,6 +565,7 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 #endif
     catch (const omniPy::UserExceptionHandled& ex) {
       // Exception has been handled by the call descriptor
+      call_desc.reacquireInterpreterLock();
     }
     return 0;
   }
