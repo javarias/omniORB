@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/10/17 16:47:09  dpg1
+  New minor codes
+
   Revision 1.1.2.10  2001/08/03 17:41:20  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -273,6 +276,13 @@ TCS_W_UTF_16::marshalWString(cdrStream& stream,
   // Here, we always send a BOM, so we can transmit using our native
   // endian.
 
+  if (len == 0) {
+    // For zero length strings, we don't bother with a BOM.
+    _CORBA_ULong mlen = 0;
+    mlen >>= stream;
+    return;
+  }
+
   // Just to be different, wstring is marshalled without a terminating
   // null. Length is in octets.
   _CORBA_ULong mlen = (len+1) * 2;  // len + 1 for BOM
@@ -362,6 +372,12 @@ TCS_W_UTF_16::unmarshalWString(cdrStream& stream,
   // never mind.
   us = omniCodeSetUtil::allocU(len + 1);
   omniCodeSetUtil::HolderU uh(us);
+
+  if (len == 0) {
+    us[0] = 0;
+    uh.drop();
+    return len;
+  }
 
   _CORBA_UShort uc; // Not UniChar, since if UniChar is wchar_t, there
                     // is no stream extraction operator for it
