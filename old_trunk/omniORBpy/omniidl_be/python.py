@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.25  2000/06/27 15:01:48  dpg1
+# Change from POA_M to M__POA mapping.
+# Global module only built if necessary.
+#
 # Revision 1.24  2000/03/29 10:15:47  dpg1
 # Exceptions now more closely follow the interface of
 # exceptions.Exception.
@@ -655,6 +659,12 @@ class PythonVisitor:
     def visitForward(self, node):
         if self.handleImported(node): return
 
+        if node.abstract():
+            sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                             ": omniORBpy does not support abstract " \
+                             "interfaces\n")
+            sys.exit(1)
+
         assert self.at_module_scope
         ifid   = mangle(node.identifier())
         repoId = node.repoId()
@@ -666,6 +676,12 @@ class PythonVisitor:
     #
     def visitInterface(self, node):
         if self.handleImported(node): return
+
+        if node.abstract():
+            sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                             ": omniORBpy does not support abstract " \
+                             "interfaces\n")
+            sys.exit(1)
 
         assert self.at_module_scope
         ifid = mangle(node.identifier())
@@ -1271,6 +1287,28 @@ class PythonVisitor:
                          ": Warning: ignoring declaration of native " + \
                          node.identifier() + "\n")
 
+    def visitValueForward(self, node):
+        sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                         ": omniORBpy does not support valuetype\n")
+        sys.exit(1)
+
+    def visitValueBox(self, node):
+        sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                         ": omniORBpy does not support valuetype\n")
+        sys.exit(1)
+
+    def visitValueAbs(self, node):
+        sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                         ": omniORBpy does not support valuetype\n")
+        sys.exit(1)
+
+    def visitValue(self, node):
+        sys.stderr.write(node.file() + ":" + str(node.line()) + \
+                         ": omniORBpy does not support valuetype\n")
+        sys.exit(1)
+
+
+
 
 def operationToDescriptors(op):
     """Return the descriptors for an operation.
@@ -1333,11 +1371,19 @@ ttdMap = {
     idltype.tk_octet:      "omniORB.tcInternal.tv_octet",
     idltype.tk_any:        "omniORB.tcInternal.tv_any",
     idltype.tk_TypeCode:   "omniORB.tcInternal.tv_TypeCode",
-    idltype.tk_Principal:  "omniORB.tcInternal.tv_Principal",
-    idltype.tk_longlong:   "omniORB.tcInternal.tv_longlong",
-    idltype.tk_ulonglong:  "omniORB.tcInternal.tv_ulonglong",
-    idltype.tk_longdouble: "omniORB.tcInternal.tv_longdouble",
-    idltype.tk_wchar:      "omniORB.tcInternal.tv_wchar"
+    idltype.tk_Principal:  "omniORB.tcInternal.tv_Principal"
+}
+
+unsupportedMap = {
+    idltype.tk_longlong:   "long long",
+    idltype.tk_ulonglong:  "unsigned long long",
+    idltype.tk_longdouble: "long double",
+    idltype.tk_wchar:      "wchar",
+    idltype.tk_wstring:    "wstring",
+    idltype.tk_fixed:      "fixed",
+    idltype.tk_value:      "valuetype",
+    idltype.tk_value_box:  "value box",
+    idltype.tk_abstract_interface: "abstract interface"
 }
 
 def typeToDescriptor(tspec, from_scope=[], is_typedef=0):
@@ -1347,6 +1393,13 @@ def typeToDescriptor(tspec, from_scope=[], is_typedef=0):
     if ttdMap.has_key(tspec.kind()):
         tspec.python_desc = ttdMap[tspec.kind()]
         return tspec.python_desc
+
+    if unsupportedMap.has_key(tspec.kind()):
+        sys.stderr.write(main.cmdname + \
+                         ": omniORBpy does not support the " + \
+                         unsupportedMap[tspec.kind()] + \
+                         " type.\n")
+        sys.exit(1)
 
     if tspec.kind() == idltype.tk_string:
         ret = "(omniORB.tcInternal.tv_string," + str(tspec.bound()) + ")"
