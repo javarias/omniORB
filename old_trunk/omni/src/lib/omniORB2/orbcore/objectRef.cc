@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.26  1999/08/14 16:39:47  sll
+  Changed locateObject. It does not throw an exception when an object is
+  not found. Instead a nil pointer is returned.
+  New locateObject for searching the python object table.
+
   Revision 1.25  1999/06/02 16:57:07  sll
   Changed createObjRef(). In the case when the proxyObjectFactories for
   the targetRepoId and the mostDerivedRepoId are not available, we now create
@@ -679,29 +684,6 @@ omniObject::_widenFromTheMostDerivedIntf(const char*, CORBA::Boolean)
 }
 
 
-void
-omniObject::globalInit()
-{
-  if (omniObject::localObjectTable) return;
-
-  omniObject::proxyObjectTable   = 0;
-  omniObject::localObjectTable   = new omniObject * [omniORB::hash_table_size];
-  omniObject::localPyObjectTable = new omniObject * [omniORB::hash_table_size];
-  unsigned int i;
-  for (i=0; i<omniORB::hash_table_size; i++)
-    omniObject::localObjectTable[i] = 0;
-
-  for (i=0; i<omniORB::hash_table_size; i++)
-    omniObject::localPyObjectTable[i] = 0;
-
-  omniObject::wrappedObjectTable = (void**)
-    (new void *[omniORB::hash_table_size]);
-
-  for (i=0; i<omniORB::hash_table_size; i++)
-    omniObject::wrappedObjectTable[i] = 0;
-}
-
-
 CORBA::Object_ptr
 CORBA::UnMarshalObjRef(const char* repoId, NetBufferedStream& s)
 {
@@ -938,53 +920,70 @@ CORBA::MarshalObjRef(CORBA::Object_ptr obj,
   *pl >>= s;
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+//            Module initialiser                                           //
+/////////////////////////////////////////////////////////////////////////////
 
-// This singleton checks the proxy object table when the application
-// is closed, and detects if any object references have not been
-// properly released.
+class omni_objectRef_initialiser : public omniInitialiser {
+public:
 
-class ProxyObjectTableCleaner {
-public: // some compilers get upset
-  ~ProxyObjectTableCleaner();
-  static ProxyObjectTableCleaner theInstance;
-};
+  void attach() {
 
-ProxyObjectTableCleaner ProxyObjectTableCleaner::theInstance;
+    omniObject::proxyObjectTable = 0;
+    omniObject::localObjectTable = new omniObject*[omniORB::hash_table_size];
+    omniObject::localPyObjectTable = new omniObject*[omniORB::hash_table_size];
+    unsigned int i;
+    for (i=0; i<omniORB::hash_table_size; i++)
+      omniObject::localObjectTable[i] = 0;
 
+    for (i=0; i<omniORB::hash_table_size; i++)
+      omniObject::localPyObjectTable[i] = 0;
 
-ProxyObjectTableCleaner::~ProxyObjectTableCleaner()
-{
-  if( omniObject::proxyObjectTable ) {
+    omniObject::wrappedObjectTable = (void**)
+      (new void *[omniORB::hash_table_size]);
 
-    omniObject** p = &omniObject::proxyObjectTable;
-    while( *p ) {
-      // Print out a message giving the details of the dangling object
-      // references, and also remove them from the list so that they
-      // will be picked up by analysis tools such as purify.
-
-      // Any objects held in omniInitialReferences will also show up
-      // in this list.
-
-      if( omniORB::traceLevel >= 15 ) {
-	const char* repoId = (*p)->NP_IRRepositoryId();
-	CORBA::String_var obj_ref((char*)
-                            IOP::iorToEncapStr((const CORBA::Char*) repoId,
-					       (*p)->iopProfiles()));
-
-	omniORB::log <<
-	  "omniORB: WARNING - Proxy object not released.\n"
-	  "  IR ID   : " << repoId << "\n"
-	  "  RefCount: " << (*p)->getRefCount() << "\n"
-	  "  ObjRef  : " << (char*)obj_ref << "\n";
-	omniORB::log.flush();
-      }
-      omniObject** next = &((*p)->pd_next);
-      *p = 0;
-      p = next;
-    }
+    for (i=0; i<omniORB::hash_table_size; i++)
+      omniObject::wrappedObjectTable[i] = 0;
 
   }
-}
+
+  void detach() {
+
+    if( omniObject::proxyObjectTable ) {
+      // Checks the proxy object table when the application
+      // is closed, and detects if any object references have not been
+      // properly released.
+      omniObject** p = &omniObject::proxyObjectTable;
+      while( *p ) {
+	// Print out a message giving the details of the dangling object
+	// references, and also remove them from the list so that they
+	// will be picked up by analysis tools such as purify.
+
+	// Any objects held in omniInitialReferences will also show up
+	// in this list.
+
+	if( omniORB::traceLevel >= 15 ) {
+	  const char* repoId = (*p)->NP_IRRepositoryId();
+	  CORBA::String_var obj_ref((char*)
+			     IOP::iorToEncapStr((const CORBA::Char*) repoId,
+						(*p)->iopProfiles()));
+
+	  omniORB::log <<
+	    "omniORB: WARNING - Proxy object not released.\n"
+	    "  IR ID   : " << repoId << "\n"
+	    "  RefCount: " << (*p)->getRefCount() << "\n"
+	    "  ObjRef  : " << (char*)obj_ref << "\n";
+	  omniORB::log.flush();
+	}
+	omniObject** next = &((*p)->pd_next);
+	*p = 0;
+	p = next;
+      }
+    }
+  }
+};
+
+static omni_objectRef_initialiser initialiser;
+
+omniInitialiser& omni_objectRef_initialiser_ = initialiser;
+
