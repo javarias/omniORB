@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15  2000/02/04 12:17:08  dpg1
+// Support for VMS.
+//
 // Revision 1.14  2000/01/18 17:15:05  dpg1
 // Changes for "small" distribution.
 //
@@ -1175,23 +1178,43 @@ extern "C" {
 int
 main(int argc, char** argv)
 {
+  const char* omniidl_string =
+"import sys, os, os.path\n"
+"\n"
+"pylibdir   = None\n"
+"binarchdir = os.path.dirname(sys.executable)\n"
+"\n"
+"if binarchdir != '':\n"
+"    sys.path.insert(0, binarchdir)\n"
+"    bindir, archname = os.path.split(binarchdir)\n"
+"    treedir, bin     = os.path.split(bindir)\n"
+"    if bin == 'bin':\n"
+"        pylibdir   = os.path.join(treedir, 'lib', 'python')\n"
+"\n"
+"        if os.path.isdir(pylibdir):\n"
+"            sys.path.insert(0, pylibdir)\n"
+"\n"
+"try:\n"
+"    import omniidl.main\n"
+"except ImportError:\n"
+"    sys.stderr.write('\\n\\n')\n"
+"    sys.stderr.write('omniidl: ERROR!\\n\\n')\n"
+"    sys.stderr.write('omniidl: Could not find Python files for IDL compiler\\n')\n"
+"    sys.stderr.write('omniidl: Please put them in directory ' + \\\n"
+"                     (pylibdir or binarchdir) + '\\n')\n"
+"    sys.stderr.write('omniidl: (or set the PYTHONPATH environment variable)\\n')\n"
+"    sys.stderr.write('\\n\\n')\n"
+"    sys.stderr.flush()\n"
+"    sys.exit(1)\n"
+"\n"
+"omniidl.main.main()\n";
+
   Py_Initialize();
   PySys_SetArgv(argc, argv);
 
   init_omniidl();
 
-  PyObject* mod    = PyString_FromString("omniidl.main");
-  PyObject* pymain = PyImport_Import(mod);
-  Py_DECREF(mod);
-
-  if (!pymain) {
-    PyErr_Print();
-    fprintf(stderr, "%s: could not import main python file.\n", argv[0]);
-    exit(1);
-  }
-  PyObject* r = PyObject_CallMethod(pymain, (char*)"main", (char*)"");
-  Py_XDECREF(r);
-  return 0;
+  return PyRun_SimpleString((char*)omniidl_string);
 }
 
 #endif
