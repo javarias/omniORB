@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // typecode.cc                Created on: 03/09/98
 //                            Author    : James Weatherall (jnw)
 //
@@ -343,7 +343,7 @@ CORBA::TypeCode::unmarshalTypeCode(MemBufferedStream &s)
 
 // omniORB internal functions
 size_t
-CORBA::TypeCode::NP_alignedSize(size_t initialoffset) const
+CORBA::TypeCode::_NP_alignedSize(size_t initialoffset) const
 {
   TypeCode_offsetTable otbl;
 
@@ -1197,8 +1197,8 @@ TypeCode_objref::NP_alignedComplexParamSize(size_t initialoffset,
   // Space for repositoryId and name
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
 
   return _msgsize;
 }
@@ -1344,8 +1344,8 @@ TypeCode_alias::NP_alignedComplexParamSize(size_t initialoffset,
   // Space for repositoryId and name
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
   _msgsize =
     TypeCode_marshaller::alignedSize(ToTcBase(pd_content), _msgsize, otbl);
 
@@ -2005,15 +2005,15 @@ TypeCode_struct::NP_alignedComplexParamSize(size_t initialoffset,
   // names & types
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
   _msgsize = omni::align_to(_msgsize, omni::ALIGN_4) + 4;
 
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ )
     {
       CORBA::String_member name;
       name = pd_members[i].name;
-      _msgsize = name.NP_alignedSize(_msgsize);
+      _msgsize = name._NP_alignedSize(_msgsize);
       name._ptr = 0;
       _msgsize = TypeCode_marshaller::alignedSize(ToTcBase(pd_members[i].type),
 						  _msgsize, otbl);
@@ -2395,15 +2395,15 @@ TypeCode_except::NP_alignedComplexParamSize(size_t initialoffset,
   // their names & types.
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
   _msgsize = omni::align_to(_msgsize, omni::ALIGN_4) + 4;
 
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ )
     {
       CORBA::String_member name;
       name = pd_members[i].name;
-      _msgsize = name.NP_alignedSize(_msgsize);
+      _msgsize = name._NP_alignedSize(_msgsize);
       name._ptr = 0;
       _msgsize = TypeCode_marshaller::alignedSize(ToTcBase(pd_members[i].type),
 						  _msgsize, otbl);
@@ -2726,9 +2726,9 @@ TypeCode_enum::NP_alignedComplexParamSize(size_t initialoffset,
 {
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
-  _msgsize = pd_members.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
+  _msgsize = pd_members._NP_alignedSize(_msgsize);
 
   return _msgsize;
 }
@@ -3061,8 +3061,8 @@ TypeCode_union::NP_alignedComplexParamSize(size_t initialoffset,
 {
   size_t _msgsize = initialoffset;
 
-  _msgsize = pd_repoId.NP_alignedSize(_msgsize);
-  _msgsize = pd_name.NP_alignedSize(_msgsize);
+  _msgsize = pd_repoId._NP_alignedSize(_msgsize);
+  _msgsize = pd_name._NP_alignedSize(_msgsize);
   _msgsize = TypeCode_marshaller::alignedSize(ToTcBase(pd_discrim_tc),
 					      _msgsize, otbl);
   _msgsize = omni::align_to(_msgsize, omni::ALIGN_4) + 4;
@@ -3073,7 +3073,7 @@ TypeCode_union::NP_alignedComplexParamSize(size_t initialoffset,
     {
       _msgsize =
 	TypeCode_union_helper::labelAlignedSize(_msgsize, pd_discrim_tc);
-      _msgsize = pd_members[i].aname.NP_alignedSize(_msgsize);
+      _msgsize = pd_members[i].aname._NP_alignedSize(_msgsize);
       _msgsize =
 	TypeCode_marshaller::alignedSize(ToTcBase(pd_members[i].atype),
 					 _msgsize, otbl);
@@ -5058,7 +5058,7 @@ CORBA::TypeCode_member&
 CORBA::TypeCode_member::operator=(const CORBA::TypeCode_var& p)
 {
   CORBA::release(_ptr);
-  _ptr = CORBA::TypeCode::_duplicate(p.pd_TC);
+  _ptr = CORBA::TypeCode::_duplicate(p.pd_ref);
   return *this;
 }
 
@@ -5091,9 +5091,9 @@ CORBA::TypeCode_member::operator<<=(MemBufferedStream& s)
 }
 
 size_t
-CORBA::TypeCode_member::NP_alignedSize(size_t initialoffset) const
+CORBA::TypeCode_member::_NP_alignedSize(size_t initialoffset) const
 {
-  return _ptr->NP_alignedSize(initialoffset);
+  return _ptr->_NP_alignedSize(initialoffset);
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // tcpSocket.cc               Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -53,7 +53,7 @@
 
   */
 
-#include <omniORB2/CORBA.h>
+#include <omniORB3/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -61,7 +61,7 @@
 
 #include <ropeFactory.h>
 #include <tcpSocket.h>
-#include <gatekeeper.h>
+//#include <gatekeeper.h>
 
 #ifndef Swap16
 #define Swap16(s) ((((s) & 0xff) << 8) | (((s) >> 8) & 0xff))
@@ -87,12 +87,15 @@ tcpSocketFactoryType::init()
 {
   if (singleton) return;
   singleton = new tcpSocketFactoryType;
+  singleton->next = ropeFactoryTypeList;
+  ropeFactoryTypeList = singleton;
 
+#if 0
   if (omniORB::traceLevel >= 2) {
-    omniORB::log << "omniORB2 gateKeeper is " << gateKeeper::version() 
-		 << "\n";
+    omniORB::log << "omniORB: GateKeeper is " << gateKeeper::version() << "\n";
     omniORB::log.flush();
   }
+#endif
 }
 
 tcpSocketFactoryType::tcpSocketFactoryType()
@@ -289,7 +292,7 @@ tcpSocketFactoryType::encodeIOPprofile(const Endpoint* addr,
 }
 
 
-tcpSocketEndpoint::tcpSocketEndpoint(CORBA::Char *h,CORBA::UShort p)
+tcpSocketEndpoint::tcpSocketEndpoint(const CORBA::Char *h,CORBA::UShort p)
     : Endpoint((CORBA::Char *)tcpSocketEndpoint::protocol_name) 
 {
   pd_host = 0;

@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // relStream.cc               Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
+//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
 //
 //    This file is part of the omniORB library
 //
@@ -37,7 +37,7 @@
 
   */
 
-#include <omniORB2/CORBA.h>
+#include <omniORB3/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop

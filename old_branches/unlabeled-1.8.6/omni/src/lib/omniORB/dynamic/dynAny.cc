@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB3
 // DynAny.cc                  Created on: 12/02/98
 //                            Author    : Sai-Lai Lo (sll)
 //
@@ -29,6 +29,10 @@
 
 /* 
    $Log$
+   Revision 1.8  1999/07/20 14:22:58  djr
+   Accept nil ref in insert_reference().
+   Allow DynAny with type tk_void.
+
    Revision 1.7  1999/06/18 21:01:11  sll
    Use TypeCode equivalent() instead of equal().
 
@@ -536,11 +540,11 @@ DynAnyImpl::insert_string(const char* value)
 void
 DynAnyImpl::insert_reference(CORBA::Object_ptr value)
 {
-  if ( !CORBA::Object::PR_is_valid(value) )
+  if ( !CORBA::Object::_PR_is_valid(value) )
     throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
 
   Lock sync(this);
-  CORBA::Object::marshalObjRef(value, doWrite(CORBA::tk_objref));
+  CORBA::Object::_marshalObjRef(value, doWrite(CORBA::tk_objref));
 }
 
 
@@ -687,7 +691,7 @@ CORBA::Object_ptr
 DynAnyImpl::get_reference()
 {
   Lock sync(this);
-  return CORBA::Object::unmarshalObjRef(doRead(CORBA::tk_objref));
+  return CORBA::Object::_unmarshalObjRef(doRead(CORBA::tk_objref));
 }
 
 
@@ -862,13 +866,13 @@ DynEnumImpl::value_as_ulong()
   CORBA::ULong val;
   {
     Lock sync(this);
-    if( !isValid() )  throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    if( !isValid() )  throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
     pd_buf.rewind_in_mkr();
     val <<= pd_buf;
   }
 
   if( val >= tc()->NP_member_count() )
-    throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
 
   return val;
 }
@@ -1066,11 +1070,11 @@ DynAnyConstrBase::insert_string(const char* value)
 void
 DynAnyConstrBase::insert_reference(CORBA::Object_ptr value)
 {
-  if ( !CORBA::Object::PR_is_valid(value) )
+  if ( !CORBA::Object::_PR_is_valid(value) )
     throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
 
   Lock sync(this);
-  CORBA::Object::marshalObjRef(value, writeCurrent(CORBA::tk_objref));
+  CORBA::Object::_marshalObjRef(value, writeCurrent(CORBA::tk_objref));
 }
 
 
@@ -1220,7 +1224,7 @@ CORBA::Object_ptr
 DynAnyConstrBase::get_reference()
 {
   Lock sync(this);
-  return CORBA::Object::unmarshalObjRef(readCurrent(CORBA::tk_objref));
+  return CORBA::Object::_unmarshalObjRef(readCurrent(CORBA::tk_objref));
 }
 
 
@@ -1573,7 +1577,7 @@ DynStructImpl::current_member_name()
   Lock sync(this);
 
   if( pd_curr_index < 0 )
-    throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
 
   return CORBA::string_dup(tc()->NP_member_name(pd_curr_index));
 }
@@ -1585,7 +1589,7 @@ DynStructImpl::current_member_kind()
   Lock sync(this);
 
   if( pd_curr_index < 0 )
-    throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
 
   return tc()->NP_member_type(pd_curr_index)->NP_kind();
 }
@@ -1603,7 +1607,7 @@ DynStructImpl::get_members()
     (*nvps)[i].id = CORBA::string_dup(tc()->NP_member_name(i));
     if( !component_to_any(i, (*nvps)[i].value) ) {
       delete nvps;
-      throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+      throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
     }
   }
   return nvps;
@@ -1831,11 +1835,11 @@ DynUnionImpl::insert_string(const char* value)
 void
 DynUnionImpl::insert_reference(CORBA::Object_ptr value)
 {
-  if ( !CORBA::Object::PR_is_valid(value) )
+  if ( !CORBA::Object::_PR_is_valid(value) )
     throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
 
   Lock sync(this);
-  CORBA::Object::marshalObjRef(value, writeCurrent(CORBA::tk_objref));
+  CORBA::Object::_marshalObjRef(value, writeCurrent(CORBA::tk_objref));
   discriminatorHasChanged();
 }
 
@@ -1986,7 +1990,7 @@ CORBA::Object_ptr
 DynUnionImpl::get_reference()
 {
   Lock sync(this);
-  return CORBA::Object::unmarshalObjRef(readCurrent(CORBA::tk_objref));
+  return CORBA::Object::_unmarshalObjRef(readCurrent(CORBA::tk_objref));
 }
 
 
@@ -2567,13 +2571,13 @@ DynUnionEnumDisc::value_as_ulong()
   CORBA::ULong val;
   {
     Lock sync(this);
-    if( !isValid() )  throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    if( !isValid() )  throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
     pd_buf.rewind_in_mkr();
     val <<= pd_buf;
   }
 
   if( val >= tc()->NP_member_count() )
-    throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
 
   return val;
 }
@@ -2665,7 +2669,7 @@ void
 DynSequenceImpl::length (CORBA::ULong value)
 {
   if( pd_bound && value > pd_bound )
-    throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
 
   Lock sync(this);
   setNumComponents(value);
@@ -2683,7 +2687,7 @@ DynSequenceImpl::get_elements()
   for( unsigned i = 0; i < pd_n_components; i++ ) {
     if( !component_to_any(i, (*as)[i]) ) {
       delete as;
-      throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+      throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
     }
   }
   return as;
@@ -2809,7 +2813,7 @@ DynArrayImpl::get_elements()
   for( unsigned i = 0; i < pd_n_components; i++ ) {
     if( !component_to_any(i, (*as)[i]) ) {
       delete as;
-      throw CORBA::SystemException(0, CORBA::COMPLETED_NO);
+      throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
     }
   }
   return as;

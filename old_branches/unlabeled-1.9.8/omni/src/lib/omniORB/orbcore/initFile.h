@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // initFile.h                 Created on: 10/01/97
 //                            Author    : Eoin Carroll  (ewc)
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9  1999/03/11 16:25:53  djr
+  Updated copyright notice
+
   Revision 1.8  1998/08/21 19:12:03  sll
   Removed public member NameService().
 

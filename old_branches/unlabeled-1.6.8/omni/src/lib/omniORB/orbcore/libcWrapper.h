@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // LibcWrapper.h              Created on: 19/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.6  1999/03/11 16:25:54  djr
+  Updated copyright notice
+
   Revision 1.5  1997/12/09 18:25:28  sll
   Use __WIN32__ instead of __NT__
 

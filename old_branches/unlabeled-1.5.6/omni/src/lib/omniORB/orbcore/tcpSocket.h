@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // tcpSocket.h                Created on: 30/9/97
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5  1999/07/09 21:04:29  sll
+ Added private data member in tcpSocketMTincomingFactory.
+
  Revision 1.4  1999/03/11 16:25:57  djr
  Updated copyright notice
 
@@ -135,8 +138,7 @@ private:
   omni_condition                pd_shutdown_cond;
   int                           pd_shutdown_nthreads;
 
-  ~tcpSocketMTincomingFactory() {} // Cannot delete a factory instance
-
+  virtual ~tcpSocketMTincomingFactory();
 };
 
 
@@ -154,7 +156,7 @@ public:
   friend class nobody;
 
 private:
-  ~tcpSocketMToutgoingFactory() {} // Cannot delete a factory instance
+  virtual ~tcpSocketMToutgoingFactory();
 };
 
 class tcpSocketStrand : public reliableStreamStrand
@@ -308,8 +310,8 @@ private:
 
 class tcpSocketEndpoint : public Endpoint {
 public:
-  tcpSocketEndpoint(CORBA::Char *h,CORBA::UShort p);
-  tcpSocketEndpoint(const tcpSocketEndpoint *e);
+  tcpSocketEndpoint(const CORBA::Char* h,CORBA::UShort p);
+  tcpSocketEndpoint(const tcpSocketEndpoint* e);
   tcpSocketEndpoint &operator=(const tcpSocketEndpoint &e);
   CORBA::Boolean operator==(const tcpSocketEndpoint *e);
   virtual ~tcpSocketEndpoint();

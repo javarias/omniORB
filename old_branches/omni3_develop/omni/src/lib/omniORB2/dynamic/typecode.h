@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB3
 // typecode.h                 Created on: 03/09/98
 //                            Author1   : James Weatherall (jnw)
 //                            Author2   : David Riddoch (djr)
@@ -57,7 +57,7 @@
 #ifndef __TYPECODE_H__
 #define __TYPECODE_H__
 
-#include <omniORB2/CORBA.h>
+#include <omniORB3/CORBA.h>
 #include <omniutilities.h>
 
 
