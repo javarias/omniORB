@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/08/17 17:10:05  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.4.5  2001/08/03 17:43:19  sll
   Make sure dll import spec for win32 is properly done.
 
@@ -254,8 +257,8 @@ public:
   // otherwise it is 0.
 
   CORBA::Boolean      gatekeeper_checked;
-  // only applies to passive strand. TRUE(1) means that the gatekeeper
-  // has checked this connection. This flag is set by giopWorker and is
+  // only applies to passive strand. TRUE(1) means that the serverTransportRule
+  // has been checked. This flag is set by giopWorker and is
   // not manipulated by the strand class.
 
   CORBA::Boolean      first_use;
