@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/06/13 20:13:50  sll
+  Minor updates to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.1  2001/04/18 18:10:43  sll
   Big checkin with the brand new internal APIs.
 
@@ -43,6 +46,9 @@
 #include <tcp/tcpAddress.h>
 #include <tcp/tcpEndpoint.h>
 #include <tcp/tcpTransportImpl.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpTransportImpl);
 
 OMNI_NAMESPACE_BEGIN(omni)
 

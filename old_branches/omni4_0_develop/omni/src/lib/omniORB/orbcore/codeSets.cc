@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/07/26 11:28:58  dpg1
+  Print GIOP version information when listing code sets.
+
   Revision 1.1.2.8  2001/07/25 10:56:28  dpg1
   Fix static initialiser problem with codesets.
 
@@ -58,8 +61,17 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/linkHacks.h>
 #include <codeSetUtil.h>
 #include <initialiser.h>
+
+//
+// Make sure built-in code set modules are always linked
+
+OMNI_FORCE_LINK(CS_8859_1);
+OMNI_FORCE_LINK(CS_UTF_8);
+OMNI_FORCE_LINK(CS_UTF_16);
+
 
 OMNI_NAMESPACE_BEGIN(omni)
 

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/07/13 15:35:09  sll
+   Error in setblocking and setnonblocking now causes the socket to be closed
+   as well.
+
   Revision 1.1.2.3  2001/06/20 18:35:17  sll
   Upper case send,recv,connect,shutdown to avoid silly substutition by
   macros defined in socket.h to rename these socket functions
@@ -50,6 +54,9 @@
 #include <ssl/sslConnection.h>
 #include <ssl/sslAddress.h>
 #include <openssl/err.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(sslAddress);
 
 OMNI_NAMESPACE_BEGIN(omni)
 

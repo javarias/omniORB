@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/04/18 18:18:09  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.7  2000/12/05 17:43:31  dpg1
   Check for input over-run in string and wstring unmarshalling.
 
@@ -57,6 +60,7 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/linkHacks.h>
 #include <codeSetUtil.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -712,3 +716,5 @@ public:
 static CS_UTF_8_init _CS_UTF_8_init;
 
 OMNI_NAMESPACE_END(omni)
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(CS_UTF_8);

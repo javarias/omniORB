@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/07/13 15:36:53  sll
+  Added the ability to monitor connections and callback to the giopServer
+  when data has arrived at a connection.
+
   Revision 1.1.2.3  2001/06/20 18:35:16  sll
   Upper case send,recv,connect,shutdown to avoid silly substutition by
   macros defined in socket.h to rename these socket functions
@@ -52,6 +56,9 @@
 #include <ssl/sslEndpoint.h>
 #include <tcp/tcpEndpoint.h>
 #include <openssl/err.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(sslEndpoint);
 
 OMNI_NAMESPACE_BEGIN(omni)
 

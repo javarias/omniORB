@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/07/13 15:35:57  sll
+  Enter a mapping from a socket to a giopConnection in the endpoint's hash
+  table.
+
   Revision 1.1.2.4  2001/06/29 16:26:01  dpg1
   Reinstate tracing messages for new connections and handling locate
   requests.
@@ -56,6 +60,9 @@
 #include <ssl/sslEndpoint.h>
 #include <tcp/tcpEndpoint.h>
 #include <stdio.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(sslConnection);
 
 OMNI_NAMESPACE_BEGIN(omni)
 

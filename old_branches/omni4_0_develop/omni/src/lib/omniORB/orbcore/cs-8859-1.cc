@@ -29,12 +29,16 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/04/18 18:18:09  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.1  2000/10/27 15:42:08  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/linkHacks.h>
 #include <codeSetUtil.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -183,3 +187,5 @@ public:
 static CS_8859_1_init _CS_8859_1_init_;
 
 OMNI_NAMESPACE_END(omni)
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(CS_8859_1);
