@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.5  2001/06/08 17:12:13  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.1.4.4  2001/01/25 13:09:11  sll
 # Fixed up cxx backend to stop it from dying when a relative
 # path name is given to the -p option of omniidl.
@@ -185,7 +188,7 @@ class _objref_Method(cxx.Method):
       direction = types.direction(p)
       param_types.append(pType.op(direction, environment,
                                   use_out = use_out))
-      param_names.append(p.identifier())
+      param_names.append(id.mapID(p.identifier()))
       
     # an operation has optional context
     if self.callable().contexts() != []:
@@ -328,7 +331,7 @@ class _objref_I(Class):
       body = output.StringStream()
       argnames = []
       for parameter in callable.parameters():
-        argnames.append(parameter.identifier())
+        argnames.append(id.mapID(parameter.identifier()))
         
       call_descriptor.out_objrefcall(body,
                                      callable.operation_name(),
