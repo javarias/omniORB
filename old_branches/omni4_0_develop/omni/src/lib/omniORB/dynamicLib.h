@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:39  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:03  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -86,9 +89,7 @@ public:
   void (*deinit)();
 
   // Marshalling contexts.
-  size_t (*context_aligned_size)(size_t initoffset, CORBA::Context_ptr cxtx,
-				 const char*const* which, int how_many);
-  void (*marshal_context)(NetBufferedStream&, CORBA::Context_ptr cxtx,
+  void (*marshal_context)(cdrStream&, CORBA::Context_ptr cxtx,
 			  const char*const* which, int how_many);
 
   // Local call call-back function for CORBA::Repository::lookup_id().
@@ -98,7 +99,7 @@ public:
 };
 
 
-#ifdef _OMNIORB3_DYNAMIC_LIBRARY
+#ifdef _OMNIORB_DYNAMIC_LIBRARY
 // ** Any source file in the dynamic library that includes
 // this header is guarenteed to engage the dynamic library
 // hook.  Thus this header should be included in source files
