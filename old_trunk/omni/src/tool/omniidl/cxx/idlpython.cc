@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/01 20:19:56  dpg1
+// Support for union switch types declared inside the switch statement.
+//
 // Revision 1.3  1999/11/01 10:05:27  dpg1
 // New file attribute to AST.
 // Fix stupid bug in module initialisation.
@@ -357,13 +360,13 @@ visitConst(Const* c)
   default:
     assert(0);
   }
-  result_ = PyObject_CallMethod(idlast_, "Const", "siiNsNsNN",
+  result_ = PyObject_CallMethod(idlast_, "Const", "siiNsNsNiN",
 				c->file(), c->line(), (int)c->mainFile(),
 				pragmasToList(c->pragmas()),
 				c->identifier(),
 				scopedNameToList(c->scopedName()),
 				c->repoId(),
-				pytype, pyv);
+				pytype, (int)c->constKind(), pyv);
   ASSERT_RESULT;
   registerPyDecl(c->scopedName(), result_);
 }
