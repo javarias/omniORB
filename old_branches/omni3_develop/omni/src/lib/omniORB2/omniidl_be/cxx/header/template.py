@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.18  2001/08/16 09:11:35  dpg1
+# Union discriminator not copied.
+#
 # Revision 1.3.2.17  2000/09/25 11:03:28  dpg1
 # Remove use of _T as a template class name
 #
@@ -530,8 +533,15 @@ public:
 };
 
 typedef _CORBA_Array_Var<@name@_copyHelper,@name@_slice> @name@_var;
-typedef _CORBA_Array_OUT_arg<@name@_slice,@name@_var > @name@_out;
 typedef _CORBA_Array_Forany<@name@_copyHelper,@name@_slice> @name@_forany;
+"""
+
+typedef_array_fix_out_type = """\
+typedef @name@_slice* @name@_out;
+"""
+
+typedef_array_variable_out_type = """\
+typedef _CORBA_Array_OUT_arg<@name@_slice,@name@_var > @name@_out;
 """
 
 ##
@@ -700,8 +710,14 @@ struct @name@ {
 };
 
 typedef @name@::_var_type @name@_var;
+"""
 
-typedef _CORBA_ConstrType_@type@_OUT_arg< @name@,@name@_var > @name@_out;
+struct_fix_out_type = """\
+typedef @name@& @name@_out;
+"""
+
+struct_variable_out_type = """\
+typedef _CORBA_ConstrType_Variable_OUT_arg< @name@,@name@_var > @name@_out;
 """
 
 struct_nonarray_sequence = """\
@@ -860,8 +876,16 @@ private:
 };
 
 typedef @unionname@::_var_type @unionname@_var;
-typedef _CORBA_ConstrType_@fixed@_OUT_arg< @unionname@,@unionname@_var > @unionname@_out;
 """
+
+union_fix_out_type = """\
+typedef @unionname@& @unionname@_out;
+"""
+
+union_variable_out_type = """\
+typedef _CORBA_ConstrType_Variable_OUT_arg< @unionname@,@unionname@_var > @unionname@_out;
+"""
+
 union_union = """\
 union {
   @members@
