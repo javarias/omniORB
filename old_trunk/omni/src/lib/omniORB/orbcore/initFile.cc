@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.7  1997/03/10  17:16:14  sll
+// Minor changes to accommodate the creation of a public API for omniORB2.
+//
 // Revision 1.6  1997/03/10  14:22:18  sll
 // Minor changes to filter out error messages depending on the trace level.
 //
@@ -210,7 +213,17 @@ void initFile::initialize()
       delete[] data;
     }
   
-  delete[] fData;
+#ifdef __NT__
+  if (!use_registry)
+    {
+#endif
+
+      delete[] fData;
+
+#ifdef __NT__
+    }
+#endif
+
   return;
 }
 
