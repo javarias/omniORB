@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  1999/09/22 14:26:43  djr
+ Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -128,4 +131,5 @@ CORBA::ULong
 omniLocalOnlyCallDescriptor::alignedSize(CORBA::ULong)
 {
   throw CORBA::INV_OBJREF(0, CORBA::COMPLETED_NO);
+  return 0;
 }

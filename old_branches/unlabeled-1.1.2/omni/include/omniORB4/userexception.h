@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  1999/10/04 15:51:51  djr
+ Various fixes/MSVC work-arounds.
+
  Revision 1.1.2.1  1999/09/24 09:51:58  djr
  Moved from omniORB2 + some new files.
 
@@ -47,7 +50,7 @@ public:  \
   }  \
   inline name(const name& _ex) : UserException(_ex) {}  \
   inline name& operator=(const name& _ex) {  \
-    CORBA::UserException::operator=(_ex);  return *this;  \
+    * (CORBA::UserException*) this = _ex;  return *this;  \
   }  \
   virtual ~name();  \
   virtual void _raise();  \
@@ -87,7 +90,7 @@ public:  \
   }  \
   inline name(const name& _ex) : UserException(_ex) {}  \
   inline name& operator=(const name& _ex) {  \
-    UserException::operator=(_ex);  return *this;  \
+    * (UserException*) this = _ex;  return *this;  \
   }  \
   virtual ~name();  \
   virtual void _raise();  \

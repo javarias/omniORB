@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.4  1999/09/24 17:11:11  djr
+  New option -ORBtraceInvocations and omniORB::traceInvocations.
+
   Revision 1.29.6.3  1999/09/24 15:01:33  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -129,6 +132,7 @@
 #include <poaimpl.h>
 #include <ropeFactory.h>
 #include <initialiser.h>
+#include <dynamicLib.h>
 #ifndef __atmos__
 #include <tcpSocket.h>
 #define _tcpOutgoingFactory tcpSocketMToutgoingFactory
@@ -137,7 +141,6 @@
 #define _tcpOutgoingFactory tcpATMosMToutgoingFactory
 #endif
 #ifdef _HAS_SIGNAL
-#include <dynamicLib.h>
 #include <signal.h>
 #include <errno.h>
 #endif
