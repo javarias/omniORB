@@ -63,7 +63,37 @@
               </td>
             </tr>
             <tr>
-              <td>No bugs yet.</td>
+              <td>Summary:</td>
+              <td>
+                <b>Incorrect use of MessageError messages with oneways</b>
+            (bug number 1)
+            <a name='bug1'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Thu Jul  4 15:29:59 BST 2002</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Chris Newbold</td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  If a oneway method threw an exception, omniORB would turn it into a
+  MessageError message. This is wrong, and can confuse clients doing a
+  oneway followed by a twoway call.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
             </tr>
           </table>
         </td>
