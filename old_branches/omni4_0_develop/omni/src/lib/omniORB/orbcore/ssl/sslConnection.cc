@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/07/31 16:16:23  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.6  2001/07/26 16:37:21  dpg1
   Make sure static initialisers always run.
 
@@ -155,7 +158,9 @@ sslConnection::Send(void* buf, size_t sz,
 
     OMNIORB_ASSERT(tx != 0);
 
-  } while(0);
+    break;
+
+  } while(1);
 
   return tx;
 }
@@ -263,7 +268,9 @@ sslConnection::Recv(void* buf, size_t sz,
 
     OMNIORB_ASSERT(rx != 0);
 
-  } while(0);
+    break;
+
+  } while(1);
 
   return rx;
 }

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/08/23 16:47:01  sll
+  Fixed missing cleanup in the switch to use orbParameters to store all
+   configuration parameters.
+
   Revision 1.1.2.6  2001/07/31 16:16:17  sll
   New transport interface to support the monitoring of active connections.
 
@@ -165,7 +169,9 @@ tcpConnection::Send(void* buf, size_t sz,
     else if (tx == 0)
       return -1;
 
-  } while(0);
+    break;
+
+  } while(1);
 
   return tx;
 
@@ -251,7 +257,9 @@ tcpConnection::Recv(void* buf, size_t sz,
     else if (rx == 0)
       return -1;
 
-  } while(0);
+    break;
+
+  } while(1);
 
   return rx;
 }

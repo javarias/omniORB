@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/02 13:00:53  sll
+  Do not use select(0,0,0,0,&timeout), it doesn't work on win32.
+
   Revision 1.1.2.2  2001/08/01 15:56:07  sll
   Workaround MSVC++ bug. It generates wrong code with FD_ISSET and FD_SET
   under certain conditions.
@@ -385,7 +388,9 @@ SocketCollection::Peek(SocketHandle_t sock) {
 	return 1;
       }
     }
-  } while(0);
+    break;
+
+  } while(1);
 
   return 0;
 }
