@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.37.2.2  2001/04/09 16:32:23  dpg1
+// De-uglify ORB_init command line argument eating.
+//
 // Revision 1.37.2.1  2000/11/02 17:45:42  dpg1
 // Unnecessary extra call to _is_a() after narrow()
 //
@@ -736,22 +739,27 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 
     RAISE_PY_BAD_PARAM_IF(!cxxsource);
 
-    CORBA::Boolean isa;
+    CORBA::Boolean    isa;
+    CORBA::Object_ptr cxxdest;
+
     try {
       omniPy::InterpreterUnlocker ul;
       isa = cxxsource->_is_a(repoId);
+
+      if (isa) {
+	omniObjRef* oosource = cxxsource->_PR_getobj();
+	omniObjRef* oodest =
+	  omniPy::createObjRef(oosource->_mostDerivedRepoId(),
+			       repoId,
+			       oosource->_iopProfiles(),
+			       0, 1);
+	cxxdest =
+	  (CORBA::Object_ptr)(oodest->_ptrToObjRef(CORBA::Object::_PD_repoId));
+      }
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
     if (isa) {
-      omniObjRef* oosource = cxxsource->_PR_getobj();
-      omniObjRef* oodest = omniPy::createObjRef(oosource->_mostDerivedRepoId(),
-						repoId,
-						oosource->_iopProfiles(),
-						0, 1);
-      CORBA::Object_ptr cxxdest =
-	(CORBA::Object_ptr)(oodest->_ptrToObjRef(CORBA::Object::_PD_repoId));
-
       return omniPy::createPyCorbaObjRef(repoId, cxxdest);
     }
     else {
