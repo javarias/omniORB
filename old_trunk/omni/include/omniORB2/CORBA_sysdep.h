@@ -56,10 +56,9 @@
 #elif defined(__SUNPRO_CC)
 // SUN C++ compiler
 
-#endif
-
 #elif defined(_MSC_VER)
 //  Microsoft Visual C++ compiler
+ 
 #endif
 
 #if defined(arm)
