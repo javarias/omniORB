@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.19  2000/10/20 16:39:13  sll
+  Typo bug fix to poll() call. Only has an effect on HPUX.
+
   Revision 1.22.6.18  2000/08/17 15:37:52  sll
   Merged RTEMS port.
 
@@ -1038,28 +1041,32 @@ tcpSocketStrand::ll_recv(void* buf, size_t sz)
 # endif
     
     if ((rx = ::recv(pd_socket,(char*)buf,sz,0)) == RC_SOCKET_ERROR) {
+#ifndef __WIN32__
       if (errno == EINTR)
 	continue;
-      else
-	{
-	  _setStrandIsDying();
-#       ifndef __WIN32__
-	  OMNIORB_THROW_CONNECTION_BROKEN(errno,CORBA::COMPLETED_NO);
-#       else
-	  OMNIORB_THROW_CONNECTION_BROKEN(::WSAGetLastError(),
-					  CORBA::COMPLETED_NO);
-#       endif
-	}
+      else {
+	_setStrandIsDying();
+	OMNIORB_THROW_CONNECTION_BROKEN(errno,CORBA::COMPLETED_NO);
+      }
+#else
+      if (::WSAGetLastError() == WSAEINTR)
+	continue;
+      else {
+	_setStrandIsDying();
+	OMNIORB_THROW_CONNECTION_BROKEN(::WSAGetLastError(),
+					CORBA::COMPLETED_NO);
+      }
+#endif
     }
     else
       if (rx == 0) {
 	_setStrandIsDying();
-#     ifndef __WIN32__
+#ifndef __WIN32__
 	OMNIORB_THROW_CONNECTION_BROKEN(errno,CORBA::COMPLETED_NO);
-#     else
+#else
 	OMNIORB_THROW_CONNECTION_BROKEN(::WSAGetLastError(),
 					CORBA::COMPLETED_NO);
-#     endif
+#endif
       }
     break;
   }
