@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.7  2001/06/15 10:22:09  sll
+# Work around for MSVC++ bug. Changed the casting of the array of base types
+# when they are marshalled using the quick method.
+#
 # Revision 1.17.2.6  2001/06/08 17:12:13  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -207,7 +211,8 @@ else """,
     indexing_string = loop.index()
     element_name = argname + indexing_string
 
-    type_name = d_type.base(environment)
+ #   type_name = d_type.base(environment)
+    type_name = type.base(environment)
     bounded = ""
     kind = d_type.type().kind()
     
@@ -322,7 +327,8 @@ def unmarshall(to, environment, type, decl, name, from_where):
     indexing_string = loop.index()
     element_name = name + indexing_string
     
-    type_name = d_type.base(environment)
+#    type_name = d_type.base(environment)
+    type_name = type.base(environment)
     bounded = ""
     kind = d_type.type().kind()
 
