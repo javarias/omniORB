@@ -10,6 +10,9 @@
 
 /*
  $Log$
+ Revision 1.1  1997/01/08 17:33:30  sll
+ Initial revision
+
  */
 
 #ifndef _O2BE_CLASSES_H_
@@ -65,6 +68,7 @@ private:
   char *pd_repositoryID;
 };
 
+class o2be_typedef;
 class o2be_sequence;
 class o2be_sequence_chain {
 public:
@@ -91,6 +95,8 @@ public:
 
   DEF_NARROW_METHODS1(o2be_predefined_type, AST_PredefinedType);
   DEF_NARROW_FROM_DECL(o2be_predefined_type);
+
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
 private:
   o2be_predefined_type();
@@ -132,6 +138,7 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   void set_hdr_produced_in_field() { pd_hdr_produced_in_field = I_TRUE; }
   idl_bool get_hdr_produced_in_field() { return pd_hdr_produced_in_field; }
@@ -172,6 +179,7 @@ public:
   DEF_NARROW_FROM_DECL(o2be_string);
 
   static const char *fieldMemberTypeName();
+  static void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   size_t max_length();
 
@@ -212,6 +220,7 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   idl_bool isVariable() { return pd_isvar; }
   idl_bool nodefault() { return pd_nodefault; }
@@ -263,6 +272,7 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   idl_bool isVariable() { return pd_isvar; }
 
@@ -314,7 +324,7 @@ public:
   DEF_NARROW_METHODS1(o2be_array, AST_Array);
   DEF_NARROW_FROM_DECL(o2be_array);
 
-  idl_bool isVariable() { return pd_isvar; }
+  idl_bool isVariable();
 
   size_t getSliceDim();
   // Get the array slice dimension
@@ -345,14 +355,15 @@ public:
     AST_Expression **pd_dims;
   };
 
-  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
+  void produce_hdr (fstream &s, o2be_typedef *tdef);
+  void produce_skel(fstream &s, o2be_typedef *tdef);
+  static void produce_typedef_hdr (fstream &s, o2be_typedef *tdef1,
+				   o2be_typedef *tdef2);
   void produce_typedef_in_union(fstream &s, const char *tname);
-  void produce_typedef_skel(fstream &s, o2be_typedef *tdef);
   void produce_struct_member_decl (fstream &s, AST_Decl *fieldtype);
   void produce_union_member_decl (fstream &s, AST_Decl *fieldtype);
 
 private:
-  idl_bool pd_isvar;
   o2be_array();
   void _produce_member_decl(fstream &s, char *varname);
 
@@ -375,6 +386,7 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   static void produce_hdr_for_predefined_types(fstream &s);
   static AST_Sequence *attach_seq_to_base_type(AST_Sequence *se);
@@ -590,6 +602,7 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+  void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
   const char *objref_uqname() const { return pd_objref_uqname; }
   const char *objref_fqname() const { return pd_objref_fqname; }
