@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.37  1999/06/26 17:53:40  sll
+ Use namespace if compiler is SGI MIPSpro 7.2.1 or HP aCC.
+ Added support for Irix 6.5 in 64bit mode.
+
  Revision 1.36  1999/06/18 21:12:16  sll
  Updated copyright notice.
 
@@ -220,9 +224,7 @@
 #elif defined(__BCPLUSPLUS__)
 #define HAS_Cplusplus_Namespace
 
-#elif defined(__SGI_CC)
-// SGI  compiler
-#define NEED_DUMMY_RETURN
+#elif defined(__sgi)
 
 #if _COMPILER_VERSION >= 721
 #define HAS_Cplusplus_Namespace
@@ -239,6 +241,10 @@
 #if _MIPS_SZPTR == 64
 #     define SIZEOF_PTR 8
 #endif
+
+#elif defined(__xlC__) && (__xlC__ <= 0x0301)
+
+#undef HAS_Cplusplus_const_cast
 
 #endif
 
