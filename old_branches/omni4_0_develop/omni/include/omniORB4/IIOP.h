@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/04/18 17:52:46  sll
+  Rationalise marshalling and unmarshalling routines.
+
   Revision 1.2.2.4  2000/11/15 17:01:59  sll
   Default ProfileBody ctor set components max to 2.
 
@@ -118,6 +121,11 @@ public:
   static void unmarshalMultiComponentProfile(const IOP::TaggedProfile&,
 					     IOP::MultipleComponentProfile&);
 
+  static void unmarshalObjectKey(const IOP::TaggedProfile& p,
+				 _CORBA_Unbounded_Sequence_Octet& key);
+  // The input profile must be TAG_INTERNET_IOP
+  // Extract the object key into <key>. The octet buffer inside <key> is
+  // still own by <p>. So p must not be deallocated before key is.
 };
 
 

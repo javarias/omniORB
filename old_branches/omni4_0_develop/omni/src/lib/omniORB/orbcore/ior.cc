@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.8  2001/04/18 18:18:07  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.10.2.7  2000/12/05 17:39:31  dpg1
   New cdrStream functions to marshal and unmarshal raw strings.
 
@@ -364,6 +367,33 @@ IIOP::unmarshalMultiComponentProfile(const IOP::TaggedProfile& profile,
     OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 }
 
+
+void
+IIOP::unmarshalObjectKey(const IOP::TaggedProfile& profile,
+			 _CORBA_Unbounded_Sequence_Octet& key)
+{
+  OMNIORB_ASSERT(profile.tag == IOP::TAG_INTERNET_IOP);
+
+  cdrEncapsulationStream s(profile.profile_data.get_buffer(),
+			   profile.profile_data.length(),
+			   1); 
+
+  CORBA::ULong len;
+  CORBA::UShort port;
+
+  // skip version
+  s.skipInput(2);
+
+  // skip address & port
+  len <<= s;
+  s.skipInput(len);
+  port <<= s;
+
+  len <<= s; // Get object key length
+  CORBA::Octet* p = (CORBA::Octet*)((omni::ptr_arith_t)s.bufPtr() + 
+				    s.currentInputPtr());
+  key.replace(len,len,p,0);
+}
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
