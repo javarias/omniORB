@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.2.9  2000/06/22 10:40:17  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.8  2000/04/27 10:52:12  dpg1
   Interoperable Naming Service
 
@@ -206,7 +210,11 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   if( 0 /*?? in context of invocation on this servant */ ) {
 
     // Return a reference to the object being invoked.
-
+#if defined(__DECCXX) && __DECCXX_VER >= 60000000
+    // Compaq C++ 6.2 warns about this even though this code 
+    // cannot ever execute
+    return 0;
+#endif
   }
   else {
 

@@ -29,6 +29,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.11  2000/06/20 13:55:58  dpg1
+# omniidl now keeps the C++ tree until after the back-ends have run.
+# This means that back-ends can be C++ extension modules.
+#
 # Revision 1.15.2.10  2000/06/05 18:13:28  dpg1
 # Comments can be attached to subsequent declarations (with -K). Better
 # idea of most recent decl in operation declarations
@@ -164,9 +168,15 @@ if hasattr(_omniidl, "__file__"):
 else:
     preprocessor_path = os.path.dirname(sys.argv[0])
 
-preprocessor      = os.path.join(preprocessor_path, "omnicpp")
-preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
-                    _omniidl.version
+if sys.platform!="OpenVMS":
+    preprocessor      = os.path.join(preprocessor_path, "omnicpp")
+    preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
+			_omniidl.version
+else:    
+    names = string.split(preprocessor_path, "/")
+    preprocessor_cmd = \
+ 	'''mcr %s:[%s]omnicpp -lang-c++ -undef "-D__OMNIIDL__=%s"'''\
+ 	% (names[1], string.join(names[2:],"."), _omniidl.version)
 
 no_preprocessor   = 0
 backends          = []
@@ -367,8 +377,12 @@ def main(argv=None):
                 sys.stderr.write(cmdname + ": `" + file + "' does not exist\n")
             sys.exit(1)
 
-        preproc_cmd = preprocessor_cmd + " " + \
-                      string.join(preprocessor_args, " ") + " " + file
+ 	if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
+ 	    preproc_cmd = preprocessor_cmd + " " + \
+ 			  string.join(preprocessor_args, " ") + " " + file
+ 	else:
+ 	    preproc_cmd = preprocessor_cmd + ' "' + \
+                       string.join(preprocessor_args, '" "') + '" ' + file
 
         if not no_preprocessor:
             if verbose:
