@@ -28,10 +28,16 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/02/07 15:26:59  dpg1
+  Spurious \r characters removed.
+
   Revision 1.1.2.1  1999/09/22 14:27:09  djr
   Major rewrite of orbcore to support POA.
 
 */
+
+// This is now obsolete. It is not used by any omniORB code, but it's
+// still here in case something elsewhere is using it.
 
 #include <omniORB3/CORBA.h>
 

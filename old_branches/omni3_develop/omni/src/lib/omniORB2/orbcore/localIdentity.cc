@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/06/22 10:40:15  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.4  1999/10/27 17:32:11  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -71,15 +75,17 @@ public:
     omni::internalLock->lock();
     pd_id->pd_nInvocations--;
     pd_id->pd_adapter->leaveAdapter();
-    int done = pd_id->pd_nInvocations > 0;
-    omni::internalLock->unlock();
-    if( done )  return;
+    if (pd_id->pd_nInvocations > 0) {
+      omni::internalLock->unlock();
+      return;
+    }
     // Object has been deactivated, and the last invocation
     // has completed.  Pass the object back to the adapter
     // so it can be etherealised.
     pd_id->adapter()->lastInvocationHasCompleted(pd_id);
-  }
 
+    // lastInvocationHasCompleted() has released <omni::internalLock>.
+  }
 private:
   omniLocalIdentity* pd_id;
 };
