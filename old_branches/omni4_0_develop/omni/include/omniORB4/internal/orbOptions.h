@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/02/11 15:15:50  dpg1
+  Things for ETS kernel.
+
   Revision 1.1.2.4  2001/08/21 11:02:12  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -196,6 +199,15 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
+  void getTraceLevel(int argc, char** argv) throw (Unknown,BadParam);
+  // Look for an -ORBtraceLevel argument very early on, so the trace
+  // level can affect later option logging. Does not remove the
+  // arguments -- that is done by extractInitOptions() later.
+  //
+  // Thread Safety preconditions:
+  //    Not thread safe
+
+  ////////////////////////////////////////////////////////////////////////
   void importFromFile(const char* filename) throw (Unknown,BadParam);
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
@@ -274,7 +286,7 @@ class orbOptions {
   // argv. Update argc to truncate the moved arguments from argv.
 
   static const char* expect_boolean_msg;
-  static const char* expect_non_zero_ulong_msg;
+  static const char* expect_ulong_msg;
   static const char* expect_greater_than_zero_ulong_msg;
 
   ////////////////////////////////////////////////////////////////////////

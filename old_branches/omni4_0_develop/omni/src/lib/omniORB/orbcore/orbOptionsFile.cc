@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/01/02 18:18:26  dpg1
+  Old config file warning less obtrusive.
+
   Revision 1.1.2.4  2001/08/29 17:54:00  sll
   Make the old configuration parameter GATEKEEPER_ALLOWFILE and
   GATEKEEPER_DENYFILE obsolute.
@@ -112,7 +115,16 @@ orbOptions::importFromFile(const char* filename) throw (orbOptions::Unknown,
     if ( *p == '#' || *p == '\0' )
       continue;
 
-    char* sep = strchr(line,'=');
+#if SUPPORT_OLD_CONFIG_FORMAT
+    // Special case: old ORBInitRef has an '=' in it, so the test
+    // below spots the '=' incorrectly.
+    if (!strncmp(p, "ORBInitRef", 10)) {
+      if (parseOldConfigOption(*this,line)) {
+	continue;
+      }
+    }
+#endif
+    char* sep = strchr(p,'=');
     if (!sep) {
 #if SUPPORT_OLD_CONFIG_FORMAT
       // Backward compatibility. Detect old format/keywords 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.30  2002/02/25 11:17:13  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.2.2.29  2002/02/13 17:39:58  dpg1
   Don't put POA in DISCARDING state during destroy().
 
@@ -3682,7 +3685,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+				 orbOptions::expect_ulong_msg);
     }
     orbParameters::poaHoldRequestTimeout = v;
   }

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2002/03/14 14:40:46  dpg1
+  Scavenger locking bug.
+
   Revision 1.1.4.14  2002/03/14 12:21:49  dpg1
   Undo accidental scavenger period change, remove invalid assertion.
 
@@ -797,7 +800,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+				 orbOptions::expect_ulong_msg);
     }
     orbParameters::scanGranularity = v;
   }
@@ -825,7 +828,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+				 orbOptions::expect_ulong_msg);
     }
     orbParameters::outConScanPeriod = v;
   }
@@ -853,7 +856,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+				 orbOptions::expect_ulong_msg);
     }
     orbParameters::inConScanPeriod = v;
   }

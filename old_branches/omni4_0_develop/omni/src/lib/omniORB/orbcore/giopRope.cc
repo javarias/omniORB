@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2001/09/19 17:26:49  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.4.18  2001/09/10 17:47:17  sll
   startIdleCounter when the strand is definitely idle.
 
@@ -757,7 +760,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+			 orbOptions::expect_greater_than_zero_ulong_msg);
     }
     orbParameters::maxGIOPConnectionPerServer = v;
   }

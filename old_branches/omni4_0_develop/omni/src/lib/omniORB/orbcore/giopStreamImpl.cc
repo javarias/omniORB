@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/09/20 13:26:14  dpg1
+  Allow ORB_init() after orb->destroy().
+
   Revision 1.1.4.3  2001/08/21 11:02:16  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -371,7 +374,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+			 orbOptions::expect_greater_than_zero_ulong_msg);
     }
     orbParameters::maxInterleavedCallsPerConnection = v;
   }

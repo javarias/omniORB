@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.24  2001/09/24 14:26:02  dpg1
+  Safer static translation unit counts for omnithread and final clean-up.
+
   Revision 1.2.2.23  2001/09/20 13:26:14  dpg1
   Allow ORB_init() after orb->destroy().
 
@@ -1187,7 +1190,7 @@ public:
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+				 orbOptions::expect_ulong_msg);
     }
     omniORB::traceLevel = v;
   }
@@ -1273,8 +1276,7 @@ public:
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
-      throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_non_zero_ulong_msg);
+      throw orbOptions::BadParam(key(),value,orbOptions::expect_ulong_msg);
     }
     orbParameters::objectTableSize = v;
   }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/03/11 12:21:07  dpg1
+  ETS things.
+
   Revision 1.1.2.5  2001/08/21 11:02:18  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -59,8 +62,9 @@
 #include <windows.h>
 #include <winreg.h>
 
-#define NEW_REGKEY "SOFTWARE\\ATT\\omniORB"
-#define OLD_REGKEY "SOFTWARE\\ORL\\omniORB\\2.0"
+#define NEW_REGKEY  "SOFTWARE\\omniORB"
+#define OLD_REGKEY1 "SOFTWARE\\ATT\\omniORB"
+#define OLD_REGKEY2 "SOFTWARE\\ORL\\omniORB\\2.0"
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -76,7 +80,8 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
 
   rootregname = NEW_REGKEY;
   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,rootregname,0,
-		   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,&rootkey) == ERROR_SUCCESS) {
+		   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
+		   &rootkey) == ERROR_SUCCESS) {
     try {
       parseConfigReg(*this,rootkey);
       RegCloseKey(rootkey);
@@ -92,7 +97,25 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
     return;
   }
 
-  rootregname = OLD_REGKEY;
+  rootregname = OLD_REGKEY1;
+  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,rootregname,0,
+		   KEY_QUERY_VALUE | KEY_ENUMERATE_SUB_KEYS,
+		   &rootkey) == ERROR_SUCCESS) {
+    try {
+      parseConfigReg(*this,rootkey);
+      RegCloseKey(rootkey);
+    }
+    catch (orbOptions::Unknown& ex) {
+      RegCloseKey(rootkey);
+      throw;
+    }
+    catch (orbOptions::BadParam& ex) {
+      RegCloseKey(rootkey);
+      throw;
+    }
+  }
+
+  rootregname = OLD_REGKEY2;
   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,rootregname,0,
 		   KEY_QUERY_VALUE,&rootkey) == ERROR_SUCCESS) {
     try {
@@ -132,7 +155,8 @@ CORBA::Boolean getRegEntry(HKEY rootkey, DWORD index,
   if (valuetype != REG_SZ) {
     if ( omniORB::trace(1) ) {
       omniORB::logger log;
-      log << "Error reading configuration data in the registry. Reason: value is not of type REG_SZ\n";
+      log << "Error reading configuration data in the registry.\n"
+	  << "Reason: value is not of type REG_SZ\n";
     }
     throw orbOptions::Unknown("<missing>","<missing>");
   }
@@ -168,7 +192,7 @@ parseConfigInSubKey(orbOptions& opt, HKEY rootkey, char* subkeyname) {
 
   if (RegOpenKeyEx(rootkey,subkeyname,0,
                    KEY_QUERY_VALUE,&subkey) == ERROR_SUCCESS) {
-   try {
+    try {
 
       DWORD total;
       DWORD keybufsize;
@@ -177,21 +201,22 @@ parseConfigInSubKey(orbOptions& opt, HKEY rootkey, char* subkeyname) {
       CORBA::String_var valuebuf;
 
       RegQueryInfoKey(subkey,NULL,NULL,NULL,NULL,NULL,NULL,
-		                  &total,&keybufsize,&valuebufsize,NULL,NULL);
+		      &total,&keybufsize,&valuebufsize,NULL,NULL);
       if (total) {
-         keybuf = CORBA::string_alloc(keybufsize);
-         valuebuf = CORBA::string_alloc(valuebufsize);
+	keybuf = CORBA::string_alloc(keybufsize);
+	valuebuf = CORBA::string_alloc(valuebufsize);
       }
 
       DWORD index = 0;
       while (index < total) {
-		    char* key;
-		    char* value;
+	char* key;
+	char* value;
         if (!getRegEntry(subkey,index,
                          keybuf,keybufsize+1,
                          valuebuf,valuebufsize+1,
-		                     key,value))
+			 key,value)) {
           return;
+	}
         opt.addOption(subkeyname,value,orbOptions::fromRegistry);
         index++;
       }
@@ -219,8 +244,8 @@ void parseConfigReg(orbOptions& opt, HKEY rootkey) {
   DWORD subkeybufsize;
   CORBA::String_var keybuf;
   CORBA::String_var valuebuf;
-	CORBA::String_var subkeybuf;
-
+  CORBA::String_var subkeybuf;
+  
   RegQueryInfoKey(rootkey,NULL,NULL,NULL,&totalsubkeys,&subkeybufsize,NULL,
 		  &total,&keybufsize,&valuebufsize,NULL,NULL);
 
@@ -233,35 +258,36 @@ void parseConfigReg(orbOptions& opt, HKEY rootkey) {
 
   DWORD index = 0;
   while (index < total) {
-		char* key;
-		char* value;
+    char* key;
+    char* value;
     if (!getRegEntry(rootkey,index,
                      keybuf,keybufsize+1,
                      valuebuf,valuebufsize+1,
-		                 key,value))
+		     key,value)) {
       return;
+    }
     opt.addOption(key,value,orbOptions::fromRegistry);
     index++;
   }
 
   index = 0;
   while (index < totalsubkeys) {
-		DWORD subkeylen = subkeybufsize + 1;
-		if ( RegEnumKeyEx(rootkey,index,
-		                  (LPTSTR) ((char*)subkeybuf),&subkeylen,
-		                  NULL,NULL,NULL,NULL) != ERROR_SUCCESS ) {
-			 omniORB::logger log;
-			 log << "Cannot red subkey name for index " << index << "\n";
-		}
-		parseConfigInSubKey(opt,rootkey,subkeybuf);
-		index++;
-	}
+    DWORD subkeylen = subkeybufsize + 1;
+    if ( RegEnumKeyEx(rootkey,index,
+		      (LPTSTR) ((char*)subkeybuf),&subkeylen,
+		      NULL,NULL,NULL,NULL) != ERROR_SUCCESS ) {
+      omniORB::logger log;
+      log << "Cannot red subkey name for index " << index << "\n";
+    }
+    parseConfigInSubKey(opt,rootkey,subkeybuf);
+    index++;
+  }
 }
 
 static
 void
 oldconfig_warning(const char* key, const char* newkey) {
-  if (omniORB::trace(1)) {
+  if (omniORB::trace(2)) {
     omniORB::logger log;
     log << "Warning: translated (" << key << ") to (" << newkey << ")\n";
   }
@@ -285,22 +311,24 @@ void parseOldConfigReg(orbOptions& opt, HKEY rootkey) {
   }
 
   if (omniORB::trace(1)) {
-    omniORB::logger log;
-    log << "Warning: the registry entries are in the old pre-omniORB4 format.\n"
- "omniORB: For the moment this is accepted to maintain backward compatibility.\n"
- "omniORB: Please update to the new registry format ASAP.\n";
+    omniORB::logger l;
+    l << "Warning: the registry entries are in the old pre-omniORB4 format.\n";
   }
-
+  if (omniORB::trace(2)) {
+    omniORB::logger l;
+    l << "For the moment this is accepted to maintain backward compatibility.\n"
+      << "omniORB: Please update to the new registry format ASAP.\n";
+  }
 
   DWORD index = 0;
   while (index < total) {
-		char* key;
-		char* value;
+    char* key;
+    char* value;
 
     if (!getRegEntry(rootkey,index,
                      keybuf,keybufsize+1,
                      valuebuf,valuebufsize+1,
-		                 key,value))
+		     key,value))
       return;
 
     if (strcmp(key,"ORBInitRef") == 0) {
@@ -345,7 +373,6 @@ void parseOldConfigReg(orbOptions& opt, HKEY rootkey) {
 
     index++;
   }
-
 }
 
 OMNI_NAMESPACE_END(omni)
