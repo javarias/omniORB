@@ -30,6 +30,10 @@
 
 /* 
  * $Log$
+ * Revision 1.9  1998/08/05 18:01:12  sll
+ * Fixed bugs caused by typos in TypeCode::TypeCode(TCKind,ULong) and
+ * TypeCode::_nil().
+ *
  * Revision 1.8  1998/04/18 10:11:17  sll
  * Corrected signature of one TypeCode ctor.
  *
@@ -1890,7 +1894,7 @@ CORBA::TypeCode_ptr
 CORBA::TypeCode::_nil()
 {
   if (!_nil_TypeCodeV) {
-#if !defined(__DECCXX_VER) || __DECCXX_VER > 50590004
+#if !defined(__DECCXX_VER) || __DECCXX_VER > 50590015
     _nil_TypeCodeV = new CORBA::_nil_TypeCode;
 #else
     // Workaround for compiler bug in DEC cxx v5.5
