@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.7  2000/06/26 16:23:11  djs
+# Added new backend arguments.
+# Better error handling when encountering unsupported IDL (eg valuetypes)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.30.2.6  2000/04/26 18:22:14  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -719,6 +724,16 @@ def const_qualifier(insideModule, insideClass):
     else:
         return "_CORBA_MODULE_VAR"
 
+# Return the base AST node after following all the typedef chains
+def remove_ast_typedefs_(node, recurse):
+    if isinstance(node, idlast.Declarator):
+        typedef = node.alias()
+        return recurse(typedef.aliasType().decl(), recurse)
+    return node
+
+def remove_ast_typedefs(node, chain = remove_ast_typedefs_):
+    return chain(node, chain)
+
 
 def allInherits(interface):
     """tyutil.allInherits(idlast.Interface) -> idlast.Interface list
@@ -726,20 +741,23 @@ def allInherits(interface):
        heirarchy. Returns the _set_ (ie no duplicates) of ancestor
        interfaces"""
     assert isinstance(interface, idlast.Interface)
+
+    # It is possible to inherit from an interface through a chain of
+    # typedef nodes. These need to be removed...
+    
     # breadth first search
-    def bfs(current, bfs):
+    def bfs(current, bfs, remove_typedefs = remove_ast_typedefs):
         if current == []:
             return []
         
         # extend search one level deeper than current
         next = []
-        for c in current:
+        for c in map(remove_typedefs, current):
             next = next + c.inherits()
 
         return next + bfs(next, bfs)
 
-    start = interface.inherits()
-    
+    start = map(remove_ast_typedefs, interface.inherits())
     list = start + bfs(start, bfs)
 
     return util.setify(list)
