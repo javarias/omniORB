@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4  1997/05/06 16:08:46  sll
+  Public release.
+
   */
 
 
@@ -50,6 +53,7 @@ public:
 private:
   char* fData;
   long fsize;
+  long currpos;
 
   inline void invref(char* entryname);
   inline void multerr(char* entryname);      
@@ -71,7 +75,7 @@ private:
   HKEY init_hkey;
   DWORD init_maxValLen;
   DWORD init_maxDataLen;
-
+  DWORD curr_index;
   int getRegistryEntry(char*& entryname, char*& data);
 #endif
 
