@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/11/02 12:17:26  dpg1
+# Top-level module name now has a prefix of _0_ to avoid clashes with
+# names of nested declarations.
+#
 # Revision 1.4  1999/11/02 10:54:01  dpg1
 # Two small bugs in union generation.
 #
@@ -51,6 +55,7 @@ stub_directory   = ""
 stub_module      = ""
 module_directory = ""
 
+cpp_args = ["-D__OMNIIDL_PYTHON__"]
 
 #""" Uncomment this line to get syntax highlighthing on the output strings
 
