@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  2000/01/12 11:52:09  djs
+# Added important comment :)
+#
 # Revision 1.2  1999/12/09 20:40:13  djs
 # TypeCode and Any generation option performs identically to old compiler for
 # all current test fragments.
@@ -59,7 +62,7 @@ def monolithic(stream, tree):
 #include "@Config.basename()@@Config.hdrsuffix()@"
 #include <omniORB3/tcDescriptor.h>
 
-static const char* @Config.name_prefix()@_library_version = @Config.omniORB_Library_Version()@;
+static const char* @Config.privatePrefix()@_library_version = @Config.omniORB_Library_Version()@;
 """, Config = config)
 
     Typecode = omniidl.be.cxx.dynskel.typecode.__init__(stream)

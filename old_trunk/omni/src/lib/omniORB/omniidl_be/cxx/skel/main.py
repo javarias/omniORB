@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20  2000/01/13 14:16:34  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.19  2000/01/12 17:48:34  djs
 # Added option to create BOA compatible skeletons (same as -BBOA in omniidl3)
 #
@@ -1185,7 +1188,8 @@ def visitException(node):
             if is_array_declarator:
                 # we use the internal typedef'ed type if the member is an array
                 # declarator
-                memberType_name_arg = "const _0RL_" + decl_name
+                memberType_name_arg = "const " + config.privatePrefix() + "_" + \
+                                      decl_name
             else:
                 # we normally use the utility function for this purpose
                 memberType_name_arg = tyutil.makeConstructorArgumentType(memberType,

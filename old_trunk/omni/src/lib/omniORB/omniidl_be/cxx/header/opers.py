@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  2000/01/07 20:31:29  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.3  1999/12/24 18:14:30  djs
 # Fixed handling of #include'd .idl files
 #
@@ -124,9 +131,10 @@ inline void operator >>=(@name@ _e, @stream@& s) {
 }
 
 inline void operator <<= (@name@& _e, @stream@& s) {
-  CORBA::ULong _0RL_e;
-  ::operator<<=(_0RL_e,s);
-  switch (_0RL_e) {""", name = cxxname, stream = s)
+  CORBA::ULong @private_prefix@_e;
+  ::operator<<=(@private_prefix@_e,s);
+  switch (_0RL_e) {""", name = cxxname, stream = s,
+                   private_prefix = config.privatePrefix())
         stream.inc_indent()
         for d in node.enumerators():
             labelname = idlutil.ccolonName(map(tyutil.mapID,
@@ -135,10 +143,11 @@ inline void operator <<= (@name@& _e, @stream@& s) {
      case @label@:""", label = labelname)
         stream.inc_indent()
         stream.out("""\
-        _e = (@name@) _0RL_e;
+        _e = (@name@) @private_prefix@_e;
         break;
      default:
-        _CORBA_marshal_error();""", name = cxxname)
+        _CORBA_marshal_error();""", name = cxxname,
+                   private_prefix = config.privatePrefix())
         stream.dec_indent()
         stream.dec_indent()
         stream.out("""\

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/11 12:02:45  djs
+# More tidying up
+#
 # Revision 1.11  2000/01/10 18:42:21  djs
 # Removed redundant code, tidied up.
 #
@@ -78,7 +81,7 @@ import string
 
 from omniidl import idlutil, idltype, idlast
 
-from omniidl.be.cxx import util, tyutil, skutil, name
+from omniidl.be.cxx import util, tyutil, skutil, name, config
 
 from omniidl.be.cxx.skel import proxy
 
@@ -571,11 +574,11 @@ def attribute_write(attribute, id):
     if not(is_array) and tyutil.isString(deref_attrType):
         unmarshal.out("""\
 {
-  CORBA::String_member _0RL_str_tmp;
-  _0RL_str_tmp <<= giop_s;
-  @item_name@ = _0RL_str_tmp._ptr;
-  _0RL_str_tmp._ptr = 0;
-}""", item_name = "value")
+  CORBA::String_member @private_prefix@_str_tmp;
+  @private_prefix@_str_tmp <<= giop_s;
+  @item_name@ = @private_prefix@_str_tmp._ptr;
+  @private_prefix@_str_tmp._ptr = 0;
+}""", item_name = "value", private_prefix = config.privatePrefix())
     else:
         skutil.unmarshall(unmarshal, environment, attrType, None, "value",
                           1, "giop_s")

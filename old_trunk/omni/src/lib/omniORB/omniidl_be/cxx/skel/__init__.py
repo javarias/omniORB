@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  2000/01/13 14:16:34  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.3  2000/01/11 11:34:49  djs
 # Added support for fragment generation (-F) mode
 #
@@ -58,7 +61,7 @@ def monolithic(stream, tree):
 #include "@Config.basename()@@Config.hdrsuffix()@"
 #include <omniORB3/callDescriptor.h>
 
-static const char* @Config.name_prefix()@_library_version = @Config.omniORB_Library_Version()@;
+static const char* @Config.privatePrefix()@_library_version = @Config.omniORB_Library_Version()@;
 
 
 """, Config = config)

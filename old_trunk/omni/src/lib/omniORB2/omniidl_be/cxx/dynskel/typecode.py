@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  2000/01/13 14:16:25  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.8  2000/01/11 11:33:55  djs
 # Tidied up
 #
@@ -172,7 +175,7 @@ def external_linkage(decl, mangled_name = ""):
     tc_unscoped_name = "_tc_" + tyutil.name(scopedName)
 
     if mangled_name == "":
-        mangled_name = mangleName("_0RL_tc_", decl.scopedName())
+        mangled_name = mangleName(config.privatePrefix() + "_tc_", decl.scopedName())
 
     if alreadyDefined(tc_name):
         return
@@ -290,7 +293,7 @@ def mkTypeCode(type, declarator = None, node = None):
 
     guard_name = tyutil.guardName(type.scopedName())
 
-    return "_0RL_tc_" + guard_name
+    return config.privatePrefix() + "_tc_" + guard_name
         
 # ---------------------------------------------------------------
 # Tree-walking part of module starts here
@@ -320,7 +323,8 @@ def visitModule(node):
 # to all the TypeCodes of the structure members
 def buildMembersStructure(node):
     struct = util.StringStream()
-    mangled_name = mangleName("_0RL_structmember_", node.scopedName())
+    mangled_name = mangleName(config.privatePrefix() + \
+                              "_structmember_", node.scopedName())
     if alreadyDefined(mangled_name):
         # no need to regenerate
         return struct
@@ -372,14 +376,15 @@ def visitStruct_structMember(node):
     tophalf.out(str(buildMembersStructure(node)))
 
     scopedName = node.scopedName()
-    mangled_name = mangleName("_0RL_tc_", scopedName)
+    mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         # private static name already declared, don't do it again
         return
 
     defineName(mangled_name)
 
-    structmember_mangled_name = mangleName("_0RL_structmember_", scopedName)
+    structmember_mangled_name = mangleName(config.privatePrefix() + \
+                                           "_structmember_", scopedName)
     assert alreadyDefined(structmember_mangled_name), \
            "The name \"" + structmember_mangled_name + "\" should be defined by now"
     
@@ -426,7 +431,7 @@ def visitUnion(node):
         return
 
     scopedName = node.scopedName()
-    mangled_name = mangleName("_0RL_tc_", scopedName)
+    mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         return
     
@@ -488,7 +493,8 @@ def visitUnion(node):
         repoID = mapRepoID(repoID)
 
     union_name = tyutil.mapID(tyutil.name(scopedName))
-    unionmember_mangled_name = mangleName("_0RL_unionMember_", scopedName)
+    unionmember_mangled_name = mangleName(config.privatePrefix() + \
+                                          "_unionMember_", scopedName)
     
     default_str = ""
     if hasDefault != None:
@@ -519,7 +525,7 @@ def visitEnum(node):
         return
     
     scopedName = node.scopedName()
-    mangled_name = mangleName("_0RL_tc_", scopedName)
+    mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         return
     
@@ -536,7 +542,8 @@ def visitEnum(node):
         repoID = mapRepoID(repoID)
 
     tc_name = name.prefixName(scopedName, "_tc_")
-    enummember_mangled_name = mangleName("_0RL_enumMember_", scopedName)
+    enummember_mangled_name = mangleName(config.privatePrefix() + \
+                                         "_enumMember_", scopedName)
 
     tophalf.out("""\
 static const char* @enummember_mangled_name@[] = { @elements@ };
@@ -617,7 +624,7 @@ def visitDeclarator(declarator):
     recurse(aliasType)
     
     scopedName = declarator.scopedName()
-    mangled_name = mangleName("_0RL_tc_", scopedName)
+    mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         return
     
@@ -666,7 +673,7 @@ def visitException(node):
         return
 
     scopedName = node.scopedName()
-    mangled_name = mangleName("_0RL_tc_", scopedName)
+    mangled_name = mangleName(config.privatePrefix() + "_tc_", scopedName)
     if alreadyDefined(mangled_name):
         return
     defineName(mangled_name)
@@ -704,7 +711,8 @@ def visitException(node):
     if config.EMULATE_BUGS():
         repoID = mapRepoID(repoID)
     ex_name = tyutil.mapID(tyutil.name(scopedName))
-    structmember_mangled_name = mangleName("_0RL_structmember_", scopedName)
+    structmember_mangled_name = mangleName(config.privatePrefix() + \
+                                           "_structmember_", scopedName)
     if num == 0:
         structmember_mangled_name = "(CORBA::PR_structMember*) 0"
     tophalf.out("""\

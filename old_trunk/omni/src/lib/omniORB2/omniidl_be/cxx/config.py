@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/13 14:16:20  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.10  2000/01/13 11:45:47  djs
 # Added option to customise C++ reserved word name escaping
 #
@@ -183,7 +186,7 @@ def poa_fragment_suffix():
     return self._poa_fragment
 
 # prefix to be added to avoid occasional name clashes
-def name_prefix():
+def privatePrefix():
     return self._name_prefix
     
 # list of all files #included in the IDL
