@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.1  2000/08/29 15:20:29  dpg1
+# New relativeScope() function. New -i flag to enter interactive loop
+# after parsing
+#
 # Revision 1.3  1999/11/15 15:49:23  dpg1
 # Documentation strings.
 #
@@ -48,7 +52,6 @@ pruneScope()     -- remove common prefix from a scoped name.
 relativeScope()  -- give a minimal name for one scope relative to another."""
 
 import string
-import _omniidl
 
 def slashName(scopedName, our_scope=[]):
     """slashName(list, [list]) -> string
@@ -150,4 +153,5 @@ relativeScope(["P", "O", "J"], ["O", "C"]) -> [None, "O", "C"]
 
 If either scoped name does not exist, returns None."""
 
+    import _omniidl
     return _omniidl.relativeScopedName(fromScope, destScope)
