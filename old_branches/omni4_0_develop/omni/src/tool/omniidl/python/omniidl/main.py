@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.13  2002/12/19 13:55:14  dgrisby
+# Don't try to delete non-existent file when no preprocessor.
+#
 # Revision 1.17.2.12  2002/10/28 12:20:45  dgrisby
 # Editing mishap.
 #
@@ -205,7 +208,7 @@ def parseArgs(args):
             preprocessor_args.append("-D" + a)
 
         elif o == "-I":
-            preprocessor_args.append("-I" + a)
+            preprocessor_args.append('-I "%s"' % a)
 
         elif o == "-U":
             preprocessor_args.append("-U" + a)
