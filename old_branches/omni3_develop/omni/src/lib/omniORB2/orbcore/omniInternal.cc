@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.2.16  2000/07/21 15:35:47  dpg1
+  Incorrectly rejected object references with incompatible target and
+  most-derived repoIds.
+
   Revision 1.1.2.15  2000/06/27 15:40:57  sll
   Workaround for Cygnus gcc's inability to recognise _CORBA_Octet*& and
   CORBA::Octet*& are the same type.
@@ -629,6 +633,10 @@ omni::createObjRef(const char* mostDerivedRepoId,
   if( !pof ) {
     pof = proxyObjectFactory::lookup(targetRepoId);
     OMNIORB_ASSERT(pof);
+    // The assertion above will fail if your application attempts to
+    // create an object reference while another thread is shutting
+    // down the ORB.
+
     if( strcmp(targetRepoId, CORBA::Object::_PD_repoId) )
       target_intf_not_confirmed = 1;
   }
@@ -734,6 +742,10 @@ omni::createObjRef(const char* mostDerivedRepoId,
   if( !pof ) {
     pof = proxyObjectFactory::lookup(targetRepoId);
     OMNIORB_ASSERT(pof);
+    // The assertion above will fail if your application attempts to
+    // create an object reference while another thread is shutting
+    // down the ORB.
+
     target_intf_not_confirmed = 1;
   }
 
@@ -959,7 +971,9 @@ omni::assertFail(const char* file, int line, const char* expr)
 {
   if( omniORB::trace(1) ) {
     omniORB::logger l;
-    l << "Assertion failed.  This indicates a bug in omniORB.\n"
+    l << "Assertion failed.  This indicates a bug in the application using\n"
+      "omniORB, or maybe in omniORB itself. e.g. using the ORB after it has\n"
+      "been shut down.\n"
       " file: " << file << "\n"
       " line: " << line << "\n"
       " info: " << expr << '\n';
