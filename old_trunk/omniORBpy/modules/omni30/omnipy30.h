@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.5  1999/09/24 09:22:03  dpg1
+// Added copyright notices.
+//
 // Revision 1.4  1999/09/22 15:46:13  dpg1
 // Fake POA implemented.
 //
@@ -54,9 +57,6 @@
 #include <python1.5/Python.h>
 
 #include <iostream.h>
-
-#define OMNIPY_MAJOR 0
-#define OMNIPY_MINOR 1
 
 
 ////////////////////////////////////////////////////////////////////////////
