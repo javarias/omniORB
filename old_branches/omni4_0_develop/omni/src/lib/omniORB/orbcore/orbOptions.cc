@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/10/19 11:06:45  dpg1
+  Principal support for GIOP 1.0. Correct some spelling mistakes.
+
   Revision 1.1.2.3  2001/08/21 11:03:38  sll
   Environment variables to set the configuration parameters must now
   prefix with "ORB". For instance, environment variable ORBtraceLevel
@@ -153,8 +156,7 @@ void
 orbOptions::addOptions(const char* options[][2]) throw (orbOptions::Unknown,
 							orbOptions::BadParam) {
 
-  int i = 0;
-  while (options[i][0]) {
+  for (int i=0; options[i][0]; i++) {
     addOption(options[i][0],options[i][1],fromArray);
   }
 }
