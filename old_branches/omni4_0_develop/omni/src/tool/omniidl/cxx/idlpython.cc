@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.6  2000/12/05 17:45:19  dpg1
+// omniidl case sensitivity updates from omni3_develop.
+//
 // Revision 1.17.2.5  2000/11/01 15:57:03  dpg1
 // More updates for 2.4.
 //
@@ -1508,7 +1511,7 @@ main(int argc, char** argv)
 "\n"
 "try:\n"
 "    import omniidl.main\n"
-"except ImportError:\n"
+"except ImportError, msg:\n"
 "    sys.stderr.write('\\n\\n')\n"
 "    sys.stderr.write('omniidl: ERROR!\\n\\n')\n"
 "    sys.stderr.write('omniidl: Could not open Python files for IDL compiler\\n')\n"
