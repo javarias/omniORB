@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.9  1997/04/29  12:30:39  sll
+// Removed name ambiguity.
+//
 // Revision 1.8  1997/04/23  14:31:16  sll
 // - added support for LOCATION_FORWARD message
 // - added code to assert object existent when first do a remote call.
@@ -257,7 +260,7 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in,
   
   // calculate request message size
   IND(s); s << "CORBA::ULong _msgsize = GIOP_C::RequestHeaderSize(_r.keysize(),"
-	    << strlen(uqname()) + 1 
+	    << strlen(local_name()->get_string()) + 1 
 	    << ");\n";
 
   {
@@ -293,7 +296,7 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in,
 
 
   IND(s); s << "_c.InitialiseRequest(_r.key(),_r.keysize(),(char *)\""
-	    << uqname() << "\"," << strlen(uqname()) + 1 << ",_msgsize,"
+	    << local_name()->get_string() << "\"," << strlen(local_name()->get_string()) + 1 << ",_msgsize,"
 	    << ((flags() == AST_Operation::OP_oneway)?"1":"0")
 	    << ");\n";
 

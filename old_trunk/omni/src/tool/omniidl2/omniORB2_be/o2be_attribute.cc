@@ -10,6 +10,10 @@
 
 /*
   $Log$
+// Revision 1.6  1997/04/23  14:28:40  sll
+// - added support for LOCATION_FORWARD message
+// - added code to assert object existent when first do a remote call.
+//
 // Revision 1.5  1997/02/17  18:03:46  ewc
 // IDL Compiler now adds a dummy return after some exceptions - this
 // stops some C++ compilers from complaining (e.g. MSVC++ 4.2) about
@@ -152,11 +156,11 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
 
   // calculate request message size
   IND(s); s << "CORBA::ULong _msgsize = GIOP_C::RequestHeaderSize(_r.keysize(),"
-	    << strlen("_get_") + strlen(uqname()) + 1 
+	    << strlen("_get_") + strlen(local_name()->get_string()) + 1 
 	    << ");\n";
 
   IND(s); s << "_c.InitialiseRequest(_r.key(),_r.keysize(),(char *)\""
-	    << "_get_" << uqname() << "\"," << strlen("_get_") + strlen(uqname()) + 1 << ",_msgsize,0);\n";
+	    << "_get_" << local_name()->get_string() << "\"," << strlen("_get_") + strlen(local_name()->get_string()) + 1 << ",_msgsize,0);\n";
 
   IND(s); s << "switch (_c.ReceiveReply())\n";  // invoke method
   IND(s); s << "{\n";
@@ -411,7 +415,7 @@ o2be_attribute::produce_proxy_wr_skel(fstream &s,o2be_interface &defined_in)
   
   // calculate request message size
   IND(s); s << "CORBA::ULong _msgsize = GIOP_C::RequestHeaderSize(_r.keysize(),"
-	    << strlen("_set_") + strlen(uqname()) + 1 
+	    << strlen("_set_") + strlen(local_name()->get_string()) + 1 
 	    << ");\n";
 
   {
@@ -422,7 +426,7 @@ o2be_attribute::produce_proxy_wr_skel(fstream &s,o2be_interface &defined_in)
   }
 
   IND(s); s << "_c.InitialiseRequest(_r.key(),_r.keysize(),(char *)\""
-	    << "_set_" << uqname() << "\"," << strlen("_set_") + strlen(uqname()) + 1 << ",_msgsize,0);\n";
+	    << "_set_" << local_name()->get_string() << "\"," << strlen("_set_") + strlen(local_name()->get_string()) + 1 << ",_msgsize,0);\n";
 
   // marshall arguments;
   {
