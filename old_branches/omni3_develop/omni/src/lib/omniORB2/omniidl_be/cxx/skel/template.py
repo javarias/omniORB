@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.1  2000/03/20 11:50:28  djs
+# Removed excess buffering- output templates have code attached which is
+# lazily evaluated when required.
+#
 # Revision 1.1  2000/01/19 17:05:16  djs
 # Modified to use an externally stored C++ output template.
 #
@@ -55,7 +59,7 @@ void @name@_Helper::release(@name@_ptr p) {
 }
 
 void @name@_Helper::duplicate(@name@_ptr p) {
-  if( p )  omni::duplicateObjRef(p);
+  if( p && !p->_NP_is_nil() )  omni::duplicateObjRef(p);
 }
 
 size_t @name@_Helper::NP_alignedSize(@name@_ptr obj, size_t offset) {
@@ -83,9 +87,9 @@ interface_class = """\
 @name@_ptr
 @name@::_duplicate(@name@_ptr obj)
 {
-  if( obj )  omni::duplicateObjRef(obj);
-   return obj;
-  
+  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
+
+  return obj;
 }
 
 
