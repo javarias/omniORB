@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  2000/01/13 15:56:34  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.8  2000/01/13 14:16:24  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -112,7 +116,9 @@ def canonDims(d):
     return string.join(canon, "")
 
 
+
 def write_array_desc(where, aliasType, dims):
+    assert(0)
     assert isinstance(aliasType, idltype.Type)
 
     env = name.Environment()
