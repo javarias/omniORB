@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.8  2001/11/14 17:13:43  dpg1
+# Long double support.
+#
 # Revision 1.16.2.7  2001/10/29 17:42:39  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -147,7 +150,8 @@ self = typecode
 
 # For a given type declaration, creates (private) static instances of
 # CORBA::TypeCode_ptr for that type, and any necessary for contained
-# constructed types.
+# constructed types. Contained types from other files cannot be used
+# because the order of static initialiser execution is not defined.
 # eg
 #   IDL:   struct testStruct{
 #            char a;
@@ -556,7 +560,13 @@ static int @resname@ = @fwname@->PR_resolve_forward(@mangled_name@);""",
     return
 
 def visitStructForward(node):
-    pass
+    if (not node.mainFile() and
+        self.__resolving_dependency and
+        not currently_being_defined(node)):
+        
+        startingNode(node)
+        node.fullDecl().accept(self)
+        finishingNode()
 
 def visitUnion(node):
     scopedName = node.scopedName()
@@ -674,7 +684,13 @@ static int @resname@ = @fwname@->PR_resolve_forward(@mangled_name@);""",
     finishingNode()
 
 def visitUnionForward(node):
-    pass
+    if (not node.mainFile() and
+        self.__resolving_dependency and
+        not currently_being_defined(node)):
+        
+        startingNode(node)
+        node.fullDecl().accept(self)
+        finishingNode()
 
 def visitEnum(node):
     scopedName = node.scopedName()
