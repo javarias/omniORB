@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14.2.3  2000/10/03 17:40:26  sll
+  Merged missing bits in Rope iterator.
+
   Revision 1.14.2.2  2000/09/27 18:30:03  sll
   Updated to use the new cdrStream abstraction.
   Removed Sync class.
@@ -146,10 +149,10 @@ static omniORB_Ripper* ripper = 0;
 Strand::Strand(Rope *r)
   : pd_rdcond(&r->pd_lock), pd_rd_nwaiting(0),
     pd_wrcond(&r->pd_lock), pd_wr_nwaiting(0),
-    pd_head(0), pd_rope(r), pd_dying(0), pd_refcount(0),
-    pd_seqNumber(1), pd_reuse(0), pd_giop_biDir(0)
+    pd_rope(r), pd_dying(0), pd_refcount(0),
+    pd_seqNumber(1), pd_reuse(0)
 {
-  pd_giop_version.major = 0; pd_giop_version.minor = 0;
+  pd_giop_info = new giopStreamInfo;
 
   // enter this to the list in rope <r>
   pd_next = r->pd_head;
@@ -166,6 +169,9 @@ Strand::~Strand()
   OMNIORB_ASSERT(pd_refcount == 0);
 
   giopStream::deleteAll(this);
+
+  delete pd_giop_info;
+  pd_giop_info = 0;
 
   // remove this from the list in rope <pd_rope>
   Strand **p = &pd_rope->pd_head;
