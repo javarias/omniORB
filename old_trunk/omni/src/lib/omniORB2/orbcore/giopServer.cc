@@ -29,6 +29,12 @@
  
 /*
   $Log$
+  Revision 1.9  1997/12/09 17:48:37  sll
+  Updated to use the new rope and strand interface.
+  Adapted to coordinate with the incoming rope scavenger.
+  New function omniORB::MaxMessageSize(size_t).
+  Now unmarshal context properly.
+
   Revision 1.8  1997/08/21 21:56:00  sll
   Added system exception TRANSACTION_REQUIRED, TRANSACTION_ROLLEDBACK,
   INVALID_TRANSACTION, WRONG_TRANSACTION.
@@ -380,7 +386,7 @@ GIOP_S::dispatcher(Strand *s)
 	} \
         else \
         { \
-	  MarshallSystemException(this,SysExceptRepoID::##exrepoid,exvar); \
+	  MarshallSystemException(this,SysExceptRepoID:: exrepoid ,exvar); \
 	}  \
       } \
     else { \
