@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.19  2005/01/29 17:25:03  dgrisby
+  Memory leaks in bidir connection management.
+
   Revision 1.1.2.18  2004/10/18 00:23:54  dgrisby
   Bug in trying to set up bidirectional GIOP with GIOP 1.0 and 1.1.
 
@@ -713,11 +716,11 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 	BiDirServerRope* r = BiDirServerRope::addRope(&strand,addrList);
       }
       
-      giopAddressList::const_iterator i, last;
-      i    = addrList.begin();
+      giopAddressList::const_iterator addr, last;
+      addr = addrList.begin();
       last = addrList.end();
-      for (; i != last; i++) {
-	delete (*i);
+      for (; addr != last; addr++) {
+	delete (*addr);
       }
     }
   }
