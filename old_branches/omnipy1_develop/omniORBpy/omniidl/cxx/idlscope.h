@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  2000/03/03 17:41:38  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.3  1999/11/02 17:07:25  dpg1
 // Changes to compile on Solaris.
 //
@@ -58,8 +61,8 @@ public:
       delete [] identifier_;
     }
 
-    inline const char* identifier() { return identifier_; }
-    inline Fragment*   next()       { return next_; };
+    inline const char* identifier() const { return identifier_; }
+    inline Fragment*   next()       const { return next_; };
 
   protected:
     Fragment* next_;
@@ -72,8 +75,9 @@ public:
 
   ScopedName(const char* identifier, _CORBA_Boolean absolute);
 
-  // Copy constructor
+  // Copy constructors
   ScopedName(const ScopedName* sn);
+  ScopedName(const Fragment*   frags, _CORBA_Boolean absolute);
 
   ~ScopedName();
 
@@ -179,15 +183,23 @@ public:
   EntryList* iFindWithInheritance(const char* identifier) const;
 
   // Find an entry based on a ScopedName. File and line requesting the
-  // find are given so errors can be reported nicely.
+  // find are given so errors can be reported nicely. If file and line
+  // are zero, do not report errors.
   const Entry* findScopedName(const ScopedName* sn,
-			      const char* file, int line) const;
+			      const char* file = 0, int line = 0) const;
 
   // Find an entry based on a ScopedName, and mark it as used in this
   // scope (and any parent scopes with nestedUse true).
   const Entry* findForUse(const ScopedName* sn, const char* file, int line);
 
   void addUse(const ScopedName* sn, const char* file, int line);
+
+  // Given source and destination ScopedNames, construct a relative or
+  // absolute ScopedName which uniquely identifies the destination
+  // from within the scope of the source. Returns 0 if either scoped
+  // name does not exist, or is not absolute.
+  static ScopedName* relativeScopedName(const ScopedName* from,
+					const ScopedName* to);
 
 
   // The following add functions take identifiers with _ escape

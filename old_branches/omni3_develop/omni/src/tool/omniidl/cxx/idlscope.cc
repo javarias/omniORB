@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.4  2000/08/24 11:33:00  dpg1
+// Typo in error message % format string
+//
 // Revision 1.11.2.3  2000/08/04 09:10:27  dpg1
 // Fix look-up of escaped identifiers broken on 19 July. (Bug 14.)
 //
@@ -83,8 +86,8 @@
 #include <string.h>
 
 // Global Scope pointers
-Scope* Scope::global_;
-Scope* Scope::current_;
+Scope* Scope::global_  = 0;
+Scope* Scope::current_ = 0;
 
 // ScopedName implementation
 ScopedName::
@@ -100,9 +103,19 @@ ScopedName::
 ScopedName(const ScopedName* sn) :
   scopeList_(0), last_(0), absolute_(sn->absolute())
 {
-  Fragment *f, *g;
+  const Fragment *f;
 
   for (f = sn->scopeList(); f; f = f->next())
+    append(f->identifier());
+}
+
+ScopedName::
+ScopedName(const ScopedName::Fragment* frags, _CORBA_Boolean absolute) :
+  scopeList_(0), last_(0), absolute_(absolute)
+{
+  const Fragment *f;
+
+  for (f = frags; f; f = f->next())
     append(f->identifier());
 }
 
@@ -639,16 +652,18 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
 
 	if (el->tail()) {
 	  // Error -- ambiguous
-	  char* ssn = sn->toString();
-	  IdlError(file, line, "Ambiguous name `%s':", ssn);
-	  delete [] ssn;
-
-	  for (; el; el = el->tail()) {
-	    char* ssn=el->head()->container()->scopedName()->toString();
-	    IdlErrorCont(el->head()->file(), el->head()->line(),
-			 "(`%s' defined in `%s')",
-			 el->head()->identifier(), ssn);
+	  if (file) {
+	    char* ssn = sn->toString();
+	    IdlError(file, line, "Ambiguous name `%s':", ssn);
 	    delete [] ssn;
+
+	    for (; el; el = el->tail()) {
+	      char* ssn = el->head()->container()->scopedName()->toString();
+	      IdlErrorCont(el->head()->file(), el->head()->line(),
+			   "(`%s' defined in `%s')",
+			   el->head()->identifier(), ssn);
+	      delete [] ssn;
+	    }
 	  }
 	  delete el;
 	  return 0;
@@ -660,22 +675,26 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
     top_component = 0;
 
     if (!e) {
-      char* ssn = sn->toString();
-      IdlError(file, line, "Error in look-up of `%s': `%s' not found",
-	       ssn, fid);
-      delete [] ssn;
+      if (file) {
+	char* ssn = sn->toString();
+	IdlError(file, line, "Error in look-up of `%s': `%s' not found",
+		 ssn, fid);
+	delete [] ssn;
+      }
       return 0;
     }
 
     if (strcmp(fid, e->identifier())) {
       // Case clash
-      char* ssn = sn->toString();
-      IdlError(file, line, "Error in look-up of `%s': `%s' differs in case",
-	       ssn, fid);
-      delete [] ssn;
-      ssn = e->scopedName()->toString();
-      IdlErrorCont(e->file(), e->line(), "from `%s' declared here", ssn);
-      delete [] ssn;
+      if (file) {
+	char* ssn = sn->toString();
+	IdlError(file, line, "Error in look-up of `%s': `%s' differs in case",
+		 ssn, fid);
+	delete [] ssn;
+	ssn = e->scopedName()->toString();
+	IdlErrorCont(e->file(), e->line(), "from `%s' declared here", ssn);
+	delete [] ssn;
+      }
       return 0;
     }
 
@@ -684,13 +703,15 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
       s = e->scope();
 
       if (!s) {
-	char* ssn = sn->toString();
-	IdlError(file, line,
-		 "Error in look-up of `%s': `%s' does not form a scope",
-		 ssn, e->identifier());
-	IdlErrorCont(e->file(), e->line(), "(`%s' defined here)",
-		     e->identifier());
-	delete [] ssn;
+	if (file) {
+	  char* ssn = sn->toString();
+	  IdlError(file, line,
+		   "Error in look-up of `%s': `%s' does not form a scope",
+		   ssn, e->identifier());
+	  IdlErrorCont(e->file(), e->line(), "(`%s' defined here)",
+		       e->identifier());
+	  delete [] ssn;
+	}
 	return 0;
       }
     }
@@ -706,6 +727,68 @@ findForUse(const ScopedName* sn, const char* file, int line)
   const Entry* e = findScopedName(sn, file, line);
   addUse(sn, file, line);
   return e;
+}
+
+
+static ScopedName*
+findRelativeScope(const ScopedName::Fragment* from,
+		  const ScopedName::Fragment* to,
+		  const Scope* fromScope,
+		  const Scope::Entry* target)
+{
+  ScopedName* result = 0;
+
+  if (!to)
+    return 0;
+
+  if (from && !strcmp(from->identifier(), to->identifier())) {
+    // Top name components match -- recursively try next components
+    result = findRelativeScope(from->next(), to->next(), fromScope, target);
+  }
+
+  if (!result) {
+    ScopedName*         test = new ScopedName(to, 0);
+    const Scope::Entry* find = fromScope->findScopedName(test);
+
+    if (find == target)
+      result = test;
+    else
+      delete test;
+  }
+  return result;
+}
+
+ScopedName*
+Scope::relativeScopedName(const ScopedName* from, const ScopedName* to)
+{
+  if (!global_) {
+    // Haven't parsed any IDL yet!
+    return 0;
+  }
+
+  if ((from && !from->absolute()) || !to->absolute())
+    return 0;
+
+  const Scope* fromScope;
+
+  if (from) {
+    const Entry* fromEntry = global_->findScopedName(from);
+    if (!fromEntry) return 0;
+    fromScope = fromEntry->scope();
+  }
+  else
+    fromScope = global_;
+
+  const Entry* toEntry = global_->findScopedName(to);
+  if (!toEntry) return 0;
+
+  ScopedName* result = findRelativeScope(from ? from->scopeList() : 0,
+					 to->scopeList(), fromScope, toEntry);
+
+  if (!result)
+    result = new ScopedName(to);
+
+  return result;
 }
 
 

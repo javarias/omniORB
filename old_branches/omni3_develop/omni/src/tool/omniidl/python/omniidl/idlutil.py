@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/15 15:49:23  dpg1
+# Documentation strings.
+#
 # Revision 1.2  1999/11/01 20:18:30  dpg1
 # Added string escaping
 #
@@ -41,9 +44,11 @@ escapifyString() -- return a string with non-printing characters escaped.
 slashName()      -- format a scoped name with '/' separating components.
 dotName()        -- format a scoped name with '.' separating components.
 ccolonName()     -- format a scoped name with '::' separating components.
-pruneScope()     -- remove common prefix from a scoped name."""
+pruneScope()     -- remove common prefix from a scoped name.
+relativeScope()  -- give a minimal name for one scope relative to another."""
 
 import string
+import _omniidl
 
 def slashName(scopedName, our_scope=[]):
     """slashName(list, [list]) -> string
@@ -103,3 +108,46 @@ Return the given string with any non-printing characters escaped."""
         if l[i] not in vis:
             l[i] = "\\%03o" % ord(l[i])
     return string.join(l, "")
+
+
+def relativeScope(fromScope, destScope):
+    """relativeScope(fromScope, destScope) -> list
+
+Given two globally-scoped names, return a minimal scoped name list
+which identifies the destination scope, without clashing with another
+identifier. For example, given IDL:
+
+  module M {
+    typedef short A;
+    typedef long  B;
+
+    module N {
+      typedef string B;
+      interface I {
+        void op(in ::M::A x, in ::M::B y);
+      };
+    };
+  };
+
+relativeScope(["M", "N", "I"], ["M", "A"]) -> ["A"]
+relativeScope(["M", "N", "I"], ["M", "B"]) -> ["M", "B"]
+
+If the only valid result is a globally-scoped name, the result list is
+prefixed with None:
+
+  module O {
+    typedef short C;
+  };
+  module P {
+    module O {
+      interface J {
+        void op(in ::O::C z);
+      };
+    };
+  };
+
+relativeScope(["P", "O", "J"], ["O", "C"]) -> [None, "O", "C"]
+
+If either scoped name does not exist, returns None."""
+
+    return _omniidl.relativeScopedName(fromScope, destScope)
