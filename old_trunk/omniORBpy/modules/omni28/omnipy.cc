@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.36  2000/06/12 15:36:08  dpg1
+// Support for exception handler functions. Under omniORB 3, local
+// operation dispatch modified so exceptions handlers are run.
+//
 // Revision 1.35  2000/05/26 15:33:31  dpg1
 // Python thread states are now cached. Operation dispatch time is
 // roughly halved!
@@ -277,7 +281,7 @@ extern "C" {
 		   << "omniORBpy: *** Stubs in " << mod << " are version "
 		   << maj << "." << min << "\n"
 		   << "omniORBpy: *** You may experience strange errors "
-		   << "until you recompile your IDL\n";
+		   << "until you fix the mismatch\n";
       omniORB::log.flush();
     }
     Py_INCREF(Py_None);
