@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.7  2000/06/08 14:36:19  dpg1
+// Comments and pragmas are now objects rather than plain strings, so
+// they can have file,line associated with them.
+//
 // Revision 1.15.2.6  2000/06/06 15:21:47  dpg1
 // Comments and pragmas attached to attribute declarators are now
 // attached to the Python Attribute object.
@@ -1248,15 +1252,23 @@ extern "C" {
     if (success) {
       PythonVisitor v;
       AST::tree()->accept(v);
-      result = v.result();
+      return v.result();
     }
     else {
+      AST::clear();
       Py_INCREF(Py_None);
-      result = Py_None;
+      return Py_None;
     }
-    AST::clear();
+  }
 
-    return result;
+  static PyObject* IdlPyClear(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)""))
+      return 0;
+
+    AST::clear();
+    Py_INCREF(Py_None);
+    return Py_None;
   }
 
   static PyObject* IdlPyDump(PyObject* self, PyObject* args)
@@ -1307,6 +1319,7 @@ extern "C" {
 
   static PyMethodDef omniidl_methods[] = {
     {(char*)"compile",          IdlPyCompile,          METH_VARARGS},
+    {(char*)"clear",            IdlPyClear,            METH_VARARGS},
     {(char*)"dump",             IdlPyDump,             METH_VARARGS},
     {(char*)"quiet",            IdlPyQuiet,            METH_VARARGS},
     {(char*)"noForwardWarning", IdlPyNoForwardWarning, METH_VARARGS},

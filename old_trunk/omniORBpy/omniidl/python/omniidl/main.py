@@ -29,6 +29,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.22  2000/06/05 18:13:26  dpg1
+# Comments can be attached to subsequent declarations (with -K). Better
+# idea of most recent decl in operation declarations
+#
 # Revision 1.15.2.9  2000/03/17 16:28:46  dpg1
 # Small improvement to error reporting.
 #
@@ -420,3 +424,4 @@ def main(argv=None):
 
             idlast.clear()
             idltype.clear()
+            _omniidl.clear()
