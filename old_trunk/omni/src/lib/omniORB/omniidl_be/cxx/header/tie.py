@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.1  1999/12/14 11:54:43  djs
+# Restructured generation of tie templates
+#
 #
 
 """Produce the 'tie' templates"""
@@ -243,6 +246,9 @@ private:
                callables = str(where))
     
 def visitInterface(node):
+    if not(node.mainFile()):
+        return
+    
     template(self.__environment, node)
 
 def visitEnum(node):
