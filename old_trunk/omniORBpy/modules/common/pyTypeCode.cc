@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.5  1999/09/24 09:22:02  dpg1
+// Added copyright notices.
+//
 // Revision 1.4  1999/09/22 15:46:12  dpg1
 // Fake POA implemented.
 //
@@ -368,7 +371,7 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 	PyObject* mems = PyTuple_GET_ITEM(d_o, 3); assert(PyTuple_Check(mems));
 	PyObject* mem;
 
-	int cnt = PyTuple_GET_SIZE(t_o);
+	int cnt = PyTuple_GET_SIZE(mems);
 
 	for (int i=0; i<cnt; i++) {
 	  mem = PyTuple_GET_ITEM(mems, i); assert(PyInstance_Check(mem));
