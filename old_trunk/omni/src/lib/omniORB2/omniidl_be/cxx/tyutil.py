@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/11/19 20:06:30  djs
+# Removed references to a removed utility function
+#
 # Revision 1.9  1999/11/17 20:37:09  djs
 # General util functions
 #
@@ -367,13 +370,13 @@ def objRefTemplate(type, suffix, environment):
 
 # ------------------------------------------------------------------
 
-def operationArgumentType(type, environment, virtualFn = 0):
+def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
     try:
         outer_env = environment.leaveScope()
         environment = outer_env
     except AttributeError:
         pass
-    param_type = environment.principalID(type)
+    param_type = environment.principalID(type, fully_scope)
     isVariable = isVariableType(type)
     type_dims = typeDims(type)
     is_array = type_dims != []
@@ -398,7 +401,7 @@ def operationArgumentType(type, environment, virtualFn = 0):
                      "CORBA::String_out ",
                      "char*& " ]
         elif isObjRef(deref_type):
-            param_type = environment.principalID(deref_type)
+            param_type = environment.principalID(deref_type, fully_scope)
             return [ param_type + "_ptr",
                      param_type + "_ptr",
                      "_CORBA_ObjRef_OUT_arg<_objref_" + param_type + "," + \
@@ -420,7 +423,7 @@ def operationArgumentType(type, environment, virtualFn = 0):
                  param_type + "& ",
                  param_type + "& " ]
     elif deref_type.kind() == idltype.tk_objref:
-        param_type = environment.principalID(deref_type)
+        param_type = environment.principalID(deref_type, fully_scope)
         return [ param_type + "_ptr",
                  param_type + "_ptr",
                  "_CORBA_ObjRef_OUT_arg<_objref_" + param_type + "," + \
@@ -441,6 +444,34 @@ def operationArgumentType(type, environment, virtualFn = 0):
                  param_type + "& ",
                  param_type + "& " ]
     
+# ------------------------------------------------------------------
+
+
+# Used to build the types for exception constructors
+def makeConstructorArgumentType(type, environment):
+    # idl.type -> string
+    typeName = environment.principalID(type)
+    isVariable = tyutil.isVariableType(type)
+    derefType = tyutil.deref(type)
+    derefTypeName = environment.principalID(derefType)
+    
+    if isinstance(derefType, idltype.Base) or isEnum(derefType):
+        return typeName
+    if isStruct(derefType) or isUnion(derefType):
+        return "const " + typeName + "&"
+    if isObjRef(derefType):
+        return derefTypeName + "_ptr"
+    if isSequence(type, 0):
+        return "const " + sequenceTemplate(derefType, environment)
+    elif isSequence(type, 1):
+        return "const " + typeName
+    else:
+        return operationArgumentType(type, environment)[1]
+
+
+
+
+
 # ------------------------------------------------------------------
 
 # This needs to be redesigned. It's too much like the old backend.
@@ -624,7 +655,7 @@ def valueString(type, value, environment):
 #       rel_scope = idlutil.pruneScope(target_scope, from_scope)
 #       return idlutil.ccolonName(rel_scope) + str(value)
     if type.kind() == idltype.tk_string:
-        return value
+        return "\"" + value + "\""
     if type.kind() == idltype.tk_octet:
         return str(value)
 
@@ -868,6 +899,18 @@ def exhaustiveMatch(switchType, allCaseValues):
     else:
         raise "exhaustiveMatch type="+repr(switchType)+ \
               " val="+repr(discrimvalue)
+
+
+# ------------------------------------------------------------------
+
+# returns whether a constant is initialised in the header file definition
+# or in the skeleton code. Equivalent to "is the value representable by
+# an integer?"
+def const_init_in_def(type):
+    assert isinstance(type, idltype.Type)
+    return isInteger(type) or isChar(type) or isBoolean(type) or \
+           isOctet(type)
+
 
 
 # ------------------------------------------------------------------
