@@ -26,9 +26,12 @@
 // Description:
 //    Misc code from PortableServer module.
 //
- 
+
 /*
   $Log$
+  Revision 1.1.2.10  2000/06/27 16:23:25  sll
+  Merged OpenVMS port.
+
   Revision 1.1.2.9  2000/06/22 10:40:17  dpg1
   exception.h renamed to exceptiondefs.h to avoid name clash on some
   platforms.
@@ -297,6 +300,13 @@ void
 PortableServer::RefCountServantBase::_add_ref()
 {
   ref_count_lock.lock();
+  // If the reference count is 0, then the object is either in the
+  // process of being deleted by _remove_ref, or has already been
+  // deleted. It is too late to be trying to _add_ref now. If the
+  // reference count is less than zero, then _remove_ref has been
+  // called too many times.
+  OMNIORB_USER_CHECK(pd_refCount > 0);
+
   pd_refCount++;
   ref_count_lock.unlock();
 }
