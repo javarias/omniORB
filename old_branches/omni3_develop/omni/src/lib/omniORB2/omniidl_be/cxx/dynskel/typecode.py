@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.2  2000/03/09 15:21:48  djs
+# Better handling of internal compiler exceptions (eg attempts to use
+# wide string types)
+#
 # Revision 1.14.2.1  2000/02/14 18:34:55  dpg1
 # New omniidl merged in.
 #
@@ -505,7 +509,7 @@ def visitUnion(node):
                 seqType = seqType.seqType()
             # careful of recursive unions
             if isinstance(seqType, idltype.Declared) and \
-               seqType.decl() != node:
+               not(recursive(seqType.decl())):
                 seqType.decl().accept(self)
                 
         self.__override = override
