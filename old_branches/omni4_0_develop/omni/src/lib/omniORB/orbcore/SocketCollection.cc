@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.21  2004/08/17 14:59:47  dgrisby
+  New selectable socket limit was wrong on Windows.
+
   Revision 1.1.2.20  2004/04/19 09:29:40  dgrisby
   Only close pipes if they were opened successfully.
 
@@ -398,6 +401,9 @@ SocketCollection::Select() {
 
   int maxfd = 0;
   int fd = 0;
+
+#ifndef __WIN32__
+  // Win32 ignores the first argument to select()
   while (total) {
     if (FD_ISSET(fd,&rfds)) {
       maxfd = fd;
@@ -405,6 +411,7 @@ SocketCollection::Select() {
     }
     fd++;
   }
+#endif
 
   int nready;
 
