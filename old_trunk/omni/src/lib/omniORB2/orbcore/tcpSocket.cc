@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.7  1999/03/11 16:25:56  djr
+  Updated copyright notice
+
   Revision 1.6  1998/08/14 13:54:13  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -84,8 +87,6 @@ tcpSocketFactoryType::init()
 {
   if (singleton) return;
   singleton = new tcpSocketFactoryType;
-  singleton->next = ropeFactoryTypeList;
-  ropeFactoryTypeList = singleton;
 
   if (omniORB::traceLevel >= 2) {
     omniORB::log << "omniORB2 gateKeeper is " << gateKeeper::version() 
