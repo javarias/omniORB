@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/12/13 15:40:27  djs
+# Added generation of "flattened" tie templates
+#
 # Revision 1.3  1999/12/12 14:02:47  djs
 # Support for tie-templates added.
 #
@@ -85,6 +88,11 @@ def visitAST(node):
         n.accept(self)
 
 def visitModule(node):
+    # again, check what happens with reopened modules spanning
+    # multiple files
+    if not(node.mainFile()):
+        return
+    
     name = tyutil.mapID(node.identifier())
     enter(name)
     scope = currentScope()
@@ -114,6 +122,9 @@ _CORBA_MODULE_END
 
 
 def visitInterface(node):
+    if not(node.mainFile()):
+        return
+    
     iname = tyutil.mapID(node.identifier())
 #    enter(name)
     scope = currentScope()

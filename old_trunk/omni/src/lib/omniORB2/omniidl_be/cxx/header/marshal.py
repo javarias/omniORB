@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  1999/12/01 17:02:11  djs
+# Moved ancillary marshalling and alignment code to this module from header.opers
+#
 
 
 """Produce the main header alignment and marshal function definitions
@@ -72,6 +75,9 @@ def visitEnum(node):
     pass
 
 def visitInterface(node):
+    if not(node.mainFile()):
+        return
+    
     # interfaces act as containers for other declarations
     # output their operators here
     for d in node.declarations():
