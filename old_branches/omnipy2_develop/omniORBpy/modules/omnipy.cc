@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.12  2001/08/15 10:37:13  dpg1
+// Track ORB core object table changes.
+//
 // Revision 1.1.2.11  2001/06/22 10:29:26  dpg1
 // Add distribution date to logging.
 //
@@ -202,14 +205,14 @@ extern "C" {
 
     if (maj != OMNIPY_MAJOR || (maj == 0 && min != OMNIPY_MINOR)) {
       if (omniORB::trace(1)) {
-	omniORB::log << "omniORBpy: ***\n"
-		     << "omniORBpy: *** WARNING! _omnipy module version "
-		     << OMNIPY_MAJOR << "." << OMNIPY_MINOR << "\n"
-		     << "omniORBpy: *** Stubs in " << mod << " are version "
-		     << maj << "." << min << "\n"
-		     << "omniORBpy: *** You may experience strange errors "
-		     << "until you fix the mismatch\n";
-	omniORB::log.flush();
+	omniORB::logger l;
+	l << "omniORBpy: ***\n"
+	  << "omniORBpy: *** WARNING! _omnipy module version "
+	  << OMNIPY_MAJOR << "." << OMNIPY_MINOR << "\n"
+	  << "omniORBpy: *** Stubs in " << mod << " are version "
+	  << maj << "." << min << "\n"
+	  << "omniORBpy: *** You may experience strange errors "
+	  << "until you fix the mismatch\n";
       }
     }
     Py_INCREF(Py_None);

@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.8  2001/04/10 11:11:14  dpg1
+// TypeCode support and tests for Fixed point.
+//
 // Revision 1.1.2.7  2001/04/09 15:52:07  dpg1
 // Bring up-to-date with omnipy1_develop.
 //
@@ -170,7 +173,8 @@ r_marshalTypeCode(cdrStream&           stream,
   CORBA::Long tc_offset;
 
   // If this TypeCode has already been sent, use an indirection:
-  if (omniORB::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
+  if (_OMNI_NS(orbParameters)::useTypeCodeIndirections &&
+      dom.lookup(d_o, tc_offset)) {
 
     CORBA::ULong tk_ind = 0xffffffff;
     tk_ind >>= stream;
