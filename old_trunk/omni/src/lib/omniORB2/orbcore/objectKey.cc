@@ -30,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.8  1998/04/08 16:06:38  sll
+  Added support for Reliant UNIX 5.43
+
   Revision 1.7  1998/04/07 19:41:57  sll
   Updated for when omniORB is a namespace.
 
@@ -120,11 +123,19 @@ omniORB::generateNewKey(omniORB::objectKey& k)
 #elif defined(__WIN32__)
       // Unique number on NT
       // Use _ftime() to obtain the current system time. 
+#ifndef __BCPLUSPLUS__
       struct _timeb v;
       _ftime(&v);
       omniORB::seed.hi = v.time;
       omniORB::seed.med = v.millitm + _getpid();
       omniORB::seed.lo = 0;
+#else
+      struct timeb v;
+      ftime(&v);
+      omniORB::seed.hi = v.time;
+      omniORB::seed.med = v.millitm + getpid();
+      omniORB::seed.lo = 0;
+#endif
 #elif defined(__VMS) && __VMS_VER < 70000000
       // VMS systems prior to 7.0
       timeb v;
