@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/11/15 17:17:20  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -435,14 +438,7 @@ public:
   void attach() {
 
     cdrStream::ncs_c = omniCodeSet::getNCS_C(omniCodeSet::ID_8859_1);
-
-#if SIZEOF_WCHAR == 4
-    cdrStream::ncs_w = omniCodeSet::getNCS_W(omniCodeSet::ID_UCS_4);
-#elif SIZEOF_WCHAR == 2
     cdrStream::ncs_w = omniCodeSet::getNCS_W(omniCodeSet::ID_UTF_16);
-#else
-#   error "sizeof wchar_t not known for this platform"
-#endif
 
     GIOP::Version ver = giopStreamImpl::maxVersion()->version();
 
