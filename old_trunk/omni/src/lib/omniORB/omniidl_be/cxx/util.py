@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  2000/01/07 20:31:18  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.8  1999/11/29 19:27:00  djs
 # Code tidied and moved around. Some redundant code eliminated.
 #
@@ -137,21 +144,15 @@ class Stream:
             
             indentedLines = []
             for line in lines:
-#                print "[[[ line = " + line + "]]]"
-#                if (line != ""):
                 indentedLines.append(" "*wsCount + line)
             return indentedLines
 
         rawLines = string.split(text, "\n")
         lines = []
         for line in rawLines:
-#            print "rawLine = ["+line+"]"
             afterSubs = doSub(self, line)
-#            for l in afterSubs:
-#                print "processedLine = ["+l+"]"
             lines = lines + afterSubs
             
-        #lines = doSub(self, text)
         # count the preceeding whitespace
         whitespace = self.__wscount(lines[0])
         
@@ -173,15 +174,52 @@ class Stream:
         self.out(text, ldict) # FIXME
         self.indent = oldIndent
         
-        #dict.update(ldict)
 
-        #def replace(match, dict=dict):
-        #    if match.group(1) == "": return "@"
-        #    return eval(match.group(1), globals(), dict)
+# simpler version (almost identical to dpg1s, except with the self.write
+# method):
+class Stream:
+    """Test output stream, same as omniidl.output.Stream but with an
+       indirection (through write method)"""
+    def __init__(self, file, indent_size = 4):
+        self.indent = 0
+        self.istring = " " * indent_size
+        self.file = file
+    regex = re.compile(r"@([^@]*)@")
 
-        #for l in string.split(self.regex.sub(replace, text), "\n"):
-        #    self.write(l)
-        #    self.write("\n")
+    def inc_indent(self): self.indent = self.indent + 1
+    def dec_indent(self): self.indent = self.indent - 1
+    def reset_indent(self): self.indent = 0
+    def out(self, text, ldict={}, **dict):
+        """Output a multi-line string with indentation and @@ substitution."""
+
+        dict.update(ldict)
+
+        def replace(match, dict=dict):
+            if match.group(1) == "": return "@"
+            return eval(match.group(1), globals(), dict)
+
+        for l in string.split(self.regex.sub(replace, text), "\n"):
+            self.write(self.istring * self.indent)
+            self.write(l)
+            self.write("\n")
+
+    def niout(self, text, ldict={}, **dict):
+        """Output a multi-line string without indentation."""
+
+        dict.update(ldict)
+
+        def replace(match, dict=dict):
+            if match.group(1) == "": return "@"
+            return eval(match.group(1), globals(), dict)
+
+        for l in string.split(self.regex.sub(replace, text), "\n"):
+            self.write(l)
+            self.write("\n")
+
+    def write(self, text):
+        self.file.write(text)
+
+        
 
 class StringStream(Stream):
     """Writes to a string buffer rather than a file."""
