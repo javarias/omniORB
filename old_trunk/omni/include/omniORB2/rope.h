@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4  1997/12/09 20:34:36  sll
+  Interfaces extended to provide more hooks to support new transports.
+  Support for incoming and outgoing rope scavenger threads.
+
  * Revision 1.3  1997/05/06  16:10:38  sll
  * Public release.
  *
@@ -758,7 +762,23 @@ protected:
   //     Must hold <MUTEX> on entry
   // Post-condition:
   //     Must hold <MUTEX> on exit, even if an exception is raised
-
+  // 
+  // Care should be taken so that newStrand() *DO NOT BLOCK* waiting
+  // to connect to a remote address space *INDEFINITELY*. This is bad
+  // because holding the mutex on pd_lock for an extended period can
+  // cause other threads which is totally unrelated to this rope to block
+  // as well:- 
+  //    One immediate consequence of holding pd_lock is that the
+  //    outScavenger will be blocked on pd_lock when it is scanning
+  //    for idle strands. This in turn blockout any thread trying to lock
+  //    rope->pd_anchor->pd_lock. This is really bad because no new rope
+  //    can be added to the anchor.
+  //
+  // The recommended way to implement newStrand() is to create a new
+  // strand instance but delay connecting to the remote address space
+  // until the first send or recv. See the tcpSocketStrand implementation
+  // for an example.
+  
 private:
 
 
