@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2002/05/07 12:55:47  dgrisby
+  Minor tweak to log message format.
+
   Revision 1.1.2.12  2002/04/25 23:13:30  dgrisby
   Minor tweak to codeset setting interceptors for GIOP 1.0.
 
@@ -581,7 +584,7 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
   omniCodeSet::TCS_C* tcs_c = d.tcs_c;
   omniCodeSet::TCS_W* tcs_w = d.tcs_w;
 
-  IOP::ServiceContextList& svclist = info.giop_s.receive_service_contexts();
+  IOP::ServiceContextList& svclist = info.giop_s.service_contexts();
   CORBA::ULong total = svclist.length();
   for (CORBA::ULong index = 0; index < total; index++) {
     if (svclist[index].context_id == IOP::CodeSets) {

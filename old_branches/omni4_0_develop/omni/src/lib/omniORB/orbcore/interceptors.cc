@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/09/10 23:17:11  dgrisby
+  Thread interceptors.
+
   Revision 1.1.2.5  2002/03/27 11:44:52  dpg1
   Check in interceptors things left over from last week.
 
@@ -65,7 +68,6 @@ omniInterceptorP::elmT* omniInterceptorP::encodeIOR              = 0;
 omniInterceptorP::elmT* omniInterceptorP::decodeIOR              = 0;
 omniInterceptorP::elmT* omniInterceptorP::clientSendRequest      = 0;
 omniInterceptorP::elmT* omniInterceptorP::clientReceiveReply     = 0;
-omniInterceptorP::elmT* omniInterceptorP::clientReceiveException = 0;
 omniInterceptorP::elmT* omniInterceptorP::serverReceiveRequest   = 0;
 omniInterceptorP::elmT* omniInterceptorP::serverSendReply        = 0;
 omniInterceptorP::elmT* omniInterceptorP::serverSendException    = 0;
@@ -125,7 +127,6 @@ INTERCEPTOR_IMPLEMENTATION(encodeIOR)
 INTERCEPTOR_IMPLEMENTATION(decodeIOR)
 INTERCEPTOR_IMPLEMENTATION(clientSendRequest)
 INTERCEPTOR_IMPLEMENTATION(clientReceiveReply)
-INTERCEPTOR_IMPLEMENTATION(clientReceiveException)
 INTERCEPTOR_IMPLEMENTATION(serverReceiveRequest)
 INTERCEPTOR_IMPLEMENTATION(serverSendReply)
 INTERCEPTOR_IMPLEMENTATION(serverSendException)
@@ -157,7 +158,6 @@ public:
       list_del(&omniInterceptorP::decodeIOR);
       list_del(&omniInterceptorP::clientSendRequest);
       list_del(&omniInterceptorP::clientReceiveReply);
-      list_del(&omniInterceptorP::clientReceiveException);
       list_del(&omniInterceptorP::serverReceiveRequest);
       list_del(&omniInterceptorP::serverSendReply);
       list_del(&omniInterceptorP::serverSendException);

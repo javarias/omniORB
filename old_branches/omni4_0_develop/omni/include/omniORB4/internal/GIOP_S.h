@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/10/17 16:33:27  dpg1
+  New downcast mechanism for cdrStreams.
+
   Revision 1.1.4.5  2001/09/04 14:38:09  sll
   Added the boolean argument to notifyCommFailure to indicate if
   omniTransportLock is held by the caller.
@@ -193,7 +196,7 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
   }
 
   //////////////////////////////////////////////////////////////////
-  IOP::ServiceContextList& receive_service_contexts() {
+  inline IOP::ServiceContextList& service_contexts() {
     return pd_service_contexts;
   }
 

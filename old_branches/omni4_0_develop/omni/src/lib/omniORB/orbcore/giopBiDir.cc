@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2002/08/23 14:15:02  dgrisby
+  Avoid exception with bidir when no POA.
+
   Revision 1.1.2.12  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -536,7 +539,7 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info) {
     return 1;
   }
 
-  IOP::ServiceContextList& svclist = info.giop_s.receive_service_contexts();
+  IOP::ServiceContextList& svclist = info.giop_s.service_contexts();
   CORBA::ULong total = svclist.length();
   for (CORBA::ULong index = 0; index < total; index++) {
     if (svclist[index].context_id == IOP::BI_DIR_IIOP) {
