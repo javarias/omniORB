@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/02 10:35:03  dpg1
+// add...() functions now carry on regardless after a keyword clash, to
+// prevent later errors.
+//
 // Revision 1.3  1999/11/02 10:01:46  dpg1
 // Minor fixes.
 //
@@ -661,7 +665,9 @@ void
 Scope::
 addUse(const ScopedName* sn, const char* file, int line)
 {
-  const char*  id    = sn->scopeList()->identifier();
+  const char* id = sn->scopeList()->identifier();
+  if (id[0] == '_') ++id;
+
   const Entry* clash = iFind(id);
 
   if (clash) {
