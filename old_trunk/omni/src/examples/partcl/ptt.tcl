@@ -1,4 +1,3 @@
-#!./ptt -f
 #
 # Simple test of omniParTcl.  We just repeatedly update a couple of 
 # variables on the C++ side and monitor their values in Tcl/Tk labels.
@@ -9,6 +8,9 @@
 # $Author$
 #
 # $Log$
+# Revision 1.1  1995/09/04  11:01:45  krw
+# Initial revision
+#
 #
 
 set tclVarOne 0
