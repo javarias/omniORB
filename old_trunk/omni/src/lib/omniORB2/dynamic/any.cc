@@ -29,6 +29,9 @@
 
 
 /* $Log$
+ * Revision 1.7  1999/01/07 16:47:03  djr
+ * New implementation
+ *
  * Revision 1.6  1998/08/14 13:43:04  sll
  * Added pragma hdrstop to control pre-compile header if the compiler feature
  * is available.
@@ -307,7 +310,7 @@ setObjectPtr(tcObjrefDesc* desc, CORBA::Object_ptr ptr)
 static CORBA::Object_ptr
 getObjectPtr(tcObjrefDesc* desc)
 {
-  return (CORBA::Object_ptr) desc->opq_objref;
+  return * (CORBA::Object_ptr*) desc->opq_objref;
 }
 
 
