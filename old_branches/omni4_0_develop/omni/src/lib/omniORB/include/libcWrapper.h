@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/06/13 20:11:37  sll
+  Minor update to make the ORB compiles with MSVC++.
+
   Revision 1.1.4.1  2001/04/18 17:18:16  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -60,9 +63,7 @@
 #define _HAS_NETDB_
 
 
-#ifdef __WIN32__
-#include <winsock.h>
-#else
+#if !defined(__WIN32__)
 #include <netdb.h>
 #endif
 
