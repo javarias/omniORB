@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/02 10:01:46  dpg1
+# Minor fixes.
+#
 # Revision 1.2  1999/11/01 20:19:55  dpg1
 # Support for union switch types declared inside the switch statement.
 #
@@ -310,7 +313,7 @@ union_descriptor_at_module_scope = """
 @uname@._def_m  = @def_m@
 @uname@._def_d  = @def_d@
 
-@modname@._m_@uname@  = (@m_un@)
+@modname@._m_@uname@  = (@m_un@,)
 @modname@._d_@uname@  = (omniORB.tcInternal.tv_union, @uname@, @uname@._NP_RepositoryId, "@uname@", @stype@, @defpos@, @modname@._m_@uname@, @m_def@, {@d_map@})"""
 
 union_indirect_at_module_scope = """\
@@ -967,7 +970,7 @@ class PythonVisitor:
                                                self.currentScope)
                         m_def  = "_m_" + uname + "[" + defpos + "]"
 
-                    m_un_l.append('(-1, "' + cname + '", ' +\
+                    m_un_l.append('(' + def_d + ', "' + cname + '", ' +\
                                   ctype + ')')
                 else:
                     if self.at_module_scope:
