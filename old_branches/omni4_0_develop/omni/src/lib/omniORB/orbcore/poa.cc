@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.34  2002/10/14 15:16:20  dgrisby
+  Fix create_POA / destroy deadlock, unique persistent system ids.
+
   Revision 1.2.2.33  2002/09/11 20:40:15  dgrisby
   Call thread interceptors from etherealiser queue.
 
@@ -2019,7 +2022,8 @@ omniOrbPOA::omniOrbPOA()  // nil constructor
     pd_poaIdSize(0),
     pd_deathSignal(&pd_lock),
     pd_oidIndex(0),
-    pd_activeObjList(0)
+    pd_activeObjList(0),
+    pd_oidPrefix(0)
 {
 }
 
