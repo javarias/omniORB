@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/02/09 12:06:37  djr
+  Additional checks for tracedmutex/conditions.
+  Removed superflouous member of omni_tracedmutex.
+
   Revision 1.1.2.1  1999/09/24 09:51:57  djr
   Moved from omniORB2 + some new files.
 
@@ -38,7 +42,9 @@
 #define __OMNI_TRACEDTHREAD_H__
 
 
-#define OMNIORB_ENABLE_LOCK_TRACES
+// Uncomment the following line to turn mutex/condition variable tracing on:
+
+//#define OMNIORB_ENABLE_LOCK_TRACES
 
 
 //////////////////////////////////////////////////////////////////////
