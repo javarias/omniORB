@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.7  2001/06/07 16:24:07  dpg1
+ PortableServer::Current support.
+
  Revision 1.2.2.6  2001/05/29 17:03:47  dpg1
  In process identity.
 
@@ -115,11 +118,12 @@ public:
   virtual void unmarshalReturnedValues(cdrStream&);
   // Defaults to no arguments and returns void.
 
-  virtual void userException(_OMNI_NS(IOP_C)& iop_client, const char*);
+  virtual void userException(cdrStream& stream, _OMNI_NS(IOP_C)* iop_client,
+			     const char*);
   // Defaults to no user exceptions, and thus throws
   // CORBA::MARSHAL.  Any version of this should in all
   // cases either throw a user exception or CORBA::MARSHAL.
-  // Must call iop_client.RequestCompleted().
+  // If iop_client is non-zero, must call iop_client->RequestCompleted().
 
   //////////////////////////////////////////////////
   // Methods to implement call on the server side //

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
+  In process identity.
+
   Revision 1.1.4.1  2001/04/18 17:18:18  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -118,10 +121,10 @@ public:
   inline void incrRefCount_locked() { pd_refCount++; }
   // Must hold <boa_lock>.
 
-  inline omniLocalIdentity** activeObjList() { return &pd_activeObjList; }
+  inline omniObjTableEntry** activeObjList() { return &pd_activeObjList; }
   // Must hold <boa_lock>.
 
-  void dispose(omniLocalIdentity*);
+  void dispose(omniIdentity*);
   // Deactivates the given object, returning silently on failure.
   //  The caller must hold <omni::internalLock> and <boa_lock> on
   // entry.  Both are always released before this function returns.
@@ -137,7 +140,7 @@ private:
   int                              pd_refCount;
   // Protected by <boa_lock>.
 
-  omniLocalIdentity*               pd_activeObjList;
+  omniObjTableEntry*               pd_activeObjList;
   // A list of objects activated in this adapter.
   // Protected by <boa_lock>.
 

@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.8.2.4  2001/08/03 17:41:22  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.8.2.3  2001/05/11 14:25:53  sll
   Added operator for omniORB::logger to report system exception status and
   minor code.
@@ -80,7 +84,7 @@
 #pragma hdrstop
 #endif
 
-#include <localIdentity.h>
+#include <objectTable.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -299,7 +303,20 @@ omniORB::logger::operator<<(omniLocalIdentity* id)
   OMNIORB_ASSERT(id);
 
   pp_key(*this, id->key(), id->keysize());
-  if( !id->adapter() )  *this << " (not activated)";
+
+  omniObjTableEntry* entry = omniObjTableEntry::downcast(id);
+  if (entry) {
+    switch (entry->state()) {
+    case omniObjTableEntry::ACTIVATING:    *this << " (activating)";    break;
+    case omniObjTableEntry::ACTIVE:        *this << " (active)";        break;
+    case omniObjTableEntry::DEACTIVATING:  *this << " (deactivating)";  break;
+    case omniObjTableEntry::ETHEREALISING: *this << " (etherealising)"; break;
+    case omniObjTableEntry::DEAD:          *this << " (dead)";          break;
+    default:                               *this << " (???)";
+    }
+  }
+  else
+    *this << " (temp)";
 
   return *this;
 }

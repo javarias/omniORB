@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.4  2001/08/01 10:08:21  dpg1
+ Main thread policy.
+
  Revision 1.1.2.3  2001/07/31 16:29:40  sll
  Make call descriptor available from omniCurrent in the unmarshalling of
  arguments on the server side.
@@ -53,7 +56,7 @@
 
 static void
 dealWithUserException(cdrMemoryStream& stream,
-		      omniCallDescriptor& desc,
+		      omniCallDescriptor* desc,
 		      CORBA::UserException& ex);
 
 
@@ -115,7 +118,6 @@ namespace {
 void
 omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 {
-  OMNIORB_ASSERT(pd_poa);
   OMNIORB_ASSERT(pd_localId);
   desc.poa(pd_poa);
   desc.localId(pd_localId);
@@ -191,7 +193,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 #ifdef HAS_Cplusplus_catch_exception_by_base
       catch (CORBA::UserException& ex) {
 	stream.rewindPtrs();
-	dealWithUserException(stream, desc, ex);
+	dealWithUserException(stream, pd_call_desc, ex);
 	OMNIORB_ASSERT(0);
       }
 #else
@@ -199,7 +201,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 	try {
 	  CORBA::UserException& ex = *((CORBA::UserException*)uex.ex());
 	  stream.rewindPtrs();
-	  dealWithUserException(stream, desc, ex);
+	  dealWithUserException(stream, pd_call_desc, ex);
 	}
 	catch (...) {
 	  delete uex.ex();  // ?? Possible memory leak?
@@ -216,41 +218,9 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 }
 
 
-OMNI_NAMESPACE_BEGIN(omni)
-class inProcessIOP_C : public IOP_C {
-public:
-  inProcessIOP_C(cdrStream& stream) : pd_stream(stream) {}
-
-  virtual cdrStream& getStream();
-  virtual void InitialiseRequest();
-  virtual GIOP::ReplyStatusType ReceiveReply();
-  virtual void RequestCompleted(_CORBA_Boolean skip=0);
-  virtual GIOP::LocateStatusType IssueLocateRequest();
-private:
-  cdrStream& pd_stream;
-};
-
-cdrStream& inProcessIOP_C::getStream() { return pd_stream; }
-
-void inProcessIOP_C::RequestCompleted(_CORBA_Boolean skip) {}
-
-void inProcessIOP_C::InitialiseRequest() {
-  OMNIORB_ASSERT(0);
-}
-GIOP::ReplyStatusType inProcessIOP_C::ReceiveReply() {
-  OMNIORB_ASSERT(0);
-  return GIOP::NO_EXCEPTION; // To silence paranoid compilers
-}
-GIOP::LocateStatusType inProcessIOP_C::IssueLocateRequest() {
-  OMNIORB_ASSERT(0);
-  return GIOP::UNKNOWN_OBJECT; // To silence paranoid compilers
-}
-OMNI_NAMESPACE_END(omni)
-
-
 static void
 dealWithUserException(cdrMemoryStream& stream,
-		      omniCallDescriptor& desc,
+		      omniCallDescriptor* desc,
 		      CORBA::UserException& ex)
 {
   int size;
@@ -263,12 +233,7 @@ dealWithUserException(cdrMemoryStream& stream,
 
   ex._NP_marshal(stream);
 
-  // omniCallDescriptor::userException() requires an IOP_C object as
-  // its argument, so it can call RequestCompleted() on it. We use a
-  // dummy IOP_C.
-  _OMNI_NS(inProcessIOP_C) iop_c(stream);
-
-  desc.userException(iop_c, repoId);
+  desc->userException(stream, 0, repoId);
 
   // userException() _must_ throw an exception
   OMNIORB_ASSERT(0);

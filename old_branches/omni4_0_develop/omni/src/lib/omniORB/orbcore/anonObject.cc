@@ -30,6 +30,10 @@
  
 /*
   $Log$
+  Revision 1.2.2.4  2001/05/31 16:20:13  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.2.2.3  2001/04/18 18:18:11  sll
   Big checkin with the brand new internal APIs.
 
@@ -86,10 +90,9 @@ omniAnonObjRef_pof::~omniAnonObjRef_pof() {}
 
 
 omniObjRef*
-omniAnonObjRef_pof::newObjRef(omniIOR* ior,
-			      omniIdentity* id, omniLocalIdentity* lid)
+omniAnonObjRef_pof::newObjRef(omniIOR* ior, omniIdentity* id)
 {
-  return new omniAnonObjRef(ior, id, lid);
+  return new omniAnonObjRef(ior, id);
 }
 
 

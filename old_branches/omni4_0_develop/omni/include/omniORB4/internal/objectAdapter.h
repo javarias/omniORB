@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.1.4.3  2001/07/31 16:34:53  sll
+ New function listMyEndpoints(). Remove explicit instantiation of
+ giopServer, do it via interceptor.
+
  Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
  In process identity.
 
@@ -194,7 +198,8 @@ public:
   // case the object adapter calls this), or when any outstanding
   // method invocations complete (in which case the
   // omniLocalIdentity calls this).
-  //  The caller must not hold any locks.
+  //  The caller must hold <omni::internalLock> on entry. It is
+  //  released on exit.
 
 
   ////////////////////

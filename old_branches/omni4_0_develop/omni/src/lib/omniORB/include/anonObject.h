@@ -30,6 +30,10 @@
  
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/31 16:21:13  dpg1
+  object references optionally just store a pointer to their repository
+  id string rather than copying it.
+
   Revision 1.1.4.1  2001/04/18 17:18:19  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -75,9 +79,8 @@ class omniAnonObjRef : public virtual omniObjRef,
 		       public virtual CORBA::Object
 {
 public:
-  inline omniAnonObjRef(omniIOR* ior,
-			omniIdentity* id, omniLocalIdentity* lid)
-    : omniObjRef(CORBA::Object::_PD_repoId, ior, id, lid, 1)
+  inline omniAnonObjRef(omniIOR* ior, omniIdentity* id)
+    : omniObjRef(CORBA::Object::_PD_repoId, ior, id, 1)
     { _PR_setobj(this); }
 
 protected:
@@ -99,8 +102,7 @@ public:
   inline omniAnonObjRef_pof()
     : proxyObjectFactory(CORBA::Object::_PD_repoId) {}
 
-  virtual omniObjRef* newObjRef(omniIOR* ior,
-				omniIdentity* id, omniLocalIdentity* lid);
+  virtual omniObjRef* newObjRef(omniIOR* ior, omniIdentity* id);
   virtual CORBA::Boolean is_a(const char* base_repoId) const;
 };
 

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/08/06 15:49:17  sll
+  Added IOP component TAG_OMNIORB_UNIX_TRANS for omniORB specific local
+  transport using the unix domain socket.
+
   Revision 1.1.2.8  2001/07/31 16:10:38  sll
   Added GIOP BiDir support.
 
@@ -186,10 +190,9 @@ public:
 	  _CORBA_ULong selected_profile_index);
   // Both repoId and iop are consumed by the object.
 
-  omniIOR(const char* repoId, omniLocalIdentity* id);
-  // create an IOR for this local object
-  //
-  // ** Caller holds lock on internalLock.
+  omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize);
+  // create an IOR for a local object with the given key
+  //  Must hold <omni::internalLock>.
 
   enum interceptorOption { NoInterceptor,
 			   DefaultInterceptors,

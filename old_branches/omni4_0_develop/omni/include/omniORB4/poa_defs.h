@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/05/29 17:03:48  dpg1
+  In process identity.
+
   Revision 1.2.2.3  2001/04/18 17:50:43  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -173,7 +176,7 @@ public:
   CORBA::Boolean unknown_adapter(POA_ptr parent, const char* name);
 
   inline _objref_AdapterActivator() { _PR_setobj(0); }  // nil
-  _objref_AdapterActivator(omniIOR*, omniIdentity*, omniLocalIdentity*);
+  _objref_AdapterActivator(omniIOR*, omniIdentity*);
 
 protected:
   virtual ~_objref_AdapterActivator();
@@ -192,8 +195,7 @@ public:
   inline _pof_AdapterActivator() : _OMNI_NS(proxyObjectFactory)(AdapterActivator::_PD_repoId) {}
   virtual ~_pof_AdapterActivator();
 
-  virtual omniObjRef* newObjRef(omniIOR* ior,
-                                omniIdentity*, omniLocalIdentity*);
+  virtual omniObjRef* newObjRef(omniIOR* ior, omniIdentity*);
   virtual _CORBA_Boolean is_a(const char*) const;
 };
 
@@ -279,7 +281,7 @@ class _objref_ServantManager :
 public:
 
   inline _objref_ServantManager() { _PR_setobj(0); }  // nil
-  _objref_ServantManager(omniIOR*, omniIdentity*, omniLocalIdentity*);
+  _objref_ServantManager(omniIOR*, omniIdentity*);
 
 protected:
   virtual ~_objref_ServantManager();
@@ -298,8 +300,7 @@ public:
   inline _pof_ServantManager() : _OMNI_NS(proxyObjectFactory)(ServantManager::_PD_repoId) {}
   virtual ~_pof_ServantManager();
 
-  virtual omniObjRef* newObjRef(omniIOR*,
-                                omniIdentity*, omniLocalIdentity*);
+  virtual omniObjRef* newObjRef(omniIOR*, omniIdentity*);
   virtual _CORBA_Boolean is_a(const char*) const;
 };
 
@@ -386,7 +387,7 @@ public:
   void etherealize(const ObjectId& oid, POA_ptr adapter, Servant serv, CORBA::Boolean cleanup_in_progress, CORBA::Boolean remaining_activations);
 
   inline _objref_ServantActivator() { _PR_setobj(0); }  // nil
-  _objref_ServantActivator(omniIOR*, omniIdentity*, omniLocalIdentity*);
+  _objref_ServantActivator(omniIOR*, omniIdentity*);
 
 protected:
   virtual ~_objref_ServantActivator();
@@ -405,8 +406,7 @@ public:
   inline _pof_ServantActivator() : _OMNI_NS(proxyObjectFactory)(ServantActivator::_PD_repoId) {}
   virtual ~_pof_ServantActivator();
 
-  virtual omniObjRef* newObjRef(omniIOR*,
-                                omniIdentity*, omniLocalIdentity*);
+  virtual omniObjRef* newObjRef(omniIOR*, omniIdentity*);
   virtual _CORBA_Boolean is_a(const char*) const;
 };
 
@@ -497,7 +497,7 @@ public:
   void postinvoke(const ObjectId& oid, POA_ptr adapter, const char* operation, ServantLocator::Cookie the_cookie, Servant the_servant);
 
   inline _objref_ServantLocator() { _PR_setobj(0); }  // nil
-  _objref_ServantLocator(omniIOR*, omniIdentity*, omniLocalIdentity*);
+  _objref_ServantLocator(omniIOR*, omniIdentity*);
 
 protected:
   virtual ~_objref_ServantLocator();
@@ -516,8 +516,7 @@ public:
   inline _pof_ServantLocator() : _OMNI_NS(proxyObjectFactory)(ServantLocator::_PD_repoId) {}
   virtual ~_pof_ServantLocator();
 
-  virtual omniObjRef* newObjRef(omniIOR*,
-                                omniIdentity*, omniLocalIdentity*);
+  virtual omniObjRef* newObjRef(omniIOR*, omniIdentity*);
   virtual _CORBA_Boolean is_a(const char*) const;
 };
 

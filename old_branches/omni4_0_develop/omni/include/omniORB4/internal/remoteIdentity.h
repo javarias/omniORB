@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:14  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.3  2000/10/03 17:41:45  sll
   Make sure object key is copied in ctor.
 
@@ -62,8 +66,9 @@ public:
   inline omniRemoteIdentity(omniIOR* ior, 
 			    const CORBA::Octet* key,
 			    CORBA::ULong keysize,
-			    _OMNI_NS(Rope)* rope)
-    : omniIdentity(key,keysize),
+			    _OMNI_NS(Rope)* rope,
+			    classCompare_fn compare = thisClassCompare)
+    : omniIdentity(key, keysize, compare),
       pd_refCount(0),
       pd_ior(ior),
       pd_rope(rope)
@@ -72,8 +77,8 @@ public:
   // with ref count of 0.
 
   virtual void dispatch(omniCallDescriptor&);
-  virtual void gainObjRef(omniObjRef*);
-  virtual void loseObjRef(omniObjRef*);
+  virtual void gainRef(omniObjRef* obj = 0);
+  virtual void loseRef(omniObjRef* obj = 0);
   virtual omniIdentity::equivalent_fn get_real_is_equivalent() const;
   // Overrides omniIdentity.
 
@@ -88,7 +93,15 @@ public:
   // Caller must hold <internalLock>. On return or raised exception, the
   // lock is released.
 
+  virtual _CORBA_Boolean inThisAddressSpace();
+  // Override omniIdentity.
 
+  static void* thisClassCompare(omniIdentity*, void*);
+
+  static inline omniRemoteIdentity* downcast(omniIdentity* id)
+  {
+    return (omniRemoteIdentity*)(id->classCompare()(id, thisClassCompare));
+  }
 
 private:
   friend class _OMNI_NS(omniRemoteIdentity_RefHolder);

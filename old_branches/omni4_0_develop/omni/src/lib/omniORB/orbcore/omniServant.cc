@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/08/03 17:41:23  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.2.2.6  2001/05/31 16:18:14  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -76,7 +80,7 @@
 #endif
 
 #include <omniORB4/omniServant.h>
-#include <localIdentity.h>
+#include <objectTable.h>
 #include <exceptiondefs.h>
 #include <omniORB4/IOP_S.h>
 #include <omniORB4/callDescriptor.h>
@@ -87,15 +91,17 @@ OMNI_USING_NAMESPACE(omni)
 
 omniServant::~omniServant()
 {
-  if( pd_identities ) {
+  if( !pd_activations.empty() ) {
     if (omniORB::trace(1)) {
       omniORB::logger l;
       l << "ERROR -- A servant has been deleted that is still activated.\n";
       omni::internalLock->lock();
-      omniLocalIdentity* id = pd_identities;
-      while( id ) {
-	l << "      id: " << id << '\n';
-	id = id->servantsNextIdentity();
+
+      omnivector<omniObjTableEntry*>::iterator i    = pd_activations.begin();
+      omnivector<omniObjTableEntry*>::iterator last = pd_activations.end();
+
+      for (; i != last; i++) {
+	l << "      id: " << *i << '\n';
       }
       omni::internalLock->unlock();
     }
@@ -177,29 +183,32 @@ omniServant::_dispatch(omniCallHandle& handle)
 }
 
 void
-omniServant::_addIdentity(omniLocalIdentity* id)
+omniServant::_addActivation(omniObjTableEntry* entry)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
-  OMNIORB_ASSERT(id);  OMNIORB_ASSERT(id->servant() == this);
+  OMNIORB_ASSERT(entry);  OMNIORB_ASSERT(entry->servant() == this);
 
-  *id->addrOfServantsNextIdentity() = pd_identities;
-  pd_identities = id;
+  pd_activations.push_back(entry);
 }
 
 
 void
-omniServant::_removeIdentity(omniLocalIdentity* id)
+omniServant::_removeActivation(omniObjTableEntry* entry)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
-  OMNIORB_ASSERT(id);
+  OMNIORB_ASSERT(entry);
 
-  omniLocalIdentity** p = &pd_identities;
+  omnivector<omniObjTableEntry*>::iterator i    = pd_activations.begin();
+  omnivector<omniObjTableEntry*>::iterator last = pd_activations.end();
 
-  while( *p != id ) {
-    OMNIORB_ASSERT(*p);
-    p = (*p)->addrOfServantsNextIdentity();
+  CORBA::Boolean activation_found = 0;
+
+  for (; i != last; i++) {
+    if (*i == entry) {
+      pd_activations.erase(i);
+      activation_found = 1;
+      break;
+    }
   }
-
-  *p = id->servantsNextIdentity();
-  *(id->addrOfServantsNextIdentity()) = 0;
+  OMNIORB_ASSERT(activation_found);
 }

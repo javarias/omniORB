@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.3  2001/04/18 17:50:43  sll
+ Big checkin with the brand new internal APIs.
+ Scoped where appropriate with the omni namespace.
+
  Revision 1.2.2.2  2000/09/27 17:03:57  sll
  Changed newObjRef signature to accept omniIOR* as an argument.
 
@@ -57,7 +61,6 @@
 #define __OMNI_PROXYFACTORY_H__
 
 
-class omniLocalIdentity;
 class omniObjRef;
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -83,8 +86,7 @@ public:
   // Returns the Interface Repository ID for proxies this
   // factory can instantiate.
 
-  virtual omniObjRef* newObjRef(omniIOR* ior,
-				omniIdentity* id, omniLocalIdentity* lid) = 0;
+  virtual omniObjRef* newObjRef(omniIOR* ior, omniIdentity* id) = 0;
   // Returns a new object reference. Consumes <profiles>.
 
   virtual _CORBA_Boolean is_a(const char* base_repoId) const = 0;

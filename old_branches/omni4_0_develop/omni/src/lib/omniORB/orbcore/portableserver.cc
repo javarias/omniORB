@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.2.2.7  2001/08/03 17:41:24  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.2.2.6  2001/06/07 16:24:11  dpg1
   PortableServer::Current support.
 
@@ -252,11 +256,10 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   {
     omni_tracedmutex_lock sync(*omni::internalLock);
 
-    omniLocalIdentity* id = _identities();
-
-    if( id && !id->servantsNextIdentity() ) {
+    if (_activations().size() == 1) {
       // We only have a single activation -- return a reference to it.
-      omniObjRef* ref = omni::createObjRef(_mostDerivedRepoId(), repoId, id);
+      omniObjRef* ref = omni::createLocalObjRef(_mostDerivedRepoId(), repoId,
+						_activations()[0]);
       OMNIORB_ASSERT(ref);
       return ref->_ptrToObjRef(repoId);
     }

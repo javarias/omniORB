@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.7  2001/07/25 13:40:52  dpg1
+# Suppress compiler warning about unused variable in _dispatch() for
+# empty interfaces.
+#
 # Revision 1.1.4.6  2001/07/25 11:42:15  dpg1
 # Generate correct code for operation parameters whose names clash with
 # C++ keywords.
@@ -283,7 +287,7 @@ class _objref_I(Class):
       if objref_name.needFlatName(self._environment):
         objref_str = objref_name.flatName()
 
-      this_inherits_str = objref_str + "(ior, id, lid),\n"
+      this_inherits_str = objref_str + "(ior, id),\n"
 
       # FIXME:
       # The powerpc-aix OMNIORB_BASE_CTOR workaround still works here

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.11  2001/08/03 17:41:17  sll
+# System exception minor code overhaul. When a system exeception is raised,
+# a meaning minor code is provided.
+#
 # Revision 1.3.2.10  2001/07/25 13:40:53  dpg1
 # Suppress compiler warning about unused variable in _dispatch() for
 # empty interfaces.
@@ -187,9 +191,9 @@ interface_objref = """\
 @fq_objref_name@::~@objref_name@() {}
 
 
-@fq_objref_name@::@objref_name@(omniIOR* ior, omniIdentity* id, omniLocalIdentity* lid) :
+@fq_objref_name@::@objref_name@(omniIOR* ior, omniIdentity* id) :
    @inherits_str@
-   omniObjRef(@name@::_PD_repoId, ior, id, lid, 1)
+   omniObjRef(@name@::_PD_repoId, ior, id, 1)
 {
   _PR_setobj(this);
 }
@@ -305,17 +309,26 @@ const char* const @call_descriptor@::_user_exns[] = {
   @exception_namelist@
 };
 
-void @call_descriptor@::userException(_OMNI_NS(IOP_C)& iop_client, const char* repoId)
+void @call_descriptor@::userException(cdrStream& s, _OMNI_NS(IOP_C)* iop_client, const char* repoId)
 {
-  cdrStream& s = iop_client.getStream();
   @exception_block@
   else {
-    iop_client.RequestCompleted(1);
+    if (iop_client) iop_client->RequestCompleted(1);
     OMNIORB_THROW(UNKNOWN,UNKNOWN_UserException,
                   (CORBA::CompletionStatus)s.completion());
   }
 }
 """
+
+interface_proxy_exn_handle = """\
+if ( omni::strMatch(repoId, @repoID_str@) ) {
+  @exname@ _ex;
+  _ex <<= s;
+  if (iop_client) iop_client->RequestCompleted();
+  throw _ex;
+}
+"""
+
 
 interface_operation = """\
 @call_descriptor@ _call_desc(@call_desc_args@);
@@ -331,10 +344,9 @@ interface_pof = """\
 
 
 omniObjRef*
-@pof_name@::newObjRef(omniIOR* ior,
-               omniIdentity* id, omniLocalIdentity* lid)
+@pof_name@::newObjRef(omniIOR* ior, omniIdentity* id)
 {
-  return new @objref_fqname@(ior, id, lid);
+  return new @objref_fqname@(ior, id);
 }
 
 
