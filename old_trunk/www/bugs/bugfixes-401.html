@@ -67,14 +67,14 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>Deallocation bug assigning an Any to itself</b>
-            (bug number 1)
-            <a name='bug1'></a>
+                <b>Crash in registry reading code</b>
+            (bug number 4)
+            <a name='bug4'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Sun Mar 23 20:36:13 GMT 2003</td>
+              <td>Thu May 22 15:47:16 BST 2003</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
@@ -82,13 +82,53 @@
             </tr>
             <tr>
               <td>Reported by:</td>
-              <td>Vasily Tchekalkin</td>
+              <td>Titus von Boxberg</td>
             </tr>
             <tr valign='top'>
               <td>Description:</td>
               <td>
-  Assigning an Any to itself would cause it to be incorrectly
-  deallocated.
+  A misplaced allocation caused a crash when there were no keys in the
+  omniORB key.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
+                <b>Connections ignored after exceptions in thread pool
+  mode.</b>
+            (bug number 3)
+            <a name='bug3'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Thu May 22 14:30:47 BST 2003</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Malge Nishant</td>
+            </tr>
+            <tr>
+              <td>Link for this bug:</td>
+              <td>
+                <a href='http://www.omniorb-support.com/pipermail/omniorb-list/2003-May/023631.html'>http://www.omniorb-support.com/pipermail/omniorb-list/2003-May/023631.html</a>
+              </td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  In some circumstances, a connections were not marked selectable
+  after an exception, meaning future requests on them were not noticed
+  in thread pool mode.
   </td>
             </tr>
             <tr>
@@ -128,6 +168,38 @@
               <td>
   A bug in connection handling meant that integer timeouts could be
   ignored if the scan granularity was set to zero.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
+                <b>Deallocation bug assigning an Any to itself</b>
+            (bug number 1)
+            <a name='bug1'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Sun Mar 23 20:36:13 GMT 2003</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Vasily Tchekalkin</td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  Assigning an Any to itself would cause it to be incorrectly
+  deallocated.
   </td>
             </tr>
             <tr>

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2003/01/22 11:43:52  dgrisby
+  Minor error message fixes in registry code.
+
   Revision 1.1.2.8  2002/07/03 15:46:40  dgrisby
   Minor registry code bugfix.
 
@@ -264,8 +267,10 @@ void parseConfigReg(orbOptions& opt, HKEY rootkey) {
   if (total) {
     keybuf = CORBA::string_alloc(keybufsize);
     valuebuf = CORBA::string_alloc(valuebufsize);
-    if (totalsubkeys) subkeybuf = CORBA::string_alloc(subkeybufsize);
   }
+
+  if (totalsubkeys)
+    subkeybuf = CORBA::string_alloc(subkeybufsize);
 
   DWORD index = 0;
   while (index < total) {
