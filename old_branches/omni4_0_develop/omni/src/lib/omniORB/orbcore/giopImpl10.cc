@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/01 17:15:18  sll
+  Non-copy input now works correctly.
+
   Revision 1.1.4.1  2001/04/18 18:10:51  sll
   Big checkin with the brand new internal APIs.
 
@@ -1094,31 +1097,6 @@ giopImpl10::sendUserException(giopStream* g,const CORBA::UserException& ex) {
 
   int i, repoid_size;
   const char* repoid = ex._NP_repoId(&repoid_size);
-
-  const char*const* user_exns = giop_s.calldescriptor()->user_excns();
-  int n_user_exns = giop_s.calldescriptor()->n_user_excns();
-
-  // Could turn this into a binary search (list is sorted).
-  // Usually a short list though -- probably not worth it.
-  for( i = 0; i < n_user_exns; i++ )
-    if( !strcmp(user_exns[i], repoid) ) {
-      break;
-    }
-
-  if( i == n_user_exns ) {
-    if( omniORB::trace(1) ) {
-      omniORB::logger l;
-      l << "WARNING -- to "
-	<< g->pd_strand->connection->peeraddress()
-	<< " method \'" << giop_s.calldescriptor()->op()
-	<< "\' on: " << giop_s.keyobj()
-	<< "\n raised the exception: " << repoid 
-	<< " which is not in the operation signature\n";
-    }
-    CORBA::UNKNOWN ex(UNKNOWN_UserException, CORBA::COMPLETED_YES);
-    sendSystemException(g,ex);
-    return;
-  }
 
   outputNewMessage(g);
 
