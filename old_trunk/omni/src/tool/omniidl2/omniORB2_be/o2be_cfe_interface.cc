@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.15  1998/08/06 16:27:03  sll
+  Re-indent getopt(). Previously getopt() failed to check for null buf_left
+  before it is de-referenced.
+
   Revision 1.14  1998/08/06 16:23:27  sll
   *** empty log message ***
 
@@ -181,13 +185,11 @@ BE_produce()
          << " unsupported IDL syntax. " << ex.msg() << std::endl;
     idl_global->err_count();
   }
-#if 0
   catch (o2be_internal_error &ex) {
     std::cerr << "omniORB2 back end internal error: " 
 	 << ex.file() << ":" << ex.line() << "-" << ex.errmsg() << std::endl;
     idl_global->err_count();
   };
-#endif
   return;
 }
 
