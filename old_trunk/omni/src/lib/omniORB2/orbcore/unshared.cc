@@ -32,6 +32,9 @@
 
 /*
   $Log$
+  Revision 1.9  1999/03/11 16:25:57  djr
+  Updated copyright notice
+
   Revision 1.8  1998/08/14 13:55:20  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -85,6 +88,7 @@ initFile*	    omni::configFile = 0;
 omni_mutex          omniObject::objectTableLock;
 omniObject*         omniObject::proxyObjectTable = 0;
 omniObject**        omniObject::localObjectTable = 0;
+omniObject**        omniObject::localPyObjectTable = 0;
 
 omni_mutex          omniObject::wrappedObjectTableLock;
 _wrap_proxy**        omniObject::wrappedObjectTable = 0;
