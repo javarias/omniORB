@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/15 10:26:10  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.4.1  2001/04/18 17:18:14  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -100,7 +103,8 @@ public:
 
   static inline omniRemoteIdentity* downcast(omniIdentity* id)
   {
-    return (omniRemoteIdentity*)(id->classCompare()(id, thisClassCompare));
+    return (omniRemoteIdentity*)(id->classCompare()
+				 (id, (void*)thisClassCompare));
   }
 
 private:

@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  2001/08/15 10:26:09  dpg1
+ New object table behaviour, correct POA semantics.
+
  Revision 1.1.2.1  2001/05/29 17:03:49  dpg1
  In process identity.
 
@@ -87,7 +90,8 @@ public:
 
   static inline omniInProcessIdentity* downcast(omniIdentity* id)
   {
-    return (omniInProcessIdentity*)(id->classCompare()(id, thisClassCompare));
+    return (omniInProcessIdentity*)(id->classCompare()
+				    (id, (void*)thisClassCompare));
   }
 
 private:

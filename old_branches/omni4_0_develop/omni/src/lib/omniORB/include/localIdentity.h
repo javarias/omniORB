@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/08/15 10:26:09  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.4.3  2001/06/13 20:11:37  sll
   Minor update to make the ORB compiles with MSVC++.
 
@@ -144,7 +147,8 @@ public:
 
   static inline omniLocalIdentity* downcast(omniIdentity* id)
   {
-    return (omniLocalIdentity*)(id->classCompare()(id, thisClassCompare));
+    return (omniLocalIdentity*)(id->classCompare()
+				(id, (void*)thisClassCompare));
   }
 
 protected:

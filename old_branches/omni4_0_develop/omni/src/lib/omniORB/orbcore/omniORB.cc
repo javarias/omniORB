@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2001/08/17 17:12:40  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.2.2.8  2001/08/08 15:57:12  sll
   New options unixTransportDirectory & unixTransportPermission.
 
@@ -74,6 +77,7 @@
 
 */
 
+#include <stdlib.h>
 #include <omniORB4/CORBA.h>
 #include <orbParameters.h>
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/15 10:26:09  dpg1
+  New object table behaviour, correct POA semantics.
+
 */
 
 #ifndef __OMNIORB_OBJECTTABLE_H__
@@ -176,7 +179,8 @@ public:
 
   static inline omniObjTableEntry* downcast(omniIdentity* id)
   {
-    return (omniObjTableEntry*)(id->classCompare()(id, thisClassCompare));
+    return (omniObjTableEntry*)(id->classCompare()
+				(id, (void*)thisClassCompare));
   }
 
 private:
