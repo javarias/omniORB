@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14.6.2  1999/10/14 16:22:07  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.14.6.1  1999/09/22 14:26:47  djr
   Major rewrite of orbcore to support POA.
 
@@ -142,10 +145,8 @@ _CORBA_String_member::operator >>= (NetBufferedStream& s) const
 void
 _CORBA_String_member::operator <<= (NetBufferedStream& s)
 {
-  if( _ptr ) {
-    omni::freeString(_ptr);
-    _ptr = 0;
-  }
+  if( pd_rel && _ptr )  omni::freeString(_ptr);
+  _ptr = 0;
 
   CORBA::ULong len;
   len <<= s;
@@ -193,10 +194,8 @@ _CORBA_String_member::operator >>= (MemBufferedStream& s) const
 void
 _CORBA_String_member::operator <<= (MemBufferedStream& s)
 {
-  if( _ptr ) {
-    omni::freeString(_ptr);
-    _ptr = 0;
-  }
+  if( pd_rel && _ptr )  omni::freeString(_ptr);
+  _ptr = 0;
 
   CORBA::ULong len;
   len <<= s;
