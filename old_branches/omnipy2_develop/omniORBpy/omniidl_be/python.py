@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.16  2003/04/25 15:45:16  dgrisby
+# Fix bug with enum members that clash with keywords.
+#
 # Revision 1.29.2.15  2003/04/16 13:07:59  dgrisby
 # Option to generate example implementations.
 #
@@ -187,6 +190,7 @@ usage_string = """\
   -Wbpackage=p    Put both Python modules and stub files in package p
   -Wbmodules=p    Put Python modules in package p
   -Wbstubs=p      Put stub files in package p
+  -Wbextern=f:p   Assume Python stub file for file f is in package p.
   -Wbglobal=g     Module to use for global IDL scope (default _GlobalIDL)"""
 
 #""" Uncomment this line to get syntax highlighting on the output strings
@@ -619,6 +623,7 @@ module_package   = ""
 stub_package     = ""
 stub_directory   = ""
 example_impl     = 0
+extern_stub_pkgs = {}
 
 
 def error_exit(message):
@@ -628,7 +633,7 @@ def error_exit(message):
 def run(tree, args):
     global main_idl_file, imported_files, exported_modules, output_inline
     global global_module, module_package, stub_package, stub_directory
-    global example_impl
+    global example_impl, extern_stub_pkgs
 
     imported_files.clear()
     exported_modules.clear()
@@ -675,11 +680,18 @@ def run(tree, args):
         elif arg == "example":
             example_impl = 1
 
+        elif arg[:7] == "extern=":
+            f_p = string.split(arg[7:], ":", 1)
+            if len(f_p) == 1:
+                extern_stub_pkgs[f_p[0]] = None
+            else:
+                extern_stub_pkgs[f_p[0]] = f_p[1]
+
         else:
             sys.stderr.write(main.cmdname + ": Warning: Python " \
                              "back-end does not understand argument: " + \
                              arg + "\n")
-    
+
     main_idl_file = tree.file()
 
     outpybasename = outputFileName(main_idl_file)
@@ -688,6 +700,9 @@ def run(tree, args):
 
     imported_files[outpybasename] = 1
 
+    if create_package:
+        checkStubPackage(stub_package)
+
     if use_stdout:
         st = output.Stream(sys.stdout, 4)
     else:
@@ -695,9 +710,6 @@ def run(tree, args):
             st = output.Stream(open(outpyname, "w"), 4)
         except IOError:
             error_exit('Cannot open "%s" for writing.' % outpyname)
-
-    if create_package:
-        checkStubPackage(stub_package)
 
     st.out(file_start, filename=main_idl_file)
 
@@ -749,9 +761,19 @@ class PythonVisitor:
             ifilename = outputFileName(node.file())
             if not imported_files.has_key(ifilename):
                 imported_files[ifilename] = 1
+                ibasename,ext = os.path.splitext(os.path.basename(node.file()))
+                if extern_stub_pkgs.has_key(ibasename):
+                    ipackage = extern_stub_pkgs[ibasename]
+                    if ipackage:
+                        fn = ipackage + '.' + ifilename
+                    else:
+                        fn = ifilename
+                else:
+                    fn = stub_package + ifilename
+
                 self.st.out(import_idl_file,
                             idlfile=node.file(),
-                            ifilename=stub_package + ifilename)
+                            ifilename=fn)
             return 1
         
     #
@@ -793,10 +815,21 @@ class PythonVisitor:
     def visitModule(self, node):
         if self.handleImported(node):
             imodname = dotName(node.scopedName())
+            ibasename,ext = os.path.splitext(os.path.basename(node.file()))
+
+            if extern_stub_pkgs.has_key(ibasename):
+                package = extern_stub_pkgs[ibasename]
+                if package is None:
+                    package = ""
+                else:
+                    package = package + "."
+            else:
+                package = module_package
+
             self.st.out(open_imported_module_name,
                         imodname=imodname,
                         s_imodname=skeletonModuleName(imodname),
-                        package=module_package)
+                        package=package)
 
         assert self.at_module_scope
 
