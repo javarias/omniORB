@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.13  1998/04/08 19:36:41  sll
+ *** empty log message ***
+
  Revision 1.12  1998/04/07 18:54:52  sll
  Use std::fstream instead of fstream.
  New helper functions VarToken and FriendToken to support the
@@ -1183,7 +1186,7 @@ static inline char const* FriendToken(AST_Decl& decl) {
 
 static inline char const* VarToken(AST_Decl& decl) {
   if (decl.defined_in()==idl_global->root())
-    return "extern";
+    return "_CORBA_GLOBAL_VAR";
   else if (decl.defined_in()->scope_node_type()==AST_Decl::NT_module)
     return "_CORBA_MODULE_VAR";
   else
