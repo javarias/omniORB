@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.11  2001/08/15 10:26:08  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.2.2.10  2001/08/01 10:08:19  dpg1
   Main thread policy.
 
@@ -183,6 +186,7 @@
 #include <string.h>
 #endif
 #include <omnithread.h>
+#include <omniORB4/finalCleanup.h>
 #include <omniORB4/CORBA_sysdep.h>
 #include <omniORB4/CORBA_basetypes.h>
 #include <omniORB4/seqTemplatedecls.h>

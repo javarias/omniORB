@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/08/21 10:49:39  dpg1
+  Fix incorrect sequence expansion.
+
   Revision 1.1.2.8  2001/08/15 10:26:13  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -367,13 +370,11 @@ class omni_omniIOR_initialiser : public omniInitialiser {
 public:
 
   void attach() {
-
-    omniIOR::lock   = new omni_tracedmutex;
+    if (!omniIOR::lock) omniIOR::lock = new omni_tracedmutex;
   }
 
   void detach() {
-    delete omniIOR::lock;
-    omniIOR::lock = 0;
+    // omniIOR::lock is deleted by final clean-up in omniInternal.cc
   }
 };
 

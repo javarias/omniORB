@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/09/04 14:38:09  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.4  2001/08/03 17:43:19  sll
   Make sure dll import spec for win32 is properly done.
 
@@ -201,6 +205,7 @@ class giopRope : public Rope, public RopeLink {
 
   friend class giopStream;
   friend class giopStrand;
+  friend class omni_giopRope_initialiser;
 
  protected:
   int                  pd_refcount;  // reference count

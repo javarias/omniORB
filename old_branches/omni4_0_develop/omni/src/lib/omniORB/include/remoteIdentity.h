@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.4.4  2001/09/03 16:52:05  sll
+  New signature for locateRequest. Now accept a calldescriptor argument.
+
   Revision 1.1.4.3  2001/08/22 13:31:31  dpg1
   Christof's fixes for gcc 3.0.1.
 
@@ -78,7 +81,10 @@ public:
       pd_refCount(0),
       pd_ior(ior),
       pd_rope(rope)
-    {}
+    {
+      ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
+      ++identity_count;
+    }
   // Consumes <ior> and <rope>.  Copies <key>.  Constructs an identity
   // with ref count of 0.
 

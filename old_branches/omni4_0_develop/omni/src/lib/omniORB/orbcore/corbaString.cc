@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.17.2.7  2001/08/03 17:41:19  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.17.2.6  2000/12/05 17:39:31  dpg1
   New cdrStream functions to marshal and unmarshal raw strings.
 
@@ -149,13 +153,7 @@ CORBA::string_free(char* p)
 char*
 CORBA::string_dup(const char* p)
 {
-  if (p) {
-    char* q = _CORBA_String_helper::alloc(strlen(p));
-    if (q) {
-      strcpy(q,p);
-      return q;
-    }
-  }
+  if (p) return _CORBA_String_helper::dup(p);
   return 0;
 }
 

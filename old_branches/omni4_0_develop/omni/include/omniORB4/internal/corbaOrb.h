@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/01 10:08:20  dpg1
+  Main thread policy.
+
   Revision 1.1.4.1  2001/04/18 17:18:18  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -85,6 +88,12 @@ public:
   // Returns true if shutdown, false if timed out. Note the potential
   // for race conditions if shutdown coincides with timeout: only
   // treat a timed-out indication as a hint.
+
+  static CORBA::Boolean all_destroyed();
+  // True if all ORBs have been destroyed (although there's only ever
+  // one at present).
+  //  NO CONCURRENCY CONTROL. This is intended to be used in the final
+  //  clean-up by a static destructor.
 
 private:
   void do_shutdown(CORBA::Boolean wait_for_completion);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/17 13:44:08  dpg1
+  Change freeing behaviour of string members and elements.
+
   Revision 1.1.2.4  2000/11/17 19:11:16  dpg1
   Rename _CORBA_Sequence__WString to _CORBA_Sequence_WString.
 
@@ -85,8 +88,11 @@ static inline void cpy(_CORBA_WChar* t, const _CORBA_WChar* f) {
 
 static inline _CORBA_WChar* dup(const _CORBA_WChar* s) { 
   _CORBA_WChar* r = alloc(len(s));
-  cpy(r, s);
-  return r;
+  if (r) {
+    cpy(r, s);
+    return r;
+  }
+  return 0;
 }
 // As CORBA::wstring_dup().
 

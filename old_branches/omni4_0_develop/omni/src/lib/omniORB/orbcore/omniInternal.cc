@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.21  2001/08/21 11:02:16  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.2.2.20  2001/08/20 13:27:43  dpg1
   Correct description of objectTableSize configuration setting.
 
@@ -173,6 +177,8 @@
 #include <invoker.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <omniORB4/objTracker.h>
+#include <corbaOrb.h>
 
 ////////////////////////////////////////////////////////////////////////////
 //             Configuration options                                      //
@@ -195,6 +201,12 @@ CORBA::Boolean  omniORB::traceInvocations = 0;
 //    message.
 //
 //    Valid values = 0 or 1
+
+CORBA::Boolean  omniORB::traceThreadId = 0;
+//    If true, then the log messages will contain the thread id.
+//
+//    Valid values = 0 or 1
+
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -240,7 +252,7 @@ int                              omni::localInvocationCount = 0;
 int                              omni::mainThreadId = 0;
 
 omni_tracedmutex*                omni::objref_rc_lock = 0;
-// Protects omniObjRef reference counting.
+// Protects omniObjRef reference counting and linked list.
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -822,6 +834,7 @@ omni::createIdentity(omniIOR* ior, const char* target, CORBA::Boolean locked)
   else {
     // Remote
     holder._retn();
+    omni_optional_lock sync(*internalLock,locked,locked);
     result = new omniRemoteIdentity(ior,
 				    object_key.get_buffer(),
 				    object_key.length(),
@@ -832,7 +845,7 @@ omni::createIdentity(omniIOR* ior, const char* target, CORBA::Boolean locked)
 
 
 omniIdentity*
-omni::createInProcessIdentity(const _CORBA_Octet* key,int keysize){
+omni::createInProcessIdentity(const _CORBA_Octet* key, int keysize) {
   return new omniInProcessIdentity(key,keysize);
 }
 
@@ -860,6 +873,7 @@ omni::createObjRef(const char* targetRepoId,
     if (lid && (!lid->servant() ||
 		!lid->servant()->_ptrToInterface(targetRepoId))) {
       // Local id can't be used by the objref
+      omni_optional_lock sync(*internalLock,locked,locked);
       id = createInProcessIdentity(lid->key(), lid->keysize());
     }
   }
@@ -1211,6 +1225,35 @@ public:
 static traceInvocationsHandler traceInvocationsHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
+class traceThreadIdHandler : public orbOptions::Handler {
+public:
+
+  traceThreadIdHandler() : 
+    orbOptions::Handler("traceThreadId",
+			"traceThreadId = 0 or 1",
+			1,
+			"-ORBtraceThreadId < 0 | 1 >") {}
+
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    omniORB::traceThreadId = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),omniORB::traceThreadId,
+			     result);
+  }
+};
+
+static traceThreadIdHandler traceThreadIdHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
 class objectTableSizeHandler : public orbOptions::Handler {
 public:
 
@@ -1280,6 +1323,7 @@ public:
   omni_omniInternal_initialiser() {
     orbOptions::singleton().registerHandler(traceLevelHandler_);
     orbOptions::singleton().registerHandler(traceInvocationsHandler_);
+    orbOptions::singleton().registerHandler(traceThreadIdHandler_);
     orbOptions::singleton().registerHandler(objectTableSizeHandler_);
     orbOptions::singleton().registerHandler(abortOnInternalErrorHandler_);
   }
@@ -1287,9 +1331,9 @@ public:
   void attach() {
     OMNIORB_ASSERT(!objectTable);  OMNIORB_ASSERT(!omni::internalLock);
 
-    omni::internalLock   = new omni_tracedmutex;
-    omni::poRcLock       = new omni_tracedmutex;
-    omni::objref_rc_lock = new omni_tracedmutex;
+    if (!omni::internalLock)   omni::internalLock   = new omni_tracedmutex;
+    if (!omni::poRcLock)       omni::poRcLock       = new omni_tracedmutex;
+    if (!omni::objref_rc_lock) omni::objref_rc_lock = new omni_tracedmutex;
 
     numObjectsInTable = 0;
     minNumObjects = 0;
@@ -1309,6 +1353,9 @@ public:
   }
 
   void detach() {
+    OMNIORB_ASSERT(numObjectsInTable == 0);
+    delete [] objectTable;
+    objectTable = 0;
   }
 };
 
@@ -1331,3 +1378,88 @@ public:
 };
 
 OMNI_NAMESPACE_END(omni)
+
+
+/////////////////////////////////////////////////////////////////////////////
+//            Nil object reference list                                    //
+/////////////////////////////////////////////////////////////////////////////
+
+static omnivector<CORBA::Object_ptr>* nilObjectList() {
+  static omnivector<CORBA::Object_ptr>* the_list = 0;
+  if (!the_list) the_list = new omnivector<CORBA::Object_ptr>;
+  return the_list;
+}
+
+static omnivector<omniTrackedObject*>* trackedList() {
+  static omnivector<omniTrackedObject*>* the_list = 0;
+  if (!the_list) the_list = new omnivector<omniTrackedObject*>;
+  return the_list;
+}
+
+OMNI_NAMESPACE_BEGIN(omni)
+
+void registerNilCorbaObject(CORBA::Object_ptr obj)
+{
+  nilObjectList()->push_back(obj);
+}
+
+void registerTrackedObject(omniTrackedObject* obj)
+{
+  trackedList()->push_back(obj);
+}
+
+OMNI_NAMESPACE_END(omni)
+
+
+/////////////////////////////////////////////////////////////////////////////
+//            Final clean-up                                               //
+/////////////////////////////////////////////////////////////////////////////
+
+int _omniFinalCleanup::count = 0;
+
+void _omniFinalCleanup::cleanup()
+{
+  if (!omniOrbORB::all_destroyed()) {
+    omniORB::logs(15, "ORB not destroyed; no final clean-up.");
+    return;
+  }
+  omniORB::logs(15, "Final clean-up");
+  int nils = 0;
+  omnivector<CORBA::Object_ptr>::iterator i = nilObjectList()->begin();
+  for (; i != nilObjectList()->end(); i++, nils++)
+    delete *i;
+
+  delete nilObjectList();
+
+  int tracked = 0;
+  omnivector<omniTrackedObject*>::iterator j = trackedList()->begin();
+  for (; j != trackedList()->end(); j++, tracked++)
+    delete *j;
+
+  delete trackedList();
+
+  if (omniORB::trace(15)) {
+    omniORB::logger l;
+    l << "Deleted " << nils << " nil object reference"
+      << (nils == 1 ? "" : "s" )
+      << " and " << tracked << " other tracked object"
+      << (tracked == 1 ? "" : "s" )
+      << ".\n";
+  }
+
+  // Delete mutexes
+  delete &omni::nilRefLock();
+  if (omni::internalLock)   delete omni::internalLock;
+  if (omni::objref_rc_lock) delete omni::objref_rc_lock;
+  if (omni::poRcLock)       delete omni::poRcLock;
+  if (omniTransportLock)    delete omniTransportLock;
+  if (omniIOR::lock)        delete omniIOR::lock;
+
+  omni::internalLock   = 0;
+  omni::objref_rc_lock = 0;
+  omni::poRcLock       = 0;
+  omniTransportLock    = 0;
+  omniIOR::lock        = 0;
+
+  omniORB::logs(10, "Final clean-up completed.");
+}

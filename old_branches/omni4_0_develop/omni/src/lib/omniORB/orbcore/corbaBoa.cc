@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.10  2001/08/17 17:14:09  sll
+  Relocated old omniORB API implementation to this file.
+
   Revision 1.16.2.9  2001/08/15 10:26:12  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -116,6 +119,7 @@
 #include <corbaBoa.h>
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/callHandle.h>
+#include <omniORB4/objTracker.h>
 #include <objectTable.h>
 #include <initRefs.h>
 #include <dynamicLib.h>
@@ -226,6 +230,7 @@ CORBA::BOA::_nil()
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
     if( !_the_nil_ptr )  _the_nil_ptr = new omniOrbBOA(1 /* is nil */);
+    registerNilCorbaObject(_the_nil_ptr);
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

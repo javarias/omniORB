@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.12.2.8  2001/08/17 17:07:05  sll
+ Remove the use of omniORB::logStream.
+
  Revision 1.12.2.7  2001/06/13 20:10:03  sll
  Minor update to make the ORB compiles with MSVC++.
 
@@ -86,6 +89,7 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/objTracker.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -510,7 +514,7 @@ ContextImpl::loseChild(ContextImpl* child)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-class omniNilContext : public CORBA::Context {
+class omniNilContext : public CORBA::Context, public omniTrackedObject {
 public:
   virtual const char* context_name() const {
     _CORBA_invoked_nil_pseudo_ref();
@@ -585,6 +589,7 @@ CORBA::Context::_nil()
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
     if( !_the_nil_ptr )  _the_nil_ptr = new omniNilContext;
+    registerTrackedObject(_the_nil_ptr);
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

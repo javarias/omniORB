@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.22  2001/09/03 16:53:23  sll
+  In _invoke and _locateRequest, set the deadline from orbParameters into the
+  calldescriptor.
+
   Revision 1.2.2.21  2001/08/21 11:02:17  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -142,8 +146,15 @@
 #include <initialiser.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <shutdownIdentity.h>
 
 OMNI_USING_NAMESPACE(omni)
+
+
+static omniObjRef* objref_list = 0;
+// Linked list of all non-nil object references.
+//  Protected by <omni::objref_rc_lock>.
+
 
 ////////////////////////////////////////////////////////////////////////////
 //             Configuration options                                      //
@@ -473,6 +484,14 @@ omniObjRef::~omniObjRef()
     }
   }
 
+  if (!pd_ior) return; // Nil
+
+  {
+    omni_tracedmutex_lock sync(*omni::objref_rc_lock);
+    *pd_prev = pd_next;
+    if (pd_next) pd_next->pd_prev = pd_prev;
+  }
+
   if (pd_flags.static_repoId) {
     if (pd_mostDerivedRepoId != pd_intfRepoId)
       delete [] pd_mostDerivedRepoId;
@@ -494,9 +513,12 @@ omniObjRef::omniObjRef()
     pd_mostDerivedRepoId(0),
     pd_intfRepoId(0),
     pd_ior(0),
-    pd_id(0)
+    pd_id(0),
+    pd_next(0),
+    pd_prev(0)
 {
   // Nil objref.
+  pd_flags.orb_shutdown = 0;
 }
 
 
@@ -526,6 +548,14 @@ omniObjRef::omniObjRef(const char* intfRepoId, omniIOR* ior,
     strcpy(pd_mostDerivedRepoId, ior->repositoryID());
   }
 
+  {
+    omni_tracedmutex_lock sync(*omni::objref_rc_lock);
+    pd_next = objref_list;
+    pd_prev = &objref_list;
+    if (pd_next) pd_next->pd_prev = &pd_next;
+    objref_list = this;
+  }
+
   pd_flags.forward_location = 0;
   pd_flags.type_verified = 1;
   pd_flags.object_exists = omniObjTableEntry::downcast(id) ? 1 : 0;
@@ -533,9 +563,34 @@ omniObjRef::omniObjRef(const char* intfRepoId, omniIOR* ior,
   pd_flags.commfail_exception_handler = 0;
   pd_flags.system_exception_handler = 0;
   pd_flags.static_repoId = static_repoId;
+  pd_flags.orb_shutdown = 0;
 }
 
+void
+omniObjRef::_shutdown()
+{
+  omni_tracedmutex_lock sync(*omni::internalLock);
+  omni_tracedmutex_lock sync2(*omni::objref_rc_lock);
 
+  int i=0;
+
+  for (omniObjRef* o = objref_list; o; o = o->pd_next, i++)
+    o->_disable();
+
+  if (omniORB::trace(15)) {
+    omniORB::logger l;
+    l << i << " object reference" << (i == 1 ? "" : "s")
+      << " present at ORB shutdown.\n";
+  }
+}
+
+void
+omniObjRef::_disable()
+{
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
+  _setIdentity(omniShutdownIdentity::singleton());
+  pd_flags.orb_shutdown = 1;
+}
 
 
 void
@@ -580,6 +635,7 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
     try{
 
       omni::internalLock->lock();
+
       fwd = pd_flags.forward_location;
 
       _identity()->dispatch(call_desc);
@@ -655,13 +711,17 @@ omniObjRef::_getIOR()
 void
 omniObjRef::_marshal(omniObjRef* objref, cdrStream& s)
 {
-
   if (!objref || objref->_is_nil()) {
     ::operator>>= ((CORBA::ULong)1,s);
     s.marshalOctet('\0');
     ::operator>>= ((CORBA::ULong) 0,s);
     return;
   }
+
+  if (objref->pd_flags.orb_shutdown)
+    OMNIORB_THROW(BAD_INV_ORDER,
+		  BAD_INV_ORDER_ORBHasShutdown,
+		  (CORBA::CompletionStatus)s.completion());
 
   omniIOR_var ior;
   {

@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.20.2.6  2001/08/03 17:41:19  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.20.2.5  2001/05/31 16:18:12  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -115,6 +119,7 @@
 
 #include <omniORB4/minorCode.h>
 #include <omniORB4/omniObjRef.h>
+#include <omniORB4/objTracker.h>
 #include <objectAdapter.h>
 #include <anonObject.h>
 #include <exceptiondefs.h>
@@ -228,6 +233,7 @@ CORBA::Object::_nil()
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
     if( !_the_nil_ptr )  _the_nil_ptr = new CORBA::Object;
+    registerNilCorbaObject(_the_nil_ptr);
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

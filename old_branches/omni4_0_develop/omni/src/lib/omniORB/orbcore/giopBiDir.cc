@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/09/10 17:45:22  sll
+  Call stopIdleCounter when a strand is switched to bidirectional in
+  getBiDirServiceContext.
+
   Revision 1.1.2.7  2001/09/03 17:32:05  sll
   Make sure that acquireClient honours the deadline set in the calldescriptor.
 
@@ -58,6 +62,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/minorCode.h>
 #include <omniORB4/omniInterceptors.h>
+#include <omniORB4/objTracker.h>
 #include <exceptiondefs.h>
 #include <giopStrand.h>
 #include <giopRope.h>
@@ -167,6 +172,7 @@ BiDirPolicy::BidirectionalPolicy::_nil()
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
     if( !_the_nil_ptr )  _the_nil_ptr = new BidirectionalPolicy;
+    registerNilCorbaObject(_the_nil_ptr);
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.7  2001/08/17 13:44:08  dpg1
+ Change freeing behaviour of string members and elements.
+
  Revision 1.2.2.6  2001/08/03 17:47:45  sll
  Removed obsoluted code.
 
@@ -81,6 +84,7 @@
 
 */
 
+
 #ifndef __OMNI_STRINGTYPES_H__
 #define __OMNI_STRINGTYPES_H__
 
@@ -111,8 +115,11 @@ static inline void free(char* s) {
 
 static inline char* dup(const char* s) { 
   char* r = alloc(strlen(s));
-  strcpy(r, s);
-  return r;
+  if (r) {
+    strcpy(r, s);
+    return r;
+  }
+  return 0;
 }
 // As CORBA::string_dup().
 

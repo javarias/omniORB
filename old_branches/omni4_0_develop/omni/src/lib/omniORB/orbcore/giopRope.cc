@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.18  2001/09/10 17:47:17  sll
+  startIdleCounter when the strand is definitely idle.
+
   Revision 1.1.4.17  2001/09/04 14:40:30  sll
   Added the boolean argument to notifyCommFailure to indicate if
   omniTransportLock is held by the caller.
@@ -784,6 +787,27 @@ public:
   void attach() {
   }
   void detach() {
+    // Get rid of any remaining ropes. By now they should all be strand-less.
+    omni_tracedmutex_lock sync(*omniTransportLock);
+
+    RopeLink* p = giopRope::ropes.next;
+    giopRope* gr;
+    int i=0;
+
+    while (p != &giopRope::ropes) {
+      gr = (giopRope*)p;
+      OMNIORB_ASSERT(gr->pd_refcount == 0 &&
+		     RopeLink::is_empty(gr->pd_strands) &&
+		     !gr->pd_nwaiting);
+      p = p->next;
+      gr->RopeLink::remove();
+      delete gr;
+      ++i;
+    }
+    if (omniORB::trace(15)) {
+      omniORB::logger l;
+      l << i << " remaining rope" << (i == 1 ? "" : "s") << " deleted.\n";
+    }
   }
 };
 

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/09/10 17:43:11  sll
+  Replaced the non-thread safe resetIdleCounter with startIdleCounter and
+  stopIdleCounter. Added orderly_closed to indicate that a stand is orderly
+  closed because a GIOP CloseConnection message has been received.
+
   Revision 1.1.4.7  2001/08/29 17:51:06  sll
   Updated description for gatekeeper_checked.
 
@@ -375,7 +380,7 @@ public:
   // this strand as well. This call ensures that both the strand and
   // connection die at the same time.
   //
-    // Thread Safety preconditions:
+  // Thread Safety preconditions:
   //    Caller must hold omniTransportLock unless forced == 1.
 
 #ifdef __GNUG__
@@ -385,7 +390,7 @@ public:
 private:
   virtual ~giopStrand();
 
-  State         pd_state;
+  State pd_state;
 
   giopStrand(const giopStrand&);
   giopStrand& operator=(const giopStrand&);

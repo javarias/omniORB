@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/17 17:12:41  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.4.2  2001/06/13 20:13:15  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -125,14 +128,11 @@ public:
   void attach() {
     OMNIORB_ASSERT(!omniTransportLock);
 
-    omniTransportLock = new omni_tracedmutex;
+    if (!omniTransportLock) omniTransportLock = new omni_tracedmutex;
   }
 
   void detach() {
-#if 0
-    delete omniTransportLock;
-    omniTransportLock = 0;
-#endif
+    // omniTransportLock is deleted by the final clean-up in omniInternal.cc
   }
 };
 
