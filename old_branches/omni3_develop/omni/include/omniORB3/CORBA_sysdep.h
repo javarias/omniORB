@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.25  2001/12/11 16:53:00  dpg1
+ Bunch of new platforms, plus other minor tweaks.
+
  Revision 1.1.2.24  2001/09/28 16:16:43  dpg1
  Support for Sun CC > 4.x in 4.x compatibility mode.
 
@@ -509,6 +512,8 @@
 # define _USE_MACH_SIGNAL 1
 # define _NO_STRDUP 1
 # define _USE_GETHOSTNAME 1
+#elif defined(__darwin__)
+# define _HAS_SIGNAL 1
 #elif defined(__VMS)
 # define _OMNIORB_HOST_BYTE_ORDER_ 1
 # if __VMS_VER >= 70000000
