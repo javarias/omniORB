@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2001/09/04 14:38:51  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.11  2001/08/15 10:26:11  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -147,8 +151,25 @@ GIOP_S::dispatcher() {
   OMNIORB_ASSERT(pd_state == Idle);
 
   try {
-    pd_state = RequestHeaderIsBeingProcessed;
+
+    pd_state = WaitForRequestHeader;
+
     impl()->inputMessageBegin(this,impl()->unmarshalWildCardRequestHeader);
+
+    {
+      ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
+      omni_tracedmutex_lock sync(*omniTransportLock);
+      pd_state = RequestHeaderIsBeingProcessed;
+      if (!pd_strand->stopIdleCounter()) {
+	// This strand has been expired by the scavenger. Don't
+	// process this call.
+	omniORB::logger log;
+	log << "dispatcher cannot stop idle counter.\n";
+	pd_strand->state(giopStrand::DYING);
+	return 0;
+      }
+    }
+
 
     if (pd_requestType == GIOP::Request) {
       return handleRequest();
@@ -297,7 +318,8 @@ GIOP_S::handleRequest() {
 } while (0)
 
 #define MARSHAL_SYSTEM_EXCEPTION() do { \
-    if (pd_state == RequestHeaderIsBeingProcessed) { \
+    if (pd_state == WaitForRequestHeader || \
+	pd_state == RequestHeaderIsBeingProcessed ) { \
       impl()->sendMsgErrorMessage(this); \
       return 0; \
     } else if (response_expected()) { \
@@ -433,7 +455,8 @@ GIOP_S::handleLocateRequest() {
   }
 
 #define MARSHAL_SYSTEM_EXCEPTION() do { \
-    if (pd_state == RequestHeaderIsBeingProcessed) { \
+    if (pd_state == WaitForRequestHeader || \
+        pd_state == RequestHeaderIsBeingProcessed) { \
       impl()->sendMsgErrorMessage(this); \
       return 0; \
     } else if (response_expected()) { \
@@ -591,7 +614,8 @@ GIOP_S::notifyCommFailure(CORBA::Boolean,
 			  CORBA::Boolean& retry) {
   retry = 0;
 
-  if (pd_state == RequestIsBeingProcessed) {
+  if (pd_state == WaitForRequestHeader ||
+      pd_state == RequestIsBeingProcessed) {
     minor = COMM_FAILURE_UnMarshalArguments;
   }
   else if (pd_state == WaitingForReply) {
