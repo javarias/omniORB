@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.21  2004/02/11 17:01:13  dgrisby
+  Use getifaddrs where available. Thanks Craig Rodrigues.
+
   Revision 1.1.2.20  2004/02/11 12:19:17  dgrisby
   Cygwin patches. Thanks Douglas Brown.
 
@@ -284,7 +287,7 @@ void ifaddrs_get_ifinfo(omnivector<const char*>& addrs) {
 
   struct ifaddrs *p;
   for (p = ifa_list; p != 0; p = p->ifa_next) {
-    if ( p->ifa_addr->sa_family == AF_INET ) {
+    if (p->ifa_addr && p->ifa_addr->sa_family == AF_INET) {
       struct sockaddr_in* iaddr = (struct sockaddr_in*)p->ifa_addr;
       CORBA::String_var s;
       s = tcpConnection::ip4ToString(iaddr->sin_addr.s_addr);
