@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.9  1999/05/26 11:54:13  sll
+  Replaced WrTimedLock with WrTestLock.
+  New implementation of Strand_iterator.
+
   Revision 1.8  1999/03/11 16:25:56  djr
   Updated copyright notice
 
@@ -64,6 +68,7 @@
 #pragma hdrstop
 #endif
 
+#include <scavenger.h>
 #include <ropeFactory.h>
 
 Strand::Strand(Rope *r, CORBA::Boolean heapAllocated)
@@ -79,9 +84,10 @@ Strand::Strand(Rope *r, CORBA::Boolean heapAllocated)
   pd_rope = r;
   pd_dying = 0;
   pd_heapAllocated = heapAllocated;
-  pd_heartbeat = 0;
   pd_refcount = 0;
   pd_seqNumber = 1;
+  pd_clicks = (r->is_incoming() ? StrandScavenger::inIdleTimeLimit() :
+	                          StrandScavenger::outIdleTimeLimit());
   return;
 }
 
@@ -302,8 +308,7 @@ Sync::RdUnlock(CORBA::Boolean held_rope_mutex)
 
 void
 Strand::
-Sync::WrLock(CORBA::Boolean held_rope_mutex,
-	     CORBA::Boolean clear_heartbeat)
+Sync::WrLock(CORBA::Boolean held_rope_mutex)
 {
   if (!held_rope_mutex)
     pd_strand->pd_rope->pd_lock.lock();
@@ -317,10 +322,6 @@ Sync::WrLock(CORBA::Boolean held_rope_mutex,
       pd_strand->pd_wr_nwaiting++;
   }
   pd_strand->pd_wr_nwaiting = -pd_strand->pd_wr_nwaiting - 1;
-
-  if (clear_heartbeat) {
-    pd_strand->pd_heartbeat = 0;
-  }
 
   if (!held_rope_mutex)
     pd_strand->pd_rope->pd_lock.unlock();
@@ -346,19 +347,33 @@ Sync::WrUnlock(CORBA::Boolean held_rope_mutex)
   return;
 }
 
-
-CORBA::Boolean
+void
 Strand::
-Sync::WrTestLock(Strand* s,CORBA::Boolean& heartbeat)
+Sync::clicksSet(int clicks, CORBA::Boolean held_rope_mutex)
 {
-  if (s->pd_wr_nwaiting < 0)
-    return 0;
+  if (!held_rope_mutex)
+    pd_strand->pd_rope->pd_lock.lock();
 
-  CORBA::Boolean hb = s->pd_heartbeat;
-  s->pd_heartbeat = heartbeat;
-  heartbeat = hb;
-  return 1;
+  pd_strand->pd_clicks = clicks;
+
+  if (!held_rope_mutex)
+    pd_strand->pd_rope->pd_lock.unlock();
 }
+
+int
+Strand::
+Sync::clicksDecrAndGet(Strand* s)
+{
+  s->pd_clicks--;
+  return s->pd_clicks;
+}
+int
+Strand::
+Sync::clicksGet(Strand* s)
+{
+  return s->pd_clicks;
+}
+
 
 void
 Strand::
