@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.9  1997/12/09 19:54:23  sll
+ *** empty log message ***
+
  * Revision 1.8  1997/09/20  16:31:29  dpg1
  * Added new name and produce functions for LifeCycle support.
  *
@@ -414,6 +417,8 @@ public:
   void produce_skel(fstream &s, o2be_typedef *tdef);
   static void produce_typedef_hdr (fstream &s, o2be_typedef *tdef1,
 				   o2be_typedef *tdef2);
+  static void produce_typedef_skel (fstream &s, o2be_typedef *tdef1,
+				    o2be_typedef *tdef2);
   void produce_typedef_in_union(fstream &s, const char *tname,
 				AST_Decl* used_in);
   // Looks at the scope-name relation between this node and the one it is
