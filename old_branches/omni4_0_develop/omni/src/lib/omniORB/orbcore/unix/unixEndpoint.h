@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/06 15:47:45  sll
+  Added support to use the unix domain socket as the local transport.
+
 */
 
 #ifndef __UNIXENDPOINT_H__
@@ -87,6 +90,9 @@ public:
   CORBA::Boolean isEmpty() const;
   // implement giopActiveCollection::isEmpty
 
+  void deactivate();
+  // implement giopActiveCollection::deactivate
+
   unixActiveCollection();
   ~unixActiveCollection();
 
@@ -101,6 +107,7 @@ protected:
 
 private:
   CORBA::ULong      pd_n_sockets;
+  CORBA::Boolean    pd_shutdown;
   omni_tracedmutex  pd_lock;
 
   giopConnection::notifyReadable_t pd_callback_func;

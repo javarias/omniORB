@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:16:21  sll
+  New transport interface to support the monitoring of active connections.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -46,7 +49,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 static tcpActiveCollection myCollection;
 
 /////////////////////////////////////////////////////////////////////////
-tcpActiveCollection::tcpActiveCollection() : pd_n_sockets(0) {}
+tcpActiveCollection::tcpActiveCollection() : pd_n_sockets(0), pd_shutdown(0) {}
 
 /////////////////////////////////////////////////////////////////////////
 tcpActiveCollection::~tcpActiveCollection() {}
@@ -65,7 +68,6 @@ tcpActiveCollection::Monitor(giopConnection::notifyReadable_t func,
   pd_callback_func = func;
   pd_callback_cookie = cookie;
 
-  CORBA::Boolean doit;
   while (!isEmpty()) {
     if (!Select()) break;
   }
@@ -88,6 +90,7 @@ void
 tcpActiveCollection::addMonitor(SocketHandle_t) {
   omni_tracedmutex_lock sync(pd_lock);
   pd_n_sockets++;
+  pd_shutdown = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -100,8 +103,16 @@ tcpActiveCollection::removeMonitor(SocketHandle_t) {
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
 tcpActiveCollection::isEmpty() const {
+  // Cast tracedmutex to escape this function's constness.
   omni_tracedmutex_lock sync((omni_tracedmutex&)pd_lock);
-  return (pd_n_sockets == 0);
+  return (pd_n_sockets == 0 || pd_shutdown);
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+tcpActiveCollection::deactivate() {
+  omni_tracedmutex_lock sync(pd_lock);
+  pd_shutdown = 1;
 }
 
 /////////////////////////////////////////////////////////////////////////

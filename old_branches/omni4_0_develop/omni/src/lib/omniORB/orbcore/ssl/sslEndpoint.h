@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/07/31 16:16:22  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.3  2001/07/13 15:36:53  sll
   Added the ability to monitor connections and callback to the giopServer
   when data has arrived at a connection.
@@ -99,6 +102,9 @@ public:
   CORBA::Boolean isEmpty() const;
   // implement giopActiveCollection::isEmpty
 
+  void deactivate();
+  // implement giopActiveCollection::deactivate
+
   sslActiveCollection();
   ~sslActiveCollection();
 
@@ -113,6 +119,7 @@ protected:
 
 private:
   CORBA::ULong      pd_n_sockets;
+  CORBA::Boolean    pd_shutdown;
   omni_tracedmutex  pd_lock;
 
   giopConnection::notifyReadable_t pd_callback_func;

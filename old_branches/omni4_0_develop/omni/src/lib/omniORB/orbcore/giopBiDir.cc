@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/01/16 11:31:59  dpg1
+  Race condition in use of registerNilCorbaObject/registerTrackedObject.
+  (Reported by Teemu Torma).
+
   Revision 1.1.2.10  2001/11/08 16:31:19  dpg1
   Minor tweaks.
 
@@ -803,6 +807,28 @@ public:
     interceptors->serverReceiveRequest.add(getBiDirServiceContext);
   }
   void detach() {
+    // Get rid of any remaining ropes. By now they should all be strand-less.
+    omni_tracedmutex_lock sync(*omniTransportLock);
+
+    RopeLink* p = BiDirServerRope::ropes.next;
+    giopRope* gr;
+    int i=0;
+
+    while (p != &BiDirServerRope::ropes) {
+      gr = (giopRope*)p;
+      OMNIORB_ASSERT(gr->pd_refcount == 0 &&
+		     RopeLink::is_empty(gr->pd_strands) &&
+		     !gr->pd_nwaiting);
+      p = p->next;
+      gr->RopeLink::remove();
+      delete gr;
+      ++i;
+    }
+    if (omniORB::trace(15)) {
+      omniORB::logger l;
+      l << i << " remaining bidir rope" << (i == 1 ? "" : "s")
+	<< " deleted.\n";
+    }
   }
 };
 

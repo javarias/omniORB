@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:28:02  sll
+  Added GIOP BiDir support.
+
 */
 
 #ifndef __GIOPMONITOR_H__
@@ -44,6 +47,8 @@ public:
     pd_server(s) { }
 
   void execute();
+
+  void deactivate() { pd_collection->deactivate(); }
 
   giopActiveCollection* collection() const { return pd_collection; }
 

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2002/03/13 16:05:39  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.1.4.3  2001/07/13 15:26:18  sll
   notifyReadable now really tells the server a connection is ready to be
   read. Use AcceptAndMonitor instead of Accept.
@@ -58,7 +63,10 @@ giopRendezvouser::notifyReadable(void* this_,giopConnection* conn) {
 }
 
 void
-giopRendezvouser::execute() {
+giopRendezvouser::execute()
+{
+  omniORB::logs(25, "giopRendezvouser task execute.");
+
   CORBA::Boolean exit_on_error;
 
   do {

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2002/02/13 16:02:40  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
   Revision 1.1.4.5  2001/12/03 18:46:25  dpg1
   Race condition in giopWorker destruction.
 
@@ -68,7 +72,9 @@ giopWorker::giopWorker(giopStrand* r, giopServer* s, CORBA::Boolean h) :
     pd_singleshot(h) {}
 
 void
-giopWorker::execute() {
+giopWorker::execute()
+{
+  omniORB::logs(25, "giopWorker task execute.");
 
   // XXX We do not call  omniORB::giopServerThreadWrapper here.
   //     Should be replaced by an interceptor called before dispatching the

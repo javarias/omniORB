@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/03/18 16:50:18  dpg1
+  New threadPoolWatchConnection parameter.
+
   Revision 1.1.2.8  2002/03/14 12:21:49  dpg1
   Undo accidental scavenger period change, remove invalid assertion.
 
@@ -136,7 +139,9 @@ CORBA::ULong  SocketCollection::hashsize           = 103;
 /////////////////////////////////////////////////////////////////////////
 SocketCollection::SocketCollection() :
   pd_n_fdset_1(0), pd_n_fdset_2(0), pd_n_fdset_dib(0),
-  pd_abs_sec(0), pd_abs_nsec(0), pd_refcount(1)
+  pd_select_cond(&pd_fdset_lock),
+  pd_abs_sec(0), pd_abs_nsec(0),
+  pd_refcount(1)
 {
   FD_ZERO(&pd_fdset_1);
   FD_ZERO(&pd_fdset_2);
@@ -261,6 +266,7 @@ SocketCollection::Select() {
   }
 
   int nready;
+
   if (fd != 0) {
 #ifndef GDB_DEBUG
     nready = select(maxfd+1,&rfds,0,0,&timeout);
@@ -269,11 +275,11 @@ SocketCollection::Select() {
 #endif
   }
   else {
-    omni_thread::sleep(pd_abs_sec,pd_abs_nsec);
-    // Alternatively we could block on a conditional variable and be woken up
-    // immediately when there is something to monitor.
-    // Also, one cannot use select(0,0,0,0,&timeout) because win32 doesn't
-    // like it.
+    omni_tracedmutex_lock sync(pd_fdset_lock);
+    pd_select_cond.timedwait(pd_abs_sec,pd_abs_nsec);
+    // The condition variable should be poked so we are woken up
+    // immediately when there is something to monitor.  We cannot use
+    // select(0,0,0,0,&timeout) because win32 doesn't like it.
     nready = 0; // simulate a timeout
   }
 

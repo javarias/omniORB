@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.20  2002/03/18 16:50:18  dpg1
+  New threadPoolWatchConnection parameter.
+
   Revision 1.22.2.19  2002/03/13 16:05:39  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -233,6 +236,7 @@ giopServer::addBiDirStrand(giopStrand* s,giopActiveCollection* watcher) {
 	    matched = 1;
 	    break;
 	  }
+	  ++i;
 	}
       }
       if (!matched) {
@@ -474,6 +478,11 @@ giopServer::deactivate()
 
   if (!Link::is_empty(pd_bidir_monitors)) {
     waitforcompletion = 1;
+
+    Link* m = pd_bidir_monitors.next;
+    for (; m != &pd_bidir_monitors; m = m->next) {
+      ((giopMonitor*)m)->deactivate();
+    }
   }
 
 
@@ -496,6 +505,7 @@ giopServer::deactivate()
     omniORB::logs(25, "giopServer waits for completion of rendezvousers "
 		  "and workers");
     pd_cond.wait();
+    omniORB::logs(25, "giopServer back from waiting.");
     goto again;
   }
   else {

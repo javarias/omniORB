@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.16  2002/03/18 15:13:08  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.4.15  2002/03/14 14:40:46  dpg1
   Scavenger locking bug.
 
@@ -623,6 +628,8 @@ Scavenger::removeIdle(StrandList& src,StrandList& dest,
 void
 Scavenger::execute()
 {
+  omniORB::logs(25, "Scavenger task execute.");
+
   unsigned long abs_sec,abs_nsec;
   omni_thread::get_time(&abs_sec,&abs_nsec);
 
@@ -972,9 +979,6 @@ public:
     }
     // Close server strands
     {
-      // XXX This code should never find any strands, since they
-      // should have all been shutdown earlier. I'm leaving it here
-      // just in case.
       StrandList* p = giopStrand::passive.next;
       while ( p != &giopStrand::passive ) {
 	giopStrand* s = (giopStrand*)p;
