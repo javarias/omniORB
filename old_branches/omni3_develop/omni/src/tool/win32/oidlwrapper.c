@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     if (argv[i][0] == '-') {
       switch (argv[i][1]) {
 
-      case 'I': case 'C':
+      case 'I': case 'C': case 'p':
 	argv[i] = TranslateFileName(argv[i],2);
 	break;
 
