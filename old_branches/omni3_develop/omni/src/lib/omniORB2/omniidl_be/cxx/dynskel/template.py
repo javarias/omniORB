@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.4  2000/03/28 18:28:23  djs
+# Sequence deletion function used unescaped name "data" which could clash with a
+# user identifier
+#   eg typedef sequence<char> data
+# produces output that could not be parsed.
+#
 # Revision 1.1.2.3  2000/03/24 16:18:25  djs
 # Added missing prefix to CORBA::Any extraction operators used for
 #   typedef sequence<X> Y
@@ -601,8 +607,8 @@ const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
 external_linkage = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
-  @namespace@
-  namespace @scope@ {
+@namespace@
+namespace @scope@ {
   const CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
 }
 #else

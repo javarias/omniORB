@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.7  2000/05/30 15:59:25  djs
+# Removed inheritance ambiguity in generated BOA _sk_ and POA_ classes
+#
 # Revision 1.3.2.6  2000/05/18 15:57:33  djs
 # Added missing T* data constructor for bounded sequence types
 #
@@ -78,7 +81,6 @@ footer = """\
 ## Main file
 ##
 main = """\
-
 #ifndef USE_omniORB_logStream
 #define USE_omniORB_logStream
 #endif
@@ -671,16 +673,16 @@ public:
   virtual void _raise();
   static @name@* _downcast(CORBA::Exception*);
   static const @name@* _downcast(const CORBA::Exception*);
-  static inline @name@* _narrow(CORBA::Exception* e) {
-    return _downcast(e);
+  static inline @name@* _narrow(CORBA::Exception* _e) {
+    return _downcast(_e);
   }
   
   @alignedSize@
 
-  @inline@ void operator>>=(NetBufferedStream&) const @body@
-  @inline@ void operator>>=(MemBufferedStream&) const @body@
-  @inline@ void operator<<=(NetBufferedStream&) @body@
-  @inline@ void operator<<=(MemBufferedStream&) @body@
+  @inline@void operator>>=(NetBufferedStream&) const @body@
+  @inline@void operator>>=(MemBufferedStream&) const @body@
+  @inline@void operator<<=(NetBufferedStream&) @body@
+  @inline@void operator<<=(MemBufferedStream&) @body@
 
   static _core_attr insertExceptionToAny    insertToAnyFn;
   static _core_attr insertExceptionToAnyNCP insertToAnyFnNCP;
@@ -813,9 +815,9 @@ void _default()
 
 union_tcParser_friend = """\
 #if defined(__GNUG__) || defined(__DECCXX) && (__DECCXX_VER < 60000000)
-    friend class @private_prefix@_tcParser_unionhelper_@name@;
+friend class @private_prefix@_tcParser_unionhelper_@name@;
 #else
-    friend class ::@private_prefix@_tcParser_unionhelper_@name@;
+friend class ::@private_prefix@_tcParser_unionhelper_@name@;
 #endif
 """
 

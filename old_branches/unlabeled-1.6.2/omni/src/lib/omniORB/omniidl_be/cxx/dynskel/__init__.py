@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.4  2000/04/26 18:22:19  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.6.2.3  2000/03/24 22:30:17  djs
 # Major code restructuring:
 #   Control flow is more recursive and obvious
@@ -101,6 +105,6 @@ def run(tree):
     # create somewhere to put the output
     header_filename = config.basename() + config.dynskelsuffix()
     
-    stream = util.LazyStream(open(header_filename, "w"), 2)
+    stream = util.Stream(open(header_filename, "w"), 2)
 
     generate(stream, tree)
