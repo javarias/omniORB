@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.11  2002/10/28 11:56:50  dgrisby
+# Work around VC++ 7 problem with FILE* change.
+#
 # Revision 1.17.2.10  2002/06/05 22:26:32  dgrisby
 # Cope with spaces in paths to IDL files.
 #
@@ -306,7 +309,7 @@ def genTempFileName():
         return tempfile.mktemp(".idl")
     except ImportError:
         # No tempfile module. Just use current directory and hope...
-        return = "omniidl-tmp" + `os.getpid()` + ".idl"
+        return "omniidl-tmp" + `os.getpid()` + ".idl"
 
 
 def my_import(name):
