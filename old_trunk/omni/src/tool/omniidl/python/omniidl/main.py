@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  1999/12/17 11:39:23  dpg1
+# Cosmetic change
+#
 # Revision 1.10  1999/11/30 10:41:20  dpg1
 # Back-ends can now have their own usage string.
 #
@@ -153,8 +156,8 @@ def parseArgs(args):
             elif a[0] == "b":
                 if len(backends) == 0:
                     if not quiet:
-                        sys.stderr.write("Error in arguments: "
-                                         "no back-ends selected")
+                        sys.stderr.write(cmdname + ": Error in arguments: "
+                                         "no back-ends selected\n")
                     sys.exit(1)
                 backends_args[-1].extend(string.split(a[1:], ","))
             else:
@@ -241,6 +244,10 @@ def main(argv=None):
 
     if print_usage:
         sys.exit(0)
+
+    if len(backends) == 0 and not quiet:
+        sys.stderr.write(cmdname + ": Warning: No back-ends specified; " \
+                         "checking IDL for validity\n")
 
     for file in files:
         if file != "-" and not os.path.isfile(file):
