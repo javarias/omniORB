@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.13.6.10  2000/01/27 10:55:45  djr
+  Mods needed for powerpc_aix.  New macro OMNIORB_BASE_CTOR to provide
+  fqname for base class constructor for some compilers.
+
   Revision 1.13.6.9  1999/10/29 13:18:15  djr
   Changes to ensure mutexes are constructed when accessed.
 
@@ -63,7 +67,7 @@
 #include <corbaBoa.h>
 #include <omniORB3/callDescriptor.h>
 #include <localIdentity.h>
-#include <bootstrap_i.h>
+#include <initRefs.h>
 #include <dynamicLib.h>
 #include <exception.h>
 #include <stdio.h>
@@ -879,8 +883,12 @@ omniOrbBoaServant::_do_get_interface()
   OMNIORB_ASSERT(repoId && *repoId);
 
   // Obtain the object reference for the interface repository.
-  CORBA::Object_var repository =
-    omniInitialReferences::get("InterfaceRepository");
+  CORBA::Object_var repository = CORBA::Object::_nil();
+  try {
+    repository = omniInitialReferences::resolve("InterfaceRepository");
+  }
+  catch (...) {
+  }
   if( CORBA::is_nil(repository) )
     OMNIORB_THROW(INTF_REPOS,0, CORBA::COMPLETED_NO);
 
