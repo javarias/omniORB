@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.3  2001/03/13 10:38:07  dpg1
+// Fixes from omnipy1_develop
+//
 // Revision 1.1.2.2  2000/12/04 18:57:24  dpg1
 // Fix deadlock when trying to lock omniORB internal lock while holding
 // the Python interpreter lock.
@@ -496,8 +499,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->get_servant();
-	pyos =
-	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos = (omniPy::Py_omniServant*)servant->
+	                        _ptrToInterface(omniPy::string_Py_omniServant);
       }
       if (pyos) {
 	PyObject* pyservant = pyos->pyServant();
@@ -810,8 +813,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->reference_to_servant(objref);
-	pyos =
-	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos = (omniPy::Py_omniServant*)servant->
+                                _ptrToInterface(omniPy::string_Py_omniServant);
       }
       if (pyos) {
 	PyObject* pyservant = pyos->pyServant();
@@ -897,8 +900,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->id_to_servant(oid);
-	pyos =
-	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos = (omniPy::Py_omniServant*)servant->
+                                _ptrToInterface(omniPy::string_Py_omniServant);
       }
       if (pyos) {
 	PyObject* pyservant = pyos->pyServant();

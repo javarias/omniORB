@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.3  2001/05/10 15:16:02  dpg1
+// Big update to support new omniORB 4 internals.
+//
 // Revision 1.1.2.2  2001/01/10 12:00:07  dpg1
 // Release the Python interpreter lock when doing potentially blocking
 // stream calls.
@@ -167,7 +170,7 @@ omniPy::Py_localCallBackFunction(omniCallDescriptor* cd, omniServant* svnt)
 {
   Py_omniCallDescriptor* pycd = (Py_omniCallDescriptor*)cd;
   Py_omniServant*        pyos =
-    (Py_omniServant*)svnt->_ptrToInterface("Py_omniServant");
+    (Py_omniServant*)svnt->_ptrToInterface(omniPy::string_Py_omniServant);
 
   // Unfortunately, we can't use the call descriptor's
   // reacquireInterpreterLock() function, since this call-back may be

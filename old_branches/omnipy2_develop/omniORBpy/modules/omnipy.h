@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.9  2001/05/29 17:10:14  dpg1
+// Support for in process identity.
+//
 // Revision 1.2.4.8  2001/05/14 12:47:21  dpg1
 // Fix memory leaks.
 //
@@ -122,6 +125,14 @@ public:
   static PyObject* pySERVANT_TWIN;
   static PyObject* pyPOA_TWIN;
   static PyObject* pyPOAMANAGER_TWIN;
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Constant strings to facilitate comparison by pointer                   //
+  ////////////////////////////////////////////////////////////////////////////
+
+  static const char* string_Py_omniObjRef;
+  static const char* string_Py_omniServant;
+
 
   ////////////////////////////////////////////////////////////////////////////
   // Pointer to the ORB                                                     //

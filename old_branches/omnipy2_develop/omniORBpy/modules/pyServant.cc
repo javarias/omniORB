@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/05/29 17:10:14  dpg1
+// Support for in process identity.
+//
 // Revision 1.1.2.5  2001/05/14 12:47:22  dpg1
 // Fix memory leaks.
 //
@@ -249,8 +252,12 @@ Py_omniServant::_ptrToInterface(const char* repoId)
 {
   OMNIORB_ASSERT(repoId);
 
-  if (!strcmp(repoId, CORBA::Object::_PD_repoId)) return (void*)1;
-  if (!strcmp(repoId, "Py_omniServant")) return (Py_omniServant*)this;
+  if (omni::ptrStrMatch(repoId, omniPy::string_Py_omniServant))
+    return (Py_omniServant*)this;
+
+  if (omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId))
+    return (void*)1;
+
   return 0;
 }
 
@@ -358,9 +365,9 @@ CORBA::Boolean
 omniPy::
 Py_omniServant::_is_a(const char* logical_type_id)
 {
-  if (!strcmp(logical_type_id, repoId_))
+  if (omni::ptrStrMatch(logical_type_id, repoId_))
     return 1;
-  else if (!strcmp(logical_type_id, CORBA::Object::_PD_repoId))
+  else if (omni::ptrStrMatch(logical_type_id, CORBA::Object::_PD_repoId))
     return 1;
   else {
     omnipyThreadCache::lock _t;
@@ -414,7 +421,8 @@ Py_omniServant::_is_a(const char* logical_type_id)
 	Py_XDECREF(etraceback);
 
 	// Is it a LOCATION_FORWARD?
-	if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+	if (omni::strMatch(PyString_AS_STRING(erepoId),
+			   "omniORB.LOCATION_FORWARD")) {
 	  Py_DECREF(erepoId);
 	  HandleLocationForward(evalue);
 	}
@@ -534,7 +542,8 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
     }
 
     // Is it a LOCATION_FORWARD?
-    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       "omniORB.LOCATION_FORWARD")) {
       Py_DECREF(erepoId);
       HandleLocationForward(evalue);
     }
@@ -676,7 +685,8 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
     }
 
     // Is it a LOCATION_FORWARD?
-    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       "omniORB.LOCATION_FORWARD")) {
       Py_DECREF(erepoId);
       HandleLocationForward(evalue);
     }
@@ -757,8 +767,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
 
-    if (!strcmp(PyString_AS_STRING(erepoId),
-		PortableServer::ForwardRequest::_PD_repoId)) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       PortableServer::ForwardRequest::_PD_repoId)) {
       Py_DECREF(erepoId);
       PyObject* pyfr = PyObject_GetAttrString(evalue,
 					      (char*)"forward_reference");
@@ -779,7 +789,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
     }
 
     // Is it a LOCATION_FORWARD?
-    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       "omniORB.LOCATION_FORWARD")) {
       Py_DECREF(erepoId);
       HandleLocationForward(evalue);
     }
@@ -803,7 +814,8 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   omnipyThreadCache::lock _t;
 
   omniPy::Py_omniServant* pyos;
-  pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
+  pyos = (omniPy::Py_omniServant*)serv->
+                                _ptrToInterface(omniPy::string_Py_omniServant);
   if (!pyos) {
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
@@ -848,14 +860,14 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
 void*
 Py_ServantActivator::_ptrToInterface(const char* repoId)
 {
-  if (!strcmp(repoId, CORBA::Object::_PD_repoId))
-    return (void*)1;
-  if (!strcmp(repoId, "Py_omniServant"))
-    return (omniPy::Py_omniServant*)this;
-  if (!strcmp(repoId, PortableServer::ServantActivator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantActivator::_PD_repoId))
     return (PortableServer::_impl_ServantActivator*)this;
-  if (!strcmp(repoId, PortableServer::ServantManager::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, omniPy::string_Py_omniServant))
+    return (omniPy::Py_omniServant*)this;
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantManager::_PD_repoId))
     return (PortableServer::_impl_ServantManager*)this;
+  if (omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId))
+    return (void*)1;
 
   return 0;
 }
@@ -948,8 +960,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
 
-    if (!strcmp(PyString_AS_STRING(erepoId),
-		PortableServer::ForwardRequest::_PD_repoId)) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       PortableServer::ForwardRequest::_PD_repoId)) {
       Py_DECREF(erepoId);
       PyObject* pyfr = PyObject_GetAttrString(evalue,
 					      (char*)"forward_reference");
@@ -969,7 +981,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
       }
     }
     // Is it a LOCATION_FORWARD?
-    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       "omniORB.LOCATION_FORWARD")) {
       Py_DECREF(erepoId);
       HandleLocationForward(evalue);
     }
@@ -993,7 +1006,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
   omnipyThreadCache::lock _t;
 
   omniPy::Py_omniServant* pyos;
-  pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
+  pyos = (omniPy::Py_omniServant*)serv->
+                                _ptrToInterface(omniPy::string_Py_omniServant);
   if (!pyos) {
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
@@ -1051,7 +1065,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
     Py_XDECREF(etraceback);
 
     // Is it a LOCATION_FORWARD?
-    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+    if (omni::strMatch(PyString_AS_STRING(erepoId),
+		       "omniORB.LOCATION_FORWARD")) {
       Py_DECREF(erepoId);
       HandleLocationForward(evalue);
     }
@@ -1064,14 +1079,14 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
 void*
 Py_ServantLocator::_ptrToInterface(const char* repoId)
 {
-  if (!strcmp(repoId, CORBA::Object::_PD_repoId))
-    return (void*)1;
-  if (!strcmp(repoId, "Py_omniServant"))
-    return (omniPy::Py_omniServant*)this;
-  if (!strcmp(repoId, PortableServer::ServantLocator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantLocator::_PD_repoId))
     return (PortableServer::_impl_ServantLocator*)this;
-  if (!strcmp(repoId, PortableServer::ServantManager::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, omniPy::string_Py_omniServant))
+    return (omniPy::Py_omniServant*)this;
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantManager::_PD_repoId))
     return (PortableServer::_impl_ServantManager*)this;
+  if (omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId))
+    return (void*)1;
 
   return 0;
 }
@@ -1140,12 +1155,12 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
 void*
 Py_AdapterActivator::_ptrToInterface(const char* repoId)
 {
-  if (!strcmp(repoId, CORBA::Object::_PD_repoId))
-    return (void*)1;
-  if (!strcmp(repoId, "Py_omniServant"))
-    return (omniPy::Py_omniServant*)this;
-  if (!strcmp(repoId, PortableServer::AdapterActivator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::AdapterActivator::_PD_repoId))
     return (PortableServer::_impl_AdapterActivator*)this;
+  if (omni::ptrStrMatch(repoId, omniPy::string_Py_omniServant))
+    return (omniPy::Py_omniServant*)this;
+  if (omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId))
+    return (void*)1;
 
   return 0;
 }
@@ -1159,13 +1174,13 @@ static
 omniPy::Py_omniServant*
 newSpecialServant(PyObject* pyservant, PyObject* opdict, char* repoId)
 {
-  if (!strcmp(repoId, PortableServer::ServantActivator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantActivator::_PD_repoId))
     return new Py_ServantActivator(pyservant, opdict, repoId);
 
-  if (!strcmp(repoId, PortableServer::ServantLocator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::ServantLocator::_PD_repoId))
     return new Py_ServantLocator(pyservant, opdict, repoId);
 
-  if (!strcmp(repoId, PortableServer::AdapterActivator::_PD_repoId))
+  if (omni::ptrStrMatch(repoId, PortableServer::AdapterActivator::_PD_repoId))
     return new Py_AdapterActivator(pyservant, opdict, repoId);
 
   OMNIORB_ASSERT(0);

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.8  2001/05/14 15:22:00  dpg1
+// cdrMarshal() / cdrUnmarshal() are back.
+//
 // Revision 1.1.2.7  2001/05/14 12:47:20  dpg1
 // Fix memory leaks.
 //
@@ -94,6 +97,14 @@ PyObject* omniPy::pyPOAMANAGER_TWIN;
 ////////////////////////////////////////////////////////////////////////////
 
 CORBA::ORB_ptr omniPy::orb;
+
+
+////////////////////////////////////////////////////////////////////////////
+// Constant strings to facilitate comparison by pointer                   //
+////////////////////////////////////////////////////////////////////////////
+
+const char* omniPy::string_Py_omniObjRef  = "Py_omniObjRef";
+const char* omniPy::string_Py_omniServant = "Py_omniServant";
 
 
 ////////////////////////////////////////////////////////////////////////////
