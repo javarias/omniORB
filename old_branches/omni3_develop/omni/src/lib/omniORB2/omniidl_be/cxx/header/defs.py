@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.11  2000/06/05 13:03:55  djs
+# Removed union member name clash (x & pd_x, pd__default, pd__d)
+# Removed name clash when a sequence is called "pd_seq"
+# Nested union within union fix
+# Actually generates BOA non-flattened tie templates
+#
 # Revision 1.31.2.10  2000/05/31 18:02:56  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)
@@ -1015,21 +1021,14 @@ def visitUnion(node):
     switchType = types.Type(node.switchType())
     d_switchType = switchType.deref()
 
+    ####################################################################
     # in the case where there is no default case and an implicit default
     # member, choose a discriminator value to set. Note that attempting
     # to access the data is undefined
-    #
-    # FIXME: The new AST representation now has
-    #   CaseLabel.default() : true if representing the default case
-    #   CaseLabel.value()   : if the default case, returns a value
-    #                         used by none of the other labels
-    # For the time being, keep the independent mechanism because it seems
-    # to closely match the old compiler's behaviour.
-    # Once this backend is trusted independantly, convert to use the
-    # new mechanism?
     def chooseArbitraryDefault(switchType = switchType,
                                allCases = tyutil.allCases(node),
                                environment = environment):
+        
         # dereference the switch_type (ie if CASE <scoped_name>)
         switchType = switchType.deref()
         # get the values from the cases
@@ -1042,7 +1041,6 @@ def visitUnion(node):
                 x = x + 1
             return x
                 
-        # CASE <integer_type>
         kind = switchType.type().kind()
         if kind == idltype.tk_short:
             short_min = -32767 # - [ 2 ^ (32-1) -1 ]
@@ -1057,34 +1055,26 @@ def visitUnion(node):
             # unsigned values start at 0
             return str(min_unused(0))
             
-        # CASE <char_type>
+        # for other types, first compute the set of all legal values
+        # (sets are all fairly small)
         elif kind == idltype.tk_char:
-            # choose the first one not already used
-            possibles = map(chr, range(0, 255))
-            difference = util.minus(possibles, values)
-            # FIXME: stupid special case. An explicit discriminator
-            # value of \0 -> 0000 whereas an implicit one (valueString)
-            # \0 -> '\000'
-            if difference[0] == '\0':
-                return "'\\000'"
-            
-            return switchType.literal(difference[0])
-
-        # CASE <boolean_type>
+            all = map(chr, range(0, 255))
         elif kind == idltype.tk_boolean:
-            return "0"
-        
-        # CASE <enum_type>
+            all = [0, 1]
         elif kind == idltype.tk_enum:
-            enums = switchType.type().decl().enumerators()
-            # pick the first enum not already in a case
-            difference = util.minus(enums, values)
-            scopedName = id.Name(difference[0].scopedName())
-            # need to be careful of scope
-            return scopedName.unambiguous(environment)
+            all = switchType.type().decl().enumerators()
         else:
             util.fatalError("Failed to generate a default union " +\
                             "discriminator value")
+            
+        # remove all those values which are already in use to leave
+        # a set of possible unused values
+        possibles = util.minus(all, values)
+        # return the first one for simplicity
+        return switchType.literal(possibles[0], environment)
+    #
+    ###############################################################
+    
 
     # does the IDL union have any default case?
     # It'll be handy to know which case is the default one later-
@@ -1170,6 +1160,7 @@ def visitUnion(node):
     def implicit_default(stream = stream, choose = chooseArbitraryDefault,
                          implicitDefault = implicitDefault):
         if implicitDefault:
+    
             stream.out(template.union_implicit_default,
                        arbitraryDefault = choose())
         return
