@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.11  2001/06/20 18:39:03  sll
+ On solaris with gcc 3.0, there is no need to provide a prototype for
+ gethostname.
+
  Revision 1.2.2.10  2001/06/15 10:23:40  sll
  Added wchar size for HPUX.
 
@@ -458,7 +462,7 @@
 #ifndef _CORBA_WCHAR_DECL
 #  define _CORBA_WCHAR_DECL wchar_t
    // Wide character size
-#  if defined(__linux__) || defined(__sunos__)
+#  if defined(__linux__) || defined(__sunos__) || defined(__freebsd__) || defined(__darwin__)
 #    define SIZEOF_WCHAR 4
 #  elif defined(__WIN32__)
 #    define SIZEOF_WCHAR 2
