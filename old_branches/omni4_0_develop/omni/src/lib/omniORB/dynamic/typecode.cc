@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.24  2002/02/25 11:17:12  dpg1
+ * Use tracedmutexes everywhere.
+ *
  * Revision 1.38.2.23  2002/01/16 11:31:57  dpg1
  * Race condition in use of registerNilCorbaObject/registerTrackedObject.
  * (Reported by Teemu Torma).
@@ -5051,9 +5054,11 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 		    BAD_PARAM_IllegitimateDiscriminatorType,
 		    CORBA::COMPLETED_NO);
 #ifdef HAS_LongLong
+   // The unlikely looking constant -1 is to work around a bug in MSVC
+   // that incorrectly deals with large negative literals :-( .
    if (sign &&
        ((TypeCode_union::DiscriminatorSigned)lbl_value <
-	                                  _CORBA_LONGLONG_CONST(-2147483648)))
+	                              _CORBA_LONGLONG_CONST(-2147483647) - 1))
       OMNIORB_THROW(BAD_PARAM,
 		    BAD_PARAM_IllegitimateDiscriminatorType,
 		    CORBA::COMPLETED_NO);
