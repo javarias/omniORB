@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.4  2001/08/15 10:26:09  dpg1
+ New object table behaviour, correct POA semantics.
+
  Revision 1.1.4.3  2001/07/31 16:34:53  sll
  New function listMyEndpoints(). Remove explicit instantiation of
  giopServer, do it via interceptor.
@@ -216,11 +219,8 @@ public:
   static const omnivector<const char*>& listMyEndpoints();
 
   struct Options {
-    inline Options() : noBootstrapAgent(0) {}
-
+    inline Options() {}
     ~Options();
-
-    _CORBA_Boolean noBootstrapAgent;
 
     struct EndpointURI {
       _CORBA_String_var  uri;
