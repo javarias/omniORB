@@ -28,6 +28,21 @@
 
 /*
   $Log$
+  Revision 1.8.2.1  1999/09/21 20:37:18  sll
+  -Simplified the scavenger code and the mechanism in which connections
+   are shutdown. Now only one scavenger thread scans both incoming
+   and outgoing connections. A separate thread do the actual shutdown.
+  -omniORB::scanGranularity() now takes only one argument as there is
+   only one scan period parameter instead of 2.
+  -Trace messages in various modules have been updated to use the logger
+   class.
+  -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                 -ORBscanIncomingPeriod.
+
+  Revision 1.8  1999/08/23 08:35:59  sll
+  Do not prepend the tcpSocketFactoryType singleton onto the
+  ropeFactoryTypeList. This has been done by the ctor of ropeFactoryType.
+
   Revision 1.7  1999/03/11 16:25:56  djr
   Updated copyright notice
 
@@ -88,10 +103,9 @@ tcpSocketFactoryType::init()
   if (singleton) return;
   singleton = new tcpSocketFactoryType;
 
-  if (omniORB::traceLevel >= 2) {
-    omniORB::log << "omniORB2 gateKeeper is " << gateKeeper::version() 
-		 << "\n";
-    omniORB::log.flush();
+  if (omniORB::trace(2)) {
+    omniORB::logger log("gateKeeper is ");
+    log << gateKeeper::version() << "\n";
   }
 }
 

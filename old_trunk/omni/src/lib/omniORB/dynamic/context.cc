@@ -29,6 +29,10 @@
 
 /*
  $Log$
+
+ Revision 1.10  1999/09/15 18:02:21  djr
+ Fixed bug in marshalling of Contexts (when specified values are missing).
+
  Revision 1.9  1999/06/26 18:03:30  sll
  Corrected minor bug in marshal.
 
