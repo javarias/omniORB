@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.11  2000/05/11 11:58:24  dpg1
+// Throw system exceptions with OMNIORB_THROW.
+//
 // Revision 1.10  2000/03/24 16:48:58  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -227,6 +230,8 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
     case CORBA::tk_any:
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
+    case CORBA::tk_longlong:
+    case CORBA::tk_ulonglong:
       // Nothing more to be sent
       break;
 
@@ -331,6 +336,9 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 	case CORBA::tk_ulong:
 	case CORBA::tk_enum:
 	  dsize = 4; dalign = omni::ALIGN_4; break;
+	case CORBA::tk_longlong:
+	case CORBA::tk_ulonglong:
+	  dsize = 8; dalign = omni::ALIGN_8; break;
 	default:
 	  OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
 	}
@@ -568,6 +576,8 @@ r_marshalTypeCode(NetBufferedStream&   stream,
     case CORBA::tk_any:
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
+    case CORBA::tk_longlong:
+    case CORBA::tk_ulonglong:
       // Nothing more to be sent
       //      cout << "simple: " << tk << endl;
       break;
@@ -960,6 +970,8 @@ r_marshalTypeCode(MemBufferedStream&   stream,
     case CORBA::tk_any:
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
+    case CORBA::tk_longlong:
+    case CORBA::tk_ulonglong:
       // Nothing more to be sent
       //      cout << "simple: " << tk << endl;
       break;
@@ -1335,6 +1347,8 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_any:
   case CORBA::tk_TypeCode:
   case CORBA::tk_Principal:
+  case CORBA::tk_longlong:
+  case CORBA::tk_ulonglong:
     {
       //      cout << "simple: " << tk << endl;
       d_o = PyInt_FromLong(tk); odm.add(d_o, tc_offset);
@@ -1817,6 +1831,8 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_any:
   case CORBA::tk_TypeCode:
   case CORBA::tk_Principal:
+  case CORBA::tk_longlong:
+  case CORBA::tk_ulonglong:
     {
       //      cout << "simple: " << tk << endl;
       d_o = PyInt_FromLong(tk); odm.add(d_o, tc_offset);

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.1  2000/07/18 15:31:29  dpg1
+# Bug with inheritance from typedef
+#
 # Revision 1.27  2000/07/12 14:32:13  dpg1
 # New no_package option to omniidl backend
 #
@@ -1392,12 +1395,12 @@ ttdMap = {
     idltype.tk_octet:      "omniORB.tcInternal.tv_octet",
     idltype.tk_any:        "omniORB.tcInternal.tv_any",
     idltype.tk_TypeCode:   "omniORB.tcInternal.tv_TypeCode",
-    idltype.tk_Principal:  "omniORB.tcInternal.tv_Principal"
+    idltype.tk_Principal:  "omniORB.tcInternal.tv_Principal",
+    idltype.tk_longlong:   "omniORB.tcInternal.tv_longlong",
+    idltype.tk_ulonglong:  "omniORB.tcInternal.tv_ulonglong"
 }
 
 unsupportedMap = {
-    idltype.tk_longlong:   "long long",
-    idltype.tk_ulonglong:  "unsigned long long",
     idltype.tk_longdouble: "long double",
     idltype.tk_wchar:      "wchar",
     idltype.tk_wstring:    "wstring",
