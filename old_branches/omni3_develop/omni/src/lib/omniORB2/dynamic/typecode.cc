@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.33.6.3  1999/10/14 17:31:31  djr
+ * Minor corrections.
+ *
  * Revision 1.33.6.2  1999/10/14 16:22:01  djr
  * Implemented logging when system exceptions are thrown.
  *
@@ -4884,7 +4887,9 @@ template <class buf_t>
 inline TypeCode_union::Discriminator
 internal_unmarshalLabel(CORBA::TypeCode_ptr tc, buf_t& s)
 {
-  switch( tc->kind() ) {
+  const TypeCode_base* aetc = TypeCode_base::NP_expand(ToTcBase_Checked(tc));
+
+  switch( aetc->kind() ) {
   case CORBA::tk_char:
     {
       CORBA::Char c;
