@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.40  2002/09/08 21:58:54  dgrisby
+  Support for MSVC 7. (Untested.)
+
   Revision 1.33.2.39  2002/03/18 15:13:07  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -400,6 +403,9 @@ extern omniInitialiser& omni_objadpt_initialiser_;
 extern omniInitialiser& omni_giopEndpoint_initialiser_;
 extern omniInitialiser& omni_transportRules_initialiser_;
 extern omniInitialiser& omni_ObjRef_initialiser_;
+extern omniInitialiser& omni_orbOptions_initialiser_;
+extern omniInitialiser& omni_poa_initialiser_;
+extern omniInitialiser& omni_uri_initialiser_;
 
 OMNI_NAMESPACE_END(omni)
 
@@ -613,6 +619,9 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     omni_dynamiclib_initialiser_.attach();
     omni_ObjRef_initialiser_.attach();
     omni_initRefs_initialiser_.attach();
+    omni_orbOptions_initialiser_.attach();
+    omni_poa_initialiser_.attach();
+    omni_uri_initialiser_.attach();
     omni_hooked_initialiser_.attach();
 
     if (orbParameters::lcdMode) {
@@ -848,6 +857,9 @@ omniOrbORB::destroy()
 
     // Call detach method of the initialisers in reverse order.
     omni_hooked_initialiser_.detach();
+    omni_uri_initialiser_.attach();
+    omni_poa_initialiser_.attach();
+    omni_orbOptions_initialiser_.attach();
     omni_initRefs_initialiser_.detach();
     omni_ObjRef_initialiser_.detach();
     omni_dynamiclib_initialiser_.detach();
