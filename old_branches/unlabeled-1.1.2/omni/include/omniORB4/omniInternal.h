@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2000/02/22 12:25:37  dpg1
+  A few things made `publicly' accessible so omniORBpy can get its hands
+  on them.
+
   Revision 1.1.2.7  2000/02/08 13:25:23  djr
   Added a couple of missing _core_attr.
 
@@ -325,14 +329,7 @@ public:
   //  Must not hold <internalLock>.
   //?? Error behaviour?
 
-  static int stringToObject(omniObjRef*& objref, const char* ior);
-  // Converts the given IOR to an object reference.  Returns 0
-  // on error.  If the IOR is a nil reference, <objref> is zero.
-  //  Does not throw any exceptions.
-
-  static char* objectToString(omniObjRef*);
-  // Returns a stringified IOR for the object reference given.
-  //  Does not throw any exceptions.
+  // stringToObject() and objectToString() now live in omniURI.h
 
   static void assertFail(const char* file, int line, const char* exp);
   static void ucheckFail(const char* file, int line, const char* exp);
