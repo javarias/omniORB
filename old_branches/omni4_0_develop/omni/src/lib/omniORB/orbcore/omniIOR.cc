@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2003/11/20 13:39:59  dgrisby
+  corbaloc handler for Unix sockets. Uses omniunix scheme name.
+
   Revision 1.1.2.14  2003/02/03 16:53:14  dgrisby
   Force type in constructor argument to help confused compilers.
 
@@ -176,7 +179,7 @@ omniIOR::omniIOR(const char* repoId,
   iiop.object_key.replace(key.length(),key.length(),
 			  (CORBA::Octet*)key.get_buffer(),0);
   iiop.address = addrs[0]; 
-  if (naddrs > 1) {
+  if (naddrs > 1 && (ver.major > 1 || ver.minor > 0)) {
     for (CORBA::ULong index = 1; index < naddrs; index++) {
 
       cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
@@ -207,8 +210,28 @@ omniIOR::omniIOR(const char* repoId,
 
   {
     CORBA::ULong last = pd_iopProfiles->length();
-    pd_iopProfiles->length(last+1);
+
+    pd_iopProfiles->length(last + 1);
     IIOP::encodeProfile(iiop,pd_iopProfiles[last]);
+
+    if (naddrs > 1 && ver.major == 1 && ver.minor == 0) {
+      // In IIOP 1.0, there is no list of tagged components in the
+      // IIOP profile, so we create a MultipleComponentProfile for the
+      // extra addresses.
+      IOP::MultipleComponentProfile components(naddrs - 1);
+      components.length(naddrs - 1);
+      for (CORBA::ULong index = 1; index < naddrs; index++) {
+	cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
+	s.marshalRawString(addrs[index].host);
+	addrs[index].port >>= s;
+	IOP::TaggedComponent& c = components[index-1];
+	c.tag = IOP::TAG_ALTERNATE_IIOP_ADDRESS;
+	CORBA::Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
+	c.component_data.replace(max,len,p,1);
+      }
+      pd_iopProfiles->length(last + 2);
+      IIOP::encodeMultiComponentProfile(components,pd_iopProfiles[last+1]);
+    }
     pd_addr_selected_profile_index = last;
   }
 }
