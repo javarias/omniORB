@@ -30,6 +30,14 @@
 
 /* 
  * $Log$
+ * Revision 1.33.4.1  1999/09/15 20:18:20  sll
+ * Updated to use the new cdrStream abstraction.
+ * Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ * replaced with just one version for cdrStream.
+ * Derived class giopStream implements the cdrStream abstraction over a
+ * network connection whereas the cdrMemoryStream implements the abstraction
+ * with in memory buffer.
+ *
  * Revision 1.33  1999/08/24 12:37:28  djr
  * TypeCode_struct and TypeCode_except modified to use 'const char*' properly.
  *
@@ -4260,7 +4268,9 @@ TypeCode_union::Discriminator
 TypeCode_union_helper::unmarshalLabel(CORBA::TypeCode_ptr tc,
 				      cdrStream& s)
 {
-  switch( tc->kind() ) {
+  const TypeCode_base* aetc = TypeCode_base::NP_expand(ToTcBase_Checked(tc));
+
+  switch( aetc->kind() ) {
   case CORBA::tk_char:
     {
       CORBA::Char c;
