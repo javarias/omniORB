@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  1999/12/14 11:53:23  djs
+# Support for CORBA::TypeCode and CORBA::Any
+# Exception member bugfix
+#
 # Revision 1.7  1999/12/13 10:50:07  djs
 # Treats the two call descriptors associated with an attribute separately,
 # since it can happen that one needs to be generated but not the other.
@@ -198,6 +202,8 @@ def operation(operation, seed):
     return_dims = tyutil.typeDims(return_type)
     return_is_array = return_dims != []
     has_return_value = not(tyutil.isVoid(deref_return_type))
+    has_arguments = operation.parameters() != []
+
     identifier = tyutil.mapID(operation.identifier())
 
     signature = mangler.produce_operation_signature(operation)
@@ -214,6 +220,11 @@ def operation(operation, seed):
 
     if not(need_proxy):
         return
+
+    # if no arguments and no return value, no proxy call descriptor
+    if not(has_return_value) and not(has_arguments):
+        return
+    
 
     # build up the constructor argument list, the initialisation
     # list and the data members list
