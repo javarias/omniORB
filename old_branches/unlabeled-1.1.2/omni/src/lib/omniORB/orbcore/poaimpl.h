@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2000/02/09 12:04:53  djr
+  Fixed memory allocation bug in Any insertion/extraction of strings.
+  Optimisation for insertion/extraction of sequence of simple types.
+
   Revision 1.1.2.5  1999/10/04 17:08:33  djr
   Some more fixes/MSVC work-arounds.
 
@@ -201,6 +205,16 @@ public:
   // returns 0 (*not* POA::_nil()).
   //  This function is thread-safe.
   //?? Can this throw exceptions?  What if it fails?
+
+  static PortableServer::POA_ptr omniINSPOA();
+  // Returns a reference to the "magic" Interoperable Naming Service
+  // POA. The INS POA is a child of the root poa (which is initialised
+  // by this call if necessary), with the PERSISTENT and USER_ID
+  // policies. It is normal in every way, except that the object keys
+  // it creates contain only the object ids, and no POA identifier.
+  // This allows objects with keys like "NameService", as required by
+  // the INS.
+  //  This function is thread-safe.
 
   static void shutdown();
   // Destroys the root poa, waiting for completion.  If the
