@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.24  2003/08/31 20:27:27  dgrisby
+// Couple of memory leaks in TypeCode unmarshalling.
+//
 // Revision 1.1.2.23  2003/07/29 14:49:28  dgrisby
 // Changes to compile with debug Python 2.3.
 //
@@ -453,6 +456,12 @@ extern "C" {
     int i;
     for (i=0; i<argc; i++) {
       o = PyList_GET_ITEM(pyargv, i);
+      if (!PyString_Check(o)) {
+	PyErr_SetString(PyExc_TypeError,
+			"argument 2: parameter must be a list of strings.");
+	delete[] argv;
+	return 0;
+      }
       argv[i] = PyString_AS_STRING(o);
     }
 
