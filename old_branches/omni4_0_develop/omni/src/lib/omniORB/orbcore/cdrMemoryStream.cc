@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2001/10/17 16:33:27  dpg1
+  New downcast mechanism for cdrStreams.
+
   Revision 1.1.4.8  2001/08/22 13:29:48  dpg1
   Re-entrant Any marshalling.
 
@@ -212,8 +215,8 @@ cdrMemoryStream::reserveOutputSpace(omni::alignment_t align,size_t required)
     newsize = (v << 1);
   }
   else {
-    // Pick the closest N Kbytes
-    newsize = (newsize + 1024 - 1) & ~(1024 - 1);
+    // Grow the buffer exponentially, but not too fast
+    newsize = newsize + datasize / 2;
   }
 
   void* oldbufp = pd_bufp;
