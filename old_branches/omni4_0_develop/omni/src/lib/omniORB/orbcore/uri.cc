@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.11  2001/08/17 17:14:54  sll
+// Moved handler initialisation into static initialisers.
+//
 // Revision 1.2.2.10  2001/08/03 17:41:25  sll
 // System exception minor code overhaul. When a system exeception is raised,
 // a meaning minor code is provided.
@@ -141,6 +144,7 @@ omniURI::stringToObject(const char* uri, unsigned int cycles)
 	handler = *i;
 	break;
       }
+      i++;
     }
   }
   if (handler)
@@ -166,6 +170,7 @@ omniURI::uriSyntaxIsValid(const char* uri)
 	handler = *i;
 	break;
       }
+      i++;
     }
   }
   if (handler) return handler->syntaxIsValid(uri);
