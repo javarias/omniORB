@@ -27,6 +27,17 @@
 
 /*
  $Log$
+ Revision 1.18  1999/01/07 09:32:16  djr
+ Changes to support new version of TypeCode and Any.
+ Code for TypeCode and Any are now generated in a separate
+ file (...DynSK.cc).
+
+ New implementation of proxy calls.
+
+ New classes o2be_buildDesc
+             o2be_call_desc
+             o2be_name_mangler
+
  Revision 1.17  1998/10/26 12:12:43  sll
  Added an exception type for reporting frontend error detected by the backend.
 
@@ -1046,6 +1057,8 @@ public:
   void produce_hdr(std::fstream& s);
   void produce_skel(std::fstream& s);
   void produce_dynskel(std::fstream& s);
+
+  void produce_decls_at_global_scope_in_hdr(std::fstream& s);
 
   void produce_binary_operators_in_hdr(std::fstream& s);
   void produce_binary_operators_in_dynskel(std::fstream& s);
