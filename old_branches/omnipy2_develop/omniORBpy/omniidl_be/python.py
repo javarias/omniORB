@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.8  2001/08/29 11:57:16  dpg1
+# Const fixes.
+#
 # Revision 1.29.2.7  2001/06/15 10:59:26  dpg1
 # Apply fixes from omnipy1_develop.
 #
@@ -1642,6 +1645,9 @@ def valueToString(val, kind, scope=[]):
 
     elif kind in [idltype.tk_float, idltype.tk_double, idltype.tk_longdouble]:
         return idlutil.reprFloat(val)
+
+    elif kind == idltype.tk_fixed:
+        return "CORBA.fixed('" + val + "')"
 
     else:
         return str(val)
