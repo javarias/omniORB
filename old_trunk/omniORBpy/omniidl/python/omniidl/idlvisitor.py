@@ -28,11 +28,56 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/10/29 18:20:01  dpg1
+# Clean up
+#
 # Revision 1.1  1999/10/29 15:47:07  dpg1
 # First revision.
 #
 
+"""Visitor pattern visitors for AST nodes and types
+
+This module declares abstract visitor classes for visiting AST nodes
+and type objects. Python's type system means that you do not actually
+need to derive from these classes to implement visitors. This module
+only really exists to show what functions should exist in visitors.
+
+Classes:
+
+  AstVisitor  -- visitor for classes in idlast.py
+  TypeVisitor -- visitor for classes in idltype.py"""
+
 class AstVisitor :
+    """Visitor for AST nodes
+
+Functions:
+
+  visitAST(node)
+  visitModule(node)
+  visitInterface(node)
+  visitForward(node)
+  visitConst(node)
+  visitDeclarator(node)
+  visitTypedef(node)
+  visitMember(node)
+  visitStruct(node)
+  visitException(node)
+  visitCaseLabel(node)
+  visitUnionCase(node)
+  visitUnion(node)
+  visitEnumerator(node)
+  visitEnum(node)
+  visitAttribute(node)
+  visitParameter(node)
+  visitOperation(node)
+  visitNative(node)
+  visitStateMember(node)
+  visitFactory(node)
+  visitValueForward(node)
+  visitValueBox(node)
+  visitValueAbs(node)
+  visitValue(node)"""
+
     def visitAST(self, node):          return
     def visitModule(self, node):       return
     def visitInterface(self, node):    return
@@ -61,6 +106,17 @@ class AstVisitor :
 
 
 class TypeVisitor:
+    """Visitor for Type objects
+
+Functions:
+
+  visitBaseType(type)
+  visitStringType(type)
+  visitWStringType(type)
+  visitSequenceType(type)
+  visitFixedType(type)
+  visitDeclaredType(type)"""
+
     def visitBaseType(self, type):     return
     def visitStringType(self, type):   return
     def visitWStringType(self, type):  return

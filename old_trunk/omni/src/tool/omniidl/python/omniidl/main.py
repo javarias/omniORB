@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/11/12 17:15:35  dpg1
+# Verbose messages now written to stderr.
+#
 # Revision 1.3  1999/11/12 15:53:48  dpg1
 # New functions omniORB.importIDL() and omniORB.importIDLString().
 #
@@ -39,6 +42,8 @@
 # Revision 1.1  1999/11/08 11:43:34  dpg1
 # Changes for NT support.
 #
+
+"""IDL Compiler front-end main function"""
 
 import _omniidl
 import sys, getopt, os, os.path, string
