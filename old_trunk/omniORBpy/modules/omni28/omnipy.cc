@@ -3,6 +3,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.10  1999/09/23 16:27:45  dpg1
+// Initial references support was accidentally missed out. Replaced.
+//
 // Revision 1.9  1999/09/22 15:46:13  dpg1
 // Fake POA implemented.
 //
@@ -368,7 +371,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "O", &pyorb))
       return NULL;
 
-    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb);
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb, ORB_TWIN);
     assert(orb);
 
     CORBA::ORB::ObjectIdList_var ids = orb->list_initial_services();
@@ -390,7 +393,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "Os", &pyorb, &id))
       return NULL;
 
-    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb);
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb, ORB_TWIN);
     assert(orb);
 
     CORBA::Object_ptr objref;
