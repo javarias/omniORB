@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2002/08/16 16:00:55  dgrisby
+  Bugs accessing uninitialised String_vars with [].
+
   Revision 1.1.2.13  2002/05/07 12:54:44  dgrisby
   Fix inevitable Windows header brokenness.
 
@@ -167,6 +170,12 @@ tcpEndpoint::Bind() {
   addr.sin_family = INETSOCKET;
   addr.sin_addr.s_addr = INADDR_ANY;
   addr.sin_port = htons(pd_address.port);
+#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+  addr.sin_len = sizeof(struct sockaddr_in);
+#endif
+#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_ZERO
+  memset((void *)&addr.sin_zero, 0, sizeof(addr.sin_zero));
+#endif
 
   if ((char*)pd_address.host && strlen(pd_address.host) != 0) {
     LibcWrapper::hostent_var h;
