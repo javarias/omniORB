@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.4  1999/06/18 20:28:30  sll
+ New Sequence string implementation. New string_member.
+
  Revision 1.3  1999/06/03 17:10:50  sll
  Updated String_out and String_var to CORBA 2.2
 
@@ -107,8 +110,12 @@ public:
 
   inline _CORBA_String_var& operator=(const _CORBA_String_member& s);
 
+#if ! (defined(__GNUG__) && __GNUC_MINOR__ == 95)
   inline operator char* ()             { return _data; }
   inline operator const char* () const { return _data; }
+#else
+  inline operator char* () const { return _data; }
+#endif
 
   inline char& operator[] (_CORBA_ULong index) {
     if (!_data || (_CORBA_ULong)strlen(_data) < index) {
@@ -218,8 +225,12 @@ public:
     return _ptr[index];
   }
 
+#if ! (defined(__GNUG__) && __GNUC_MINOR__ == 95)
   inline operator char* ()             { return _ptr; }
   inline operator const char* () const { return _ptr; }
+#else
+  inline operator char* () const { return _ptr; }
+#endif
 
   inline char* _retn() {
     char *tmp;
