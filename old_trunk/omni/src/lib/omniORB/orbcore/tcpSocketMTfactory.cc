@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.13  1998/09/23 15:31:15  sll
+  Previously, tcpSocketStrand::shutdown sends an incomplete GIOP
+  CloseConnection message (the message length field is missing). Fixed.
+
   Revision 1.12  1998/09/23 08:48:34  sll
   Use config variable omniORB::maxTcpConnectionPerServer to determine the
   maximum number of outgoing per tcpSocketOutgoingRope.
@@ -180,7 +184,7 @@ tcpSocketMTincomingFactory::isIncoming(Endpoint* addr) const
 
 void
 tcpSocketMTincomingFactory::instantiateIncoming(Endpoint* addr,
-						CORBA::Boolean export)
+						CORBA::Boolean exportflag)
 {
   tcpSocketEndpoint* te = tcpSocketEndpoint::castup(addr);
   if (!te)
@@ -194,7 +198,7 @@ tcpSocketMTincomingFactory::instantiateIncoming(Endpoint* addr,
 			    "cannot instantiate incoming in ZOMBIE state");
   }
 
-  tcpSocketIncomingRope* r = new tcpSocketIncomingRope(this,0,te,export);
+  tcpSocketIncomingRope* r = new tcpSocketIncomingRope(this,0,te,exportflag);
   r->incrRefCount(1);
 
   if (pd_state == ACTIVE) {
@@ -314,8 +318,8 @@ tcpSocketMTincomingFactory::getIncomingIOPprofiles(const CORBA::Octet* objkey,
 tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
 					     unsigned int maxStrands,
 					     tcpSocketEndpoint *e,
-					     CORBA::Boolean export)
-  : Rope(f->anchor(),maxStrands,1), pd_export(export), 
+					     CORBA::Boolean exportflag)
+  : Rope(f->anchor(),maxStrands,1), pd_export(exportflag), 
     pd_shutdown(NO_THREAD), rendezvouser(0)
 {
   struct sockaddr_in myaddr;

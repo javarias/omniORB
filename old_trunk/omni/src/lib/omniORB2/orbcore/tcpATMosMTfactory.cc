@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.6  1998/08/14 13:53:49  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.5  1998/04/07 19:39:04  sll
   Replace cerr with omniORB::log.
 
@@ -126,7 +130,7 @@ tcpATMosMTincomingFactory::isIncoming(Endpoint* addr) const
 
 void
 tcpATMosMTincomingFactory::instantiateIncoming(Endpoint* addr,
-						CORBA::Boolean export)
+						CORBA::Boolean exportflag)
 {
   tcpATMosEndpoint* te = tcpATMosEndpoint::castup(addr);
   if (!te)
@@ -140,7 +144,7 @@ tcpATMosMTincomingFactory::instantiateIncoming(Endpoint* addr,
 			    "cannot instantiate incoming in ZOMBIE state");
   }
 
-  tcpATMosIncomingRope* r = new tcpATMosIncomingRope(this,0,te,export);
+  tcpATMosIncomingRope* r = new tcpATMosIncomingRope(this,0,te,exportflag);
   r->incrRefCount(1);
 
   if (pd_state == ACTIVE) {
@@ -260,8 +264,8 @@ tcpATMosMTincomingFactory::getIncomingIOPprofiles(const CORBA::Octet* objkey,
 tcpATMosIncomingRope::tcpATMosIncomingRope(tcpATMosMTincomingFactory* f,
 					     unsigned int maxStrands,
 					     tcpATMosEndpoint *e,
-					     CORBA::Boolean export)
-  : Rope(f->anchor(),maxStrands,1), pd_export(export), 
+					     CORBA::Boolean exportflag)
+  : Rope(f->anchor(),maxStrands,1), pd_export(exportflag), 
     pd_shutdown(NO_THREAD), rendezvouser(0)
 {
   // For the moment, we do not impose a restriction on the maximum
