@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.5  1999/03/11 16:25:55  djr
+ Updated copyright notice
+
  Revision 1.4  1998/08/14 13:51:22  sll
  Added pragma hdrstop to control pre-compile header if the compiler feature
  is available.
@@ -154,3 +157,23 @@ giopServerThreadWrapper::getGiopServerThreadWrapper()
 {
   return giopServerThreadWrapperP;
 }
+
+ropeFactoryType::~ropeFactoryType() {}
+
+ropeFactory::~ropeFactory() {}
+
+incomingRopeFactory::~incomingRopeFactory() {}
+
+outgoingRopeFactory::~outgoingRopeFactory() {}
+
+ropeFactoryList::~ropeFactoryList() {}
+
+ropeFactoryList_ThreadSafe::~ropeFactoryList_ThreadSafe() {}
+
+ropeFactory_iteractor::~ropeFactory_iterator() { pd_l.unlock(); }
+
+
+Endpoint::~Endpoint() {
+  delete [] pd_protocolname;
+}
+
