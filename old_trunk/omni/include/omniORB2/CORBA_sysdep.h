@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.16  1998/04/07 20:07:06  sll
+ Added the use of namespace.
+
  Revision 1.15  1998/03/25 14:24:12  sll
  Added #define EGCS_WORKAROUND for gcc compiler. This activate a
  workaround for a bug in post-1.0 egcs snapshots. Can be removed if
@@ -195,6 +198,9 @@ strdup (char* str)
     return newstr;
 }
 #endif
+#elif defined(__SINIX__)
+#define _OMNIORB_HOST_BYTE_ORDER_ 0
+#define _HAS_SIGNAL 1
 #else
 #error "The byte order of this platform is unknown"
 #endif
