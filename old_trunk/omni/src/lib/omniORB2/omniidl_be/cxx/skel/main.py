@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/01/10 15:39:48  djs
+# Better name and scope handling.
+#
 # Revision 1.14  2000/01/07 20:31:33  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -98,19 +101,6 @@ self.__globalScope = name.globalScope()
 self.__insideInterface = 0
 self.__insideModule = 0
 
-#def enter(scope):
-#    # the exception is thrown in the case of a forward declared interface
-#    # being properly defined. Needs tidying up?
-#    try:
-#        self.__environment.add(scope)
-#    except KeyError:
-#        pass
-#    self.__environment = self.__environment.enterScope(scope)
-#
-#def leave():
-#    self.__environment = self.__environment.leaveScope()
-#def currentScope():
-#    return self.__environment.scope()
 
 def __init__(stream):
     self.stream = stream
@@ -126,14 +116,6 @@ def visitAST(node):
             n.accept(self)
 
 def visitModule(node):
-    #name = node.identifier()
-    #cxx_name = tyutil.mapID(name)
-    ##name = tyutil.mapID(node.identifier())
-    ##enter(name)
-    ##scope = currentScope()
-    #outer_environment = env.lookup(node)
-    #environment = outer_environment.enterScope(name)
-
     insideModule = self.__insideModule
     self.__insideModule = 1
     for n in node.definitions():
@@ -141,16 +123,11 @@ def visitModule(node):
 
     self.__insideModule = insideModule
 
-    ##leave()
 
 def visitInterface(node):
     name = node.identifier()
     cxx_name = tyutil.mapID(name)
     
-    #name = tyutil.mapID(node.identifier())
-    #enter(name)
-    #scope = currentScope()
-    #environment = self.__environment
     outer_environment = env.lookup(node)
     environment = outer_environment.enterScope(name)
 
@@ -346,7 +323,6 @@ void*
             paramType_name = self.__globalScope.principalID(paramType)
             
             optypes = tyutil.operationArgumentType(paramType,
-#                                                   self.__globalScope)
                                                    outer_environment)
             # optypes[0] is return [1] is in [2] is out [3] is inout
             parameter_argmapping.append(optypes[parameter.direction() + 1])
@@ -649,7 +625,6 @@ const char*
     #leave()
 
 def visitTypedef(node):
-    #environment = self.__environment
     environment = env.lookup(node)
     is_global_scope = not(self.__insideModule or self.__insideInterface)
 
@@ -734,8 +709,6 @@ extern void @fq_derived@_free( @fq_derived@_slice* p) {
     pass
 
 def visitEnum(node):
-    #name = tyutil.name(node.scopedName())
-    #self.__environment.add(name)
     return
 
 def visitMember(node):
@@ -748,13 +721,10 @@ def visitMember(node):
         
 def visitStruct(node):
 
-    #environment = self.__environment
     outer_environment = env.lookup(node)
     
     name = map(tyutil.mapID, node.scopedName())
     name = string.join(name, "::")
-
-    #environment.add(tyutil.name(node.scopedName()))
 
     size_calculation = "omni::align_to(_msgsize, omni::ALIGN_4) + 4"
 
@@ -831,7 +801,6 @@ void
     stream.reset_indent()
     
 def visitUnion(node):
-    #environment = self.__environment
     environment = env.lookup(node)
     
     name = map(tyutil.mapID, node.scopedName())
@@ -1086,17 +1055,9 @@ void
     
     
 def visitForward(node):
-    #name = tyutil.name(node.scopedName())
-    #try:
-    #    self.__environment.add(name)
-    #except KeyError:
-    #    # legal to multiply define these
-    #    pass
-    
     return
 
 def visitConst(node):
-    #environment = self.__environment
     environment = env.lookup(node)
     
     constType = node.constType()
@@ -1158,9 +1119,6 @@ def visitException(node):
     name = tyutil.name(node.scopedName())
     cxx_name = tyutil.mapID(name)
     
-    #name = tyutil.mapID(tyutil.name(node.scopedName()))
-    #enter(name)
-    #environment = self.__environment
     outer_environment = env.lookup(node)
     environment = outer_environment.enterScope(name)
     
@@ -1180,12 +1138,9 @@ def visitException(node):
         memberType = m.memberType()
         if m.constrType():
             memberType.decl().accept(self)
-            #raise "Doesn't handle types constructed within an exception"
         deref_memberType = tyutil.deref(memberType)
         memberType_name = environment.principalID(memberType)
         memberType_fqname = self.__globalScope.principalID(memberType)
-        #memberType_name_arg = tyutil.makeConstructorArgumentType(memberType,
-        #                                                         environment)
         type_dims = tyutil.typeDims(memberType)
         for d in m.declarators():
             decl_name = tyutil.mapID(tyutil.name(d.scopedName()))
@@ -1409,7 +1364,7 @@ void
                    mem_unmarshal = str(mem_unmarshal))
 
 
-    #leave()
+    return
             
             
                                            

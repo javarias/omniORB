@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  2000/01/07 20:31:32  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.9  1999/12/25 21:47:18  djs
 # Better TypeCode support
 #
@@ -261,8 +268,6 @@ def operation(operation):
                               from_where = "giop_s",
                               can_throw_marshall = 1,
                               string_via_member = 1)
-            #Proxy.unmarshal(argument_type, prefix + argument_name, "giop_s",
-            #                  get_arguments, can_throw_marshal = 1)
 
         marshal_name = argument_prefixed_name
         align_name = argument_prefixed_name

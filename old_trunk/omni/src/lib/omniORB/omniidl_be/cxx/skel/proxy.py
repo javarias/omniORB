@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/07 20:31:33  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.11  1999/12/25 21:47:19  djs
 # Better TypeCode support
 #
@@ -156,8 +163,6 @@ def argmapping(type):
     deref_type_name = environment.principalID(deref_type, fully_scope = 0)
 
     if is_array:
-        #if tyutil.isObjRef(deref_type) or \
-        #   tyutil.isString(deref_type):
         if is_variable:
             return ["const " + type_name + "_slice*",
                                type_name + "_slice*&",
