@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/06/13 19:58:37  sll
+  Added omni namespace scoping for omniCodeSet.
+
   Revision 1.1.2.10  2001/05/10 15:03:50  dpg1
   Update cdrStreamAdapter to modified cdrStream interface.
 
@@ -645,6 +648,11 @@ public:
   // Note: the return value is really of type CORBA::CompletionStatus.
   // Since this declaration must appear before the CORBA declaration,
   // we have to live with returning a _CORBA_ULong.
+
+  /////////////////////////////////////////////////////////////////////
+  virtual _CORBA_Boolean is_giopStream();
+  // Returns true if this instance is actually a giopStream.
+  // We could have used dynamic_cast<> if we have standard C++.
 
 private:
   cdrStream(const cdrStream&);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/04/18 18:18:11  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.3  2000/11/20 11:59:43  dpg1
   API to configure code sets.
 
@@ -54,6 +57,12 @@
 CORBA::ULong 
 cdrStream::completion() {
   return CORBA::COMPLETED_NO;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+cdrStream::is_giopStream() {
+  return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
