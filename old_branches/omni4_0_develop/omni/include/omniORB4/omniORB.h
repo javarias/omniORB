@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.14  2001/08/17 17:03:23  sll
+  Moved configuration parameters to orbParameters. Move old compatibility API
+  to omniORBcompat.h.
+
   Revision 1.2.2.13  2001/08/16 16:11:48  sll
   Removed duplicate offerBidirectionalGIOP.
 
@@ -234,6 +238,17 @@ _CORBA_MODULE_BEG
   //                                                                    //
   _CORBA_MODULE_FN void setMainThread();                                //
   ////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
+  //                                                                    //
+  // giopMaxMsgSize()                                                   //
+  //                                                                    //
+  // Return the ORB-wide limit on the size of GIOP message (excluding   //
+  // the header). This value is set by the ORB option giopMaxMsgSize.   //
+  //                                                                    //
+  _CORBA_MODULE_FN _CORBA_ULong giopMaxMsgSize();                       //
+  ////////////////////////////////////////////////////////////////////////
+
 
   //////////////////////////////////////////////////////////////////////
   /////////////////////////// omniORB::logger //////////////////////////
