@@ -25,6 +25,9 @@
 
 /*
   $Log$
+  Revision 1.19  1999/09/14 16:57:30  djr
+  Fixed bug - exception constructor does not duplicate object reference arg.
+
   Revision 1.18  1999/07/19 09:49:32  djr
   Put back prefix Exception/UserException onto type id of exceptions.
 
@@ -130,7 +133,9 @@ o2be_exception::produce_hdr(std::fstream &s)
       while (tdecl->node_type() == AST_Decl::NT_typedef)
 	tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
 
+      const char* field_name = o2be_field::narrow_from_decl(d)->uqname();
       IND(s);
+
       switch( tdecl->node_type() ) {
       case AST_Decl::NT_string:
 	{
@@ -139,18 +144,14 @@ o2be_exception::produce_hdr(std::fstream &s)
 	  else
 	    s << o2be_typedef::narrow_from_decl(decl)
 	      ->fieldMemberType_fqname(this);
-	  s <<" "<< o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	  s <<" "<< field_name << ";\n";
 	  break;
 	}
       case AST_Decl::NT_interface:
 	{
-	  if (decl->node_type() == AST_Decl::NT_interface)
-	    s << o2be_interface::narrow_from_decl(decl)
-	      ->fieldMemberType_fqname(this);
-	  else
-	    s << o2be_typedef::narrow_from_decl(decl)
-	      ->fieldMemberType_fqname(this);
-	  s <<" "<< o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	  s << o2be_interface::narrow_from_decl(tdecl)
+	    ->fieldMemberType_fqname(this)
+	    << " " << field_name << ";\n";
 	  break;
 	}
       case AST_Decl::NT_pre_defined:
@@ -164,7 +165,7 @@ o2be_exception::produce_hdr(std::fstream &s)
 	    {
 	      s << o2be_name::narrow_and_produce_unambiguous_name(decl,this);
 	    }		    
-	  s << " " << o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	  s << " " << field_name << ";\n";
 	  break;
 	}
       case AST_Decl::NT_array:
@@ -173,7 +174,7 @@ o2be_exception::produce_hdr(std::fstream &s)
 	    // Check if this is an anonymous array type, if so
 	    // generate the supporting typedef.
 	    if (decl->has_ancestor(this)) {
-	      char* fname = o2be_field::narrow_from_decl(d)->uqname();
+	      const char* fname = field_name;
 	      char * tmpname = new char [strlen(fname) + 2];
 	      strcpy(tmpname,"_");
 	      strcat(tmpname,fname);
@@ -183,7 +184,7 @@ o2be_exception::produce_hdr(std::fstream &s)
 	  }
 	  else {
 	    s << o2be_typedef::narrow_from_decl(decl)->unambiguous_name(this);
-	    s <<" "<< o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	    s <<" "<< field_name << ";\n";
 	  }
 	  break;
 	}
@@ -192,18 +193,18 @@ o2be_exception::produce_hdr(std::fstream &s)
 	  if (decl->node_type() == AST_Decl::NT_sequence) {
 	    s << o2be_sequence::narrow_from_decl(decl)->seq_template_name(this)
 	      << " "
-	      << o2be_field::narrow_from_decl(d)->uqname()
+	      << field_name
 	      << ";\n";
 	  }
 	  else {
 	    s << o2be_typedef::narrow_from_decl(decl)->unambiguous_name(this);
-	    s <<" "<< o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	    s <<" "<< field_name << ";\n";
 	  }
 	  break;
 	}
       default:
 	s << o2be_name::narrow_and_produce_unambiguous_name(decl,this)
-	  << " " << o2be_field::narrow_from_decl(d)->uqname() << ";\n";
+	  << " " << field_name << ";\n";
       }
     }
   }
@@ -551,8 +552,11 @@ o2be_exception::produce_skel(std::fstream &s)
 
 	      case o2be_operation::tObjref:
 		{
+		  AST_Decl* decl = dd->field_type();
+		  while (decl->node_type() == AST_Decl::NT_typedef)
+		    decl = o2be_typedef::narrow_from_decl(decl)->base_type();
 		  o2be_interface* intf =
-		    o2be_interface::narrow_from_decl(dd->field_type());
+		    o2be_interface::narrow_from_decl(decl);
 		  IND(s); s << intf->fqname() << "_Helper::duplicate(_"
 			    << dd->uqname() << ");\n";
 		  IND(s); s << dd->uqname() << " = _" << dd->uqname() << ";\n";
