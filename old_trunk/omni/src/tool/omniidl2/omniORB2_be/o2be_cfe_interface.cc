@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.17  1998/08/13 22:41:24  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.16  1998/08/10 15:33:52  sll
   Now catch all internal exceptions and print an error message instead
   of causing a core dump.
@@ -185,6 +189,9 @@ BE_produce()
 {
   try {
     o2be_global::root()->produce();
+  }
+  catch (o2be_fe_error &ex) {
+    std::cerr << "Error: " << ex.errmsg() << std::endl;
   }
   catch (o2be_fileio_error &ex) {
     std::cerr << "Error: " << ex.errmsg() << std::endl;
