@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/13 21:09:57  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.2  2005/01/06 23:08:25  dgrisby
   Big merge from omni4_0_develop.
 
@@ -259,6 +263,9 @@ public:
       pd_selectable(0),
       pd_data_in_buffer(0),
       pd_selected(0),
+#ifdef __WIN32__
+      pd_fd_index(-1),
+#endif
       pd_next(0),
       pd_prev(0) { }
 
@@ -299,6 +306,9 @@ private:
   CORBA::Boolean    pd_selectable;
   CORBA::Boolean    pd_data_in_buffer;
   CORBA::Boolean    pd_selected;
+#ifdef __WIN32__
+  int               pd_fd_index;
+#endif
   SocketHolder*     pd_next;
   SocketHolder**    pd_prev;
 };
@@ -349,7 +359,6 @@ public:
 private:
   int                  pd_refcount;
   omni_tracedmutex     pd_collection_lock;
-  omni_tracedcondition pd_select_cond; // timedwait on if nothing to select
 
   // Absolute time at which we scan through the socket list choosing
   // the selectable ones.
@@ -366,7 +375,7 @@ private:
   // unnecessary processing.
   unsigned             pd_idle_count;
 
-#ifdef USE_POLL
+#if defined(USE_POLL)
   // On platforms where we use poll(), we maintain a pre-allocated
   // array of pollfd structures and a parallel array of pointers to
   // SocketHolders. pd_pollfd_n is the number of populated pollfds.
@@ -378,9 +387,16 @@ private:
 
   void growPollLists();
   // Expand the pd_pollfds and pd_pollsockets to fit more values.
+
+#elif defined(__WIN32__)
+  // Windows has select() but its fd_sets are more like pollfds, just
+  // less convenient...
+  omni_tracedcondition pd_select_cond; // timedwait on if nothing to select
+  fd_set               pd_fd_set;
+  SocketHolder*        pd_fd_sockets[FD_SETSIZE];
   
 #else
-  // On platforms using select(), we maintain an fd_set and the
+  // On other platforms we use select(). We maintain an fd_set and the
   // highest socket number set in it plus 1.
   fd_set               pd_fd_set;
   int                  pd_fd_set_n;
