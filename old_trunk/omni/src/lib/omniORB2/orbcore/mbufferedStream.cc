@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.8  1999/03/11 16:25:54  djr
+  Updated copyright notice
+
   Revision 1.7  1999/01/07 16:04:39  djr
   Interface changed slightly to agree more closely with NetBufferedStream.
   Support for read-only streams with external buffer improved.
@@ -156,11 +159,12 @@ MemBufferedStream::MemBufferedStream(void* databuffer) {
 #error "No suitable integer type available to calculate maximum" \
   " pointer value from"
 #endif
-  rewind_inout_mkr();
+  pd_in_mkr = startofstream();
+  pd_out_mkr = pd_bufend;
 }
 
 
-MemBufferedStream::MemBufferedStream(void *databuffer, size_t maxLen)
+MemBufferedStream::MemBufferedStream(void* databuffer, size_t maxLen)
 {
   // Create a read-only MemBufferedStream, which reads from an
   // externally-managed buffer and has a limited length
@@ -168,7 +172,8 @@ MemBufferedStream::MemBufferedStream(void *databuffer, size_t maxLen)
   pd_byte_order = omni::myByteOrder;
   pd_bufp = databuffer;
   pd_bufend = (void *)((omni::ptr_arith_t)pd_bufp + (omni::ptr_arith_t)maxLen);
-  rewind_inout_mkr();
+  pd_in_mkr = startofstream();
+  pd_out_mkr = pd_bufend;
 }
 
 
