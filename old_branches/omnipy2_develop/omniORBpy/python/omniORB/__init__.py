@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.8  2002/01/18 15:49:45  dpg1
+# Context support. New system exception construction. Fix None call problem.
+#
 # Revision 1.26.2.7  2001/09/20 14:51:26  dpg1
 # Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
 #
@@ -722,36 +725,15 @@ for exc in _omnipy.system_exceptions:
 del cd, exc, cls
 
 # Reserved word mapping:
-keywordMapping = {
-    "access":   "_access",
-    "and":      "_and",
-    "assert":   "_assert",
-    "break":    "_break",
-    "class":    "_class",
-    "continue": "_continue",
-    "def":      "_def",
-    "del":      "_del",
-    "elif":     "_elif",
-    "else":     "_else",
-    "except":   "_except",
-    "finally":  "_finally",
-    "for":      "_for",
-    "from":     "_from",
-    "global":   "_global",
-    "if":       "_if",
-    "import":   "_import",
-    "in":       "_in",
-    "is":       "_is",
-    "lambda":   "_lambda",
-    "not":      "_not",
-    "or":       "_or",
-    "pass":     "_pass",
-    "print":    "_print",
-    "raise":    "_raise",
-    "return":   "_return",
-    "try":      "_try",
-    "while":    "_while"
-    }
+
+keywordMapping = {}
+try:
+    import keyword
+    for word in keyword.kwlist:
+        keywordMapping[word] = "_" + word
+    del keyword
+except ImportError:
+    pass
 
 
 # More public things, which depend on the CORBA module
