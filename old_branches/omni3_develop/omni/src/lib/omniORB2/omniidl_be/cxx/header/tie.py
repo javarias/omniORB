@@ -28,6 +28,10 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11.2.8  2000/07/17 09:36:40  djs
+# Now handles the case where an interface inherits from a typedef to another
+# interface.
+#
 # Revision 1.11.2.7  2000/06/26 16:24:00  djs
 # Better handling of #include'd files (via new commandline options)
 # Refactoring of configuration state mechanism.
@@ -150,7 +154,9 @@ def write_template(name, inherits, node, stream,
 
             for parameter in parameters:
                 paramType = types.Type(parameter.paramType())
-                param_type_name = paramType.op(types.direction(parameter))
+                # Need to call the _impl operation not the _objref operation
+                param_type_name = paramType.op(types.direction(parameter),
+                                               use_out = 0)
                 param_id = id.mapID(parameter.identifier())
                 signature.append(param_type_name + " " + param_id)
                 call.append(param_id)
