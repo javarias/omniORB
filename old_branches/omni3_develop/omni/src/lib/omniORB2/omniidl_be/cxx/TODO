@@ -63,6 +63,11 @@ Combined list of things to-do and things to think about
   optional declarators) which contains the marshalling, unmarshalling and
   alignment code?
 
+  Another awkwardness example:
+  in the DynSK.cc generation code we build functions based on types. Anon
+  arrays inside (eg) a struct produce the same fns as typedef'd ones do. 
+  However I can only get its type (through the alias()) if its a typedef.
+
 * When do typedefs get dereferenced and when are they not? It seems like everything
   is a special case in the current system- is that necessary?
 
