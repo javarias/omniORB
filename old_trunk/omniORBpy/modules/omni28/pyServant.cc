@@ -31,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/09/29 15:46:50  dpg1
+// lockWithNewThreadState now creates a dummy threading.Thread object so
+// threading doesn't get upset that it's not there. Very dependent on the
+// implementation of threading.py.
+//
 // Revision 1.6  1999/09/29 11:38:29  dpg1
 // Comments removed.
 //
@@ -281,20 +286,32 @@ Py_Servant::dispatch(GIOP_S&        giop_server,
 
     assert(etype);
 
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
-
-    if (!(evalue && PyInstance_Check(evalue)))
+    if (!(evalue && PyInstance_Check(evalue))) {
+      omniORB::log << "omniORBpy: *** Warning: caught an unexpected "
+		   << "exception during up-call.\n"
+		   << "omniORBPy: Traceback follows:\n";
+      omniORB::log.flush();
+      PyErr_Restore(etype, evalue, etraceback);
+      PyErr_Print();
       throw CORBA::UNKNOWN(0,CORBA::COMPLETED_NO);
+    }
 
     //    cout << "Exception may be one we know..." << endl;
 
     PyObject* erepoId = PyObject_GetAttrString(evalue, "_NP_RepositoryId");
 
     if (!erepoId) {
-      Py_DECREF(evalue);
+      omniORB::log << "omniORBpy: *** Warning: caught an unexpected "
+		   << "exception during up-call.\n"
+		   << "omniORBPy: Traceback follows:\n";
+      omniORB::log.flush();
+      PyErr_Restore(etype, evalue, etraceback);
+      PyErr_Print();
       throw CORBA::UNKNOWN(0,CORBA::COMPLETED_NO);
     }
+
+    Py_DECREF(etype);
+    Py_XDECREF(etraceback);
 
     // Is it a user exception?
     if (exc_d != Py_None) {

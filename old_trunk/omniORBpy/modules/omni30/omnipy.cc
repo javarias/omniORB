@@ -31,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.17  1999/09/29 15:46:51  dpg1
+// lockWithNewThreadState now creates a dummy threading.Thread object so
+// threading doesn't get upset that it's not there. Very dependent on the
+// implementation of threading.py.
+//
 // Revision 1.16  1999/09/29 11:25:56  dpg1
 // Nil objects now map to None. They work too, which is more than can be
 // said for the old mapping...
@@ -132,11 +137,12 @@ extern "C" {
       return NULL;
 
     if (maj != OMNIPY_MAJOR) {
-      omniORB::log << "***\n*** WARNING! omnipy module version "
+      omniORB::log << "omniORBpy: ***\n"
+		   << "omniORBpy: *** WARNING! omnipy module version "
 		   << OMNIPY_MAJOR << "." << OMNIPY_MINOR
 		   << ", stubs in " << mod << " are version "
-		   << maj << "." << min
-		   << "\n***\n";
+		   << maj << "." << min << "\n"
+		   << "omniORBpy: ***\n";
       omniORB::log.flush();
     }
     Py_INCREF(Py_None);
