@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.9  1998/08/14 13:49:17  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.8  1998/04/07 19:35:50  sll
   Updated signature of NetBufferedStream::RdMessageSize(...).
 
@@ -101,50 +105,54 @@ NetBufferedStream::NetBufferedStream(Rope *r,
   rewind_inb_mkr((int)omni::max_alignment);
   rewind_outb_mkr((int)omni::max_alignment);
   pd_rdmsg_size = pd_wrmsg_size = pd_read = pd_written = 0;
-  return;
 }
 
 
 NetBufferedStream::~NetBufferedStream() {
   RdUnlock();
   WrUnlock();
-  return;
 }
 
 void
-NetBufferedStream::get_char_array(CORBA::Char *b,int size,
-				  CORBA::Boolean startMTU) {
+NetBufferedStream::get_char_array(CORBA::Char* b, int size,
+				  omni::alignment_t align,
+				  CORBA::Boolean startMTU)
+{
   Strand::sbuf s;
-  if (!size) return;
   if (size >= DIRECT_RCV_CUTOFF) {
     ensure_rdlocked();
     giveback_received(startMTU);
+    int current_alignment = current_inb_alignment();
+    omni::ptr_arith_t padding =
+      omni::align_to(current_alignment, align) - current_alignment;
     if (RdMessageSize()) {
-      if (size > (int)RdMessageUnRead()) {
+      if (size + padding > (int)RdMessageUnRead()) {
 	throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
       }
     }
-    s.buffer = (void *)b;
+    if( padding > 0 )  skip(padding, startMTU);
+    s.buffer = (void*) b;
     s.size   = size;
-    pd_strand->receive_and_copy(s,startMTU);
+    pd_strand->receive_and_copy(s, startMTU);
     pd_read += size;
     int newalignment = current_inb_alignment() + size;
-    newalignment = newalignment &((int)omni::max_alignment - 1);
-    rewind_inb_mkr((newalignment)?newalignment:(int)omni::max_alignment);
+    newalignment = newalignment & ((int)omni::max_alignment - 1);
+    rewind_inb_mkr((newalignment) ? newalignment : (int)omni::max_alignment);
   }
   else {
-    char * p = (char *)align_and_get_bytes(omni::ALIGN_1,size,startMTU);
-    memcpy((void *)b,p,size);
+    void* p = align_and_get_bytes(align, size, startMTU);
+    if( size )  memcpy(b, p, size);
   }
-  return;
 }
 
+
 void
-NetBufferedStream::put_char_array(const CORBA::Char *b,int size,
+NetBufferedStream::put_char_array(const CORBA::Char* b, int size,
+				  omni::alignment_t align,
 				  CORBA::Boolean startMTU,
-				  CORBA::Boolean at_most_once) {
+				  CORBA::Boolean at_most_once)
+{
   Strand::sbuf s;
-  if (!size) return;
   if (size >= DIRECT_SND_CUTOFF) {
     ensure_wrlocked();
     if (startMTU) {
@@ -153,15 +161,22 @@ NetBufferedStream::put_char_array(const CORBA::Char *b,int size,
     else {
       giveback_reserved();
     }
+    int current_alignment = current_outb_alignment();
+    omni::ptr_arith_t padding =
+      omni::align_to(current_alignment, align) - current_alignment;
     if (WrMessageSize()) {
-      if (size > (int)WrMessageSpaceLeft()) {
+      if (size + padding > (int)WrMessageSpaceLeft()) {
 	throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
       }
     }
     if (startMTU) {
       pd_strand->reserve_and_startMTU(0,1,omni::ALIGN_1,0,at_most_once);
     }
-    s.buffer = (void *) b;
+    if( padding > 0 ) {
+      pd_strand->reserve(padding, 1, current_alignment);
+      pd_written += padding;
+    }
+    s.buffer = (void*) b;
     s.size = size;
     pd_strand->reserve_and_copy(s);
     pd_written += size;
@@ -170,8 +185,8 @@ NetBufferedStream::put_char_array(const CORBA::Char *b,int size,
     rewind_outb_mkr((newalignment)?newalignment:(int)omni::max_alignment);
   }
   else {
-    void *p = align_and_put_bytes(omni::ALIGN_1,size,startMTU,at_most_once);
-    memcpy(p,(void *)b,size);
+    void *p = align_and_put_bytes(align, size, startMTU, at_most_once);
+    if( size )  memcpy(p, b, size);
   }
   return;
 }
@@ -183,6 +198,15 @@ NetBufferedStream::flush(CORBA::Boolean endMTU) {
   return;
 }
 
+void
+NetBufferedStream::copy_from(MemBufferedStream& from, size_t size,
+			     omni::alignment_t align)
+{
+  // We can use align_and_get_bytes for arbitrarily large blocks
+  // of memory from MemBufferedStreams (unlike NetBufferedStreams).
+  void* p = from.align_and_get_bytes(align, size);
+  put_char_array((CORBA::Char*)p, size, align);
+}
 
 void
 NetBufferedStream::reserve(size_t minimum,
@@ -237,7 +261,8 @@ NetBufferedStream::reserve(size_t minimum,
 
 void
 NetBufferedStream::giveback_reserved(CORBA::Boolean transmit,
-				     CORBA::Boolean endMTU) {
+				     CORBA::Boolean endMTU)
+{
   // Tell the strand we have finished with the previous buffer with
   // so much to spare
   ensure_wrlocked();
@@ -256,7 +281,8 @@ NetBufferedStream::giveback_reserved(CORBA::Boolean transmit,
 }
 
 void
-NetBufferedStream::receive(size_t minimum,CORBA::Boolean startMTU) {
+NetBufferedStream::receive(size_t minimum,CORBA::Boolean startMTU)
+{
   Strand::sbuf b;
 
   ensure_rdlocked();
@@ -425,8 +451,8 @@ NetBufferedStream::skip(CORBA::ULong size,CORBA::Boolean startMTU)
 
   giveback_received();
   // We know that giveback_received() calls pd_strand->giveback_received() as
-  // well as reset our internal pointers. It is therefore save to call
-  // the skip function of the strand instread of using align_and_get_bytes
+  // well as reset our internal pointers. It is therefore safe to call
+  // the skip function of the strand instead of using align_and_get_bytes
   // to skip through the bytes.
   pd_strand->skip(size,startMTU);
   // Don't forget to update the internal pointers to the same alignment as it
