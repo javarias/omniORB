@@ -316,7 +316,7 @@ omniORB_Scavenger::run_undetached(void*)
 
   omni_mutex_lock sync(pd_mutex);
 
-  while (1) {
+  while (!pd_isdying) {
 
     int poke = 0;
     if (ScanPeriod) {
@@ -333,9 +333,7 @@ omniORB_Scavenger::run_undetached(void*)
       omni_thread::get_time(&abs_sec,&abs_nsec);	
     }
 
-    if (pd_isdying) break;
-    
-    if (poke) continue;
+    if (poke || pd_isdying) continue;
   
     LOGMESSAGE(15,"","scanning connections");
 
