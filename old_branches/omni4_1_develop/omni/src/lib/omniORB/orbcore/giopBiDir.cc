@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/03/02 12:39:18  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.2  2005/01/06 23:10:15  dgrisby
   Big merge from omni4_0_develop.
 
@@ -710,11 +713,11 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 	BiDirServerRope* r = BiDirServerRope::addRope(&strand,addrList);
       }
       
-      giopAddressList::const_iterator i, last;
-      i    = addrList.begin();
+      giopAddressList::const_iterator addr, last;
+      addr = addrList.begin();
       last = addrList.end();
-      for (; i != last; i++) {
-	delete (*i);
+      for (; addr != last; addr++) {
+	delete (*addr);
       }
     }
   }
