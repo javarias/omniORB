@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.8  1998/04/18 10:11:17  sll
+ * Corrected signature of one TypeCode ctor.
+ *
  * Revision 1.7  1998/04/08 16:07:50  sll
  * Minor change to help some compiler to find the right TypeCode ctor.
  *
@@ -75,7 +78,7 @@ CORBA::TypeCode::TypeCode(CORBA::TCKind t, CORBA::ULong maxLen)
 
   pd_tck = t;
   if (pd_tck == CORBA::tk_string) pd_maxLen = maxLen;
-  else maxLen = 0;
+  else pd_maxLen = 0;
 } 
 
 
@@ -1888,7 +1891,7 @@ CORBA::TypeCode::_nil()
 {
   if (!_nil_TypeCodeV) {
 #if !defined(__DECCXX_VER) || __DECCXX_VER > 50590004
-    _nil_TypeCodeV == new CORBA::_nil_TypeCode;
+    _nil_TypeCodeV = new CORBA::_nil_TypeCode;
 #else
     // Workaround for compiler bug in DEC cxx v5.5
     CORBA::_nil_TypeCode tmp;
