@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.18  1999/02/09 17:45:34  djr
+ * Fixed bug in TypeCode_alignTable generation for structures and exceptions.
+ *
  * Revision 1.17  1999/02/08 18:55:45  djr
  * Fixed bug in marshalling of TypeCodes for sequences. The sequence
  * bound and the content TypeCode were marshalled in the wrong order.
@@ -1533,8 +1536,8 @@ void
 TypeCode_array::NP_marshalComplexParams(MemBufferedStream &s,
 					TypeCode_offsetTable* otbl) const
 {
-  pd_length >>= s;
   TypeCode_marshaller::marshal(ToTcBase(pd_content), s, otbl);
+  pd_length >>= s;
 }
 
 TypeCode_base*
@@ -1545,8 +1548,8 @@ TypeCode_array::NP_unmarshalComplexParams(MemBufferedStream &s,
 
   otbl->addEntry(otbl->currentOffset(), _ptr);
 
-  _ptr->pd_length <<= s;
   _ptr->pd_content = TypeCode_marshaller::unmarshal(s, otbl);
+  _ptr->pd_length <<= s;
   _ptr->pd_complete = 1;
   _ptr->generateAlignmentTable();
 
