@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.3  1998/04/07 19:37:14  sll
+  Replace cerr with omniORB::log.
+
 // Revision 1.2  1998/01/22  11:38:19  sll
 // Set the incoming and outgoing scan period to 30 seconds.
 //
@@ -38,6 +41,11 @@
 
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <objectManager.h>
 #include <scavenger.h>

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1998/04/07 19:31:46  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.4  1997/12/09 18:19:09  sll
   New members BOA::impl_shutdown and BOA::destroy
   Merged code from orb.cc.
@@ -40,6 +43,11 @@
  */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 

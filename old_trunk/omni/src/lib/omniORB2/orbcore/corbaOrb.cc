@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14  1998/04/18 10:09:52  sll
+  Make the definition of omniORB::serverName consistent with omniORB.h
+
   Revision 1.13  1998/04/08 16:06:25  sll
   Added support for Reliant UNIX 5.43.
 
@@ -60,6 +63,11 @@
  */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <stdio.h>
 #include <initFile.h>
 #include <scavenger.h>

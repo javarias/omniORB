@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1998/04/07 19:39:04  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.4  1998/03/20 12:30:30  sll
   Delay connect to the remote address space until the first send or recv.
   Previously, connect was made inside the ctor of tcpATMosStrand.
@@ -45,6 +48,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <tcpATMos.h>
 

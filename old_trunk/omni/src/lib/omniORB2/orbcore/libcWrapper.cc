@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13  1998/08/11 19:08:33  sll
+  Added CPP macro to recognise SCO OpenServer 5.
+
   Revision 1.12  1998/01/21 12:30:32  sll
   Corrected typo that only affects hpux.
 
@@ -50,6 +53,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.10  1998/06/29 17:13:30  sll
+  Fixed Solaris specific code in realConnect. Now switch the socket back
+  to blocking mode after connect() until all circumstance.
+
   Revision 1.9  1998/04/22 16:39:50  sll
   Added try-catch loop to guard against exception raised by the thread library
   when it cannot create a new thread for tcpSocketWorker.
@@ -61,6 +65,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <tcpSocket.h>
 

@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.2  1998/04/18 10:11:47  sll
+  Corrected typo (_log instead of log).
+
   Revision 1.1  1998/04/07 20:24:40  sll
   Initial revision
 
@@ -40,6 +43,10 @@
 // Macros to handle std namespace and streams header files
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #include <stdio.h>
 

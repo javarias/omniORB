@@ -30,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.9  1998/04/18 10:10:41  sll
+  Added support for Borland C++
+
   Revision 1.8  1998/04/08 16:06:38  sll
   Added support for Reliant UNIX 5.43
 
@@ -51,6 +54,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <stdlib.h>
 
 #if defined(UnixArchitecture) || defined(__VMS)

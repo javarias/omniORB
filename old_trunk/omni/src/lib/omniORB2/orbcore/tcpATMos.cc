@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3  1998/04/07 19:38:46  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.2  1997/12/12 18:45:49  sll
   Added call to print out the version of gatekeeper.
 
@@ -37,6 +40,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <tcpATMos.h>
 #include <gatekeeper.h>

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1998/04/07 19:37:39  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.4  1998/03/19 19:53:35  sll
   Bug fixed. WrTimedLock.
 
@@ -43,6 +46,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 
 Strand::Strand(Rope *r, CORBA::Boolean heapAllocated)

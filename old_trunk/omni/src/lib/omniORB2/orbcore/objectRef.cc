@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.15  1998/04/07 19:36:50  sll
+  Replace cerr with omniORB::log.
+
 // Revision 1.14  1998/01/27  15:35:55  ewc
 // Added support for type any
 //
@@ -57,6 +60,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <omniORB2/proxyFactory.h>
 #include <ropeFactory.h>
 

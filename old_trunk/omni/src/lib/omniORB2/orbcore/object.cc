@@ -29,10 +29,16 @@
  
 /*
   $Log$
+  Revision 1.13  1998/04/07 19:50:35  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.12  1998/03/25 14:20:36  sll
   Temporary work-around for egcs compiler.
 
   $Log$
+  Revision 1.13  1998/04/07 19:50:35  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.11  1998/03/19 15:22:47  sll
   Fixed so that omniObject ctor would not reject zero length key.
 
@@ -54,6 +60,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <objectManager.h>
 #include <excepthandler.h>

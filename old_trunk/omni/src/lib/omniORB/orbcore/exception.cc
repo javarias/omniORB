@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.5  1998/04/07 19:33:40  sll
+  Replace cerr with omniORB::log.
+  Use namespce when available.
+
   Revision 1.4  1997/12/09 18:06:37  sll
   Added support for system exception handlers.
 
@@ -43,6 +47,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <excepthandler.h>
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)

@@ -30,9 +30,16 @@
 
 /* 
    $Log$
+   Revision 1.1  1998/08/11 16:39:41  sll
+   Initial revision
+
 */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #if defined(__VMS) && !__IEEE_FLOAT
 

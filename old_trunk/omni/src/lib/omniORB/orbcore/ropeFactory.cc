@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.3  1998/03/04 15:21:03  ewc
+ Typo corrected - giopServerThreadWrapper
+
 // Revision 1.2  1998/03/04  14:45:04  sll
 // Added omniORB::giopServerThreadWrapper.
 //
@@ -37,6 +40,11 @@
 */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <objectManager.h>
 

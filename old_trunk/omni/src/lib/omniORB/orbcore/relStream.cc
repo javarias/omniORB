@@ -28,9 +28,17 @@
 
 /*
   $Log$
+  Revision 1.1  1997/12/09 18:43:13  sll
+  Initial revision
+
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <relStream.h>
 #include <limits.h>
 

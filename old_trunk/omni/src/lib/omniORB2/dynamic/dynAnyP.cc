@@ -29,9 +29,17 @@
 
 /*
    $Log$
+   Revision 1.1  1998/08/05 18:03:51  sll
+   Initial revision
+
 */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <tcParseEngine.h>
 #include <dynAnyP.h>
 

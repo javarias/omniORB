@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.5  1998/08/13 16:10:07  sll
+  Now can accept IOR with IIOP 1.1 profile. IIOP 1.1 specific part of
+  the profile is ignored silently.
+
   Revision 1.4  1998/04/07 19:39:24  sll
   Replace cerr with omniORB::log.
 
@@ -43,6 +47,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <tcpSocket.h>
 #include <gatekeeper.h>

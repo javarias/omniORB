@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.12  1998/04/07 19:50:22  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.11  1998/03/25 14:20:51  sll
   Temporary work-around for egcs compiler.
 
@@ -46,6 +49,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <objectManager.h>
 

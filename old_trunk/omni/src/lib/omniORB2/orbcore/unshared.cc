@@ -32,6 +32,9 @@
 
 /*
   $Log$
+  Revision 1.7  1997/09/20 17:00:34  dpg1
+  Added LifeCycle support hash table.
+
 // Revision 1.6  1997/08/26  15:29:25  sll
 // Added initFile.h include.
 //
@@ -41,6 +44,11 @@
  */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <initFile.h>
 #include "libcWrapper.h"
 #if defined(UnixArchitecture)

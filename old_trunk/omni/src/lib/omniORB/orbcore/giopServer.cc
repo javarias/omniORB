@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.12  1998/04/07 19:34:26  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.11  1998/02/25 20:37:13  sll
   Added hooks for dynamic object loader.
 
@@ -51,6 +54,11 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <ropeFactory.h>
 #include <objectManager.h>
 

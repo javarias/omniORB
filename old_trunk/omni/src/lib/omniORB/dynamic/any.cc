@@ -28,6 +28,10 @@
 
 
 /* $Log$
+ * Revision 1.5  1998/08/10 18:08:26  sll
+ * Fixed Any ctor and Any::replace() for untyped values. Now accept null
+ * pointer for the value parameter for all typecode types.
+ *
  * Revision 1.4  1998/08/05 18:03:36  sll
  * Fixed bug in Any::operator>>=(NetBufferedStream|MemBufferedStream).
  * Previously, basic data types other than any, objref and typecode would be
@@ -47,9 +51,13 @@
 //
  */
 
-#include <string.h>
-
 #include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
+#include <string.h>
 #include "tcParseEngine.h"
 
 CORBA::Any::Any() : pd_data(0)
