@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.2  2000/03/06 15:03:49  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 // Revision 1.7.2.1  2000/02/16 16:30:54  dpg1
 // #pragma ID was misspelled #pragma id. Oops.
 //
@@ -605,9 +608,11 @@ void parseLineDirective(char* s) {
       }
     }
     delete [] currentFile;
-    currentFile = file;
+    // cccp escapes \ characters, so use the normal string parser
+    currentFile = escapedStringToString(file);
+    delete [] file;
     if (mainFile)
-      AST::tree()->setFile(file);
+      AST::tree()->setFile(currentFile);
   }
   yylineno = line;
 }
