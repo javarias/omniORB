@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.23  1999/05/26 12:46:38  sll
+  *** empty log message ***
+
   Revision 1.22  1999/05/26 12:14:40  sll
   Added -Y <cpp location> flag.
 
@@ -305,7 +308,6 @@ BE_parse_args(int argc, char **argv)
 
 #endif
 
-  DRV_cpp_init();
   idl_global->set_prog_name(argv[0]);
   while ((c = getopt(argc,argv,"D:EI:U:VY:uvwh:s:lamt")) != EOF)
     {
@@ -401,5 +403,7 @@ BE_parse_args(int argc, char **argv)
       idl_global->set_compile_flags(idl_global->compile_flags() |
 				    IDL_CF_ONLY_USAGE);
     }
+  DRV_cpp_init();
+
   return;
 }
