@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.12  1997/12/09 19:54:19  sll
+  *** empty log message ***
+
 // Revision 1.11  1997/09/20  16:35:25  dpg1
 // New code generation for LifeCycle support.
 //
@@ -377,6 +380,52 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
+  IND(s); s << "catch (const CORBA::OBJECT_NOT_EXIST& ex) {\n";
+  INC_INDENT_LEVEL();
+  {
+    o2be_operation::argMapping mapping;
+    o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
+	
+    if (mapping.is_arrayslice)
+      {
+	IND(s); s << "if (_0RL_result) delete [] _0RL_result;\n";
+      }
+    else if (mapping.is_reference && mapping.is_pointer)
+      {
+	IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+      }
+    else if (ntype == o2be_operation::tObjref)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::release(_0RL_result);\n";
+      }
+    else if (ntype == o2be_operation::tString)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
+      }
+  }
+
+  IND(s); s << "if (_0RL_fwd) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "resetRopeAndKey();\n";
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
   IND(s); s << "catch (const CORBA::SystemException& ex) {\n";
   INC_INDENT_LEVEL();
   {
@@ -650,6 +699,29 @@ o2be_attribute::produce_proxy_wr_skel(fstream &s,o2be_interface &defined_in)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
+  IND(s); s << "catch (const CORBA::OBJECT_NOT_EXIST& ex) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (_0RL_fwd) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "resetRopeAndKey();\n";
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
   IND(s); s << "catch (const CORBA::SystemException& ex) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
@@ -898,9 +970,12 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
   IND(s); produce_decl_rd(s,defined_in.lcproxy_fqname(),I_FALSE,I_TRUE);
   s << " {\n";
   INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
+  s << "_0RL_again:\n";
   IND(s); s << "assertObjectExistent();\n";
   IND(s); s << "omniRopeAndKey _0RL_r;\n";
-  IND(s); s << "getRopeAndKey(_0RL_r);\n";
+  IND(s); s << "CORBA::Boolean _0RL_fwd = getRopeAndKey(_0RL_r);\n";
+  IND(s); s << "CORBA::Boolean _0RL_reuse = 0;\n";
 
   {
     o2be_operation::argMapping mapping;
@@ -929,6 +1004,7 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
   INC_INDENT_LEVEL();
 
   IND(s); s << "GIOP_C _0RL_c(_0RL_r.rope());\n";
+  IND(s); s << "_0RL_reuse = _0RL_c.isReUsingExistingConnection();\n";
 
   // calculate request message size
   IND(s); s << "CORBA::ULong _0RL_msgsize = GIOP_C::RequestHeaderSize(_0RL_r.keysize(),"
@@ -1062,15 +1138,80 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
 	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
       }
   }
+
+  IND(s); s << "if (_0RL_reuse) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+
   IND(s); s << defined_in.wrapproxy_uqname()
 	    << " *_0RL_w = _get_wrap_" << defined_in._fqname() << "();\n";
   IND(s); s << "if (_0RL_w->_forwarded()) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_0RL_w->_reset_proxy();\n";
-  IND(s); s << "throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);\n";
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2)) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return _0RL_w->" << uqname() << "();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
+  IND(s); s << "else\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callCommFailureExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
   IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  DEC_INDENT_LEVEL();
+
+
+  IND(s); s << "}\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  IND(s); s << "catch (const CORBA::TRANSIENT& ex) {\n";
+  INC_INDENT_LEVEL();
+  {
+    o2be_operation::argMapping mapping;
+    o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
+	
+    if (mapping.is_arrayslice)
+      {
+	IND(s); s << "if (_0RL_result) delete [] _0RL_result;\n";
+      }
+    else if (mapping.is_reference && mapping.is_pointer)
+      {
+	IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+      }
+    else if (ntype == o2be_operation::tObjref)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::release(_0RL_result);\n";
+      }
+    else if (ntype == o2be_operation::tString)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
+      }
+  }
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
@@ -1102,10 +1243,59 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
   IND(s); s << "if (_0RL_w->_forwarded()) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_0RL_w->_reset_proxy();\n";
-  IND(s); s << "throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);\n";
+
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2)) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return _0RL_w->" << uqname() << "();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
+  IND(s); s << "else\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
   IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  IND(s); s << "catch (const CORBA::SystemException& ex) {\n";
+  INC_INDENT_LEVEL();
+  {
+    o2be_operation::argMapping mapping;
+    o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
+	
+    if (mapping.is_arrayslice)
+      {
+	IND(s); s << "if (_0RL_result) delete [] _0RL_result;\n";
+      }
+    else if (mapping.is_reference && mapping.is_pointer)
+      {
+	IND(s); s << "if (_0RL_result) delete _0RL_result;\n";
+      }
+    else if (ntype == o2be_operation::tObjref)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::release(_0RL_result);\n";
+      }
+    else if (ntype == o2be_operation::tString)
+      {
+	IND(s); s << "if (_0RL_result) CORBA::string_free(_0RL_result);\n";
+      }
+  }
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
@@ -1138,6 +1328,9 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
     IND(s); s << "}\n";
   }
 
+  IND(s); s << "goto _0RL_again;\n";
+
+  s << "#ifdef NEED_DUMMY_RETURN\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   IND(s); s << "// never reach here! Dummy return to keep some compilers happy.\n";
@@ -1198,6 +1391,7 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
   IND(s); s << "return _0RL_result;\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
+  s << "#endif\n";
 
   DEC_INDENT_LEVEL();
   IND(s);s << "}\n";
@@ -1212,13 +1406,17 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
   IND(s); produce_decl_wr(s,defined_in.lcproxy_fqname(),I_FALSE,I_TRUE);
   s << " {\n";
   INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
+  s << "_0RL_again:\n";
   IND(s); s << "assertObjectExistent();\n";
   IND(s); s << "omniRopeAndKey _0RL_r;\n";
-  IND(s); s << "getRopeAndKey(_0RL_r);\n";
+  IND(s); s << "CORBA::Boolean _0RL_fwd = getRopeAndKey(_0RL_r);\n";
+  IND(s); s << "CORBA::Boolean _0RL_reuse = 0;\n";
   IND(s); s << "try {\n";
   INC_INDENT_LEVEL();
 
   IND(s); s << "GIOP_C _0RL_c(_0RL_r.rope());\n";
+  IND(s); s << "_0RL_reuse = _0RL_c.isReUsingExistingConnection();\n";
   
   // calculate request message size
   IND(s); s << "CORBA::ULong _0RL_msgsize = GIOP_C::RequestHeaderSize(_0RL_r.keysize(),"
@@ -1279,15 +1477,22 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
   INC_INDENT_LEVEL();
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "Rope *_0RL_rope;\n";
-  IND(s); s << "CORBA::Octet *_0RL_key;\n";
-  IND(s); s << "size_t _0RL_ksize;\n";
-  IND(s); s << "IOP::TaggedProfileList *_0RL_profiles;\n";
-  IND(s); s << "omni::PartUnMarshalObjRef(_0RL_c,_0RL_rope,_0RL_key,_0RL_ksize,_0RL_profiles);\n";
+  IND(s); s << "CORBA::Object_var obj = CORBA::Object::unmarshalObjRef(_0RL_c);\n";
+  IND(s); s << "_0RL_c.RequestCompleted();\n";
+  IND(s); s << "if (CORBA::is_nil(obj)) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (omniORB::traceLevel > 10) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "cerr << \"Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\" << endl;\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
   IND(s); s << "_0RL_c.~GIOP_C();\n";
-  IND(s); s << defined_in.wrapproxy_uqname() << " *_0RL_w = _get_wrap_"
+  IND(s); s << defined_in.wrapproxy_fqname() << " *_0RL_w = _get_wrap_"
 	    << defined_in._fqname() << "();\n";
-  IND(s); s << "_0RL_w->_forward_to(_0RL_rope, _0RL_key, _0RL_ksize, _0RL_profiles);\n";
+  IND(s); s << "_0RL_w->_forward_to(obj);\n";
   IND(s); s << "if (omniORB::traceLevel > 10) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "cerr << \"GIOP::LOCATION_FORWARD: retry request.\" << endl;\n";
@@ -1305,15 +1510,58 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
   IND(s); s << "}\n";
   IND(s); s << "catch (const CORBA::COMM_FAILURE& ex) {\n";
   INC_INDENT_LEVEL();
+  IND(s); s << "if (_0RL_reuse) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+
   IND(s); s << defined_in.wrapproxy_uqname()
 	    << " *_0RL_w = _get_wrap_" << defined_in._fqname() << "();\n";
   IND(s); s << "if (_0RL_w->_forwarded()) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_0RL_w->_reset_proxy();\n";
-  IND(s); s << "throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);\n";
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2)) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "_0RL_w->" << uqname() << "(_value);\n";
+  IND(s); s << "return;\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
+  IND(s); s << "else\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callCommFailureExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
   IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  IND(s); s << "catch (const CORBA::TRANSIENT& ex) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callTransientExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
@@ -1324,13 +1572,42 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
   IND(s); s << "if (_0RL_w->_forwarded()) {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "_0RL_w->_reset_proxy();\n";
-  IND(s); s << "throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);\n";
+  IND(s); s << "CORBA::TRANSIENT _0RL_ex2(ex.minor(),ex.completed());\n";
+  IND(s); s << "if (_omni_callTransientExceptionHandler(this,_0RL_retries++,_0RL_ex2)) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "_0RL_w->" << uqname() << "(_value);\n";
+  IND(s); s << "return;\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
+  IND(s); s << "else\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw _0RL_ex2;\n";
+  DEC_INDENT_LEVEL();
+
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+  IND(s); s << "else {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
   IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
 
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  IND(s); s << "catch (const CORBA::SystemException& ex) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "if (!_omni_callSystemExceptionHandler(this,_0RL_retries++,ex))\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "throw;\n";
+  DEC_INDENT_LEVEL();
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+
+  IND(s); s << "goto _0RL_again;\n";
   DEC_INDENT_LEVEL();
   IND(s);s << "}\n";
   return;

@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.14  1997/12/09 19:54:07  sll
+  *** empty log message ***
+
 // Revision 1.13  1997/09/20  16:44:22  dpg1
 // Added new is_cxx_type argument to _widenFromTheMostDerivedIntf().
 // Added LifeCycle code generation.
@@ -796,7 +799,7 @@ o2be_interface::produce_hdr(fstream &s)
 	  s << " public virtual " << intf->unambiguous_lcserver_name(this) << ",";
 	}
       if (ni==0)
-	s << " public virtual _lc_sk,";
+	s << " public virtual omniLC::_lc_sk,";
     }
     s << " public virtual " << uqname() << " {\n";
     IND(s); s << "public:\n\n";
@@ -972,7 +975,7 @@ o2be_interface::produce_hdr(fstream &s)
 	}
       else
 	{
-	  s << " public virtual _wrap_home, ";
+	  s << " public virtual omniLC::_wrap_home, ";
 	}
     }
     s << "public virtual " << uqname() << " {\n";
@@ -1162,7 +1165,7 @@ o2be_interface::produce_hdr(fstream &s)
 	  }
       }
       else
-	s << " public virtual _wrap_proxy,";
+	s << " public virtual omniLC::_wrap_proxy,";
     }
     s << " public virtual " << uqname() << " {\n";
 
@@ -1250,7 +1253,7 @@ o2be_interface::produce_hdr(fstream &s)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   if (idl_global->compile_flags() & IDL_CF_LIFECYCLE) {
-    IND(s); s << "static void mayMoveLocal(CORBA::Boolean l) { _may_move_local = 1; }\n";
+    IND(s); s << "static void mayMoveLocal(CORBA::Boolean l) { _may_move_local = l; }\n";
   }
   DEC_INDENT_LEVEL();
   IND(s); s << "private:\n";
@@ -1953,7 +1956,7 @@ o2be_interface::produce_skel(fstream &s)
     IND(s); s << home_fqname() << " *wrap = new "
 	      << home_fqname() << "(this);\n";
     IND(s); s << "wrap->_obj_is_ready(CORBA::BOA::getBOA());\n";
-    IND(s); s << "LifeCycleInfo_i *li = new LifeCycleInfo_i(wrap, wrap);\n";
+    IND(s); s << "omniLC::LifeCycleInfo_i *li = new omniLC::LifeCycleInfo_i(wrap, wrap);\n";
     IND(s); s << "li->_obj_is_ready(li->_boa());\n";
     IND(s); s << "_set_home(wrap);\n";
     IND(s); s << "_set_linfo(li);\n";
@@ -1992,7 +1995,7 @@ o2be_interface::produce_skel(fstream &s)
     INC_INDENT_LEVEL();
     IND(s); s << "if (_home_" << _fqname() << "->is_proxy())\n";
     INC_INDENT_LEVEL();
-    IND(s); s << "_wrap_proxy::_reset_wraps(this);\n";
+    IND(s); s << "omniLC::_wrap_proxy::_reset_wraps(this);\n";
     DEC_INDENT_LEVEL();
     IND(s); s << "_get_linfo()->reportMove(to);\n";
     DEC_INDENT_LEVEL();
@@ -2005,7 +2008,7 @@ o2be_interface::produce_skel(fstream &s)
     INC_INDENT_LEVEL();
     IND(s); s << "if (_home_" << _fqname() << "->is_proxy())\n";
     INC_INDENT_LEVEL();
-    IND(s); s << "_wrap_proxy::_reset_wraps(this);\n";
+    IND(s); s << "omniLC::_wrap_proxy::_reset_wraps(this);\n";
     DEC_INDENT_LEVEL();
     IND(s); s << "_get_linfo()->reportRemove();\n";
     DEC_INDENT_LEVEL();
@@ -2122,7 +2125,7 @@ o2be_interface::produce_skel(fstream &s)
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n";
 
-    IND(s); s << "reDirect *rd = new reDirect("
+    IND(s); s << "omniLC::reDirect *rd = new omniLC::reDirect("
 	      << fqname() << "::_duplicate(p));\n";
     IND(s); s << "rd->_obj_is_ready(CORBA::BOA::getBOA());\n\n";
 
@@ -2380,6 +2383,19 @@ o2be_interface::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
 	      << " " << SERVER_CLASS_PREFIX << tdef->uqname() << ";\n";
     IND(s); s << "typedef " << unambiguous_nil_name(tdef)
 	      << " " << NIL_CLASS_PREFIX << tdef->uqname() << ";\n";
+
+    if (idl_global->compile_flags() & IDL_CF_LIFECYCLE) {
+      IND(s); s << "typedef " << unambiguous_home_name(tdef)
+		<< " " << HOME_CLASS_PREFIX << tdef->uqname() << ";\n";
+      IND(s); s << "typedef " << unambiguous_dead_name(tdef)
+		<< " " << DEAD_CLASS_PREFIX << tdef->uqname() << ";\n";
+      IND(s); s << "typedef " << unambiguous_wrapproxy_name(tdef)
+		<< " " << WRAPPROXY_CLASS_PREFIX << tdef->uqname() << ";\n";
+      IND(s); s << "typedef " << unambiguous_lcserver_name(tdef)
+		<< " " << LCSERVER_CLASS_PREFIX << tdef->uqname() << ";\n";
+      IND(s); s << "typedef " << unambiguous_lcproxy_name(tdef)
+		<< " " << LCPROXY_CLASS_PREFIX << tdef->uqname() << ";\n";
+    }
     s << "#define " << tdef->_fqname() << IRREPOID_POSTFIX << " " << IRrepoId()
       << ";\n";
   }
