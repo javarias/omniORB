@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  1999/11/17 17:17:00  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.6  1999/11/04 17:16:55  dpg1
 // Changes for NT.
 //
@@ -844,7 +847,11 @@ boolean_literal:
     ;
 
 positive_int_const:
-    const_exp { $$ = $1->evalAsULong(); }
+    const_exp {
+      $$ = $1->evalAsULong();
+      if ($$ < 1)
+	IdlError(currentFile, yylineno, "Size must be at least 1");
+    }
     ;
 
 type_dcl:
