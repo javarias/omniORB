@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  2000/01/13 15:56:39  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.4  2000/01/07 20:31:29  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -98,6 +102,15 @@ extern CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp);""
 def visitUnion(node):
     if not(node.mainFile()):
         return
+
+    # deal with constructed switch type
+    if node.constrType():
+        node.switchType().decl().accept(self)
+
+    # deal with constructed member types
+    for n in node.cases():
+        if n.constrType():
+            n.caseType().decl().accept(self)
     
     # TypeCode and Any
     if config.TypecodeFlag():
@@ -187,13 +200,17 @@ def visitTypedef(node):
     if not(node.mainFile()):
         return
     
+    aliasType = node.aliasType()
+    deref_aliasType = tyutil.deref(aliasType)
+    type_dims = tyutil.typeDims(aliasType)
+
+    if node.constrType():
+        aliasType.decl().accept(self)
+
     # don't need to do anything unless generating TypeCodes and Any
     if not(config.TypecodeFlag()):
         return
     
-    aliasType = node.aliasType()
-    deref_aliasType = tyutil.deref(aliasType)
-    type_dims = tyutil.typeDims(aliasType)
 
     env = name.Environment()
     for d in node.declarators():
