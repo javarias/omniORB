@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9  2000/05/11 11:58:25  dpg1
+// Throw system exceptions with OMNIORB_THROW.
+//
 // Revision 1.8  2000/03/31 17:25:59  dpg1
 // Refcounting bug in _get_the_children().
 //
@@ -989,12 +992,24 @@ extern "C" {
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyservant);
 
     RAISE_PY_BAD_PARAM_IF(!pyos);
-    PyObject* result = pyos->py_this();
-    {
-      omniPy::InterpreterUnlocker _u;
-      pyos->_remove_ref();
+
+    try {
+      PyObject* result = pyos->py_this();
+      {
+	omniPy::InterpreterUnlocker _u;
+	pyos->_remove_ref();
+      }
+      return result;
     }
-    return result;
+    catch (PortableServer::POA::WrongPolicy& ex) {
+      PyObject* pyPOA = PyObject_GetAttrString(omniPy::pyPortableServerModule,
+					       "POA");
+      OMNIORB_ASSERT(pyPOA);
+      raisePOAException(pyPOA, "WrongPolicy");
+      Py_DECREF(pyPOA);
+      return 0;
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
 
