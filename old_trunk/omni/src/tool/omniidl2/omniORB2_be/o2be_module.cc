@@ -10,6 +10,9 @@
 
 /* 
    $Log$
+// Revision 1.2  1997/01/13  15:31:29  sll
+// Added interface forward declaration as a valid node type.
+//
    Revision 1.1  1997/01/08 17:32:59  sll
    Initial revision
 
@@ -29,8 +32,8 @@ o2be_module::produce_hdr(fstream &s)
 
   if (defined_in() != 0)
     {
-      IND(s); s << "class " << uqname() << " {\n";
-      IND(s); s << "public:\n\n";
+      IND(s); s << "_CORBA_MODULE " << uqname() << " {\n";
+      IND(s); s << "_CORBA_MODULE_PUBLIC\n\n";
       INC_INDENT_LEVEL();
     }
 
@@ -70,15 +73,10 @@ o2be_module::produce_hdr(fstream &s)
 	  case AST_Decl::NT_enum:
 	    o2be_enum::narrow_from_decl(decl)->produce_hdr(s);
 	    break;
-#if 1
 	  case AST_Decl::NT_enum_val:
 	    break;
 	  default:
 	    throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised node type");
-#else
-	  default:
-	    break;
-#endif
 	  }
 	}
       i.next();
@@ -135,15 +133,10 @@ o2be_module::produce_skel(fstream &s)
 	  case AST_Decl::NT_enum:
 	    o2be_enum::narrow_from_decl(decl)->produce_skel(s);
 	    break;
-#if 1
 	  case AST_Decl::NT_enum_val:
 	    break;
 	  default:
 	    throw o2be_internal_error(__FILE__,__LINE__,"Unrecognised node type");
-#else
-	  default:
-	    break;
-#endif
 	  }
 	}
       i.next();
