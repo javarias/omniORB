@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/11/17 20:37:09  djs
+# General util functions
+#
 # Revision 1.8  1999/11/15 19:10:55  djs
 # Added module for utility functions specific to generating skeletons
 # Union skeletons working
@@ -126,7 +129,7 @@ from omniidl import idlutil, idltype, idlast
 
 from omniidl.be.cxx import util
 
-import re
+import string, re
 
 import tyutil
 self = tyutil
@@ -216,7 +219,7 @@ def principalID(type, from_scope=[]):
     # escape all components of the name
     scopedName = map(mapID, scopedName)
 
-    return util.delimitedlist(scopedName, "::")
+    return string.join(scopedName, "::")
 
 # ------------------------------------------------------------------
 
@@ -520,7 +523,7 @@ def templateToString(template):
 
     # -----------------------------------
     # build the template instance
-    args_string = util.delimitedlist(args)
+    args_string = string.join(args, ", ")
 #    print "[[[ args = " + repr(args_string) + "]]]"
     if (args_string != ""):
         return name + "<" + args_string + ">"
@@ -941,6 +944,11 @@ def isUnion(type, force_deref = 0):
     if force_deref:
         type = deref(type)
     return type.kind() == idltype.tk_union
+
+def isVoid(type, force_deref = 0):
+    if force_deref:
+        type = deref(type)
+    return type.kind() == idltype.tk_void
 
 # ------------------------------------------------------------------
 
