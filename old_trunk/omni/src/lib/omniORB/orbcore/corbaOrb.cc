@@ -29,6 +29,9 @@
 
 /*
   $Log$
+// Revision 1.9  1998/01/27  15:32:14  ewc
+// Added -ORBtcAliasExpand flag
+//
   Revision 1.8  1997/12/12 18:42:24  sll
   New command line option to set omniORB::serverName.
 
@@ -364,8 +367,16 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
       return 0;
     }
 
-  // XXX Should we trim this to a leafname?
-  omniORB::serverName = (const char *)(argv[0]);
+  if (argc > 0) {
+    // Using argv[0] as the serverName implicitly assumes that the
+    // argv array follows the unix tradition of passing the command name
+    // as the first argument. This may not be the case on other platforms
+    // and the application may choose to create its own argv array instead
+    // of passing the command line arguments to ORB_init in verbatim form.
+    // 
+    // XXX Should we trim this to a leafname?
+    omniORB::serverName = (const char *)(argv[0]);
+  }
 
   int idx = 1;
   while (argc > idx) 
