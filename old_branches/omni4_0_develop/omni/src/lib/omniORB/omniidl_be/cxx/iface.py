@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.10  2001/11/08 16:33:51  dpg1
+# Local servant POA shortcut policy.
+#
 # Revision 1.1.4.9  2001/11/07 15:45:53  dpg1
 # Faster _ptrToInterface/_ptrToObjRef in common cases.
 #
@@ -202,7 +205,18 @@ class _objref_Method(cxx.Method):
       direction = types.direction(p)
       param_types.append(pType.op(direction, environment,
                                   use_out = use_out))
-      param_names.append(id.mapID(p.identifier()))
+
+      # Special ugly case. If the IDL says something like (in foo::bar
+      # bar), the parameter name may be the same as the relative type
+      # name. We mangly the parameter name if this happens.
+
+      typeBase = pType.base(environment)
+      ident    = id.mapID(p.identifier())
+
+      if typeBase == ident:
+        ident = "_" + ident
+
+      param_names.append(ident)
       
     # an operation has optional context
     if self.callable().contexts() != []:
@@ -386,10 +400,8 @@ class _objref_I(Class):
       # produce member function for this operation/attribute.
       body = output.StringStream()
 
-      argnames = []
-      for parameter in callable.parameters():
-        argnames.append(id.mapID(parameter.identifier()))
-        
+      argnames = method.arg_names()
+
       if config.state['Shortcut']:
         if method.return_type().kind() != idltype.tk_void:
           callreturn = "return "
