@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.25.2.2  2000/09/21 11:05:49  dpg1
+// Fix race condition with Py_omniServant deletion.
+//
 // Revision 1.25.2.1  2000/09/06 11:20:49  dpg1
 // Support for Python 1.6 and 2.0b1.
 //
@@ -275,7 +278,9 @@ public:
   // Object reference functions                                             //
   ////////////////////////////////////////////////////////////////////////////
 
-  // Create the Python object relating to a CORBA object reference:
+  // Create the Python object relating to a CORBA object reference
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* createPyCorbaObjRef(const char* targetRepoId,
 				const CORBA::Object_ptr objref);
@@ -286,6 +291,8 @@ public:
 
   // Functions which mirror omni::createObjRef(). These versions don't
   // look for C++ proxy factories, and spot local Python servants.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   omniObjRef* createObjRef(const char*             mostDerivedRepoId,
 			   const char*             targetRepoId,
@@ -308,6 +315,8 @@ public:
   // omniAnonObjRef. This function converts one of them into a
   // Py_omniObjRef with a reference to the local servant. It
   // decrements the refcount of the original objref.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   CORBA::Object_ptr makeLocalObjRef(const char* targetRepoId,
 				    CORBA::Object_ptr objref);
@@ -317,16 +326,20 @@ public:
   // a new objref of the target type if they are not compatible. Sets
   // Python exception status to BAD_PARAM and returns 0 if the Python
   // object is not an object reference.
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* copyObjRefArgument(PyObject*               pytargetRepoId,
 			       PyObject*               pyobjref,
 			       CORBA::CompletionStatus compstatus);
 
-  // Mirror of omniURI::stringToObject()
+  // Mirror of omniURI::stringToObject(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr stringToObject(const char* uri);
 
-  // Mirrors of CORBA::UnMarshalObjRef()
+  // Mirrors of CORBA::UnMarshalObjRef(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr UnMarshalObjRef(const char* repoId, NetBufferedStream& s);
 
