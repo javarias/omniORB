@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.6  2000/11/09 12:27:57  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.2.2.5  2000/11/03 19:14:03  sll
   Use _CORBA_Unbounded_Sequence_Octet instead of _CORBA_Unbounded_Sequence__Octet
 
@@ -113,11 +116,11 @@
 #include <localIdentity.h>
 #include <remoteIdentity.h>
 #include <objectAdapter.h>
-#include <ropeFactory.h>
 #include <anonObject.h>
 #include <initialiser.h>
 #include <exceptiondefs.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 #if defined(HAS_Cplusplus_Namespace)
 using omniORB::operator==;
@@ -135,6 +138,8 @@ int                              omni::localInvocationCount = 0;
 
 omni_tracedmutex*                omni::objref_rc_lock = 0;
 // Protects omniObjRef reference counting.
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 // The local object table.  This is a dynamically resized
 // open hash table.
@@ -304,6 +309,8 @@ omniInternal::resizeObjectTable()
   minNumObjects =
     objectTableSizeI ? (objTblSizes[objectTableSizeI - 1] / 3) : 0;
 }
+
+OMNI_NAMESPACE_END(omni)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////// omni ////////////////////////////////
@@ -585,15 +592,15 @@ omni::createObjRef(const char* targetRepoId,
   Rope*          rope = 0;
   CORBA::Boolean is_local = 0;
 
-  if( !ropeFactory::iorToRope(ior, rope, is_local) ) {
+  if( !ior->selectRope(rope, is_local) ) {
     ior->release();
     return 0;
   }
 
   if( is_local ) {
 
-    CORBA::Octet* key = ior->iiop.object_key.get_buffer();
-    int  keysize = ior->iiop.object_key.length();
+    const CORBA::Octet* key = ior->getIIOPprofile().object_key.get_buffer();
+    int  keysize = ior->getIIOPprofile().object_key.length();
 
     CORBA::ULong hashv = hash(key,keysize);
 
@@ -607,7 +614,7 @@ omni::createObjRef(const char* targetRepoId,
     return createObjRef(targetRepoId, local_id, ior);
   }
 
-  proxyObjectFactory* pof = proxyObjectFactory::lookup(ior->repositoryID);
+  proxyObjectFactory* pof = proxyObjectFactory::lookup(ior->repositoryID());
 
   if( pof && !pof->is_a(targetRepoId) &&
       strcmp(targetRepoId, CORBA::Object::_PD_repoId) ) {
@@ -653,7 +660,7 @@ omni::createObjRef(const char* targetRepoId,
     omniORB::logger l;
     l << "Creating ref to remote: " << id << "\n"
       " target id      : " << targetRepoId << "\n"
-      " most derived id: " << (const char*)ior->repositoryID << "\n";
+      " most derived id: " << (const char*)ior->repositoryID() << "\n";
   }
 
   // Now create the object reference itself.
@@ -697,7 +704,7 @@ omni::createObjRef(const char* targetRepoId,
 
     while( objref ) {
 
-      if( !strcmp(ior->repositoryID, objref->_mostDerivedRepoId()) &&
+      if( !strcmp(ior->repositoryID(), objref->_mostDerivedRepoId()) &&
 	  objref->_ptrToObjRef(targetRepoId) ) {
 
 	omniORB::logs(15, "createObjRef -- reusing reference from local"
@@ -727,7 +734,7 @@ omni::createObjRef(const char* targetRepoId,
     }
   }
 
-  proxyObjectFactory* pof = proxyObjectFactory::lookup(ior->repositoryID);
+  proxyObjectFactory* pof = proxyObjectFactory::lookup(ior->repositoryID());
 
   if( pof && !pof->is_a(targetRepoId) &&
       strcmp(targetRepoId, CORBA::Object::_PD_repoId) ) {
@@ -736,7 +743,7 @@ omni::createObjRef(const char* targetRepoId,
       omniORB::logger l;
       l << "Cannot create ref to: " << local_id << "\n"
 	" as " << targetRepoId << " is not a base for "
-	<< (const char*)ior->repositoryID << ".\n";
+	<< (const char*)ior->repositoryID() << ".\n";
     }
 
     ior->release();
@@ -761,7 +768,7 @@ omni::createObjRef(const char* targetRepoId,
     omniORB::logger l;
     l << "Creating ref to local: " << local_id << "\n"
       " target id      : " << targetRepoId << "\n"
-      " most derived id: " << (const char*) ior->repositoryID << "\n";
+      " most derived id: " << (const char*) ior->repositoryID() << "\n";
   }
 
   if( servant && !servant->_ptrToInterface(targetRepoId) )
@@ -819,7 +826,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
 
   omniIOR_var ior = objref->_getIOR();
 
-  if( !ropeFactory::iorToRope(ior, rope, is_local) ) {
+  if ( !ior->selectRope(rope, is_local) ) {
     OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
   }
 
@@ -843,15 +850,16 @@ omni::revertToOriginalProfile(omniObjRef* objref)
 
   if( is_local ) {
 
-    CORBA::Octet* key = ior->iiop.object_key.get_buffer();
-    int  keysize = ior->iiop.object_key.length();
+    const CORBA::Octet* key = ior->getIIOPprofile().object_key.get_buffer();
+    int  keysize = ior->getIIOPprofile().object_key.length();
 
     CORBA::ULong hashv = hash(key, keysize);
     local_id = locateIdentity(key, keysize, hashv, 1);
 
     omniServant* servant = local_id->servant();
+    // XXX could servant be nil??
 
-    if (objref->_compatibleServant(servant)) {
+    if (servant && objref->_compatibleServant(servant)) {
       omniInternal::replaceImplementation(objref, local_id, local_id);
       return;
     }
@@ -997,6 +1005,8 @@ omni::ucheckFail(const char* file, int line, const char* expr)
 //            Module initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 class omni_omniInternal_initialiser : public omniInitialiser {
 public:
 
@@ -1031,6 +1041,7 @@ static omni_omniInternal_initialiser initialiser;
 
 omniInitialiser& omni_omniInternal_initialiser_ = initialiser;
 
+OMNI_NAMESPACE_END(omni)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

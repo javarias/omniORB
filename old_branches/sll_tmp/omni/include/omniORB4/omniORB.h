@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2000/11/20 11:59:43  dpg1
+  API to configure code sets.
+
   Revision 1.2.2.3  2000/11/03 18:58:47  sll
   Unbounded sequence of octet got a new type name.
 
@@ -140,7 +143,9 @@ struct omniOrbBoaKey {
   _CORBA_ULong lo;
 };
 
+OMNI_NAMESPACE_BEGIN(omni)
 class omniInterceptors;
+OMNI_NAMESPACE_END(omni)
 
 _CORBA_MODULE omniORB
 
@@ -762,7 +767,7 @@ _CORBA_MODULE_BEG
   //   interception functions can be added.                             //
   //   Calling this function before ORB_init() will result in a system  //
   //   exception.
-  _CORBA_MODULE_FN omniInterceptors* getInterceptors();
+  _CORBA_MODULE_FN _OMNI_NS(omniInterceptors)* getInterceptors();
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////

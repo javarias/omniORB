@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.7  2000/12/05 17:39:31  dpg1
+  New cdrStream functions to marshal and unmarshal raw strings.
+
   Revision 1.10.2.6  2000/11/20 14:42:23  sll
   Do not insert codeset component if the IOR is GIOP 1.0.
 
@@ -101,6 +104,8 @@
 #include <exceptiondefs.h>
 #include <initialiser.h>
 #include <stdio.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 void
 IOP::TaggedProfile::operator>>= (cdrStream &s) const {
@@ -351,7 +356,7 @@ omniIOR::unmarshal_TAG_ORB_TYPE(const IOP::TaggedComponent& c , omniIOR* ior)
   OMNIORB_ASSERT(c.tag == IOP::TAG_ORB_TYPE);
   cdrEncapsulationStream e(c.component_data.get_buffer(),
 			   c.component_data.length(),1);
-  ior->orb_type <<= e;
+  ior->pd_orb_type <<= e;
 }
 
 
@@ -378,6 +383,8 @@ omniIOR::dump_TAG_ORB_TYPE(const IOP::TaggedComponent& c)
   }
   return outstr._retn();
 }
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 //////////////////////////////////////////////////////////////////////////
 // For the TAGs that the ORB will look at, add a handler to the following
@@ -425,6 +432,8 @@ static struct {
 };
 
 static int tablesize = 0;
+
+OMNI_NAMESPACE_END(omni)
 
 char*
 IOP::dumpComponent(const IOP::TaggedComponent& c) {
@@ -501,7 +510,12 @@ IOP::dumpComponent(const IOP::TaggedComponent& c) {
 /////////////////////////////////////////////////////////////////////////////
 //            Default interceptors                                         //
 /////////////////////////////////////////////////////////////////////////////
+OMNI_NAMESPACE_BEGIN(omni)
+
 static _CORBA_Unbounded_Sequence_Octet my_orb_type;
+
+OMNI_NAMESPACE_END(omni)
+
 
 void
 omniIOR::add_TAG_ORB_TYPE(IOP::TaggedComponent& component, const omniIOR*)
@@ -513,18 +527,23 @@ omniIOR::add_TAG_ORB_TYPE(IOP::TaggedComponent& component, const omniIOR*)
   component.component_data.replace(max,len,my_orb_type.get_buffer(),0);
 }
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 static
 void insertSupportedComponents(omniIOR* ior)
 {
-  CORBA::ULong index = ior->iiop.components.length();
-  ior->iiop.components.length(index+2);
+  {
+    // Insert ORB TYPE
+    IOP::TaggedComponent& c = ior->newIIOPtaggedComponent();
+    omniIOR::add_TAG_ORB_TYPE(c,ior);
+  }
 
-  // Insert ORB TYPE
-  omniIOR::add_TAG_ORB_TYPE(ior->iiop.components[index],ior);
-
-  if (ior->iiop.version.major > 1 || ior->iiop.version.minor != 0)
+  if (ior->getIIOPprofile().version.major > 1 || 
+      ior->getIIOPprofile().version.minor != 0) {
     // Insert CODE SET
-    omniIOR::add_TAG_CODE_SETS(ior->iiop.components[index+1],ior);
+    IOP::TaggedComponent& c = ior->newIIOPtaggedComponent();
+    omniIOR::add_TAG_CODE_SETS(c,ior);
+  }
 }
 
 static
@@ -534,7 +553,9 @@ void extractSupportedComponents(omniIOR* ior)
     while (componentUnmarshalHandlers[tablesize].id != 0xffffffff) tablesize++;
   }
 
-  CORBA::ULong total = ior->iiop.components.length();
+  const IIOP::ProfileBody& iiop = ior->getIIOPprofile();
+
+  CORBA::ULong total = iiop.components.length();
   for (CORBA::ULong index = 0; index < total; index++) {
 
     int top = tablesize;
@@ -543,13 +564,13 @@ void extractSupportedComponents(omniIOR* ior)
     do {
       int i = (top + bottom) >> 1;
       IOP::ComponentId id = componentUnmarshalHandlers[i].id;
-      if (id == ior->iiop.components[index].tag) {
+      if (id == iiop.components[index].tag) {
 	if (componentUnmarshalHandlers[i].fn) {
-	  componentUnmarshalHandlers[i].fn(ior->iiop.components[index],ior);
+	  componentUnmarshalHandlers[i].fn(iiop.components[index],ior);
 	}
 	break;
       }
-      else if (id > ior->iiop.components[index].tag) {
+      else if (id > iiop.components[index].tag) {
 	top = i;
       }
       else {
@@ -558,8 +579,6 @@ void extractSupportedComponents(omniIOR* ior)
     } while (top != bottom);
   }
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -592,3 +611,5 @@ public:
 static omni_ior_initialiser initialiser;
 
 omniInitialiser& omni_ior_initialiser_ = initialiser;
+
+OMNI_NAMESPACE_END(omni)

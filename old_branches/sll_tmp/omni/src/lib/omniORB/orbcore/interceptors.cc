@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/15 17:23:52  sll
+  Added interceptors along the giop request processing path.
+
   Revision 1.1.2.1  2000/09/27 17:30:30  sll
   *** empty log message ***
 
@@ -38,6 +41,8 @@
 #include <omniORB4/omniInterceptors.h>
 #include <exceptiondefs.h>
 #include <initialiser.h>
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 omniInterceptors::omniInterceptors() {}
 omniInterceptors::~omniInterceptors() {}
@@ -164,6 +169,9 @@ static omni_interceptor_initialiser initialiser;
 
 omniInitialiser& omni_interceptor_initialiser_ = initialiser;
 
+OMNI_NAMESPACE_END(omni)
+
+OMNI_USING_NAMESPACE(omni)
 /////////////////////////////////////////////////////////////////////////////
 omniInterceptors*
 omniORB::getInterceptors() {

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.3  2000/11/09 12:27:56  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.16.2.2  2000/09/27 17:53:27  sll
   Updated to identify the ORB as omniORB4.
 
@@ -97,6 +100,8 @@
 #include <exceptiondefs.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 static const char* boa_ids[] = { "omniORB4_BOA",
 				 "omniORB3_BOA", 
@@ -607,7 +612,7 @@ omniOrbBOA::decrRefCount()
 
 
 void
-omniOrbBOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
+omniOrbBOA::dispatch(IOP_S& giop_s, omniLocalIdentity* id)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);  OMNIORB_ASSERT(id->servant());
@@ -624,13 +629,13 @@ omniOrbBOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
   if( omniORB::traceInvocations ) {
     omniORB::logger l;
     l << "Dispatching remote call \'" 
-      << (const char*) giop_s.invokeInfo().operation() << "\' to: "
+      << giop_s.operation_name() << "\' to: "
       << id << '\n';
   }
 
   if( !id->servant()->_dispatch(giop_s) ) {
     if( !id->servant()->omniServant::_dispatch(giop_s) ) {
-      giop_s.RequestReceived(1);
+      giop_s.SkipRequestBody();
       OMNIORB_THROW(BAD_OPERATION,0, CORBA::COMPLETED_NO);
     }
   }
@@ -638,7 +643,7 @@ omniOrbBOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
 
 
 void
-omniOrbBOA::dispatch(GIOP_S& giop_s, const CORBA::Octet* key, int keysize)
+omniOrbBOA::dispatch(IOP_S& giop_s, const CORBA::Octet* key, int keysize)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(key && keysize == sizeof(omniOrbBoaKey));
@@ -1048,9 +1053,9 @@ parse_BOA_args(int& argc, char** argv, const char* orb_identifier)
 
 	const char* hostname = getenv(OMNIORB_USEHOSTNAME_VAR);
 	if( !hostname )  hostname = "";
-	omniObjAdapter::options.
-	  incomingPorts.push_back(omniObjAdapter::ListenPort(hostname, port));
-
+	char* es = CORBA::string_alloc(strlen(hostname)+16);
+	sprintf(es,"tcp/%s:%u",hostname,port);
+	omniObjAdapter::options.endpoints.push_back(es);
 	move_args(argc,argv,idx,2);
 	continue;
       }
@@ -1090,10 +1095,9 @@ parse_BOA_args(int& argc, char** argv, const char* orb_identifier)
 	  // null terminate and isolate hostname argument
 	  *port_str = 0;
         }
-
-	omniObjAdapter::options.
-	  incomingPorts.push_back(omniObjAdapter::ListenPort(hostname, port));
-
+	char* es = CORBA::string_alloc(strlen(hostname)+16);
+	sprintf(es,"tcp/%s:%u",hostname,port);
+	omniObjAdapter::options.endpoints.push_back(es);
         move_args(argc,argv,idx,2);
         continue;
       }

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2000/12/05 17:43:30  dpg1
+  Check for input over-run in string and wstring unmarshalling.
+
   Revision 1.1.2.5  2000/11/22 14:38:00  dpg1
   Code set marshalling functions now take a string length argument.
 
@@ -53,6 +56,7 @@
 #include <omniORB4/CORBA.h>
 #include <codeSetUtil.h>
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 class NCS_W_UTF_16 : public omniCodeSet::NCS_W {
 public:
@@ -451,3 +455,5 @@ public:
 };
 
 static CS_UTF_16_init _CS_UTF_16_init;
+
+OMNI_NAMESPACE_END(omni)

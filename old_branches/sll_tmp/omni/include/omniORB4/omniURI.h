@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.3  2000/11/09 12:27:50  dpg1
+// Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+//
 // Revision 1.2.2.2  2000/09/27 17:12:03  sll
 // Updated to include from include/omniORB4.
 //
@@ -52,6 +55,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/Naming.hh>
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 class omniURI {
 public:
@@ -123,5 +127,6 @@ public:
   // actually exists in the specified naming service.
 };
 
+OMNI_NAMESPACE_END(omni)
 
 #endif // _omniURI_h_

@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2000/11/15 17:00:55  sll
+  Added marshalling operators for ServiceContext.
+
   Revision 1.2.2.4  2000/11/03 18:58:46  sll
   Unbounded sequence of octet got a new type name.
 
@@ -74,10 +77,9 @@
 #ifndef __OMNIORB_IOP_H__
 #define __OMNIORB_IOP_H__
 
-class omniIOR;
-
 class IOP {
 public:
+  
   typedef _CORBA_ULong ProfileId;
   static _core_attr const   ProfileId    TAG_INTERNET_IOP;
   static _core_attr const   ProfileId    TAG_MULTIPLE_COMPONENTS;
@@ -412,6 +414,5 @@ public:
   // is not recongised.
 
 };
-
 
 #endif // __OMNIORB_IOP_H__

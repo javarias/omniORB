@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/15 17:05:39  sll
+  Added interceptors along the giop request processing path.
+
   Revision 1.1.2.1  2000/09/27 16:54:08  sll
   *** empty log message ***
 
@@ -41,7 +44,12 @@
 #include <omniORB4/CORBA.h>
 #endif
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 class omniInterceptorP;
+
+class giopStream;
+class GIOP_S;
 
 class omniInterceptors {
  public:
@@ -187,11 +195,10 @@ class omniInterceptors {
 
     class info_T {
     public:
-      giopStream&               giopstream;
-      giopStream::requestInfo&  requestinfo;
+      GIOP_S&    giop_s;
 
-      info_T(giopStream& s, giopStream::requestInfo& r) : 
-	giopstream(s), requestinfo(r) {}
+      info_T(GIOP_S& s) : 
+	giop_s(s) {}
 
     private:
       info_T();
@@ -290,5 +297,8 @@ class omniInterceptors {
   omniInterceptors();
   ~omniInterceptors();
 };
+
+OMNI_NAMESPACE_END(omni)
+
 
 #endif // __OMNIINTERCEPTORS_H__

@@ -29,10 +29,15 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/10/27 15:42:08  dpg1
+  Initial code set conversion support. Not yet enabled or fully tested.
+
 */
 
 #include <omniORB4/CORBA.h>
 #include <codeSetUtil.h>
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 static const omniCodeSet::UniChar toUCS[] = {
   0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
@@ -170,3 +175,5 @@ public:
   }
 };
 static CS_8859_1_init _CS_8859_1_init_;
+
+OMNI_NAMESPACE_END(omni)

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/11/20 18:56:39  sll
+  Sequence templates were broken by the previous checkin. They are now fixed.
+
   Revision 1.1.2.4  2000/11/20 14:41:44  sll
   Simplified sequence template hierachy and added templates for sequence of
   wchar and sequence of array of wchar.
@@ -64,6 +67,7 @@
 #else
 #error "Swap32 has already been defined"
 #endif
+
 
 //////////////////////////////////////////////////////////////////////
 template <class T>
@@ -693,6 +697,7 @@ _CORBA_Sequence_ObjRef<T,ElemT,T_Helper>::operator<<= (cdrStream& s)
   for( _CORBA_ULong i = 0; i < l; i++ )
     operator[](i) = T_Helper::unmarshalObjRef(s);
 }
+
 
 #undef Swap16
 #undef Swap32

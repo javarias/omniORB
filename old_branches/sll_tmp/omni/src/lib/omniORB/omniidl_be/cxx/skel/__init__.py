@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.4  2001/01/25 13:09:11  sll
+# Fixed up cxx backend to stop it from dying when a relative
+# path name is given to the -p option of omniidl.
+#
 # Revision 1.7.2.3  2000/11/03 19:17:37  sll
 # Generated code use include omniORB4.
 #
@@ -97,7 +101,7 @@ def monolithic(stream, tree):
 #include "@basename@@hh@"
 #include <omniORB4/callDescriptor.h>
 @include_omniAMICallDescriptor@
-static const char* @prefix@_library_version = @library@;
+static const char* @prefix@_library_version = _OMNI_NS(@library@);
 
 
 """,
