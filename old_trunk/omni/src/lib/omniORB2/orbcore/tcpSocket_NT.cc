@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.1  1997/02/19  11:05:18  ewc
+// Initial revision
+//
 
   */
 
@@ -663,6 +666,7 @@ tcpSocketRope::tcpSocketRope(Anchor *a,
   else {
     pd_endpoint.me = new tcpSocketEndpoint(te);
     pd_rendezvous = new tcpSocketRendezvous(this,pd_endpoint.me);
+    *te = *pd_endpoint.me;
   }
   return;
 }
