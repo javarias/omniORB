@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/06/08 17:12:08  dpg1
+  Merge all the bug fixes from omni3_develop.
+
   Revision 1.1.4.2  2001/05/11 14:28:14  sll
   Separate  minor code MARSHAL_MessageSizeExceedLimit into distinct client and
   server side codes.
@@ -61,6 +64,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_10 OMNIORBMinorCode(10)
 #define OMNIORBMinorCode_11 OMNIORBMinorCode(11)
 #define OMNIORBMinorCode_12 OMNIORBMinorCode(12)
+#define OMNIORBMinorCode_13 OMNIORBMinorCode(13)
 
  
 // Taken from CORBA Spec. 2.4 Table 4-3.
@@ -186,7 +190,9 @@ enum OBJECT_NOT_EXIST_minor {
   Object_Not_Exist_IncarnateFailed        = OMGMinorCode(2)
 };
 
-
+enum INITIALISE_minor {
+  TRANSPORT_ERROR                         = OMNIORBMinorCode_13
+};
 
 OMNI_NAMESPACE_END(omni)
 
