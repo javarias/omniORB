@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.11.2.3  2000/12/04 18:04:42  dpg1
+// Fix bug with TypeCode indirections.
+//
 // Revision 1.11.2.2  2000/08/17 08:44:09  dpg1
 // Updates for long long were broken on platforms without it
 //
@@ -523,10 +526,8 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 #define MARSHAL_PYSTRING(_stream, _pystring) { \
   CORBA::ULong _slen = PyString_GET_SIZE(_pystring) + 1; \
   _slen >>= _stream; \
-  if (_slen > 1) { \
-    char* _str = PyString_AS_STRING(_pystring); \
-    _stream.put_char_array((const CORBA::Char*)((const char*)_str), _slen); \
-  } \
+  char* _str = PyString_AS_STRING(_pystring); \
+  _stream.put_char_array((const CORBA::Char*)((const char*)_str), _slen); \
 }
 
 void
