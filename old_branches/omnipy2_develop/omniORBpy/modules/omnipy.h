@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.8  2001/05/14 12:47:21  dpg1
+// Fix memory leaks.
+//
 // Revision 1.2.4.7  2001/05/10 15:16:01  dpg1
 // Big update to support new omniORB 4 internals.
 //
@@ -534,7 +537,7 @@ public:
 
     virtual ~Py_omniServant();
 
-    virtual CORBA::Boolean _dispatch(_OMNI_NS(IOP_S)& iop_s);
+    virtual CORBA::Boolean _dispatch(omniCallHandle& handle);
 
     void remote_dispatch(Py_omniCallDescriptor* pycd);
     void local_dispatch (Py_omniCallDescriptor* pycd);
@@ -598,8 +601,12 @@ public:
 
     // Set the Python exception state to the contents of this exception.
     // Caller must hold the Python interpreter lock.
-    // Returns 0 so callers can do return ex.setPyExceptionState().
+    // Returns 0 so callers can do "return ex.setPyExceptionState()".
     PyObject* setPyExceptionState();
+
+    // DECREF the contained Python exception object. Caller must huld
+    // the Python interpreter lock.
+    void decrefPyException();
 
     // Marshalling operators for exception body, not including
     // repository id:

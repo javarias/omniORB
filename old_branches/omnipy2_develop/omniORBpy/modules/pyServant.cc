@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.5  2001/05/14 12:47:22  dpg1
+// Fix memory leaks.
+//
 // Revision 1.1.2.4  2001/05/10 15:16:03  dpg1
 // Big update to support new omniORB 4 internals.
 //
@@ -48,6 +51,7 @@
 #include <omnipy.h>
 #include <pyThreadCache.h>
 
+#include <omniORB4/callHandle.h>
 #include <omniORB4/IOP_S.h>
 
 
@@ -80,8 +84,8 @@ public:
   const char* _mostDerivedRepoId() {
     return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
-  CORBA::Boolean _dispatch(_OMNI_NS(IOP_S)& iop_s) {
-    return PY_OMNISERVANT_BASE::_dispatch(iop_s);
+  CORBA::Boolean _dispatch(omniCallHandle& handle) {
+    return PY_OMNISERVANT_BASE::_dispatch(handle);
   }
 
 private:
@@ -121,8 +125,8 @@ public:
   const char* _mostDerivedRepoId() {
     return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
-  CORBA::Boolean _dispatch(_OMNI_NS(IOP_S)& iop_s) {
-    return PY_OMNISERVANT_BASE::_dispatch(iop_s);
+  CORBA::Boolean _dispatch(omniCallHandle& handle) {
+    return PY_OMNISERVANT_BASE::_dispatch(handle);
   }
 
 private:
@@ -155,8 +159,8 @@ public:
   const char* _mostDerivedRepoId() {
     return PY_OMNISERVANT_BASE::_mostDerivedRepoId();
   }
-  CORBA::Boolean _dispatch(_OMNI_NS(IOP_S)& iop_s) {
-    return PY_OMNISERVANT_BASE::_dispatch(iop_s);
+  CORBA::Boolean _dispatch(omniCallHandle& handle) {
+    return PY_OMNISERVANT_BASE::_dispatch(handle);
   }
 
 private:
@@ -426,12 +430,12 @@ Py_omniServant::_is_a(const char* logical_type_id)
 
 CORBA::Boolean
 omniPy::
-Py_omniServant::_dispatch(_OMNI_NS(IOP_S)& iop_s)
+Py_omniServant::_dispatch(omniCallHandle& handle)
 {
   int i;
   omnipyThreadCache::lock _t;
 
-  const char* op   = iop_s.operation_name();
+  const char* op   = handle.operation_name();
   PyObject*   desc = PyDict_GetItemString(opdict_, (char*)op);
 
   if (!desc) return 0; // Unknown operation name
@@ -447,11 +451,18 @@ Py_omniServant::_dispatch(_OMNI_NS(IOP_S)& iop_s)
 				  in_d, out_d, exc_d, 0, 1);
   try {
     omniPy::InterpreterUnlocker _u;
-    _upcall(iop_s, call_desc);
+    handle.upcall(this, call_desc);
   }
   catch (omniPy::PyUserException& ex) {
-    omniPy::InterpreterUnlocker _u;
-    iop_s.SendException(&ex);
+    if (handle.iop_s()) {
+      {
+	omniPy::InterpreterUnlocker _u;
+	handle.iop_s()->SendException(&ex);
+      }
+      ex.decrefPyException();
+    }
+    else
+      throw;
   }
   return 1;
 }
@@ -1010,17 +1021,43 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
 
   pyos->_locked_remove_ref();
 
-  if (result)
+  if (result) {
     Py_DECREF(result);
+    return;
+  }
   else {
-    if (omniORB::trace(5))
-      omniORB::logf("omniORBpy: postinvoke raised an exception!");
-    if (omniORB::trace(10)) {
-      omniORB::logf("omniORBpy: Traceback follows:");
-      PyErr_Print();
+    // An exception of some sort was thrown
+    PyObject *etype, *evalue, *etraceback;
+    PyObject *erepoId = 0;
+    PyErr_Fetch(&etype, &evalue, &etraceback);
+    OMNIORB_ASSERT(etype);
+
+    if (evalue && PyInstance_Check(evalue))
+      erepoId = PyObject_GetAttrString(evalue, (char*)"_NP_RepositoryId");
+
+    if (!(erepoId && PyString_Check(erepoId))) {
+      Py_XDECREF(erepoId);
+      if (omniORB::trace(1)) {
+	{
+	  omniORB::logger l;
+	  l << "Caught an unexpected Python exception during postinvoke.\n";
+	}
+	PyErr_Restore(etype, evalue, etraceback);
+	PyErr_Print();
+      }
+      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
     }
-    else
-      PyErr_Clear();
+    Py_DECREF(etype);
+    Py_XDECREF(etraceback);
+
+    // Is it a LOCATION_FORWARD?
+    if (!strcmp(PyString_AS_STRING(erepoId), "omniORB.LOCATION_FORWARD")) {
+      Py_DECREF(erepoId);
+      HandleLocationForward(evalue);
+    }
+
+    // System exception or unknown user exception
+    omniPy::produceSystemException(evalue, erepoId);
   }
 }
 
