@@ -10,6 +10,10 @@
 
 /*
   $Log$
+// Revision 1.2  1997/01/13  15:25:34  sll
+// New member function produce_typedef_hdr(). Called when a typedef
+// declaration is encountered.
+//
   Revision 1.1  1997/01/08 17:32:59  sll
   Initial revision
 
@@ -1108,6 +1112,7 @@ astExpr2val(AST_Expression *e)
     default:
       throw o2be_internal_error(__FILE__,__LINE__,"unexpected type for array dimension");
     }
+  return 0; // For MSVC++ 4.2
 }
 
 
