@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.5  2000/01/10 15:38:56  djs
+# Better name and scope handling.
+#
 # Revision 1.4  2000/01/10 11:01:57  djs
 # Forgot to keep track of names already defined causing a scoping problem.
 #
@@ -63,26 +66,7 @@ def __init__(stream):
     return self
 
 
-self.__nested = 0
-
 self.__environment = name.Environment()
-
-#def add(name):
-#    try:
-#        self.__environment.add(name)
-#    except KeyError:
-#        pass    
-#    #print "env now = " + str(self.__environment)
-#def enter(scope):
-#    # the exception is thrown in the case of a forward declared interface
-#    # being properly defined. Needs tidying up?
-#    add(scope)
-#    self.__environment = self.__environment.enterScope(scope)
-#
-#def leave():
-#    self.__environment = self.__environment.leaveScope()
-#def currentScope():
-#    return self.__environment.scope()
 
 
 def POA_prefix(nested):
@@ -99,20 +83,12 @@ def visitAST(node):
 
 def visitModule(node):
 
-#    enter(node.identifier())
-    
     for n in node.definitions():
-        nested = self.__nested
-        # we're outside of the CORBA_MODULE stuff so "not nested"
-        #self.__nested = 1
-        
         n.accept(self)
 
-        self.__nested = nested
 
-#    leave()
-
-def template(environment, node, nested = self.__nested):
+#def template(environment, node, nested = self.__nested):
+def template(environment, node, nested = 0):
     
     scope = tyutil.scope(node.scopedName())
     iname = tyutil.mapID(node.identifier())
@@ -172,9 +148,6 @@ def template(environment, node, nested = self.__nested):
                 param_id = tyutil.mapID(parameter.identifier())
                 signature.append(param_type_name + " " + param_id)
                 call.append(param_id)
-
-                #print "env = " + str(env)
-                #print "name " + param_type_name
 
             if has_return_value:
                 return_str = "return "
@@ -273,30 +246,22 @@ def visitInterface(node):
     if not(node.mainFile()):
         return
 
-#    env = self.__environment
     environment = env.lookup(node)
-#    enter(node.identifier())
     template(environment, node)
 
     for n in node.declarations():
         n.accept(self)
     
-#    leave()
 
 def visitEnum(node):
     pass
 def visitStruct(node):
-    #print "adding " + node.identifier()
-#    add(node.identifier())
     for n in node.members():
         n.accept(self)
-        
-    pass
+
 def visitUnion(node):
-#    add(node.identifier())
     pass
 def visitForward(node):
-#    add(node.identifier())
     pass
 def visitConst(node):
     pass
@@ -307,10 +272,6 @@ def visitMember(node):
         node.memberType().decl().accept(self)
     pass
 def visitException(node):
-#    add(node.identifier())
     pass
 def visitTypedef(node):
-#    for d in node.declarators():
-#        add(d.identifier())
-        #add(tyutil.name(d.scopedName()))
     pass

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  1999/12/24 18:14:29  djs
+# Fixed handling of #include'd .idl files
+#
 # Revision 1.6  1999/12/13 15:40:26  djs
 # Added generation of "flattened" tie templates
 #
@@ -158,8 +161,6 @@ def monolithic(stream, tree):
         tree.accept(tie)
 
     
-    #poa_defs(stream, node)
-
     stream.out("""\
 #undef _core_attr
 #undef _dyn_attr
