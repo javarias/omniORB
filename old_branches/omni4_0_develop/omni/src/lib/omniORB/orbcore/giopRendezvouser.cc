@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/06/20 18:35:18  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
   Revision 1.1.4.1  2001/04/18 18:10:50  sll
   Big checkin with the brand new internal APIs.
 
@@ -42,6 +47,13 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 void
+giopRendezvouser::notifyReadable(void* this_,giopConnection* conn) {
+  giopRendezvouser* r = (giopRendezvouser*)this_;
+  r->pd_server->notifyRzReadable(conn);
+
+}
+
+void
 giopRendezvouser::execute() {
   CORBA::Boolean exit_on_error;
 
@@ -49,7 +61,8 @@ giopRendezvouser::execute() {
     exit_on_error = 0;
     giopConnection* newconn = 0;
     try {
-      newconn = pd_endpoint->Accept();
+
+      newconn = pd_endpoint->AcceptAndMonitor(notifyReadable,this);
       if (newconn)
 	pd_server->notifyRzNewConnection(this,newconn);
       else {
@@ -58,10 +71,10 @@ giopRendezvouser::execute() {
       }
     }
     catch(const giopServer::outOfResource&) {
-      delete newconn;
+      // giopServer has consumed the connection.
     }
     catch(const giopServer::Terminate&) {
-      delete newconn;
+      newconn->decrRefCount(1);
       break;
     }
     catch(...) {
@@ -71,7 +84,9 @@ giopRendezvouser::execute() {
 	omniORB::logger l;
 	l << "Unexpected exception caught by giopRendezvouser\n";
       }
-      if (newconn) delete newconn;
+      if (newconn) {
+	newconn->decrRefCount(1);
+      }
       exit_on_error = 1;
       break;
     }
@@ -84,6 +99,7 @@ void
 giopRendezvouser::terminate() {
   pd_endpoint->Poke();
 }
+
 
 
 OMNI_NAMESPACE_END(omni)
