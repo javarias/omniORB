@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.13  2001/12/04 14:32:27  dpg1
+// Minor corbaloc bugs.
+//
 // Revision 1.2.2.12  2001/08/18 17:28:38  sll
 // Fixed minor bug introduced by the previous update.
 //
@@ -206,7 +209,7 @@ iorURIHandler::toObject(const char* sior, unsigned int)
 {
   omniObjRef* objref = omniObjRef::_fromString(sior);
   if (!objref)
-    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR, CORBA::COMPLETED_NO);
+    return CORBA::Object::_nil();
 
   return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
