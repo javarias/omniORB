@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.22.6.10.2.4  2000/03/06 16:06:35  djs
+  Changed thread pool to use an internal pipe for notification rather than
+  async unix signals. Restructured the code, to make it easier to try signals
+  again.
+
   Revision 1.22.6.10.2.3  2000/03/01 17:08:35  djs
   Restructuring of Rendezvouser into:
                      Rendezvouser
@@ -378,6 +383,11 @@ private:
 #endif
 
 #ifdef THREADPOOL
+
+// Max # open file descriptors?
+int queueLength = getdtablesize();
+//const int queueLength = 5;
+
 class PoolRendezvouser: public tcpSocketRendezvouser{
 public:
   PoolRendezvouser(tcpSocketIncomingRope *r,
@@ -391,8 +401,7 @@ public:
 protected:
 
   // Fixed length queue of requests to be processed
-  const static int queueLength = 5; // relate this to the getdtablesize()?
-  FixedQueue<tcpSocketStrand*, queueLength> pd_q;
+  FixedQueue<tcpSocketStrand*> pd_q;
 
   // Mapping of filedescriptors to strands
   // (assumes an array is efficient)
