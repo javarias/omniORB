@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.3  2000/11/09 12:27:55  dpg1
+# Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+#
 # Revision 1.16.2.2  2000/10/12 15:37:50  sll
 # Updated from omni3_1_develop.
 #
@@ -302,6 +305,7 @@ def mkTypeCode(type, declarator = None, node = None):
         idltype.tk_double:    "double",
         idltype.tk_boolean:   "boolean",
         idltype.tk_char:      "char",
+        idltype.tk_wchar:     "wchar",
         idltype.tk_octet:     "octet",
         idltype.tk_any:       "any",
         idltype.tk_TypeCode:  "TypeCode",
@@ -320,8 +324,7 @@ def mkTypeCode(type, declarator = None, node = None):
         return prefix + "string_tc(" + str(type.bound()) + ")"
 
     if isinstance(type, idltype.WString):
-        util.fatalError("Wide-strings are not supported")
-        raise "Don't know how to generate TypeCode for WString"
+        return prefix + "wstring_tc(" + str(type.bound()) + ")"
 
     if isinstance(type, idltype.Sequence):
         seqType = type.seqType()

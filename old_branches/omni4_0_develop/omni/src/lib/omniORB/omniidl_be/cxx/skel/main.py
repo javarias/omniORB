@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.4  2000/11/07 18:30:35  sll
+# exception copy ctor must use helper duplicate function if the interface is
+# a forward declaration.
+#
 # Revision 1.29.2.3  2000/11/03 19:22:56  sll
 # Replace the old set of marshalling operators in the generated code with
 # a couple of unified operators for cdrStream.
@@ -537,6 +541,8 @@ def visitConst(node):
     
     if d_constType.string():
         type_string = "char *"
+    elif d_constType.wstring():
+        type_string = "CORBA::WChar *"
     else:
         type_string = d_constType.base()
 

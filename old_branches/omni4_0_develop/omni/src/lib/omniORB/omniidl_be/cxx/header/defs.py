@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.5  2000/11/10 15:40:52  dpg1
+# Missed an update in yesterday's merge.
+#
 # Revision 1.33.2.4  2000/11/07 18:29:56  sll
 # Choose a default constant not too large to avoid g++ complaining.
 #
@@ -433,6 +436,8 @@ def visitConst(node):
     d_constType = constType.deref()
     if d_constType.string():
         type_string = "char *"
+    elif d_constType.string():
+        type_string = "CORBA::WChar *"
     else:
         type_string = d_constType.member()
         # should this be .base?
@@ -538,6 +543,9 @@ def visitTypedef(node):
             elif d_type.string():
                 stream.out(template.typedef_simple_string,
                            name = derivedName)
+            elif d_type.wstring():
+                stream.out(template.typedef_simple_wstring,
+                           name = derivedName)
             elif d_type.typecode():
                 stream.out(template.typedef_simple_typecode,
                            name = derivedName)
@@ -616,6 +624,9 @@ def visitTypedef(node):
                 if d_seqType.string():
                     element = "_CORBA_String_element"
                     element_IN = "char *"
+                elif d_seqType.wstring():
+                    element = "_CORBA_WString_element"
+                    element_IN = "CORBA::WChar *"
                 elif d_seqType.objref():
                     element = seqType.base(environment)
                     element_IN = element
@@ -630,6 +641,8 @@ def visitTypedef(node):
                 element_ptr = element_IN
                 if d_seqType.string() and not(seqType.array()):
                     element_ptr = "char*"
+                elif d_seqType.wstring() and not(seqType.array()):
+                    element_ptr = "CORBA::WChar*"
                 elif d_seqType.objref() and not(seqType.array()):
                     element_ptr = seqType.base(environment)
                 # only if an anonymous sequence
@@ -689,6 +702,9 @@ def visitTypedef(node):
                 element_reference = ""
                 if not(aliasType.array()):
                     if d_seqType.string():
+                        # special case alert
+                        element_reference = element
+                    elif d_seqType.wstring():
                         # special case alert
                         element_reference = element
                     elif d_seqType.objref():
@@ -1394,6 +1410,11 @@ def visitUnion(node):
                                name = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+                elif d_caseType.wstring():
+                    stream.out(template.union_wstring,
+                               name = member,
+                               isDefault = str(c.isDefault),
+                               discrimvalue = discrimvalue)
                 elif d_caseType.objref():
                     scopedName = d_caseType.type().decl().scopedName()
 
@@ -1492,6 +1513,7 @@ def visitUnion(node):
                 if d_caseType.type().kind() in \
                    [ idltype.tk_struct, idltype.tk_union,
                      idltype.tk_except, idltype.tk_string,
+                     idltype.tk_wstring,
                      idltype.tk_sequence, idltype.tk_any,
                      idltype.tk_TypeCode, idltype.tk_objref ]:
                                                  
