@@ -29,6 +29,14 @@
 
 /*
  $Log$
+ Revision 1.46.4.1  1999/09/15 20:18:15  sll
+ Updated to use the new cdrStream abstraction.
+ Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ replaced with just one version for cdrStream.
+ Derived class giopStream implements the cdrStream abstraction over a
+ network connection whereas the cdrMemoryStream implements the abstraction
+ with in memory buffer.
+
  Revision 1.46  1999/08/30 18:45:58  sll
  Made #include ir stubs conditional on ENABLE_CLIENT_IR_SUPPORT.
  Application code has to define ENABLE_CLIENT_IR_SUPPORT in order to act
@@ -3211,13 +3219,6 @@ private:
     virtual const char *irRepoId() const = 0;
     // returns the Interface Repository ID.
 
-#if 0       
-    virtual CORBA::Object_ptr newProxyObject(Rope *r,
-					     _CORBA_Octet *key,
-					     size_t keysize,
-					     IOP::TaggedProfileList *profiles,
-					     _CORBA_Boolean release) = 0;
-#endif
     virtual CORBA::Object_ptr newProxyObject(GIOPObjectInfo* objInfo) = 0;
     // returns a new proxy object.
 

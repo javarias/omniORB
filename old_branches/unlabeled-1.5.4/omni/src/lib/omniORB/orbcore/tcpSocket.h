@@ -29,6 +29,25 @@
 
 /*
  $Log$
+ Revision 1.5.2.1  1999/09/21 20:37:18  sll
+ -Simplified the scavenger code and the mechanism in which connections
+  are shutdown. Now only one scavenger thread scans both incoming
+  and outgoing connections. A separate thread do the actual shutdown.
+ -omniORB::scanGranularity() now takes only one argument as there is
+  only one scan period parameter instead of 2.
+ -Trace messages in various modules have been updated to use the logger
+  class.
+ -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                -ORBscanIncomingPeriod.
+
+ Revision 1.5.4.1  1999/09/15 20:18:28  sll
+ Updated to use the new cdrStream abstraction.
+ Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ replaced with just one version for cdrStream.
+ Derived class giopStream implements the cdrStream abstraction over a
+ network connection whereas the cdrMemoryStream implements the abstraction
+ with in memory buffer.
+
  Revision 1.5  1999/07/09 21:04:29  sll
  Added private data member in tcpSocketMTincomingFactory.
 
@@ -191,7 +210,7 @@ public:
   // Post-condition:
   //    Still hold <MUTEX> on exit
 
-  void shutdown();
+  void real_shutdown();
   void ll_send(void* buf,size_t sz);
   size_t ll_recv(void* buf,size_t sz);
 

@@ -27,6 +27,19 @@
 
 /*
   $Log$
+  Revision 1.39.2.1  1999/09/24 11:33:31  sll
+  Removed else if nesting in stub dispatch function. This makes life easier
+  for MS VC++ when compiling an interface with a pathologically large
+  number of members.
+
+  Revision 1.39.4.1  1999/09/15 20:18:43  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.39  1999/08/04 10:17:39  sll
   Added missing operator for non-copy Any insertion.
 
@@ -1563,14 +1576,12 @@ o2be_interface::produce_skel(std::fstream &s)
   IND(s); s << "cdrStream& _0RL_s = (cdrStream&)_giop_s;\n";
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
-    idl_bool notfirst = I_FALSE;
     while (!i.is_done())
       {
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
-	    IND(s); s << ((notfirst)?"else ":"")
-		      << "if (strcmp(_0RL_op,\""
+	    IND(s); s << "if (strcmp(_0RL_op,\""
 		      << d->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
@@ -1578,13 +1589,11 @@ o2be_interface::produce_skel(std::fstream &s)
 	    o2be_operation::narrow_from_decl(d)->produce_server_skel(s,*this);
 	    DEC_INDENT_LEVEL();
 	    IND(s); s << "}\n";
-	    notfirst = I_TRUE;
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
 	  {
 	    o2be_attribute *a = o2be_attribute::narrow_from_decl(d);
-	    IND(s); s << ((notfirst)?"else ":"")
-		      << "if (strcmp(_0RL_op,\""
+	    IND(s); s << "if (strcmp(_0RL_op,\""
 		      << "_get_" << a->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
@@ -1594,7 +1603,7 @@ o2be_interface::produce_skel(std::fstream &s)
 	    IND(s); s << "}\n";
 	    if (!a->readonly())
 	      {
-		IND(s); s << "else if (strcmp(_0RL_op,\""
+		IND(s); s << "if (strcmp(_0RL_op,\""
 			  << "_set_" << a->local_name()->get_string()
 			  << "\") == 0)\n";
 		IND(s); s << "{\n";
@@ -1603,7 +1612,6 @@ o2be_interface::produce_skel(std::fstream &s)
 		DEC_INDENT_LEVEL();
 		IND(s); s << "}\n";
 	      }
-	    notfirst = I_TRUE;
 	  }
 	i.next();
       }
@@ -1643,21 +1651,15 @@ o2be_interface::produce_skel(std::fstream &s)
 	      strcat(intf_name,intf->server_uqname());
 	    }
 	  }
-	  IND(s); s << ((notfirst)?"else ":"")
-		    << "if (" << intf_name
+	  IND(s); s << "if (" << intf_name
 		    << "::dispatch(_giop_s,_0RL_op,_0RL_response_expected)) {\n";
 	  INC_INDENT_LEVEL();
 	  IND(s); s << "return 1;\n";
 	  DEC_INDENT_LEVEL();
 	  IND(s); s << "}\n";
-	  notfirst = I_TRUE;
 	}
     }
-    IND(s); s << ((notfirst)?"else {\n":"{\n");
-    INC_INDENT_LEVEL();
     IND(s); s << "return 0;\n";
-    DEC_INDENT_LEVEL();
-    IND(s); s << "}\n";
   }
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n\n";
@@ -1944,14 +1946,12 @@ o2be_interface::produce_skel(std::fstream &s)
     INC_INDENT_LEVEL();
     {
       UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
-      idl_bool notfirst = I_FALSE;
       while (!i.is_done())
 	{
 	  AST_Decl *d = i.item();
 	  if (d->node_type() == AST_Decl::NT_op)
 	    {
-	      IND(s); s << ((notfirst)?"else ":"")
-			<< "if (strcmp(_0RL_op,\""
+	      IND(s); s << "if (strcmp(_0RL_op,\""
 			<< d->local_name()->get_string()
 			<< "\") == 0)\n";
 	      IND(s); s << "{\n";
@@ -1959,13 +1959,11 @@ o2be_interface::produce_skel(std::fstream &s)
 	      o2be_operation::narrow_from_decl(d)->produce_server_skel(s,*this);
 	      DEC_INDENT_LEVEL();
 	      IND(s); s << "}\n";
-	      notfirst = I_TRUE;
 	    }
 	  else if (d->node_type() == AST_Decl::NT_attr)
 	    {
 	      o2be_attribute *a = o2be_attribute::narrow_from_decl(d);
-	      IND(s); s << ((notfirst)?"else ":"")
-			<< "if (strcmp(_0RL_op,\""
+	      IND(s); s << "if (strcmp(_0RL_op,\""
 			<< "_get_" << a->local_name()->get_string()
 			<< "\") == 0)\n";
 	      IND(s); s << "{\n";
@@ -1975,7 +1973,7 @@ o2be_interface::produce_skel(std::fstream &s)
 	      IND(s); s << "}\n";
 	      if (!a->readonly())
 		{
-		  IND(s); s << "else if (strcmp(_0RL_op,\""
+		  IND(s); s << "if (strcmp(_0RL_op,\""
 			    << "_set_" << a->local_name()->get_string()
 			    << "\") == 0)\n";
 		  IND(s); s << "{\n";
@@ -1984,7 +1982,6 @@ o2be_interface::produce_skel(std::fstream &s)
 		  DEC_INDENT_LEVEL();
 		  IND(s); s << "}\n";
 		}
-	      notfirst = I_TRUE;
 	    }
 	  i.next();
 	}
@@ -2024,21 +2021,15 @@ o2be_interface::produce_skel(std::fstream &s)
 		strcat(intf_name,intf->lcserver_uqname());
 	      }
 	    }
-	    IND(s); s << ((notfirst)?"else ":"")
-		      << "if (" << intf_name
+	    IND(s); s << "if (" << intf_name
 		      << "::dispatch(_0RL_s,_0RL_op,_0RL_response_expected)) {\n";
 	    INC_INDENT_LEVEL();
 	    IND(s); s << "return 1;\n";
 	    DEC_INDENT_LEVEL();
 	    IND(s); s << "}\n";
-	    notfirst = I_TRUE;
 	  }
       }
-      IND(s); s << ((notfirst)?"else {\n":"{\n");
-      INC_INDENT_LEVEL();
       IND(s); s << "return 0;\n";
-      DEC_INDENT_LEVEL();
-      IND(s); s << "}\n";
     }
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n\n";
