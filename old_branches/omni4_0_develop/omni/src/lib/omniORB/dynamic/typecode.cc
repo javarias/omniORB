@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.38.2.7  2000/11/20 14:40:04  sll
+ * Added TypeCode::PR_wstring_tc(CORBA::ULong bound).
+ *
  * Revision 1.38.2.6  2000/11/17 19:09:38  dpg1
  * Support codeset conversion in any.
  *
@@ -701,6 +704,10 @@ CORBA::TypeCode_ptr CORBA::TypeCode::PR_Object_tc() {
 CORBA::TypeCode_ptr CORBA::TypeCode::PR_string_tc() {
   check_static_data_is_initialised();
   return CORBA::_tc_string;
+}
+CORBA::TypeCode_ptr CORBA::TypeCode::PR_wstring_tc() {
+  check_static_data_is_initialised();
+  return CORBA::_tc_wstring;
 }
 #ifdef HAS_LongLong
 CORBA::TypeCode_ptr CORBA::TypeCode::PR_longlong_tc() {
