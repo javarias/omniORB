@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2003/11/06 10:19:19  dgrisby
+  Remove transports from linked list when they are deleted.
+
   Revision 1.1.2.14  2003/05/22 13:41:41  dgrisby
   HPUX patches.
 
@@ -418,7 +421,7 @@ public:
 #ifdef __ETS_KERNEL__
     versionReq = MAKEWORD(1, 1);  // ETS kernel only supports 1.1
 #else
-    versionReq = MAKEWORD(2, 0);  // Must use 2.2 in order to use
+    versionReq = MAKEWORD(2, 0);  // Must use 2.0 in order to use
                                   // SIO_ADDRESS_LIST_QUERY
 #endif
 
