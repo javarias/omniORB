@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.14  1998/08/10 15:34:12  sll
+  Now include octet as a valid discriminant type.
+
   Revision 1.13  1998/04/07 18:53:50  sll
   Stub code modified to accommodate the use of namespace to represent module.
   Use std::fstream instead of fstream.
@@ -130,6 +133,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #define ADPT_CLASS_TEMPLATE  "_CORBA_ConstrType_Variable_OUT_arg"
 

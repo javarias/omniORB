@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.21  1998/07/08 13:42:16  dpg1
+  Fixed bug with interface inheritance in LifeCycle code generation.
+
   Revision 1.20  1998/05/20 18:23:58  sll
   New option (-t) enable the generation of tie implementation template.
 
@@ -73,6 +76,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #define PROXY_CLASS_PREFIX        "_proxy_"
 #define SERVER_CLASS_PREFIX       "_sk_"

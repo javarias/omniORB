@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.8  1998/04/07 18:53:00  sll
+  Stub code modified to accommodate the use of namespace to represent module.
+  Use std::fstream instead of fstream.
+
 // Revision 1.7  1998/01/27  16:50:17  ewc
 //  Added support for type Any and TypeCode
 //
@@ -51,6 +55,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #define OBJREF_MEMBER_TEMPLATE_NAME "_CORBA_ObjRef_Member"
 #define STRING_MEMBER_NAME          "CORBA::String_member"

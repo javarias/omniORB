@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.22  1998/04/07 18:49:34  sll
+  Stub code modified to accommodate the use of namespace to represent module.
+  Use std::fstream instead of fstream.
+
   Revision 1.21  1998/03/25 14:40:11  sll
   *** empty log message ***
 
@@ -71,6 +75,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_operation::o2be_operation(AST_Type *rt, AST_Operation::Flags fl,
 			       UTL_ScopedName *n, UTL_StrList *p)

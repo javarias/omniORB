@@ -28,6 +28,12 @@
 
 /*
   $Log$
+  Revision 1.7  1998/04/07 18:45:26  sll
+  Use std::fstream instead of fstream.
+  Stub code contains workaround code for MSVC++ to initialise typecode const
+  properly.
+  Stub code modified to accomodate namespace support.
+
 // Revision 1.6  1998/01/27  16:35:19  ewc
 //  Added support for type any and TypeCode
 //
@@ -42,6 +48,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_enum::o2be_enum(UTL_ScopedName *n, UTL_StrList *p)
        : AST_Enum(n, p),

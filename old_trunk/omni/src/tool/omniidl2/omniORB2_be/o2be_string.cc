@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.8  1998/04/07 18:51:41  sll
+  Use std::fstream instead of fstream.
+
 // Revision 1.7  1998/01/27  16:49:27  ewc
 //  Added support for type Any and TypeCode
 //
@@ -42,6 +45,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_string::o2be_string(AST_Expression *v)
 	 : AST_String(v),

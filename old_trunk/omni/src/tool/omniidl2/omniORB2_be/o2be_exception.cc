@@ -25,6 +25,10 @@
 
 /*
   $Log$
+  Revision 1.9  1998/04/07 18:47:11  sll
+  Use std::fstream instead of fstream.
+  Stub code modified to accommodate the use of namespace to represent module.
+
 // Revision 1.8  1998/01/27  16:35:52  ewc
 //  Added support for type any and TypeCode
 //
@@ -47,6 +51,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #define IRREPOID_POSTFIX          "_IntfRepoID"
 

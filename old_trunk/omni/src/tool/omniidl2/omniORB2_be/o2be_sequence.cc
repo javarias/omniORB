@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.12  1998/04/07 18:51:13  sll
+  Use std::fstream instead of fstream.
+  Stub code modified to accommodate the use of namespace to represent module.
+
 // Revision 1.11  1998/02/19  12:13:56  ewc
 // Fix to recursive unions.
 //
@@ -140,6 +144,11 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <stdio.h>
 
 #define SEQUENCE_TYPE_PREFIX "_IDL_SEQUENCE_"

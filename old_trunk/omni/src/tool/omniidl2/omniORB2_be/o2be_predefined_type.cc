@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.6  1998/04/07 18:49:55  sll
+  Use std::fstream instead of fstream.
+
 // Revision 1.5  1998/01/27  16:48:06  ewc
 // Added support for type Any and TypeCode
 //
@@ -41,6 +44,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_predefined_type::o2be_predefined_type(AST_PredefinedType::PredefinedType t,
 				       UTL_ScopedName *sn, UTL_StrList *p)

@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.9  1998/04/07 18:49:01  sll
+  Use std::fstream instead of fstream.
+
 // Revision 1.8  1998/01/27  16:46:29  ewc
 // *** empty log message ***
 //
@@ -44,6 +47,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 static char *internal_produce_scope_name(UTL_ScopedName *n,char *separator);
 static char *internal_check_name_for_reserved_words(char *p);

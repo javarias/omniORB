@@ -26,11 +26,18 @@
 
 /*
   $Log$
+  Revision 1.2  1997/05/06 13:56:54  sll
+  Public release.
+
   */
 
 #include  "idl.hh"
 #include  "idl_extern.hh"
 #include  "o2be.h"
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 AST_Root  *
 o2be_generator::create_root(UTL_ScopedName *n,UTL_StrList *p)

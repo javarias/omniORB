@@ -25,6 +25,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/12/09 19:55:39  sll
+  *** empty log message ***
+
 // Revision 1.2  1997/05/06  13:58:00  sll
 // Public release.
 //
@@ -33,6 +36,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 o2be_field::o2be_field(AST_Type *ft, UTL_ScopedName *n, UTL_StrList *p)
 	: AST_Field(ft, n, p),

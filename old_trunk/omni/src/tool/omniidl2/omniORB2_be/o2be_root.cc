@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.13  1998/08/10 15:33:07  sll
+  Now catch all errors instead of letting o2be_fatal_exception to cause
+  core dump.
+
   Revision 1.12  1998/08/05 18:05:43  sll
   Version variable is changed to omniORB_2_6 (previously omniORB_2_5).
 
@@ -64,6 +68,10 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #ifdef __WIN32__
 #include <stdio.h>
