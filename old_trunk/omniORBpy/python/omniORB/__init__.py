@@ -31,6 +31,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.21  2000/06/12 15:36:09  dpg1
+# Support for exception handler functions. Under omniORB 3, local
+# operation dispatch modified so exceptions handlers are run.
+#
 # Revision 1.20  2000/06/02 14:25:51  dpg1
 # orb.run() now properly exits when the ORB is shut down
 #
@@ -251,7 +255,18 @@ runtime creates any "WorkerThread"s.
     WorkerThread.hooks.append(hook)
 
 
-# Import omniORB API functions
+# Import omniORB API functions. This provides:
+#
+#   installTransientExceptionHandler()
+#   installCommFailureExceptionHandler()
+#   installSystemExceptionHandler()
+#
+# And with omniORB3:
+#
+#   nameToString()
+#   stringToName()
+#   addrAndNameToURI()
+
 from _omnipy.omni_func import *
 
 
