@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/10/27 17:32:09  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.1  1999/09/24 09:51:48  djr
   Moved from omniORB2 + some new files.
 
@@ -256,6 +259,7 @@ private:
   //////////////////////////////////////////////////
   friend class omni;
   friend class omniInternal;
+  friend class omniPy;
 
   inline void _setIdentity(omniIdentity* id, omniLocalIdentity* lid) {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);

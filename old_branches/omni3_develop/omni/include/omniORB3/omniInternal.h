@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2000/02/08 13:25:23  djr
+  Added a couple of missing _core_attr.
+
   Revision 1.1.2.6  2000/01/27 16:31:32  djr
   String_member now initialised to empty string by default.
 
@@ -183,6 +186,7 @@ public:
 
   static _core_attr const _CORBA_Char                myByteOrder;
   static _core_attr omni_tracedmutex*                internalLock;
+  static _core_attr omni_tracedmutex*                objref_rc_lock;
 
   static _core_attr omni_tracedmutex*                poRcLock;
   // Psuedo-object ref count lock.
