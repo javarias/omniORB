@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/02 17:07:26  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.2  1999/10/29 10:01:31  dpg1
 // Nicer error reporting.
 //
@@ -125,7 +128,7 @@ _CORBA_Short IntegerExpr::evalAsShort() {
   return value_;
 }
 _CORBA_Long IntegerExpr::evalAsLong() {
-  if (value_ > ((1 << 31) - 1)) {
+  if (value_ > ((1ul << 31) - 1)) {
     IdlError(file(), line(), "Integer literal is too large for long");
     return 1;
   }
@@ -573,7 +576,11 @@ _CORBA_Float ConstExpr::evalAsFloat() {
 
   switch (c_->constKind()) {
   case IdlType::tk_float:      r = c_->constAsFloat();      break;
+#ifndef __VMS
   case IdlType::tk_double:     r = c_->constAsDouble();     break;
+#else
+  case IdlType::tk_double:     r = (float)(double)c_->constAsDouble(); break;
+#endif
 #ifdef HAS_LongDouble
   case IdlType::tk_longdouble: r = c_->constAsLongDouble(); break;
 #endif
@@ -597,7 +604,11 @@ _CORBA_Double ConstExpr::evalAsDouble() {
   _CORBA_Double r;
 
   switch (c_->constKind()) {
+#ifndef __VMS
   case IdlType::tk_float:      r = c_->constAsFloat();      break;
+#else
+  case IdlType::tk_float:      r = (double)(float)c_->constAsFloat(); break;
+#endif
   case IdlType::tk_double:     r = c_->constAsDouble();     break;
 #ifdef HAS_LongDouble
   case IdlType::tk_longdouble: r = c_->constAsLongDouble(); break;

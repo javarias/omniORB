@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  1999/12/28 17:44:01  dpg1
+// Stupid string allocation bug.
+//
 // Revision 1.5  1999/11/19 16:03:40  dpg1
 // Flex scanner now accepts \r as whitespace.
 //
@@ -58,7 +61,11 @@
 #include <idlexpr.h>
 #include <idlast.h>
 
+#ifndef __VMS
 #include <y.tab.h>
+#else
+#include <y_tab.h>
+#endif
 
 char*          currentFile;
 _CORBA_Boolean mainFile  = 1; // Are we processing the main file

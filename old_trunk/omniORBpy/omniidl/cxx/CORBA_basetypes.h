@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1  1999/10/27 14:06:01  dpg1
+ *** empty log message ***
+
  Revision 1.12  1999/08/15 13:52:17  sll
  New VMS float implementation.
 
@@ -160,6 +163,12 @@ public:
 };
 
 #undef cvt_
+
+//  Assume long double type is compatible with the CORBA standard.
+
+#ifdef HAS_LongDouble
+typedef long double               _CORBA_LongDouble;
+#endif
 
 #endif   // VMS float test
 #endif   // !defined(NO_FLOAT)

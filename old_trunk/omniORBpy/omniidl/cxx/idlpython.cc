@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.14  2000/01/18 17:15:05  dpg1
+// Changes for "small" distribution.
+//
 // Revision 1.13  1999/12/15 12:17:18  dpg1
 // Changes to compile with SunPro CC 5.0.
 //
@@ -70,8 +73,10 @@
 // First revision.
 //
 
-#ifdef __WIN32__
+#if defined(__WIN32__)
 #include <Python.h>
+#elif defined(__VMS)
+#include <python_include/python.h>
 #else
 #include <python1.5/Python.h>
 #endif

@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.14  2000/01/20 17:47:09  dpg1
+// Refcounting bug in any handling.
+//
 // Revision 1.13  2000/01/10 19:58:59  dpg1
 // Struct marshalling is more forgiving. BAD_PARAM exceptions instead of
 // assertion failures with incorrect data.
@@ -74,6 +77,15 @@
 //
 
 #include <omnipy.h>
+
+#if defined(__DECCXX)
+// EDG based compaq cxx is having a problem with taking the address of static
+// functions.
+PyObject* omnipyCompaqCxxBug() {
+  // Oddly, modules that invoke the following function don't have a problem.
+  return omniPy::newTwin(0); // never call this.
+}
+#endif
 
 CORBA::ULong
 omniPy::alignedSize(CORBA::ULong msgsize,

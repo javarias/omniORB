@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/18 17:15:05  dpg1
+# Changes for "small" distribution.
+#
 # Revision 1.12  1999/12/21 16:03:57  dpg1
 # Warning if no back-ends are selected.
 #
@@ -107,7 +110,7 @@ if hasattr(_omniidl, "__file__"):
 else:
     preprocessor_path = os.path.dirname(sys.argv[0])
 
-preprocessor      = os.path.join(preprocessor_path, "omni-cpp")
+preprocessor      = os.path.join(preprocessor_path, "omnicpp")
 preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
                     _omniidl.version
 

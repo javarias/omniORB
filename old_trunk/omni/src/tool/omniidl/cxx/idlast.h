@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  1999/11/17 17:17:00  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.6  1999/11/02 17:07:27  dpg1
 // Changes to compile on Solaris.
 //
@@ -384,8 +387,13 @@ private:
     _CORBA_Long         long_;
     _CORBA_UShort       ushort_;
     _CORBA_ULong        ulong_;
+#ifndef __VMS
     _CORBA_Float        float_;
     _CORBA_Double       double_;
+#else
+    float               float_;
+    double              double_;
+#endif
     _CORBA_Boolean      boolean_;
     _CORBA_Char         char_;
     _CORBA_Octet        octet_;
