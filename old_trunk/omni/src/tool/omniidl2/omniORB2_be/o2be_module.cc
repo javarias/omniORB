@@ -26,6 +26,9 @@
 
 /* 
    $Log$
+   Revision 1.14  1999/03/11 16:26:11  djr
+   Updated copyright notice
+
    Revision 1.13  1999/02/10 09:55:27  djr
    Fixed bug in which omniidl2 failed if constructed types were
    declared in an exception member declaration.
@@ -86,7 +89,8 @@ o2be_module::produce_hdr(std::fstream &s)
   if (!(in_main_file()))
     return;
 
-  if (defined_in() != 0)
+  if (defined_in() != 0 &&
+      !(idl_global->compile_flags() & IDL_BE_GENERATE_FRAGMENT))
     {
       s << "\n";
       IND(s); s << "_CORBA_MODULE " << uqname() << "\n\n";
@@ -140,7 +144,8 @@ o2be_module::produce_hdr(std::fstream &s)
       i.next();
     }
 
-  if (defined_in() != 0)
+  if (defined_in() != 0 &&
+      !(idl_global->compile_flags() & IDL_BE_GENERATE_FRAGMENT))
     {
       DEC_INDENT_LEVEL();
       s << "\n";
