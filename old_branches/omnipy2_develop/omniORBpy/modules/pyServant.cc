@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.16  2003/12/15 12:10:52  dgrisby
+// Bug with omniORB.LOCATION_FORWARD handling.
+//
 // Revision 1.1.2.15  2003/05/28 10:13:01  dgrisby
 // Preliminary interceptor support. General clean-up.
 //
@@ -542,10 +545,11 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
+      else {
+        Py_DECREF(etype); Py_XDECREF(evalue); Py_XDECREF(etraceback);
+      }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
 
     PyObject* exc_d = pycd->exc_d_;
 
@@ -556,7 +560,7 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
       PyObject* edesc = PyDict_GetItem(exc_d, erepoId);
 
       if (edesc) {
-	Py_DECREF(erepoId);
+	Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
 	PyUserException ex(edesc, evalue, CORBA::COMPLETED_MAYBE);
 	ex._raise();
       }
@@ -565,12 +569,12 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
     // Is it a LOCATION_FORWARD?
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       "omniORB.LOCATION_FORWARD")) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       omniPy::handleLocationForward(evalue);
     }
 
     // System exception or unknown user exception
-    omniPy::produceSystemException(evalue, erepoId);
+    omniPy::produceSystemException(evalue, erepoId, etype, etraceback);
   }
 }
 
@@ -701,10 +705,11 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
+      else {
+        Py_DECREF(etype); Py_XDECREF(evalue); Py_XDECREF(etraceback);
+      }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
 
     // Is it a user exception?
     if (exc_d != Py_None) {
@@ -713,7 +718,7 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
       PyObject* edesc = PyDict_GetItem(exc_d, erepoId);
 
       if (edesc) {
-	Py_DECREF(erepoId);
+	Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
 	PyUserException ex(edesc, evalue, CORBA::COMPLETED_MAYBE);
 	ex._raise();
       }
@@ -722,12 +727,12 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
     // Is it a LOCATION_FORWARD?
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       "omniORB.LOCATION_FORWARD")) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       omniPy::handleLocationForward(evalue);
     }
 
     // System exception or unknown user exception
-    omniPy::produceSystemException(evalue, erepoId);
+    omniPy::produceSystemException(evalue, erepoId, etype, etraceback);
   }
 }
 
@@ -799,6 +804,9 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
+      else {
+        Py_DECREF(etype); Py_XDECREF(evalue); Py_XDECREF(etraceback);
+      }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
@@ -806,7 +814,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
 
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       PortableServer::ForwardRequest::_PD_repoId)) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       PyObject* pyfr = PyObject_GetAttrString(evalue,
 					      (char*)"forward_reference");
       Py_DECREF(evalue);
@@ -829,12 +837,12 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
     // Is it a LOCATION_FORWARD?
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       "omniORB.LOCATION_FORWARD")) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       omniPy::handleLocationForward(evalue);
     }
 
     // System exception or unknown user exception
-    omniPy::produceSystemException(evalue, erepoId);
+    omniPy::produceSystemException(evalue, erepoId, etype, etraceback);
   }
   OMNIORB_ASSERT(0); // Never reach here
   return 0;
@@ -995,14 +1003,15 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
+      else {
+	Py_DECREF(etype); Py_XDECREF(evalue); Py_XDECREF(etraceback);
+      }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
 
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       PortableServer::ForwardRequest::_PD_repoId)) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       PyObject* pyfr = PyObject_GetAttrString(evalue,
 					      (char*)"forward_reference");
       Py_DECREF(evalue);
@@ -1024,12 +1033,12 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
     // Is it a LOCATION_FORWARD?
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       "omniORB.LOCATION_FORWARD")) {
-      Py_DECREF(erepoId);
+      Py_DECREF(erepoId); Py_DECREF(etype); Py_XDECREF(etraceback);
       omniPy::handleLocationForward(evalue);
     }
 
     // System exception or unknown user exception
-    omniPy::produceSystemException(evalue, erepoId);
+    omniPy::produceSystemException(evalue, erepoId, etype, etraceback);
   }
   OMNIORB_ASSERT(0); // Never reach here
   return 0;
