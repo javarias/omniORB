@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  2000/03/31 15:09:29  dpg1
+// Revision 1.5 introduced a bug into reference_to_servant().
+//
 // Revision 1.6  2000/03/31 14:20:18  dpg1
 // Arguments to activate_object_with_id() were in the wrong order.
 //
@@ -330,7 +333,9 @@ extern "C" {
       PyObject* pypl = PyList_New(pl->length());
 
       for (CORBA::ULong i=0; i < pl->length(); i++)
-	PyList_SetItem(pypl, i, omniPy::createPyPOAObject(pl[i]));
+	PyList_SetItem(pypl, i,
+		       omniPy::createPyPOAObject(PortableServer::POA::
+						 _duplicate(pl[i])));
 
       return pypl;
     }
