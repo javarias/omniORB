@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.6  2000/11/09 12:27:56  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.33.2.5  2000/10/27 15:42:07  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -263,6 +266,7 @@ extern omniInitialiser& omni_hooked_initialiser_;
 extern omniInitialiser& omni_interceptor_initialiser_;
 extern omniInitialiser& omni_ior_initialiser_;
 extern omniInitialiser& omni_codeSet_initialiser_;
+extern omniInitialiser& omni_cdrStream_initialiser_;
 
 static CORBA::Boolean
 parse_ORB_args(int& argc, char** argv, const char* orb_identifier);
@@ -361,9 +365,10 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
     omni_giopStreamImpl_initialiser_.attach();
     omni_interceptor_initialiser_.attach();
     omni_ior_initialiser_.attach();
+    omni_codeSet_initialiser_.attach();
+    omni_cdrStream_initialiser_.attach();
     omni_initFile_initialiser_.attach();
     omni_initRefs_initialiser_.attach();
-    omni_codeSet_initialiser_.attach();
     omni_hooked_initialiser_.attach();
 
     if( bootstrapAgentHostname ) {
@@ -617,9 +622,10 @@ omniOrbORB::actual_shutdown()
 
   // Call detach method of the initialisers in reverse order.
   omni_hooked_initialiser_.detach();
-  omni_codeSet_initialiser_.detach();
   omni_initRefs_initialiser_.detach();
   omni_initFile_initialiser_.detach();
+  omni_codeSet_initialiser_.detach();
+  omni_cdrStream_initialiser_.detach();
   omni_ior_initialiser_.detach();
   omni_interceptor_initialiser_.detach();
   omni_giopStreamImpl_initialiser_.detach();
