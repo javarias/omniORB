@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.3  1999/09/20 14:53:29  dpg1
+// Various fixes. Support for oneway.
+//
 // Revision 1.2  1999/07/19 15:52:07  dpg1
 // Things moved into module omniPy.
 // Twin type expanded so it can be put into dictionaries.
@@ -105,21 +108,21 @@ newTwin(void* twin)
 
 _CORBA_MODULE_FN
 inline void
-setTwin(PyObject* obj, void* twin)
+setTwin(PyObject* obj, void* twin, char* name)
 {
   PyObject* ot = newTwin(twin);
 
   PyDict_SetItemString(((PyInstanceObject*)obj)->in_dict,
-		       "_twin", ot);
+		       name, ot);
   Py_DECREF(ot);
 }
 
 _CORBA_MODULE_FN
 inline void*
-getTwin(PyObject* obj)
+getTwin(PyObject* obj, char* name)
 {
   PyObject* ot = PyDict_GetItemString(((PyInstanceObject*)obj)->in_dict,
-				      "_twin");
+				      name);
   if (ot)
     return ((omnipyTwin*)ot)->ob_twin;
   else
@@ -128,10 +131,14 @@ getTwin(PyObject* obj)
 
 _CORBA_MODULE_FN
 inline void
-remTwin(PyObject* obj)
+remTwin(PyObject* obj, char* name)
 {
-  PyDict_DelItemString(((PyInstanceObject*)obj)->in_dict, "_twin");
+  PyDict_DelItemString(((PyInstanceObject*)obj)->in_dict, name);
 }
+
+#define ORB_TWIN    "__twin_orb"
+#define BOA_TWIN    "__twin_boa"
+#define OBJREF_TWIN "__twin_obj"
 
 
 
@@ -391,6 +398,11 @@ public:
       Py_DECREF(err);
       return 0;
     }
+  }
+
+  inline PyObject* pyServant() {
+    Py_INCREF(pyservant_);
+    return pyservant_;
   }
 
 private:

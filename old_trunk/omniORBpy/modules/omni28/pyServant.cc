@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.2  1999/09/20 14:56:12  dpg1
+// GCC 2.95 is more pedantic than egcs.
+//
 // Revision 1.1  1999/07/29 14:20:49  dpg1
 // Initial revision
 //
@@ -64,7 +67,7 @@ Py_Servant::Py_Servant(PyObject* pyservant, PyObject* opdict,
 omniPy::
 Py_Servant::~Py_Servant()
 {
-  cout << "Py_Servant destructor." << endl;
+  //  cout << "Py_Servant destructor." << endl;
   Py_DECREF(pyservant_);
   Py_DECREF(opdict_);
 }

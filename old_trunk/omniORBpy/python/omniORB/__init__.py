@@ -3,6 +3,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.4  1999/09/13 15:13:09  dpg1
+# Module handling.
+# Any coercion (*** not fully tested).
+#
 # Revision 1.3  1999/08/03 09:03:46  dpg1
 # Unions with no default member fixed.
 #
@@ -386,6 +390,6 @@ keywordMapping = {
 
 
 # Register this module with omnipy:
-import omniORB
+import omniORB, omniORB.PortableServer
 _omnipy.registerPyObjects(omniORB)
 del omniORB

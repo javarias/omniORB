@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.5  1999/08/24 11:21:10  dpg1
+// Fixed typo in ulong marshalling.
+//
 // Revision 1.4  1999/08/03 09:03:34  dpg1
 // Unions with no default member fixed.
 //
@@ -147,7 +150,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
     {
       assert(tup);
 
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o);
+      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
 
       if (!obj) throw CORBA::BAD_PARAM();
 
@@ -587,7 +590,7 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_any:
     {
-      cout << "about to marshal Any's TypeCode..." << endl;
+      //      cout << "about to marshal Any's TypeCode..." << endl;
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // TypeCode
@@ -596,22 +599,22 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
       PyObject* desc  = PyDict_GetItemString(tdict, "_d");
       marshalTypeCode(stream, desc);
 
-      cout << "about to marshal Any's contents..." << endl;
+      //      cout << "about to marshal Any's contents..." << endl;
 
       // Any's contents
       t_o             = PyDict_GetItemString(adict, "_v");
       marshalPyObject(stream, desc, t_o);
-      cout << "Any marshalled." << endl;
+      //      cout << "Any marshalled." << endl;
     }
     break;
 
   case CORBA::tk_TypeCode:
     {
-      cout << "about to marshal TypeCode..." << endl;
+      //      cout << "about to marshal TypeCode..." << endl;
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
       t_o             = PyDict_GetItemString(tdict, "_d"); assert(t_o);
       marshalTypeCode(stream, t_o);
-      cout << "TypeCode marshalled." << endl;
+      //      cout << "TypeCode marshalled." << endl;
     }
     break;
 
@@ -619,7 +622,7 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o);
+      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
       const char* repoId    = obj->PR_getobj()->NP_IRRepositoryId();
 
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
@@ -971,7 +974,7 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_any:
     {
-      cout << "about to marshal Any's TypeCode..." << endl;
+      //      cout << "about to marshal Any's TypeCode..." << endl;
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // TypeCode
@@ -980,12 +983,12 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
       PyObject* desc  = PyDict_GetItemString(tdict, "_d");
       marshalTypeCode(stream, desc);
 
-      cout << "about to marshal Any's contents..." << endl;
+      //      cout << "about to marshal Any's contents..." << endl;
 
       // Any's contents
       t_o             = PyDict_GetItemString(adict, "_v");
       marshalPyObject(stream, desc, t_o);
-      cout << "Any marshalled." << endl;
+      //      cout << "Any marshalled." << endl;
     }
     break;
 
@@ -1001,7 +1004,7 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_objref: // repoId, name
     {
-      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o);
+      CORBA::Object_ptr obj = (CORBA::Object_ptr)getTwin(a_o, OBJREF_TWIN);
       const char* repoId    = obj->PR_getobj()->NP_IRRepositoryId();
 
       CORBA::MarshalObjRef(obj, repoId, strlen(repoId) + 1, stream);
@@ -1337,7 +1340,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_any:
     {
-      cout << "about to unmarshal Any's TypeCode..." << endl;
+      //      cout << "about to unmarshal Any's TypeCode..." << endl;
 
       // TypeCode
       PyObject* desc     = unmarshalTypeCode(stream);
@@ -1346,7 +1349,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       PyObject* tcobj    = PyEval_CallObject(pyCreateTypeCode, argtuple);
       Py_DECREF(argtuple);
 
-      cout << "about to unmarshal Any's value..." << endl;
+      //      cout << "about to unmarshal Any's value..." << endl;
 
       // Value
       t_o = unmarshalPyObject(stream, desc);
@@ -1358,7 +1361,7 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       r_o = PyEval_CallObject(pyCORBAAnyClass, argtuple);
       Py_DECREF(argtuple);
 
-      cout << "Any unmarshalled." << endl;
+      //      cout << "Any unmarshalled." << endl;
     }
     break;
 
@@ -1759,7 +1762,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_any:
     {
-      cout << "about to unmarshal Any's TypeCode..." << endl;
+      //      cout << "about to unmarshal Any's TypeCode..." << endl;
 
       // TypeCode
       PyObject* desc     = unmarshalTypeCode(stream);
@@ -1768,7 +1771,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       PyObject* tcobj    = PyEval_CallObject(pyCreateTypeCode, argtuple);
       Py_DECREF(argtuple);
 
-      cout << "about to unmarshal Any's value..." << endl;
+      //      cout << "about to unmarshal Any's value..." << endl;
 
       // Value
       t_o = unmarshalPyObject(stream, desc);
@@ -1780,7 +1783,7 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       r_o = PyEval_CallObject(pyCORBAAnyClass, argtuple);
       Py_DECREF(argtuple);
 
-      cout << "Any unmarshalled." << endl;
+      //      cout << "Any unmarshalled." << endl;
     }
     break;
 

@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.3  1999/07/29 14:21:38  dpg1
+// Handling of reserved words.
+//
 // Revision 1.2  1999/07/19 14:41:03  dpg1
 // createPyTypeCodeObject() removed.
 //
@@ -463,7 +466,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 {
   CORBA::Long tc_offset;
 
-  cout << endl << "marshalTypeCode... " << flush;
+  //  cout << endl << "marshalTypeCode... " << flush;
 
   // If this TypeCode has already been sent, use an indirection:
   if (omniORB::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
@@ -474,7 +477,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
     tk_ind >>= stream;
     offset >>= stream;
 
-    cout << "indirection to " << offset << endl;
+    //    cout << "indirection to " << offset << endl;
   }
   else {
     CORBA::ULong   tk;
@@ -495,7 +498,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
     // Offset of this TypeCode (within the current encapsulation if any):
     tc_offset = stream.WrMessageAlreadyWritten() - 4;
 
-    cout << "offset = " << tc_offset << " " << flush;
+    //    cout << "offset = " << tc_offset << " " << flush;
     
     switch (tk) {
     case CORBA::tk_void:
@@ -512,12 +515,12 @@ r_marshalTypeCode(NetBufferedStream&   stream,
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
       // Nothing more to be sent
-      cout << "simple: " << tk << endl;
+      //      cout << "simple: " << tk << endl;
       break;
 
     case CORBA::tk_string:
       {
-	cout << "string" << endl;
+	//	cout << "string" << endl;
 	// Send max length
 	t_o = PyTuple_GET_ITEM(d_o, 1); assert(PyInt_Check(t_o));
 	CORBA::ULong len = PyInt_AS_LONG(t_o);
@@ -527,7 +530,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_objref:
       {
-	cout << "objref" << endl;
+	//	cout << "objref" << endl;
 	// Add entry to descriptor offset map:
 	dom.add(d_o, tc_offset);
 
@@ -551,7 +554,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_struct:
       {
-	cout << "struct" << endl;
+	//	cout << "struct" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -596,7 +599,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_union:
       {
-	cout << "union" << endl;
+	//	cout << "union" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -660,7 +663,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_enum:
       {
-	cout << "enum" << endl;
+	//	cout << "enum" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -697,7 +700,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_sequence:
       {
-	cout << "sequence" << endl;
+	//	cout << "sequence" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -721,7 +724,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_array:
       {
-	cout << "array" << endl;
+	//	cout << "array" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -745,7 +748,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_alias:
       {
-	cout << "alias" << endl;
+	//	cout << "alias" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -771,7 +774,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case CORBA::tk_except:
       {
-	cout << "except" << endl;
+	//	cout << "except" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -817,7 +820,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
     case 0xffffffff:
       {
-	cout << "indirect" << endl;
+	//	cout << "indirect" << endl;
 	t_o = PyTuple_GET_ITEM(d_o, 1); assert(PyList_Check(t_o));
 	t_o = PyList_GET_ITEM(t_o, 0); assert(t_o);
 
@@ -828,7 +831,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 
 	offset = position - (tc_offset + 4);
 
-	cout << "indirect to " << offset << endl;
+	//	cout << "indirect to " << offset << endl;
 
 	offset >>= stream;
       }
@@ -838,7 +841,7 @@ r_marshalTypeCode(NetBufferedStream&   stream,
       throw CORBA::BAD_TYPECODE();
     }
   }
-  cout << "marshalTypeCode() done." << endl;
+  //  cout << "marshalTypeCode() done." << endl;
 }
 
 
@@ -849,7 +852,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 {
   CORBA::Long tc_offset;
 
-  cout << endl << "marshalTypeCode... " << flush;
+  //  cout << endl << "marshalTypeCode... " << flush;
 
   // If this TypeCode has already been sent, use an indirection:
   if (omniORB::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
@@ -860,7 +863,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
     tk_ind >>= stream;
     offset >>= stream;
 
-    cout << "indirection to " << offset << endl;
+    //    cout << "indirection to " << offset << endl;
   }
   else {
     CORBA::ULong   tk;
@@ -881,7 +884,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
     // Offset of this TypeCode (within the current encapsulation if any):
     tc_offset = stream.WrMessageAlreadyWritten() - 4;
 
-    cout << "offset = " << tc_offset << " " << flush;
+    //    cout << "offset = " << tc_offset << " " << flush;
     
     switch (tk) {
     case CORBA::tk_void:
@@ -898,12 +901,12 @@ r_marshalTypeCode(MemBufferedStream&   stream,
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
       // Nothing more to be sent
-      cout << "simple: " << tk << endl;
+      //      cout << "simple: " << tk << endl;
       break;
 
     case CORBA::tk_string:
       {
-	cout << "string" << endl;
+	//	cout << "string" << endl;
 	// Send max length
 	t_o = PyTuple_GET_ITEM(d_o, 1); assert(PyInt_Check(t_o));
 	CORBA::ULong len = PyInt_AS_LONG(t_o);
@@ -913,7 +916,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_objref:
       {
-	cout << "objref" << endl;
+	//	cout << "objref" << endl;
 	// Add entry to descriptor offset map:
 	dom.add(d_o, tc_offset);
 
@@ -937,7 +940,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_struct:
       {
-	cout << "struct" << endl;
+	//	cout << "struct" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -982,7 +985,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_union:
       {
-	cout << "union" << endl;
+	//	cout << "union" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1046,7 +1049,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_enum:
       {
-	cout << "enum" << endl;
+	//	cout << "enum" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1083,7 +1086,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_sequence:
       {
-	cout << "sequence" << endl;
+	//	cout << "sequence" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1107,7 +1110,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_array:
       {
-	cout << "array" << endl;
+	//	cout << "array" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1131,7 +1134,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_alias:
       {
-	cout << "alias" << endl;
+	//	cout << "alias" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1157,7 +1160,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case CORBA::tk_except:
       {
-	cout << "except" << endl;
+	//	cout << "except" << endl;
 	dom.add(d_o, tc_offset);
 
 	MemBufferedStream encap;
@@ -1203,7 +1206,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 
     case 0xffffffff:
       {
-	cout << "indirect" << endl;
+	//	cout << "indirect" << endl;
 	t_o = PyTuple_GET_ITEM(d_o, 1); assert(PyList_Check(t_o));
 	t_o = PyList_GET_ITEM(t_o, 0); assert(t_o);
 
@@ -1215,7 +1218,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 	offset = position - (tc_offset + 4); // Position in stream of
 	                                     // indirect pointer
 
-	cout << "indirect to " << offset << endl;
+	//	cout << "indirect to " << offset << endl;
 
 	offset >>= stream;
       }
@@ -1225,7 +1228,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
       throw CORBA::BAD_TYPECODE();
     }
   }
-  cout << "marshalTypeCode() done." << endl;
+  //  cout << "marshalTypeCode() done." << endl;
 }
 
 
@@ -1244,7 +1247,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
   PyObject* d_o; // Descriptor object to build
   PyObject* t_o;
 
-  cout << "unmarshal typecode... " << flush;
+  //  cout << "unmarshal typecode... " << flush;
 
   // Read kind
   CORBA::ULong tk; tk <<= stream;
@@ -1267,14 +1270,14 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_TypeCode:
   case CORBA::tk_Principal:
     {
-      cout << "simple: " << tk << endl;
+      //      cout << "simple: " << tk << endl;
       d_o = PyInt_FromLong(tk); odm.add(d_o, tc_offset);
     }
     break;
 
   case CORBA::tk_string:
     {
-      cout << "string" << endl;
+      //      cout << "string" << endl;
       d_o = PyTuple_New(2); odm.add(d_o, tc_offset);
       PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
 
@@ -1286,7 +1289,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_objref:
     {
-      cout << "objref" << endl;
+      //      cout << "objref" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1304,7 +1307,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_struct:
     {
-      cout << "struct" << endl;
+      //      cout << "struct" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1375,7 +1378,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_union:
     {
-      cout << "union" << endl;
+      //      cout << "union" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1476,7 +1479,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_enum:
     {
-      cout << "enum" << endl;
+      //      cout << "enum" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1533,7 +1536,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_sequence:
     {
-      cout << "sequence" << endl;
+      //      cout << "sequence" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1557,7 +1560,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_array:
     {
-      cout << "array" << endl;
+      //      cout << "array" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1581,7 +1584,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_alias:
     {
-      cout << "alias" << endl;
+      //      cout << "alias" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1605,7 +1608,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_except:
     {
-      cout << "except" << endl;
+      //      cout << "except" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1676,7 +1679,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case 0xffffffff:
     {
-      cout << "indirect" << endl;
+      //      cout << "indirect" << endl;
       CORBA::ULong position, offset;
 
       offset  <<= stream;
@@ -1698,7 +1701,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
     throw CORBA::BAD_TYPECODE();
   }
 
-  cout << "r_unmarshalTypeCode ended." << endl;
+  //  cout << "r_unmarshalTypeCode ended." << endl;
   return d_o;
 }
 
@@ -1710,7 +1713,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
   PyObject* d_o; // Descriptor object to build
   PyObject* t_o;
 
-  cout << "unmarshal typecode... " << flush;
+  //  cout << "unmarshal typecode... " << flush;
 
   // Read kind
   CORBA::ULong tk; tk <<= stream;
@@ -1733,14 +1736,14 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_TypeCode:
   case CORBA::tk_Principal:
     {
-      cout << "simple: " << tk << endl;
+      //      cout << "simple: " << tk << endl;
       d_o = PyInt_FromLong(tk); odm.add(d_o, tc_offset);
     }
     break;
 
   case CORBA::tk_string:
     {
-      cout << "string" << endl;
+      //      cout << "string" << endl;
       d_o = PyTuple_New(2); odm.add(d_o, tc_offset);
       PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
 
@@ -1752,7 +1755,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_objref:
     {
-      cout << "objref" << endl;
+      //      cout << "objref" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1770,7 +1773,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_struct:
     {
-      cout << "struct" << endl;
+      //      cout << "struct" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1841,7 +1844,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_union:
     {
-      cout << "union" << endl;
+      //      cout << "union" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1942,7 +1945,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_enum:
     {
-      cout << "enum" << endl;
+      //      cout << "enum" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -1999,7 +2002,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_sequence:
     {
-      cout << "sequence" << endl;
+      //      cout << "sequence" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -2023,7 +2026,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_array:
     {
-      cout << "array" << endl;
+      //      cout << "array" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -2047,7 +2050,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_alias:
     {
-      cout << "alias" << endl;
+      //      cout << "alias" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -2071,7 +2074,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_except:
     {
-      cout << "except" << endl;
+      //      cout << "except" << endl;
       CORBA::ULong size; size <<= stream;
       MemBufferedStream encap(size);
       if (stream.overrun(size)) throw CORBA::MARSHAL();
@@ -2142,7 +2145,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
   case 0xffffffff:
     {
-      cout << "indirect" << endl;
+      //      cout << "indirect" << endl;
       CORBA::ULong position, offset;
 
       offset  <<= stream;
@@ -2164,7 +2167,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
     throw CORBA::BAD_TYPECODE();
   }
 
-  cout << "r_unmarshalTypeCode ended." << endl;
+  //  cout << "r_unmarshalTypeCode ended." << endl;
   return d_o;
 }
 
