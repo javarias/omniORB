@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/06/13 20:07:25  sll
+  Minor update to make the ORB compiles with MSVC++.
+
   Revision 1.1.4.1  2001/04/18 17:26:28  sll
   Big checkin with the brand new internal APIs.
 
@@ -38,6 +41,16 @@
 #define __OMNITRANSPORT_H__
 
 class omniCallDescriptor;
+
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -50,7 +63,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 //
 // Each network connection is represented by a Strand.
 
-extern omni_tracedmutex* omniTransportLock;
+extern _core_attr omni_tracedmutex* omniTransportLock;
 
 class IOP_C;
 class IOP_S;
@@ -144,5 +157,7 @@ private:
 };
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __ROPE_H__
