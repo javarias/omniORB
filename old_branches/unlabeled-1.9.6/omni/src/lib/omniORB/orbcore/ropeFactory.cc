@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.9.6.2  1999/09/24 15:01:36  djr
+ Added module initialisers, and sll's new scavenger implementation.
+
  Revision 1.9.2.1  1999/09/21 20:37:17  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -94,7 +97,7 @@ ropeFactoryList* globalOutgoingRopeFactories = 0;
 
 int
 ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList& profiles,
-			       _CORBA_Octet*& key, int& keysize,
+			       CORBA::Octet*& key, int& keysize,
 			       Rope*& rope, _CORBA_Boolean& is_local)
 {
   is_local = 0;

@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.2.14  2000/06/22 10:40:16  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.13  2000/04/27 10:51:13  dpg1
   Interoperable Naming Service
 
@@ -562,7 +566,11 @@ omni::createObjRef(const char* mostDerivedRepoId,
   // NB. <mostDerivedRepoId> can be the empty string "".
 
   int            keysize = 0;
-  CORBA::Octet*  key = 0;
+  _CORBA_Octet*  key = 0; // Instead of using CORBA::Octet because
+                          // some brain-dead compilers does not realise
+                          // _CORBA_Octet and CORBA::Octet are the same type
+                          // and would not take a CORBA::Octet* as an
+                          // argument that requires a _CORBA_Octet*&.
   Rope*          rope = 0;
   CORBA::Boolean is_local = 0;
 
@@ -809,7 +817,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
   omniORB::logs(10, "Reverting object reference to original profile");
 
   int            keysize = 0;
-  CORBA::Octet*  key = 0;
+  _CORBA_Octet*  key = 0;
   Rope*          rope = 0;
   CORBA::Boolean is_local = 0;
 
