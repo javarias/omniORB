@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.2  1999/06/07 14:58:20  dpg1
+// Descriptors unflattened again.
+//
 // Revision 1.1  1999/06/07 10:11:02  dpg1
 // Initial revision
 //
@@ -140,7 +143,7 @@ Py_OmniProxyCallDesc::r_alignedSize(CORBA::ULong msgsize,
     }
     break;
 
-  case CORBA::tk_struct: // name, descriptor, name, descriptor, ...
+  case CORBA::tk_struct: // class, name, descriptor, name, descriptor, ...
     {
       assert(tup);
       if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
@@ -148,14 +151,14 @@ Py_OmniProxyCallDesc::r_alignedSize(CORBA::ULong msgsize,
       PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
 
       // The descriptor tuple has twice the number of struct members,
-      // plus one for the typecode kind.
-      int       cnt   = (PyTuple_GET_SIZE(d_o) - 1) / 2;
+      // plus one for the typecode kind and one for the Python class.
+      int       cnt   = (PyTuple_GET_SIZE(d_o) - 2) / 2;
 
       PyObject* name;
       PyObject* value;
 
       int i, j;
-      for (i=0,j=1; i < cnt; i++) {
+      for (i=0,j=2; i < cnt; i++) {
 	name    = PyTuple_GET_ITEM(d_o, j++);
 	assert(PyString_Check(name));
 	value   = PyDict_GetItem(sdict, name);
@@ -164,11 +167,66 @@ Py_OmniProxyCallDesc::r_alignedSize(CORBA::ULong msgsize,
     }
     break;
 
-  case CORBA::tk_enum:
+  case CORBA::tk_union: // class, discriminant type,
+			// (default case member name, default case descr),
+			// {case: (member name, descr)}
+    {
+      assert(tup);
+      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
+
+      PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
+
+      PyObject* discriminant = PyDict_GetItemString(udict, "d");
+      PyObject* value        = PyDict_GetItemString(udict, "v");
+      assert(discriminant && value);
+
+      t_o = PyTuple_GET_ITEM(d_o, 2); // Discriminant descriptor
+      msgsize = r_alignedSize(msgsize, t_o, discriminant);
+
+      PyObject* cdict = PyTuple_GET_ITEM(d_o, 4);
+      assert(PyDict_Check(cdict));
+
+      t_o = PyDict_GetItem(cdict, discriminant);
+      if (t_o) {
+	// Discriminant found in case dictionary
+	assert(PyTuple_Check(t_o));
+	msgsize = r_alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 1), value);
+      }
+      else {
+	// Is there a default case?
+	t_o = PyTuple_GET_ITEM(d_o, 3);
+	if (t_o != Py_None) {
+	  assert(PyTuple_Check(t_o));
+	  msgsize = r_alignedSize(msgsize, PyTuple_GET_ITEM(t_o, 1), value);
+	}
+	else throw CORBA::BAD_PARAM();
+      }
+    }
+    break;
+
+  case CORBA::tk_enum: // item list
     {
       if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
       msgsize = omni::align_to(msgsize,omni::ALIGN_4);
       msgsize += 4;
+    }
+    break;
+
+  case CORBA::tk_string: // max_length
+    {
+      assert(tup);
+      t_o                 = PyTuple_GET_ITEM(d_o, 1);
+      assert(PyInt_Check(t_o));
+
+      CORBA::Long max_len = PyInt_AS_LONG(t_o);
+
+      if (!PyString_Check(a_o)) throw CORBA::BAD_PARAM();
+
+      if (max_len > 0 && PyString_GET_SIZE(a_o) > max_len)
+	throw CORBA::BAD_PARAM();
+
+      msgsize  = omni::align_to(msgsize, omni::ALIGN_4);
+      msgsize += 4 + PyString_GET_SIZE(a_o) + 1;
     }
     break;
 
@@ -223,21 +281,37 @@ Py_OmniProxyCallDesc::r_alignedSize(CORBA::ULong msgsize,
     }
     break;
 
-  case CORBA::tk_string: // max_length
+  case CORBA::tk_except: // class, name, descriptor, name, descriptor, ...
     {
       assert(tup);
-      t_o                 = PyTuple_GET_ITEM(d_o, 1);
-      assert(PyInt_Check(t_o));
+      if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
 
-      CORBA::Long max_len = PyInt_AS_LONG(t_o);
+      PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
 
-      if (!PyString_Check(a_o)) throw CORBA::BAD_PARAM();
+      // The descriptor tuple has twice the number of struct members,
+      // plus one for the typecode kind and one for the Python class.
+      int       cnt   = (PyTuple_GET_SIZE(d_o) - 2) / 2;
 
-      if (max_len > 0 && PyString_GET_SIZE(a_o) > max_len)
-	throw CORBA::BAD_PARAM();
+      PyObject* name;
+      PyObject* value;
 
-      msgsize  = omni::align_to(msgsize, omni::ALIGN_4);
-      msgsize += 4 + PyString_GET_SIZE(a_o) + 1;
+      int i, j;
+      for (i=0,j=2; i < cnt; i++) {
+	name    = PyTuple_GET_ITEM(d_o, j++);
+	assert(PyString_Check(name));
+	value   = PyDict_GetItem(sdict, name);
+	msgsize = r_alignedSize(msgsize, PyTuple_GET_ITEM(d_o, j++), value);
+      }
+    }
+    break;
+
+  case 0xffffffff: // [indirect descriptor]
+    {
+      assert(tup);
+      t_o = PyTuple_GET_ITEM(d_o, 1);
+      assert(PyList_Check(t_o));
+
+      msgsize = r_alignedSize(msgsize, PyList_GET_ITEM(t_o, 0), a_o);
     }
     break;
 
@@ -260,7 +334,7 @@ Py_OmniProxyCallDesc::marshalArguments(GIOP_C& giop_client)
 		       PyTuple_GET_ITEM(in_d_,i),
 		       PyTuple_GET_ITEM(args_,i));
 
-  tstate_ = PyEval_SaveThread();
+  if (!tstate_) tstate_ = PyEval_SaveThread();
 }
 
 
@@ -365,16 +439,16 @@ Py_OmniProxyCallDesc::r_marshalArguments(GIOP_C&   giop_client,
     }
     break;
 
-  case CORBA::tk_struct: // name, descriptor, name, descriptor, ...
+  case CORBA::tk_struct: // class, name, descriptor, name, descriptor, ...
     {
       PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
-      int       cnt   = (PyTuple_GET_SIZE(d_o) - 1) / 2;
+      int       cnt   = (PyTuple_GET_SIZE(d_o) - 2) / 2;
 
       PyObject* name;
       PyObject* value;
 
       int i, j;
-      for (i=0,j=1; i < cnt; i++) {
+      for (i=0,j=2; i < cnt; i++) {
 	name    = PyTuple_GET_ITEM(d_o, j++);
 	value   = PyDict_GetItem(sdict, name);
 	r_marshalArguments(giop_client, PyTuple_GET_ITEM(d_o, j++), value);
@@ -382,13 +456,60 @@ Py_OmniProxyCallDesc::r_marshalArguments(GIOP_C&   giop_client,
     }
     break;
 
-  case CORBA::tk_enum:
+  case CORBA::tk_union: // class, discriminant type,
+			// (default case member name, default case descr),
+			// {case: (member name, descr)}
+    {
+      PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
+
+      PyObject* discriminant = PyDict_GetItemString(udict, "d");
+      PyObject* value        = PyDict_GetItemString(udict, "v");
+      t_o = PyTuple_GET_ITEM(d_o, 2); // Discriminant descriptor
+
+      r_marshalArguments(giop_client, t_o, discriminant);
+
+      PyObject* cdict = PyTuple_GET_ITEM(d_o, 4);
+
+      t_o = PyDict_GetItem(cdict, discriminant);
+      if (t_o) {
+	// Discriminant found in case dictionary
+	r_marshalArguments(giop_client, PyTuple_GET_ITEM(t_o, 1), value);
+      }
+      else {
+	// Is there a default case?
+	t_o = PyTuple_GET_ITEM(d_o, 3);
+	if (t_o != Py_None) {
+	  r_marshalArguments(giop_client, PyTuple_GET_ITEM(t_o, 1), value);
+	}
+	else throw CORBA::BAD_PARAM();
+      }
+    }
+    break;
+
+  case CORBA::tk_enum: // item list
     {
       PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
 					  "_v");
       if (!ev) throw CORBA::BAD_PARAM();
       CORBA::ULong e = PyInt_AS_LONG(ev);
       e >>= giop_client;
+    }
+    break;
+
+  case CORBA::tk_string: // max_length
+    {
+      CORBA::Long slen = PyString_GET_SIZE(a_o) + 1;
+
+      slen >>= giop_client;
+
+      if (slen > 1) {
+	char* str = PyString_AS_STRING(a_o);
+	giop_client.put_char_array((const CORBA::Char*)((const char*)str),
+				   slen);
+      }
+      else {
+	CORBA::Char('\0') >>= giop_client;
+      }
     }
     break;
 
@@ -419,20 +540,27 @@ Py_OmniProxyCallDesc::r_marshalArguments(GIOP_C&   giop_client,
     }
     break;
 
-  case CORBA::tk_string: // max_length
+  case CORBA::tk_except: // class, name, descriptor, name, descriptor, ...
     {
-      CORBA::Long slen = PyString_GET_SIZE(a_o) + 1;
+      PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
+      int       cnt   = (PyTuple_GET_SIZE(d_o) - 2) / 2;
 
-      slen >>= giop_client;
+      PyObject* name;
+      PyObject* value;
 
-      if (slen > 1) {
-	char* str = PyString_AS_STRING(a_o);
-	giop_client.put_char_array((const CORBA::Char*)((const char*)str),
-				   slen);
+      int i, j;
+      for (i=0,j=2; i < cnt; i++) {
+	name    = PyTuple_GET_ITEM(d_o, j++);
+	value   = PyDict_GetItem(sdict, name);
+	r_marshalArguments(giop_client, PyTuple_GET_ITEM(d_o, j++), value);
       }
-      else {
-	CORBA::Char('\0') >>= giop_client;
-      }
+    }
+    break;
+
+  case 0xffffffff: // [indirect descriptor]
+    {
+      t_o = PyTuple_GET_ITEM(d_o, 1);
+      r_marshalArguments(giop_client, PyList_GET_ITEM(t_o, 0), a_o);
     }
     break;
 
@@ -576,6 +704,7 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
 
   case CORBA::tk_objref: // repoId
     {
+      assert(tup);
       t_o                   = PyTuple_GET_ITEM(d_o, 1);
       assert(PyString_Check(t_o));
 
@@ -587,10 +716,10 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
     }
     break;
 
-  case CORBA::tk_struct: // struct_class, name, descriptor, name, descriptor...
+  case CORBA::tk_struct: // class, name, descriptor, name, descriptor...
     {
+      assert(tup);
       PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-
       assert(PyClass_Check(strclass));
 
       int       cnt      = (PyTuple_GET_SIZE(d_o) - 2) / 2;
@@ -607,8 +736,50 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
     }
     break;
 
+  case CORBA::tk_union: // class, discriminant type,
+			// (default case member name, default case descr),
+			// {case: (member name, descr)}
+    {
+      assert(tup);
+      PyObject* unclass = PyTuple_GET_ITEM(d_o, 1);
+      assert(PyClass_Check(unclass));
+
+      t_o = PyTuple_GET_ITEM(d_o, 2);
+
+      PyObject* discriminant = r_unmarshalReturnedValues(giop_client, t_o);
+      PyObject* value;
+      PyObject* cdict = PyTuple_GET_ITEM(d_o, 4);
+
+      t_o = PyDict_GetItem(cdict, discriminant);
+      if (t_o) {
+	// Discriminant found in case dictionary
+	assert(PyTuple_Check(t_o));
+	value = r_unmarshalReturnedValues(giop_client,
+					  PyTuple_GET_ITEM(t_o, 1));
+      }
+      else {
+	// Is there a default case?
+	t_o = PyTuple_GET_ITEM(d_o, 3);
+	if (t_o != Py_None) {
+	  assert(PyTuple_Check(t_o));
+	  value = r_unmarshalReturnedValues(giop_client,
+					    PyTuple_GET_ITEM(t_o, 1));
+	}
+	else throw CORBA::MARSHAL();
+      }
+
+      PyObject* untuple = PyTuple_New(2);
+      PyTuple_SET_ITEM(untuple, 0, discriminant);
+      PyTuple_SET_ITEM(untuple, 1, value);
+
+      r_o = PyEval_CallObject(unclass, untuple);
+      Py_DECREF(untuple);
+    }
+    break;
+
   case CORBA::tk_enum: // list enum_items
     {
+      assert(tup);
       t_o = PyTuple_GET_ITEM(d_o, 1);
 
       assert(PyList_Check(t_o));
@@ -622,8 +793,28 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
     }
     break;
 
+  case CORBA::tk_string: // max_length
+    {
+      assert(tup);
+      t_o                 = PyTuple_GET_ITEM(d_o, 1);
+
+      assert(PyInt_Check(t_o));
+
+      CORBA::Long max_len = PyInt_AS_LONG(t_o);
+
+      CORBA::String_member str_tmp;
+      str_tmp <<= giop_client;
+
+      r_o = PyString_FromString(str_tmp._ptr);
+
+      if (max_len > 0 && PyString_GET_SIZE(r_o) > max_len)
+	throw CORBA::MARSHAL();
+    }
+    break;
+
   case CORBA::tk_sequence: // max_length, element_desc
     {
+      assert(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 1);
 
       assert(PyInt_Check(t_o));
@@ -633,7 +824,7 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
       CORBA::ULong seq_len;
       seq_len <<= giop_client;
 
-      if (max_len > 0 && seq_len > max_len) throw CORBA::BAD_PARAM();
+      if (max_len > 0 && seq_len > max_len) throw CORBA::MARSHAL();
 
       r_o = PyList_New(seq_len);
       t_o = PyTuple_GET_ITEM(d_o, 2);
@@ -649,6 +840,7 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
 
   case CORBA::tk_array: // length, element_desc
     {
+      assert(tup);
       t_o                  = PyTuple_GET_ITEM(d_o, 1);
 
       assert(PyInt_Check(t_o));
@@ -664,21 +856,33 @@ Py_OmniProxyCallDesc::r_unmarshalReturnedValues(GIOP_C&   giop_client,
     }
     break;
 
-  case CORBA::tk_string: // max_length
+  case CORBA::tk_except: // class, name, descriptor, name, descriptor...
     {
-      t_o                 = PyTuple_GET_ITEM(d_o, 1);
+      assert(tup);
+      PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
+      assert(PyClass_Check(strclass));
 
-      assert(PyInt_Check(t_o));
+      int       cnt      = (PyTuple_GET_SIZE(d_o) - 2) / 2;
+      PyObject* strtuple = PyTuple_New(cnt);
 
-      CORBA::Long max_len = PyInt_AS_LONG(t_o);
+      int i, j;
+      for (i=0, j=3; i < cnt; i++, j+=2) {
+	PyTuple_SET_ITEM(strtuple, i,
+			 r_unmarshalReturnedValues(giop_client,
+						   PyTuple_GET_ITEM(d_o, j)));
+      }
+      r_o = PyEval_CallObject(strclass, strtuple);
+      Py_DECREF(strtuple);
+    }
+    break;
 
-      CORBA::String_member str_tmp;
-      str_tmp <<= giop_client;
+  case 0xffffffff: // [indirect descriptor]
+    {
+      assert(tup);
+      t_o = PyTuple_GET_ITEM(d_o, 1);
+      assert(PyList_Check(t_o));
 
-      r_o = PyString_FromString(str_tmp._ptr);
-
-      if (max_len > 0 && PyString_GET_SIZE(r_o) > max_len)
-	throw CORBA::BAD_PARAM();
+      r_o = r_unmarshalReturnedValues(giop_client, PyList_GET_ITEM(t_o, 0));
     }
     break;
 
@@ -697,29 +901,11 @@ Py_OmniProxyCallDesc::userException(GIOP_C& giop_client, const char* repoId)
   PyEval_RestoreThread(tstate_);
   tstate_ = 0;
 
-  PyObject* o;
-  PyObject* exc_t = PyDict_GetItemString(exc_d_, repoId);
+  PyObject* d_o = PyDict_GetItemString(exc_d_, repoId);
 
-  if (exc_t) {
-    PyObject* exc_c = PyTuple_GET_ITEM(exc_t, 0);
-    PyObject* exc_d = PyTuple_GET_ITEM(exc_t, 1);
-    int       exc_l = PyTuple_GET_SIZE(exc_d);
-
-    PyObject* exc_a;
-
-    exc_a = PyTuple_New(exc_l);
-    if (!exc_a) throw CORBA::NO_MEMORY();
-
-    for (int i=0; i < exc_l; i++) {
-      PyTuple_SET_ITEM(exc_a, i,
-		       r_unmarshalReturnedValues(giop_client,
-						 PyTuple_GET_ITEM(exc_d, i)));
-    }
-    giop_client.RequestCompleted();
-
-    PyObject* exc_i = PyEval_CallObject(exc_c, exc_a);
-    Py_DECREF(exc_a);
-    PyErr_SetObject(exc_c, exc_i);
+  if (d_o) { // exc class, name, descriptor, name, descriptor, ...
+    PyObject* exc_i = r_unmarshalReturnedValues(giop_client, d_o);
+    PyErr_SetObject(PyTuple_GET_ITEM(d_o, 1), exc_i);
     throw CORBA::UserException();
   }
   else {
