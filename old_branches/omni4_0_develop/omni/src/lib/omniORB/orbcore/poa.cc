@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.27  2002/01/16 11:31:59  dpg1
+  Race condition in use of registerNilCorbaObject/registerTrackedObject.
+  (Reported by Teemu Torma).
+
   Revision 1.2.2.26  2002/01/15 16:38:13  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.
@@ -458,17 +462,19 @@ static omniOrbPOA* theINSPOA  = 0;
 
 omniOrbPOA::~omniOrbPOA()
 {
-  switch (pd_policy.threading) {
-  case TP_ORB_CTRL:
-    break;
-  case TP_SINGLE_THREAD:
-    delete pd_call_lock;
-    break;
-  case TP_MAIN_THREAD:
-    delete pd_main_thread_sync.cond;
-    delete pd_main_thread_sync.mu;
-    break;
-  };
+  if (!_NP_is_nil()) {
+    switch (pd_policy.threading) {
+    case TP_ORB_CTRL:
+      break;
+    case TP_SINGLE_THREAD:
+      delete pd_call_lock;
+      break;
+    case TP_MAIN_THREAD:
+      delete pd_main_thread_sync.cond;
+      delete pd_main_thread_sync.mu;
+      break;
+    }
+  }
 }
 
 
