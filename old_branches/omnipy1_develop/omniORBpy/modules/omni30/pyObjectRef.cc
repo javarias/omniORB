@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.17  2000/06/27 15:13:12  dpg1
+// New copyObjRefArgument() function
+//
 // Revision 1.16  2000/06/16 17:33:18  dpg1
 // When creating an object reference with target type A, when the object
 // claims to be B, but A and B are unrelated, now creates a reference of
@@ -551,7 +554,7 @@ omniPy::stringToObject(const char* uri)
 
   cxxobj = omniURI::stringToObject(uri);
 
-  if (cxxobj->_NP_is_pseudo()) {
+  if (CORBA::is_nil(cxxobj) || cxxobj->_NP_is_pseudo()) {
     return cxxobj;
   }
   omniObjRef* cxxobjref = cxxobj->_PR_getobj();
@@ -634,7 +637,7 @@ omniPy::UnMarshalObjRef(const char* repoId, NetBufferedStream& s)
       delete [] id;
       id = 0;
 
-      if (!objref) OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
+      if (!objref) OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_MAYBE);
       return 
 	(CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
     }
