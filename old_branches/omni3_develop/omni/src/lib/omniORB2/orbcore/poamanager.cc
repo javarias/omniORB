@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2000/06/22 10:40:17  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.6  2000/02/04 18:11:03  djr
   Minor mods for IRIX (casting pointers to ulong instead of int).
 
@@ -287,7 +291,7 @@ omniOrbPOAManager::_ptrToObjRef(const char* repoId)
   if( !strcmp(repoId, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
   if( !strcmp(repoId, PortableServer::POAManager::_PD_repoId) )
-    return (PortableServer::POA_ptr) this;
+    return (PortableServer::POAManager_ptr) this;
 
   return 0;
 }
