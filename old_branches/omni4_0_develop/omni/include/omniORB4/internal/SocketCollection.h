@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.17  2003/11/12 16:04:18  dgrisby
+  Set sockets to close on exec.
+
   Revision 1.1.2.16  2003/02/17 01:45:50  dgrisby
   Pipe to kick select thread (on Unix).
 
@@ -304,6 +307,9 @@ public:
 
   void clearSelectable(SocketHandle_t);
   // Indicates that this connection need not be watched any more.
+
+  CORBA::Boolean isSelectable(SocketHandle_t sock);
+  // Indicates whether the given socket can be selected upon.
 
   CORBA::Boolean Select();
   // Returns TRUE(1) if the Select() has successfully done a scan.

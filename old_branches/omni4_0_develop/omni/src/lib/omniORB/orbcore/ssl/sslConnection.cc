@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2003/11/12 16:04:17  dgrisby
+  Set sockets to close on exec.
+
   Revision 1.1.2.12  2003/04/15 10:40:47  dgrisby
   Timeouts ignored in some cases when scan granularity set to zero.
 
@@ -391,6 +394,13 @@ sslConnection::clearSelectable() {
 
   pd_belong_to->clearSelectable(pd_socket);
 }
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+sslConnection::isSelectable() {
+  return pd_belong_to->isSelectable(pd_socket);
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 void

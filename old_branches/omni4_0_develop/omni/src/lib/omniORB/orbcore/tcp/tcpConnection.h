@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/12/03 13:39:55  dpg1
+  Explicit socket shutdown flag for Windows.
+
   Revision 1.1.2.6  2001/07/31 16:16:17  sll
   New transport interface to support the monitoring of active connections.
 
@@ -80,6 +83,8 @@ public:
   void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
+
+  CORBA::Boolean isSelectable();
 
   void Peek(notifyReadable_t func,void* cookie);
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.29  2004/03/02 15:32:07  dgrisby
+  Fix locking in connection shutdown.
+
   Revision 1.22.2.28  2004/02/27 12:40:09  dgrisby
   Fix race conditions in connection shutdown. Thanks Serguei Kolos.
 
@@ -741,6 +744,22 @@ giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
 	conn->pd_n_workers++;
       }
       else {
+	if (!conn->isSelectable()) {
+	  if (omniORB::trace(20)) {
+	    omniORB::logger log;
+	    log << "Connection from " << conn->peeraddress()
+		<< " is not selectable. Closing it.\n";
+	  }
+	  {
+	    omni_tracedmutex_lock sync(*omniTransportLock);
+	    cs->strand->safeDelete();
+	  }
+	  csRemove(conn);
+	  pd_lock.unlock();
+	  delete cs;
+	  pd_lock.lock();
+	  throw outOfResource();
+	}
 	pd_lock.unlock();
 	conn->setSelectable(1);
 	pd_lock.lock();

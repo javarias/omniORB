@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/07/31 16:16:23  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.4  2001/07/13 15:36:24  sll
   Revised declaration to match the changes in giopConnection.
 
@@ -77,6 +80,8 @@ class sslConnection : public giopConnection, public SocketLink {
   void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
+
+  CORBA::Boolean isSelectable();
 
   void Peek(giopConnection::notifyReadable_t func,void* cookie);
 
