@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.22  2000/03/03 17:41:28  dpg1
+# Major reorganisation to support omniORB 3.0 as well as 2.8.
+#
 # Revision 1.21  2000/02/23 10:20:52  dpg1
 # Bug in descriptors for single-item enums.
 #
@@ -401,7 +404,7 @@ union_descriptor = """
 @uname@._def_m  = @def_m@
 @uname@._def_d  = @def_d@
 
-_m_@uname@  = (@m_un@)
+_m_@uname@  = (@m_un@,)
 _d_@uname@  = (omniORB.tcInternal.tv_union, @uname@, @uname@._NP_RepositoryId, "@uname@", @stype@, @defpos@, _m_@uname@, @m_def@, {@d_map@})"""
 
 union_indirect = """\
