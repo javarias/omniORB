@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.9  2001/06/18 20:30:51  sll
+# Only define 1 conversion operator from T_var to T* if the compiler is
+# gcc. Previously, this is only done for gcc 2.7.2. It seems that gcc 3.0
+# requires this to be the case. This is the default for all versions of
+# gcc.
+#
 # Revision 1.5.2.8  2001/05/29 17:03:50  dpg1
 # In process identity.
 #
@@ -536,8 +542,8 @@ public:
   static inline void free(@name@_slice* p) { @name@_free(p); }
 };
 
-typedef _CORBA_Array_Var<@name@_copyHelper,@name@_slice> @name@_var;
-typedef _CORBA_Array_OUT_arg<@name@_slice,@name@_var > @name@_out;
+typedef _CORBA_Array_@var_or_fix@_Var<@name@_copyHelper,@name@_slice> @name@_var;
+typedef _CORBA_Array_@var_or_fix@_OUT_arg<@name@_slice,@name@_var > @name@_out;
 typedef _CORBA_Array_Forany<@name@_copyHelper,@name@_slice> @name@_forany;
 """
 
