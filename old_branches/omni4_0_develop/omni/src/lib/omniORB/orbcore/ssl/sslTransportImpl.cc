@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:05  sll
+  *** empty log message ***
+
 
 */
 
@@ -64,7 +67,7 @@ sslTransportImpl::~sslTransportImpl() {
 giopEndpoint*
 sslTransportImpl::toEndpoint(const char* param) {
 
-  const char* p = index(param,':');
+  const char* p = strchr(param,':');
   if (!p) return 0;
   IIOP::Address address;
   if (param == p) {
@@ -74,7 +77,7 @@ sslTransportImpl::toEndpoint(const char* param) {
   else {
     address.host = CORBA::string_alloc(p-param);
     strncpy(address.host,param,p-param);
-    address.host[p-param] = '\0';
+    ((char*)address.host)[p-param] = '\0';
   }
   if (*(++p) != '\0') {
     int v;
@@ -92,7 +95,7 @@ sslTransportImpl::toEndpoint(const char* param) {
 CORBA::Boolean
 sslTransportImpl::isValid(const char* param) {
   
-  const char* p = index(param,':');
+  const char* p = strchr(param,':');
   if (!p || param == p || *p == '\0') return 0;
   int v;
   if (sscanf(p+1,"%d",&v) != 1) return 0;
@@ -105,11 +108,11 @@ static
 CORBA::Boolean
 parseAddress(const char* param, IIOP::Address& address) {
 
-  const char* p = index(param,':');
+  const char* p = strchr(param,':');
   if (!p || param == p || *p == '\0') return 0;
   address.host = CORBA::string_alloc(p-param);
   strncpy(address.host,param,p-param);
-  address.host[p-param] = '\0';
+  ((char*)address.host)[p-param] = '\0';
   ++p;
   int v;
   if (sscanf(p,"%d",&v) != 1) return 0;
