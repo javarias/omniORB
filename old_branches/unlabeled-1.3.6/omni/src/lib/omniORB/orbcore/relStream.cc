@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3.6.1  1999/09/15 20:25:44  sll
+  Make sure that receive never receive more than max_receive_buffer_size().
+
   Revision 1.3  1999/03/11 16:25:55  djr
   Updated copyright notice
 
@@ -152,7 +155,7 @@ reliableStreamStrand::receive(size_t size,
       // the same alignment as they were previously
 
       
-      size_t avail = max_receive_buffer_size() - 
+      size_t avail = pd_buffer_size - 
 	                ((omni::ptr_arith_t) pd_rx_end - 
 			 (omni::ptr_arith_t) pd_rx_buffer) + bsz;
       if (avail < size) {
@@ -241,7 +244,7 @@ reliableStreamStrand::giveback_received(size_t leftover)
 void
 reliableStreamStrand::fetch(CORBA::ULong max)
 {
-  size_t bsz = max_receive_buffer_size() -
+  size_t bsz = pd_buffer_size -
     ((omni::ptr_arith_t) pd_rx_end - (omni::ptr_arith_t) pd_rx_buffer);
 
   bsz = (max != 0 && bsz > max) ? max : bsz;
@@ -325,7 +328,7 @@ reliableStreamStrand::reserve(size_t size,
 
   giveback_reserved(0,tx);
   
-  size_t bsz = max_reserve_buffer_size() -
+  size_t bsz = pd_buffer_size -
     ((omni::ptr_arith_t) pd_tx_end - (omni::ptr_arith_t) pd_tx_buffer);
   
   if (!bsz) {
