@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.14  2000/12/11 10:16:37  dpg1
+ CORBA::Object::_narrow() failed to increment reference count.
+
  Revision 1.1.2.13  2000/08/11 13:50:08  sll
  Added external guard in CORBA.h to ensure that any idl that include
  CosNaming.idl will compile as expected.
@@ -2688,6 +2691,15 @@ _CORBA_MODULE_END
 // put external guards around the include.
 #ifndef __CosNaming_hh_EXTERNAL_GUARD__
 #define __CosNaming_hh_EXTERNAL_GUARD__
+#endif
+
+#ifndef __corbaidl_hh_EXTERNAL_GUARD__
+#define __corbaidl_hh_EXTERNAL_GUARD__
+#endif
+#ifdef ENABLE_CLIENT_IR_SUPPORT
+#ifndef __ir_hh_EXTERNAL_GUARD__
+#define __ir_hh_EXTERNAL_GUARD__
+#endif
 #endif
 
 
