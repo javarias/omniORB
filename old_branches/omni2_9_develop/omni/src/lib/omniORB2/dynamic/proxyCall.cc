@@ -35,6 +35,14 @@
 
 /*
  $Log$
+ Revision 1.7.4.1  1999/09/15 20:18:23  sll
+ Updated to use the new cdrStream abstraction.
+ Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ replaced with just one version for cdrStream.
+ Derived class giopStream implements the cdrStream abstraction over a
+ network connection whereas the cdrMemoryStream implements the abstraction
+ with in memory buffer.
+
  Revision 1.7  1999/06/28 10:49:16  sll
  Added missing check for verifyObjectExistsAndType in oneway invoke.
 
@@ -54,6 +62,13 @@
 
 #include <omniORB2/CORBA.h>
 #include <omniORB2/proxyCall.h>
+
+#define LOGMESSAGE(level,prefix,message) do {\
+   if (omniORB::trace(level)) {\
+     omniORB::logger log("omniORB: ");\
+	log << prefix ## ": " ## message ## "\n";\
+   }\
+} while (0)
 
 
 //////////////////////////////////////////////////////////////////////
@@ -131,21 +146,15 @@ OmniProxyCallWrapper::invoke(omniObject* o,
 	    CORBA::Object::unmarshalObjRef((cdrStream&)giop_client);
 	  giop_client.RequestCompleted();
 	  if( CORBA::is_nil(obj) ){
-	    if( omniORB::traceLevel > 10 ){
-	      omniORB::log << "Received GIOP::LOCATION_FORWARD message that"
-		" contains a nil object reference.\n";
-	      omniORB::log.flush();
-	    }
+	    LOGMESSAGE(10,"OmniProxyCallWrapper","Received GIOP::LOCATION_FORWARD message that"
+		       " contains a nil object reference.");
 	    throw CORBA::COMM_FAILURE(0, CORBA::COMPLETED_NO);
 	  }
 	  GIOPObjectInfo* newinfo = obj->PR_getobj()->getInvokeInfo(fwd);
 	  o->setInvokeInfo(newinfo,
 			   (rc == GIOP::LOCATION_FORWARD_PERM) ? 0 : 1);
+	  LOGMESSAGE(10,"OmniProxyCallWrapper","GIOP::LOCATION_FORWARD: retry request.");
 	}
-      if( omniORB::traceLevel > 10 ){
-	omniORB::log << "GIOP::LOCATION_FORWARD: retry request.\n";
-	omniORB::log.flush();
-      }
       break;
 
       case GIOP::NEEDS_ADDRESSING_MODE:

@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.10.4.2  1999/09/25 17:00:21  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.10.2.2  1999/09/23 13:47:25  sll
   Fixed a race condition which causes simple programs that exit quickly to
   delay for a maximum of one scan period.
@@ -102,7 +105,7 @@
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("scavenger " ## prefix ## ": ");\
+     omniORB::logger log("omniORB: scavenger " ## prefix ## ": ");\
 	log << message ## "\n";\
    }\
 } while (0)

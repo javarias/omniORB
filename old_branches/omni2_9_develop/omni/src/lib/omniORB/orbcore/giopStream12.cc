@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/15 20:37:29  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB2/CORBA.h>
@@ -68,7 +71,7 @@ static const char fragmentHeader[8] = {
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("giop 1.2 " ## prefix ## ": ");\
+     omniORB::logger log("omniORB: giop 1.2 " ## prefix ## ": ");\
 	log << message ## "\n";\
    }\
 } while (0)

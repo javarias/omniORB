@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/09/16 16:04:25  sll
+  Bug fix. Rope_iterator now use Strand::Sync::is_unused() to test if the
+  strand is not in use. giopStream::is_unused() now remove unused giopStream
+  as a side-effect. The net effect is that unused outgoing Rope is now
+  deleted correctly.
+
   Revision 1.1.2.1  1999/09/15 20:37:27  sll
   *** empty log message ***
 
@@ -852,10 +858,10 @@ giopStream::garbageCollect()
 
     p = (giopStream*) p->pd_next;
   }
-  if (omniORB::traceLevel > 20) {
-    omniORB::log << "giopStream::garbageCollect: (" << (void*)this 
-		 << ") " << ((rc)? "TRUE" : "FALSE") << "\n";
-    omniORB::log.flush();
+  if (omniORB::trace(20)) {
+    omniORB::logger log("omniORB: ");
+    log << "giopStream::garbageCollect: (" << (void*)this 
+	<< ") " << ((rc)? "TRUE" : "FALSE") << "\n";
   }
   return rc;
 }
