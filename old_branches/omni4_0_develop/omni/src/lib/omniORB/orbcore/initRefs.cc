@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 18:15:16  sll
+  Use the new omniIOR class and createObjRef() to create the object reference
+  for the bootagent.
+
   Revision 1.2.2.1  2000/07/17 10:35:54  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -737,6 +741,11 @@ public:
   }
 
   void detach() {
+    serviceRecord* sl;
+    sl = the_argsServiceList.get_buffer(1);
+    delete [] sl;
+    sl = the_fileServiceList.get_buffer(1);
+    delete [] sl;
     if (the_argsDefaultInitRef) CORBA::string_free(the_argsDefaultInitRef);
     the_argsDefaultInitRef = 0;
     if (the_fileDefaultInitRef) CORBA::string_free(the_fileDefaultInitRef);
