@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.7.2.1  2000/07/17 10:36:00  sll
+ Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
  Revision 1.8  2000/07/13 15:25:55  dpg1
  Merge from omni3_develop for 3.0 release.
 
@@ -111,15 +114,8 @@ public:
 
   CORBA::Boolean is_IOPprofileId(IOP::ProfileId tag) const;
   CORBA::Boolean is_protocol(const char* name) const;
-  CORBA::Boolean decodeIOPprofile(const IOP::TaggedProfile& profile,
-					  // return values:
-					  Endpoint*&     addr,
-					  CORBA::Octet*& objkey,
-					  size_t&        objkeysize) const;
-  void encodeIOPprofile(const Endpoint* addr,
-			const CORBA::Octet* objkey,
-			const size_t objkeysize,
-			IOP::TaggedProfile& profile) const;
+  CORBA::Boolean decodeIOPprofile(omniIOR* ior,CORBA::Boolean);
+  CORBA::Boolean encodeIOPprofile(omniIOR* ior);
 
   static tcpSocketFactoryType* singleton;
   static void init();
@@ -127,6 +123,7 @@ public:
   friend class nobody;
 
 private:
+
   tcpSocketFactoryType();
   ~tcpSocketFactoryType() {}  // Cannot delete a factory type instance
 };
@@ -144,12 +141,11 @@ public:
   void startIncoming();
   void stopIncoming();
   void removeIncoming();
-  Rope* findIncoming(Endpoint* addr) const;
-  void getIncomingIOPprofiles(const CORBA::Octet*     objkey,
-			      const size_t            objkeysize,
-			      IOP::TaggedProfileList& profilelist) const;
+  Rope* findIncoming(omniIOR* addr) const;
 
-  friend class nobody;
+  typedef _CORBA_PseudoValue_Sequence<tcpSocketEndpoint*> Endpoints;
+  const Endpoints& getEndpoints() const { return pd_endpoint_list; }
+
   friend class tcpSocketRendezvouser;
   friend class tcpSocketWorker;
 
@@ -159,6 +155,8 @@ private:
   omni_mutex                    pd_shutdown_lock;
   omni_condition                pd_shutdown_cond;
   int                           pd_shutdown_nthreads;
+
+  Endpoints                     pd_endpoint_list;
 
   virtual ~tcpSocketMTincomingFactory();
 };
@@ -173,11 +171,16 @@ public:
   }
 
   CORBA::Boolean isOutgoing(Endpoint* addr) const;
-  Rope*  findOrCreateOutgoing(Endpoint* addr);
+  Rope*  findOrCreateOutgoing(omniIOR* ior);
 
   friend class nobody;
 
 private:
+  Rope* auxillaryTransportLookup(omniIOR* ior);
+  // Look at the tagged components decoded in <ior>. Based on the information,
+  // returns a rope that provides a better way to contact the object than
+  // the default provided by findOrCreateOutgoing.
+  //
   virtual ~tcpSocketMToutgoingFactory();
 };
 
@@ -242,6 +245,7 @@ public:
   CORBA::Boolean is_outgoing() const { return 0; }
   CORBA::Boolean remote_is(Endpoint *&e) { return 0; }
   CORBA::Boolean this_is(Endpoint *&e);
+  CORBA::Boolean this_is(const IIOP::Address& addr) const;
 
   Strand *newStrand();
   friend class tcpSocketMTincomingFactory;
@@ -303,7 +307,9 @@ public:
   CORBA::Boolean is_incoming() const { return 0; }
   CORBA::Boolean is_outgoing() const { return 1; }
   CORBA::Boolean remote_is(Endpoint *&e);
+  CORBA::Boolean remote_is(const IIOP::Address& addr) const;
   CORBA::Boolean this_is(Endpoint *&e) { return 0; }
+  CORBA::Boolean oneCallPerConnection();
 
   Strand *newStrand();
 
@@ -330,22 +336,25 @@ private:
 
 class tcpSocketEndpoint : public Endpoint {
 public:
-  tcpSocketEndpoint(const CORBA::Char* h,CORBA::UShort p);
+  tcpSocketEndpoint(const char* h,CORBA::UShort p);
+  tcpSocketEndpoint(const IIOP::Address& addr);
   tcpSocketEndpoint(const tcpSocketEndpoint* e);
   tcpSocketEndpoint &operator=(const tcpSocketEndpoint &e);
   CORBA::Boolean operator==(const tcpSocketEndpoint *e);
   virtual ~tcpSocketEndpoint();
-  CORBA::Char * host() const;
-  void host(const CORBA::Char *p);
+  const char* host() const;
+  void host(const char* p);
   CORBA::UShort port() const;
   void port(const CORBA::UShort p);
+  const IIOP::Address& address() const { return pd_address; }
+  CORBA::Boolean is_equal(const IIOP::Address&) const;
+
   static tcpSocketEndpoint *castup(const Endpoint* e);
 
   static const char* protocol_name;
 
 private:
-  CORBA::Char  *pd_host;
-  CORBA::UShort pd_port;
+  IIOP::Address pd_address;
   
   tcpSocketEndpoint();
 };
