@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.8  2001/08/01 10:12:36  dpg1
+# Main thread policy.
+#
 # Revision 1.28.2.7  2001/06/15 10:59:27  dpg1
 # Apply fixes from omnipy1_develop.
 #
@@ -195,8 +198,11 @@ class SystemException (Exception):
         Exception.__init__(self, minor, self.completed)
 
     def __str__(self):
-        return "Minor: " + hex(self.minor) + \
-               ", Completed: " + str(self.completed) + "."
+        minorName = omniORB.minorCodeToString(self)
+        if minorName is None:
+            minorName = hex(self.minor)
+        return "Minor: " + minorName + \
+               ", " + str(self.completed) + "."
 
 class UserException (Exception):
     def __init__(self, *args):
