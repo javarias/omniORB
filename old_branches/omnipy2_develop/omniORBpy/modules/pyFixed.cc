@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.4  2001/09/24 10:48:26  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.1.2.3  2001/05/14 12:47:21  dpg1
 // Fix memory leaks.
 //
@@ -42,8 +45,6 @@
 #include <omnipy.h>
 #include <pyFixed.h>
 #include <stdio.h>
-
-#include <iostream.h>  // ***
 
 static PyObject*
 fixedValueAsPyLong(const CORBA::Fixed& f)
