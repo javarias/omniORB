@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ * Revision 1.9  1998/01/27  16:08:45  ewc
+ * Added new classes and templates for sequence of Boolean and sequence
+ * of Octet.
+ *
  Revision 1.8  1997/12/18 17:35:52  sll
  _CORBA_Sequence copy ctor should allocate s.pd_max elements instead of
  s.pd_len elements.
@@ -248,6 +252,17 @@ class _CORBA_Unbounded_Sequence__Boolean
 {
 public:
   inline _CORBA_Unbounded_Sequence__Boolean() {}
+  inline _CORBA_Unbounded_Sequence__Boolean(_CORBA_ULong max)
+    : _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Boolean,1,1>(max) {}
+  inline _CORBA_Unbounded_Sequence__Boolean(_CORBA_ULong max,
+						    _CORBA_ULong length,
+						    _CORBA_Boolean   *value,
+						    _CORBA_Boolean release = 0)
+    : _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Boolean,1,1>(max,length,value,release) {}
+  inline _CORBA_Unbounded_Sequence__Boolean (const 
+       _CORBA_Unbounded_Sequence__Boolean& s)
+    :  _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Boolean,1,1>(s) {}
+
   inline ~_CORBA_Unbounded_Sequence__Boolean() {}
 };
 
@@ -256,6 +271,17 @@ class _CORBA_Unbounded_Sequence__Octet
 {
 public:
   inline _CORBA_Unbounded_Sequence__Octet() {}
+  inline _CORBA_Unbounded_Sequence__Octet(_CORBA_ULong max)
+    :  _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Octet,1,1 >(max) {}
+  inline _CORBA_Unbounded_Sequence__Octet(_CORBA_ULong max,
+						    _CORBA_ULong length,
+						    _CORBA_Octet   *value,
+						    _CORBA_Boolean release = 0)
+    : _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Octet,1,1 >(max,length,value,release) {}
+  inline _CORBA_Unbounded_Sequence__Octet (const 
+       _CORBA_Unbounded_Sequence__Octet& s)
+    : _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_Octet,1,1 >(s) {}
+
   inline ~_CORBA_Unbounded_Sequence__Octet() {}
 };
 
@@ -317,6 +343,14 @@ class _CORBA_Bounded_Sequence__Boolean
 {
 public:
   inline _CORBA_Bounded_Sequence__Boolean() {}
+  inline _CORBA_Bounded_Sequence__Boolean(_CORBA_ULong length,
+					   _CORBA_Boolean    *value,
+					   _CORBA_Boolean release = 0)
+    : _CORBA_Bounded_Sequence_w_FixSizeElement<_CORBA_Boolean,max,1,1>(length,value,release) {}
+  inline _CORBA_Bounded_Sequence__Boolean(const 
+			       _CORBA_Bounded_Sequence__Boolean<max>& s) 
+    :  _CORBA_Bounded_Sequence_w_FixSizeElement<_CORBA_Boolean,max,1,1>(s) {}
+
   inline ~_CORBA_Bounded_Sequence__Boolean() {}
 };
 
@@ -326,6 +360,14 @@ class _CORBA_Bounded_Sequence__Octet
 {
 public:
   inline _CORBA_Bounded_Sequence__Octet() {}
+  inline _CORBA_Bounded_Sequence__Octet(_CORBA_ULong length,
+					   _CORBA_Octet    *value,
+					   _CORBA_Boolean release = 0)
+    : _CORBA_Bounded_Sequence_w_FixSizeElement<_CORBA_Octet,max,1,1>(length,value,release) {}
+  inline _CORBA_Bounded_Sequence__Octet(const 
+		       		 _CORBA_Bounded_Sequence__Octet<max>& s) 
+    :  _CORBA_Bounded_Sequence_w_FixSizeElement<_CORBA_Octet,max,1,1>(s) {}
+
   inline ~_CORBA_Bounded_Sequence__Octet() {}
 };
 ////////////////////////////////////////////////////////////////////////////
@@ -537,6 +579,17 @@ class _CORBA_Unbounded_Sequence_Array__Boolean
 {
 public:
   inline _CORBA_Unbounded_Sequence_Array__Boolean() {}
+  inline _CORBA_Unbounded_Sequence_Array__Boolean(_CORBA_ULong max)
+    : _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Boolean,dimension,1,1>(max) {}
+  inline _CORBA_Unbounded_Sequence_Array__Boolean(_CORBA_ULong max,
+							 _CORBA_ULong length,
+							 _CORBA_Boolean *value,
+							 _CORBA_Boolean release = 0)
+    :  _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Boolean,dimension,1,1>(max,length,value,release) {}
+  inline _CORBA_Unbounded_Sequence_Array__Boolean (const 
+       _CORBA_Unbounded_Sequence_Array__Boolean<T,T_slice,dimension>& s)
+    :   _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Boolean,dimension,1,1>(s) {}
+
   inline ~_CORBA_Unbounded_Sequence_Array__Boolean() {}
 };
 
@@ -547,6 +600,17 @@ class _CORBA_Unbounded_Sequence_Array__Octet
 {
 public:
   inline _CORBA_Unbounded_Sequence_Array__Octet() {}
+  inline _CORBA_Unbounded_Sequence_Array__Octet(_CORBA_ULong max)
+    :   _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Octet,dimension,1,1>(max) {}
+  inline _CORBA_Unbounded_Sequence_Array__Octet(_CORBA_ULong max,
+							 _CORBA_ULong length,
+							 _CORBA_Octet *value,
+							 _CORBA_Boolean release = 0)
+    :   _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Octet,dimension,1,1>(max,length,value,release) {}
+  inline _CORBA_Unbounded_Sequence_Array__Octet (const 
+       _CORBA_Unbounded_Sequence_Array__Octet<T,T_slice,dimension>& s)
+    :   _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Octet,dimension,1,1>(s) {}
+
   inline ~_CORBA_Unbounded_Sequence_Array__Octet() {}
 };
 
@@ -606,6 +670,14 @@ class _CORBA_Bounded_Sequence_Array__Boolean
 {
 public:
   inline _CORBA_Bounded_Sequence_Array__Boolean() {}
+  inline _CORBA_Bounded_Sequence_Array__Boolean(_CORBA_ULong length,
+						        _CORBA_Boolean *value,
+							_CORBA_Boolean release = 0)
+    :  _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Boolean,dimension,max,1,1>(length,value,release) {}
+  inline _CORBA_Bounded_Sequence_Array__Boolean(const 
+      _CORBA_Bounded_Sequence_Array__Boolean<T,T_slice,dimension,max>& s) 
+    :  _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Boolean,dimension,max,1,1>(s) {}
+
   inline ~_CORBA_Bounded_Sequence_Array__Boolean() {}
 };
 
@@ -615,6 +687,14 @@ class _CORBA_Bounded_Sequence_Array__Octet
 {
 public:
   inline _CORBA_Bounded_Sequence_Array__Octet() {}
+  inline _CORBA_Bounded_Sequence_Array__Octet(_CORBA_ULong length,
+						        _CORBA_Octet *value,
+							_CORBA_Boolean release = 0)
+    :  _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Octet,dimension,max,1,1>(length,value,release) {}
+  inline _CORBA_Bounded_Sequence_Array__Octet(const 
+      _CORBA_Bounded_Sequence_Array__Octet<T,T_slice,dimension,max>& s) 
+    :  _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,_CORBA_Octet,dimension,max,1,1>(s) {}
+
   inline ~_CORBA_Bounded_Sequence_Array__Octet() {}
 };
 
