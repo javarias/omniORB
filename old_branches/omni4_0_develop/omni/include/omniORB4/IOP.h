@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // IOP.h                      Created on: 8/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:06:09  sll
+  Updated to use the new cdrStream abstraction.
+  Updated to include the latest componentID, service context ID etc.
+
   Revision 1.2.2.1  2000/07/17 10:35:34  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -163,7 +167,7 @@ public:
     _CORBA_String_member  type_id;
     TaggedProfileList     profiles;
 
-    // the following are omniORB2 private functions
+    // the following are omniORB private functions
     void operator>>= (cdrStream &s);
     void operator<<= (cdrStream &s);
     static char* unmarshaltype_id(cdrStream&);
@@ -198,7 +202,7 @@ public:
 
 
   static const char* ComponentIDtoName(ComponentId);
-  // omniORB2 private function.
+  // omniORB private function.
   // Return the name given the ComponentId. Return nil if the ComponentId
   // is not recongised.
 
@@ -206,11 +210,15 @@ public:
     ComponentId	            tag;
     _CORBA_Unbounded_Sequence_Octet component_data;
 
-    // the following are omniORB2 private functions
+    // the following are omniORB private functions
     void operator>>= (cdrStream &s) const;
     void operator<<= (cdrStream &s);
   };
   
+  static char* dumpComponent(const TaggedComponent&);
+  // omniORB private function. Produce the textual dump of the component
+  // content
+
   typedef _CORBA_Unbounded_Sequence<TaggedComponent> MultipleComponentProfile;
 
   class MultipleComponentProfile_out;
@@ -296,7 +304,7 @@ public:
     ServiceID              context_id;
     _CORBA_Unbounded_Sequence__Octet context_data;
 
-    // the following are omniORB2 private functions
+    // the following are omniORB private functions
     void operator>>= (cdrStream &s);
     void operator<<= (cdrStream &s);
   };
@@ -393,7 +401,7 @@ public:
   static _core_attr const ServiceID RTCorbaPriorityRange;
 
   static const char* ServiceIDtoName(ServiceID);
-  // omniORB2 private function.
+  // omniORB private function.
   // Return the name given the ComponentId. Return nil if the ComponentId
   // is not recongised.
 
