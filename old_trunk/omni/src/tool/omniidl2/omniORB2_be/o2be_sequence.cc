@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.6  1997/08/21 21:17:27  sll
+  Added support for sequence of array. It was missing previously.
+
 // Revision 1.5  1997/05/06  14:05:26  sll
 // Public release.
 //
@@ -119,9 +122,9 @@
 
   */
 
-#include "idl.hh"
-#include "idl_extern.hh"
-#include "o2be.h"
+#include <idl.hh>
+#include <idl_extern.hh>
+#include <o2be.h>
 #include <stdio.h>
 
 #define SEQUENCE_TYPE_PREFIX "_IDL_SEQUENCE_"
@@ -144,8 +147,16 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 				new Identifier("sequence", 1, 0, I_FALSE),
 				NULL),
 		      NULL),
-	     o2be_name(this),
-	     o2be_sequence_chain(this)
+	     o2be_name(AST_Decl::NT_sequence,
+		      new UTL_ScopedName(
+				new Identifier("sequence", 1, 0, I_FALSE),
+				NULL),
+		      NULL),
+	     o2be_sequence_chain(AST_Decl::NT_sequence,
+		      new UTL_ScopedName(
+				new Identifier("sequence", 1, 0, I_FALSE),
+				NULL),
+		      NULL)
 {
 
   // we want a sequence to be defined in the same scope as its elements.
@@ -191,7 +202,13 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
   strcpy(p,_scopename());
   strcat(p,uqname());
   set__fqname(p);
+}
 
+
+char*
+o2be_sequence::seq_template_name(AST_Decl* used_in)
+{
+  char* result;
   o2be_operation::argMapping mapping;
   o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(base_type(),
 					        o2be_operation::wIN,mapping);
@@ -200,7 +217,7 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
   size_t dimension = 0;       // non-zero means this is a sequence of array
   size_t elmsize = 0;         // non-zero means this is a primitive type seq
   size_t alignment = 0;
-  const char* baseclassname = o2be_name::narrow_and_produce_fqname(base_type());
+  const char* baseclassname = seq_member_name(used_in);
   const char* elmclassname = 0; // non-zero if this is a sequence of array
   switch (ntype) 
     {
@@ -229,27 +246,6 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
       elmsize = 8;
       alignment = 8;
       break;
-    case o2be_operation::tObjref:
-      {
-	AST_Decl *decl = base_type();
-	while (decl->node_type() == AST_Decl::NT_typedef)
-	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
-	baseclassname = o2be_interface::narrow_from_decl(decl)->fieldMemberType_fqname();
-	break;
-      }
-    case o2be_operation::tString:
-      {
-	baseclassname = o2be_string::fieldMemberTypeName();
-	break;
-      }
-    case o2be_operation::tSequence:
-      {
-	AST_Decl *decl = base_type();
-	while (decl->node_type() == AST_Decl::NT_typedef)
-	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
-	baseclassname = o2be_sequence::narrow_from_decl(decl)->seq_template_name();
-	break;
-      }
     case o2be_operation::tArrayFixed:
       {
 	AST_Decl *decl = base_type();
@@ -259,7 +255,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	// look at the type of the elements in the array and see
 	// if it is a primitive type
 	decl = o2be_array::narrow_from_decl(decl)->getElementType();
-	elmclassname = o2be_name::narrow_and_produce_fqname(decl);
+	elmclassname = o2be_name::narrow_and_produce_unambiguous_name(decl,
+								      used_in);
 	ntype = o2be_operation::ast2ArgMapping(decl,
 					       o2be_operation::wIN,mapping);
 	switch (ntype)
@@ -310,7 +307,7 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	    {
 	      while (decl->node_type() == AST_Decl::NT_typedef)
 		decl = o2be_typedef::narrow_from_decl(decl)->base_type();
-	      elmclassname = o2be_interface::narrow_from_decl(decl)->fieldMemberType_fqname();
+	      elmclassname = o2be_interface::narrow_from_decl(decl)->fieldMemberType_fqname(used_in);
 	    }
 	    break;
 	  case o2be_operation::tString:
@@ -319,7 +316,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	    }
 	    break;
 	  default:
-	    elmclassname = o2be_name::narrow_and_produce_fqname(decl);
+	    elmclassname = o2be_name::narrow_and_produce_unambiguous_name(decl,
+								 used_in);
 	  }
 	break;
       }
@@ -328,8 +326,6 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
     break;
   }
 
-  pd_seq_baseclass_name = baseclassname;
-
   if (s_max)
     {
       // bounded sequence
@@ -337,8 +333,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	if (elmsize) {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_BOUNDED_W_FIXSIZEELEMENT)
 	                    + strlen(baseclassname) + 20;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
+	  result = new char[namesize];
+	  sprintf(result,
 		  "%s<%s,%d,%d,%d>",
 		  SEQUENCE_TEMPLATE_BOUNDED_W_FIXSIZEELEMENT,
 		  baseclassname,
@@ -349,8 +345,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	else {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_BOUNDED)
    	                    + strlen(baseclassname) + 13;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
+	  result = new char[namesize];
+	  sprintf(result,
 		  "%s<%s,%d>",
 		  SEQUENCE_TEMPLATE_BOUNDED,
 		  baseclassname,
@@ -361,11 +357,12 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	// bounded sequence of array
 	if (elmsize) {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_BOUNDED_ARRAY_W_FIXSIZEELEMENT)
-	                    +strlen(baseclassname)+strlen(elmclassname)+33;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
-		  "%s<%s,%s,%d,%d,%d,%d>",
+	                    +strlen(baseclassname)*2+strlen(elmclassname)+39;
+	  result = new char[namesize];
+	  sprintf(result,
+		  "%s<%s,%s_slice,%s,%d,%d,%d,%d>",
 		  SEQUENCE_TEMPLATE_BOUNDED_ARRAY_W_FIXSIZEELEMENT,
+		  baseclassname,
 		  baseclassname,
 		  elmclassname,
 		  dimension,
@@ -375,11 +372,12 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	}
 	else {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_BOUNDED_ARRAY)
-   	                    +strlen(baseclassname)+strlen(elmclassname)+26;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
-		  "%s<%s,%s,%d,%d>",
+   	                    +strlen(baseclassname)*2+strlen(elmclassname)+32;
+	  result = new char[namesize];
+	  sprintf(result,
+		  "%s<%s,%s_slice,%s,%d,%d>",
 		  SEQUENCE_TEMPLATE_BOUNDED_ARRAY,
+		  baseclassname,
 		  baseclassname,
 		  elmclassname,
 		  dimension,
@@ -394,8 +392,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	if (elmsize) {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_UNBOUNDED_W_FIXSIZEELEMENT)
 	                    + strlen(baseclassname) + 7;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
+	  result = new char[namesize];
+	  sprintf(result,
 		  "%s<%s,%d,%d>",
 		  SEQUENCE_TEMPLATE_UNBOUNDED_W_FIXSIZEELEMENT,
 		  baseclassname,
@@ -405,8 +403,8 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	else {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_UNBOUNDED)
 	                    + strlen(baseclassname) + 4;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
+	  result = new char[namesize];
+	  sprintf(result,
 		  "%s<%s >",
 		  SEQUENCE_TEMPLATE_UNBOUNDED,
 		  baseclassname);
@@ -416,11 +414,12 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	// unbounded sequence of array
 	if (elmsize) {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_UNBOUNDED_ARRAY_W_FIXSIZEELEMENT)
-	                    + strlen(baseclassname)+strlen(elmclassname)+21;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
-		  "%s<%s,%s,%d,%d,%d>",
+	                    + strlen(baseclassname)*2+strlen(elmclassname)+27;
+	  result = new char[namesize];
+	  sprintf(result,
+		  "%s<%s,%s_slice,%s,%d,%d,%d>",
 		  SEQUENCE_TEMPLATE_UNBOUNDED_ARRAY_W_FIXSIZEELEMENT,
+		  baseclassname,
 		  baseclassname,
 		  elmclassname,
 		  dimension,
@@ -429,18 +428,62 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
 	}
 	else {
 	  size_t namesize = strlen(SEQUENCE_TEMPLATE_UNBOUNDED_ARRAY)
-	                    + strlen(baseclassname)+strlen(elmclassname)+18;
-	  pd_seq_template_name = new char[namesize];
-	  sprintf(pd_seq_template_name,
-		  "%s<%s,%s,%d>",
+	                    + strlen(baseclassname)*2+strlen(elmclassname)+24;
+	  result = new char[namesize];
+	  sprintf(result,
+		  "%s<%s,%s_slice,%s,%d>",
 		  SEQUENCE_TEMPLATE_UNBOUNDED_ARRAY,
+		  baseclassname,
 		  baseclassname,
 		  elmclassname,
 		  dimension);
 	}
       }
     }
-  return;
+  return result;
+}
+
+const char*
+o2be_sequence::seq_member_name(AST_Decl* used_in)
+{
+  const char* baseclassname;
+  if (o2be_global::qflag()) {
+    baseclassname = o2be_name::narrow_and_produce_fqname(base_type());
+  }
+  else {
+    baseclassname = o2be_name::narrow_and_produce_unambiguous_name(base_type(),
+								   used_in);
+  }
+  o2be_operation::argMapping mapping;
+  o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(base_type(),
+					        o2be_operation::wIN,mapping);
+  switch (ntype) 
+    {
+    case o2be_operation::tObjref:
+      {
+	AST_Decl *decl = base_type();
+	while (decl->node_type() == AST_Decl::NT_typedef)
+	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	baseclassname = o2be_interface::narrow_from_decl(decl)->fieldMemberType_fqname(used_in);
+	break;
+      }
+    case o2be_operation::tString:
+      {
+	baseclassname = o2be_string::fieldMemberTypeName();
+	break;
+      }
+    case o2be_operation::tSequence:
+      {
+	AST_Decl *decl = base_type();
+	while (decl->node_type() == AST_Decl::NT_typedef)
+	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	baseclassname = o2be_sequence::narrow_from_decl(decl)->seq_template_name(used_in);
+	break;
+      }
+    default:
+    break;
+  }
+  return baseclassname;
 }
 
 void
@@ -699,10 +742,25 @@ void
 o2be_sequence::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
 {
 #ifdef USE_SEQUENCE_TEMPLATE_IN_PLACE
-  IND(s); s << "typedef " << seq_template_name() << " " << tdef->uqname() << ";\n";
-  IND(s); s << "typedef _CORBA_Sequence_Var<"
-	    << tdef->uqname() << ", " << seq_member_name() <<  " > " 
-	    << tdef->uqname() << "_var;\n\n";
+  IND(s); s << "typedef " << seq_template_name(tdef) 
+	    << " " << tdef->uqname() << ";\n";
+
+  o2be_operation::argMapping mapping;
+  switch (o2be_operation::ast2ArgMapping(base_type(),o2be_operation::wIN,
+					 mapping))
+    {
+    case o2be_operation::tArrayFixed:
+    case o2be_operation::tArrayVariable:
+      IND(s); s << "typedef _CORBA_Sequence_Array_Var<"
+		<< tdef->uqname() << ", " << seq_member_name(tdef) <<  "_slice > " 
+		<< tdef->uqname() << "_var;\n\n";
+      break;
+    default:
+      IND(s); s << "typedef _CORBA_Sequence_Var<"
+		<< tdef->uqname() << ", " << seq_member_name(tdef) <<  " > " 
+		<< tdef->uqname() << "_var;\n\n";
+      break;
+    }
 #else
   IND(s); s << "typedef " << fqname() << " " << tdef->uqname() << ";\n";
   IND(s); s << "typedef " << fqname() << "_var " << tdef->uqname() << "_var;\n\n";
@@ -710,15 +768,24 @@ o2be_sequence::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
 }
 
 const char*
-o2be_sequence::out_adptarg_name(o2be_typedef* tdef) const
+o2be_sequence::out_adptarg_name(o2be_typedef* tdef,AST_Decl* used_in) const
 {
+  const char* ubname;
+
+  if (o2be_global::qflag()) {
+    ubname = tdef->fqname();
+  }
+  else {
+    ubname = tdef->unambiguous_name(used_in);
+  }
+
   char* p = new char[strlen(SEQUENCE_TEMPLATE_ADPT_CLASS)+strlen("<, >")+
-		     strlen(tdef->fqname())*2+strlen("_var")+1];
+		     strlen(ubname)*2+strlen("_var")+1];
   strcpy(p,SEQUENCE_TEMPLATE_ADPT_CLASS);
   strcat(p,"<");
-  strcat(p,tdef->fqname());
+  strcat(p,ubname);
   strcat(p,",");
-  strcat(p,tdef->fqname());
+  strcat(p,ubname);
   strcat(p,"_var >");
   return p;
 }
@@ -1157,10 +1224,10 @@ o2be_sequence_chain::set_seq_decl(o2be_sequence *d)
   if (pd_seq_decl == NULL)
     {
       pd_seq_decl = d;
-      if (pd_decl->node_type() == AST_Decl::NT_sequence)
+      if (node_type() == AST_Decl::NT_sequence)
 	{
-	  AST_Decl *decl = AST_Sequence::narrow_from_decl(pd_decl)->base_type();
-	  o2be_sequence *ns = o2be_sequence::narrow_from_decl(pd_decl);
+	  AST_Decl *decl = AST_Sequence::narrow_from_decl(this)->base_type();
+	  o2be_sequence *ns = o2be_sequence::narrow_from_decl(this);
 	  switch (decl->node_type())
 	    {
 	    case AST_Decl::NT_pre_defined:
@@ -1236,8 +1303,8 @@ o2be_sequence_chain::set_seq_decl(o2be_sequence *d)
       ddd = d;
     }
     while (ddd) {
-      if (!(ddd->pd_decl->in_main_file())) {
-	dd->pd_decl->set_in_main_file(I_FALSE);
+      if (!(ddd->in_main_file())) {
+	dd->set_in_main_file(I_FALSE);
       }
       ddd = ddd->pd_seq_decl;
       dd = dd->pd_seq_decl;

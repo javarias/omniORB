@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.3  1997/05/06  14:04:04  sll
+// Public release.
+//
   */
 
 #include <idl.hh>
@@ -37,8 +40,8 @@ o2be_predefined_type::o2be_predefined_type(AST_PredefinedType::PredefinedType t,
 				       UTL_ScopedName *sn, UTL_StrList *p)
 		  : AST_PredefinedType(t, sn, p),
 		    AST_Decl(AST_Decl::NT_pre_defined, sn, p),
-		    o2be_name(this),
-		    o2be_sequence_chain(this)
+		    o2be_name(AST_Decl::NT_pre_defined,sn,p),
+		    o2be_sequence_chain(AST_Decl::NT_pre_defined,sn,p)
 {
   const char *name;
 

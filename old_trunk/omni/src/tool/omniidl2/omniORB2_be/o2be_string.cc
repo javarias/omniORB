@@ -28,11 +28,14 @@
 
 /*
   $Log$
+// Revision 1.5  1997/05/06  14:07:43  sll
+// Public release.
+//
   */
 
-#include "idl.hh"
-#include "idl_extern.hh"
-#include "o2be.h"
+#include <idl.hh>
+#include <idl_extern.hh>
+#include <o2be.h>
 
 o2be_string::o2be_string(AST_Expression *v)
 	 : AST_String(v),
@@ -40,8 +43,14 @@ o2be_string::o2be_string(AST_Expression *v)
 		    new UTL_ScopedName(new Identifier("string", 1, 0, I_FALSE),
 				       NULL),
 		    NULL),
-	   o2be_name(this),
-	   o2be_sequence_chain(this)
+	   o2be_name(AST_Decl::NT_string,
+		    new UTL_ScopedName(new Identifier("string", 1, 0, I_FALSE),
+				       NULL),
+		    NULL),
+	   o2be_sequence_chain(AST_Decl::NT_string,
+		    new UTL_ScopedName(new Identifier("string", 1, 0, I_FALSE),
+				       NULL),
+		    NULL)
 {
   char *p = new char [strlen(local_name()->get_string())+1];
   strcpy(p,local_name()->get_string());
@@ -68,8 +77,26 @@ o2be_string::o2be_string(AST_Expression *v, long wide)
                                                         I_FALSE),
 					 NULL),
 		    NULL),
-	   o2be_name(this),
-	   o2be_sequence_chain(this)
+	   o2be_name(AST_Decl::NT_string,
+		    wide == 1
+		    ? new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
+					 NULL)
+		    : new UTL_ScopedName(new Identifier("wstring_t",
+                                                        1,
+                                                        0,
+                                                        I_FALSE),
+					 NULL),
+		    NULL),
+	   o2be_sequence_chain(AST_Decl::NT_string,
+		    wide == 1
+		    ? new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
+					 NULL)
+		    : new UTL_ScopedName(new Identifier("wstring_t",
+                                                        1,
+                                                        0,
+                                                        I_FALSE),
+					 NULL),
+		    NULL)
 {
   char *p = new char [strlen(local_name()->get_string())+1];
   strcpy(p,local_name()->get_string());

@@ -27,11 +27,14 @@
 
 /*
   $Log$
+// Revision 1.2  1997/05/06  13:52:40  sll
+// Public release.
+//
   */
 
-#include "idl.hh"
-#include "idl_extern.hh"
-#include "o2be.h"
+#include <idl.hh>
+#include <idl_extern.hh>
+#include <o2be.h>
 
 o2be_constant::o2be_constant(AST_Expression::ExprType et,
 			 AST_Expression *v,
@@ -39,7 +42,7 @@ o2be_constant::o2be_constant(AST_Expression::ExprType et,
 			 UTL_StrList *p)
 	   : AST_Constant(et, v, n, p),
 	     AST_Decl(AST_Decl::NT_const, n, p),
-	     o2be_name(this)
+	     o2be_name(AST_Decl::NT_const,n,p)
 {
 }
 

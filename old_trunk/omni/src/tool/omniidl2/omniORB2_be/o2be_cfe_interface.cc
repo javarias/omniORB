@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.7  1997/09/20  16:37:24  dpg1
+// Added new -l flag for LifeCycle code generation.
+//
 // Revision 1.6  1997/05/07  10:12:52  ewc
 // Changed win32 usage() message.
 //
@@ -39,17 +42,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef __NT__
+#ifndef __WIN32__
 #include <unistd.h>
 #endif
 
-#include "idl.hh"
-#include "idl_extern.hh"
-#include "drv_private.hh"
-#include "o2be.h"
+#include <idl.hh>
+#include <idl_extern.hh>
+#include <drv_private.hh>
+#include <o2be.h>
 
 
-#ifdef __NT__
+#ifdef __WIN32__
 
 // NT doesn't have an implementation of getopt() - supply a getopt() for this program:
 
@@ -116,6 +119,8 @@ char *o2be_global::pd_skelsuffix = DEFAULT_IDL_SKEL_SUFFIX;
 size_t o2be_global::pd_suffixlen = DEFAULT_IDL_SUFFIXLEN;
 int o2be_global::pd_fflag = 0;
 int o2be_global::pd_aflag = 0;
+int o2be_global::pd_qflag = 0;
+int o2be_global::pd_mflag = 1;
 
 //
 // Initialize the BE. The protocol requires only that this routine
@@ -182,7 +187,7 @@ usage()
 {
   cerr << GTDEVEL("usage: ")
        << idl_global->prog_name()
-#ifdef __NT__
+#ifdef __WIN32__
        << GTDEVEL(" [flag]* file\n");
 #else
        << GTDEVEL(" [flag]* file [file]*\n");
@@ -216,7 +221,7 @@ BE_parse_args(int argc, char **argv)
   int c;
   char *buffer;
 
-#ifndef __NT__
+#ifndef __WIN32__
   extern char *optarg;
   extern int optind;
 #else	
@@ -264,6 +269,7 @@ BE_parse_args(int argc, char **argv)
 					IDL_CF_NOWARNINGS);
 	  break;
 	case 'l':
+	  // XXX -Life cycle compiler flag
 	  idl_global->set_compile_flags(idl_global->compile_flags() |
 					IDL_CF_LIFECYCLE);
 	  break;
