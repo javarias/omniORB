@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.44  2003/07/30 14:23:35  dgrisby
+  Fix various race conditions in ORB shutdown.
+
   Revision 1.33.2.43  2003/06/02 13:26:59  dgrisby
   Configuration dump error on some platforms.
 
@@ -521,7 +524,11 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     // Parse configuration file
     option_source = option_src_1;
 
+#if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
+    const char* config_fname = 0;
+#else
     const char* config_fname = CONFIG_DEFAULT_LOCATION;
+#endif
     {
       const char* f = getenv(CONFIG_ENV);
       if (f) config_fname = f;
@@ -533,7 +540,11 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     else {
       // Parse configuration from registry on NT if no configuration
       // file is specified.
-      orbOptions::singleton().importFromRegistry();
+      if (!orbOptions::singleton().importFromRegistry()) {
+	// Failed to read from the registry. Try the default file location.
+	config_fname = CONFIG_DEFAULT_LOCATION;
+	orbOptions::singleton().importFromFile(config_fname);
+      }
     }
 #endif
 

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/03/18 15:13:07  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.2.5  2002/02/11 15:15:50  dpg1
   Things for ETS kernel.
 
@@ -208,11 +213,11 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void importFromFile(const char* filename) throw (Unknown,BadParam);
+  CORBA::Boolean importFromFile(const char* filename) throw (Unknown,BadParam);
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
   ////////////////////////////////////////////////////////////////////////
-  void importFromRegistry() throw (Unknown,BadParam);
+  CORBA::Boolean importFromRegistry() throw (Unknown,BadParam);
 #endif
 
   ////////////////////////////////////////////////////////////////////////

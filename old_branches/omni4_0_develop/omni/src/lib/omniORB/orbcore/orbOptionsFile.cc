@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/03/18 15:13:09  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.2.5  2002/01/02 18:18:26  dpg1
   Old config file warning less obtrusive.
 
@@ -76,7 +81,7 @@ invalid_syntax_error(const char* filename, int lineno,
 
 static CORBA::Boolean parseOldConfigOption(orbOptions& opt, char* line);
 
-void
+CORBA::Boolean
 orbOptions::importFromFile(const char* filename) throw (orbOptions::Unknown,
 							orbOptions::BadParam) {
 
@@ -84,7 +89,7 @@ orbOptions::importFromFile(const char* filename) throw (orbOptions::Unknown,
   CORBA::String_var line(CORBA::string_alloc(LINEBUFSIZE));
   unsigned int lnum = 0;
 
-  if ( !filename || !strlen(filename) ) return;
+  if ( !filename || !strlen(filename) ) return 0;
 
   if ( !(file = fopen(filename, "r")) ) {
     if ( omniORB::trace(2) ) {
@@ -92,7 +97,7 @@ orbOptions::importFromFile(const char* filename) throw (orbOptions::Unknown,
       log << "Configuration file \"" << filename
 	  << "\" either does not exist or is not a file. No settings read.\n";
     }
-    return;
+    return 0;
   }
   else if ( omniORB::trace(2) ) {
     omniORB::logger log;
@@ -193,6 +198,7 @@ orbOptions::importFromFile(const char* filename) throw (orbOptions::Unknown,
     addOption(key,value,fromFile);
   }
   fclose(file);
+  return 1;
 }
 
 #if SUPPORT_OLD_CONFIG_FORMAT

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2003/05/22 14:51:37  dgrisby
+  Fix registry code.
+
   Revision 1.1.2.9  2003/01/22 11:43:52  dgrisby
   Minor error message fixes in registry code.
 
@@ -82,7 +85,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 static void parseConfigReg(orbOptions& opt, HKEY rootkey);
 static void parseOldConfigReg(orbOptions& opt, HKEY rootkey);
 
-void
+CORBA::Boolean
 orbOptions::importFromRegistry() throw (orbOptions::Unknown,
 					orbOptions::BadParam) {
 
@@ -105,7 +108,7 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
-    return;
+    return 1;
   }
 
   rootregname = OLD_REGKEY1;
@@ -124,6 +127,7 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
+    return 1;
   }
 
   rootregname = OLD_REGKEY2;
@@ -141,7 +145,9 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
+    return 1;
   }
+  return 0;
 }
 
 #define KEYBUFSIZE   128
