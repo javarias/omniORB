@@ -3,7 +3,7 @@
 // cdrMemoryStream.cc         Created on: 13/1/99
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,13 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2000/11/03 18:49:16  sll
+  Separate out the marshalling of byte, octet and char into 3 set of distinct
+  marshalling functions.
+  Renamed put_char_array and get_char_array to put_octet_array and
+  get_octet_array.
+  New string marshal member functions.
+
   Revision 1.1.4.2  2000/10/10 10:14:27  sll
   Extra ctor for cdrEncapsulationStream which initialise the buffer by
   fetching data from the argument cdrStream.
@@ -61,6 +68,9 @@ cdrMemoryStream::cdrMemoryStream(CORBA::ULong initialBufsize,
   if (pd_clear_memory) memset(pd_bufp,0,
 			      (omni::ptr_arith_t)pd_outb_end -
 			      (omni::ptr_arith_t)pd_bufp);
+
+  pd_tcs_c = default_tcs_c;
+  pd_tcs_w = default_tcs_w;
 }
 
 cdrMemoryStream::~cdrMemoryStream()
@@ -257,6 +267,9 @@ cdrMemoryStream::currentOutputPtr() const
 
 cdrMemoryStream::cdrMemoryStream(void* databuffer)
 {
+  pd_tcs_c = default_tcs_c;
+  pd_tcs_w = default_tcs_w;
+
   pd_readonly_and_external_buffer = 1;
   pd_bufp = databuffer;
 #if (SIZEOF_LONG == SIZEOF_PTR)
@@ -272,6 +285,9 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer)
 
 cdrMemoryStream::cdrMemoryStream(void* databuffer, size_t maxLen)
 {
+  pd_tcs_c = default_tcs_c;
+  pd_tcs_w = default_tcs_w;
+
   pd_readonly_and_external_buffer = 1;
   pd_bufp = databuffer;
   pd_inb_end = (void*)((omni::ptr_arith_t)pd_bufp + maxLen);
@@ -280,6 +296,9 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer, size_t maxLen)
 
 cdrMemoryStream::cdrMemoryStream(const cdrMemoryStream& s)
 {
+  pd_tcs_c = s.pd_tcs_c;
+  pd_tcs_w = s.pd_tcs_w;
+
   pd_readonly_and_external_buffer = s.pd_readonly_and_external_buffer;
   pd_marshal_byte_swap = pd_unmarshal_byte_swap = s.pd_marshal_byte_swap;
 
@@ -306,6 +325,9 @@ cdrMemoryStream::cdrMemoryStream(const cdrMemoryStream& s)
 cdrMemoryStream& 
 cdrMemoryStream::operator=(const cdrMemoryStream& s)
 {
+  pd_tcs_c = s.pd_tcs_c;
+  pd_tcs_w = s.pd_tcs_w;
+
   pd_marshal_byte_swap = pd_unmarshal_byte_swap = s.pd_marshal_byte_swap;
 
   if (!s.pd_readonly_and_external_buffer) {
@@ -384,6 +406,9 @@ cdrEncapsulationStream::cdrEncapsulationStream(cdrStream& s,
 					       CORBA::ULong fetchsize)
   : cdrMemoryStream(fetchsize)
 {
+  pd_tcs_c = s.TCS_C();
+  pd_tcs_w = s.TCS_W();
+
   s.copy_to(*this,fetchsize);
   rewindInputPtr();
   {
