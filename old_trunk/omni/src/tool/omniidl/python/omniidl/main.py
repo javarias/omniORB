@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  1999/11/23 09:52:11  dpg1
+# Dumb bug where maps weren't cleared between runs.
+#
 # Revision 1.7  1999/11/17 15:01:20  dpg1
 # -Wb and -Wp now support multiple arguments separated by commas.
 #
@@ -76,8 +79,9 @@ The supported flags are:
   -Ycmd           Set command for the preprocessor
   -N              Do not run preprocessor
   -Wparg[,arg...] Send args to the preprocessor
-  -bback_end      Select a back-end to be used. More than one permitted.
+  -bback_end      Select a back-end to be used. More than one permitted
   -Wbarg[,arg...] Send args to the back-end
+  -Cdir           Change directory to dir before writing output
   -d              Dump the parsed IDL then exit
   -V              Print version info then exit
   -u              Print this usage message and exit
@@ -100,16 +104,17 @@ no_preprocessor   = 0
 backends          = []
 backends_args     = []
 dump_only         = 0
+cd_to             = None
 verbose           = 0
 quiet             = 0
 
 def parseArgs(args):
     global preprocessor_args, preprocessor_only, preprocessor_cmd
-    global no_preprocessor, backend, backend_args, dump_only
+    global no_preprocessor, backend, backend_args, dump_only, cd_to
     global verbose, quiet
 
     try:
-        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:dVuvq")
+        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:C:dVuvq")
     except getopt.error, e:
         sys.stderr.write("Error in arguments: " + e + "\n")
         sys.stderr.write("Use " + cmdname + " -u for usage\n")
@@ -153,6 +158,13 @@ def parseArgs(args):
                     sys.stderr.write("Use " + cmdname + " -u for usage\n")
                 sys.exit(1)
 
+        elif o == "-C":
+            if not os.path.isdir(a):
+                sys.stderr.write(cmdname + ": `" + a + \
+                                 "' is not a directory\n")
+                sys.exit(1)
+            cd_to = a
+
         elif o == "-b":
             backends.append(a)
             backends_args.append([])
@@ -179,7 +191,7 @@ def parseArgs(args):
 
 def main(argv=None):
     global preprocessor_args, preprocessor_only, preprocessor_cmd
-    global no_preprocessor, backend, backend_args, dump_only
+    global no_preprocessor, backend, backend_args, dump_only, cd_to
     global verbose, quiet
 
     if argv is None: argv = sys.argv
@@ -260,6 +272,10 @@ def main(argv=None):
             if tree is None:
                 sys.exit(1)
 
+            if cd_to is not None:
+                old_wd = os.getcwd()
+                os.chdir(cd_to)
+            
             i = 0
             for backend in backends:
                 if verbose:
@@ -268,6 +284,9 @@ def main(argv=None):
 
                 bemodules[i].run(tree, backends_args[i])
                 i = i + 1
+
+            if cd_to is not None:
+                os.chdir(old_wd)
 
             idlast.clear()
             idltype.clear()
