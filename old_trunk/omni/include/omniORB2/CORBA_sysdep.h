@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.32  1999/05/26 12:41:51  sll
+ ENABLE_CLIENT_IR_SUPPORT again.
+
  Revision 1.31  1999/05/26 12:23:11  sll
  Enable IR client support when namespace is supported.
 
@@ -162,6 +165,9 @@
 // SUN C++ compiler
 #  if __SUNPRO_CC < 0x420
 #    define NEED_DUMMY_RETURN
+#  elif __SUNPRO_CC >= 0x500
+#    define HAS_Cplusplus_Namespace
+#    define HAS_Std_Namespace
 #  endif
 
 // XXX
