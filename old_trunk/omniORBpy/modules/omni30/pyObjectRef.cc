@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.14  2000/04/27 11:03:40  dpg1
+// Support for ORB core Interoperable Naming Service changes.
+//
 // Revision 1.13  2000/03/28 11:03:37  dpg1
 // Failed to copy IOP profiles if release_profiles was false.
 //
@@ -80,7 +83,6 @@
 #include <omnipy.h>
 
  // Internal omniORB interfaces
-#include <exception.h>
 #include <ropeFactory.h>
 #include <localIdentity.h>
 #include <remoteIdentity.h>

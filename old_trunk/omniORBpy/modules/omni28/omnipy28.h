@@ -30,6 +30,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.20  2000/03/24 16:48:58  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.19  2000/03/07 16:52:17  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -111,6 +116,10 @@
 #ifndef OMNIORB_ASSERT
 #include <assert.h>
 #define OMNIORB_ASSERT(x) assert(x)
+#endif
+
+#ifndef OMNIORB_THROW
+#define OMNIORB_THROW(ex,min,comp) throw CORBA::ex(min,comp)
 #endif
 
 

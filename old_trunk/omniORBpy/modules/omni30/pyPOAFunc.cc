@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8  2000/03/31 17:25:59  dpg1
+// Refcounting bug in _get_the_children().
+//
 // Revision 1.7  2000/03/31 15:09:29  dpg1
 // Revision 1.5 introduced a bug into reference_to_servant().
 //
@@ -169,7 +172,7 @@ CORBA::Policy_ptr createPolicyObject(PortableServer::POA_ptr poa,
   if (policy) return policy;
 
   PyErr_Clear();
-  throw CORBA::BAD_PARAM();
+  OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   return 0; // For MSVC
 }
   

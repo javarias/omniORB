@@ -30,6 +30,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.22  2000/04/27 11:01:52  dpg1
+// Interoperable Naming Service
+//
+// Change to stringToObject() signature.
+//
 // Revision 1.21  2000/03/24 16:48:57  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -114,6 +119,7 @@
 
 #include <omniORB3/CORBA.h>
 #include <omniORB3/callDescriptor.h>
+#include <exception.h>
 #include "omnipy30_sysdep.h"
 
 ////////////////////////////////////////////////////////////////////////////

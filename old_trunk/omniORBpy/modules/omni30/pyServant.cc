@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.21  2000/04/06 14:12:39  dpg1
+// Incorrect format character in PyObject_CallMethod() caused a reference
+// count leak.
+//
 // Revision 1.20  2000/04/03 11:02:51  dpg1
 // Error report if a method does not exist on upcall.
 //
@@ -457,7 +461,7 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
     }
     PyErr_Clear();
     Py_DECREF(argtuple);
-    throw CORBA::NO_IMPLEMENT(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
   }
 
   PyObject* result = PyEval_CallObject(method, argtuple);
@@ -501,7 +505,7 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
     else {
       if (giop_s.response_expected()) {
 	Py_DECREF(result);
-	throw CORBA::BAD_OPERATION(0,CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW(BAD_OPERATION, 0, CORBA::COMPLETED_MAYBE);
       }
     }
     Py_DECREF(result);
@@ -527,7 +531,7 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      throw CORBA::UNKNOWN(0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
     }
 
     Py_DECREF(etype);
@@ -753,7 +757,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
   method = PyObject_GetAttrString(pysa_, (char*)"incarnate");
   if (!method) {
     PyErr_Clear();
-    throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_MAYBE);
+    // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#N",
@@ -770,7 +775,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
     Py_DECREF(pyservant);
 
     if (servant) return servant;
-    else         throw CORBA::BAD_PARAM();
+    else         OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   }
   else {
     // An exception of some sort was thrown
@@ -789,7 +794,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
       omniORB::log.flush();
       PyErr_Restore(etype, evalue, etraceback);
       PyErr_Print();
-      throw CORBA::UNKNOWN(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_NO);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -811,7 +816,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
       }
       else {
 	PyErr_Clear();
-	throw CORBA::BAD_PARAM();
+	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
       }
     }
     omniPy::produceSystemException(evalue, erepoId);
@@ -833,12 +838,14 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
 
   omniPy::Py_omniServant* pyos;
   pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
-  if (!pyos) throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+  if (!pyos) OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+  // *** Good choice of exn?
 
   method = PyObject_GetAttrString(pysa_, (char*)"etherealize");
   if (!method) {
     PyErr_Clear();
-    throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#NNii",
@@ -913,7 +920,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
   method = PyObject_GetAttrString(pysl_, (char*)"preinvoke");
   if (!method) {
     PyErr_Clear();
-    throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#Ns",
@@ -929,7 +937,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
   if (rettuple) {
     if (PyTuple_Size(rettuple) != 2) {
       Py_DECREF(rettuple);
-      throw CORBA::BAD_PARAM();
+      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
     }
     pyservant = PyTuple_GET_ITEM(rettuple, 0);
     pycookie  = PyTuple_GET_ITEM(rettuple, 1);
@@ -944,7 +952,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
     }
     else {
       Py_DECREF(rettuple);
-      throw CORBA::BAD_PARAM();
+      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
     }
   }
   else {
@@ -964,7 +972,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
       omniORB::log.flush();
       PyErr_Restore(etype, evalue, etraceback);
       PyErr_Print();
-      throw CORBA::UNKNOWN(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(UNKNOWN, 0, CORBA::COMPLETED_NO);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -986,7 +994,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
       }
       else {
 	PyErr_Clear();
-	throw CORBA::BAD_PARAM();
+	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
       }
     }
     omniPy::produceSystemException(evalue, erepoId);
@@ -1008,12 +1016,14 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
 
   omniPy::Py_omniServant* pyos;
   pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
-  if (!pyos) throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+  if (!pyos) OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+  // *** Good choice of exn?
 
   method = PyObject_GetAttrString(pysl_, (char*)"postinvoke");
   if (!method) {
     PyErr_Clear();
-    throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#NsNN",
@@ -1086,7 +1096,8 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
   method = PyObject_GetAttrString(pyaa_, (char*)"unknown_adapter");
   if (!method) {
     PyErr_Clear();
-    throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
+    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(parent);
   argtuple = Py_BuildValue((char*)"Ns",
@@ -1100,7 +1111,7 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
   if (pyresult) {
     if (!PyInt_Check(pyresult)) {
       Py_DECREF(pyresult);
-      throw CORBA::BAD_PARAM();
+      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
     }
     CORBA::Boolean result = PyInt_AS_LONG(pyresult);
     Py_DECREF(pyresult);
