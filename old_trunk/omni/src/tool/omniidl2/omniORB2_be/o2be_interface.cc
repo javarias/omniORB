@@ -27,6 +27,11 @@
 
 /*
   $Log$
+  Revision 1.10  1997/08/21 21:20:08  sll
+  - Names of internal variables inside the stub code now all start with the
+    prefix __ to avoid potential clash with identifiers defined in IDL.
+  - fixed bug in the stub code generated for typedef Object X.
+
 // Revision 1.9  1997/05/06  13:58:53  sll
 // Public release.
 //
@@ -357,9 +362,9 @@ o2be_interface::produce_hdr(fstream &s)
 	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg())
 	      {
 		IND(s); s << "virtual ";
-		op->produce_decl(s,0,"___");
+		op->produce_decl(s,0,"_0RL__");
 		s << " = 0;\n";
-		op->produce_mapping_with_indirection(s,"___");
+		op->produce_mapping_with_indirection(s,"_0RL__");
 	      }
 	    else
 	      {
@@ -500,7 +505,7 @@ o2be_interface::produce_hdr(fstream &s)
 	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg())
 	      {
 		IND(s); s << "virtual ";
-		op->produce_decl(s,0,"___");
+		op->produce_decl(s,0,"_0RL__");
 		s << " {\n";
 		INC_INDENT_LEVEL();
 		IND(s);
@@ -581,7 +586,7 @@ o2be_interface::produce_hdr(fstream &s)
 	    if (op->has_variable_out_arg() ||
 		op->has_pointer_inout_arg())
 	      {
-		op->produce_decl(s,0,"___");
+		op->produce_decl(s,0,"_0RL__");
 	      }
 	    else
 	      {
@@ -654,7 +659,7 @@ o2be_interface::produce_hdr(fstream &s)
 	  {
 	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
 	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg()) {
-	      op->produce_nil_skel(s,"___");
+	      op->produce_nil_skel(s,"_0RL__");
 	    }
 	    else {
 	      op->produce_nil_skel(s);
@@ -808,7 +813,7 @@ o2be_interface::produce_skel(fstream &s)
 	  {
 	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
 	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg()) {
-	      op->produce_proxy_skel(s,*this,"___");
+	      op->produce_proxy_skel(s,*this,"_0RL__");
 	    }
 	    else {
 	      op->produce_proxy_skel(s,*this);
@@ -833,7 +838,7 @@ o2be_interface::produce_skel(fstream &s)
 
   // server skeleton dispatch function
   IND(s); s << "CORBA::Boolean\n";
-  IND(s); s << server_fqname() << "::dispatch(GIOP_S &__s,const char *__op,CORBA::Boolean __response_expected)\n";
+  IND(s); s << server_fqname() << "::dispatch(GIOP_S &_0RL_s,const char *_0RL_op,CORBA::Boolean _0RL_response_expected)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   {
@@ -845,7 +850,7 @@ o2be_interface::produce_skel(fstream &s)
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
 	    IND(s); s << ((notfirst)?"else ":"")
-		      << "if (strcmp(__op,\""
+		      << "if (strcmp(_0RL_op,\""
 		      << d->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
@@ -859,7 +864,7 @@ o2be_interface::produce_skel(fstream &s)
 	  {
 	    o2be_attribute *a = o2be_attribute::narrow_from_decl(d);
 	    IND(s); s << ((notfirst)?"else ":"")
-		      << "if (strcmp(__op,\""
+		      << "if (strcmp(_0RL_op,\""
 		      << "_get_" << a->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
@@ -869,7 +874,7 @@ o2be_interface::produce_skel(fstream &s)
 	    IND(s); s << "}\n";
 	    if (!a->readonly())
 	      {
-		IND(s); s << "else if (strcmp(__op,\""
+		IND(s); s << "else if (strcmp(_0RL_op,\""
 			  << "_set_" << a->local_name()->get_string()
 			  << "\") == 0)\n";
 		IND(s); s << "{\n";
@@ -890,7 +895,7 @@ o2be_interface::produce_skel(fstream &s)
 	  o2be_interface * intf = o2be_interface::narrow_from_decl(intftable[j]);
 	  IND(s); s << ((notfirst)?"else ":"")
 		    << "if (" << intf->server_fqname() 
-		    << "::dispatch(__s,__op,__response_expected)) {\n";
+		    << "::dispatch(_0RL_s,_0RL_op,_0RL_response_expected)) {\n";
 	  INC_INDENT_LEVEL();
 	  IND(s); s << "return 1;\n";
 	  DEC_INDENT_LEVEL();
