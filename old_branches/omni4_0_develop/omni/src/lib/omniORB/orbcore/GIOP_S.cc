@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.24  2002/11/26 16:54:34  dgrisby
+  Fix exception interception.
+
   Revision 1.1.4.23  2002/11/26 14:51:49  dgrisby
   Implement missing interceptors.
 
@@ -620,7 +623,10 @@ GIOP_S::SendReply() {
 
   OMNIORB_ASSERT(pd_state == WaitingForReply);
 
-  if (!response_expected()) throw terminateProcessing();
+  if (!response_expected()) {
+    pd_state = ReplyCompleted;
+    return;
+  }
 
   pd_service_contexts.length(0);
 

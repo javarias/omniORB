@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.24  2003/01/28 13:37:06  dgrisby
+  Send GIOP dumps to logger. Thanks Matej Kenda.
+
   Revision 1.1.4.23  2002/11/12 16:40:11  dgrisby
   Fix incorrect delete.
 
@@ -865,17 +868,14 @@ giopStream::inputMessage() {
   }
   else if (buf->size < (buf->last - buf->start)) {
 
-    if (omniORB::trace(40)) {
-      omniORB::logger log;
-      log << "Split input data to multiple messages\n";
-    }
-
     // Too much data in the buffer. Locate the beginning of the next
     // message header(s) and uses a separate Buffer for each message.
     CORBA::ULong first = buf->start + buf->size;
     giopStream_Buffer** tail = &pd_strand->head;
     while (*tail)
       tail = &(*tail)->next;
+
+    int splitcount = 0;
 
     do {
       CORBA::ULong sz = buf->last - first;
@@ -916,12 +916,18 @@ giopStream::inputMessage() {
 	omniORB::logger log;
 	log << "Split to new buffer\n";
       }
+      splitcount++;
 
       *tail = newbuf;
       tail = &(newbuf->next);
       first += sz;
     } while (first != buf->last);
     buf->last = buf->start + buf->size;
+
+    if (omniORB::trace(30)) {
+      omniORB::logger log;
+      log << "Split input data into " << splitcount << " messages\n";
+    }
   }
   return buf;
 }

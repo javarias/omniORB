@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.25  2003/05/22 13:47:40  dgrisby
+  Failed to setSelectable in some cases.
+
   Revision 1.22.2.24  2003/02/17 01:46:23  dgrisby
   Pipe to kick select thread (on Unix).
 
@@ -1035,7 +1038,12 @@ giopServer::notifyWkPreUpCall(giopWorker* w, CORBA::Boolean data_in_buffer) {
 	omni_tracedmutex_lock sync(pd_lock);
 	conn->pd_dedicated_thread_in_upcall = 1;
       }
-      conn->setSelectable(0,data_in_buffer);
+      if (orbParameters::maxServerThreadPerConnection > 1) {
+	// If only one thread per connection is allowed, there is no
+	// need to setSelectable, since we won't be able to act on any
+	// interleaved calls that arrive.
+	conn->setSelectable(0,data_in_buffer);
+      }
     }
     else {
       // This is a temporary worker thread
