@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.6  2000/06/26 16:23:27  djs
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.14.2.5  2000/05/04 14:35:12  djs
 # Added new flag splice-modules which causes all continuations to be output
 # as one lump. Default is now to output them in pieces following the IDL.
@@ -436,7 +439,19 @@ def visitStruct(node):
         memberType = child.memberType()
         if isinstance(memberType, idltype.Declared):
             memberType.decl().accept(self)
+        elif isinstance(memberType, idltype.Sequence):
+            # anonymous sequence (maybe sequence<sequence<...<T>>>)
+            # Find the ultimate base type, and if it's user declared then
+            # produce a typecode definition for it.
+            base_type = memberType.seqType()
+            while isinstance(base_type, idltype.Sequence):
+                base_type = base_type.seqType()
 
+            # careful of recursive structs
+            if isinstance(base_type, idltype.Declared) and \
+               not(recursive(base_type.decl())):
+                base_type.decl().accept(self)
+                        
     self.__override = override
 
     tophalf.out(str(buildMembersStructure(node)))
