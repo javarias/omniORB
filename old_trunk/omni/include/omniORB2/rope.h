@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1998/03/19 19:59:01  sll
+  Added comment to clarify the sync. requirement of newStrand().
+
   Revision 1.4  1997/12/09 20:34:36  sll
   Interfaces extended to provide more hooks to support new transports.
   Support for incoming and outgoing rope scavenger threads.
@@ -431,6 +434,10 @@ public:
     //        Restore <MUTEX> to the same state as indicated by held_rope_mutex
     //      For WrTimedLock(), WrUnlock(Strand*):
     //        Still held <MUTEX> on exit
+    // XXX  For WrTimedLock(), if the write lock has been acquired, the
+    //                         reference count of the strand is increment by 1.
+    // XXX  For WrUnlock(Strand*), the reference count of the strand is
+    //                         decrement by 1.
     //
     // There are two ways to acquire a Write Lock, 
     //    i.e. WrLock and WrTimedLock.
