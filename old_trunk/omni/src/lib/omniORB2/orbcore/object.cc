@@ -11,6 +11,9 @@
  
 /*
   $Log$
+// Revision 1.2  1997/03/10  11:53:06  sll
+// Minor changes to accomodate the creation of a public API for omniORB2.
+//
   Revision 1.1  1997/01/08 17:26:01  sll
   Initial revision
 
@@ -90,6 +93,9 @@ omniObject::NP_objkey(const omniObjectKey &k)
   if (pd_refCount || pd_proxy)
     throw CORBA::BAD_PARAM(1,CORBA::COMPLETED_NO);
   pd_objkey.native = k;
+  IOP::TaggedProfileList *np = omni::objectToIopProfiles(this);
+  delete pd_iopprofile;
+  pd_iopprofile = np;
   return;
 }
 
