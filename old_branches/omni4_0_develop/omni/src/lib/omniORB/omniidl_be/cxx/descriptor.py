@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.5  2003/08/21 15:06:03  dgrisby
+# Avoid spurious Python 2.3 complaints about unsigned long integers.
+#
 # Revision 1.1.4.4  2001/06/08 17:12:12  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -212,7 +215,12 @@ def get_interface_operation_descriptor(iname, operation_name, signature):
     return descriptor
 
 
-# takes an int and returns the int in hex, without leading 0x and
-# with 0s padding
+# Takes an int and returns the int in hex, without leading 0x and with
+# 0s padding. Can't use %08x because Python 1.5.2 can't do it with
+# longs >= 2**31.
+
 def hex_word(x):
-    return "%08x" % x
+    s = hex(x)[2:]
+    if s[-1] == "L":
+        s = s[:-1]
+    return string.zfill(s, 8)
