@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.11  2001/09/12 19:42:36  sll
+  Added back function to report max. GIOP message size.
+
   Revision 1.2.2.10  2001/08/22 13:31:31  dpg1
   Christof's fixes for gcc 3.0.1.
 
@@ -83,6 +86,7 @@
 #include <stdlib.h>
 #include <omniORB4/CORBA.h>
 #include <orbParameters.h>
+#include <omniCurrent.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -116,6 +120,43 @@ omniORB::setMainThread()
 
   omni::mainThreadId = self->id();
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+void
+omniORB::setClientCallTimeout(CORBA::ULong v)
+{
+  orbParameters::clientCallTimeOutPeriod.secs = v / 1000;
+  orbParameters::clientCallTimeOutPeriod.nanosecs = (v % 1000) * 1000000;
+}
+
+void
+omniORB::setClientCallTimeout(CORBA::Object_ptr obj, CORBA::ULong v)
+{
+  omniObjRef* oo = obj->_PR_getobj();
+  oo->_setTimeout(v / 1000, (v % 1000) * 1000000);
+}
+
+void
+omniORB::setClientThreadCallTimeout(CORBA::ULong v)
+{
+  omniCurrent* current = omniCurrent::get();
+  if (!current)
+    OMNIORB_THROW(INITIALIZE, INITIALIZE_NotOmniThread, CORBA::COMPLETED_NO);
+
+  current->setTimeout(v / 1000, (v % 1000) * 1000000);
+}
+
+void
+omniORB::setClientThreadCallDeadline(unsigned long secs, unsigned long ns)
+{
+  omniCurrent* current = omniCurrent::get();
+  if (!current)
+    OMNIORB_THROW(INITIALIZE, INITIALIZE_NotOmniThread, CORBA::COMPLETED_NO);
+
+  current->setDeadline(secs, ns);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

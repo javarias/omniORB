@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2002/04/29 11:52:51  dgrisby
+  More fixes for FreeBSD, Darwin, Windows.
+
   Revision 1.1.4.5  2002/03/18 15:13:08  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -88,6 +91,12 @@ orbParameters::timeValue orbParameters::clientCallTimeOutPeriod = {0,0};
 //
 //   Valid values = (n >= 0 in seconds) 
 //                   0 --> no timeout. Block till a reply comes back
+
+CORBA::Boolean orbParameters::supportPerThreadTimeOut = 0;
+//   If true, each thread may have a timeout associated with it. This
+//   gives a performance hit due to accessing per-thread data.
+//
+//   Valid values = 0 or 1
 
 orbParameters::timeValue orbParameters::serverCallTimeOutPeriod = {0,0};
 //   Call timeout. On the server side, if the ORB cannot completely 
@@ -334,6 +343,34 @@ public:
 static clientCallTimeOutPeriodHandler clientCallTimeOutPeriodHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
+class supportPerThreadTimeOutHandler : public orbOptions::Handler {
+public:
+
+  supportPerThreadTimeOutHandler() : 
+    orbOptions::Handler("supportPerThreadTimeOut",
+			"supportPerThreadTimeOut = 0 or 1",
+			1,
+			"-ORBsupportPerThreadTimeOut < 0 | 1 >") {}
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    orbParameters::supportPerThreadTimeOut = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),orbParameters::supportPerThreadTimeOut,
+			     result);
+  }
+};
+
+static supportPerThreadTimeOutHandler supportPerThreadTimeOutHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
 class serverCallTimeOutPeriodHandler : public orbOptions::Handler {
 public:
 
@@ -490,6 +527,7 @@ public:
     orbOptions::singleton().registerHandler(maxGIOPVersionHandler_);
     orbOptions::singleton().registerHandler(giopMaxMsgSizeHandler_);
     orbOptions::singleton().registerHandler(clientCallTimeOutPeriodHandler_);
+    orbOptions::singleton().registerHandler(supportPerThreadTimeOutHandler_);
     orbOptions::singleton().registerHandler(serverCallTimeOutPeriodHandler_);
     orbOptions::singleton().registerHandler(maxInterleavedCallsPerConnectionHandler_);
     orbOptions::singleton().registerHandler(giopTargetAddressModeHandler_);
