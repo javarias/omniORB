@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.13  2002/09/21 21:07:48  dgrisby
+// Support ValueBase in omniidl. (No use to omniORB yet...)
+//
 // Revision 1.17.2.12  2001/11/14 17:13:43  dpg1
 // Long double support.
 //
@@ -1336,18 +1339,39 @@ visitDeclaredType(DeclaredType* t)
 extern "C" {
   static PyObject* IdlPyCompile(PyObject* self, PyObject* args)
   {
-    PyObject* pyfile;
+    PyObject*   arg;
+    const char* name;
+    FILE*       file;
+    IDL_Boolean to_close = 0;
 
-    if (!PyArg_ParseTuple(args, (char*)"O!", &PyFile_Type, &pyfile))
+    if (!PyArg_ParseTuple(args, (char*)"O", &arg))
       return 0;
 
-    FILE*       file   = PyFile_AsFile(pyfile);
-    PyObject*   pyname = PyFile_Name(pyfile);
-    const char* name   = PyString_AsString(pyname);
+    if (PyString_Check(arg)) {
+      name = PyString_AsString(arg);
+      file = fopen(name, "r");
+      if (!file) {
+	PyErr_SetString(PyExc_IOError,
+			(char*)"Cannot open file");
+	return 0;
+      }
+      to_close = 1;
+    }
+    else if (PyFile_Check(arg)) {
+      PyObject* pyname = PyFile_Name(arg);
+      file = PyFile_AsFile(arg);
+      name = PyString_AsString(pyname);
+    }
+    else {
+      PyErr_SetString(PyExc_TypeError,
+		      (char*)"Argument must be a file or filename");
+      return 0;
+    }
 
     IDL_Boolean success = AST::process(file, name);
 
-    PyObject* result;
+    if (to_close)
+      fclose(file);
 
     if (success) {
       PythonVisitor v;
@@ -1373,16 +1397,39 @@ extern "C" {
 
   static PyObject* IdlPyDump(PyObject* self, PyObject* args)
   {
-    PyObject* pyfile;
+    PyObject*   arg;
+    const char* name;
+    FILE*       file;
+    IDL_Boolean to_close = 0;
 
-    if (!PyArg_ParseTuple(args, (char*)"O!", &PyFile_Type, &pyfile))
+    if (!PyArg_ParseTuple(args, (char*)"O", &arg))
       return 0;
 
-    FILE*       file   = PyFile_AsFile(pyfile);
-    PyObject*   pyname = PyFile_Name(pyfile);
-    const char* name   = PyString_AsString(pyname);
+    if (PyString_Check(arg)) {
+      name = PyString_AsString(arg);
+      file = fopen(name, "r");
+      if (!file) {
+	PyErr_SetString(PyExc_IOError,
+			(char*)"Cannot open file");
+	return 0;
+      }
+      to_close = 1;
+    }
+    else if (PyFile_Check(arg)) {
+      PyObject* pyname = PyFile_Name(arg);
+      file = PyFile_AsFile(arg);
+      name = PyString_AsString(pyname);
+    }
+    else {
+      PyErr_SetString(PyExc_TypeError,
+		      (char*)"Argument must be a file or filename");
+      return 0;
+    }
 
     IDL_Boolean success = AST::process(file, name);
+
+    if (to_close)
+      fclose(file);
 
     if (success) {
       DumpVisitor v;
@@ -1513,6 +1560,16 @@ extern "C" {
     return l;
   }
 
+  static PyObject* IdlPyAlwaysTempFile(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)"")) return 0;
+#if defined (_MSC_VER) && _MSC_VER > 1200
+    return PyInt_FromLong(1);
+#else
+    return PyInt_FromLong(0);
+#endif
+  }
+
   static PyMethodDef omniidl_methods[] = {
     {(char*)"compile",            IdlPyCompile,            METH_VARARGS},
     {(char*)"clear",              IdlPyClear,              METH_VARARGS},
@@ -1524,6 +1581,7 @@ extern "C" {
     {(char*)"runInteractiveLoop", IdlPyRunInteractiveLoop, METH_VARARGS},
     {(char*)"caseSensitive",      IdlPyCaseSensitive,      METH_VARARGS},
     {(char*)"platformDefines",    IdlPyPlatformDefines,    METH_VARARGS},
+    {(char*)"alwaysTempFile",     IdlPyAlwaysTempFile,     METH_VARARGS},
     {NULL, NULL}
   };
 

@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.10  2002/06/05 22:26:32  dgrisby
+# Cope with spaces in paths to IDL files.
+#
 # Revision 1.17.2.9  2002/04/25 23:12:44  dgrisby
 # Bug with invalid omniidl option reporting.
 #
@@ -82,6 +85,8 @@ import getopt, os, os.path, string
 import idlast, idltype
 
 cmdname = "omniidl"
+
+StringType = type("")
 
 def version():
     print "omniidl version 1.0"
@@ -285,12 +290,7 @@ def parseArgs(args):
             interactive = 1
 
         elif o == "-T":
-            try:
-                import tempfile
-                temp_file = tempfile.mktemp(".idl")
-            except ImportError:
-                # No tempfile module. Just use current directory and hope...
-                temp_file = "omniidl-tmp" + `os.getpid()` + ".idl"
+            temp_file = genTempFileName()
 
         elif o == "-P":
             preprocessor_args.extend(_omniidl.platformDefines())
@@ -298,6 +298,15 @@ def parseArgs(args):
     sys.path = paths + sys.path
 
     return files
+
+
+def genTempFileName():
+    try:
+        import tempfile
+        return tempfile.mktemp(".idl")
+    except ImportError:
+        # No tempfile module. Just use current directory and hope...
+        return = "omniidl-tmp" + `os.getpid()` + ".idl"
 
 
 def my_import(name):
@@ -321,11 +330,14 @@ def be_import(name):
 def main(argv=None):
     global preprocessor_args, preprocessor_only, preprocessor_cmd
     global no_preprocessor, backend, backend_args, dump_only, cd_to
-    global verbose, quiet, print_usage, interactive
+    global verbose, quiet, print_usage, interactive, temp_file
 
     if argv is None: argv = sys.argv
 
     files = parseArgs(argv[1:])
+
+    if _omniidl.alwaysTempFile():
+        temp_file = genTempFileName()
 
     if print_usage:
         usage()        
@@ -379,24 +391,24 @@ def main(argv=None):
         sys.stderr.write(cmdname + ": Warning: No back-ends specified; " \
                          "checking IDL for validity\n")
 
-    for file in files:
-        if file != "-" and not os.path.isfile(file):
+    for name in files:
+        if name != "-" and not os.path.isfile(name):
             if not quiet:
-                sys.stderr.write(cmdname + ": '" + file + "' does not exist\n")
+                sys.stderr.write(cmdname + ": '" + name + "' does not exist\n")
             sys.exit(1)
 
  	if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
  	    preproc_cmd = '%s %s "%s"' % (preprocessor_cmd,
                                           string.join(preprocessor_args, ' '),
-                                          file)
+                                          name)
  	else:
             preproc_cmd = '%s "%s" %s' % (preprocessor_cmd,
                                           string.join(preprocessor_args,'" "'),
-                                          file)
+                                          name)
         if not no_preprocessor:
             if verbose:
                 sys.stderr.write(cmdname + ": Preprocessing '" +\
-                                 file + "' with '" + preproc_cmd + "'\n")
+                                 name + "' with '" + preproc_cmd + "'\n")
 
             if preprocessor_only:
                 err = os.system(preproc_cmd)
@@ -422,13 +434,13 @@ def main(argv=None):
                     except:
                         pass
                     sys.exit(1)
-                file = open(temp_file, "r")
+                file = temp_file
 
             else:
                 file = os.popen(preproc_cmd, "r")
 
         else: # No preprocessor
-            file = open(file, "r")
+            file = name
 
         if verbose: sys.stderr.write(cmdname + ": Running front end\n")
 
@@ -436,16 +448,18 @@ def main(argv=None):
             if verbose:
                 sys.stderr.write(cmdname + ": Dumping\n")
             _omniidl.dump(file)
-            file.close()
+            if not isinstance(file, StringType):
+                file.close()
             if temp_file: os.remove(temp_file)
         else:
             tree = _omniidl.compile(file)
 
-            if file.close():
-                if not quiet:
-                    sys.stderr.write(cmdname + \
-                                     ": Error running preprocessor\n")
-                sys.exit(1)
+            if not isinstance(file, StringType):
+                if file.close():
+                    if not quiet:
+                        sys.stderr.write(cmdname + \
+                                         ": Error running preprocessor\n")
+                    sys.exit(1)
 
             if tree is None:
                 sys.exit(1)
