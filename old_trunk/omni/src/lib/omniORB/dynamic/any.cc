@@ -588,7 +588,7 @@ CORBA::Any::operator>>=(CORBA::TypeCode_ptr& tc) const
     CORBA::Boolean ret = pdAnyP()->getData(CORBA::_tc_TypeCode, tcd);
     if( ret ) {
       if (!omniORB::omniORB_27_CompatibleAnyExtraction) {
-        PR_setCachedData((void*)tcm._ptr,delete_typecode);
+        ((CORBA::Any*)this)->PR_setCachedData((void*)tcm._ptr,delete_typecode);
       }
       tc = tcm._ptr;
       tcm._ptr = CORBA::TypeCode::_nil(); return 1;
