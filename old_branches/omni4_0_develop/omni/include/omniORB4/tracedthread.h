@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2001/12/03 18:47:39  dpg1
+  Detect use after deletion in traced mutex and condition.
+
   Revision 1.2.2.2  2001/08/17 13:49:08  dpg1
   Optional logging for traced mutexes and condition variables.
 
@@ -51,7 +54,10 @@
 #define __OMNI_TRACEDTHREAD_H__
 
 
-#define OMNIORB_ENABLE_LOCK_TRACES
+// Lock tracing is controlled by autoconf, or in the dummy
+// omniconfig.h.  You can override it here if you wish.
+
+//#define OMNIORB_ENABLE_LOCK_TRACES
 
 
 //////////////////////////////////////////////////////////////////////
