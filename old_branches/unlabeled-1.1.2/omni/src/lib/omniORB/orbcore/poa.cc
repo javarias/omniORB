@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  1999/11/12 17:05:38  djr
+  Minor mods for hp-10.20 with aCC.
+
   Revision 1.1.2.9  1999/10/29 13:18:18  djr
   Changes to ensure mutexes are constructed when accessed.
 
@@ -1227,8 +1230,17 @@ omniOrbPOA::decrRefCount()
   if( done )  return;
 
   if( pd_refCount < 0 ) {
-    omniORB::logs(1, "POA has negative ref count! 'CORBA::release()'ed "
-		  "too many times?");
+    omniORB::logs(1, "ERROR -- POA has negative ref count!"
+		  " 'CORBA::release()'ed too many times?");
+    return;
+  }
+  if( pd_destroyed != 2 ) {
+    if( omniORB::trace(1) ) {
+      omniORB::logger l;
+      l << "ERROR -- POA(" << (char*) pd_name << ") has been released"
+	" too many times!\n";
+    }
+    pd_refCount = 1;  // attempt recovery!
     return;
   }
 
