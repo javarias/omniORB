@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.1  2000/02/14 18:34:53  dpg1
+# New omniidl merged in.
+#
 # Revision 1.7  2000/01/19 17:05:16  djs
 # Modified to use an externally stored C++ output template.
 #
@@ -54,7 +57,7 @@
 # similar to o2be_root::produce_poa_skel in the old C++ BE
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, name, config
+from omniidl_be.cxx import tyutil, util, id, config
 from omniidl_be.cxx.skel import template
 
 import poa
@@ -63,7 +66,6 @@ self = poa
 
 def __init__(stream):
     poa.stream = stream
-    self.__environment = name.Environment()
 
     self.__nested = 0
     return poa
@@ -73,14 +75,6 @@ def POA_prefix():
         return "POA_"
     return ""
 
-def enter(scope):
-    self.__environment = self.__environment.enterScope(scope)
-def leave():
-    self.__environment = self.__environment.leaveScope()
-def currentScope():
-    return self.__environment.scope()
-
-
 # ------------------------------------
 # Control arrives here
 
@@ -89,9 +83,7 @@ def visitAST(node):
         n.accept(self)
 
 def visitModule(node):
-    name = tyutil.mapID(node.identifier())
-    enter(name)
-    scope = currentScope()
+    name = id.mapID(node.identifier())
 
     for n in node.definitions():
         nested = self.__nested
@@ -101,25 +93,18 @@ def visitModule(node):
 
         self.__nested = nested
 
-    leave()
 
 def visitInterface(node):
     if not(node.mainFile()):
         return
-    name = tyutil.mapID(node.identifier())
-    environment = self.__environment
-    fqname = environment.nameToString(node.scopedName())
-    
-    enter(name)
-    scope = currentScope()
-    
+    name = id.mapID(node.identifier())
+    fqname = id.Name(node.scopedName()).fullyQualify()
     stream.out(template.interface_POA,
                POA_prefix = POA_prefix(),
                name = name,
                fqname = fqname)
         
 
-    leave()
 
 def visitTypedef(node):
     pass
