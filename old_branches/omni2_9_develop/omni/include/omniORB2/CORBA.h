@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.46.4.2  1999/09/25 17:00:09  sll
+ Merged changes from omni2_8_develop branch.
+
  Revision 1.46.4.1  1999/09/15 20:18:15  sll
  Updated to use the new cdrStream abstraction.
  Marshalling operators for NetBufferedStream and MemBufferedStream are now
@@ -2285,7 +2288,7 @@ _CORBA_MODULE_BEG
     static BOA_ptr _duplicate(BOA_ptr);
     static BOA_ptr _nil();
 
-    static BOA_ptr getBOA();
+    static BOA_ptr getBOA(CORBA::Boolean no_exception=0);
     // omniORB2 specific. Must be called after BOA_init is called.
     // Otherwise a CORBA::OBJ_ADAPTOR exception is raised.
 

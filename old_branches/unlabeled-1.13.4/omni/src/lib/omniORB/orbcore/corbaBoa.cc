@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.4.1  1999/09/25 17:00:19  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.13.2.1  1999/09/21 20:37:15  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -110,6 +113,15 @@
 #define OMNIORB_USEHOSTNAME_VAR "OMNIORB_USEHOSTNAME"
 #endif
 
+///////////////////////////////////////////////////////////////////////
+#define LOGMESSAGE(level,prefix,message) do {\
+   if (omniORB::trace(level)) {\
+     omniORB::logger log("omniORB: ");\
+	log << prefix ## ": " ## message ## "\n";\
+   }\
+} while (0)
+
+///////////////////////////////////////////////////////////////////////
 static CORBA::BOA_ptr     boa = 0;
 static const char*        myBOAId = "omniORB2_BOA";
 static omni_mutex         internalLock;
@@ -179,6 +191,7 @@ BOAobjectManager::defaultLoopBack()
     {
       ropeFactory_iterator iter(globalOutgoingRopeFactories);
       outgoingRopeFactory* factory;
+
       while ((factory = (outgoingRopeFactory*) iter())) {
 	if ((pd_loopback = factory->findOrCreateOutgoing((Endpoint*)myaddr))) {
 	  break;
@@ -268,10 +281,14 @@ ORB::BOA_init(int &argc, char **argv, const char *boa_identifier)
 
 CORBA::BOA_ptr
 CORBA::
-BOA::getBOA()
+BOA::getBOA(CORBA::Boolean no_exception)
 {
   if (!boa) {
-    throw CORBA::OBJ_ADAPTER(0,CORBA::COMPLETED_NO);
+    if (no_exception) {
+      return 0;
+    }
+    else
+      throw CORBA::OBJ_ADAPTER(0,CORBA::COMPLETED_NO);
   }
   return CORBA::BOA::_duplicate(boa);
 }
@@ -485,10 +502,10 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
   CORBA::Boolean orbId_match = 0;
   if (orb_identifier && strcmp(orb_identifier,myBOAId) != 0)
     {
-      if (omniORB::traceLevel > 0) {
-	omniORB::log << "BOA_init failed: the BOAid ("
-		     << orb_identifier << ") is not " <<  myBOAId << "\n";
-	omniORB::log.flush();
+      if (omniORB::trace(0)) {
+	omniORB::logger log("omniORB: ");
+	log << "BOA_init failed: the BOAid ("
+	    << orb_identifier << ") is not " <<  myBOAId << "\n";
       }
       return 0;
     }
@@ -508,18 +525,15 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       // -BOAid <id>
       if (strcmp(argv[idx],"-BOAid") == 0) {
 	if ((idx+1) >= argc) {
-	  if (omniORB::traceLevel > 0) {
-	    omniORB::log << "BOA_init failed: missing -BOAid parameter.\n";
-	    omniORB::log.flush();
-	  }
+	  LOGMESSAGE(0,"BOA_init"," failed: missing -BOAid parameter.");
 	  return 0;
 	}
 	if (strcmp(argv[idx+1],myBOAId) != 0)
 	  {
-	    if (omniORB::traceLevel > 0) {
-	      omniORB::log << "BOA_init failed: the BOAid ("
-			   << argv[idx+1] << ") is not " << myBOAId << "\n";
-	      omniORB::log.flush();
+	    if (omniORB::trace(0)) {
+	      omniORB::logger log("omniORB: ");
+	      log << "BOA_init failed: the BOAid ("
+		  << argv[idx+1] << ") is not " << myBOAId << "\n";
 	    }
 	    return 0;
 	  }
@@ -531,19 +545,13 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       // -BOAiiop_port <port number>[,<port number>]*
       if (strcmp(argv[idx],"-BOAiiop_port") == 0) {
 	if ((idx+1) >= argc) {
-	  if (omniORB::traceLevel > 0) {
-	    omniORB::log << "BOA_init failed: missing -BOAiiop_port parameter.\n";
-	    omniORB::log.flush();
-	  }
+	  LOGMESSAGE(0,"BOA_init"," failed: missing -BOAiiop_port parameter.");
 	  return 0;
 	}
         unsigned int port;
 	if (sscanf(argv[idx+1],"%u",&port) != 1 ||
             (port == 0 || port >= 65536)) {
-	  if (omniORB::traceLevel > 0) {
-	    omniORB::log << "BOA_init failed: invalid -BOAiiop_port parameter.\n";
-	    omniORB::log.flush();
-	  }
+	  LOGMESSAGE(0,"BOA_init"," failed: invalid -BOAiiop_port parameter.");
 	  return 0;
 	}
 
@@ -560,10 +568,9 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	      if (!factory->isIncoming(&e)) {
 		// This port has not been instantiated
 		factory->instantiateIncoming(&e,1);
-		if (omniORB::traceLevel >= 2) {
-		  omniORB::log << "Accept IIOP calls on port " << e.port()
-			       << "\n";
-		  omniORB::log.flush();
+		if (omniORB::trace(2)) {
+		  omniORB::logger log("omniORB: ");
+		  log << "BOA: Accept IIOP calls on port " << e.port() << "\n";
 		}
 	      }
 	      break;
@@ -571,10 +578,10 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	  }
 	}
 	catch (...) {
-	  if (omniORB::traceLevel > 0) {
-	    omniORB::log << "BOA_init falied: cannot use port " << port
-			 << " to accept incoming IIOP calls.\n";
-	    omniORB::log.flush();
+	  if (omniORB::trace(0)) {
+	    omniORB::logger log("omniORB: ");
+	    log << "BOA_init falied: cannot use port " << port
+		<< " to accept incoming IIOP calls.\n";
 	  }
 	  return 0;
 	}
@@ -585,10 +592,10 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
       // -BOAiiop_name_port <hostname[:port number]>
       if (strcmp(argv[idx],"-BOAiiop_name_port") == 0) {
         if ((idx+1) >= argc) {
-          if (omniORB::traceLevel > 0) {
-            omniORB::log << "BOA_init failed: missing -BOAiiop_name_port parameter.\n";
-	    omniORB::log << "usage: -BOAiiop_name_port <hostname[:port number]>+\n";
-            omniORB::log.flush();
+          if (omniORB::trace(0)) {
+	    omniORB::logger log("omniORB: ");
+            log << "BOA_init failed: missing -BOAiiop_name_port parameter.\n";
+	    log << "usage: -BOAiiop_name_port <hostname[:port number]>+\n";
           }
           return 0;
         }
@@ -607,10 +614,10 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
            if (port_str[1] == '\0')
               port = 0;
            else if (sscanf(port_str+1,"%u",&port) != 1 || (port < 0 || port >= 65536)) {
-              if (omniORB::traceLevel > 0) {
-                 omniORB::log << "BOA_init failed: invalid -BOAiiop_name_port parameter. "
-                              << "Portnumber out of range : " << port << ".\n";
-                 omniORB::log.flush();
+              if (omniORB::trace(0)) {
+		omniORB::logger log("omniORB: ");
+		log << "BOA_init failed: invalid -BOAiiop_name_port parameter. "
+		    << "Portnumber out of range : " << port << ".\n";
               }
               return 0;
            }
@@ -628,10 +635,9 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
               if (!factory->isIncoming(&e)) {
                 // This port has not been instantiated
                 factory->instantiateIncoming(&e,1);
-                if (omniORB::traceLevel >= 2) {
-                  omniORB::log << "Accept IIOP calls on port " << e.port()
-                               << "\n";
-                  omniORB::log.flush();
+                if (omniORB::trace(2)) {
+		  omniORB::logger log("omniORB: ");
+                  log << "BOA accept IIOP calls on port " << e.port() << "\n";
                 }
               }
               break;
@@ -639,10 +645,10 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
           }
         }
         catch (...) {
-          if (omniORB::traceLevel > 0) {
-            omniORB::log << "BOA_init falied: cannot use port " << port
-                         << " to accept incoming IIOP calls.\n";
-            omniORB::log.flush();
+          if (omniORB::trace(0)) {
+	    omniORB::logger log("omniORB: ");
+            log << "BOA_init falied: cannot use port " << port
+		<< " to accept incoming IIOP calls.\n";
           }
           return 0;
         }
@@ -659,12 +665,12 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 
       // -BOAhelp
       if (strcmp(argv[idx],"-BOAhelp") == 0) {
-	omniORB::log << "Valid -BOA<options> are:\n"
-		     << "    -BOAid omniORB2_BOA\n"
-		     << "    -BOAiiop_port <port no.>[,<port no>]*\n"
-		     << "    -BOAiiop_name_port <hostname[:port no.]>\n"
-		     << "    -BOAno_bootstrap_agent\n";
-	omniORB::log.flush();
+	omniORB::logger log("");
+	log << "Valid -BOA<options> are:\n"
+	    << "    -BOAid omniORB2_BOA\n"
+	    << "    -BOAiiop_port <port no.>[,<port no>]*\n"
+	    << "    -BOAiiop_name_port <hostname[:port no.]>\n"
+	    << "    -BOAno_bootstrap_agent\n";
 	move_args(argc,argv,idx,1);
 	continue;
       }
@@ -672,18 +678,18 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 
       // Reach here only if the argument in this form: -BOAxxxxx
       // is not recognised.
-      if (omniORB::traceLevel > 0) {
-	omniORB::log << "BOA_init failed: unknown BOA argument ("
-		     << argv[idx] << ")\n";
-	omniORB::log.flush();
+      if (omniORB::trace(0)) {
+	omniORB::logger log("omniORB: ");
+	log << "BOA_init failed: unknown BOA argument ("
+	    << argv[idx] << ")\n";
       }
       return 0;
     }
 
   if (!orb_identifier && !orbId_match) {
-    if (omniORB::traceLevel > 0) {
-      omniORB::log << "BOA_init failed: BOAid is not specified.\n";
-      omniORB::log.flush();
+    if (omniORB::trace(0)) {
+      omniORB::logger log("omniORB: ");
+      log << "BOA_init failed: BOAid is not specified.\n";
     }
     return 0;
   }
