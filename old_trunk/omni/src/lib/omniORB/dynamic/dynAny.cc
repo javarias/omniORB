@@ -29,6 +29,10 @@
 
 /* 
    $Log$
+   Revision 1.2  1998/08/14 13:45:31  sll
+   Added pragma hdrstop to control pre-compile header if the compiler feature
+   is available.
+
    Revision 1.1  1998/08/05 18:03:49  sll
    Initial revision
 
@@ -914,7 +918,7 @@ CORBA::Boolean
 CORBA::DynAny::seek(CORBA::Long index)
 {
   omni_mutex_lock sync(dynAnyP::lock);
-  if (index >= CvtDynAnyP()->totalComponents())
+  if ((CORBA::ULong)index >= CvtDynAnyP()->totalComponents())
     return 0;
   CvtDynAnyP()->nthComponent(index);
   return 1;
