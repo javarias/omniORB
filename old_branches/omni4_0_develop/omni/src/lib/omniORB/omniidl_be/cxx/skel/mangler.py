@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.5  2001/06/08 17:12:20  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.15.2.4  2001/03/13 10:32:09  dpg1
 # Fixed point support.
 #
@@ -152,7 +155,7 @@ name_map = {
 # Produce a cannonical type name
 def canonTypeName(type, decl = None, useScopedName = 0):
     assert isinstance(type, types.Type)
-    
+
     type_dims = type.dims()
     decl_dims = []
     if decl != None:

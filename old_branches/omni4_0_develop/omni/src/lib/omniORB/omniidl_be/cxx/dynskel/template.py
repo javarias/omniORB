@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.11  2001/08/29 13:41:04  dpg1
+# jnw's fix for compilers with variable sizeof(enum)
+#
 # Revision 1.3.2.10  2001/08/22 13:29:48  dpg1
 # Re-entrant Any marshalling.
 #
@@ -185,7 +188,7 @@ static void
 # Generated symbols:
 #   @private_prefix@_buildDesc@cname@
 builddesc_extern = """\
-@where@ void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
+@where@void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
 """
 
 # Required symbols:

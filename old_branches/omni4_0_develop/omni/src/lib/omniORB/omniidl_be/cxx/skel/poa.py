@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9.2.3  2001/06/08 17:12:20  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.9.2.2  2000/10/12 15:37:53  sll
 # Updated from omni3_1_develop.
 #
@@ -127,7 +130,11 @@ def visitEnum(node):
     pass
 def visitStruct(node):
     pass
+def visitStructForward(node):
+    pass
 def visitUnion(node):
+    pass
+def visitUnionForward(node):
     pass
 def visitForward(node):
     pass

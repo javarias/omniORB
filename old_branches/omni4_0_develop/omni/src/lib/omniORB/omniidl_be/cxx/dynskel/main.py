@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.8  2001/08/22 13:29:47  dpg1
+# Re-entrant Any marshalling.
+#
 # Revision 1.14.2.7  2001/08/17 13:47:31  dpg1
 # Small bug fixes.
 #
@@ -351,7 +354,7 @@ def prototype(decl, where, member = None):
                name = member)
 
 def external(decl, member = None):
-    prototype(decl, "extern", member)
+    prototype(decl, "extern ", member)
 def forward(decl, member = None):
     prototype(decl, "", member)
 
@@ -465,7 +468,7 @@ def visitSequenceType(type):
     elementDesc = output.StringStream()
     prefix = config.state['Private Prefix']
     # djr and jnw's "Super-Hacky Optimisation"
-    # (ammended by dpg1 to be even more hacky, since char/wchar now don't work)
+    # (amended by dpg1 to be even more hacky, since char/wchar now don't work)
     if isinstance(d_seqType.type(), idltype.Base) and \
        not d_seqType.variable() and \
        not d_seqType.type().kind() in [idltype.tk_char, idltype.tk_wchar] and \
@@ -763,8 +766,8 @@ def visitStruct(node):
     prefix = config.state['Private Prefix']
     
     # if it's recursive, stick in a forward declaration
-    if (node.recursive()):
-        stream.out("// forward declaration because struct is recursive")
+    if node.recursive():
+        stream.out("// struct is recursive")
         forward(node)
 
     # output code for constructed members (eg nested structs)
@@ -792,7 +795,26 @@ def visitStruct(node):
     
     finishingNode()
 
-    
+def visitStructForward(node):
+    startingNode(node)
+
+    scopedName = id.Name(node.scopedName())
+    guard_name = scopedName.guard()
+    fqname = scopedName.fullyQualify()
+    prefix = config.state['Private Prefix']
+
+    stream.out("// forward declaration")
+    forward(node)
+
+    required_symbols = [ prefix + "_buildDesc_c" + guard_name ]
+    generated_symbols = [ prefix + "_delete_" + guard_name ]
+    assertDefined(required_symbols)
+    defineSymbols(generated_symbols)
+
+    finishingNode()
+
+
+
 def visitTypedef(node):
     startingNode(node)
     
@@ -806,7 +828,7 @@ def visitTypedef(node):
 
     # we don't need to recurse on the aliased type here because
     # the code generated is only used from the code generated from
-    # and array declarator.
+    # an array declarator.
     # visitArray() would take care of it for us.
     # Don't do this:
     #   aliasType.accept(self)
@@ -872,8 +894,10 @@ def visitTypedef(node):
 
         # --- sequences
         if not is_array_declarator and aliasType.sequence():
+
             if first_declarator:
                 deref_aliasType.type().accept(self)
+
             stream.out(template.typedef_sequence_oper,
                        fqname = fqname,
                        tcname = tc_name,
@@ -1022,6 +1046,24 @@ default: return 0;""")
                guard_name = guard_name, fqname = fqname,
                private_prefix = prefix)
                
+
+    finishingNode()
+
+def visitUnionForward(node):
+    startingNode(node)
+
+    scopedName = id.Name(node.scopedName())
+    guard_name = scopedName.guard()
+    fqname = scopedName.fullyQualify()
+    prefix = config.state['Private Prefix']
+
+    stream.out("// forward declaration")
+    forward(node)
+
+    required_symbols = [ prefix + "_buildDesc_c" + guard_name ]
+    generated_symbols = [ prefix + "_delete_" + guard_name ]
+    assertDefined(required_symbols)
+    defineSymbols(generated_symbols)
 
     finishingNode()
 

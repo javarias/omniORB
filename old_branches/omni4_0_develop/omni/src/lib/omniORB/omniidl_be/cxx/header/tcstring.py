@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.4  2001/06/08 17:12:18  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.5.2.3  2000/11/20 14:43:25  sll
 # Added support for wchar and wstring.
 #
@@ -87,7 +90,14 @@ def visitStruct(node):
     for n in node.members():
         n.accept(self)
 
+def visitStructForward(node):
+    pass
+
 def visitUnion(node):
+    # *** Recurse here?
+    pass
+
+def visitUnionForward(node):
     pass
 
 def visitStringType(type):

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.3  2000/10/27 16:31:10  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.5.2.2  2000/10/10 10:18:51  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -96,8 +99,10 @@ public:
   IDL_Boolean absolute() const { return absolute_; }
 
   // toString() returns a new string containing the stringified
-  // name. The caller is responsible for deleting it.
-  char*          toString() const;
+  // name. The caller is responsible for deleting it. If qualify is
+  // true, and the name is absolute, prefix with ::, otherwise do not.
+  char* toString(IDL_Boolean qualify=0) const;
+
   IDL_Boolean equal(const ScopedName* sn) const;
 
   // Append a new fragment

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.9  2001/10/17 16:48:32  dpg1
+// Minor error message tweaks
+//
 // Revision 1.16.2.8  2001/08/29 11:55:22  dpg1
 // Enumerator nodes record their value.
 //
@@ -1129,6 +1132,8 @@ Typedef(const char* file, int line, IDL_Boolean mainFile,
 {
   if (aliasType) delType_ = aliasType->shouldDelete();
   else           delType_ = 0;
+
+  if (aliasType) checkNotForward(file, line, aliasType);
 
   for (Declarator* d = declarators; d; d = (Declarator*)d->next()) {
     d->setAlias(this);

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.4  2001/06/08 17:12:17  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.8.2.3  2001/03/26 11:11:55  dpg1
 # Python clean-ups. Output routine optimised.
 #
@@ -112,6 +115,9 @@ def visitStruct(node):
     for n in node.members():
         n.accept(self)
 
+def visitStructForward(node):
+    pass
+
 def visitUnion(node):
     for n in node.cases():
         if n.constrType():
@@ -128,6 +134,9 @@ def visitUnion(node):
                    private_prefix = config.state['Private Prefix'])
 
             
+def visitUnionForward(node):
+    pass
+
 def visitInterface(node):
     for n in node.declarations():
         n.accept(self)

@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.3  2001/06/08 17:12:17  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.6.2.2  2000/10/12 15:37:51  sll
 # Updated from omni3_1_develop.
 #
@@ -93,9 +96,15 @@ def visitStruct(node):
     for n in node.members():
         n.accept(self)
 
-def visitUnion(node):
+def visitStructForward(node):
     pass
 
+def visitUnion(node):
+    # *** Recurse?
+    pass
+
+def visitUnionForward(node):
+    pass
 
 def visitMember(node):
     if node.constrType():

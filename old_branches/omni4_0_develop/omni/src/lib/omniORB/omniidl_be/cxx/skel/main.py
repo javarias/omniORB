@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.8  2001/06/08 17:12:19  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.29.2.7  2001/03/13 10:32:09  dpg1
 # Fixed point support.
 #
@@ -331,6 +334,7 @@ def visitTypedef(node):
     is_global_scope = not (self.__insideModule or self.__insideInterface)
 
     aliasType = types.Type(node.aliasType())
+    d_type = aliasType.deref()
 
     if node.constrType():
         aliasType.type().decl().accept(self)
@@ -377,8 +381,29 @@ def visitTypedef(node):
             stream.out(template.typedef_global_simple_array,
                        fq_derived = fq_derived,
                        fq_aliased = fq_aliased)
-            
-    
+
+        elif d_type.sequence():
+            seqType = types.Type(d_type.type().seqType())
+            d_seqType = seqType.deref()
+            if d_seqType.structforward() or d_seqType.unionforward():
+                fqname  = scopedName.fullyQualify()
+                name    = id.mapID(d.identifier())
+                element = d_seqType.base()
+                bound   = d_type.type().bound()
+                derived = d_type.sequenceTemplate()
+                
+                if (bound > 0):
+                    stream.out(template.sequence_forward_bounded_defns,
+                               bound=bound, fqname=fqname, name=name,
+                               element=element, derived=derived)
+                else:
+                    stream.out(template.sequence_forward_unbounded_defns,
+                               fqname=fqname, name=name,
+                               element=element, derived=derived)
+
+                stream.out(template.sequence_forward_defns,
+                           fqname=fqname, name=name, element=element)
+                
     pass
 
 def visitEnum(node):
@@ -427,6 +452,9 @@ def visitStruct(node):
 
     stream.reset_indent()
     
+def visitStructForward(node):
+    pass
+
 def visitUnion(node):
     outer_environment = id.lookup(node)
     environment = outer_environment.enter(node.identifier())
@@ -547,6 +575,8 @@ def visitUnion(node):
         
     return
     
+def visitUnionForward(node):
+    pass
     
 def visitForward(node):
     return
@@ -610,6 +640,7 @@ def visitConst(node):
     pass
 def visitDeclarator(node):
     pass
+
 def visitException(node):
     scopedName = id.Name(node.scopedName())
     name = scopedName.simple()

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.6  2001/10/17 16:48:33  dpg1
+// Minor error message tweaks
+//
 // Revision 1.13.2.5  2001/06/08 17:12:23  dpg1
 // Merge all the bug fixes from omni3_develop.
 //
@@ -155,19 +158,19 @@ ScopedName::
 
 char*
 ScopedName::
-toString() const
+toString(IDL_Boolean qualify) const
 {
   int       i;
   Fragment* f;
 
-  i = absolute_ ? 2 : 0;
+  i = (qualify && absolute_) ? 2 : 0;
 
   for (f = scopeList_; f; f = f->next())
     i += strlen(f->identifier()) + 2;
 
   char* str = new char [i-1];
 
-  if (absolute_) {
+  if (qualify && absolute_) {
     str[0] = ':'; str[1] = ':';
     i = 2;
   }
