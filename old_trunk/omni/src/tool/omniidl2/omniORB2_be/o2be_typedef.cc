@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.3  1997/05/06  14:09:04  sll
+// Public release.
+//
   */
 
 
@@ -54,27 +57,35 @@ o2be_typedef::o2be_typedef(AST_Type *bt, UTL_ScopedName *n, UTL_StrList *p)
   switch (decl->node_type())
     {
     case AST_Decl::NT_interface:
-      pd_fm_uqname = new char[strlen(OBJREF_MEMBER_TEMPLATE_NAME)+
-			     strlen(uqname()) +
-			     strlen(uqname()) + strlen("_Helper") + 4];
-      strcpy(pd_fm_uqname,OBJREF_MEMBER_TEMPLATE_NAME);
-      strcat(pd_fm_uqname,"<");
-      strcat(pd_fm_uqname,uqname());
-      strcat(pd_fm_uqname,",");
-      strcat(pd_fm_uqname,uqname());
-      strcat(pd_fm_uqname,"_Helper");
-      strcat(pd_fm_uqname,">");
+      if (strcmp(o2be_name::narrow_and_produce_uqname(decl),"Object") == 0) {
+	pd_fm_uqname = (char *)o2be_interface::narrow_from_decl(decl)->
+	                  fieldMemberType_uqname();
+	pd_fm_fqname = (char *)o2be_interface::narrow_from_decl(decl)->
+	                  fieldMemberType_fqname();
+      }
+      else {
+	pd_fm_uqname = new char[strlen(OBJREF_MEMBER_TEMPLATE_NAME)+
+			       strlen(uqname()) +
+			       strlen(uqname()) + strlen("_Helper") + 4];
+	strcpy(pd_fm_uqname,OBJREF_MEMBER_TEMPLATE_NAME);
+	strcat(pd_fm_uqname,"<");
+	strcat(pd_fm_uqname,uqname());
+	strcat(pd_fm_uqname,",");
+	strcat(pd_fm_uqname,uqname());
+	strcat(pd_fm_uqname,"_Helper");
+	strcat(pd_fm_uqname,">");
 
-      pd_fm_fqname = new char[strlen(OBJREF_MEMBER_TEMPLATE_NAME)+
-			     strlen(fqname()) +
-			     strlen(fqname()) + strlen("_Helper") + 4];
-      strcpy(pd_fm_fqname,OBJREF_MEMBER_TEMPLATE_NAME);
-      strcat(pd_fm_fqname,"<");
-      strcat(pd_fm_fqname,fqname());
-      strcat(pd_fm_fqname,",");
-      strcat(pd_fm_fqname,fqname());
-      strcat(pd_fm_fqname,"_Helper");
-      strcat(pd_fm_fqname,">");
+	pd_fm_fqname = new char[strlen(OBJREF_MEMBER_TEMPLATE_NAME)+
+			       strlen(fqname()) +
+			       strlen(fqname()) + strlen("_Helper") + 4];
+	strcpy(pd_fm_fqname,OBJREF_MEMBER_TEMPLATE_NAME);
+	strcat(pd_fm_fqname,"<");
+	strcat(pd_fm_fqname,fqname());
+	strcat(pd_fm_fqname,",");
+	strcat(pd_fm_fqname,fqname());
+	strcat(pd_fm_fqname,"_Helper");
+	strcat(pd_fm_fqname,">");
+      }
       break;
     case AST_Decl::NT_string:
       pd_fm_uqname = new char[strlen(STRING_MEMBER_NAME)+1];
