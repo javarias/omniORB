@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.5  1997/05/06  17:28:38  sll
+// Public release.
+//
   */
 
 #include <stdlib.h>
@@ -176,7 +179,11 @@ usage()
 {
   cerr << GTDEVEL("usage: ")
        << idl_global->prog_name()
+#ifdef __NT__
+       << GTDEVEL(" [flag]* file\n");
+#else
        << GTDEVEL(" [flag]* file [file]*\n");
+#endif
   cerr << GTDEVEL("Legal flags:\n");
 
   cerr << GTDEVEL(" -Dname[=value]\t\tdefines name for preprocessor\n");
