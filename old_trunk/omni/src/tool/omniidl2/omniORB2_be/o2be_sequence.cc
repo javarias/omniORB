@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.8  1997/12/18 17:28:50  sll
+  *** empty log message ***
+
   Revision 1.7  1997/12/09 19:55:14  sll
   *** empty log message ***
 
@@ -316,6 +319,11 @@ o2be_sequence::seq_template_name(AST_Decl* used_in)
 	  case o2be_operation::tString:
 	    {
 	      elmclassname = o2be_string::fieldMemberTypeName();
+	    }
+	    break;
+	  case o2be_operation::tSequence:
+	    {
+	      elmclassname = o2be_sequence::narrow_from_decl(decl)->seq_template_name(used_in);
 	    }
 	    break;
 	  default:
