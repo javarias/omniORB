@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  1999/12/10 18:26:03  djs
+# Added a utility function to order exceptions based on their names
+#
 # Revision 1.7  1999/11/29 19:26:59  djs
 # Code tidied and moved around. Some redundant code eliminated.
 #
@@ -130,7 +133,12 @@ def marshall(string, environment, type, decl, argname, to="_n",
                        size = str(num_bytes), align = align_str, to = to)
             return
 
-    if tyutil.isString(deref_type):
+    if tyutil.isTypeCode(deref_type):
+        string.out("""\
+CORBA::TypeCode::marshalTypeCode(@argname@, @to@);""",
+                   argname = argname, to = to)
+       
+    elif tyutil.isString(deref_type):
         indexing_string = util.block_begin_loop(string, full_dims)
         string.out("""\
     CORBA::ULong _len = (((const char*) @argname@@indexing_string@)? strlen((const char*) @argname@@indexing_string@) + 1 : 1);
@@ -274,8 +282,13 @@ CdrStreamHelper_unmarshalArray@suffix@(@where@,@typecast@, @num@);""",
 
     indexing_string = util.start_loop(to, full_dims)
     element_name = name + indexing_string
-    
-    if tyutil.isString(deref_type):
+
+    if tyutil.isTypeCode(deref_type):
+        to.out("""\
+  @element_name@ = CORBA::TypeCode::unmarshalTypeCode(@from_where@);""",
+               element_name = element_name,
+               from_where = from_where)
+    elif tyutil.isString(deref_type):
         if not(is_array) and string_via_member:
             # go via temporary. why?
             to.out("""\

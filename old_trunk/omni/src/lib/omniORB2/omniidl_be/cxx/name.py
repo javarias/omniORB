@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/12/09 20:41:24  djs
+# Now runs typecode and any generator
+#
 # Revision 1.2  1999/11/23 18:49:25  djs
 # Lots of fixes, especially marshalling code
 # Added todo list to keep track of issues
@@ -206,6 +209,8 @@ class Environment:
 
         if isinstance(type, idltype.String):
             return "CORBA::String_member"
+        if type.kind() == idltype.tk_TypeCode:
+            return "CORBA::TypeCode_member"
         if isinstance(type, idltype.Sequence):
             return self.principalID(type.seqType())
 
