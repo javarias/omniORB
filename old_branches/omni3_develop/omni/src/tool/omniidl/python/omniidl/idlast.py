@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.4  2000/08/29 10:20:29  dpg1
+# Operations and attributes now have repository ids.
+#
 # Revision 1.13.2.3  2000/06/29 14:08:11  dpg1
 # Incorrect visitor method called for Value nodes.
 #
@@ -985,6 +988,7 @@ def registerDecl(scopedName, decl):
               isinstance(rdecl, ValueForward)):
             
             # repeat forward declaration
+            decl._fullDecl = rdecl
             rdecl._more.append(decl)
 
         elif (isinstance(decl, Forward) and isinstance(rdecl, Interface)) or \
@@ -1027,7 +1031,7 @@ strings. Raises DeclNotFound if the name is not recognised."""
     sname = idlutil.slashName(scopedName)
     if not declMap.has_key(sname):
         raise DeclNotFound(scopedName)
-    
+
     return declMap[sname]
 
 
