@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.5  1998/01/27  16:48:06  ewc
+// Added support for type Any and TypeCode
+//
   Revision 1.4  1997/12/09 19:55:03  sll
   *** empty log message ***
 
@@ -160,7 +163,7 @@ o2be_predefined_type::o2be_predefined_type(AST_PredefinedType::PredefinedType t,
 }
 
 void
-o2be_predefined_type::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+o2be_predefined_type::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
 {
   switch(pt())
     {

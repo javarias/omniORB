@@ -28,6 +28,9 @@
 
 /*
   $Log$
+// Revision 1.7  1998/01/27  16:49:27  ewc
+//  Added support for type Any and TypeCode
+//
   Revision 1.6  1997/12/09 19:55:28  sll
   *** empty log message ***
 
@@ -131,7 +134,7 @@ o2be_string::fieldMemberTypeName()
 }
 
 void
-o2be_string::produce_typedef_hdr(fstream &s, o2be_typedef *tdef)
+o2be_string::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
 {
   IND(s); s << "typedef char* " << tdef->uqname() << ";\n";
   IND(s); s << "typedef CORBA::String_var " << tdef->uqname() << "_var;\n";
