@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.1  2000/07/17 10:36:05  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.4  2000/07/13 15:25:52  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -48,10 +51,13 @@ public:
   AstValidateVisitor() {}
   virtual ~AstValidateVisitor() {}
 
-  void visitAST              (AST*          a);
-  void visitModule           (Module*       m);
-  void visitForward          (Forward*      f);
-  void visitValueForward     (ValueForward* f);
+  void visitAST              (AST*           a);
+  void visitModule           (Module*        m);
+  void visitInterface        (Interface*     i);
+  void visitForward          (Forward*       f);
+  void visitValueForward     (ValueForward*  f);
+  void visitStructForward    (StructForward* f);
+  void visitUnionForward     (UnionForward*  f);
 };
 
 
