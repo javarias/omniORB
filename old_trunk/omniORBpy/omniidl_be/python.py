@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  1999/11/30 10:41:20  dpg1
+# Back-ends can now have their own usage string.
+#
 # Revision 1.12  1999/11/25 11:49:31  dpg1
 # Minor version number bumped since server-side _is_a() required an
 # incompatible change.
@@ -524,7 +527,7 @@ class PythonVisitor:
             n.accept(self)
 
         if ags:
-            self.currentScope = ["_GlobalIDL"]
+            self.currentScope = ["_0__GlobalIDL"]
         else:
             self.currentScope.pop()
         self.at_global_scope = ags
