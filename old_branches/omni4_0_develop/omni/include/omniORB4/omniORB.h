@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2000/11/20 11:59:43  dpg1
+  API to configure code sets.
+
   Revision 1.2.2.3  2000/11/03 18:58:47  sll
   Unbounded sequence of octet got a new type name.
 
@@ -140,7 +143,9 @@ struct omniOrbBoaKey {
   _CORBA_ULong lo;
 };
 
+OMNI_NAMESPACE_BEGIN(omni)
 class omniInterceptors;
+OMNI_NAMESPACE_END(omni)
 
 _CORBA_MODULE omniORB
 
@@ -297,6 +302,32 @@ _CORBA_MODULE_BEG
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////
+  enum callTimeOutType { clientSide, serverSide };                      //
+  // Call timeout. On the client side, if a remote call takes longer    //
+  // than the timeout value, the ORB will shutdown the connection and   //
+  // raise a TRANSIENT.                                                 //
+  // On the server side, if the ORB cannot completely unmarshal a       //
+  // call's arguments in the defined timeout, it shutdown the           //
+  // connection.
+  //                                                                    //
+  // void callTimeOutPeriod() sets the per-call timeout period.         //
+  // If the time argument is zero, calls never timeout. This is the     //
+  // default.                                                           //
+  _CORBA_MODULE_FN void callTimeOutPeriod(callTimeOutType direction,    //
+					  CORBA::ULong sec,             //
+					  CORBA::ULong nanosec);        //
+  // Note: This function is *non-thread safe*!!! The behaviour of       //
+  //       concurrent calls to this function is undefined.              //
+  //                                                                    //
+  // CORBA::ULong callTimeOutPeriod       ()                            //
+  //   Returns the current timeout value                                //
+  _CORBA_MODULE_FN CORBA::ULong callTimeOutPeriod(                      //
+					     callTimeOutType direction, //
+                                             CORBA::ULong* nanosec);    //
+  ////////////////////////////////////////////////////////////////////////
+
+
+  ////////////////////////////////////////////////////////////////////////
   enum idleConnType { idleIncoming, idleOutgoing };                     //
   // Idle connections shutdown. The ORB periodically scans all the      //
   // incoming and outgoing connections to detect if they are idle.      //
@@ -318,34 +349,11 @@ _CORBA_MODULE_BEG
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////
-  enum callTimeOutType { clientSide, serverSide };                      //
-  // Call timeout. The ORB periodically scans all the                   //
-  // incoming and outgoing connections to detect if they are stuck in   //
-  // a remote call. If the ORB detects that a call has taken too long   //
-  // to complete, it shut down the connection and considers this as     //
-  // a COMM_FAILURE.
-  //                                                                    //
-  // void callTimeOutPeriod() sets the per-call timeout period.         //
-  // The argument is in number of seconds. If the argument is zero,     //
-  // calls never timeout.                                               //
-  _CORBA_MODULE_FN void callTimeOutPeriod(callTimeOutType direction,    //
-					  CORBA::ULong sec);            //
-  // Note: This function is *non-thread safe*!!! The behaviour of       //
-  //       concurrent calls to this function is undefined.              //
-  //                                                                    //
-  // CORBA::ULong callTimeOutPeriod       ()                            //
-  //   Returns the current timeout value                                //
-  _CORBA_MODULE_FN CORBA::ULong callTimeOutPeriod(
-					     callTimeOutType direction);//
-  ////////////////////////////////////////////////////////////////////////
-
-
-  ////////////////////////////////////////////////////////////////////////
   // The granularity at which the ORB scan for idle connections or	//
   // stuck remote calls can be changed by scanGranularity().            //
   // This value determines the minimum value that      	       	        //
-  // idleConnectionScanPeriod() and callTimeOutPeriod() can             //
-  // be relistically implemented. The default value is 5 sec.           //
+  // idleConnectionScanPeriod() can                                     //
+  // be implemented. The default value is 5 sec.                        //
   // Setting the value to zero disable scanning altogether. This means  //
   // both scan for idle connections or stuck remote calls are disabled  //
   // as well.                                                           //
@@ -762,7 +770,7 @@ _CORBA_MODULE_BEG
   //   interception functions can be added.                             //
   //   Calling this function before ORB_init() will result in a system  //
   //   exception.
-  _CORBA_MODULE_FN omniInterceptors* getInterceptors();
+  _CORBA_MODULE_FN _OMNI_NS(omniInterceptors)* getInterceptors();
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////
@@ -808,6 +816,8 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE_VAR _core_attr CORBA::Boolean acceptMisalignedTcIndirections;
   // false by default
 
+  _CORBA_MODULE_VAR _core_attr CORBA::ULong maxNumOfAsyncThreads;
+  // 50 by default
 
   class logStream {
   public:
@@ -951,7 +961,6 @@ private:
     CORBA::Exception* pd_e;
   };
 #endif
-
 
 _CORBA_MODULE_END
 

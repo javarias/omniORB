@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:12:47  sll
+  New member _upcall().
+
   Revision 1.2.2.1  2000/07/17 10:35:35  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -46,10 +49,8 @@
 #ifndef __OMNISERVANT_H__
 #define __OMNISERVANT_H__
 
-
 class omniObjRef;
 class omniIdentity;
-
 
 //: Base class for all Servants.
 
@@ -108,7 +109,7 @@ public:
   // GIOP _get_interface operation.  The returned reference really
   // ought to be of type CORBA::InterfaceDef_ptr.
 
-  virtual _CORBA_Boolean _dispatch(GIOP_S&);
+  virtual _CORBA_Boolean _dispatch(_OMNI_NS(IOP_S)&);
   // This is the point at which the ORB makes an upcall into the object
   // implementation when making method invocations from the wire.  This
   // function is called by the dispatcher of GIOP_S.  It should return
@@ -138,7 +139,7 @@ public:
   // Must hold <omni::internalLock>.
 
 protected:
-  void _upcall(GIOP_S&, omniCallDescriptor&);
+  void _upcall(_OMNI_NS(IOP_S)&, omniCallDescriptor&);
   // Called by the dispatcher in the skeleton implementation stub to drive the 
   // upcall into the implementation code.
 
@@ -150,6 +151,5 @@ private:
   // will be removed from this list.  However, the identity may
   // still hold a reference to this servant until it is destroyed.
 };
-
 
 #endif  // __OMNISERVANT_H__

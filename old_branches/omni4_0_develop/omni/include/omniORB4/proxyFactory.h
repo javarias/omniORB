@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.2  2000/09/27 17:03:57  sll
+ Changed newObjRef signature to accept omniIOR* as an argument.
+
  Revision 1.2.2.1  2000/07/17 10:35:37  sll
  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -56,6 +59,9 @@
 
 class omniLocalIdentity;
 class omniObjRef;
+
+OMNI_NAMESPACE_BEGIN(omni)
+
 
 
 class proxyObjectFactory {
@@ -89,6 +95,8 @@ public:
 private:
   const char* pd_repoId;
 };
+
+OMNI_NAMESPACE_END(omni)
 
 
 #endif // __OMNI_PROXYFACTORY_H__

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/15 17:05:39  sll
+  Added interceptors along the giop request processing path.
+
   Revision 1.1.2.1  2000/09/27 16:54:08  sll
   *** empty log message ***
 
@@ -41,7 +44,14 @@
 #include <omniORB4/CORBA.h>
 #endif
 
+class omniLocalIdentity;
+
+OMNI_NAMESPACE_BEGIN(omni)
+
 class omniInterceptorP;
+class giopStream;
+class GIOP_S;
+class orbServer;
 
 class omniInterceptors {
  public:
@@ -49,7 +59,23 @@ class omniInterceptors {
   //////////////////////////////////////////////////////////////////
   class encodeIOR_T {
   public:
-    typedef void (*interceptFunc)(omniIOR* ior);
+
+    class info_T {
+    public:
+      omniIOR&                 ior;
+      IIOP::ProfileBody&       iiop;
+      CORBA::Boolean           default_only;
+
+      info_T(omniIOR& i, IIOP::ProfileBody& body, CORBA::Boolean b) :
+         ior(i), iiop(body), default_only(b) {}
+
+    private:
+      info_T();
+      info_T(const info_T&);
+      info_T& operator=(const info_T&);
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -61,7 +87,7 @@ class omniInterceptors {
     omniInterceptorP* pd_ilist;
 
   public:
-    void visit(omniIOR*); // ORB internal function
+    void visit(info_T&); // ORB internal function
 
 
   };
@@ -69,7 +95,24 @@ class omniInterceptors {
   //////////////////////////////////////////////////////////////////
   class decodeIOR_T {
   public:
-    typedef void (*interceptFunc)(omniIOR* ior);
+
+    class info_T {
+    public:
+      const IIOP::ProfileBody& iiop;
+      omniIOR&                 ior;
+      CORBA::Boolean           has_iiop_body;
+
+      info_T(const IIOP::ProfileBody& body, omniIOR& i, CORBA::Boolean b) :
+         iiop(body), ior(i), has_iiop_body(b) {}
+
+    private:
+      info_T();
+      info_T(const info_T&);
+      info_T& operator=(const info_T&);
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
+
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -81,7 +124,7 @@ class omniInterceptors {
     omniInterceptorP* pd_ilist;
 
   public:
-    void visit(omniIOR*);  // ORB internal function
+    void visit(info_T&);  // ORB internal function
   };
 
 
@@ -92,13 +135,13 @@ class omniInterceptors {
     class info_T {
     public:
       giopStream&              giopstream;
-      omniIOR&                 ior;
+      const omniIOR&           ior;
       const char*              opname;
       CORBA::Boolean           oneway;
       CORBA::Boolean           response_expected;
       IOP::ServiceContextList  service_contexts;
 
-      info_T(giopStream& s, omniIOR& i, const char* op,
+      info_T(giopStream& s, const omniIOR& i, const char* op,
 	     CORBA::Boolean ow, CORBA::Boolean re) :
 	giopstream(s),ior(i),opname(op),oneway(ow),response_expected(re),
 	service_contexts(5) {}
@@ -109,7 +152,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -138,7 +181,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -166,7 +209,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -187,11 +230,10 @@ class omniInterceptors {
 
     class info_T {
     public:
-      giopStream&               giopstream;
-      giopStream::requestInfo&  requestinfo;
+      GIOP_S&    giop_s;
 
-      info_T(giopStream& s, giopStream::requestInfo& r) : 
-	giopstream(s), requestinfo(r) {}
+      info_T(GIOP_S& s) : 
+	giop_s(s) {}
 
     private:
       info_T();
@@ -199,7 +241,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -228,7 +270,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -256,7 +298,7 @@ class omniInterceptors {
       info_T& operator=(const info_T&);
     };
 
-    typedef void (*interceptFunc)(info_T& info);
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
     void add(interceptFunc);
     void remove(interceptFunc);
@@ -271,6 +313,63 @@ class omniInterceptors {
     void visit(info_T&);  // ORB internal function
   };
 
+  //////////////////////////////////////////////////////////////////
+  class createIdentity_T {
+  public:
+    
+    class info_T {
+    public:
+      omniIOR*            ior;
+      omniLocalIdentity*& invoke_handle_if_local;
+      omniIdentity*&      invoke_handle;
+      CORBA::Boolean      held_internalLock;
+
+      info_T(omniIOR* i,omniLocalIdentity*& local_id,
+	     omniIdentity*& id,CORBA::Boolean b) :
+	ior(i),invoke_handle_if_local(local_id),invoke_handle(id),
+	held_internalLock(b) {}
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
+
+    void add(interceptFunc);
+    void remove(interceptFunc);
+
+    createIdentity_T();
+    ~createIdentity_T();
+
+  private:
+    omniInterceptorP* pd_ilist;
+
+  public:
+    void visit(info_T&); // ORB internal function
+  };
+
+  //////////////////////////////////////////////////////////////////
+  class createORBServer_T {
+  public:
+    
+    class info_T {
+    public:
+      omnivector<orbServer*>& servers;
+
+      info_T(omnivector<orbServer*>& s) : servers(s) {}
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
+
+    void add(interceptFunc);
+    void remove(interceptFunc);
+
+    createORBServer_T();
+    ~createORBServer_T();
+
+  private:
+    omniInterceptorP* pd_ilist;
+
+  public:
+    void visit(info_T&); // ORB internal function
+  };
 
   //////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////
@@ -282,6 +381,8 @@ class omniInterceptors {
   serverReceiveRequest_T     serverReceiveRequest;
   serverSendReply_T          serverSendReply;
   serverSendException_T      serverSendException;
+  createIdentity_T           createIdentity;
+  createORBServer_T          createORBServer;
 
   //////////////////////////////////////////////////////////////////
   friend class omni_interceptor_initialiser;
@@ -290,5 +391,8 @@ class omniInterceptors {
   omniInterceptors();
   ~omniInterceptors();
 };
+
+OMNI_NAMESPACE_END(omni)
+
 
 #endif // __OMNIINTERCEPTORS_H__
