@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.12  1999/05/26 10:49:11  sll
+  Use o2be_nested_typedef.
+
   Revision 1.11  1999/03/11 16:26:08  djr
   Updated copyright notice
 
@@ -93,7 +96,8 @@ o2be_enum::produce_hdr(std::fstream &s)
 	s << ", ";
     }
   }
-  s << " };\n\n";
+  s << " };\n";
+  s << "typedef " << uqname() << "& " << uqname() << "_out;\n\n";
 
   if (idl_global->compile_flags() & IDL_CF_ANY) {
     // TypeCode_ptr declaration
