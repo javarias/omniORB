@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9  1999/11/17 17:17:00  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.8  1999/11/04 17:15:52  dpg1
 // Typo.
 //
@@ -270,7 +273,15 @@ InheritSpec(const ScopedName* sn, const char* file, int line)
 
 	Decl* d = ((DeclaredType*)t)->decl();
 
-	if (d->kind() == Decl::D_INTERFACE) {
+	if (!d) {
+	  char* ssn = sn->toString();
+	  IdlError(file, line, "Cannot inherit from CORBA::Object");
+	  IdlErrorCont(se->file(), se->line(),
+		       "(accessed through typedef `%s')", ssn);
+	  delete [] ssn;
+	  return;
+	}
+	else if (d->kind() == Decl::D_INTERFACE) {
 	  interface_ = (Interface*)d;
 	  scope_     = interface_->scope();
 	  return;
