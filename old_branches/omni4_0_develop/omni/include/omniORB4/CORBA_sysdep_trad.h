@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.16  2004/10/17 20:14:28  dgrisby
+  Updated support for OpenVMS. Many thanks to Bruce Visscher.
+
   Revision 1.1.2.15  2004/07/30 10:53:16  dgrisby
   Only set HAVE_STD if not already set. Thanks Matej Kenda.
 
@@ -489,6 +492,8 @@
 
 #elif defined(__vxWorks__)
 #  undef HAVE_GETTIMEOFDAY
+#  undef HAVE_STRCASECMP
+#  undef HAVE_STRNCASECMP
 
 #elif defined(__macos__)
 #  define SIZEOF_WCHAR 2
