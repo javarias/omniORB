@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.8.6.6  2000/09/19 09:11:21  dpg1
+ * Standard C++ does not permit type definitions in anonymous unions
+ *
  * Revision 1.8.6.5  2000/06/22 10:40:13  dpg1
  * exception.h renamed to exceptiondefs.h to avoid name clash on some
  * platforms.
@@ -582,6 +585,10 @@ public:
   virtual TypeCode_base* NP_aliasExpand(TypeCode_pairlist*);
 
   virtual void removeOptionalNames();
+
+  inline CORBA::Boolean  PR_content_is_assigned() const {
+    return !CORBA::is_nil(pd_content);
+  }
 
 private:
   TypeCode_sequence();
