@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/10/29 18:19:39  dpg1
+# Clean up
+#
 # Revision 1.1  1999/10/29 15:47:08  dpg1
 # First revision.
 #
@@ -36,10 +39,12 @@ import idlutil
 import idlvisitor
 
 class AST:
-    def __init__(self, declarations):
+    def __init__(self, file, declarations):
+        self.__file         = file
         self.__declarations = declarations
         #print "AST init:", declarations
 
+    def file(self):            return self.__file
     def declarations(self):    return self.__declarations
     def accept(self, visitor): visitor.visitAST(self)
 
@@ -447,7 +452,7 @@ class Operation (Decl):
         self.__contexts   = contexts
         #print line, "Operation init:", identifier, raises, contexts
 
-    def accept(self, visitor): visitor.visitParameter(self)
+    def accept(self, visitor): visitor.visitOperation(self)
 
     def oneway(self):     return self.__oneway
     def returnType(self): return self.__returnType

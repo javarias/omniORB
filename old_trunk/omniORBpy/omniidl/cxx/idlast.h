@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/10/29 15:43:02  dpg1
+// Code to detect recursive structs and unions.
+//
 // Revision 1.2  1999/10/29 10:00:43  dpg1
 // Added code to find a value for the default case in a union.
 //
@@ -51,18 +54,23 @@ class Decl;
 // AST class represents the whole IDL definition
 class AST {
 public:
+  AST();
+  ~AST();
   static AST*           tree() { return &tree_; }
   static _CORBA_Boolean process(FILE* f, const char* name);
 
-  Decl* declarations()              { return declarations_; }
-  void  clear();
-  void  accept(AstVisitor& visitor) { visitor.visitAST(this); }
+  Decl*       declarations()              { return declarations_; }
+  const char* file()                      { return file_; }
+  void        clear();
+  void        accept(AstVisitor& visitor) { visitor.visitAST(this); }
+
+  void        setFile(const char* f);
 
 private:
-  AST();
-  ~AST();
   void        setDeclarations(Decl* d);
+
   Decl*       declarations_;
+  const char* file_;
   static AST  tree_;
   friend int  yyparse();
 };

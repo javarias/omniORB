@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:06:00  dpg1
+// *** empty log message ***
+//
 
 #include <stdlib.h>
 #include <string.h>
@@ -575,6 +578,8 @@ void parseLineDirective(char* s) {
     }
     delete [] currentFile;
     currentFile = file;
+    if (mainFile)
+      AST::tree()->setFile(file);
   }
   yylineno = line;
 }
