@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.2  2004/07/04 23:53:35  dgrisby
+ More ValueType TypeCode and Any support.
+
  Revision 1.1.4.1  2003/03/23 21:03:51  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -76,7 +79,7 @@
 #define __DYNANYIMPL_H__
 
 #include <typecode.h>
-#include <anyStream.h>
+#include <omniORB4/anyStream.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 

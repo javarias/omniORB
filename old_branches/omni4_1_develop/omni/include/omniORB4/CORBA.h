@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.5.2.5  2004/04/02 13:26:25  dgrisby
+ Start refactoring TypeCode to support value TypeCodes, start of
+ abstract interfaces support.
+
  Revision 1.5.2.4  2004/02/16 10:10:28  dgrisby
  More valuetype, including value boxes. C++ mapping updates.
 
@@ -325,6 +329,7 @@
 class omniOrbBoaServant;
 class _omni_ValueFactoryManager;
 struct _omni_ValueIds;
+class cdrAnyMemoryStream;
 
 _CORBA_MODULE CORBA
 

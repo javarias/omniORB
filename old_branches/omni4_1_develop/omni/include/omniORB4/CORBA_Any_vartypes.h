@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:25  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.2  2001/10/17 16:43:59  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -239,11 +242,6 @@ public:
   inline Boolean operator>>=(Object_ptr& obj) const {
     return (*pd_data >>= obj);
   }
-#ifndef _NO_ANY_STRING_EXTRACTION_
-  inline Boolean operator>>=(char*& s) const {
-    return (*pd_data >>= s);
-  }
-#endif
   inline Boolean operator>>=(const WChar*& s) const {
     return (*pd_data >>= s);
   }
@@ -259,11 +257,9 @@ public:
   inline Boolean operator>>=(Any::to_octet o) const {
     return (*pd_data >>= o);
   }
-#ifndef _NO_ANY_STRING_EXTRACTION_
   inline Boolean operator>>=(Any::to_string s) const {
     return (*pd_data >>= s);
   }
-#endif
   inline Boolean operator>>=(Any::to_wstring s) const {
     return (*pd_data >>= s);
   }

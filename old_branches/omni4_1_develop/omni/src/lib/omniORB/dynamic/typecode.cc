@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.4  2004/07/04 23:53:37  dgrisby
+ * More ValueType TypeCode and Any support.
+ *
  * Revision 1.40.2.3  2004/05/25 14:20:51  dgrisby
  * ValueType TypeCode support.
  *
@@ -1053,6 +1056,23 @@ CORBA::TypeCode::PR_recursive_sequence_tc(CORBA::ULong bound,
   tracker->add(r);
   return r;
 }
+
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode::PR_forward_tc(const char* id,
+			       CORBA::TypeCode::_Tracker* tracker)
+{
+  check_static_data_is_initialised();
+
+  CORBA::TypeCode_ptr r = the_typecodes->find(id);
+  if (!r) {
+    r = new TypeCode_indirect(id);
+    tracker->add(r);
+    the_typecodes->add(id, r);
+  }
+  return r;
+}
+
 
 
 CORBA::TypeCode_ptr CORBA::TypeCode::PR_null_tc() {
@@ -4419,6 +4439,13 @@ TypeCode_value::removeOptionalNames()
   }
 }
 
+TypeCode_paramListType
+TypeCode_value::NP_paramListType() const
+{
+  return plt_Complex;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_value_box ///////////////////////
@@ -4557,6 +4584,11 @@ TypeCode_value_box::removeOptionalNames()
   }
 }
 
+TypeCode_paramListType
+TypeCode_value_box::NP_paramListType() const
+{
+  return plt_Complex;
+}
 
 
 //////////////////////////////////////////////////////////////////////
@@ -5859,6 +5891,9 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 	  OMNIORB_THROW(BAD_PARAM,
 			BAD_PARAM_IncompatibleDiscriminatorType,
 			CORBA::COMPLETED_NO);
+	CORBA::ULong c;
+	label >>= c;
+	lbl_value = c;
 	break;
       }
     default:
@@ -5945,12 +5980,11 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 
   case CORBA::tk_enum:
     {
-      CORBA::ULong c;
-      tcDescriptor enumdesc;
-      enumdesc.p_enum.data = &c;
-      enumdesc.p_enum.size = sizeof(c);
-      label.PR_unpackTo(dtc, &enumdesc);
-      lbl_value = c;
+      if (lbl_value >= aetc->member_count()) {
+	OMNIORB_THROW(MARSHAL,
+		      MARSHAL_InvalidEnumValue,
+		      CORBA::COMPLETED_NO);
+      }
       break;
     }
   // case CORBA::tk_wchar:
@@ -6006,10 +6040,12 @@ TypeCode_union_helper::insertLabel(CORBA::Any& label,
   case CORBA::tk_enum:
     {
       CORBA::ULong val = c;
-      tcDescriptor enumdesc;
-      enumdesc.p_enum.data = (void*)&val;
-      enumdesc.p_enum.size = sizeof(val);
-      label.PR_packFrom((TypeCode_base*) aetc, &enumdesc);
+      if (val >= aetc->member_count()) {
+	OMNIORB_THROW(MARSHAL,
+		      MARSHAL_InvalidEnumValue,
+		      CORBA::COMPLETED_NO);
+      }
+      label <<= val;
       break;
     }
   // case CORBA::tk_wchar:

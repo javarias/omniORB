@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2004/07/04 23:53:35  dgrisby
+  More ValueType TypeCode and Any support.
+
   Revision 1.1.4.4  2003/11/06 11:56:55  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -1081,7 +1084,7 @@ class cdrMemoryStream : public cdrStream {
 public:
   cdrMemoryStream(_CORBA_ULong initialBufsize = 0,
 		  _CORBA_Boolean clearMemory = 0);
-  ~cdrMemoryStream();
+  virtual ~cdrMemoryStream();
 
   void rewindInputPtr();
   // Rewind the input pointer to the beginning of the buffer
@@ -1189,7 +1192,7 @@ public:
     pd_tcs_w = tcs_w;
   }
 
-  ~cdrCountingStream() {}
+  virtual ~cdrCountingStream() {}
 
   size_t total() { return pd_total; }
 

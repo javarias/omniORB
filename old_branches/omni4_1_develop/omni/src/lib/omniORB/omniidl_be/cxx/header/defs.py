@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.5  2004/07/04 23:53:38  dgrisby
+# More ValueType TypeCode and Any support.
+#
 # Revision 1.36.2.4  2004/02/16 10:10:31  dgrisby
 # More valuetype, including value boxes. C++ mapping updates.
 #
@@ -1550,15 +1553,6 @@ def visitUnion(node):
                     util.fatalError("Unknown union case type encountered")
         return
 
-    # Typecode and Any
-    def tcParser_unionHelper(stream = stream, node = node):
-        if config.state['Typecode']:
-            guard_name = id.Name(node.scopedName()).guard()
-            stream.out(template.union_tcParser_friend,
-                       name = guard_name,
-                       private_prefix = config.state['Private Prefix'])
-
-
     # declare the instance of the discriminator and
     # the actual data members (shock, horror)
     # FIXME: there is some interesting behaviour in
@@ -1643,7 +1637,6 @@ def visitUnion(node):
                _d_body = _d_fn,
                implicit_default = implicit_default,
                members = members,
-               tcParser_unionHelper = tcParser_unionHelper,
                union = str(inside),
                outsideUnion = str(outside))
 
