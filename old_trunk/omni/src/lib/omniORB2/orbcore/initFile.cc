@@ -13,8 +13,6 @@
   $Log$
   */
 
-#define CosNaming_NamingContext_IntfRepoID "IDL:CosNaming/NamingContext:1.0"
-// Remove above line when Naming.hh is included in Library.
 
 #include <iostream.h>
 #include <stdio.h>
@@ -28,9 +26,6 @@
 
 
 #include <omniORB2/CORBA.h>
-
-#define MAX_CONFIG 10   
-            // Maximum number of entries in the config file.
 
 
 initFile::initFile()
