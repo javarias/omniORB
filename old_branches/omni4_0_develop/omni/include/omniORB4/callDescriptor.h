@@ -28,6 +28,12 @@
 
 /*
  $Log$
+ Revision 1.2.2.2  2000/09/27 17:18:35  sll
+ Updated to use the new cdrStream abstraction.
+ Added new member unmarshalArguments(), marshalReturnedValues() and modified
+ the ctor arguments to make the omniCallDescriptor class suitable for use in
+ the upcalls on the server side.
+
  Revision 1.2.2.1  2000/07/17 10:35:34  sll
  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -113,6 +119,7 @@ public:
   inline const char*const* user_excns() { return pd_user_excns; }
   inline int n_user_excns() { return pd_n_user_excns; }
   inline _CORBA_Boolean is_upcall() const { return pd_is_upcall; }
+  inline _CORBA_Boolean haslocalCallFn() const { return (pd_localCall)?1:0; }
 
   /////////////////////
   // Context support //
@@ -125,6 +132,8 @@ public:
     CORBA::Context_ptr context;
     const char*const*  expected;
     int                num_expected;
+
+    inline ContextInfo() : context(0), expected(0), num_expected(0) {}
   };
 
   inline void set_context_info(const ContextInfo* ci) { pd_ctxt = ci; }
@@ -221,9 +230,7 @@ class omniClientCallMarshaller : public giopMarshaller {
  public:
   omniClientCallMarshaller(omniCallDescriptor& desc) : pd_descriptor(desc) {}
 
-  void marshal(cdrStream& s) {
-    pd_descriptor.marshalArguments(s);
-  }
+  void marshal(cdrStream& s);
 
  private:
   omniCallDescriptor& pd_descriptor;
@@ -237,9 +244,7 @@ class omniServerCallMarshaller : public giopMarshaller {
  public:
   omniServerCallMarshaller(omniCallDescriptor& desc) : pd_descriptor(desc) {}
 
-  void marshal(cdrStream& s) {
-    pd_descriptor.marshalReturnedValues(s);
-  }
+  void marshal(cdrStream& s);
 
  private:
   omniCallDescriptor& pd_descriptor;
