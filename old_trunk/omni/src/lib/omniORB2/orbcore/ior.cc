@@ -29,6 +29,9 @@
  
 /*
   $Log$
+// Revision 1.4  1997/05/06  15:21:58  sll
+// Public release.
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -219,7 +222,8 @@ IOP::iorToEncapStr(const CORBA::Char *type_id,
   result[3] = ':';
   for (int i=0; i < (int)s; i++) {
     int j = 4 + i*2;
-    int v = ((data[i] & 0xf0) >> 4);
+    int v = (data[i] & 0xf0);
+    v = v >> 4;
     if (v < 10)
       result[j] = '0' + v;
     else
@@ -307,6 +311,7 @@ IOP::EncapStrToIor(const CORBA::Char *str,
   catch (...) {
     if (type_id) delete [] type_id;
     if (profiles) delete profiles;
+    throw;
   }
   return;
 }
@@ -352,3 +357,4 @@ template class _CORBA_Sequence<IOP::TaggedProfile>;
 template class _CORBA_Unbounded_Sequence<IOP::TaggedProfile>;
 
 #endif
+
