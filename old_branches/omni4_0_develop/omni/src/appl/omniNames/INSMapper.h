@@ -24,6 +24,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.2  2000/10/09 16:20:56  sll
+// Ported to omniORB 4 API.
+//
 // Revision 1.2.2.1  2000/07/17 10:35:38  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //
@@ -51,7 +54,7 @@ public:
 
   ~INSMapper() {}
 
-  CORBA::Boolean _dispatch(GIOP_S& giop_s) {
+  CORBA::Boolean _dispatch(_OMNI_NS(IOP_S&)) {
     throw omniORB::LOCATION_FORWARD(CORBA::Object::_duplicate(obj_),0);
     return 1;
   }
