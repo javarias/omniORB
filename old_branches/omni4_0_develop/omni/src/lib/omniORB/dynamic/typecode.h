@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.10.2.5  2000/11/17 19:09:39  dpg1
+ * Support codeset conversion in any.
+ *
  * Revision 1.10.2.4  2000/11/09 12:27:55  dpg1
  * Huge merge from omni3_develop, plus full long long from omni3_1_develop.
  *
@@ -289,7 +292,7 @@ public:
     }
   }
 
-  // omniORB2 internal versions of the OMG TypeCode interface
+  // omniORB internal versions of the OMG TypeCode interface
   inline CORBA::TCKind NP_kind() const { return pd_tck; }
 
   CORBA::Boolean NP_equal(const TypeCode_base* TCp,
@@ -320,6 +323,8 @@ public:
   virtual CORBA::Long    NP_default_index() const;
   virtual CORBA::ULong   NP_length() const;
   virtual TypeCode_base* NP_content_type() const;
+  virtual CORBA::UShort  NP_fixed_digits() const;
+  virtual CORBA::Short   NP_fixed_scale() const;
   virtual CORBA::Long    NP_param_count() const;
   virtual CORBA::Any*    NP_parameter(CORBA::Long) const;
 
@@ -446,6 +451,39 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////
+/////////////////////////// TypeCode_fixed ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+class TypeCode_fixed : public TypeCode_base {
+public:
+
+  // omniORB interface:
+  TypeCode_fixed(CORBA::UShort digits, CORBA::Short scale);
+
+  virtual ~TypeCode_fixed();
+
+  virtual void NP_marshalSimpleParams(cdrStream&,
+				      TypeCode_offsetTable*) const;
+
+  static TypeCode_base* NP_unmarshalSimpleParams(cdrStream& s,
+						 TypeCode_offsetTable*);
+
+  // OMG Interface:
+  virtual CORBA::Boolean NP_extendedEqual(const TypeCode_base* TCp,
+					  CORBA::Boolean equivalent,
+					  const TypeCode_pairlist* tcpl) const;
+
+  virtual CORBA::UShort NP_fixed_digits() const;
+  virtual CORBA::Short  NP_fixed_scale()  const;
+
+private:
+  TypeCode_fixed();
+
+  CORBA::UShort pd_digits;
+  CORBA::Short  pd_scale;
+};
+
+//////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_wstring /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -477,6 +515,8 @@ private:
 
   CORBA::ULong pd_length;
 };
+
+
 
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_objref //////////////////////////

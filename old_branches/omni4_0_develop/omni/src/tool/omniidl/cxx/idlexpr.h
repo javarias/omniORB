@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4.2.2  2000/10/27 16:31:09  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.4.2.1  2000/07/17 10:36:03  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //
@@ -46,8 +49,7 @@
 
 #include <idlutil.h>
 #include <idlscope.h>
-
-typedef int IDL_Fixed; // ***
+#include <idlfixed.h>
 
 class Enumerator;
 class Enum;
@@ -68,8 +70,8 @@ public:
   virtual IDL_Boolean      evalAsBoolean();
   virtual IDL_Char         evalAsChar();
   virtual IDL_Octet        evalAsOctet();
-  virtual const char*         evalAsString();
-  virtual Enumerator*         evalAsEnumerator(const Enum* target);
+  virtual const char*      evalAsString();
+  virtual Enumerator*      evalAsEnumerator(const Enum* target);
 #ifdef HAS_LongLong
   virtual IDL_LongLong     evalAsLongLong();
   virtual IDL_ULongLong    evalAsULongLong();
@@ -79,7 +81,7 @@ public:
 #endif
   virtual IDL_WChar        evalAsWChar();
   virtual const IDL_WChar* evalAsWString();
-  virtual IDL_Fixed        evalAsFixed();
+  virtual IDL_Fixed*       evalAsFixed();
 
   inline const char* file() { return file_; }
   inline int         line() { return line_; }
@@ -109,8 +111,8 @@ public:
   IDL_Boolean      evalAsBoolean()                      { return 0; }
   IDL_Char         evalAsChar()                         { return '!'; }
   IDL_Octet        evalAsOctet()                        { return 1; }
-  const char*         evalAsString()                       { return "!"; }
-  Enumerator*         evalAsEnumerator(const Enum* target) { return 0; }
+  const char*      evalAsString()                       { return "!"; }
+  Enumerator*      evalAsEnumerator(const Enum* target) { return 0; }
 #ifdef HAS_LongLong
   IDL_LongLong     evalAsLongLong()                     { return 1; }
   IDL_ULongLong    evalAsULongLong()                    { return 1; }
@@ -120,9 +122,9 @@ public:
 #endif
   IDL_WChar        evalAsWChar()                        { return '!'; }
   const IDL_WChar* evalAsWString();
-  IDL_Fixed        evalAsFixed()                        { return 1; }
+  IDL_Fixed*       evalAsFixed()                 { return new IDL_Fixed("1"); }
 
-  const char* errText() { return "dummy"; }
+  const char*      errText() { return "dummy"; }
 };
 
 
@@ -143,9 +145,9 @@ public:
   IDL_LongLong     evalAsLongLong();
   IDL_ULongLong    evalAsULongLong();
 #endif
-  const char*         errText() { return "integer literal"; }
+  const char*      errText() { return "integer literal"; }
 private:
-  IdlIntLiteral value_;
+  IdlIntLiteral    value_;
 };
 
 class StringExpr : public IdlExpr {
@@ -154,8 +156,8 @@ public:
     : IdlExpr(file, line), value_(idl_strdup(v)) { }
   ~StringExpr() { delete [] value_; }
 
-  const char*         evalAsString();
-  const char*         errText() { return "string literal"; }
+  const char*      evalAsString();
+  const char*      errText() { return "string literal"; }
 private:
   char* value_;
 };
@@ -167,9 +169,9 @@ public:
   ~WStringExpr() { delete [] value_; }
 
   const IDL_WChar* evalAsWString();
-  const char*         errText() { return "wide string literal"; }
+  const char*      errText() { return "wide string literal"; }
 private:
-  IDL_WChar* value_;
+  IDL_WChar*       value_;
 };
 
 class CharExpr : public IdlExpr {
@@ -179,9 +181,9 @@ public:
   ~CharExpr() {}
 
   IDL_Char         evalAsChar();
-  const char*         errText() { return "character literal"; }
+  const char*      errText() { return "character literal"; }
 private:
-  IDL_Char value_;
+  IDL_Char         value_;
 };
 
 class WCharExpr : public IdlExpr {
@@ -191,21 +193,21 @@ public:
   ~WCharExpr() {}
 
   IDL_WChar        evalAsWChar();
-  const char*         errText() { return "wide character literal"; }
+  const char*      errText() { return "wide character literal"; }
 private:
-  IDL_WChar value_;
+  IDL_WChar        value_;
 };
 
 class FixedExpr : public IdlExpr {
 public:
-  FixedExpr(const char* file, int line, IDL_Fixed v)
+  FixedExpr(const char* file, int line, IDL_Fixed* v)
     : IdlExpr(file, line), value_(v) {}
   ~FixedExpr() {}
 
-  IDL_Fixed        evalAsFixed();
-  const char*         errText() { return "fixed point literal"; }
+  IDL_Fixed*       evalAsFixed();
+  const char*      errText() { return "fixed point literal"; }
 private:
-  IDL_Fixed value_;
+  IDL_Fixed*       value_;
 };
 
 class FloatExpr : public IdlExpr {
@@ -219,7 +221,7 @@ public:
 #ifdef HAS_LongDouble
   IDL_LongDouble   evalAsLongDouble();
 #endif
-  const char*         errText() { return "floating point literal"; }
+  const char*      errText() { return "floating point literal"; }
 private:
   IdlFloatLiteral value_;
 };
@@ -231,9 +233,9 @@ public:
   ~BooleanExpr() {}
 
   IDL_Boolean      evalAsBoolean();
-  const char*         errText() { return "boolean literal"; }
+  const char*      errText() { return "boolean literal"; }
 private:
-  IDL_Boolean value_;
+  IDL_Boolean      value_;
 };
 
 // Enumerator referred to by scoped name
@@ -243,11 +245,11 @@ public:
     : IdlExpr(file, line), value_(e), scopedName_(sn) {}
   ~EnumExpr() {}
 
-  Enumerator* evalAsEnumerator(const Enum* target);
-  const char* errText() { return "enumerator"; }
+  Enumerator*      evalAsEnumerator(const Enum* target);
+  const char*      errText() { return "enumerator"; }
 private:
-  Enumerator* value_;
-  ScopedName* scopedName_;
+  Enumerator* 	   value_;
+  ScopedName* 	   scopedName_;
 };
 
 // Constant referred to by scoped name
@@ -266,8 +268,8 @@ public:
   IDL_Boolean      evalAsBoolean();
   IDL_Char         evalAsChar();
   IDL_Octet        evalAsOctet();
-  const char*         evalAsString();
-  Enumerator*         evalAsEnumerator(const Enum* target);
+  const char*      evalAsString();
+  Enumerator*      evalAsEnumerator(const Enum* target);
 #ifdef HAS_LongLong
   IDL_LongLong     evalAsLongLong();
   IDL_ULongLong    evalAsULongLong();
@@ -277,7 +279,7 @@ public:
 #endif
   IDL_WChar        evalAsWChar();
   const IDL_WChar* evalAsWString();
-  IDL_Fixed        evalAsFixed();
+  IDL_Fixed*       evalAsFixed();
 
   const char* errText() { return "constant"; }
 private:
@@ -329,9 +331,13 @@ private:
   IDL_Double       evalAsDouble();
 #endif
 
+#define EXPR_FIXED_CONVERSION_FUNCTIONS \
+  IDL_Fixed*       evalAsFixed();
+
 #define EXPR_CONVERSION_FUNCTIONS    \
   EXPR_INT_CONVERSION_FUNCTIONS      \
-  EXPR_FLOAT_CONVERSION_FUNCTIONS
+  EXPR_FLOAT_CONVERSION_FUNCTIONS    \
+  EXPR_FIXED_CONVERSION_FUNCTIONS
 
 
 #define EXPR_INT_BINARY_CLASS(cls, str) \
@@ -372,17 +378,6 @@ EXPR_BINARY_CLASS(SubExpr,  "subtract")
 EXPR_BINARY_CLASS(MultExpr, "multiply")
 EXPR_BINARY_CLASS(DivExpr,  "divide")
 
-#define EXPR_INT_UNARY_CLASS(cls, str) \
-class cls : public IdlExpr { \
-public: \
-  cls(const char* file, int line, IdlExpr* e) \
-    : IdlExpr(file, line), e_(e) { } \
-  ~cls() { delete e_; } \
-  EXPR_INT_CONVERSION_FUNCTIONS \
-  const char* errText() { return "result of " str " operator"; } \
-private: \
-  IdlExpr* e_; \
-};
 
 class InvertExpr : public IdlExpr {
 public:
@@ -402,6 +397,7 @@ public:
   ~MinusExpr() { delete e_; }
   EXPR_S_INT_CONVERSION_FUNCTIONS
   EXPR_FLOAT_CONVERSION_FUNCTIONS
+  EXPR_FIXED_CONVERSION_FUNCTIONS
   const char* errText() { return "result of unary negate operator"; }
 private:
   IdlExpr* e_;

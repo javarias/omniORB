@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.4  2000/11/20 14:43:24  sll
+# Added support for wchar and wstring.
+#
 # Revision 1.3.2.3  2000/11/03 19:21:55  sll
 # Use include omniORB4 in the generated code.
 #
@@ -110,6 +113,16 @@ bdesc_string = """\
 bdesc_wstring = """\
 #ifndef @private_prefix@_buildDesc_c@n@wstring
 #define @private_prefix@_buildDesc_c@n@wstring @private_prefix@_buildDesc_cwstring
+#endif
+"""
+
+# Required symbols:
+#   @private_prefix@_buildDesc_cfixed
+# Generated symbols:
+#   @private_prefix@_buildDesc_c@digits@_@scale@fixed
+bdesc_fixed = """\
+#ifndef @private_prefix@_buildDesc_c@digits@_@scale@fixed
+#define @private_prefix@_buildDesc_c@digits@_@scale@fixed @private_prefix@_buildDesc_cfixed
 #endif
 """
 

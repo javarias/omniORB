@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.5  2000/12/05 17:45:18  dpg1
+// omniidl case sensitivity updates from omni3_develop.
+//
 // Revision 1.11.2.4  2000/11/01 12:45:55  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -137,7 +140,7 @@ ValueAbs* valueabs_hack = 0;
   IDL_WChar                wchar_val;
   IDL_WChar*               wstring_val;
   IDL_Boolean              boolean_val;
-  int                      fixed_val; // ***
+  IDL_Fixed*               fixed_val;
   IdlType*                 type_val;
   TypeSpec*                type_spec_val;
   IdlExpr*                 expr_val;
@@ -1437,9 +1440,7 @@ fixed_pt_type:
 
 fixed_pt_const_type:
     FIXED {
-      IdlError(currentFile, yylineno,
-	       "Fixed point constants are not supported yet");
-      $$ = 0;
+      $$ = new FixedType(0, 0);
     }
     ;
 

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.7  2001/01/08 12:35:26  dpg1
+// Incorrect exception handling when omniidl is an executable.
+//
 // Revision 1.17.2.6  2000/12/05 17:45:19  dpg1
 // omniidl case sensitivity updates from omni3_develop.
 //
@@ -528,6 +531,15 @@ visitConst(Const* c)
 #endif
   case IdlType::tk_wchar:   pyv = PyInt_FromLong(c->constAsWChar());  break;
   case IdlType::tk_wstring: pyv = wstringToList(c->constAsWString()); break;
+
+  case IdlType::tk_fixed:
+    {
+      char* fs = c->constAsFixed()->asString();
+      pyv = PyString_FromString(fs);
+      delete [] fs;
+    }
+    break;
+
   case IdlType::tk_enum:
     pyv = findPyDecl(c->constAsEnumerator()->scopedName());
     break;
@@ -1259,7 +1271,7 @@ void
 PythonVisitor::
 visitFixedType(FixedType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, (char*)"fixedType", (char*)"i",
+  result_ = PyObject_CallMethod(idltype_, (char*)"fixedType", (char*)"ii",
 				t->digits(), t->scale());
   ASSERT_RESULT;
 }

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.3  2000/11/01 12:45:57  dpg1
+// Update to CORBA 2.4 specification.
+//
 // Revision 1.5.2.2  2000/10/27 16:31:10  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -248,20 +251,20 @@ private:
 
 class FixedType : public IdlType {
 public:
-  FixedType(IDL_UShort digits, IDL_Short scale) :
+  FixedType(IDL_Short digits, IDL_Short scale) :
     IdlType(tk_fixed), digits_(digits), scale_(scale) { }
 
   virtual ~FixedType() {}
 
   IDL_UShort  digits()       { return digits_; }
-  IDL_Short   scale()        { return scale_; }
+  IDL_UShort  scale()        { return scale_; }
   IDL_Boolean shouldDelete() { return 1; }
 
   void accept(TypeVisitor& visitor) { visitor.visitFixedType(this); }
 
 private:
   IDL_UShort digits_;
-  IDL_Short  scale_;
+  IDL_UShort scale_;
 };
 
 

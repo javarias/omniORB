@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.3  2000/11/20 14:43:26  sll
+# Added support for wchar and wstring.
+#
 # Revision 1.15.2.2  2000/10/12 15:37:53  sll
 # Updated from omni3_1_develop.
 #
@@ -105,7 +108,7 @@
 
 
 from omniidl import idlast, idltype
-from omniidl_be.cxx import types, id, skutil
+from omniidl_be.cxx import types, id, skutil, util
 
 import string
 
@@ -238,6 +241,11 @@ def canonTypeName(type, decl = None, useScopedName = 0):
             if type.type().bound() != 0:
                 bound = str(type.type().bound())
             return bound + "wstring"
+
+        if isinstance(type.type(), idltype.Fixed):
+            return str(type.type().digits()) + "_" + \
+                   str(type.type().scale()) + "fixed"
+
         if isinstance(type.type(), idltype.Declared):
             return id.Name(type.type().scopedName()).guard()
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.5  2000/11/20 14:43:25  sll
+# Added support for wchar and wstring.
+#
 # Revision 1.5.2.4  2000/11/09 12:27:55  dpg1
 # Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 #
@@ -441,6 +444,11 @@ typedef CORBA::TypeCode_var @name@_var;
 typedef_simple_any = """\
 typedef CORBA::Any @name@;
 typedef CORBA::Any_var @name@_var;
+"""
+
+typedef_simple_fixed = """\
+typedef _omni_Fixed<@digits@,@scale@> @name@;
+typedef @name@& @name@_out;
 """
 
 typedef_simple_basic = """\

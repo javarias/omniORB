@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.4  2000/11/20 14:43:24  sll
+# Added support for wchar and wstring.
+#
 # Revision 1.16.2.3  2000/11/09 12:27:55  dpg1
 # Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 #
@@ -342,8 +345,7 @@ def mkTypeCode(type, declarator = None, node = None):
                mkTypeCode(types.Type(type.seqType())) + ")"
 
     if isinstance(type, idltype.Fixed):
-        util.fatalError("Fixed types are not supported")
-        raise "Don't know how to generate TypeCode for Fixed"
+        return prefix + "fixed_tc(%d,%d)" % (type.digits(),type.scale())
 
     assert isinstance(type, idltype.Declared)
 

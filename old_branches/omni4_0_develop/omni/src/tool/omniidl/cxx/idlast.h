@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.10.2.4  2000/11/01 12:45:56  dpg1
+// Update to CORBA 2.4 specification.
+//
 // Revision 1.10.2.3  2000/10/27 16:31:08  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -462,7 +465,7 @@ public:
 #endif
   IDL_WChar        constAsWChar()      const;
   const IDL_WChar* constAsWString()    const;
-  IDL_Fixed        constAsFixed()      const;
+  IDL_Fixed*       constAsFixed()      const;
   Enumerator*      constAsEnumerator() const;
 
   void accept(AstVisitor& visitor) { visitor.visitConst(this); }
@@ -496,7 +499,7 @@ private:
 #endif
     IDL_WChar        wchar_;
     IDL_WChar*       wstring_;
-    IDL_Fixed        fixed_;
+    IDL_Fixed*       fixed_;
     Enumerator*      enumerator_;
   } v_;
 };

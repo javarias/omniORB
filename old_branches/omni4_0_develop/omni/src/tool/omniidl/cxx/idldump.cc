@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.4  2000/11/01 15:57:03  dpg1
+// More updates for 2.4.
+//
 // Revision 1.11.2.3  2000/11/01 12:45:56  dpg1
 // Update to CORBA 2.4 specification.
 //
@@ -239,6 +242,15 @@ visitConst(Const* c)
 #endif
   case IdlType::tk_wchar:     printf("'\\u%hx'", c->constAsWChar());   break;
   case IdlType::tk_wstring:   printf("[cannot show wide string]");     break;
+
+  case IdlType::tk_fixed:
+    {
+      char* fs = c->constAsFixed()->asString();
+      printf("%sd", fs);
+      delete [] fs;
+    }
+    break;
+
   case IdlType::tk_enum:      c->constAsEnumerator()->accept(*this);   break;
   default:
     assert(0);
@@ -652,7 +664,10 @@ void
 DumpVisitor::
 visitFixedType(FixedType* t)
 {
-  printf("fixed<%hu, %hd>", t->digits(), t->scale());
+  if (t->digits() > 0)
+    printf("fixed<%hu,%hd>", t->digits(), t->scale());
+  else
+    printf("fixed");
 }
 
 #define DTCASE(tk, dt, dk) \

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.3  2000/11/15 19:16:30  sll
+ Added provision to override default mapping of CORBA::WChar to C++ wchar_t.
+
  Revision 1.2.2.2  2000/10/27 15:42:02  dpg1
  Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -96,6 +99,8 @@ typedef long                      _CORBA_Long;
 
 typedef unsigned long             _CORBA_ULong;
 #elif SIZEOF_INT == 4
+#  define OMNI_LONG_IS_INT
+
 typedef int                       _CORBA_Long;
 
 typedef unsigned int              _CORBA_ULong;
