@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/09/20 13:26:15  dpg1
+  Allow ORB_init() after orb->destroy().
+
   Revision 1.1.4.4  2001/09/19 17:26:51  dpg1
   Full clean-up after orb->destroy().
 
@@ -85,6 +88,13 @@ RopeLink::remove()
 {
   prev->next = next;
   next->prev = prev;
+
+  // When a connection is scavenged, remove() is called by the
+  // scavenger to remove the connection from the scavenger's list.
+  // Later, the thread looking after the strand calls safeDelete()
+  // which attempts to remove() it again. Setting next and prev to
+  // this means the second remove has no effect.
+  next = prev = this;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -111,6 +121,7 @@ StrandList::remove()
 {
   prev->next = next;
   next->prev = prev;
+  next = prev = this;
 }
 
 ////////////////////////////////////////////////////////////////////////////

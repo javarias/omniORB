@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.21  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.22.2.20  2002/03/18 16:50:18  dpg1
   New threadPoolWatchConnection parameter.
 
@@ -1091,6 +1094,7 @@ giopServer::Link::remove()
 {
   prev->next = next;
   next->prev = prev;
+  next = prev = this;
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.1.4.16  2002/03/18 15:13:08  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -467,8 +470,6 @@ giopStrand::acquireServer(giopWorker* w)
 void
 giopStrand::releaseServer(IOP_S* iop_s)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
-
   omni_tracedmutex_lock sync(*omniTransportLock);
 
   GIOP_S* giop_s = (GIOP_S*) iop_s;
@@ -1029,6 +1030,7 @@ giopStreamList::remove()
 {
   prev->next = next;
   next->prev = prev;
+  next = prev = this;
 }
 
 ////////////////////////////////////////////////////////////////////////////
