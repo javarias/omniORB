@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/04/18 17:50:44  sll
+  Big checkin with the brand new internal APIs.
+  Scoped where appropriate with the omni namespace.
+
   Revision 1.1.2.3  2000/11/15 17:06:49  sll
   Added tcs_c and tcs_w in omniIOR to record what code set convertor to use
   for this IOR.
@@ -65,10 +69,10 @@ public:
   }
 
   // index into pd_iopProfiles which has been chosen and decoded
-  _CORBA_ULong addr_selected_profile_index() const {
+  _CORBA_Long addr_selected_profile_index() const {
     return pd_addr_selected_profile_index;
   }
-  void addr_selected_profile_index(_CORBA_ULong index) {
+  void addr_selected_profile_index(_CORBA_Long index) {
     pd_addr_selected_profile_index = index;
   }
 
