@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.2.10  2000/02/22 12:25:38  dpg1
+  A few things made `publicly' accessible so omniORBpy can get its hands
+  on them.
+
   Revision 1.1.2.9  2000/01/27 16:31:33  djr
   String_member now initialised to empty string by default.
 
@@ -436,7 +440,7 @@ omni::activateObject(omniServant* servant, omniObjAdapter* adapter,
 
   while( objreflist ) {
     objreflist->pd_flags.object_exists = 1;
-    if( servant->_ptrToInterface(objreflist->pd_intfRepoId) ) {
+    if (objreflist->_compatibleServant(servant)) {
       omniInternal::replaceImplementation(objreflist, id, id);
       objreflist->pd_flags.type_verified = 1;
     }
@@ -826,7 +830,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
 
     omniServant* servant = local_id->servant();
 
-    if( servant && servant->_ptrToInterface(objref->pd_intfRepoId) ) {
+    if (objref->_compatibleServant(servant)) {
       delete[] key;
       omniInternal::replaceImplementation(objref, local_id, local_id);
       return;
@@ -891,7 +895,7 @@ omni::locationForward(omniObjRef* objref, omniObjRef* new_location)
     omniLocalIdentity* nl_lid = new_location->_localId();
 
     if( nl_id == nl_lid &&
-	nl_lid->servant()->_ptrToInterface(objref->pd_intfRepoId) ) {
+	objref->_compatibleServant(nl_lid->servant()) ) {
       omniInternal::replaceImplementation(objref, nl_lid, nl_lid);
     }
     else {

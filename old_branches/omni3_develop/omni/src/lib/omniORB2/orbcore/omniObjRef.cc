@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/11/08 09:45:17  djr
+  Fixed bug in omniObjRef::_real_is_a().
+
   Revision 1.1.2.3  1999/10/27 17:32:14  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -54,6 +57,18 @@
 #include <ropeFactory.h>
 #include <excepthandler.h>
 #include <exception.h>
+
+
+CORBA::Boolean
+omniObjRef::_compatibleServant(omniServant* svnt)
+{
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
+
+  if (svnt->_ptrToInterface(pd_intfRepoId))
+    return 1;
+  else
+    return 0;
+}
 
 
 int

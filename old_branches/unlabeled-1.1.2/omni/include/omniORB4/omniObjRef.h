@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/02/22 12:25:38  dpg1
+  A few things made `publicly' accessible so omniORBpy can get its hands
+  on them.
+
   Revision 1.1.2.2  1999/10/27 17:32:09  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -48,6 +52,7 @@ class omniIdentity;
 class omniLocalIdentity;
 class omniRemoteIdentity;
 class omniCallDescriptor;
+class omniServant;
 
 
 class omniObjRef {
@@ -64,6 +69,13 @@ public:
   //  <repoId> must not be NULL.
   //  This function does not throw any exceptions.
   //  This function is thread-safe.
+
+  virtual _CORBA_Boolean _compatibleServant(omniServant* svnt);
+  // Return true if the servant can be used in a local case
+  // optimisation, false if it must be contacted through the loopback
+  // interface.
+  // This funtion is thread safe.
+  // Must hold <omni::internalLock>.
 
   int _getRopeAndKey(omniRopeAndKey& rak, _CORBA_Boolean* is_local=0) const;
   // Get the current value of the rope and key, and whether
