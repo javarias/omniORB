@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.21  2003/05/28 10:13:01  dgrisby
+// Preliminary interceptor support. General clean-up.
+//
 // Revision 1.2.4.20  2003/03/12 11:17:02  dgrisby
 // Registration of external pseudo object creation functions.
 //
@@ -616,8 +619,9 @@ public:
       tstate_ = 0;
     }
 
-    // Extract and take ownership of stored args/results
-    inline PyObject* args()   { PyObject* r = args_;   args_ = 0;   return r; }
+    inline PyObject* args() { return args_; }
+
+    // Extract and take ownership of stored results
     inline PyObject* result() { PyObject* r = result_; result_ = 0; return r; }
 
     //
