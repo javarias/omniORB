@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.3  2000/10/24 09:53:28  dpg1
+// Clean up omniidl system dependencies. Replace use of _CORBA_ types
+// with IDL_ types.
+//
 // Revision 1.1.2.2  2000/06/05 18:13:27  dpg1
 // Comments can be attached to subsequent declarations (with -K). Better
 // idea of most recent decl in operation declarations
@@ -43,3 +47,4 @@ IDL_Boolean Config::quiet          = 0;
 IDL_Boolean Config::forwardWarning = 1;
 IDL_Boolean Config::keepComments   = 0;
 IDL_Boolean Config::commentsFirst  = 0;
+IDL_Boolean Config::caseSensitive  = 0;

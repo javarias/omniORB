@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.16  2000/10/24 09:53:29  dpg1
+// Clean up omniidl system dependencies. Replace use of _CORBA_ types
+// with IDL_ types.
+//
 // Revision 1.15.2.15  2000/09/06 11:20:50  dpg1
 // Support for Python 1.6 and 2.0b1.
 //
@@ -1209,7 +1213,7 @@ void
 PythonVisitor::
 visitFixedType(FixedType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, (char*)"fixedType", (char*)"i",
+  result_ = PyObject_CallMethod(idltype_, (char*)"fixedType", (char*)"ii",
 				t->digits(), t->scale());
   ASSERT_RESULT;
 }
@@ -1402,6 +1406,13 @@ extern "C" {
     return Py_None;
   }
 
+  static PyObject* IdlPyCaseSensitive(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)"")) return 0;
+    Config::caseSensitive = 1;
+    Py_INCREF(Py_None); return Py_None;
+  }
+
   static PyMethodDef omniidl_methods[] = {
     {(char*)"compile",            IdlPyCompile,            METH_VARARGS},
     {(char*)"clear",              IdlPyClear,              METH_VARARGS},
@@ -1411,6 +1422,7 @@ extern "C" {
     {(char*)"keepComments",       IdlPyKeepComments,       METH_VARARGS},
     {(char*)"relativeScopedName", IdlPyRelativeScopedName, METH_VARARGS},
     {(char*)"runInteractiveLoop", IdlPyRunInteractiveLoop, METH_VARARGS},
+    {(char*)"caseSensitive",      IdlPyCaseSensitive,      METH_VARARGS},
     {NULL, NULL}
   };
 
