@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:26:05  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.2  1999/09/30 11:49:27  djr
   Implemented catching user-exceptions in GIOP_S for all compilers.
 

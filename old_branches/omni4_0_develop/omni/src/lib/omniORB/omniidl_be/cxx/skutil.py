@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18  2000/07/13 15:26:01  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.15.2.4  2000/05/31 18:02:16  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  2000/07/13 15:25:59  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.5.2.4  2000/06/26 16:24:16  djs
 # Refactoring of configuration state mechanism.
 #

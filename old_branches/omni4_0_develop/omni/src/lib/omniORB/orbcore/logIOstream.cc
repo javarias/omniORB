@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.9  2000/07/13 15:25:57  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.7.6.2  1999/09/28 10:54:33  djr
   Removed pretty-printing of object keys from object adapters.
 

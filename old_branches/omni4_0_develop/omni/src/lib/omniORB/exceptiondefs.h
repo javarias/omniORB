@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:26:03  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.1  2000/06/22 10:37:49  dpg1
   Transport code now throws omniConnectionBroken exception rather than
   CORBA::COMM_FAILURE when things go wrong. This allows the invocation

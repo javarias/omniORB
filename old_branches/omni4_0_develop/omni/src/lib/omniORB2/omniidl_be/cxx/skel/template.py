@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  2000/07/13 15:25:59  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.1.2.6  2000/06/05 13:04:20  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
 # Removed name clash when a sequence is called "pd_seq"

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.14  2000/07/13 15:25:52  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.11  1999/11/26 11:33:44  dpg1
 // Bug in findWithInheritance() when inherited interface was not found.
 //

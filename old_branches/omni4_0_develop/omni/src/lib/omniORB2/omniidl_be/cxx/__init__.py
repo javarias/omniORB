@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.21  2000/07/13 15:26:02  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.18.2.7  2000/06/26 16:23:09  djs
 # Added new backend arguments.
 # Better error handling when encountering unsupported IDL (eg valuetypes)

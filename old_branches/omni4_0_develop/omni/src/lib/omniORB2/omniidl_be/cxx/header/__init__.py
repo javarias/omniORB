@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/07/13 15:26:00  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.12.2.7  2000/06/26 16:23:57  djs
 # Better handling of #include'd files (via new commandline options)
 # Refactoring of configuration state mechanism.

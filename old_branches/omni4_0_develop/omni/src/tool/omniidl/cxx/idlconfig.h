@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  2000/07/13 15:25:53  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.1.2.2  2000/06/05 18:13:27  dpg1
 // Comments can be attached to subsequent declarations (with -K). Better
 // idea of most recent decl in operation declarations

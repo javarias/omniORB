@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:26:05  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.4  2000/05/25 08:45:54  dpg1
   Forgot _core_attr onn IIOP::DEFAULT_CORBALOC_PORT
 

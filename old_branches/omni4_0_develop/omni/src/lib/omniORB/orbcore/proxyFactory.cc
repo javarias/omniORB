@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:25:55  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.1  1999/09/22 14:27:05  djr
   Major rewrite of orbcore to support POA.
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  2000/07/13 15:26:00  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.1.2.5  2000/05/16 11:16:01  djs
 # Updated to simplify memory management, correct errors in function prototypes,
 # add missing attribute functions and generate #warnings which the user should

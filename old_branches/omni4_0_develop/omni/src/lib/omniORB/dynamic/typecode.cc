@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.39  2000/07/13 15:26:02  dpg1
+ * Merge from omni3_develop for 3.0 release.
+ *
  * Revision 1.33.6.10  2000/06/27 16:23:25  sll
  * Merged OpenVMS port.
  *

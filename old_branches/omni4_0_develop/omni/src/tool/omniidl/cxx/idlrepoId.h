@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  2000/07/13 15:25:53  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.2  1999/11/02 17:07:25  dpg1
 // Changes to compile on Solaris.
 //

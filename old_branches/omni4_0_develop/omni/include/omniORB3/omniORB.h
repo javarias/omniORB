@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:26:05  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.8  2000/05/24 17:11:18  dpg1
   Comments clarified.
 

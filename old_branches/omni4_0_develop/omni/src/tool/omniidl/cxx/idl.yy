@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.12  2000/07/13 15:25:54  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.9.2.4  2000/06/09 11:20:47  dpg1
 // Last fix put __omni_pragma line numbers off by one...
 //

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:26:05  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.2  2000/03/03 14:29:16  djr
   Improvement to BOA skeletons (less generated code).
 

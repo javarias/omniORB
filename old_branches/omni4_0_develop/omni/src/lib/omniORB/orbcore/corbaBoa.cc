@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17  2000/07/13 15:25:58  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.13.6.14  2000/06/22 10:40:13  dpg1
   exception.h renamed to exceptiondefs.h to avoid name clash on some
   platforms.

@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:25:57  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.5  2000/06/30 14:12:07  dpg1
   Minor fixes for FreeBSD.
 

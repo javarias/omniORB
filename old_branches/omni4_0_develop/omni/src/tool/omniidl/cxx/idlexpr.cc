@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  2000/07/13 15:25:53  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.4.2.1  2000/06/27 16:00:17  sll
 // Fixes to WIN 32 related build and compiler issues.
 //

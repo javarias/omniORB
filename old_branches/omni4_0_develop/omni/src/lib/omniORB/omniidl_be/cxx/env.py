@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/07/13 15:26:01  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.3.2.2  2000/04/26 18:22:12  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
