@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2003/01/14 11:48:15  dgrisby
+  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+
   Revision 1.1.2.7  2002/12/19 13:56:58  dgrisby
   New Windows 1251 code set. (Thanks Vasily Tchekalkin).
 
@@ -140,6 +143,9 @@ public:
   static _core_attr const CONV_FRAME::CodeSetId ID_UTF_16;  // Unicode with
                                                             //  surrogates
   static _core_attr const CONV_FRAME::CodeSetId ID_CP1251;  // windows-1251
+  static _core_attr const CONV_FRAME::CodeSetId ID_037;     // IBM Ebcdic
+  static _core_attr const CONV_FRAME::CodeSetId ID_500;
+  static _core_attr const CONV_FRAME::CodeSetId ID_EDF_4;
 
 
   class NCS_C; // Native code set for char and string
