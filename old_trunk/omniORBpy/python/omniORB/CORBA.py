@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.20  2000/03/28 09:33:21  dpg1
+# CORBA.Exception no longer derives from exceptions.Exception.
+#
 # Revision 1.19  2000/03/03 17:41:28  dpg1
 # Major reorganisation to support omniORB 3.0 as well as 2.8.
 #
@@ -94,7 +97,7 @@
 import _omnipy
 import omniORB
 
-import threading, types, time
+import threading, types, time, exceptions
 
 
 #############################################################################
@@ -114,7 +117,7 @@ FALSE = 0
 #                                                                           #
 #############################################################################
 
-class Exception:
+class Exception (exceptions.Exception):
     pass
 
 # Completion status:
