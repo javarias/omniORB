@@ -8,6 +8,9 @@
 <p>
 <ul>
   <li>
+    <b>8 May 2003</b> - Possible mailing list disruption. See <a href="http://www.omniorb-support.com/pipermail/omniorb-list/2003-May/023567.html">here</a>.
+  </li>
+  <li>
     <b>14 March 2003</b> - <a
     href="http://sourceforge.net/project/showfiles.php?group_id=51138&amp;release_id=146413">omniORB
     4.0.1</a> and <a
@@ -27,10 +30,6 @@
     <b>2 August 2002</b> - <a
     href="http://www.omniorb-support.com/">Commercial support</a> for
     omniORB is available.
-  </li>
-  <li>
-    <b>2 July 2002</b> - Daily <a href="snapshots/">CVS snapshots</a>
-    available.
   </li>
   <li>
     <b>24 April 2002</b> - AT&amp;T Laboratories Cambridge closed.
