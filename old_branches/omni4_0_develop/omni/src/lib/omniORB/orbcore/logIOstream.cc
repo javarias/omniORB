@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.7  2001/09/19 17:30:04  dpg1
+  New traceThreadId option to add omni_thread id to log messages.
+
   Revision 1.8.2.6  2001/08/17 17:07:06  sll
   Remove the use of omniORB::logStream.
 
@@ -91,6 +94,8 @@
 #endif
 
 #include <objectTable.h>
+#include <remoteIdentity.h>
+#include <inProcessIdentity.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -105,6 +110,19 @@
 #define INIT_BUF_SIZE  256
 
 #define PREFIX           "omniORB: "
+
+
+static inline omniORB::logFunction& logfunc()
+{
+  static omniORB::logFunction f = 0;
+  return f;
+}
+
+void
+omniORB::setLogFunction(omniORB::logFunction f)
+{
+  logfunc() = f;
+}
 
 
 omniORB::logger::logger(const char* prefix)
@@ -128,9 +146,12 @@ omniORB::logger::logger(const char* prefix)
 
 omniORB::logger::~logger()
 {
-  if( (size_t)(pd_p - pd_buf) != strlen(pd_prefix) )
-    fprintf(stderr, "%s", pd_buf);
-
+  if( (size_t)(pd_p - pd_buf) != strlen(pd_prefix) ) {
+    if (logfunc())
+      logfunc()(pd_buf);
+    else
+      fputs(pd_buf, stderr);
+  }
   delete[] pd_buf;
 }
 
@@ -222,13 +243,13 @@ static void pp_key(omniORB::logger& l, const CORBA::Octet*, int);
 
 
 omniORB::logger&
-omniORB::logger::operator<<(omniLocalIdentity* id)
+omniORB::logger::operator<<(const omniLocalIdentity* id)
 {
   OMNIORB_ASSERT(id);
 
   pp_key(*this, id->key(), id->keysize());
 
-  omniObjTableEntry* entry = omniObjTableEntry::downcast(id);
+  omniObjTableEntry* entry=omniObjTableEntry::downcast((omniLocalIdentity*)id);
   if (entry) {
     switch (entry->state()) {
     case omniObjTableEntry::ACTIVATING:    *this << " (activating)";    break;
@@ -247,7 +268,7 @@ omniORB::logger::operator<<(omniLocalIdentity* id)
 
 
 omniORB::logger&
-omniORB::logger::operator<<(omniIdentity* id)
+omniORB::logger::operator<<(const omniIdentity* id)
 {
   OMNIORB_ASSERT(id);
 
@@ -373,7 +394,34 @@ omniORB::logf(const char* fmt ...)
 
   va_list args;
   va_start(args, fmt);
-  vfprintf(stderr, buf, args);
+
+  if (logfunc()) {
+    char  oinline[INLINE_BUF_SIZE * 4];
+    char* obuf = oinline;
+    int   obufsize = INLINE_BUF_SIZE * 4;
+    int   nchars;
+#ifdef HAS_snprintf
+    while (1) {
+      nchars = vsnprintf(obuf, obufsize, buf, args);
+      if (nchars > -1 && nchars < obufsize)
+	break;
+      if (nchars > -1)
+	obufsize = nchars + 1;
+      else
+	obufsize += 2;
+      if (obuf != oinline) delete [] obuf;
+      obuf = new char[obufsize];
+    }
+#else
+    nchars = vsprintf(obuf, buf, args);
+    OMNIORB_ASSERT(nchars >= 0 && nchars < obufsize);
+#endif
+    logfunc()(obuf);
+    if (obuf != oinline) delete [] obuf;
+  }
+  else {
+    vfprintf(stderr, buf, args);
+  }
   va_end(args);
 
   if( buf != inlinebuf )  delete[] buf;
@@ -400,7 +448,10 @@ omniORB::do_logs(const char* mesg)
   else
     sprintf(buf, "%s%s\n", PREFIX, mesg);
 
-  fprintf(stderr, "%s", buf);
+  if (logfunc())
+    logfunc()(buf);
+  else
+    fputs(buf, stderr);
 
   if( buf != inlinebuf )  delete[] buf;
 }
