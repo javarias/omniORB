@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.8.2.1  2000/02/15 11:06:18  djr
+ * Fixed bug in create_union_tc() -- problem if discriminator was an alias.
+ *
  * Revision 1.8  1999/08/24 12:37:20  djr
  * TypeCode_struct and TypeCode_except modified to use 'const char*' properly.
  *
@@ -566,6 +569,10 @@ public:
   virtual TypeCode_base* NP_aliasExpand(TypeCode_pairlist*);
 
   virtual void removeOptionalNames();
+
+  inline CORBA::Boolean  PR_content_is_assigned() const {
+    return !CORBA::is_nil(pd_content);
+  }
 
 private:
   TypeCode_sequence();
