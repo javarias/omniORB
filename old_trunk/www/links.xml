@@ -46,9 +46,13 @@
   </li>
 </ul>
 
-<h2>CORBA links</h2>
+<h2>CORBA and omniORB links</h2>
 
 <ul>
+  <li>The <a href="http://freegee.sourceforge.net/">FreeGee
+  Application Framework</a> bundles some useful packages including
+  omniORB.
+  </li>
   <li>The <a href="http://nenya.ms.mff.cuni.cz/benchmark">Middleware
   Benchmarking Project</a> has extensive performance measurements of
   many CORBA ORBs including omniORB.
