@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  2000/01/10 17:18:14  djs
+# Removed redundant code.
+#
 # Revision 1.8  2000/01/10 15:38:55  djs
 # Better name and scope handling.
 #
@@ -98,14 +101,15 @@ def visitModule(node):
         return
     
     name = tyutil.mapID(node.identifier())
-    
-    stream.out("""\
+
+    if not(config.FragmentFlag()):
+        stream.out("""\
 _CORBA_MODULE @POA_prefix@@name@
 _CORBA_MODULE_BEG
 """,
-               name = name,
-               POA_prefix = POA_prefix())
-    stream.inc_indent()
+                   name = name,
+                   POA_prefix = POA_prefix())
+        stream.inc_indent()
 
     for n in node.definitions():
         nested = self.__nested
@@ -115,8 +119,9 @@ _CORBA_MODULE_BEG
 
         self.__nested = nested
 
-    stream.dec_indent()
-    stream.out("""\
+    if not(config.FragmentFlag()):
+        stream.dec_indent()
+        stream.out("""\
 _CORBA_MODULE_END
 
 """)

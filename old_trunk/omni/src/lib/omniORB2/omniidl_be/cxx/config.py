@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/12/24 18:20:12  djs
+# Builds list of IDL files #included by walking the AST and examining the
+# file() of each Decl node.
+#
 # Revision 1.4  1999/12/01 17:04:21  djs
 # Added global config options for Typecodes and Anys, and forms of tie templates
 #
@@ -94,6 +98,13 @@ def FlatTieFlag():
     global __flattie
     return __flattie
 
+# generate fragments
+def setFragmentFlag(flag):
+    global __fragment
+    __fragment = flag
+def FragmentFlag():
+    global __fragment
+    return __fragment
     
 # suffix added to basename to get header filename
 def hdrsuffix():
@@ -113,7 +124,7 @@ def defs_fragment_suffix():
 
 # suffix to be added to basename to get the filename of the operators fragment file
 def opers_fragment_suffix():
-    return "_opers"
+    return "_operators"
 
 # suffix to be added to basename to get the filename of the operators fragment file
 def poa_fragment_suffix():

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/10 15:39:34  djs
+# Better name and scope handling.
+#
 # Revision 1.11  1999/12/24 18:20:12  djs
 # Builds list of IDL files #included by walking the AST and examining the
 # file() of each Decl node.
@@ -103,10 +106,14 @@ def tie():
 def flat_tie():
     config.setFlatTieFlag(1)
 
+def fragments():
+    config.setFragmentFlag(1)
+
 arguments = {
     "a":  typecode_any,
     "tp": tie,
-    "tf": flat_tie
+    "tf": flat_tie,
+    "F":  fragments
     }
 
 def process_args(args):
@@ -144,6 +151,7 @@ def run(tree, args):
     config.setTypecodeFlag(0)
     config.setTieFlag(0)
     config.setFlatTieFlag(0)
+    config.setFragmentFlag(0)
 
     process_args(args)
        
