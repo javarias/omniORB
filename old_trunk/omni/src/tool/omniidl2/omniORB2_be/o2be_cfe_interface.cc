@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.24  1999/05/26 16:08:59  sll
+  Moved DRV_cpp_init() to the end of BE_parse_args.
+
   Revision 1.23  1999/05/26 12:46:38  sll
   *** empty log message ***
 
@@ -291,6 +294,8 @@ BE_parse_args(int argc, char **argv)
   int c;
   char *buffer;
 
+  DRV_cpp_init();
+
 #ifdef __WIN32__
   o2be_global::set_skelsuffix("SK.cpp");
   o2be_global::set_dynskelsuffix("DynSK.cpp");
@@ -332,7 +337,7 @@ BE_parse_args(int argc, char **argv)
 	  {
 	    char* cpploc = new char[strlen(optarg)+1];
 	    strcpy(cpploc,optarg);
-	    idl_global->set_cpp_location(cpploc);
+	    DRV_cpp_new_location(cpploc);
 	  }
 	  break;
 	case 'h':
@@ -403,7 +408,5 @@ BE_parse_args(int argc, char **argv)
       idl_global->set_compile_flags(idl_global->compile_flags() |
 				    IDL_CF_ONLY_USAGE);
     }
-  DRV_cpp_init();
-
   return;
 }
