@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/09/28 10:54:33  djr
+  Removed pretty-printing of object keys from object adapters.
+
   Revision 1.1.2.1  1999/09/22 14:26:45  djr
   Major rewrite of orbcore to support POA.
 
@@ -131,7 +134,7 @@ private:
   // synchronise_request().
   //  Protected by <omni::internalLock>.
 
-  omni_tracedcondition             pd_state_signal;
+  omni_tracedcondition*            pd_state_signal;
   // Uses <omni::internalLock> as lock.  Signalled
   // on state change.
 };
