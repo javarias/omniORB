@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.5  2000/05/30 15:59:25  djs
+# Removed inheritance ambiguity in generated BOA _sk_ and POA_ classes
+#
 # Revision 1.15.2.4  2000/05/04 14:35:04  djs
 # Added new flag splice-modules which causes all continuations to be output
 # as one lump. Default is now to output them in pieces following the IDL.
@@ -203,8 +206,16 @@ def visitInterface(node):
                inherits = inherits_str)
 
     if config.TieFlag():
-        tie.__init__(stream)
-        tie.write_template(environment, node, self.__nested)
+        # Normal tie templates, inline (so already in relevant POA_
+        # module)
+        poa_name = ""
+        if len(scopedName.fullName()) == 1:
+            poa_name = "POA_"
+        poa_name = poa_name + scopedName.simple()
+        tie_name = poa_name + "_tie"
+
+        tie.write_template(tie_name, poa_name, node, stream)
+
     return
 
 def visitTypedef(node):
