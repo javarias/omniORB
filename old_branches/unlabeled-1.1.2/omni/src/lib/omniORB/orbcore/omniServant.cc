@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/09/27 11:01:11  djr
+  Modifications to logging.
+
   Revision 1.1.2.1  1999/09/22 14:27:00  djr
   Major rewrite of orbcore to support POA.
 
@@ -42,6 +45,7 @@
 
 #include <omniORB3/omniServant.h>
 #include <localIdentity.h>
+#include <exception.h>
 
 
 omniServant::~omniServant()
@@ -153,7 +157,7 @@ omniServant::_dispatch(GIOP_S& giop_s)
     omniORB::logs(2,
      "WARNING -- received GIOP request \'_implementation\'.\n"
      " This operation is not supported.  CORBA::NO_IMPLEMENT was raised.");
-    throw CORBA::NO_IMPLEMENT(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT,0, CORBA::COMPLETED_NO);
   }
 
   return 0;

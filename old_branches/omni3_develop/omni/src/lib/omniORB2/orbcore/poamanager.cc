@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/09/30 11:52:33  djr
+  Implemented use of AdapterActivators in POAs.
+
   Revision 1.1.2.1  1999/09/22 14:27:02  djr
   Major rewrite of orbcore to support POA.
 
@@ -128,7 +131,7 @@ omniOrbPOAManager::hold_requests(CORBA::Boolean wait_for_completion)
   CHECK_NOT_NIL();
 
   if( wait_for_completion && 0 /*?? in context of invocation */ )
-    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
 
   POASeq poas;
   {
@@ -163,7 +166,7 @@ omniOrbPOAManager::discard_requests(CORBA::Boolean wait_for_completion)
   CHECK_NOT_NIL();
 
   if( wait_for_completion && 0 /*?? in context of invocation */ )
-    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
 
   POASeq poas;
   {
@@ -219,7 +222,7 @@ omniOrbPOAManager::deactivate(CORBA::Boolean etherealize_objects,
   CHECK_NOT_NIL();
 
   if( wait_for_completion && 0 /*?? in context of invocation */ )
-    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
 
   POASeq* ppoas = new POASeq;
   POASeq& poas = *ppoas;

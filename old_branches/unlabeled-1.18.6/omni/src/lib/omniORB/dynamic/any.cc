@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.18.6.2  1999/09/27 08:48:31  djr
+ * Minor corrections to get rid of warnings.
+ *
  * Revision 1.18.6.1  1999/09/22 14:26:27  djr
  * Major rewrite of orbcore to support POA.
  *
@@ -105,8 +108,16 @@
 //
 */
 
+#include <omniORB3/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
 #include <anyP.h>
 #include <typecode.h>
+#include <exception.h>
+
 
 ////////////////////////////////////////////////////////////////////////
 // In pre-2.8.0 versions, the CORBA::Any extraction operator for
@@ -392,7 +403,7 @@ void
 CORBA::Any::operator<<=(TypeCode_ptr tc)
 {
   if (!CORBA::TypeCode::PR_is_valid(tc)) {
-    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
   }
   CORBA::TypeCode_member tcm(tc);
   tcDescriptor tcd;
@@ -405,7 +416,7 @@ void
 CORBA::Any::operator<<=(Object_ptr obj)
 {
   if (!CORBA::Object::_PR_is_valid(obj)) {
-    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
   }
   const char* repoid = CORBA::Object::_PD_repoId;
   const char* name   = "";

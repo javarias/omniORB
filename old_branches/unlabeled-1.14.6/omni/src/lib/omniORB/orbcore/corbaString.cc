@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14.6.1  1999/09/22 14:26:47  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.14  1999/06/18 20:52:29  sll
   Updated with new sequence string implementation.
 
@@ -79,7 +82,7 @@
 #pragma hdrstop
 #endif
 
-#include <string.h>
+#include <exception.h>
 
 
 char*
@@ -150,13 +153,13 @@ _CORBA_String_member::operator <<= (NetBufferedStream& s)
 
   CORBA::ULong nbytes = len ? len : 1;
   char* p = omni::allocString(nbytes - 1);
-  if( !p )  throw CORBA::NO_MEMORY(0, CORBA::COMPLETED_MAYBE);
+  if( !p )  OMNIORB_THROW(NO_MEMORY,0, CORBA::COMPLETED_MAYBE);
 
   if( len ) {
     try {
       s.get_char_array((CORBA::Char*)p, len);
       if( p[len - 1] != '\0' )
-        throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+        OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
     }
     catch(...) {
       omni::freeString(p);
@@ -200,12 +203,12 @@ _CORBA_String_member::operator <<= (MemBufferedStream& s)
   if( !len && omniORB::traceLevel > 1 )  _CORBA_null_string_ptr(1);
 
   char* p = omni::allocString(len - 1);
-  if( !p )  throw CORBA::NO_MEMORY(0, CORBA::COMPLETED_MAYBE);
+  if( !p )  OMNIORB_THROW(NO_MEMORY,0, CORBA::COMPLETED_MAYBE);
 
   s.get_char_array((CORBA::Char*)p, len);
   if( p[len - 1] != '\0' ) {
     omni::freeString(p);
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_MAYBE);
   }
 
   _ptr = p;
@@ -303,7 +306,7 @@ inline void unmarshal_ss(char** buf,
       try {
 	s.get_char_array((CORBA::Char*) ps, len);
 	if( ps[len - 1] != '\0' )
-          throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+          OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
       }
       catch(...) {
 	omni::freeString(ps);

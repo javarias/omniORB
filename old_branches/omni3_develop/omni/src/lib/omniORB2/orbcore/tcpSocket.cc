@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.8.6.2  1999/09/24 15:01:38  djr
+  Added module initialisers, and sll's new scavenger implementation.
+
   Revision 1.8.2.1  1999/09/21 20:37:18  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -77,6 +80,8 @@
 #include <ropeFactory.h>
 #include <tcpSocket.h>
 #include <gatekeeper.h>
+#include <exception.h>
+
 
 #ifndef Swap16
 #define Swap16(s) ((((s) & 0xff) << 8) | (((s) >> 8) & 0xff))
@@ -142,7 +147,7 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   // profile.profile_data[0] - byteorder
   end += 1;
   if (profile.profile_data.length() <= end)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 
   CORBA::Boolean byteswap = ((profile.profile_data[begin] == 
 			      omni::myByteOrder) ? 0 : 1);
@@ -152,11 +157,11 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   begin = end;
   end = begin + 2;
   if (profile.profile_data.length() <= end)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
   
   // iiop_version.major must be 1
   if (profile.profile_data[begin]   != 1)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
   
   // iiop_version.minor is either 0 or above.
   CORBA::Octet minor_version = profile.profile_data[begin+1];
@@ -166,7 +171,7 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   begin = end + 1;
   end = begin + 4;
   if (profile.profile_data.length() <= end)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
   {
     CORBA::ULong len;
     if (!byteswap) {
@@ -181,11 +186,11 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
     begin = end;
     end = begin + len;
     if (profile.profile_data.length() <= end)
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 
     // Is this string null terminated?
     if (((char)profile.profile_data[end-1]) != '\0')
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 
     host = (CORBA::Char*)&profile.profile_data[begin];
   }
@@ -195,7 +200,7 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   // profile.profile_data[begin] port number
   end = begin + 2;
   if (profile.profile_data.length() <= end)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
   if (!byteswap) {
     port = ((CORBA::UShort &) profile.profile_data[begin]);
   }
@@ -209,7 +214,7 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
   // profile.profile_data[begin]  object key length
   end = begin + 4;
   if (profile.profile_data.length() < end)
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 
   if (profile.profile_data.length() == end) {
     objkeysize = 0;
@@ -228,13 +233,13 @@ tcpSocketFactoryType::decodeIOPprofile(const IOP::TaggedProfile& profile,
     begin = end;
     end = begin + len;
     if (profile.profile_data.length() < end)
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
 
     if (minor_version == 0) {
       // This profile is IIOP 1.0. The encapsulated profile must end exactly
       // at the end of the object key.
       if (profile.profile_data.length() != end) {
-	throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW(MARSHAL,0,CORBA::COMPLETED_NO);
       }
     }
     else {
@@ -403,7 +408,7 @@ tcpSocketIncomingRope::this_is(Endpoint *&e)
   else {
     e = new tcpSocketEndpoint(me);
     if (!e)
-      throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
     return 1;
   }
 }
@@ -423,7 +428,7 @@ tcpSocketOutgoingRope::remote_is(Endpoint *&e)
   else {
     e = new tcpSocketEndpoint(remote);
     if (!e)
-      throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
     return 1;
   }
 }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.6.6  1999/10/04 17:08:31  djr
+  Some more fixes/MSVC work-arounds.
+
   Revision 1.13.6.5  1999/09/30 12:24:48  djr
   Implemented the '_interface' operation for BOA servants.
 
@@ -48,16 +51,12 @@
 
 #define ENABLE_CLIENT_IR_SUPPORT
 #include <omniORB3/CORBA.h>
-
-#ifdef HAS_pch
-#pragma hdrstop
-#endif
-
 #include <corbaBoa.h>
 #include <omniORB3/callDescriptor.h>
 #include <localIdentity.h>
 #include <bootstrap_i.h>
 #include <dynamicLib.h>
+#include <exception.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -98,13 +97,13 @@ CORBA::ORB::BOA_init(int& argc, char** argv, const char* boa_identifier)
   }
 
   if( !parse_BOA_args(argc, argv, boa_identifier) )
-    throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 
   try {
     omniObjAdapter::initialise();
   }
   catch(...) {
-    throw CORBA::INITIALIZE(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INITIALIZE,0, CORBA::COMPLETED_NO);
   }
 
   the_boa = new omniOrbBOA(0 /* not nil */);
@@ -121,7 +120,7 @@ CORBA::BOA::getBOA()
   if( boa )  boa->incrRefCount_locked();
   boa_lock.unlock();
 
-  if( !boa )  throw CORBA::OBJ_ADAPTER(0, CORBA::COMPLETED_NO);
+  if( !boa )  OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
   return boa;
 }
 
@@ -167,7 +166,7 @@ const char* CORBA::BOA::_PD_repoId = "IDL:omg.org/CORBA/BOA:1.0";
 #define CHECK_NOT_NIL_OR_DESTROYED()  \
   if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();  \
   if( pd_state == DESTROYED )  \
-    throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);  \
+    OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);  \
 
 
 omniOrbBOA::~omniOrbBOA()  {}
@@ -208,7 +207,7 @@ omniOrbBOA::impl_is_ready(CORBA::ImplementationDef_ptr,
     case DESTROYED:
       omni::internalLock.unlock();
       boa_lock.unlock();
-      throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
       break;
     }
 
@@ -267,7 +266,7 @@ omniOrbBOA::impl_shutdown()
 
     case DESTROYED:
       omni::internalLock.unlock();
-      throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
       break;
     }
 
@@ -322,7 +321,7 @@ omniOrbBOA::destroy()
       case DESTROYED:
 	omni::internalLock.unlock();
 	boa_lock.unlock();
-	throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
 	break;
       }
 
@@ -389,7 +388,7 @@ omniOrbBOA::obj_is_ready(omniOrbBoaServant* servant,
 			 CORBA::ImplementationDef_ptr /* ignored */)
 {
   CHECK_NOT_NIL_OR_DESTROYED();
-  if( !servant )  throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
+  if( !servant )  OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
 
   servant->_obj_is_ready();
 }
@@ -403,7 +402,7 @@ omniOrbBOA::obj_is_ready(CORBA::Object_ptr, CORBA::ImplementationDef_ptr)
   omniORB::logs(1, "CORBA::BOA::obj_is_ready() is not supported.  Use\n"
 		" _obj_is_ready(boa) on the object implementation instead.");
 
-  throw CORBA::NO_IMPLEMENT(0, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(NO_IMPLEMENT,0, CORBA::COMPLETED_NO);
 }
 
 
@@ -414,7 +413,7 @@ omniOrbBOA::dispose(CORBA::Object_ptr obj)
 
   if( !obj || obj->_NP_is_nil() )  return;
   if( obj->_NP_is_pseudo() )
-    throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
 
   boa_lock.lock();
   omni::internalLock.lock();
@@ -575,7 +574,7 @@ omniOrbBOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
   if( !id->servant()->_dispatch(giop_s) ) {
     if( !id->servant()->omniServant::_dispatch(giop_s) ) {
       giop_s.RequestReceived(1);
-      throw CORBA::BAD_OPERATION(0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_OPERATION,0, CORBA::COMPLETED_NO);
     }
   }
 }
@@ -588,7 +587,7 @@ omniOrbBOA::dispatch(GIOP_S& giop_s, const CORBA::Octet* key, int keysize)
   OMNIORB_ASSERT(key && keysize == sizeof(omniOrbBoaKey));
 
   omniORB::loader::mapKeyToObject_t loader = MapKeyToObjectFunction;
-  if( !loader )  throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+  if( !loader )  OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
 
   omniOrbBoaKey k;
   memcpy(&k, key, sizeof(omniOrbBoaKey));
@@ -686,7 +685,7 @@ omniOrbBOA::dispose(omniLocalIdentity* lid)
   if( pd_state == DESTROYED ) {
     omni::internalLock.unlock();
     boa_lock.unlock();
-    throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
   }
 
   if( !lid || !lid->servant() ) {
@@ -744,7 +743,7 @@ omniOrbBOA::synchronise_request()
   if( pd_nwaiting == /*??* max */ 5 ) {
     startRequest();
     omni::internalLock.unlock();
-    throw CORBA::COMM_FAILURE(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(COMM_FAILURE,0, CORBA::COMPLETED_NO);
   }
 
   pd_nwaiting++;
@@ -759,7 +758,7 @@ omniOrbBOA::synchronise_request()
   case DESTROYED:
     startRequest();
     omni::internalLock.unlock();
-    throw CORBA::OBJ_ADAPTER(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
   }
 }
 
@@ -786,7 +785,7 @@ omniOrbBoaServant::_dispose()
 
   if( !the_boa ) {
     boa_lock.unlock();
-    throw CORBA::OBJ_ADAPTER(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
   }
   // We have to grab a ref to the boa here, since <boa_lock> is
   // released during omniOrbBOA::dispose() -- thus the_boa could
@@ -808,7 +807,7 @@ omniOrbBoaServant::_obj_is_ready()
   // Why not throw OBJ_ADAPTER?
   if( !the_boa ) {
     boa_lock.unlock();
-    throw CORBA::OBJECT_NOT_EXIST(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJECT_NOT_EXIST,0, CORBA::COMPLETED_NO);
   }
 
   omniObjKey key((const CORBA::Octet*) &pd_key, sizeof(omniOrbBoaKey));
@@ -821,7 +820,7 @@ omniOrbBoaServant::_obj_is_ready()
   if( !id ) {
     omni::internalLock.unlock();
     boa_lock.unlock();
-    throw CORBA::INV_OBJREF(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
   }
 
   omni::internalLock.unlock();
@@ -866,7 +865,7 @@ omniOrbBoaServant::_do_get_interface()
   CORBA::Object_var repository =
     omniInitialReferences::get("InterfaceRepository");
   if( CORBA::is_nil(repository) )
-    throw CORBA::INTF_REPOS(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INTF_REPOS,0, CORBA::COMPLETED_NO);
 
   // Make a call to the interface repository.
   omniStdCallDesc::_cCORBA_mObject_i_cstring

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  1999/09/24 17:11:13  djr
+ New option -ORBtraceInvocations and omniORB::traceInvocations.
+
  Revision 1.1.2.2  1999/09/24 15:01:34  djr
  Added module initialisers, and sll's new scavenger implementation.
 
@@ -49,6 +52,8 @@
 #include <bootstrap_i.h>
 #include <poaimpl.h>
 #include <corbaBoa.h>
+#include <exception.h>
+
 #include <stdlib.h>
 
 #ifndef __atmos__
@@ -350,7 +355,7 @@ omniObjAdapter::defaultLoopBack()
 	  else
 	    // This is tough!!! Haven't got a loop back!
 	    // May be the BOA has been destroyed!!!
-	    throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
 	}
       }
     }

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.2  1999/10/04 17:08:34  djr
+  Some more fixes/MSVC work-arounds.
+
   Revision 1.1.2.1  1999/09/22 14:27:04  djr
   Major rewrite of orbcore to support POA.
 
@@ -41,6 +44,7 @@
 #include <omniORB3/callDescriptor.h>
 #include <bootstrap_i.h>
 #include <dynamicLib.h>
+#include <exception.h>
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// Policy Interfaces /////////////////////////
@@ -205,7 +209,7 @@ PortableServer::ServantBase::_do_this(const char* repoId)
     }
 
     if( CORBA::is_nil(poa) )
-      throw CORBA::OBJ_ADAPTER(0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
 
     return ((omniOrbPOA*)(PortableServer::POA_ptr) poa)->
       servant__this(this, repoId);
@@ -232,7 +236,7 @@ PortableServer::ServantBase::_do_get_interface()
   CORBA::Object_var repository =
     omniInitialReferences::get("InterfaceRepository");
   if( CORBA::is_nil(repository) )
-    throw CORBA::INTF_REPOS(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(INTF_REPOS,0, CORBA::COMPLETED_NO);
 
   // Make a call to the interface repository.
   omniStdCallDesc::_cCORBA_mObject_i_cstring
@@ -300,7 +304,7 @@ PortableServer::ObjectId_to_string(const ObjectId& id)
   for( int i = 0; i < len; i++ )
     if( (char) (s[i] = id[i]) == '\0' ) {
       delete[] s;
-      throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM,0, CORBA::COMPLETED_NO);
     }
 
   s[len] = '\0';

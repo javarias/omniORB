@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30.6.2  1999/09/24 15:01:34  djr
+  Added module initialisers, and sll's new scavenger implementation.
+
   Revision 1.30.6.1  1999/09/22 14:26:50  djr
   Major rewrite of orbcore to support POA.
 
@@ -113,6 +116,7 @@
 #include <bootstrap_i.h>
 #include <gatekeeper.h>
 #include <initialiser.h>
+#include <exception.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -318,7 +322,7 @@ void initFile::initialize()
 	kprintf("Unknown field (%s) found in configuration file.\n",(const char*)entryname);
 #endif
       }
-      throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
     }
   }
   if (CORBA::is_nil(NameService) && CORBA::is_nil(InterfaceRepository)) {
@@ -378,7 +382,7 @@ int initFile::read_file(char* config_fname)
 
   fData = new char[fsize+1];
   if (fData == NULL) 
-    throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
 
   size_t result = fread((void*) fData,1,fsize,iFile);
   fclose(iFile);
@@ -524,7 +528,7 @@ void initFile::multerr(char* entryname)
 	    entryname);
 #endif
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 }
 
 
@@ -542,7 +546,7 @@ void initFile::dataerr(char* entryname)
     kprintf(" in configuration file.\n");
 #endif
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 }
 
 
@@ -557,7 +561,7 @@ void initFile::parseerr()
     kprintf("Configuration error: Parse error in config file.\n");
 #endif
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 }
 
 
@@ -573,7 +577,7 @@ void initFile::invref(char* entryname)
 	    entryname);
 #endif
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 }
 
 
@@ -605,7 +609,7 @@ void initFile::formaterr(char* entryname)
       " is not a character string.\n";
     omniORB::log.flush();
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
 }
 
 #endif

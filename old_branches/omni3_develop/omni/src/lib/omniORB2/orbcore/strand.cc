@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.6.4  1999/09/27 13:26:22  djr
+  Updates to loggin to ensure prefix is always omniORB:
+
   Revision 1.10.6.3  1999/09/27 11:01:12  djr
   Modifications to logging.
 
@@ -92,6 +95,7 @@
 #include <scavenger.h>
 #include <ropeFactory.h>
 #include <initialiser.h>
+#include <exception.h>
 
 
 #define LOGMESSAGE(level,prefix,message)  \
@@ -208,7 +212,7 @@ Sync::Sync(Strand *s,CORBA::Boolean rdLock,CORBA::Boolean wrLock)
   if (s->_strandIsDying()) {
     // If this strand or the rope it belongs is being shutdown, stop here
     s->pd_rope->pd_lock.unlock();
-    throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
   }
 
   // enter this to the list in strand <s>

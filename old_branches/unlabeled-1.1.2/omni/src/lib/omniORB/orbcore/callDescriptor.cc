@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  1999/10/04 17:08:31  djr
+ Some more fixes/MSVC work-arounds.
+
  Revision 1.1.2.1  1999/09/22 14:26:43  djr
  Major rewrite of orbcore to support POA.
 
@@ -41,6 +44,7 @@
 #endif
 
 #include <omniORB3/callDescriptor.h>
+#include <exception.h>
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////// omniCallDescriptor /////////////////////////
@@ -85,7 +89,7 @@ omniCallDescriptor::userException(GIOP_C& giop_c, const char* repoId)
   }
 
   giop_c.RequestCompleted(1);
-  throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+  OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -130,6 +134,6 @@ void omniStdCallDesc::_cCORBA_mObject_i_cstring::unmarshalReturnedValues(GIOP_C&
 CORBA::ULong
 omniLocalOnlyCallDescriptor::alignedSize(CORBA::ULong)
 {
-  throw CORBA::INV_OBJREF(0, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
   return 0;
 }

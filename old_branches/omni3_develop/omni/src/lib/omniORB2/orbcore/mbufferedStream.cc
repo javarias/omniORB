@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9.6.1  1999/09/22 14:26:54  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.9  1999/05/10 16:36:04  djr
   Fixed bug in constructors for read-only streams.
 
@@ -51,6 +54,12 @@
   */
 
 #include <omniORB3/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
+
+#include <exception.h>
 #include <limits.h>
 
 
@@ -303,7 +312,7 @@ MemBufferedStream::skip(CORBA::ULong size)
 void
 MemBufferedStream::overrun_error()
 {
-  throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+  OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
 }
 
 
