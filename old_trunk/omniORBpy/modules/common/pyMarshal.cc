@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.15  2000/02/04 12:17:10  dpg1
+// Support for VMS.
+//
 // Revision 1.14  2000/01/20 17:47:09  dpg1
 // Refcounting bug in any handling.
 //
@@ -1662,6 +1665,10 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 	  assert(PyTuple_Check(t_o));
 	  value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
 	}
+	else {
+	  Py_INCREF(Py_None);
+	  value = Py_None;
+	}
       }
 
       PyObject* untuple = PyTuple_New(2);
@@ -2087,6 +2094,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 	if (t_o != Py_None) {
 	  assert(PyTuple_Check(t_o));
 	  value = unmarshalPyObject(stream, PyTuple_GET_ITEM(t_o, 2));
+	}
+	else {
+	  Py_INCREF(Py_None);
+	  value = Py_None;
 	}
       }
 
