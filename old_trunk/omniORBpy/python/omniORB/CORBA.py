@@ -31,6 +31,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.14  1999/11/25 14:12:34  dpg1
+# sleep()ing for maxint seconds wasn't a good idea, since some platforms
+# use milliseconds for their sleep system call.
+#
 # Revision 1.13  1999/11/25 14:01:45  dpg1
 # orb.run() now uses time.sleep() to sleep, rather than blocking in
 # impl_is_ready(). This means Python can interrupt the sleep.
@@ -394,6 +398,14 @@ _tc_any       = tcInternal.createTypeCode(tcInternal.tv_any)
 _tc_TypeCode  = tcInternal.createTypeCode(tcInternal.tv_TypeCode)
 _tc_Principal = tcInternal.createTypeCode(tcInternal.tv_Principal)
 _tc_string    = tcInternal.createTypeCode((tcInternal.tv_string,0))
+
+
+# id() function returns the repository ID of an object
+def id(obj):
+    try:
+        return obj._NP_RepositoryId
+    except AttributeError:
+        raise BAD_PARAM()
 
 
 #############################################################################
