@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.16  1999/06/03 17:12:09  sll
+  Updated to CORBA 2.2.
+
   Revision 1.15  1999/05/31 17:56:44  sll
   Added C++ keyword export.
 
@@ -1173,5 +1176,5 @@ char const* o2be_name::variable_qualifier() {
   else if( defined_in()->scope_node_type() == AST_Decl::NT_module )
     return "_CORBA_MODULE_VAR";
   else
-    return "static _LC_attr";
+    return "static";
 }
