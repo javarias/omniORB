@@ -11,6 +11,9 @@
  
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:26:01  sll
+  Initial revision
+
   */
 
 #include <omniORB2/CORBA.h>
@@ -241,8 +244,10 @@ GIOP_C::RequestCompleted(CORBA::Boolean skip_msg)
   else
     {
       if (RdMessageUnRead())
-	throw omniORB::fatalException(__FILE__,__LINE__,
-             "GIOP_C::RequestCompleted() reported wrong reply message size.");				  
+	{
+	  setStrandDying();
+	  throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_MAYBE);
+	}
     }
 
   pd_state = GIOP_C::Idle;
