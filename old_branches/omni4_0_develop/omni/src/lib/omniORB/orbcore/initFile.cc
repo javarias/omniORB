@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.32.2.2  2000/09/27 18:00:49  sll
+  Use the helper functions in _CORBA_String_helper.
+
   Revision 1.32.2.1  2000/07/17 10:35:54  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -301,8 +304,8 @@ void initFile::initialize()
 
     if (strcmp((const char*)entryname,"ORBInitRef") == 0) {
       unsigned int slen = strlen(data) + 1;
-      CORBA::String_var id  = CORBA::string_alloc(slen);
-      CORBA::String_var uri = CORBA::string_alloc(slen);
+      CORBA::String_var id(CORBA::string_alloc(slen));
+      CORBA::String_var uri(CORBA::string_alloc(slen));
       if (sscanf(data, "%[^=]=%s", (char*)id, (char*)uri) != 2) {
 	if (omniORB::trace(1)) {
 	  omniORB::logger l;

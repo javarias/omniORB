@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:58:56  sll
+  Changed include/omniORB3 to include/omniORB4
+
   Revision 1.2.2.1  2000/07/17 10:35:58  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -94,9 +97,12 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
 
     if( cmp < 0 )       top = middle;
     else if( cmp > 0 )  bottom = middle + 1;
-    else
-      throw omniORB::fatalException(__FILE__, __LINE__,
-			    "Duplicate proxyObjectFactory registered.");
+    else {
+      ofl[middle] = this;
+      if( omniORB::trace(15) )
+	  omniORB::logf("Replaced proxyObjectFactory for %s.", repoId);
+      return;
+    }
   }
 
   OMNIORB_ASSERT(top == bottom);
@@ -112,9 +118,9 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
 void
 proxyObjectFactory::shutdown()
 {
-  delete[] ofl;
   ofl_size = 0;
   ofl_len = 0;
+  delete[] ofl;
 }
 
 
@@ -122,8 +128,11 @@ proxyObjectFactory*
 proxyObjectFactory::lookup(const char* repoId)
 {
   // Factories should all be registered before the ORB is initialised,
-  // so at this point the list is read-only -- so concurrent reads
-  // are safe.
+  // so at this point the list is read-only. Concurrent accesses are
+  // safe, except that the list is deleted when the ORB is shutdown.
+  // There is a very small possibility that we will segfault below,
+  // but that can only happen if the application is creating an object
+  // reference at the same time as they are shutting down the ORB.
 
   OMNIORB_ASSERT(repoId);
 

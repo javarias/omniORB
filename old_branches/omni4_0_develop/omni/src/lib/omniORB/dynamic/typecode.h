@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.10.2.3  2000/10/06 16:40:55  sll
+ * Changed to use cdrStream.
+ *
  * Revision 1.10.2.2  2000/09/27 17:25:45  sll
  * Changed include/omniORB3 to include/omniORB4.
  *
@@ -163,14 +166,17 @@ public:
 
   struct Alignment {
     InfoType type;
+
+    struct SimpleAlignment {
+      omni::alignment_t alignment;
+      CORBA::ULong      size;
+    };
+    struct NastyAlignment {
+      TypeCode_base*    tc;
+    };
     union {
-      struct {
-	omni::alignment_t alignment;
-	CORBA::ULong      size;
-      } simple;
-      struct {
-	TypeCode_base*    tc;
-      } nasty;
+      SimpleAlignment simple;
+      NastyAlignment  nasty;
     };
   };
 
@@ -804,7 +810,8 @@ public:
   // This type is used to store discriminator values for all types
   // of discriminator - so must be able to store values as large
   // as the largest discriminator type.
-  typedef CORBA::PR_unionDiscriminator Discriminator;
+  typedef CORBA::PR_unionDiscriminator       Discriminator;
+  typedef CORBA::PR_unionDiscriminatorSigned DiscriminatorSigned;
 
   TypeCode_union(const char* repoId, const char* name,
 		 TypeCode_base* discTC, const CORBA::UnionMemberSeq& members);

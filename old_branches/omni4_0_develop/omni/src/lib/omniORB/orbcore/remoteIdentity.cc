@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/11/03 19:12:07  sll
+  Use new marshalling functions for byte, octet and char. Use get_octet_array
+  instead of get_char_array and put_octet_array instead of put_char_array.
+
   Revision 1.2.2.2  2000/09/27 18:05:51  sll
   Use the new giop engine APIs to drive a remote call.
 
@@ -130,6 +134,7 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   omniRemoteIdentity_RefHolder rh(this);
+  // omni::internalLock has been released by RefHolder constructor
 
   if( omniORB::traceInvocations ) {
     omniORB::logger l;

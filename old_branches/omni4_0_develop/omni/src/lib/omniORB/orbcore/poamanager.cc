@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:41:41  sll
+  Updated include/omniORB3 to include/omniORB4
+
   Revision 1.2.2.1  2000/07/17 10:35:57  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -297,7 +300,7 @@ omniOrbPOAManager::_ptrToObjRef(const char* repoId)
   if( !strcmp(repoId, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
   if( !strcmp(repoId, PortableServer::POAManager::_PD_repoId) )
-    return (PortableServer::POA_ptr) this;
+    return (PortableServer::POAManager_ptr) this;
 
   return 0;
 }

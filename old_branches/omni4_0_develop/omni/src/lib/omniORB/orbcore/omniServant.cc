@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 18:10:23  sll
+  Use calldescriptor to handle upcalls to CORBA::Object operations.
+
   Revision 1.2.2.1  2000/07/17 10:35:56  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -68,17 +71,17 @@
 omniServant::~omniServant()
 {
   if( pd_identities ) {
-    omniORB::logger l;
-    l << "ERROR -- A servant has been deleted that is still activated.\n"
-      " repo id: " << _mostDerivedRepoId() << "\n";
-
-    omni::internalLock->lock();
-    omniLocalIdentity* id = pd_identities;
-    while( id ) {
-      l << "      id: " << id << '\n';
-      id = id->servantsNextIdentity();
+    if (omniORB::trace(1)) {
+      omniORB::logger l;
+      l << "ERROR -- A servant has been deleted that is still activated.\n";
+      omni::internalLock->lock();
+      omniLocalIdentity* id = pd_identities;
+      while( id ) {
+	l << "      id: " << id << '\n';
+	id = id->servantsNextIdentity();
+      }
+      omni::internalLock->unlock();
     }
-    omni::internalLock->unlock();
   }
 }
 

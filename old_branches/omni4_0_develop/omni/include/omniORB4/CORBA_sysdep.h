@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.4  2000/11/03 19:00:26  sll
+ Removed Suppress_Spurious_gcc_Warnings cpp macro.
+
  Revision 1.2.2.3  2000/10/27 15:42:03  dpg1
  Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -332,9 +335,6 @@
 #endif
 #define _HAS_NOT_GOT_strcasecmp
 #define _HAS_NOT_GOT_strncasecmp
-
-// No current version of MSVC++ can catch exceptions by base class
-#undef HAS_Cplusplus_catch_exception_by_base
 
 #define HAS_LongLong
 #define _CORBA_LONGLONG_DECL   __int64

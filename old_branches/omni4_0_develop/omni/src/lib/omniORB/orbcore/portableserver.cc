@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 18:04:43  sll
+  Use new string allocation functions. Updated to use the new calldescriptor.
+
   Revision 1.2.2.1  2000/07/17 10:35:58  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -227,21 +230,20 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   }
   else {
 
-    PortableServer::POA_var poa = this->_default_POA();
-
     {
       omni_tracedmutex_lock sync(*omni::internalLock);
 
       omniLocalIdentity* id = _identities();
 
       if( id && !id->servantsNextIdentity() ) {
-	// We only have a single activation -- return a
-	// reference to it.
+	// We only have a single activation -- return a reference to it.
 	omniObjRef* ref = omni::createObjRef(_mostDerivedRepoId(), repoId, id);
 	OMNIORB_ASSERT(ref);
 	return ref->_ptrToObjRef(repoId);
       }
     }
+
+    PortableServer::POA_var poa = this->_default_POA();
 
     if( CORBA::is_nil(poa) )
       OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
@@ -306,6 +308,13 @@ void
 PortableServer::RefCountServantBase::_add_ref()
 {
   ref_count_lock.lock();
+  // If the reference count is 0, then the object is either in the
+  // process of being deleted by _remove_ref, or has already been
+  // deleted. It is too late to be trying to _add_ref now. If the
+  // reference count is less than zero, then _remove_ref has been
+  // called too many times.
+  OMNIORB_USER_CHECK(pd_refCount > 0);
+
   pd_refCount++;
   ref_count_lock.unlock();
 }

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:34  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:05  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -77,7 +80,7 @@ private:
   virtual omniObjRef* _do_get_interface();
   // Overrides omniServant.
 
-
+protected:
   omniOrbBoaKey pd_key;
   // This is used only for construction/initialisation.
   // When the object is activated, the key in the id is

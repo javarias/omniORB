@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.3  2000/11/03 19:23:53  sll
+# Replace the old set of marshalling operators in the generated code with
+# a couple of unified operators for cdrStream. Changed template to correspond
+# to the new callDescriptor structure and the new way to dispatch a call on
+# the server side.
+#
 # Revision 1.3.2.2  2000/10/12 15:37:53  sll
 # Updated from omni3_1_develop.
 #
@@ -375,6 +381,8 @@ if( !strcmp(id, @inherited_name@::_PD_repoId) )
 """
 
 interface_sk = """\
+@sk_fqname@::@sk_name@(const omniOrbBoaKey& k) { pd_key = k; }
+
 @sk_fqname@::~@sk_name@() {}
 """
 

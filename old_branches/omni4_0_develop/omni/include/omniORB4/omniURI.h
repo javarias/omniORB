@@ -28,10 +28,11 @@
 //	*** PROPRIETARY INTERFACE ***
 //
 
-#include <iostream.h>
-
 // $Id$
 // $Log$
+// Revision 1.2.2.2  2000/09/27 17:12:03  sll
+// Updated to include from include/omniORB4.
+//
 // Revision 1.2.2.1  2000/07/17 10:35:35  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //

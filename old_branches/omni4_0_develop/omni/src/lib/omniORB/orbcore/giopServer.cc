@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.22.2.4  2000/11/03 19:12:05  sll
+  Use new marshalling functions for byte, octet and char. Use get_octet_array
+  instead of get_char_array and put_octet_array instead of put_char_array.
+
   Revision 1.22.2.3  2000/10/03 17:38:50  sll
   Fixed typo that cause user exception to be marshalled as system exception.
 
@@ -477,6 +481,9 @@ GIOP_S::HandleRequest()
       // message.
       pd_state = GIOP_S::Idle;
     }
+  }
+  catch(const omniORB::fatalException& ex) {
+      throw; // don't mask bugs!
   }
   catch(...) {
     if( omniORB::traceLevel > 1 ) {

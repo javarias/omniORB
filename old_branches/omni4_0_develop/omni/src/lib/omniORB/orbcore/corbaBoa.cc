@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.2  2000/09/27 17:53:27  sll
+  Updated to identify the ORB as omniORB4.
+
   Revision 1.16.2.1  2000/07/17 10:35:51  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -95,15 +98,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-#ifndef OMNIORB_USEHOSTNAME_VAR
-#define OMNIORB_USEHOSTNAME_VAR "OMNIORB_USEHOSTNAME"
-#endif
-
 static const char* boa_ids[] = { "omniORB4_BOA",
-			       "omniORB3_BOA", 
-			       "omniORB2_BOA", 
-			       0 };
+				 "omniORB3_BOA", 
+				 "omniORB2_BOA", 
+				 0 };
 
 static omniOrbBOA*                       the_boa = 0;
 static omni_tracedmutex                  boa_lock;

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.3  2000/10/03 17:39:46  sll
+ DefaultLoopback now works.
+
  Revision 1.2.2.2  2000/09/27 18:17:19  sll
  Use the new omniIOR class in defaultLoopBack().
 
@@ -93,11 +96,6 @@
 #define _tcpIncomingFactory tcpATMosMTincomingFactory
 #define _tcpIncomingRope    tcpATMosIncomingRope
 #define _tcpEndpoint        tcpATMosEndpoint
-#endif
-
-
-#ifndef OMNIORB_USEHOSTNAME_VAR
-#define OMNIORB_USEHOSTNAME_VAR "OMNIORB_USEHOSTNAME"
 #endif
 
 
@@ -186,7 +184,7 @@ omniObjAdapter::initialise()
       omniInitialReferences::initialise_bootstrap_agentImpl();
   }
   catch (...) {
-    throw;//?? hmm - this is probably quite bad.
+    OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
   }
 
   initialised = 1;

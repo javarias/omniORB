@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 18:02:56  sll
+  Updated to use the new cdrStream abstraction.
+
   Revision 1.2.2.1  2000/07/17 10:35:56  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -1394,10 +1397,15 @@ omniOrbPOA::lastInvocationHasCompleted(omniLocalIdentity* id)
 
   PortableServer::ServantActivator_ptr sa = 0;
 
+  // This lock _could_ go inside the body of the 'if' below, but I want
+  // to ensure that we take this lock no matter what.  The reason is to
+  // ensure that detached_object() is called (in deactivate_object())
+  // before met_detached_object() (below).  Otherwise we get a nasty
+  // race ...
+  pd_lock.lock();
+
   if( (pd_policy.req_processing == RPP_SERVANT_MANAGER &&
        pd_policy.retain_servants) || pd_dying ) {
-
-    pd_lock.lock();
 
     // The omniLocalIdentity still holds a reference to us, and
     // we hold a reference to the servant activator, so we don't
@@ -1410,9 +1418,9 @@ omniOrbPOA::lastInvocationHasCompleted(omniLocalIdentity* id)
       // Wait for apparent destruction.
       while( !pd_destroyed )  pd_deathSignal.wait();
     }
-
-    pd_lock.unlock();
   }
+
+  pd_lock.unlock();
 
   PortableServer::Servant servant = DOWNCAST(id->servant());
 

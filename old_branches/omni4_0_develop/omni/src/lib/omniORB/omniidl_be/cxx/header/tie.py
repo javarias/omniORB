@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.13.2.2  2000/10/12 15:37:52  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.14.2.2  2000/08/21 11:35:19  djs
 # Lots of tidying
 #
@@ -163,7 +166,9 @@ def write_template(name, inherits, node, stream,
 
             for parameter in parameters:
                 paramType = types.Type(parameter.paramType())
-                param_type_name = paramType.op(types.direction(parameter))
+                # Need to call the _impl operation not the _objref operation
+                param_type_name = paramType.op(types.direction(parameter),
+                                               use_out = 0)
                 param_id = id.mapID(parameter.identifier())
                 signature.append(param_type_name + " " + param_id)
                 call.append(param_id)

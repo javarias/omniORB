@@ -30,6 +30,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.2  2000/09/27 18:24:14  sll
+// Use omniObjRef::_toString and _fromString. Use the new omniIOR class and
+// createObjRef().
+//
 // Revision 1.2.2.1  2000/07/17 10:36:00  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //
@@ -205,8 +209,8 @@ CORBA::Boolean
 iorURIHandler::supports(const char* uri)
 {
   return ((uri[0] == 'I' || uri[0] == 'i') &&
-	  (uri[1] == 'O' || uri[0] == 'o') &&
-	  (uri[2] == 'R' || uri[0] == 'r') &&
+	  (uri[1] == 'O' || uri[1] == 'o') &&
+	  (uri[2] == 'R' || uri[2] == 'r') &&
 	  (uri[3] == ':'));
 }
 

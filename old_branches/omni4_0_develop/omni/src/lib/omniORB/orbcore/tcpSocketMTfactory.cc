@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.2.4  2000/10/06 16:38:34  sll
+  Replaced omniConnectionBroken with strand::raiseException().
+
   Revision 1.29.2.3  2000/09/27 18:32:41  sll
   Use the new reference counting scheme of Strand.
   New signature findIncoming() and findOrCreateOutgoing().
@@ -198,9 +201,9 @@
   Revision 1.5  1998/03/04 14:44:36  sll
   Updated to use omniORB::giopServerThreadWrapper.
 
-// Revision 1.4  1998/01/20  17:32:38  sll
-// Added support for OpenVMS.
-//
+  Revision 1.4  1998/01/20  17:32:38  sll
+  Added support for OpenVMS.
+
   Revision 1.3  1997/12/18 17:27:39  sll
   Updated to work under glibc-2.0.
 
@@ -1034,7 +1037,7 @@ tcpSocketStrand::ll_recv(void* buf, size_t sz)
     fds.fd = pd_socket;
     fds.events = POLLIN;
 
-    while (!(rx = poll(&fds,1,omniORB::scanGranularity()*1000) > 0)) {
+    while ((rx = poll(&fds,1,omniORB::scanGranularity()*1000)) <= 0) {
       if (rx == RC_SOCKET_ERROR && errno != EINTR) 
 	break;
     }
