@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.3  2000/02/17 11:18:05  dpg1
+# Multiple -p flags now preserve the order, rather than reversing it.
+#
 # Revision 1.15.2.2  2000/02/16 16:23:52  dpg1
 # Support things for Python neophytes.
 #
@@ -122,7 +125,7 @@ The supported flags are:
   -Wbarg[,arg...] Send args to the back-end
   -Cdir           Change directory to dir before writing output
   -d              Dump the parsed IDL then exit
-  -ppath          Path to omniidl back-ends
+  -pdir           Path to omniidl back-ends ($TOP/lib/python)
   -V              Print version info then exit
   -u              Print this usage message and exit
   -v              Trace compilation stages"""
