@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.9  2003/05/28 10:13:01  dgrisby
+// Preliminary interceptor support. General clean-up.
+//
 // Revision 1.1.2.8  2001/10/18 15:48:39  dpg1
 // Track ORB core changes.
 //
@@ -134,9 +137,11 @@ omniPy::produceSystemException(PyObject* eobj, PyObject* erepoId)
 
 #undef THROW_SYSTEM_EXCEPTION_IF_MATCH
 
-  Py_DECREF(erepoId); OMNIORB_THROW(UNKNOWN,
-				    UNKNOWN_SystemException,
-				    CORBA::COMPLETED_MAYBE);
+  Py_DECREF(erepoId);
+  if (m && c && v)
+    OMNIORB_THROW(UNKNOWN, UNKNOWN_SystemException, CORBA::COMPLETED_MAYBE);
+  else
+    OMNIORB_THROW(UNKNOWN, UNKNOWN_UserException, CORBA::COMPLETED_MAYBE);
 }
 
 
