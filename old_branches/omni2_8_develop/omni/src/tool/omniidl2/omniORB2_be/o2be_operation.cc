@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.34  1999/09/15 10:30:01  djr
+  produce_invoke() did not pass ctxt argument if operation had no
+  other arguments.
+
   Revision 1.33  1999/08/20 11:39:10  djr
   Removed debug output (left in by mistake!).
 
@@ -2507,48 +2511,56 @@ o2be_operation::produceUnMarshalCode(std::fstream& s, AST_Decl* decl,
 	  case tChar:
 	  case tOctet:
 	    IND(s); s << netstream << ".get_char_array((_CORBA_Char*) "
-		      << ptr_to_first_elm << ", " << total_length << ");\n";
+		      << (const char*)ptr_to_first_elm 
+		      << ", " << total_length << ");\n";
 	    break;
 
 	  case tShort:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayShort("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
 	  case tUShort:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayUShort("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
 	  case tLong:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayLong("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
 	  case tULong:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayULong("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
 	  case tEnum:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayULong("
 		      << netstream << ", (_CORBA_ULong*) "
-		      << ptr_to_first_elm << ", " << total_length << ");\n";
+		      << (const char*)ptr_to_first_elm 
+		      << ", " << total_length << ");\n";
 	    break;
 
 	  case tFloat:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayFloat("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
 	  case tDouble:
 	    IND(s); s << "CdrStreamHelper_unmarshalArrayDouble("
-		      << netstream << ", " << ptr_to_first_elm << ", "
+		      << netstream << ", " 
+		      << (const char*)ptr_to_first_elm << ", "
 		      << total_length << ");\n";
 	    break;
 
@@ -2940,13 +2952,15 @@ o2be_operation::produceMarshalCode(std::fstream& s, AST_Decl* decl,
 	  case tChar:
 	  case tOctet:
 	    IND(s); s << netstream << ".put_char_array((const _CORBA_Char*) "
-		      << ptr_to_first_elm << ", " << total_length << ");\n";
+		      << (const char*)ptr_to_first_elm 	
+		      << ", " << total_length << ");\n";
 	    break;
 
 	  case tShort:
 	  case tUShort:
 	    IND(s); s << netstream << ".put_char_array((const _CORBA_Char*) "
-		      << ptr_to_first_elm << ", " << (total_length * 2)
+		      << (const char*)ptr_to_first_elm 
+		      << ", " << (total_length * 2)
 		      << ", omni::ALIGN_2);\n";
 	    break;
 
@@ -2955,13 +2969,15 @@ o2be_operation::produceMarshalCode(std::fstream& s, AST_Decl* decl,
 	  case tEnum:
 	  case tFloat:
 	    IND(s); s << netstream << ".put_char_array((const _CORBA_Char*) "
-		      << ptr_to_first_elm << ", " << (total_length * 4)
+		      << (const char*)ptr_to_first_elm 
+		      << ", " << (total_length * 4)
 		      << ", omni::ALIGN_4);\n";
 	    break;
 
 	  case tDouble:
 	    IND(s); s << netstream << ".put_char_array((const _CORBA_Char*) "
-		      << ptr_to_first_elm << ", " << (total_length * 8)
+		      << (const char*)ptr_to_first_elm 
+		      << ", " << (total_length * 8)
 		      << ", omni::ALIGN_8);\n";
 	    break;
 
