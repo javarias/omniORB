@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.2  1999/09/24 17:11:12  djr
+  New option -ORBtraceInvocations and omniORB::traceInvocations.
+
   Revision 1.21.6.1  1999/09/22 14:26:49  djr
   Major rewrite of orbcore to support POA.
 
@@ -510,7 +513,7 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 	pd_operation = p;
       }
     get_char_array((CORBA::Octet*) pd_operation, octetlen);
-    if( pd_operation[octetlen - 1] != '\0' )
+    if( !octetlen || pd_operation[octetlen - 1] != '\0' )
       throw CORBA::MARSHAL(0, CORBA::COMPLETED_NO);
 
     octetlen <<= *this;
@@ -526,8 +529,6 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 	pd_principal = p;
       }
     get_char_array((CORBA::Octet*) pd_principal, octetlen);
-    if( pd_principal[octetlen - 1] != '\0' )
-      throw CORBA::MARSHAL(0, CORBA::COMPLETED_NO);
   }
   catch (CORBA::MARSHAL& ex) {
     RequestReceived(1);
