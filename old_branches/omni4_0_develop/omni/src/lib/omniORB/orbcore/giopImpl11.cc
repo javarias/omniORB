@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.20  2003/07/25 16:07:18  dgrisby
+  Incorrect COMM_FAILURE with GIOP 1.2 CloseConnection.
+
   Revision 1.1.4.19  2003/01/22 11:40:12  dgrisby
   Correct serverSendException interceptor use.
 
@@ -1583,7 +1586,14 @@ giopImpl11::outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize) {
     avail = (avail ? avail - 4 : 0);
 
     omni::ptr_arith_t newmkr = (omni::ptr_arith_t) g->pd_outb_mkr + avail;
-    if (newmkr < (omni::ptr_arith_t)g->pd_outb_end) {
+
+    // If the new position is inside the buffer, set the end pointer.
+    // Note that if avail is very large, newmkr may wrap around and be
+    // < pd_outb_mkr.
+
+    if ((newmkr >= (omni::ptr_arith_t)g->pd_outb_mkr &&
+	 newmkr <  (omni::ptr_arith_t)g->pd_outb_end)) {
+
       g->pd_outb_end = (void*) newmkr;
     }
   }
