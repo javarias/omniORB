@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.9  1998/08/13 22:46:47  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.8  1998/04/07 18:53:00  sll
   Stub code modified to accommodate the use of namespace to represent module.
   Use std::fstream instead of fstream.
@@ -123,7 +127,7 @@ o2be_typedef::produce_hdr(std::fstream &s)
     if (check_recursive_seq() == I_FALSE) {
       set_recursive_seq(I_FALSE);
       // TypeCode_ptr declaration
-      IND(s); s << VarToken(*this)
+      IND(s); s << variable_qualifier()
 		<< " const CORBA::TypeCode_ptr " << tcname() << ";\n";
     }
     else set_recursive_seq(I_TRUE);
@@ -219,6 +223,69 @@ o2be_typedef::produce_skel(std::fstream &s)
 		  << "_01RL_" << _fqtcname() << ";\n\n";
       }
   }
+}
+
+void
+o2be_typedef::produce_binary_operators_in_hdr(std::fstream &s)
+{
+  if (idl_global->compile_flags() & IDL_CF_ANY)
+    {
+      if (check_recursive_seq() == I_FALSE)
+	{
+	  set_recursive_seq(I_FALSE);
+
+	  AST_Decl *decl = base_type();
+	  
+	  while (decl->node_type() == AST_Decl::NT_typedef) {
+	    decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	  }
+
+	  switch (decl->node_type())
+	    {
+	    case AST_Decl::NT_sequence:
+	      o2be_sequence::narrow_from_decl(decl)
+		->produce_typedef_binary_operators_in_hdr(s,this);
+	      break;
+	    case AST_Decl::NT_array:
+	      if (base_type()->node_type() == AST_Decl::NT_array)
+		o2be_array::narrow_from_decl(decl)
+		  ->produce_binary_operators_in_hdr(s,this);
+	      break;
+	    default:
+	      break;
+	    }
+	}
+      else
+	set_recursive_seq(I_TRUE);
+    }
+}
+
+void
+o2be_typedef::produce_binary_operators_in_skel(std::fstream &s)
+{
+  if ((idl_global->compile_flags() &IDL_CF_ANY) && recursive_seq() == I_FALSE)
+    {
+      AST_Decl *decl = base_type();
+
+      while (decl->node_type() == AST_Decl::NT_typedef) {
+	decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+      }
+
+      switch (decl->node_type())
+	{
+	case AST_Decl::NT_sequence:
+	  o2be_sequence::
+	    narrow_from_decl(decl)->produce_typedef_binary_operators_in_skel(s,this);
+	  break;
+	case AST_Decl::NT_array:
+	  if (base_type()->node_type() == AST_Decl::NT_array)
+	    o2be_array::
+	      narrow_from_decl(decl)->produce_binary_operators_in_skel(s,this);
+	  break;
+	default:
+	  break;
+	}
+    }
 }
 
 void
