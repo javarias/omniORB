@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.14  1999/06/18 20:45:49  sll
+  Updated to support CORBA 2.3 mapping.
+
   Revision 1.13  1999/06/03 17:11:13  sll
   Updated to CORBA 2.2
 
@@ -801,7 +804,7 @@ o2be_structure::produce_binary_operators_in_dynskel(std::fstream &s)
   DEC_INDENT_LEVEL();
   IND(s); s << "} else {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "delete _sp; _sp = 0;\n";
+  IND(s); s << "delete (" << fqname() << " *)_sp; _sp = 0;\n";
   IND(s); s << "return 0;\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
