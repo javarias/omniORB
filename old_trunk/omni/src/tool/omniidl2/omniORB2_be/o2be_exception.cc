@@ -25,6 +25,9 @@
 
 /*
   $Log$
+  Revision 1.18  1999/07/19 09:49:32  djr
+  Put back prefix Exception/UserException onto type id of exceptions.
+
   Revision 1.17  1999/06/22 14:53:00  sll
   Fixed core dump when a member of an exception is a typedef of an interface.
   Cleanup any extraction operator signature and type casting.
@@ -545,7 +548,17 @@ o2be_exception::produce_skel(std::fstream &s)
 		  IND(s); s << "}\n";
 		  break;
 		}
-	  
+
+	      case o2be_operation::tObjref:
+		{
+		  o2be_interface* intf =
+		    o2be_interface::narrow_from_decl(dd->field_type());
+		  IND(s); s << intf->fqname() << "_Helper::duplicate(_"
+			    << dd->uqname() << ");\n";
+		  IND(s); s << dd->uqname() << " = _" << dd->uqname() << ";\n";
+		}
+		break;
+
 	      default:
 		IND(s); s << dd->uqname() << " = _" << dd->uqname() << ";\n";
 		break;
