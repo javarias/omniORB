@@ -3,6 +3,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.2  1999/07/29 14:16:03  dpg1
+# Server side support.
+#
 # Revision 1.1  1999/07/19 15:53:26  dpg1
 # Initial revision
 #
@@ -113,8 +116,7 @@ class Union:
                 return "_d = " + str(self._d) + ", " + self._def_m + \
                        " = " + str(self._v)
             else:
-                return "_d = " + str(self._d) + ", " + str(self._v) + \
-                       " (malformed)"
+                return "_d = " + str(self._d)
 
     def __getattr__(self, mem):
         try:
