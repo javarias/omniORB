@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.3  1999/09/27 11:01:13  djr
+  Modifications to logging.
+
   Revision 1.22.6.2  1999/09/24 15:01:39  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -1221,7 +1224,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
       omni_thread::sleep(1,0);
       continue;
     }
-    catch(const omniORB::fatalException& ex) {
+    catch(omniORB::fatalException& ex) {
       if (omniORB::trace(0)) {
 	omniORB::logger l;
 	l << "You have caught an omniORB bug, details are as follows:\n" <<

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.6.3  1999/09/27 11:01:12  djr
+  Modifications to logging.
+
   Revision 1.10.6.2  1999/09/24 15:01:37  djr
   Added module initialisers, and sll's new scavenger implementation.
 
@@ -512,8 +515,9 @@ Rope::incrRefCount(CORBA::Boolean held_anchor_mutex)
     pd_anchor->pd_lock.lock();
   {
     if (omniORB::trace(20)) {
-      omniORB::logger log("strand Rope::incrRefCount: ");
-      log << "old value = " << pd_refcount << "\n";
+      omniORB::logger log;
+      log << "strand Rope::incrRefCount: " << "old value = "
+	<< pd_refcount << "\n";
     }
   }
   OMNIORB_ASSERT(pd_refcount >= 0);
@@ -531,8 +535,8 @@ Rope::decrRefCount(CORBA::Boolean held_anchor_mutex)
 
   {
     if (omniORB::trace(20)) {
-      omniORB::logger log("strand Rope::decrRefCount: ");
-      log << "old value = " << pd_refcount << "\n";
+      omniORB::logger log;
+      log << "strand Rope::decrRefCount: old value = " << pd_refcount << "\n";
     }
   }
 
