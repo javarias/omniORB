@@ -30,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.7  1998/04/07 19:41:57  sll
+  Updated for when omniORB is a namespace.
+
 // Revision 1.6  1998/01/20  17:32:26  sll
 // Added support for OpenVMS.
 //
@@ -100,7 +103,11 @@ omniORB::generateNewKey(omniORB::objectKey& k)
       // On unices, add the process id to med.
       // Initialise lo to 0.
       struct timeval v;
+#ifndef __SINIX__
       gettimeofday(&v,0);
+#else
+      gettimeofday(&v);
+#endif
       omniORB::seed.hi = v.tv_sec;
       omniORB::seed.med = (v.tv_usec << 12);
 #if defined(UnixArchitecture) || defined(__VMS)
