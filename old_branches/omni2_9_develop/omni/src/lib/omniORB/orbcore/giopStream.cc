@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  1999/11/05 14:44:57  sll
+  Fully initialise the return value of requestInfo::targetAddress() even if
+  the addressing mode is only GIOP::ProfileAddr. This is done when the target
+  object is unknown. There may be a MapTargetAddressToObjectFunction
+  registered to look into targetAddress().
+
   Revision 1.1.2.5  1999/11/04 20:20:19  sll
   GIOP engines can now do callback to the higher layer to calculate total
   message size if necessary.
@@ -879,10 +885,15 @@ giopStream::garbageCollect()
       switch (p->pd_state) {
       case UnUsed:
 	{
-	  giopStream* q = p;
-	  p = (giopStream*) p->pd_next;
-	  delete q;
-	  continue;
+	  if (p->pd_nwaiting) {
+	    rc = 0;
+	  }
+	  else {
+	    giopStream* q = p;
+	    p = (giopStream*) p->pd_next;
+	    delete q;
+	    continue;
+	  }
 	}	
       case OutputIdle:
       case InputIdle:
@@ -921,7 +932,7 @@ giopStream::is_unused()
 
   while (p) {
 
-    if (p->pd_state == UnUsed) {
+    if (p->pd_state == UnUsed && !p->pd_nwaiting) {
       giopStream* q = p;
       p = (giopStream*) p->pd_next;
       delete q;
