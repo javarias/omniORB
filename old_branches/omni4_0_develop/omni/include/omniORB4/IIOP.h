@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // IIOP.h                     Created on: 8/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:06:43  sll
+  New helper functions to decode an IOR.
+
   Revision 1.2.2.1  2000/07/17 10:35:34  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
