@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.3  2000/10/24 09:53:31  dpg1
+// Clean up omniidl system dependencies. Replace use of _CORBA_ types
+// with IDL_ types.
+//
 // Revision 1.3.2.2  2000/09/22 10:50:21  dpg1
 // Digital Unix uses strtoul, not strtoull
 //
@@ -146,6 +150,14 @@ IdlIntLiteral
 idl_strtoul(const char* text, int base)
 {
   return strtoul(text, 0, base);
+}
+
+#  elif defined(__freebsd__)
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtouq(text, 0, base);
 }
 
 #  else
