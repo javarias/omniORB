@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  2000/01/17 17:06:56  djs
+# Better handling of recursive and constructed types
+#
 # Revision 1.9  2000/01/13 15:56:35  djs
 # Factored out private identifier prefix rather than hard coding it all through
 # the code.
@@ -514,7 +517,7 @@ def visitUnion(node):
     discrim_cname = mangler.canonTypeName(switchType)
     discrim_type = env.principalID(deref_switchType)
 
-    allCaseValues = tyutil.allCaseValues(node)
+    allCaseValues = tyutil.allCases(node)
     isExhaustive = tyutil.exhaustiveMatch(switchType, allCaseValues)
 
     default_case = None

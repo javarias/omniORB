@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.24  2000/01/17 17:05:38  djs
+# Marshalling and constructed types fixes
+#
 # Revision 1.23  2000/01/14 15:57:20  djs
 # Added MSVC workaround for interface inheritance
 #
@@ -945,7 +948,7 @@ def visitUnion(node):
     deref_switchType = tyutil.deref(switchType)
 
     exhaustive = tyutil.exhaustiveMatch(switchType,
-                                        tyutil.allCaseValues(node))
+                                        tyutil.allCases(node))
     defaultCase = tyutil.getDefaultCaseAndMark(node)
     if defaultCase:
         defaultLabel = tyutil.getDefaultLabel(defaultCase)
