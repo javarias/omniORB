@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 18:31:47  sll
+  New constant CORBA::Object::repositoryID.
+  omni::myORBId and omni::myBOAId removed.
+
   Revision 1.5  1997/08/21 21:55:23  sll
   Added system exception TRANSACTION_REQUIRED, TRANSACTION_ROLLEDBACK,
   INVALID_TRANSACTION, WRONG_TRANSACTION.
@@ -39,6 +43,9 @@
   */
 
 #include <omniORB2/CORBA.h>
+
+// See the description of this variable in omniInternal.h
+const char* omniORB_2_4 = "omniORB version 2.4.x";
 
 const IOP::ProfileId       IOP::TAG_INTERNET_IOP = 0;
 const IOP::ProfileId       IOP::TAG_MULTIPLE_COMPONENTS = 1;
