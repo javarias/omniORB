@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/13 21:10:17  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.1  2003/03/23 21:01:57  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -70,9 +74,8 @@ protected:
   
 
 private:
-  SocketHandle_t       pd_socket;
-  CORBA::String_var    pd_filename;
-  CORBA::String_var    pd_address_string;
+  CORBA::String_var pd_filename;
+  CORBA::String_var pd_address_string;
 
   SocketHandle_t                   pd_new_conn_socket;
   giopConnection::notifyReadable_t pd_callback_func;
