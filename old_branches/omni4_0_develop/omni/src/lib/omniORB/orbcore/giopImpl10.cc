@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2001/09/12 19:43:19  sll
+  Enforce GIOP message size limit.
+
   Revision 1.1.4.11  2001/09/10 17:46:09  sll
   When a connection is broken, check if it has been shutdown orderly. If so,
   do a retry.
@@ -998,7 +1001,7 @@ giopImpl10::marshalRequestHeader(giopStream* g) {
     cs.put_octet_array(giop_c.key(),giop_c.keysize());
     operator>>= ((CORBA::ULong)calldesc.op_len(),cs);
     cs.put_octet_array((CORBA::Octet*) calldesc.op(), calldesc.op_len());
-    operator>>= ((CORBA::ULong)0,cs);
+    omni::myPrincipalID >>= cs;
     *((CORBA::ULong*)(hdr+8)) = cs.total();
 
 #if defined(PRE_CALCULATE_MESSAGE_SIZE)
@@ -1027,7 +1030,7 @@ giopImpl10::marshalRequestHeader(giopStream* g) {
   s.put_octet_array((CORBA::Octet*) calldesc.op(), calldesc.op_len());
 
   // principal
-  operator>>= ((CORBA::ULong)0,s);
+  omni::myPrincipalID >>= s;
 }
 
 ////////////////////////////////////////////////////////////////////////
