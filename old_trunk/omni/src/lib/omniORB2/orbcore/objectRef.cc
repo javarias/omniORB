@@ -29,6 +29,12 @@
  
 /*
   $Log$
+  Revision 1.27  1999/08/16 19:26:36  sll
+  Replace static variable dtor with initialiser object to enumerate the
+  list of remaining proxy objects on shutdown.
+  This new scheme avoids the problem that dtor of static variables on
+  different compilation units may be called in different order.
+
   Revision 1.26  1999/08/14 16:39:47  sll
   Changed locateObject. It does not throw an exception when an object is
   not found. Instead a nil pointer is returned.
@@ -939,8 +945,7 @@ public:
     for (i=0; i<omniORB::hash_table_size; i++)
       omniObject::localPyObjectTable[i] = 0;
 
-    omniObject::wrappedObjectTable = (void**)
-      (new void *[omniORB::hash_table_size]);
+    omniObject::wrappedObjectTable = new void*[omniORB::hash_table_size];
 
     for (i=0; i<omniORB::hash_table_size; i++)
       omniObject::wrappedObjectTable[i] = 0;
