@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.8  1999/08/24 12:37:20  djr
+ * TypeCode_struct and TypeCode_except modified to use 'const char*' properly.
+ *
  * Revision 1.7  1999/07/01 10:28:14  djr
  * Added two methods to TypeCode_pairlist.
  * Declare inline methods as inline.
@@ -304,7 +307,8 @@ public:
 
   virtual CORBA::Boolean NP_containsAnAlias();
   // Returns true if this TypeCode or any of its members
-  // is an alias.
+  // is an alias.  Used in the implementation of
+  // aliasExpand() below.
 
   virtual TypeCode_base* NP_aliasExpand(TypeCode_pairlist*);
   // Return a TypeCode equivalent to this, but with aliases expanded
@@ -312,6 +316,8 @@ public:
   // if necassary - ie. the instance it is invoked on really does
   // contain an alias.  This is necassary to reduce the number of
   // calls to NP_containsAnAlias that are necassary.
+  //  **This is used to implement aliasExpand() below, and should not
+  // be called directly**
 
   TypeCode_base* NP_compactTc();
   // Return a TypeCode equivalent to this, but with the optional
