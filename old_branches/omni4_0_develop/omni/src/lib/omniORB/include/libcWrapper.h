@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/24 16:43:25  sll
+  Switch to use Winsock 2. Removed reference to winsock.h. Let the pre-processor
+  define _WIN32_WINNT=0x0400 to select the right header.
+
   Revision 1.1.4.2  2001/06/13 20:11:37  sll
   Minor update to make the ORB compiles with MSVC++.
 
@@ -106,21 +110,22 @@ public:
 
 OMNI_NAMESPACE_END(omni)
 
-#ifdef _HAS_NOT_GOT_strcasecmp
-
 #if defined(_MSC_VER)
-#if    defined(_OMNIORB_LIBRARY)
-#define _NT_DLL_ATTR __declspec(dllexport)
+#  if defined(_OMNIORB_LIBRARY)
+#    define _NT_DLL_ATTR __declspec(dllexport)
+#  else
+#    define _NT_DLL_ATTR __declspec(dllimport)
+#  endif
 #else
-#define _NT_DLL_ATTR __declspec(dllimport)
-#endif
-#else
-#define _NT_DLL_ATTR
+#  define _NT_DLL_ATTR
 #endif
 
+#ifndef HAVE_STRCASECMP
 int _NT_DLL_ATTR strcasecmp(const char *s1, const char *s2);
-int _NT_DLL_ATTR strncasecmp(const char *s1, const char *s2,size_t n);
+#endif
 
+#ifndef HAVE_STRNCASECMP
+int _NT_DLL_ATTR strncasecmp(const char *s1, const char *s2,size_t n);
 #endif
 
 #endif // __LIBCWRAPPER_H__
