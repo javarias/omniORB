@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.14  2001/10/17 16:26:50  dpg1
+ Support for Sun CC > 5 in 4.x compatibility mode.
+
  Revision 1.2.2.13  2001/08/15 10:14:41  dpg1
  Remove obsolete USE_omniORB_logStream.
 
@@ -443,14 +446,6 @@
 
 #ifndef __cplusplus
 #error "Cannot use this C++ header file for non C++ programs."
-#endif
-
-#ifdef Status
-#error "Name conflict: Status is defined as a macro in a header file include before this."
-// X11's Xlib.h (and may be others) define Status as a macro. This name
-// conflicts with the Status type defined in the CORBA namespace.
-// To remove this error, make sure that the offending header file is included
-// after omniORB2/CORBA.h.
 #endif
 
 // Default flag values if not already overridden above

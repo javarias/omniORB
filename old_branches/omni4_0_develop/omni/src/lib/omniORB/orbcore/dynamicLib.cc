@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/08/21 11:02:14  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.2.2.6  2001/08/17 17:12:36  sll
   Modularise ORB configuration parameters.
 
@@ -142,15 +146,12 @@ CORBA::Boolean  orbParameters::acceptMisalignedTcIndirections = 0;
 ////////////////////////////////////////////////////////////////////////////
 static void init();
 static void deinit();
-static void marshal_context(cdrStream&, CORBA::Context_ptr cxtx,
-			    const char*const* which, int how_many);
 static void lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt);
 
 
 static omniDynamicLib orbcore_ops = {
   init,
   deinit,
-  marshal_context,
   lookup_id_lcfn
 };
 
@@ -169,17 +170,6 @@ static void
 deinit()
 {
 }
-
-static void
-marshal_context(cdrStream& s, CORBA::Context_ptr cxtx,
-		const char*const* which, int how_many)
-{
-  omniORB::logs(1, "Attempt to marshal context, but omniDynamic library"
-		" is not linked!");
-  OMNIORB_THROW(NO_IMPLEMENT,NO_IMPLEMENT_Unsupported, 
-		(CORBA::CompletionStatus)s.completion());
-}
-
 
 static void
 lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt)

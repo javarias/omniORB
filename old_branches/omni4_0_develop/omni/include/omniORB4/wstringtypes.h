@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/09/19 17:26:44  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.2.5  2001/08/17 13:44:08  dpg1
   Change freeing behaviour of string members and elements.
 
@@ -830,7 +833,7 @@ public:
 
   inline _CORBA_Unbounded_Sequence_WString(_CORBA_ULong   max,
 					   _CORBA_ULong   length,
-					   _CORBA_WChar**         value,
+					   _CORBA_WChar** value,
 					   _CORBA_Boolean release = 0)
     : _CORBA_Sequence_WString(max, length, value, release) {}
 

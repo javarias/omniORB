@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:48  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -63,10 +66,10 @@ public:
   virtual void set_return_type(TypeCode_ptr tc) = 0;
   virtual Any& return_value() = 0;
 
-  virtual Status  invoke() = 0;
-  virtual Status  send_oneway() = 0;
-  virtual Status  send_deferred() = 0;
-  virtual Status  get_response() = 0;
+  virtual void    invoke() = 0;
+  virtual void    send_oneway() = 0;
+  virtual void    send_deferred() = 0;
+  virtual void    get_response() = 0;
   virtual Boolean poll_response() = 0;
 
   virtual Boolean NP_is_nil() const = 0;

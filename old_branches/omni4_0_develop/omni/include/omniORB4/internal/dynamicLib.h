@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/17 17:09:39  sll
+  Use LinkHack.
+
   Revision 1.1.4.1  2001/04/18 17:18:17  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -88,10 +91,6 @@ public:
   // Initialisation
   void (*init)();
   void (*deinit)();
-
-  // Marshalling contexts.
-  void (*marshal_context)(cdrStream&, CORBA::Context_ptr cxtx,
-			  const char*const* which, int how_many);
 
   // Local call call-back function for CORBA::Repository::lookup_id().
   // This is needed to support the server side of _get_interface(),

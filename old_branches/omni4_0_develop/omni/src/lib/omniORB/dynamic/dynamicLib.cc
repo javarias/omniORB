@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/08/17 17:08:35  sll
+  Use LinkHack mechanism to ensure dynamicLib is linked.
+
   Revision 1.2.2.5  2001/04/19 09:14:14  sll
   Scoped where appropriate with the omni namespace.
 
@@ -64,15 +67,12 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 static void init();
 static void deinit();
-static void marshal_context(cdrStream&, CORBA::Context_ptr cxtx,
-			    const char*const* which, int how_many);
 static void lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt);
 
 
 static omniDynamicLib dynamic_ops = {
   init,
   deinit,
-  marshal_context,
   lookup_id_lcfn
 };
 
@@ -97,14 +97,6 @@ static void
 deinit()
 {
   omniORB::logs(5, "Deinitialising omniDynamic library.");
-}
-
-
-static void
-marshal_context(cdrStream& s, CORBA::Context_ptr ctxt,
-		const char*const* which, int how_many)
-{
-  CORBA::Context::marshalContext(ctxt, which, how_many, s);
 }
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.30  2001/10/19 11:06:45  dpg1
+  Principal support for GIOP 1.0. Correct some spelling mistakes.
+
   Revision 1.33.2.29  2001/09/20 14:18:12  dpg1
   Make hooked initialiser suitable for ORB restart.
 
@@ -638,6 +641,12 @@ omniOrbORB::omniOrbORB(int nil)
     pd_shutdown(0),
     pd_shutdown_in_progress(0)
 {
+}
+
+char*
+omniOrbORB::id()
+{
+  return CORBA::string_dup("");
 }
 
 

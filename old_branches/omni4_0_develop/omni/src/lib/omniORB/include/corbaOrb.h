@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/09/19 17:26:46  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.4.2  2001/08/01 10:08:20  dpg1
   Main thread policy.
 
@@ -62,6 +65,8 @@ class omniOrbORB : public CORBA::ORB {
 public:
   virtual ~omniOrbORB();
   omniOrbORB(int nil);
+
+  virtual char* id();
 
   virtual char* object_to_string(CORBA::Object_ptr);
   virtual CORBA::Object_ptr string_to_object(const char*);

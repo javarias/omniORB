@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  2001/04/18 17:18:18  sll
+ Big checkin with the brand new internal APIs.
+ These files were relocated and scoped with the omni namespace.
+
  Revision 1.5.2.2  2000/09/27 17:25:40  sll
  Changed include/omniORB3 to include/omniORB4.
 
@@ -60,25 +64,20 @@ public:
 
   virtual const char* context_name() const;
   virtual CORBA::Context_ptr parent() const;
-  virtual CORBA::Status create_child(const char*, CORBA::Context_out);
-  virtual CORBA::Status set_one_value(const char*, const CORBA::Any&);
-  virtual CORBA::Status set_values(CORBA::NVList_ptr);
-  virtual CORBA::Status delete_values(const char*);
-  virtual CORBA::Status get_values(const char* start_scope,
-				   CORBA::Flags op_flags,
-				   const char* pattern,
-				   CORBA::NVList_out values);
+  virtual void create_child(const char*, CORBA::Context_out);
+  virtual void set_one_value(const char*, const CORBA::Any&);
+  virtual void set_values(CORBA::NVList_ptr);
+  virtual void delete_values(const char*);
+  virtual void get_values(const char* start_scope,
+			  CORBA::Flags op_flags,
+			  const char* pattern,
+			  CORBA::NVList_out values);
   virtual CORBA::Boolean NP_is_nil() const;
   virtual CORBA::Context_ptr NP_duplicate();
 
   ///////////////////
   // omni internal //
   ///////////////////
-  const char* lookup_single(const char* name) const;
-  // Lookup single entry, starting at current scope, and looking in
-  // parent/grandparents etc. if necassary.
-  //  Retains ownership of the return value. Returns 0 if not found.
-
   void insert_single_consume(char* name, char* value);
   // Inserts a single entry, consuming the given name/value pair.
 
@@ -115,7 +114,7 @@ private:
   // name or property name respectively.
 
   void addChild(ContextImpl* c) {
-    omni_mutex_lock lock(pd_lock);
+    omni_tracedmutex_lock lock(pd_lock);
     c->pd_nextSibling = pd_children;
     pd_children = c;
   }
@@ -138,7 +137,7 @@ private:
   ContextImpl*       pd_nextSibling;  // linked list of siblings
   unsigned           pd_refCount;
 
-  omni_mutex         pd_lock;
+  omni_tracedmutex   pd_lock;
 
   // Manages access to <pd_entries>, <pd_children>, <pd_refCount> and the
   // <pd_nextSibling> pointers in its children.
