@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.2  2001/04/12 11:11:49  dpg1
+// Can now construct a fixed point object given another one.
+//
 // Revision 1.1.2.1  2001/04/09 15:22:15  dpg1
 // Fixed point support.
 //
@@ -85,16 +88,10 @@ omniPy::newFixedObject(PyObject* self, PyObject* args)
       }
       else if (PyLong_Check(pyv)) {
 	PyObject* pystr = PyObject_Str(pyv);
-	try {
-	  CORBA::Fixed f;
-	  f.NP_fromString(PyString_AsString(pystr), 1);
-	  Py_DECREF(pystr);
-	  return omniPy::newFixedObject(f);
-	}
-	catch (...) {
-	  Py_DECREF(pystr);
-	  throw;
-	}
+	omniPy::PyRefHolder pystr_holder(pystr);
+	CORBA::Fixed f;
+	f.NP_fromString(PyString_AsString(pystr), 1);
+	return omniPy::newFixedObject(f);
       }
       else if (omnipyFixed_Check(pyv)) {
 	return omniPy::newFixedObject(*((omnipyFixedObject*)pyv)->ob_fixed);
@@ -128,18 +125,12 @@ omniPy::newFixedObject(PyObject* self, PyObject* args)
 	}
 	else if (PyLong_Check(pyv)) {
 	  PyObject* pystr = PyObject_Str(pyv);
-	  try {
-	    CORBA::Fixed f;
-	    f.NP_fromString(PyString_AsString(pystr), 1);
-	    f.PR_changeScale(scale);
-	    f.PR_setLimits(digits, scale);
-	    Py_DECREF(pystr);
-	    return omniPy::newFixedObject(f);
-	  }
-	  catch (...) {
-	    Py_DECREF(pystr);
-	    throw;
-	  }
+	  omniPy::PyRefHolder pystr_holder(pystr);
+	  CORBA::Fixed f;
+	  f.NP_fromString(PyString_AsString(pystr), 1);
+	  f.PR_changeScale(scale);
+	  f.PR_setLimits(digits, scale);
+	  return omniPy::newFixedObject(f);
 	}
 	else if (PyString_Check(pyv)) {
 	  CORBA::Fixed f(PyString_AsString(pyv));

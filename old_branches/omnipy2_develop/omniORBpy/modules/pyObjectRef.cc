@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/05/10 15:16:03  dpg1
+// Big update to support new omniORB 4 internals.
+//
 // Revision 1.1.2.5  2001/03/13 10:38:07  dpg1
 // Fixes from omnipy1_develop
 //
@@ -344,14 +347,12 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
   }
   if (!PyInstance_Check(pyobjref)) {
     // Not an objref
-    CORBA::BAD_PARAM ex(0,compstatus);
-    return omniPy::handleSystemException(ex);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   }
   CORBA::Object_ptr objref = (CORBA::Object_ptr)getTwin(pyobjref, OBJREF_TWIN);
   if (!objref) {
     // Not an objref
-    CORBA::BAD_PARAM ex(0,compstatus);
-    return omniPy::handleSystemException(ex);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   }
 
   // To copy an object reference, we have to take a number of things
@@ -402,9 +403,22 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
     omniPy::InterpreterUnlocker _u;
     newooref = omniPy::createObjRef(targetRepoId, ooref->_getIOR(), 0, 0);
   }
-  return createPyCorbaObjRef(targetRepoId,
-			     (CORBA::Object_ptr)newooref->
-			             _ptrToObjRef(CORBA::Object::_PD_repoId));
+  PyObject* r = createPyCorbaObjRef(targetRepoId,
+				    (CORBA::Object_ptr)newooref->
+				      _ptrToObjRef(CORBA::Object::_PD_repoId));
+  if (!r) {
+    if (omniORB::trace(1)) {
+      {
+	omniORB::logger l;
+	l <<
+	  "Caught an unexpected Python exception trying to create an "
+	  "object reference.\n";
+      }
+      PyErr_Print();
+    }
+    OMNIORB_THROW(INTERNAL, 0, compstatus);
+  }
+  return r;
 }
 
 

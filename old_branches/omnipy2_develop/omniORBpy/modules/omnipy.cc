@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/05/10 15:16:01  dpg1
+// Big update to support new omniORB 4 internals.
+//
 // Revision 1.1.2.5  2001/04/09 16:28:49  dpg1
 // De-uglify ORB_init command line argument eating.
 //
@@ -61,7 +64,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
 PyInterpreterState* omniPy::pyInterpreter;
-omni_mutex*         omniPy::pyInterpreterLock;
 
 PyObject* omniPy::pyCORBAmodule;	// The CORBA module
 PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
@@ -507,7 +509,7 @@ extern "C" {
 OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 #undef DO_CALL_DESC_SYSTEM_EXCEPTON
 #endif
-    catch (const omniPy::PyUserException& ex) {
+    catch (omniPy::PyUserException& ex) {
       call_desc.reacquireInterpreterLock();
       ex.setPyExceptionState();
     }
@@ -707,8 +709,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
   {
     // Make sure Python is running multi-threaded
     PyEval_InitThreads();
-
-    omniPy::pyInterpreterLock = new omni_mutex;
 
     PyObject* m = Py_InitModule((char*)"_omnipy", omnipy_methods);
     PyObject* d = PyModule_GetDict(m);
