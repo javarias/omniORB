@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.2  2000/06/19 15:25:57  dpg1
+// Explicit cast to (const char*) when using String_var with logger.
+//
 // Revision 1.1.2.1  2000/05/24 17:15:37  dpg1
 // Added omniMapper.
 //
@@ -245,15 +248,26 @@ main(int argc, char** argv)
   argv[2] = new char[16];
   sprintf(argv[2], "%d", port);
 
-  orb = CORBA::ORB_init(argc, argv, "omniORB3");
+  try {
+    orb = CORBA::ORB_init(argc, argv, "omniORB3");
+  }
+  catch (CORBA::INITIALIZE& ex) {
+    cerr << "Failed to initialise the ORB." << endl;
+    return 1;
+  }
 
   // Get hold of the INS POA and activate it
-  {
+  try {
     CORBA::Object_var obj = orb->resolve_initial_references("omniINSPOA");
     inspoa                = PortableServer::POA::_narrow(obj);
 
     PortableServer::POAManager_var pm = inspoa->the_POAManager();
     pm->activate();
+  }
+  catch (CORBA::INITIALIZE& ex) {
+    cerr << "Failed to initialise the POA. "
+	 << "Is omniMapper is already running?" << endl;
+    return 1;
   }
 
   // Figure out config file name
