@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/24 09:51:45  djr
+  Moved from omniORB2 + some new files.
+
   Revision 1.11  1999/06/26 17:55:19  sll
   Added new exception return type terminateProcessing.
 
@@ -429,6 +432,10 @@ private:
   void HandleCancelRequest(_CORBA_Boolean byteorder);
   void HandleMessageError();
   void HandleCloseConnection();
+
+  void MaybeMarshalUserException(void*);
+  // Okay -- the void* is a nasty hack.  Its actually
+  // a CORBA::UserException*.
 };
 
 

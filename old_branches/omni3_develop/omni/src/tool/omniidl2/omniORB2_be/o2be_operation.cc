@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.34.6.1  1999/09/24 10:05:27  djr
+  Updated for omniORB3.
+
   Revision 1.33  1999/08/20 11:39:10  djr
   Removed debug output (left in by mistake!).
 
@@ -1336,7 +1339,7 @@ o2be_operation::produce_server_skel(std::fstream& s, AST_Decl* defined_in)
   // do the invocation
   ////////////////////
   if( !no_user_exception() ) {
-    s << "#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7\n";
+    s << "#ifndef HAS_Cplusplus_catch_exception_by_base\n";
     IND(s); s << "try {\n";
     s << "#endif\n";
     INC_INDENT_LEVEL();
@@ -1358,7 +1361,7 @@ o2be_operation::produce_server_skel(std::fstream& s, AST_Decl* defined_in)
     // pass down to the GIOP_S using a GIOP_S::UserException.
 
     DEC_INDENT_LEVEL();
-    s << "#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7\n";
+    s << "#ifndef HAS_Cplusplus_catch_exception_by_base\n";
     IND(s); s << "}\n";
     // Catch each user exception, and pass down to next level
     // using a GIOP_S::UserException.
@@ -1366,7 +1369,7 @@ o2be_operation::produce_server_skel(std::fstream& s, AST_Decl* defined_in)
     while( !i.is_done() ) {
       o2be_exception* e = o2be_exception::narrow_from_decl(i.item());
       IND(s); s << "catch(" << e->fqname() << "& ex) {\n";
-      IND(s); s << "  throw GIOP_S::UserException(ex._NP_duplicate());\n";
+      IND(s); s << "  throw omniORB::StubUserException(ex._NP_duplicate());\n";
       IND(s); s << "}\n";
       i.next();
     }

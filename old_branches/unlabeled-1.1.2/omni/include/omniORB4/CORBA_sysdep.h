@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  1999/09/24 09:51:38  djr
+ Moved from omniORB2 + some new files.
+
  Revision 1.39  1999/08/30 18:43:34  sll
  Removed ENABLE_CLIENT_IR_SUPPORT as the default define. Application code
  should define this macro if the code is to act as a client to an
@@ -142,6 +145,11 @@
 #define HAS_Cplusplus_const_cast
 // Unset this define if the compiler does not support const_cast<T*>
 
+#define HAS_Cplusplus_catch_exception_by_base
+// Unset this define if the compiler does not support catching
+// exceptions by base class.
+
+
 #if defined(__GNUG__)
 // GNU G++ compiler
 
@@ -149,6 +157,10 @@
 #     define SIZEOF_LONG 8
 #     define SIZEOF_INT  4
 #     define SIZEOF_PTR  8
+#  endif
+
+#  if __GNUG__ == 2 && __GNUC_MINOR__ == 7
+#     undef HAS_Cplusplus_catch_exception_by_base
 #  endif
 
 // Activate temporary workaround for a bug in post-1.0 egcs snapshots
