@@ -443,12 +443,14 @@ void initFile::invref(char* entryname)
 void initFile::noValsFound()
 {
   if (omniORB::traceLevel > 0) {
-    cerr << "Configuration error: No values found in registry key " 
+    cerr << "Configuration error: No values found in registry key"
+         << "\nHKEY_LOCAL_MACHINE\\" 
 	 << INIT_REGKEY << endl;
     cerr << "Either set the environment variable OMNIORB_CONFIG to point"
          << "\nto the omniORB configuration file, or enter the IOR for the"
          << "\nnaming service in to the registry in the (string) value"
-         << "\nNAMESERVICE , under the registry entry " << INIT_REGKEY << endl;
+         << "\nNAMESERVICE , under the registry entry HKEY_LOCAL_MACHINE\\" 
+	 << INIT_REGKEY << endl;
   }
 }
 
