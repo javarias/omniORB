@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/12/09 20:36:28  sll
+  Added TaggedProfileList_var class.
+
  * Revision 1.2  1997/05/06  16:07:17  sll
  * Public release.
  *
@@ -39,11 +42,11 @@
 #ifndef __IOP_H__
 #define __IOP_H__
 
-class _OMNIORB2_NTDLL_ IOP {
+class IOP {
 public:
   typedef _CORBA_ULong ProfileId;
-  static const   ProfileId    TAG_INTERNET_IOP;
-  static const   ProfileId    TAG_MULTIPLE_COMPONENTS;
+  static _OMNIORB_NTDLL_IMPORT const   ProfileId    TAG_INTERNET_IOP;
+  static _OMNIORB_NTDLL_IMPORT const   ProfileId    TAG_MULTIPLE_COMPONENTS;
 
   struct TaggedProfile {
     ProfileId tag;
@@ -155,7 +158,7 @@ public:
 
   typedef _CORBA_Unbounded_Sequence<ServiceContext> ServiceContextList;
 
-  static const ServiceID TransactionService;
+  static _OMNIORB_NTDLL_IMPORT const ServiceID TransactionService;
 
 
   // omniORB2 private function
