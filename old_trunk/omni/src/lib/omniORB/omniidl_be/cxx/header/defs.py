@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  1999/12/14 11:52:30  djs
+# Support for CORBA::TypeCode and CORBA::Any
+#
 # Revision 1.11  1999/12/01 17:03:15  djs
 # Added support for Typecodes and Anys
 #
@@ -684,6 +687,11 @@ typedef @base@ @name@;""",
                 elif tyutil.isObjRef(seqDerefType):
                     element = environment.principalID(seqType) + "_ptr"
                     element_IN = element
+                # only if an anonymous sequence
+                elif tyutil.isSequence(seqType):
+                    element = tyutil.sequenceTemplate(seqDerefType,
+                                                      environment)
+                    element_IN = element
                 else:
                     element = environment.principalID(seqType)
                     element_IN = element
@@ -694,6 +702,10 @@ typedef @base@ @name@;""",
                 elif tyutil.isObjRef(seqDerefType) and \
                      not(is_array):
                     element_ptr = environment.principalID(seqType) + "_ptr"
+                # only if an anonymous sequence
+                elif tyutil.isSequence(seqType) and \
+                     not(is_array):
+                    element_ptr = element
                 else:
                     element_ptr = environment.principalID(seqType)
                     
@@ -784,6 +796,9 @@ typedef @base@ @name@;""",
                         element_reference = tyutil.objRefTemplate(seqDerefType,
                                                                   "Member",
                                                                   environment)
+                    # only if an anonymous sequence
+                    elif tyutil.isSequence(seqType):
+                        element_reference = tyutil.sequenceTemplate(seqDerefType, environment) + "&"
                     else:
                         element_reference = element + "&"
                     subscript_operator_var.out("""\

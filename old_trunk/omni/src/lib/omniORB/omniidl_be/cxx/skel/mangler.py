@@ -30,6 +30,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  1999/12/14 11:53:23  djs
+# Support for CORBA::TypeCode and CORBA::Any
+# Exception member bugfix
+#
 # Revision 1.7  1999/12/13 10:50:07  djs
 # Treats the two call descriptors associated with an attribute separately,
 # since it can happen that one needs to be generated but not the other.
@@ -151,6 +155,15 @@ def canonTypeName(type, decl = None, useScopedName = 0):
 
     deref_type = tyutil.deref(type)
 
+    # consider anonymous sequence<sequence<....
+    if tyutil.isSequence(type) and \
+          tyutil.isSequence(type.seqType()):
+        bound = type.bound()
+        canon_name = canon_name + SEQ_SEPARATOR + str(bound)
+        return canon_name + canonTypeName(type.seqType(),
+                                          None, useScopedName)
+        
+
     # sometimes we don't want to call a sequence a sequence
     # (operation signatures)
     if useScopedName and not(is_array) and \
@@ -158,8 +171,8 @@ def canonTypeName(type, decl = None, useScopedName = 0):
         # find the last typedef in the chain
         while tyutil.isTypedef(type.decl().alias().aliasType()):
             type = type.decl().alias().aliasType()
-        return canon_name + CANNON_NAME_SEPARATOR +\
-               string.join(type.scopedName(), SCOPE_SEPARATOR)
+        scopedName = produce_idname(type.scopedName())
+        return canon_name + CANNON_NAME_SEPARATOR + scopedName
 
     # _arrays_ of sequences seem to get handled differently
     # to simple aliases to sequences
