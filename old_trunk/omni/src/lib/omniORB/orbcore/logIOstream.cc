@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.6  1999/09/01 12:57:46  djr
+  Added atomic logging class omniORB::logger, and methods logf() and logs().
+
   Revision 1.5  1999/03/11 16:25:54  djr
   Updated copyright notice
 
@@ -269,10 +272,10 @@ omniORB::logger::operator<<(double n)
 void
 omniORB::logger::flush()
 {
-  if( (size_t)(pd_p - pd_buf) != strlen(PREFIX) )
+  if( (size_t)(pd_p - pd_buf) != strlen(pd_prefix) )
     fprintf(stderr, "%s", pd_buf);
 
-  pd_p = pd_buf + strlen(PREFIX);
+  pd_p = pd_buf + strlen(pd_prefix);
   *pd_p = '\0';
 }
 
