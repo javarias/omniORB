@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/10/14 15:27:41  dgrisby
+  Typo in fcntl error check.
+
   Revision 1.1.2.10  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -184,12 +187,12 @@ SocketCollection::setSelectable(SocketHandle_t sock,
     pd_n_fdset_1++;
     FD_SET(sock,&pd_fdset_1);
   }
-  if (now) {
+  if (now || data_in_buffer) {
     if (!FD_ISSET(sock,&pd_fdset_2)) {
       pd_n_fdset_2++;
       FD_SET(sock,&pd_fdset_2);
     }
-    // XXX poke the thread doing accept to look at the fdset immediately.
+    // XXX poke the thread doing select to look at the fdset immediately.
   }
 
   if (!hold_lock) pd_fdset_lock.unlock();
@@ -252,7 +255,6 @@ SocketCollection::Select() {
     pd_n_fdset_2 = pd_n_fdset_1;
   }
   else {
-
     omni_tracedmutex_lock sync(pd_fdset_lock);
     rfds  = pd_fdset_2;
     total = pd_n_fdset_2;
@@ -299,29 +301,31 @@ SocketCollection::Select() {
     }
   }
 
-  if (nready > 0) {
+  {
     omni_tracedmutex_lock sync(pd_fdset_lock);
-
-    // Process the result from the select.
     SocketHandle_t fd = 0;
-    while (nready) {
-      if (FD_ISSET(fd,&rfds)) {
-	nready--;
-	if (FD_ISSET(fd,&pd_fdset_2)) {
-	  pd_n_fdset_2--;
-	  FD_CLR(fd,&pd_fdset_2);
-	  if (FD_ISSET(fd,&pd_fdset_1)) {
-	    pd_n_fdset_1--;
-	    FD_CLR(fd,&pd_fdset_1);
+
+    if (nready > 0) {
+      // Process the result from the select.
+      while (nready) {
+	if (FD_ISSET(fd,&rfds)) {
+	  nready--;
+	  if (FD_ISSET(fd,&pd_fdset_2)) {
+	    pd_n_fdset_2--;
+	    FD_CLR(fd,&pd_fdset_2);
+	    if (FD_ISSET(fd,&pd_fdset_1)) {
+	      pd_n_fdset_1--;
+	      FD_CLR(fd,&pd_fdset_1);
+	    }
+	    if (FD_ISSET(fd,&pd_fdset_dib)) {
+	      pd_n_fdset_dib--;
+	      FD_CLR(fd,&pd_fdset_dib);
+	    }
+	    if (!notifyReadable(fd)) return 0;
 	  }
-	  if (FD_ISSET(fd,&pd_fdset_dib)) {
-	    pd_n_fdset_dib--;
-	    FD_CLR(fd,&pd_fdset_dib);
-	  }
-	  if (!notifyReadable(fd)) return 0;
 	}
+	fd++;
       }
-      fd++;
     }
 
     // Process pd_fdset_dib. Those sockets with their bit set have
