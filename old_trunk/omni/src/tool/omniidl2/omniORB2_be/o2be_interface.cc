@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.31  1999/04/15 14:12:05  djr
+  Fixed bug w TIE templates (wrong when using diamond shaped multiple
+  inheritance.
+
   Revision 1.30  1999/03/11 16:26:13  djr
   Updated copyright notice
 
@@ -2640,7 +2644,11 @@ o2be_interface::produce_dynskel(std::fstream &s)
 	AST_Decl *d = i.item();
 	switch(d->node_type()) {
 	case AST_Decl::NT_op:
+	  o2be_operation::narrow_from_decl(d)->produce_dynskel(s);
+	  break;
 	case AST_Decl::NT_attr:
+	  o2be_attribute::narrow_from_decl(d)->produce_dynskel(s);
+	  break;
 	case AST_Decl::NT_enum_val:
 	  break;
 	case AST_Decl::NT_const:
@@ -2729,6 +2737,14 @@ o2be_interface::produce_decls_at_global_scope_in_hdr(std::fstream& s)
       break;
     case AST_Decl::NT_interface:
       o2be_interface::narrow_from_decl(d)
+	->produce_decls_at_global_scope_in_hdr(s);
+      break;
+    case AST_Decl::NT_op:
+      o2be_operation::narrow_from_decl(d)
+	->produce_decls_at_global_scope_in_hdr(s);
+      break;
+    case AST_Decl::NT_attr:
+      o2be_attribute::narrow_from_decl(d)
 	->produce_decls_at_global_scope_in_hdr(s);
       break;
     default:
