@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16  1999/03/11 16:25:57  djr
+  Updated copyright notice
+
   Revision 1.15  1999/02/19 12:22:33  djr
   Fixed typo: sunsos -> sunos
 
@@ -105,7 +108,21 @@
 #else
 
 #include <sys/time.h>
+
+#if !defined(__linux__) || !defined(__CIAO__)
 #include <sys/socket.h>
+#else
+// This bit of ugly work around is to hide away the non ansi
+// syntax in the headers that causes CCia to complain loudly.
+#  ifndef __STRICT_ANSI__
+#    define __STRICT_ANSI__
+#    include <sys/socket.h>
+#    undef  __STRICT_ANSI__
+#  else
+#    include <sys/socket.h>
+#  endif
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -138,7 +155,8 @@
 #include <libcWrapper.h>
 #include <gatekeeper.h>
 
-#ifdef NEED_GETHOSTNAME_PROTOTYPE
+
+#if defined(NEED_GETHOSTNAME_PROTOTYPE)
 extern "C" int gethostname(char *name, int namelen);
 #endif
 
@@ -764,8 +782,10 @@ tcpSocketStrand::shutdown()
       char* p = closeConnectionMessage;
       while (sz) {
 	fd_set wrfds;
+#       ifndef __CIAO__
 	FD_ZERO(&wrfds);
 	FD_SET(pd_socket,&wrfds);
+#       endif
 	struct timeval t = { 5,0};
 	int rc;
 	if ((rc = select(pd_socket+1,0,&wrfds,0,&t)) <= 0) {
@@ -844,8 +864,10 @@ realConnect(tcpSocketEndpoint* r)
       return RC_INVALID_SOCKET;
     }
     fd_set wrfds;
+#   ifndef __CIAO__
     FD_ZERO(&wrfds);
     FD_SET(sock,&wrfds);
+#   endif
     struct timeval t = { 30,0 };
     int rc;
     if ((rc = select(sock+1,0,&wrfds,0,&t)) <= 0) {
@@ -1044,8 +1066,10 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 
     {
       fd_set rdfds;
+#     ifndef __CIAO__
       FD_ZERO(&rdfds);
       FD_SET(r->pd_rendezvous,&rdfds);
+#     endif
       struct timeval t = { 1,0};
       int rc;
       if ((rc = select(r->pd_rendezvous+1,&rdfds,0,0,&t)) <= 0) {
