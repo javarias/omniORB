@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17  1999/03/11 16:25:54  djr
+  Updated copyright notice
+
   Revision 1.16  1999/01/07 16:12:12  djr
   Added support for the server side _interface() operation.
 
@@ -46,6 +49,9 @@
   Temporary work-around for egcs compiler.
 
   $Log$
+  Revision 1.17  1999/03/11 16:25:54  djr
+  Updated copyright notice
+
   Revision 1.16  1999/01/07 16:12:12  djr
   Added support for the server side _interface() operation.
 
@@ -114,7 +120,7 @@ omniObject::omniObject(omniObjectManager* m)    // ctor for local object
     pd_objkeysize = sizeof(pd_objkey.native);
     pd_manager = ((m) ? m : omniObjectManager::root());
     IOP::TaggedProfileList_var pl(new IOP::TaggedProfileList);
-    ropeFactory_iterator iter(*(pd_manager->incomingRopeFactories()));
+    ropeFactory_iterator iter(pd_manager->incomingRopeFactories());
     incomingRopeFactory* rp;
     while ((rp = (incomingRopeFactory*) iter())) {
       rp->getIncomingIOPprofiles((CORBA::Octet*)&pd_objkey.native,
@@ -269,7 +275,7 @@ omniObject::setRopeAndKey(const omniRopeAndKey& l,
       IOP::TaggedProfileList_var np;
       np = new IOP::TaggedProfileList;
       {
-	ropeFactory_iterator iter(*(pd_manager->incomingRopeFactories()));
+	ropeFactory_iterator iter(pd_manager->incomingRopeFactories());
 	incomingRopeFactory* rp;
 	while ((rp = (incomingRopeFactory*) iter())) {
 	  rp->getIncomingIOPprofiles((CORBA::Octet*)&pd_objkey.native,
@@ -933,3 +939,5 @@ internal_get_interface(const char* repoId)
   OmniProxyCallWrapper::invoke(repository->PR_getobj(), call_desc);
   return call_desc.result();
 }
+
+

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10  1999/06/26 18:05:03  sll
+  New option -BOAiiop_name_port.
+
   Revision 1.9  1999/05/25 17:17:41  sll
   Added check for invalid argument in static member functions.
 
@@ -133,7 +136,7 @@ BOAobjectManager::defaultLoopBack()
     // Locate the incoming tcpSocket Rope, read its address and
     // use this address to create a new outgoing tcpSocket Rope.
     {
-      ropeFactory_iterator iter(pd_factories);
+      ropeFactory_iterator iter(&pd_factories);
       incomingRopeFactory* factory;
       while ((factory = (incomingRopeFactory*) iter())) {
 	if (factory->getType()->is_protocol( _tcpEndpoint ::protocol_name))
@@ -197,7 +200,7 @@ ORB::BOA_init(int &argc, char **argv, const char *boa_identifier)
       throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
     }
 
-    ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+    ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
     incomingRopeFactory* factory;
 
     while ((factory = (incomingRopeFactory*)iter())) {
@@ -265,7 +268,7 @@ BOA::impl_is_ready(CORBA::ImplementationDef_ptr p,CORBA::Boolean NonBlocking)
       // thread both try to grep the mutex in factory->anchor().
       // To prevent this from happening, put this block of code in a separate
       // scope.
-      ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+      ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
       incomingRopeFactory* factory;
       while ((factory = (incomingRopeFactory*)iter())) {
 	factory->startIncoming();
@@ -300,7 +303,7 @@ BOA::impl_shutdown()
       // thread both try to grep the mutex in factory->anchor().
       // To prevent this from happening, put this block of code in a separate
       // scope.
-      ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+      ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
       incomingRopeFactory* factory;
       while ((factory = (incomingRopeFactory*)iter())) {
 	factory->stopIncoming();
@@ -324,7 +327,7 @@ BOA::destroy()
     // thread both try to grep the mutex in factory->anchor().
     // To prevent this from happening, put this block of code in a separate
     // scope.
-    ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+    ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
     incomingRopeFactory* factory;
     while ((factory = (incomingRopeFactory*)iter())) {
       if (internalBlockingFlag > 0) {
@@ -530,7 +533,7 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	}
 	try {
 	  _tcpEndpoint e (hostname,(CORBA::UShort)port);
-	  ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+	  ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
 	  incomingRopeFactory* factory;
 	  while ((factory = (incomingRopeFactory*)iter())) {
 	    if (factory->getType()->is_protocol( _tcpEndpoint ::protocol_name)) {
@@ -598,7 +601,7 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 
         try {
           _tcpEndpoint e ((CORBA::Char*)hostname,(CORBA::UShort)port);
-          ropeFactory_iterator iter(*rootObjectManager->incomingRopeFactories());
+          ropeFactory_iterator iter(rootObjectManager->incomingRopeFactories());
           incomingRopeFactory* factory;
           while ((factory = (incomingRopeFactory*)iter())) {
             if (factory->getType()->is_protocol( _tcpEndpoint ::protocol_name)) {

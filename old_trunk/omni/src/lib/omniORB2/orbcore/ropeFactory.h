@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.6  1999/07/02 19:10:08  sll
+ Removed inlined virtual destructors. Some compilers generate a copy of
+ each destructor in each compilation unit.
+
  Revision 1.5  1999/03/11 16:25:55  djr
  Updated copyright notice
 
@@ -361,9 +365,9 @@ private:
 
 class ropeFactory_iterator {
 public:
-  ropeFactory_iterator(ropeFactoryList& l) : pd_l(l) { 
-    l.lock(); 
-    pd_this = l.pd_head; 
+  ropeFactory_iterator(ropeFactoryList* l) : pd_l(*l) { 
+    pd_l.lock(); 
+    pd_this = pd_l.pd_head; 
   }
   virtual ~ropeFactory_iterator();
   const ropeFactory* operator() () {
@@ -382,6 +386,6 @@ private:
 // make outgoing ropes. To make the ORB recognise and use a new rope
 // factory instance, the instance must be registered using:
 //   globalRopeFactories.insert().
-extern ropeFactoryList globalOutgoingRopeFactories;
+extern ropeFactoryList* globalOutgoingRopeFactories;
 
 #endif // __ROPEFACTORY_H__
