@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.10  2001/06/11 13:06:25  dpg1
+// Support for PortableServer::Current.
+//
 // Revision 1.1.2.9  2001/06/01 11:09:25  dpg1
 // Make use of new omni::ptrStrCmp() and omni::strCmp().
 //
@@ -64,6 +67,7 @@
 #define DLL_EXPORT
 #endif
 
+#include <omniORB4/pydistdate.hh>
 #include <omnipy.h>
 #include <pyThreadCache.h>
 
@@ -358,6 +362,11 @@ extern "C" {
       orb = CORBA::ORB_init(argc, argv, orbid);
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    if (omniORB::trace(2)) {
+      omniORB::logger l;
+      l << "omniORBpy distribution date: " OMNIORBPY_DIST_DATE "\n";
+    }
 
     omniPy::orb = orb;
 
