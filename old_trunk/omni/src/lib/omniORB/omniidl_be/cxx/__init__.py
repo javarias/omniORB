@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/04 19:05:01  djs
+# Finished moving code from tmp_omniidl. Regression tests ok.
+#
 # Revision 1.2  1999/11/03 17:35:06  djs
 # Brought more of the old tmp_omniidl code into the new tree
 #
@@ -42,6 +45,8 @@ from omniidl.be.cxx import header
 
 import re
 
+cpp_args = ["-D__OMNIIDL_CXX__"]
+
 def run(tree, args):
     """Entrypoint to the C++ backend"""
 
@@ -50,6 +55,7 @@ def run(tree, args):
 #    print "Better do something!"
 
 #    print "I know, I'll generate the header."
+
 
     filename = tree.file()
     regex = re.compile(r"\.idl")
