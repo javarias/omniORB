@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/04/27 10:39:18  dpg1
+  Interoperable Naming Service
+
+  Moved from bootstrap_i.h, and extended.
+
   Revision 1.4.6.2  1999/09/27 08:48:31  djr
   Minor corrections to get rid of warnings.
 
@@ -55,7 +60,7 @@
 #define __INITREFS_H__
 
 
-#include <bootstrap.hh>
+#include <omniORB3/bootstrap.hh>
 
 
 class CORBA_InitialReferences_i;
