@@ -6,8 +6,10 @@
 // Copyright (C) Olivetti - Oracle Research Limited, 1996
 //
 // Description:
-//	Implementation of the Strand using TCP/IP and socket interface
+//	Implementation of the Strand using TCP/IP and ATMos IP package
+//      interface.
 //	
+
 
 /*
   $Log$
