@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.22  2004/05/05 11:02:01  dgrisby
+  Bug in system exception marshalling with GIOP 1.1. Thanks Paul Haesler.
+
   Revision 1.1.4.21  2004/02/06 16:17:45  dgrisby
   Properly handle large giopMaxMsgSize settings.
 
@@ -1164,8 +1167,8 @@ giopImpl11::marshalRequestHeader(giopStream* g) {
   omniInterceptors::clientSendRequest_T::info_T info(*g,
 				                     *(giop_c.ior()),
 						     calldesc.op(),
-						     response_expected,
-						     !response_expected);
+						     !response_expected,
+						     response_expected);
   omniInterceptorP::visit(info);
 
   // service context

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.20  2003/07/25 16:07:18  dgrisby
+  Incorrect COMM_FAILURE with GIOP 1.2 CloseConnection.
+
   Revision 1.1.4.19  2003/01/22 11:40:12  dgrisby
   Correct serverSendException interceptor use.
 
@@ -1023,8 +1026,8 @@ giopImpl10::marshalRequestHeader(giopStream* g) {
   omniInterceptors::clientSendRequest_T::info_T info(*g,
 				                     *(giop_c.ior()),
 						     calldesc.op(),
-						     response_expected,
-						     !response_expected);
+						     !response_expected,
+						     response_expected);
   omniInterceptorP::visit(info);
 
   {

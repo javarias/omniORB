@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.25  2004/06/18 14:45:24  dgrisby
+  Obscure and rare bug in GIOP 1.2 system exception sending.
+
   Revision 1.1.4.24  2004/05/25 14:02:22  dgrisby
   Properly close bidirectional connections.
 
@@ -1415,8 +1418,8 @@ giopImpl12::marshalRequestHeader(giopStream* g) {
   omniInterceptors::clientSendRequest_T::info_T info(*g,
 				                     *(giop_c.ior()),
 						     calldesc.op(),
-						     response_expected,
-						     !response_expected);
+						     !response_expected,
+						     response_expected);
   omniInterceptorP::visit(info);
 
   CORBA::Octet v = 0;
