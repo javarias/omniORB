@@ -30,6 +30,10 @@
 
 /* 
  * $Log$
+ * Revision 1.29  1999/07/01 10:27:38  djr
+ * Fixed NP_aliasExpand().
+ * Added omg.org to a few IR repo IDs.
+ *
  * Revision 1.28  1999/06/22 15:02:07  sll
  * Corrected bug in TypeCode_alias::NP_extendedEqual.
  *
@@ -3161,7 +3165,11 @@ TypeCode_union::NP_member_label(CORBA::ULong i) const
   CORBA::Any* a = new CORBA::Any;
   if( !a )  _CORBA_new_operator_return_null();
 
-  TypeCode_union_helper::insertLabel(*a, pd_members[i].alabel, pd_discrim_tc);
+  if (i != pd_default) {
+    TypeCode_union_helper::insertLabel(*a, pd_members[i].alabel, pd_discrim_tc);
+  } else {
+    (*a) <<= CORBA::Any::from_octet((CORBA::Octet)0);
+  }
   return a;
 }
 
