@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.2  1999/07/19 14:41:03  dpg1
+// createPyTypeCodeObject() removed.
+//
 // Revision 1.1  1999/07/19 12:47:43  dpg1
 // Initial revision
 //
@@ -60,6 +63,9 @@ protected:
 private:
   PyObject*   dict_;
   CORBA::Long base_;
+
+  DescriptorOffsetMap(const DescriptorOffsetMap&);
+  DescriptorOffsetMap& operator=(const DescriptorOffsetMap&);
 };
 
 class OffsetDescriptorMap {
@@ -102,6 +108,9 @@ protected:
 private:
   PyObject*   dict_;
   CORBA::Long base_;
+
+  OffsetDescriptorMap(const OffsetDescriptorMap&);
+  OffsetDescriptorMap& operator=(const OffsetDescriptorMap&);
 };
 
 
@@ -221,6 +230,11 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 	  msgsize = omni::align_to(msgsize, omni::ALIGN_4) + 4 +
 	    PyString_GET_SIZE(t_o) + 1;
 
+	  // If the member name starts with '_', it has been named
+	  // that way to avoid a clash with a Python reserved word. It
+	  // needs to be sent without the _
+	  if (PyString_AS_STRING(t_o)[0] == '_') --msgsize;
+
 	  // member type
 	  msgsize = r_alignedSizeTypeCode(msgsize, PyTuple_GET_ITEM(d_o, j++),
 					  dom);
@@ -289,6 +303,12 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 	  msgsize = omni::align_to(msgsize, omni::ALIGN_4) + 4 +
 	    PyString_GET_SIZE(t_o) + 1;
 
+	  // If the member name starts with '_', it has been named
+	  // that way to avoid a clash with a Python reserved word. It
+	  // needs to be sent without the _
+	  if (PyString_AS_STRING(t_o)[0] == '_') --msgsize;
+	  
+	  // Member type
 	  msgsize = r_alignedSizeTypeCode(msgsize, PyTuple_GET_ITEM(mem, 2),
 					  dom);
 	}
@@ -400,6 +420,11 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 	  t_o = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
 	  msgsize = omni::align_to(msgsize, omni::ALIGN_4) + 4 +
 	    PyString_GET_SIZE(t_o) + 1;
+
+	  // If the member name starts with '_', it has been named
+	  // that way to avoid a clash with a Python reserved word. It
+	  // needs to be sent without the _
+	  if (PyString_AS_STRING(t_o)[0] == '_') --msgsize;
 
 	  // member type
 	  msgsize = r_alignedSizeTypeCode(msgsize, PyTuple_GET_ITEM(d_o, j++),
@@ -544,12 +569,21 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 	CORBA::ULong cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 	cnt >>= encap;
 
-	CORBA::ULong i, j;
+	CORBA::ULong i, j, slen;
+	char* str;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
-	  t_o = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
+	  t_o  = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
 
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // member type
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(d_o, j++), edom);
 	}
@@ -593,6 +627,9 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 	CORBA::ULong cnt = PyTuple_GET_SIZE(mems);
 	cnt >>= encap;
 
+	CORBA::ULong slen;
+	char*        str;
+
 	for (CORBA::ULong i=0; i < cnt; i++) {
 	  mem = PyTuple_GET_ITEM(mems, i); assert(PyTuple_Check(mem));
 
@@ -601,9 +638,16 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 				  PyTuple_GET_ITEM(mem, 0));
 
 	  // Member name
-	  t_o    = PyTuple_GET_ITEM(mem, 1); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
+	  t_o  = PyTuple_GET_ITEM(mem, 1); assert(PyString_Check(t_o));
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
 
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // Member typecode
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(mem, 2), edom);
 	}
@@ -745,12 +789,22 @@ r_marshalTypeCode(NetBufferedStream&   stream,
 	CORBA::ULong cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 	cnt >>= encap;
 
-	CORBA::ULong i, j;
+	CORBA::ULong i, j, slen;
+	char* str;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  t_o = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
 
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
+
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // member type
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(d_o, j++), edom);
 	}
@@ -901,12 +955,21 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 	CORBA::ULong cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 	cnt >>= encap;
 
-	CORBA::ULong i, j;
+	CORBA::ULong i, j, slen;
+	char* str;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
-	  t_o = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
+	  t_o  = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
 
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // member type
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(d_o, j++), edom);
 	}
@@ -950,6 +1013,9 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 	CORBA::ULong cnt = PyTuple_GET_SIZE(mems);
 	cnt >>= encap;
 
+	CORBA::ULong slen;
+	char*        str;
+
 	for (CORBA::ULong i=0; i < cnt; i++) {
 	  mem = PyTuple_GET_ITEM(mems, i); assert(PyTuple_Check(mem));
 
@@ -958,9 +1024,16 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 				  PyTuple_GET_ITEM(mem, 0));
 
 	  // Member name
-	  t_o    = PyTuple_GET_ITEM(mem, 1); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
+	  t_o  = PyTuple_GET_ITEM(mem, 1); assert(PyString_Check(t_o));
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
 
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // Member typecode
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(mem, 2), edom);
 	}
@@ -1102,12 +1175,22 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 	CORBA::ULong cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 	cnt >>= encap;
 
-	CORBA::ULong i, j;
+	CORBA::ULong i, j, slen;
+	char* str;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  t_o = PyTuple_GET_ITEM(d_o, j++); assert(PyString_Check(t_o));
-	  MARSHAL_PYSTRING(encap, t_o);
 
+	  str  = PyString_AS_STRING(t_o);
+	  slen = PyString_GET_SIZE(t_o) + 1;
+
+	  if (str[0] == '_') { --slen; ++str; }
+	  slen >>= encap;
+	  if (slen > 1) {
+	    encap.put_char_array((const CORBA::Char*)((const char*)str),
+				 slen);
+	  }
 	  // member type
 	  r_marshalTypeCode(encap, PyTuple_GET_ITEM(d_o, j++), edom);
 	}
@@ -1254,9 +1337,16 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	CORBA::ULong i, j;
 
+	PyObject* word;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(d_o, j++, t_o);
 	  Py_INCREF(t_o);
 	  PyTuple_SET_ITEM(mems, i, t_o);
@@ -1336,6 +1426,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	PyObject* mem;
 	PyObject* label;
+	PyObject* word;
 
 	for (CORBA::ULong i=0; i<cnt; i++) {
 	  mem = PyTuple_New(3);
@@ -1346,6 +1437,11 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	  // Member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(mem, 1, t_o);
 
 	  // Member type
@@ -1542,9 +1638,16 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	CORBA::ULong i, j;
 
+	PyObject* word;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(d_o, j++, t_o);
 	  Py_INCREF(t_o);
 	  PyTuple_SET_ITEM(mems, i, t_o);
@@ -1700,9 +1803,16 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	CORBA::ULong i, j;
 
+	PyObject* word;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(d_o, j++, t_o);
 	  Py_INCREF(t_o);
 	  PyTuple_SET_ITEM(mems, i, t_o);
@@ -1782,6 +1892,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	PyObject* mem;
 	PyObject* label;
+	PyObject* word;
 
 	for (CORBA::ULong i=0; i<cnt; i++) {
 	  mem = PyTuple_New(3);
@@ -1792,6 +1903,11 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	  // Member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(mem, 1, t_o);
 
 	  // Member type
@@ -1988,9 +2104,16 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 
 	CORBA::ULong i, j;
 
+	PyObject* word;
+
 	for (i=0, j=4; i < cnt; i++) {
 	  // member name
 	  UNMARSHAL_PYSTRING(encap, t_o);
+
+	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_DECREF(t_o);
+	    t_o = word;
+	  }
 	  PyTuple_SET_ITEM(d_o, j++, t_o);
 	  Py_INCREF(t_o);
 	  PyTuple_SET_ITEM(mems, i, t_o);
