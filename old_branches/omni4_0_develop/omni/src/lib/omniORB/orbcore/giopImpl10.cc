@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/06/20 18:35:18  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
   Revision 1.1.4.5  2001/05/11 14:30:12  sll
   Message size limit is now enforced.
 
@@ -141,11 +146,8 @@ giopImpl10::inputMessageBegin(giopStream* g,
     omni_tracedmutex_lock sync(*omniTransportLock);
 
     while (!(g->inputFullyBuffered() || g->pd_rdlocked)) {
-      if (giopStream::rdLockNonBlocking(g->pd_strand)) {
-	g->markRdLock();
-      }
-      else {
-	giopStream::sleepOnRdLock(g->pd_strand);
+      if (!g->rdLockNonBlocking()) {
+	g->sleepOnRdLock(0,0); // XXX no deadline set yet
       }
     }
   }
@@ -824,7 +826,7 @@ giopImpl10::outputNewMessage(giopStream* g) {
 
   if (!g->pd_wrlocked) {
     omni_tracedmutex_lock sync(*omniTransportLock);
-    g->wrLock();
+    g->wrLock(0,0); // XXX no deadline set yet.
   }
 
   if (!g->pd_currentOutputBuffer) {
