@@ -30,6 +30,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.9.2.3  2001/05/14 14:21:15  dpg1
+# TypeCode.equivalent() was broken in a similar manner to
+# get_compact_typecode()
+#
 # Revision 1.9.2.2  2001/05/11 16:27:23  dpg1
 # TypeCode.get_compact_typecode() was broken.
 #
@@ -906,7 +910,7 @@ def removeIndirections(desc):
             removeIndirections(desc[i])
 
     elif k == tv__indirect:
-        del(desc[1][0])
+        desc[1][0] = None
 
 
 # Function to insert indirections into a descriptor, replacing repoIds
