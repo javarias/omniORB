@@ -3,7 +3,7 @@
 // bufferedstream.h           Created on: 3/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.23  1999/06/18 20:35:18  sll
+  Updated marshalling operators for sequences. Part of the updates to
+  CORBA 2.3 mapping.
+
   Revision 1.22  1999/05/26 15:56:25  sll
     Added marshalling operators for the new _CORBA_*Sequence_ObjRef templates.
 

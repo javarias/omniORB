@@ -3,7 +3,7 @@
 // CORBA_basetypes.h          Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories - Cambridge Ltd
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.10  1999/06/18 20:34:22  sll
+ New function _CORBA_bad_param_freebuf().
+
  Revision 1.9  1999/01/07 18:11:58  djr
  New functions: _CORBA_invoked_nil_pseudo_ref()
  and            _CORBA_use_nil_ptr_as_nil_pseudo_objref()

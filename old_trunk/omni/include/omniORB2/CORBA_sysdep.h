@@ -3,7 +3,7 @@
 // CORBA_sysdep.h             Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.35  1999/06/18 20:35:41  sll
+ Replaced _LC_attr with _core_attr and _dyn_attr.
+
  Revision 1.34  1999/06/02 16:40:56  sll
  Enable IR client support on all platforms
 

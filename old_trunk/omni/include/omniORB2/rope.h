@@ -3,7 +3,7 @@
 // rope.h                     Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,15 @@
 
 /*
   $Log$
+  Revision 1.8  1999/05/26 11:46:30  sll
+  Replaced WrTimedLock with WrTestLock.
+  Changed the operator() of Strand_iterator to increment the ref count
+  of the strand it returns.
+  Added new member is_unused() to class Strand. This is used to check
+  if no Sync object is parking on the strand. This member is necessary
+  because given the change in the Strand_iterator, is_idle() is no
+  longer appropriate to test if no Sync object is using the strand.
+
   Revision 1.7  1999/03/17 12:43:40  djr
   Corrected error in Rope_var copy constructor.
 

@@ -3,7 +3,7 @@
 // proxyCall.h                Created on: 12/98
 //                            Author    : David Riddoch (djr)
 //
-//    Copyright (C) 1996-1999 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library.
 //
@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.3  1999/05/20 18:34:42  sll
+ Separate proxyCall structures into without context and with context versions.
+
  Revision 1.2  1999/04/21 13:12:17  djr
  Added support for contexts.
 

@@ -3,7 +3,7 @@
 // omniLifeCycle.cc           Created on: 1997/09/20
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1997-1999 AT&T Laboratories Cambridge.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,11 @@
 
 /* 
    $Log$
+   Revision 1.5  1998/08/12 15:28:27  dpg1
+   Added error checking to _lc_sk class. It is now a run-time error to
+   call _set_lifecycle() on an _lc_sk_... object after a previous call to
+   _this() or _set_lifecycle().
+
  * Revision 1.4  1998/04/07  20:00:18  sll
  * Added test for CPP macro USE_stub_in_nt_dll.
  *
