@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19  1999/12/25 21:44:58  djs
+# Better TypeCode support
+#
 # Revision 1.18  1999/12/16 16:08:54  djs
 # Added allInherits function to return a list of all the interfaces an
 # interface inherits from (ie under the transitive closure of the inherits
@@ -505,16 +508,22 @@ def operationArgumentType(type, environment, virtualFn = 0, fully_scope = 0):
                  param_type + "_Helper >" ,
                  param_type + "_Helper >" ]                 
                  #param_type + "_ptr&" ]
-    elif isVariable:
- #       param_type =principalID(deref_type, scope)
+
+    out_base_type = param_type
+    if isVariable:
+        # Strangeness: if actually a typedef to a struct or union, the _out
+        # type is dereferenced, whilst the others aren't?
+        if isTypedef(type) and (isStruct(deref_type) or isUnion(deref_type)):
+            out_base_type = environment.principalID(deref_type, fully_scope)
+
         return [ param_type + "*",
                  "const " + param_type + "& ",
-                 param_type + "_out ",
+                 out_base_type + "_out ",
                  param_type + "& "]
     else:
         return [ param_type,
                  "const " + param_type + "& ",
-                 param_type + "& ",
+                 out_base_type + "& ",
                  param_type + "& " ]
     
 # ------------------------------------------------------------------
@@ -733,6 +742,9 @@ def valueString(type, value, environment):
     # chars are single-quoted
     if type.kind() == idltype.tk_char      or \
        type.kind() == idltype.tk_wchar:
+        # FIXME: need isalphanum() fn and proper formatting
+        if ord(value) < 32:
+            return r"'\00" + str(ord(value)) + r"'" 
         return "'" + str(value) + "'"
     # booleans are straightforward
     if type.kind() == idltype.tk_boolean:
