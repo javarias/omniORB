@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.9  2001/12/04 12:17:08  dpg1
+# Incorrect generated code for fixed constants.
+#
 # Revision 1.29.2.8  2001/08/29 11:57:16  dpg1
 # Const fixes.
 #
@@ -246,7 +249,7 @@ _0_@modname@.@ifid@ = omniORB.newEmptyClass()
 class @ifid@ @inherits@:
     _NP_RepositoryId = _0_@modname@._d_@ifid@[1]
 
-    def __init__(self):
+    def __init__(self, *args, **kw):
         raise RuntimeError("Cannot construct objects of this type.")
 
     _nil = CORBA.Object._nil
@@ -267,17 +270,13 @@ attribute_set_descriptor = """\
 @ifid@._d__set_@attr@ = ((@descr@,),(),None)"""
 
 operation_descriptor = """\
-@ifid@._d_@opname@ = (@inds@, @outds@, @excs@)"""
+@ifid@._d_@opname@ = (@inds@, @outds@, @excs@@ctxts@)"""
 
 objref_class = """\
 
 # @ifid@ object reference
 class _objref_@ifid@ @inherits@:
     _NP_RepositoryId = @ifid@._NP_RepositoryId
-
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)
 
     def __init__(self):"""
 
@@ -309,10 +308,7 @@ skeleton_class = """
 __name__ = "@package@@s_modname@"
 class @ifid@ (@inherits@):
     _NP_RepositoryId = _0_@modname@.@ifid@._NP_RepositoryId
-
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)"""
+"""
 
 skeleton_methodmap = """
     _omni_op_d = @methodmap@"""
@@ -338,7 +334,7 @@ typedef_header = """\
 # typedef ... @tdname@
 class @tdname@:
     _NP_RepositoryId = "@repoId@"
-    def __init__(self):
+    def __init__(self, *args, **kw):
         raise RuntimeError("Cannot construct objects of this type.")"""
 
 typedef_struct_union_header = """\
@@ -804,7 +800,12 @@ class PythonVisitor:
                                     attr=attr, descr=descr, ifid=ifid)
             else: # Operation
 
-                inds, outds, excs = operationToDescriptors(c)
+                inds, outds, excs, ctxts = operationToDescriptors(c)
+
+                if ctxts:
+                    ctxts = ", " + ctxts
+                else:
+                    ctxts = ""
 
                 # Output the declaration
                 self.st.out(operation_descriptor,
@@ -812,6 +813,7 @@ class PythonVisitor:
                             inds   = inds,
                             outds  = outds,
                             excs   = excs,
+                            ctxts  = ctxts,
                             ifid   = ifid)
 
         # Objref class
@@ -1472,7 +1474,7 @@ def operationToDescriptors(op):
     """Return the descriptors for an operation.
 
     Returns a tuple containing (in descriptor, out descriptor,
-    exception map)
+    exception map, context list)
     """
 
     indl  = []
@@ -1513,7 +1515,12 @@ def operationToDescriptors(op):
     else:
         excs = "None"
 
-    return inds, outds, excs
+    if op.contexts():
+        ctxts = "[" + string.join(map(repr, op.contexts()), ", ") + "]"
+    else:
+        ctxts = None
+
+    return inds, outds, excs, ctxts
 
 
 

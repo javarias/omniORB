@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.4  2001/09/20 14:51:26  dpg1
+# Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
+#
 # Revision 1.7.4.3  2001/08/01 10:12:36  dpg1
 # Main thread policy.
 #
@@ -86,9 +89,11 @@ _d_Servant = omniORB.tcInternal.tv_native
 class POAManager (CORBA.Object) :
     _NP_RepositoryId = "IDL:omg.org/PortableServer/POAManager:1.0"
 
+    def __init__(self):
+        self.__release = _omnipy.poamanager_func.releaseRef
+
     def __del__(self):
-        if _omnipy is not None and _omnipy.poamanager_func is not None:
-            _omnipy.poamanager_func.releaseRef(self)
+        self.__release(self)
 
     def activate(self):
         _omnipy.poamanager_func.activate(self)
@@ -143,9 +148,11 @@ class POA (CORBA.Object) :
     
     _NP_RepositoryId = _d_POA[1]
 
+    def __init__(self):
+        self.__release = _omnipy.poa_func.releaseRef
+
     def __del__(self):
-        if _omnipy is not None and _omnipy.poa_func is not None:
-                _omnipy.poa_func.releaseRef(self)
+        self.__release(self)
 
     def create_POA(self, adapter_name, a_POAManager, policies):
         return _omnipy.poa_func.create_POA(self, adapter_name,
@@ -407,9 +414,11 @@ class POA (CORBA.Object) :
 class Current (CORBA.Object) :
     _NP_RepositoryId = "IDL:omg.org/PortableServer/Current:1.0"
 
+    def __init__(self):
+        self.__release = _omnipy.poacurrent_func.releaseRef
+
     def __del__(self):
-        if _omnipy is not None and _omnipy.poacurrent_func is not None:
-            _omnipy.poacurrent_func.releaseRef(self)
+        self.__release(self)
 
     def get_POA(self):
         return _omnipy.poacurrent_func.get_POA(self)
@@ -695,10 +704,6 @@ omniORB.registerType(ServantManager._NP_RepositoryId,
 class _objref_ServantManager (CORBA.Object):
     _NP_RepositoryId = ServantManager._NP_RepositoryId
 
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)
-
     def __init__(self):
         CORBA.Object.__init__(self)
 
@@ -736,10 +741,6 @@ ServantActivator._d_etherealize = ((_d_ObjectId, _d_POA, _d_Servant,
 # ServantActivator object reference
 class _objref_ServantActivator (_objref_ServantManager):
     _NP_RepositoryId = ServantActivator._NP_RepositoryId
-
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)
 
     def __init__(self):
         _objref_ServantManager.__init__(self)
@@ -796,10 +797,6 @@ ServantLocator._d_postinvoke = ((_d_ObjectId, _d_POA, CORBA._d_Identifier,
 class _objref_ServantLocator (_objref_ServantManager):
     _NP_RepositoryId = ServantLocator._NP_RepositoryId
 
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)
-
     def __init__(self):
         _objref_ServantManager.__init__(self)
 
@@ -847,10 +844,6 @@ AdapterActivator._d_unknown_adapter = ((_d_POA,
 # AdapterActivator object reference
 class _objref_AdapterActivator (CORBA.Object):
     _NP_RepositoryId = AdapterActivator._NP_RepositoryId
-
-    def __del__(self):
-        if _omnipy is not None:
-            _omnipy.releaseObjref(self)
 
     def __init__(self):
         CORBA.Object.__init__(self)

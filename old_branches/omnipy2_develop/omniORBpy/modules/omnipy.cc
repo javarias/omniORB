@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.16  2001/12/10 18:10:37  dpg1
+// Segfault with narrow on pseudo object.
+//
 // Revision 1.1.2.15  2001/09/24 10:48:25  dpg1
 // Meaningful minor codes.
 //
@@ -98,6 +101,7 @@ PyInterpreterState* omniPy::pyInterpreter;
 PyObject* omniPy::pyCORBAmodule;	// The CORBA module
 PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
 PyObject* omniPy::pyCORBAAnyClass;	//  Any class
+PyObject* omniPy::pyCORBAContextClass;	//  Context class
 PyObject* omniPy::pyomniORBmodule;	// The omniORB module
 PyObject* omniPy::pyomniORBobjrefMap;	//  The objref class map
 PyObject* omniPy::pyomniORBtypeMap;     //  The repoId to descriptor mapping
@@ -212,6 +216,27 @@ public:
 static omni_python_initialiser the_omni_python_initialiser;
 
 
+// Function to generate a list of system exception names
+static PyObject*
+generateExceptionList()
+{
+  int i = 0;
+# define INCREMENT_COUNT(exc) i++;
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(INCREMENT_COUNT)
+# undef INCREMENT_COUNT
+
+  PyObject* excs = PyList_New(i);
+  i = 0;
+
+# define ADD_EXCEPTION_NAME(exc) \
+  PyList_SetItem(excs, i++, PyString_FromString(#exc));
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(ADD_EXCEPTION_NAME)
+# undef ADD_EXCEPTION_NAME
+
+  return excs;
+}
+
+
 
 // Things visible to Python:
 
@@ -285,6 +310,9 @@ extern "C" {
     omniPy::pyCORBAAnyClass =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Any");
 
+    omniPy::pyCORBAContextClass =
+      PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Context");
+
     omniPy::pyomniORBobjrefMap =
       PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)"objrefMapping");
 
@@ -321,6 +349,8 @@ extern "C" {
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyCORBAsysExcMap));
     OMNIORB_ASSERT(omniPy::pyCORBAAnyClass);
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAAnyClass));
+    OMNIORB_ASSERT(omniPy::pyCORBAContextClass);
+    OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAContextClass));
     OMNIORB_ASSERT(omniPy::pyomniORBobjrefMap);
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBobjrefMap));
     OMNIORB_ASSERT(omniPy::pyomniORBtypeMap);
@@ -507,7 +537,7 @@ extern "C" {
     //  exc_desc is a dictionary containing a mapping from repoIds to
     //  tuples of the form (exception class, marshal desc., param count)
 
-    PyObject *pyobjref, *in_d, *out_d, *exc_d, *op_args, *result;
+    PyObject *pyobjref, *in_d, *out_d, *exc_d, *ctxt_d, *op_args, *result;
     char*  op;
     size_t op_len;
 
@@ -531,13 +561,19 @@ extern "C" {
     out_d    = PyTuple_GET_ITEM(desc,1);
     exc_d    = PyTuple_GET_ITEM(desc,2);
 
+    if (PyTuple_GET_SIZE(desc) == 4)
+      ctxt_d = PyTuple_GET_ITEM(desc,3);
+    else
+      ctxt_d = 0;
+
     op_args  = PyTuple_GET_ITEM(args,3);
 
-    if (PyTuple_GET_SIZE(op_args) != PyTuple_GET_SIZE(in_d)) {
+    int arg_len = PyTuple_GET_SIZE(in_d) + (ctxt_d ? 1:0);
+
+    if (PyTuple_GET_SIZE(op_args) != arg_len) {
       char* err = new char[80];
       sprintf(err, "Operation requires %d argument%s; %d given",
-	      PyTuple_GET_SIZE(in_d),
-	      (PyTuple_GET_SIZE(in_d) == 1) ? "" : "s",
+	      arg_len, (arg_len == 1) ? "" : "s",
 	      PyTuple_GET_SIZE(op_args));
 
       PyErr_SetString(PyExc_TypeError, err);
@@ -552,7 +588,8 @@ extern "C" {
     CORBA::Boolean is_oneway = (out_d == Py_None);
 
     omniPy::Py_omniCallDescriptor call_desc(op, op_len + 1, is_oneway,
-					    in_d, out_d, exc_d, op_args, 0);
+					    in_d, out_d, exc_d, ctxt_d,
+					    op_args, 0);
     try {
       call_desc.releaseInterpreterLock();
       oobjref->_invoke(call_desc);
@@ -794,6 +831,11 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     PyObject* d = PyModule_GetDict(m);
     PyDict_SetItemString(d, (char*)"omnipyTwinType",
 			 (PyObject*)&omnipyTwinType);
+
+    PyObject* excs = generateExceptionList();
+    PyDict_SetItemString(d, (char*)"system_exceptions", excs);
+    Py_DECREF(excs);
+
     omniPy::initORBFunc(d);
     omniPy::initPOAFunc(d);
     omniPy::initPOAManagerFunc(d);

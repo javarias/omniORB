@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.9  2001/09/24 10:48:25  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.1.2.8  2001/09/20 14:51:24  dpg1
 // Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
 //
@@ -91,6 +94,7 @@ omniPy::Py_omniCallDescriptor::initialiseCall(cdrStream&)
 void
 omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 {
+  int i;
   if (in_marshal_) {
     if (omniORB::trace(1)) {
       omniORB::logger l;
@@ -99,10 +103,12 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 	"Untested code may fail.\n";
     }
     // Re-entered to figure out the size
-    for (int i=0; i < in_l_; i++)
+    for (i=0; i < in_l_; i++)
       omniPy::marshalPyObject(stream,
 			      PyTuple_GET_ITEM(in_d_,i),
 			      PyTuple_GET_ITEM(args_,i));
+    if (ctxt_d_)
+      omniPy::marshalContext(stream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
   }
   else {
     reacquireInterpreterLock();
@@ -110,10 +116,13 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
     in_marshal_ = 1;
     PyUnlockingCdrStream pystream(stream);
 
-    for (int i=0; i < in_l_; i++)
+    for (i=0; i < in_l_; i++)
       omniPy::marshalPyObject(pystream,
 			      PyTuple_GET_ITEM(in_d_,i),
 			      PyTuple_GET_ITEM(args_,i));
+    if (ctxt_d_)
+      omniPy::marshalContext(pystream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
+
     in_marshal_ = 0;
 
     releaseInterpreterLock();
@@ -219,15 +228,22 @@ omniPy::Py_omniCallDescriptor::unmarshalArguments(cdrStream& stream)
 
   omnipyThreadCache::lock _t;
 
-  args_ = PyTuple_New(in_l_);
+  if (ctxt_d_)
+    args_ = PyTuple_New(in_l_ + 1);
+  else
+    args_ = PyTuple_New(in_l_);
+
 
   PyUnlockingCdrStream pystream(stream);
 
-  for (int i=0; i < in_l_; i++) {
+  int i;
+  for (i=0; i < in_l_; i++) {
     PyTuple_SET_ITEM(args_, i,
 		     omniPy::unmarshalPyObject(pystream,
 					       PyTuple_GET_ITEM(in_d_, i)));
   }
+  if (ctxt_d_)
+    PyTuple_SET_ITEM(args_, i, omniPy::unmarshalContext(pystream));
 }
 
 void
