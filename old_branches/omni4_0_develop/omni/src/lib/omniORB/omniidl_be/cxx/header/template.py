@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.18  2001/11/08 16:33:51  dpg1
+# Local servant POA shortcut policy.
+#
 # Revision 1.5.2.17  2001/10/29 17:42:41  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -344,6 +347,7 @@ public:
 
   static _ptr_type _duplicate(_ptr_type);
   static _ptr_type _narrow(CORBA::Object_ptr);
+  static _ptr_type _unchecked_narrow(CORBA::Object_ptr);
   static _ptr_type _nil();
 
   static inline void _marshalObjRef(_ptr_type, cdrStream&);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/11/06 15:41:34  dpg1
+  Reimplement Context. Remove CORBA::Status. Tidying up.
+
   Revision 1.1.2.1  2001/08/17 13:39:47  dpg1
   Split CORBA.h into separate bits.
 
@@ -90,6 +93,9 @@ public:
 
   static _ptr_type        _duplicate(_ptr_type);
   static inline _ptr_type _narrow(Object_ptr o) { return _duplicate(o); }
+  static inline _ptr_type _unchecked_narrow(Object_ptr o) {
+    return _duplicate(0);
+  }
   static _ptr_type        _nil();
 
   //////////////////////
