@@ -30,6 +30,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.8  2000/11/21 10:59:27  dpg1
+// Poperly throw INV_OBJREF for object references containing no profiles
+// we understand.
+//
 // Revision 1.1.2.7  2000/09/13 11:45:05  dpg1
 // Minor cut-and-paste error in URI handling meant that ior: was not
 // accepted as a URI format.
@@ -467,6 +471,15 @@ ParseVersionNumber(const char*& c, CORBA::Char& majver, CORBA::Char& minver)
 
 corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
 {
+  if (*c == '\0' || *c == ',' || *c == '/' || *c == '#') {
+    // Empty host name -- use localhost, default port
+    host_   = CORBA::string_dup("localhost");
+    port_   = IIOP::DEFAULT_CORBALOC_PORT;
+    majver_ = 1;
+    minver_ = 0;
+    return;
+  }
+
   const char* p;
   ParseVersionNumber(c, majver_, minver_);
 
@@ -475,6 +488,7 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
   if (p == c) OMNIORB_THROW(BAD_PARAM,
 			    MINOR_BAD_SCHEME_SPECIFIC_PART,
 			    CORBA::COMPLETED_NO);
+
   host_ = CORBA::string_alloc(1 + p - c);
   char* h = (char*)host_;
   if (!h) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
