@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.21  2004/02/06 16:17:45  dgrisby
+  Properly handle large giopMaxMsgSize settings.
+
   Revision 1.1.4.20  2003/07/25 16:07:18  dgrisby
   Incorrect COMM_FAILURE with GIOP 1.2 CloseConnection.
 
@@ -1275,6 +1278,8 @@ giopImpl11::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
 
   int repoid_size;
   const char* repoid = ex._NP_repoId(&repoid_size);
+
+  outputNewMessage(g);
 
   char* hdr = (char*) g->pd_currentOutputBuffer + 
                       g->pd_currentOutputBuffer->start;
