@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2  1997/12/12 18:44:30  sll
+  Added call to gateKeeper.
+
   Revision 1.1  1997/12/09 18:43:09  sll
   Initial revision
 
@@ -80,6 +83,7 @@ public:
   }
   virtual ~tcpATMosWorker() {}
   virtual void run(void *arg);
+  static void _realRun(void* arg);
 
 private:
   Strand::Sync    pd_sync;
@@ -711,7 +715,16 @@ tcpATMosRendezvouser::run_undetached(void *arg)
 }
 
 void
-tcpATMosWorker::run(void *arg)
+tcpATMosWorker::run(void* arg)
+{
+  omniORB::giopServerThreadWrapper::
+         getGiopServerThreadWrapper()->run(tcpATMosWorker::_realRun,arg);
+  // the wrapper run() method will pass back control to tcpATMosWorker
+  // by calling  _realRun(arg) when it is ready.
+}
+
+void
+tcpATMosWorker::_realRun(void *arg)
 {
   tcpATMosStrand* s = (tcpATMosStrand*)arg;
 
