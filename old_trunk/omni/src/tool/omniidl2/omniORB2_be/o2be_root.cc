@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.18  1999/03/11 16:26:09  djr
+  Updated copyright notice
+
   Revision 1.17  1999/01/07 09:37:19  djr
   Separate stub skeleton into two files: fooSK.cc and fooDynSK.cc.
   The latter contains code for TypeCode and Any.
@@ -100,7 +103,7 @@
 
 // Do not forget to update the version number in omniORB_x_y below.
 // The variable is defined in omniInternal.h.
-#define OMNIORB_LIBRARY_VERSION    "omniORB_2_7"
+#define OMNIORB_LIBRARY_VERSION    "omniORB_2_8"
 
 
 o2be_root::o2be_root(UTL_ScopedName *n, UTL_StrList *p)
