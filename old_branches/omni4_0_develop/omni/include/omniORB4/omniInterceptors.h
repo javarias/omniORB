@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // omniInterceptors.h         Created on: 22/09/2000
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -24,11 +24,14 @@
 //
 //
 // Description:
-//	*** PROPRIETORY INTERFACE ***
+//	*** PROPRIETARY INTERFACE ***
 //	
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/08/15 10:26:08  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.2.3  2001/04/18 17:50:44  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -58,7 +61,7 @@ class GIOP_S;
 class orbServer;
 
 class omniInterceptors {
- public:
+public:
 
   //////////////////////////////////////////////////////////////////
   class encodeIOR_T {
@@ -83,17 +86,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    encodeIOR_T();
-    ~encodeIOR_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&); // ORB internal function
-
-
   };
 
   //////////////////////////////////////////////////////////////////
@@ -117,18 +109,8 @@ class omniInterceptors {
 
     typedef CORBA::Boolean (*interceptFunc)(info_T& info);
 
-
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    decodeIOR_T();
-    ~decodeIOR_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
 
@@ -160,15 +142,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    clientSendRequest_T();
-    ~clientSendRequest_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
 
@@ -189,15 +162,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    clientReceiveReply_T();
-    ~clientReceiveReply_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////
@@ -217,15 +181,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    clientReceiveException_T();
-    ~clientReceiveException_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////
@@ -249,15 +204,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    serverReceiveRequest_T();
-    ~serverReceiveRequest_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
 
@@ -278,15 +224,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    serverSendReply_T();
-    ~serverSendReply_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////
@@ -306,15 +243,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    serverSendException_T();
-    ~serverSendException_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&);  // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////
@@ -335,15 +263,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    createIdentity_T();
-    ~createIdentity_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&); // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////
@@ -361,15 +280,6 @@ class omniInterceptors {
 
     void add(interceptFunc);
     void remove(interceptFunc);
-
-    createORBServer_T();
-    ~createORBServer_T();
-
-  private:
-    omniInterceptorP* pd_ilist;
-
-  public:
-    void visit(info_T&); // ORB internal function
   };
 
   //////////////////////////////////////////////////////////////////

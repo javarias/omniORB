@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/03 17:48:43  sll
+  Make sure dll import spec for win32 is properly done.
+
   Revision 1.1.4.2  2001/06/13 20:07:25  sll
   Minor update to make the ORB compiles with MSVC++.
 
@@ -160,4 +163,4 @@ OMNI_NAMESPACE_END(omni)
 
 #undef _core_attr
 
-#endif // __ROPE_H__
+#endif // __OMNITRANSPORT_H__

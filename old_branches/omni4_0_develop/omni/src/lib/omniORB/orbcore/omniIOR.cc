@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/12/04 14:32:27  dpg1
+  Minor corbaloc bugs.
+
   Revision 1.1.2.10  2001/09/19 17:26:50  dpg1
   Full clean-up after orb->destroy().
 
@@ -67,10 +70,11 @@
 #include <initialiser.h>
 #include <giopStreamImpl.h>
 #include <omniORB4/omniInterceptors.h>
+#include <interceptors.h>
 #include <objectTable.h>
 #include <giopRope.h>
 
-omni_tracedmutex*                omniIOR::lock = 0;
+omni_tracedmutex* omniIOR::lock = 0;
 
 /////////////////////////////////////////////////////////////////////////////
 omniIOR::omniIOR(char* repoId, IOP::TaggedProfileList* iop) : 
@@ -120,7 +124,7 @@ omniIOR::omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize) :
   pd_iopProfiles = new IOP::TaggedProfileList();
   {
     _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,0);
-    omniORB::getInterceptors()->encodeIOR.visit(info);
+    _OMNI_NS(omniInterceptorP)::visit(info);
   }
 
   if (strlen(iiop.address.host) == 0) {
@@ -180,7 +184,7 @@ omniIOR::omniIOR(const char* repoId,
   if (callInterceptors != NoInterceptor) {
     _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,
 				(callInterceptors == DefaultInterceptors));
-    omniORB::getInterceptors()->encodeIOR.visit(info);
+    _OMNI_NS(omniInterceptorP)::visit(info);
   }
 
   {
@@ -295,7 +299,7 @@ omniIOR::decodeIOPprofile(const IIOP::ProfileBody& iiop) {
   // Call interceptors
   {
     _OMNI_NS(omniInterceptors)::decodeIOR_T::info_T info(iiop,*this,1);
-    omniORB::getInterceptors()->decodeIOR.visit(info);
+    _OMNI_NS(omniInterceptorP)::visit(info);
   }
 }
 
@@ -333,7 +337,7 @@ omniIOR::getIORInfo() const {
       p->pd_iorInfo = new IORInfo();
       {
 	_OMNI_NS(omniInterceptors)::decodeIOR_T::info_T info(iiop,*p,is_iiop);
-	omniORB::getInterceptors()->decodeIOR.visit(info);
+	_OMNI_NS(omniInterceptorP)::visit(info);
       }
     }
   }

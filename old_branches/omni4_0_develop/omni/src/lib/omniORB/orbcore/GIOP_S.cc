@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2002/03/18 12:38:25  dpg1
+  Lower trace(0) to trace(1), propagate fatalException.
+
   Revision 1.1.4.18  2002/03/13 16:05:38  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -118,6 +121,7 @@
 #include <GIOP_S.h>
 #include <omniORB4/minorCode.h>
 #include <omniORB4/omniInterceptors.h>
+#include <interceptors.h>
 #include <poaimpl.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -263,7 +267,7 @@ GIOP_S::handleRequest() {
 
     {
       omniInterceptors::serverReceiveRequest_T::info_T info(*this);
-      omniORB::getInterceptors()->serverReceiveRequest.visit(info);
+      omniInterceptorP::visit(info);
     }
 
     // Create a callHandle object

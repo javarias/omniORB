@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2002/03/18 12:38:26  dpg1
+  Lower trace(0) to trace(1), propagate fatalException.
+
   Revision 1.1.4.13  2001/09/12 19:43:19  sll
   Enforce GIOP message size limit.
 
@@ -93,6 +96,7 @@
 #include <exceptiondefs.h>
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/omniInterceptors.h>
+#include <interceptors.h>
 #include <orbParameters.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -1363,8 +1367,7 @@ giopImpl12::marshalRequestHeader(giopStream* g) {
 						     calldesc.op(),
 						     response_expected,
 						     !response_expected);
-
-  omniORB::getInterceptors()->clientSendRequest.visit(info);
+  omniInterceptorP::visit(info);
 
   CORBA::Octet v = 0;
   {
