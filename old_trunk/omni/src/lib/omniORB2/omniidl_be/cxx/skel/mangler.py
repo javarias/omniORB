@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/12/17 10:48:11  djs
+# Typedef to a sequence<sequence< name mangling bug
+#
 # Revision 1.9  1999/12/14 17:38:25  djs
 # Fixed anonymous sequences of sequences bug
 #
@@ -290,11 +293,12 @@ def produce_write_attribute_signature(attribute):
 # ----------------
 # Call Descriptor utility functions
 
-base_initialised = 0
-base_low = 0
-base_high = 0
-base_counter = 0
-
+def __init__():
+    self.base_initialised = 0
+    self.base_low = 0
+    self.base_high = 0
+    self.base_counter = 0
+    self.call_descriptor_table = {}
 
 def initialise_base(string_seed):
     self.base_initialised = 1
@@ -354,8 +358,6 @@ def generate_unique_name(prefix):
     
     return unique_name
     
-
-call_descriptor_table = {}
 
 def initialise_call_descriptor_table():
     # FIXME: name mangling by hand shouldn't be allowed-

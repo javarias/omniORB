@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.7  2000/01/11 12:02:41  djs
+# More tidying up
+#
 # Revision 1.6  2000/01/10 17:18:15  djs
 # Removed redundant code.
 #
@@ -66,10 +69,8 @@ self = tie
 
 def __init__(stream):
     self.stream = stream
+    self.__environment = name.Environment()
     return self
-
-
-self.__environment = name.Environment()
 
 
 def POA_prefix(nested):

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  2000/01/11 11:34:49  djs
+# Added support for fragment generation (-F) mode
+#
 # Revision 1.2  1999/11/19 20:10:13  djs
 # Now runs the poa generating code after the main code
 #
@@ -45,6 +48,7 @@ from omniidl.be.cxx import tyutil, util
 
 from omniidl.be.cxx.skel import main
 from omniidl.be.cxx.skel import poa
+from omniidl.be.cxx.skel import mangler
 
 def monolithic(stream, tree):
     """Creates one large skeleton with all code inside"""
@@ -84,11 +88,15 @@ def run(tree):
     skel_filename = config.basename() + config.skelsuffix()
     stream = util.Stream(open(skel_filename, "w"), 2)
 
+    # clear all state
+    mangler.__init__()
+
     if config.FragmentFlag():
         fragment(stream, tree)
     else:
         # generate one big chunk of code
         monolithic(stream, tree)
+
 
 
 

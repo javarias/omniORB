@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  2000/01/11 11:33:55  djs
+# Tidied up
+#
 # Revision 1.7  2000/01/07 20:31:24  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -92,17 +95,6 @@ self = typecode
 # Utility functions local to this module start here
 # ----------------------------------------------------------------------
 
-# Hashtable with keys representing names defined. If two structures both
-# have a member of type foo, we should still only define the TypeCode for
-# foo once.
-self.__defined_names = {}
-
-# Normally when walking over the tree we only consider things defined in
-# the current file. However if we encounter a dependency between something
-# in the current file and something defined elsewhere, we set the override
-# flag and recurse again.
-self.__override = 0
-
 class NameAlreadyDefined:
     def __str__(self):
         return "Name has already been defined in this scope/block/file/section"
@@ -128,6 +120,18 @@ def __init__(stream):
     self.tophalf = stream
     self.bottomhalf = stream
     self.__immediatelyInsideModule = 0
+
+    # Hashtable with keys representing names defined. If two structures both
+    # have a member of type foo, we should still only define the TypeCode for
+    # foo once.
+    self.__defined_names = {}
+
+    # Normally when walking over the tree we only consider things defined in
+    # the current file. However if we encounter a dependency between something
+    # in the current file and something defined elsewhere, we set the override
+    # flag and recurse again.
+    self.__override = 0
+    
     return self
 
 # It appears that the old compiler will map names in repository IDs

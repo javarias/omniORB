@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19  2000/01/12 17:48:34  djs
+# Added option to create BOA compatible skeletons (same as -BBOA in omniidl3)
+#
 # Revision 1.18  2000/01/11 14:13:23  djs
 # Updated array mapping to include NAME_copy(to, from) as per 2.3 spec
 #
@@ -102,17 +105,12 @@ from omniidl.be.cxx.skel import mangler, dispatch, proxy
 import main
 self = main
 
-# ------------------------------------
-# environment handling functions
-
-#self.__environment = name.Environment()
-self.__globalScope = name.globalScope()
-self.__insideInterface = 0
-self.__insideModule = 0
-
 
 def __init__(stream):
     self.stream = stream
+    self.__globalScope = name.globalScope()
+    self.__insideInterface = 0
+    self.__insideModule = 0
     return self
 
 # ------------------------------------

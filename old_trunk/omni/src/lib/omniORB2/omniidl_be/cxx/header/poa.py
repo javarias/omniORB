@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  2000/01/11 11:34:28  djs
+# Added support for fragment generation (-F) mode
+#
 # Revision 1.9  2000/01/10 17:18:14  djs
 # Removed redundant code.
 #
@@ -76,11 +79,10 @@ import poa
 self = poa
 
 def __init__(stream):
+    self.__nested = 0
     poa.stream = stream
     return poa
 
-
-self.__nested = 0
 
 def POA_prefix():
     if not(self.__nested):

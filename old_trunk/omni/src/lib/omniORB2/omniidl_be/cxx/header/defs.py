@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.24  2000/01/12 17:48:31  djs
+# Added option to create BOA compatible skeletons (same as -BBOA in omniidl3)
+#
 # Revision 1.23  2000/01/11 14:13:15  djs
 # Updated array mapping to include NAME_copy(to, from) as per 2.3 spec
 #
@@ -120,16 +123,14 @@ import defs
 
 self = defs
 
-# State information (used to be passed as arguments during recursion)
-self.__insideInterface = 0
-self.__insideModule = 0
-self.__insideClass = 0
-
-self.__globalScope = name.globalScope()
-
-
 def __init__(stream):
     defs.stream = stream
+    self.__insideInterface = 0
+    self.__insideModule = 0
+    self.__insideClass = 0
+
+    self.__globalScope = name.globalScope()
+    
     return defs
 
 #
