@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2000/09/21 11:08:18  dpg1
+  Add a user check to RefCountServantBase::_add_ref() which complains if
+  it is called when the reference count is zero.
+
   Revision 1.1.2.10  2000/06/27 16:23:25  sll
   Merged OpenVMS port.
 
@@ -221,21 +225,20 @@ PortableServer::ServantBase::_do_this(const char* repoId)
   }
   else {
 
-    PortableServer::POA_var poa = this->_default_POA();
-
     {
       omni_tracedmutex_lock sync(*omni::internalLock);
 
       omniLocalIdentity* id = _identities();
 
       if( id && !id->servantsNextIdentity() ) {
-	// We only have a single activation -- return a
-	// reference to it.
+	// We only have a single activation -- return a reference to it.
 	omniObjRef* ref = omni::createObjRef(_mostDerivedRepoId(), repoId, id);
 	OMNIORB_ASSERT(ref);
 	return ref->_ptrToObjRef(repoId);
       }
     }
+
+    PortableServer::POA_var poa = this->_default_POA();
 
     if( CORBA::is_nil(poa) )
       OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
