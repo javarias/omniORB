@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/01/20 11:51:34  djr
+  (Most) Pseudo objects now used omni::poRcLock for ref counting.
+  New assertion check OMNI_USER_CHECK.
+
   Revision 1.1.2.1  1999/09/22 14:26:46  djr
   Major rewrite of orbcore to support POA.
 
@@ -55,10 +59,7 @@ public:
   virtual void shutdown(CORBA::Boolean);
   virtual void destroy();
 
-  virtual CORBA::Boolean _is_a(const char*);
   virtual CORBA::Boolean _non_existent();
-  virtual CORBA::Boolean _is_equivalent(CORBA::Object_ptr);
-  virtual CORBA::ULong   _hash(CORBA::ULong);
   virtual void* _ptrToObjRef(const char*);
   virtual void _NP_incrRefCount();
   virtual void _NP_decrRefCount();

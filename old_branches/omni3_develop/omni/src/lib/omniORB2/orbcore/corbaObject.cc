@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.19.6.6  1999/10/29 13:18:16  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.19.6.5  1999/10/16 13:22:53  djr
   Changes to support compiling on MSVC.
 
@@ -174,7 +177,7 @@ CORBA::ULong
 CORBA::Object::_hash(CORBA::ULong maximum)
 {
   if( _NP_is_nil() || maximum == 0 )  return 0;
-  if( _NP_is_pseudo() )  return CORBA::ULong(this) % maximum;
+  if( _NP_is_pseudo() )  return CORBA::ULong((unsigned long) this) % maximum;
 
   omniObjKey key;
   pd_obj->_getTheKey(key);

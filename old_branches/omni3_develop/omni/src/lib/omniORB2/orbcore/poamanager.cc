@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/01/20 11:51:37  djr
+  (Most) Pseudo objects now used omni::poRcLock for ref counting.
+  New assertion check OMNI_USER_CHECK.
+
   Revision 1.1.2.4  1999/10/29 13:18:19  djr
   Changes to ensure mutexes are constructed when accessed.
 
@@ -212,7 +216,7 @@ deactivate_thread_fn(void* args)
 
   omniOrbPOAManager::POASeq* ppoas = (omniOrbPOAManager::POASeq*) targs[0];
   omniOrbPOAManager::POASeq& poas = *ppoas;
-  CORBA::Boolean etherealise = (CORBA::Boolean) (int) targs[1];
+  CORBA::Boolean etherealise = (CORBA::Boolean) (unsigned long) targs[1];
   delete[] targs;
 
   for( CORBA::ULong i = 0; i < poas.length(); i++ ) {
