@@ -29,13 +29,16 @@
 
 /*
  $Log$
+ * Revision 1.5  1997/05/06  16:10:05  sll
+ * Public release.
+ *
 */
 
 #ifndef __PROXYFACTORY_H__
 #define __PROXYFACTORY_H__
 
 class proxyObjectFactory_iterator;
-class _OMNIORB2_NTDLL_ proxyObjectFactory {
+class proxyObjectFactory {
 public:
   proxyObjectFactory();
   virtual ~proxyObjectFactory();
@@ -55,7 +58,7 @@ public:
   // a base interface.
 
   friend class proxyObjectFactory_iterator;
-  static proxyObjectFactory* proxyStubs;
+  static _OMNIORB_NTDLL_IMPORT proxyObjectFactory* proxyStubs;
 
 private:
   proxyObjectFactory *pd_next;
