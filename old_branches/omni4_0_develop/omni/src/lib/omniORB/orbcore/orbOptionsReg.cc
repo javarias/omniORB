@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2002/03/18 15:13:09  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.2.6  2002/03/11 12:21:07  dpg1
   ETS things.
 
@@ -167,20 +172,23 @@ CORBA::Boolean getRegEntry(HKEY rootkey, DWORD index,
   while ( isspace(*p) )
     p++;
   key = p;
-  p += strlen(key) - 1;
-  while ( isspace(*p) )
-    p--;
-  *(++p) = '\0';
+  if (!*p != '\0') {
+    p += strlen(key) - 1;
+    while ( isspace(*p) )
+      p--;
+    *(++p) = '\0';
+  }
 
   p = valuebuf;
   while ( isspace(*p) )
     p++;
   value = p;
-  p += strlen(value) - 1;
-  while ( isspace(*p) )
-    p--;
-  *(++p) = '\0';
-
+  if (*p != '\0') {
+    p += strlen(value) - 1;
+    while ( isspace(*p) )
+      p--;
+    *(++p) = '\0';
+  }
   return 1;
 }
 
