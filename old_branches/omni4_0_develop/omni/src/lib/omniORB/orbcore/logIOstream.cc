@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.8.2.9  2002/01/15 16:38:13  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.8.2.8  2002/01/09 11:39:23  dpg1
   New omniORB::setLogFunction() function.
 
@@ -341,9 +345,12 @@ omniORB::logger::operator<<(const CORBA::SystemException& ex)
 void
 omniORB::logger::flush()
 {
-  if( (size_t)(pd_p - pd_buf) != strlen(pd_prefix) )
-    fprintf(stderr, "%s", pd_buf);
-
+  if( (size_t)(pd_p - pd_buf) != strlen(pd_prefix) ) {
+    if (logfunc())
+      logfunc()(pd_buf);
+    else
+      fprintf(stderr, "%s", pd_buf);
+  }
   pd_p = pd_buf + strlen(pd_prefix);
   *pd_p = '\0';
 }
