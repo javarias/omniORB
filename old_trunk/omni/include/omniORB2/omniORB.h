@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15  1999/02/18 15:19:54  djr
+  New configuration function omniORB::enableLcdMode()
+
   Revision 1.14  1999/01/07 18:38:34  djr
   New configuration variable omniORB::diiThrowsSysExceptions.
 
@@ -531,6 +534,9 @@ _CORBA_MODULE_BEG
 
   _CORBA_MODULE_VAR CORBA::Boolean useTypeCodeIndirections;
   // true by default
+
+  _CORBA_MODULE_VAR CORBA::Boolean acceptMisalignedTcIndirections;
+  // false by default
 
 
   class logStream {

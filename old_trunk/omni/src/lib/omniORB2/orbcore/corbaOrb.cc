@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.21  1999/03/11 16:25:52  djr
+  Updated copyright notice
+
   Revision 1.20  1999/02/18 15:15:12  djr
   omniORB::strictIIOP if now true by default.
   New runtime option -ORBlcdMode  (omniORB::enableLcdMode())
@@ -122,6 +125,7 @@ CORBA::Boolean           tcAliasExpand = 0;
 unsigned int             maxTcpConnectionPerServer = 5;
 CORBA::Boolean           diiThrowsSysExceptions = 0;
 CORBA::Boolean           useTypeCodeIndirections = 1;
+CORBA::Boolean           acceptMisalignedTcIndirections = 0;
 }
 
 #else
@@ -136,6 +140,7 @@ CORBA::Boolean                  omniORB::tcAliasExpand = 0;
 unsigned int                    omniORB::maxTcpConnectionPerServer = 5;
 CORBA::Boolean                  omniORB::diiThrowsSysExceptions = 0;
 CORBA::Boolean                  omniORB::useTypeCodeIndirections = 1;
+CORBA::Boolean                  omniORB::acceptMisalignedTcIndirections = 0;
 #endif
 
 _CORBA_Unbounded_Sequence_Octet omni::myPrincipalID;
@@ -754,4 +759,5 @@ omniORB::enableLcdMode()
   omniORB::idleConnectionScanPeriod(omniORB::idleIncoming, 0);
   omniORB::idleConnectionScanPeriod(omniORB::idleOutgoing, 0);
   omniORB::useTypeCodeIndirections = 0;
+  omniORB::acceptMisalignedTcIndirections = 1;
 }
