@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/12/03 13:39:54  dpg1
+  Explicit socket shutdown flag for Windows.
+
   Revision 1.1.4.5  2001/08/23 16:00:34  sll
   Added method in giopTransportImpl to return the addresses of the host
   interfaces.
@@ -347,10 +350,7 @@ public:
 
   virtual const omnivector<const char*>* getInterfaceAddress() = 0;
   // Get the addresses of all the interfaces that can be used to talk to
-  // this host. Return the list only if <type> identifies this transport type.
-  // e.g. type == "giop:tcp" causes the tcp transport implementation to
-  // returns the IP address of all the network interfaces of this host.
-  // If <type> does not match, returns 0.
+  // this host using this transport.
 
   virtual void initialise();
   // Initialise the transport implementation. Called once the 1st time
@@ -363,7 +363,7 @@ public:
   // returns the IP address of all the network interfaces of this host.
   // If <type> does not match returns 0.
 
-  const char*     type;
+  const char*        type;
   giopTransportImpl* next;
 
   giopTransportImpl(const char* t);
