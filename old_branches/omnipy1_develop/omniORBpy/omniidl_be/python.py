@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.5  2001/03/19 12:01:24  dpg1
+# Invalid stub code generated for typedef to struct/union inside an
+# interface.
+#
 # Revision 1.27.2.4  2000/11/01 11:25:56  dpg1
 # Recursive structs inside interfaces were broken
 #
@@ -204,7 +208,7 @@ import_idl_file = """\
 import @ifilename@"""
 
 open_imported_module_name = """\
-_0_@imodname@     = omniORB.openModule("@package@@imodname@")
+_0_@imodname@ = omniORB.openModule("@package@@imodname@")
 _0_@s_imodname@ = omniORB.openModule("@package@@s_imodname@")"""
 
 forward_interface = """\
