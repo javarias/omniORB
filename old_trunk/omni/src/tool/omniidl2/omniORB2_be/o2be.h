@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.10  1997/12/23 19:29:58  sll
+ New member o2be_array::produce_typedef_skel.
+
  Revision 1.9  1997/12/09 19:54:23  sll
  *** empty log message ***
 
@@ -67,6 +70,19 @@ public:
   // same as fqname but with '_' as the separator
   virtual char *_fqname() const   { return pd__fqname; }
 
+  // un-qualified name, prefixed by the TypeCode prefix
+  virtual char *tcname() const { return pd_tcname; }
+
+  // fully qualified name with TypeCode prefix, 
+  // scope name + TypeCode prefix + un-qualified name
+  virtual char *fqtcname() const { return pd_fqtcname; }
+  
+  // same as above, but with '_' as the seperator
+  virtual char *_fqtcname() const { return pd__fqtcname; }
+
+  // true if contains a recursive sequence, otherwise false
+  virtual idl_bool recursive_seq ()const { return pd_recursive_seq; }
+
   virtual char *unambiguous_name(AST_Decl* used_in,
 				 idl_bool use_fqname = I_FALSE) const;
   // Looks at the scope-name relation between this class and the one it
@@ -96,6 +112,10 @@ public:
   void set__scopename(char *n){ pd__scopename = n; }
   void set__fqname(char *n)   { pd__fqname = n; }
 
+  void set_tcname(char *n)    { pd_tcname = n; }
+  void set_fqtcname(char* n)  { pd_fqtcname = n; }
+  void set__fqtcname(char* n) { pd__fqtcname = n; }
+  void set_recursive_seq(idl_bool v) { pd_recursive_seq = v; }
 
   static char *narrow_and_produce_fqname(AST_Decl *type);
   static char *narrow_and_produce__fqname(AST_Decl *type);
@@ -108,6 +128,12 @@ public:
   static char *narrow_and_produce_unambiguous_scopename(AST_Decl *type,
 						   AST_Decl *used_in,
 						   idl_bool use_fqname=I_FALSE);
+  static void narrow_and_produce_typecode_skel(AST_Decl *type, 
+					       fstream& s);
+  static void produce_typecode_member(AST_Decl *type, 
+				      fstream& s,
+				      idl_bool new_ptr=I_TRUE);
+  static idl_bool narrow_and_check_recursive_seq(AST_Decl *decl);
 
 private:
   o2be_name();
@@ -117,6 +143,10 @@ private:
   char *pd__scopename;
   char *pd__fqname;
   char *pd_repositoryID;
+  char *pd_tcname;
+  char *pd_fqtcname;
+  char *pd__fqtcname;
+  idl_bool pd_recursive_seq;
 };
 
 class o2be_typedef;
@@ -149,9 +179,15 @@ public:
 
   void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
+  const char* fieldMemberTypeName();
+  static const char* TypeCodeMemberName();
+
+  virtual char *tckname() const { return pd_tckname; }
+  void set_tckname(char *n) { pd_tckname = n; }
+
 private:
   o2be_predefined_type();
-
+  char *pd_tckname;
 };
 
 class o2be_constant : public virtual AST_Constant,
@@ -190,6 +226,8 @@ public:
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
   void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
+
+  void produce_typecode_skel(fstream &s);
 
   void set_hdr_produced_in_field() { pd_hdr_produced_in_field = I_TRUE; }
   idl_bool get_hdr_produced_in_field() { return pd_hdr_produced_in_field; }
@@ -272,6 +310,9 @@ public:
   void produce_skel(fstream &s);
   void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
+  void produce_typecode_skel(fstream &s);
+  idl_bool check_recursive_seq();
+
   idl_bool isVariable() { return pd_isvar; }
   idl_bool nodefault() { return pd_nodefault; }
   idl_bool no_missing_disc_value();
@@ -328,6 +369,9 @@ public:
   void produce_skel(fstream &s);
   void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
+  void produce_typecode_skel(fstream &s);
+  idl_bool check_recursive_seq();
+
   idl_bool isVariable() { return pd_isvar; }
 
   void set_hdr_produced_in_field() { pd_hdr_produced_in_field = I_TRUE; }
@@ -360,6 +404,9 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+
+  void produce_typecode_skel(fstream &s);
+  idl_bool check_recursive_seq();
 
   size_t repoIdConstLen() const { return pd_repoidsize; }
   const char *repoIdConstName() const { return pd_repoid; }
@@ -415,6 +462,11 @@ public:
 
   void produce_hdr (fstream &s, o2be_typedef *tdef);
   void produce_skel(fstream &s, o2be_typedef *tdef);
+
+  void produce_typecode_skel(fstream &s);
+  void produce_typecode_member(fstream &s, idl_bool new_ptr);
+  idl_bool check_recursive_seq();
+
   static void produce_typedef_hdr (fstream &s, o2be_typedef *tdef1,
 				   o2be_typedef *tdef2);
   static void produce_typedef_skel (fstream &s, o2be_typedef *tdef1,
@@ -471,6 +523,10 @@ public:
   void produce_skel(fstream &s);
   void produce_typedef_hdr (fstream &s, o2be_typedef *tdef);
 
+  void produce_typecode_skel(fstream &s);
+  void produce_typecode_member(fstream &s, idl_bool new_ptr);
+  idl_bool check_recursive_seq();
+
   static void produce_hdr_for_predefined_types(fstream &s);
   static AST_Sequence *attach_seq_to_base_type(AST_Sequence *se);
 
@@ -478,7 +534,7 @@ public:
 
 private:
   o2be_sequence();
-  enum seqnametype { EFFECTIVE_TYPE, IMMEDIATE_TYPE };
+  enum seqnametype { EFFECTIVE_TYPE, IMMEDIATE_TYPE, BASE_TYPE };
   char *pd_effname;
   static char *internal_produce_seqname(AST_Decl *basetype,
 					enum seqnametype stype);
@@ -639,13 +695,15 @@ public:
   friend class o2be_sequence;
   friend class o2be_union;
   friend class o2be_exception;
+  friend class o2be_array;
 
   enum argType {
     tShort = 0, tLong = 1, tUShort = 2, tULong = 3, tFloat = 4, tDouble = 5,
     tBoolean = 6, tChar = 7, tOctet = 8, tEnum = 9, tObjref = 10,
     tStructFixed = 11, tStructVariable = 12, tUnionFixed = 13,
     tUnionVariable = 14, tString = 15, tSequence = 16, tArrayFixed = 17,
-    tArrayVariable = 18, tAny = 19, tObjrefMember = 20, tStringMember = 21,
+    tArrayVariable = 18, tAny = 19, tTypeCode = 20, tObjrefMember = 21, 
+    tStringMember = 22, tTypeCodeMember = 23,
     _tMaxValue
   };
 
@@ -718,6 +776,10 @@ public:
 
   void produce_hdr(fstream &s);
   void produce_skel(fstream &s);
+
+  void produce_typecode_skel(fstream &s);
+  idl_bool check_recursive_seq();
+
   const char *fieldMemberType_uqname() const { return pd_fm_uqname; }
   const char *fieldMemberType_fqname(AST_Decl* used_in);
   // Looks at the scope-name relation between this node and the one it is
