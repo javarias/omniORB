@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.6  2000/03/06 15:03:45  dpg1
+# Minor bug fixes to omniidl. New -nf and -k flags.
+#
 # Revision 1.15.2.5  2000/03/02 11:22:46  dpg1
 # omniidl.py renamed omniidlrun.py to avoid problems with import
 # omniidl.main.
@@ -329,7 +332,7 @@ def main(argv=None):
     if print_usage:
         sys.exit(0)
 
-    if len(backends) == 0 and not (quiet or dump_only):
+    if len(backends) == 0 and not (quiet or dump_only or preprocessor_only):
         sys.stderr.write(cmdname + ": Warning: No back-ends specified; " \
                          "checking IDL for validity\n")
 
