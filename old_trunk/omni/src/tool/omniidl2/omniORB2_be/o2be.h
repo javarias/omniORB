@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.26  1999/06/18 20:46:12  sll
+ *** empty log message ***
+
  Revision 1.25  1999/06/03 17:11:36  sll
  Make out_adptarg_name non-const in o2be_struct and o2be_union.
 
@@ -743,7 +746,6 @@ private:
   idl_bool pd_have_produced_tcParser_buildDesc_code;
   idl_bool pd_have_calc_rec_seq_offset;
   size_t   pd_rec_seq_offset;
-  char* pd_out_adptarg_name;
 };
 
 
