@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.30.6.8  2000/06/22 10:40:14  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.30.6.7  2000/06/19 14:18:33  dpg1
   Explicit cast to (const char*) when using String_var with logger.
 
@@ -168,7 +172,7 @@
 #endif
 
 #ifndef INIT_REGKEY
-#define INIT_REGKEY  "SOFTWARE\\ORL\\omniORB\\3.0"
+#define INIT_REGKEY  "SOFTWARE\\ORL\\omniORB\\2.0"
                      // Path to Registry Keys for omniORB [NT specific]
 #endif
 
