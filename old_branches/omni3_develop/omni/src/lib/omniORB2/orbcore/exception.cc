@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.9.6.3  1999/10/14 16:22:08  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.9.6.2  1999/09/30 12:25:58  djr
   Minor changes.
 
@@ -234,6 +237,7 @@ _omni_callTransientExceptionHandler(omniObjRef* obj,
 							    ex);
   }
   else {
+    cookie = omni_globalTransientExcHandlerCookie;
     return (*omni_globalTransientExcHandler)(cookie,
 					     nretries,
 					     ex);
@@ -254,6 +258,7 @@ _omni_callCommFailureExceptionHandler(omniObjRef* obj,
 							      ex);
   }
   else {
+    cookie = omni_globalCommFailureExcHandlerCookie;
     return (*omni_globalCommFailureExcHandler)(cookie,
 					       nretries,
 					       ex);
@@ -274,6 +279,7 @@ _omni_callSystemExceptionHandler(omniObjRef* obj,
 							 ex);
   }
   else {
+    cookie = omni_globalSystemExcHandlerCookie;
     return (*omni_globalSystemExcHandler)(cookie,
 					  nretries,
 					  ex);
