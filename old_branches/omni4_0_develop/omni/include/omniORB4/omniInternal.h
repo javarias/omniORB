@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2000/11/03 18:58:47  sll
+  Unbounded sequence of octet got a new type name.
+
   Revision 1.2.2.3  2000/10/27 15:42:03  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -380,6 +383,7 @@ public:
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+#include <omniORB4/codeSets.h>
 #include <omniORB4/cdrStream.h>
 #include <omniORB4/seqTemplatedefns.h>
 #include <omniORB4/giopStream.h>
