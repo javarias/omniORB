@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2004/04/02 13:26:23  dgrisby
+  Start refactoring TypeCode to support value TypeCodes, start of
+  abstract interfaces support.
+
   Revision 1.1.2.3  2004/02/16 10:10:29  dgrisby
   More valuetype, including value boxes. C++ mapping updates.
 
@@ -111,7 +115,7 @@ valueFactoryTableTracker::
   for (CORBA::ULong i=0; i < vf_tablesize; i++) {
     ValueFactoryTableEntry *f, *n;
     for (f = vf_table[i]; f; f = n) {
-      if (omniORB::trace(26)) {
+      if (omniORB::trace(25)) {
 	omniORB::logger l;
 	l << "Release internal value factory for '" << f->repoId << "'.\n";
       }
