@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9  1997/12/09 18:24:29  sll
+  Added support for HPUX.
+
   Revision 1.8  1997/08/21 22:04:49  sll
   Changed to use the new platform identification proprocessor macro.
 
@@ -96,12 +99,13 @@ again:
   //                       struct hostent_data *buffer);
   // -1 = Error, 0 is OK
   extern int h_errno;
-  hostent_data hd;		// see netdb.h
-  hd.hostf = NULL;
-  hd.current = NULL;
-  if (gethostbyname_r(name, &h.pd_ent, &hd) == -1) {
-    rc = h_errno;   // Error
-    return -1;
+  if (!h.pd_buffer) {
+    h.pd_buffer = (char*) (new hostent_data);
+    memset((void*)h.pd_buffer,0,sizeof(hostent_data));
+  }
+  if (gethostbyname_r(name,&h.pd_ent,(hostent_data*)h.pd_buffer) == -1) {
+    rc = h_errno;  // Error
+    return -1
   }
   
 #else
