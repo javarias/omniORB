@@ -28,6 +28,9 @@
 //      
 
 // $Log$
+// Revision 1.2  1997/12/10 11:39:33  sll
+// Updated life cycle runtime.
+//
 // Revision 1.1  1997/09/20  17:04:23  dpg1
 // Initial revision
 //
@@ -81,7 +84,13 @@ omniLC::_wrap_proxy::_reset_wraps(omniObject *obj) {
   omniLC::_wrap_proxy **p = (omniLC::_wrap_proxy **)
     (&omniObject::wrappedObjectTable[omniORB::hash(k)]);
   while (*p) {
+#ifdef HAS_Cplusplus_Namespace
+    // operator== is defined in the omniORB namespace
+    if (omniORB::operator==((*p)->_wrapped_key,k)) {
+#else
+    // operator== is defined in the global namespace
     if ((*p)->_wrapped_key == k) {
+#endif
       (*p)->_reset_proxy();
       *p = (*p)->_next_wrap_proxy;
     }
