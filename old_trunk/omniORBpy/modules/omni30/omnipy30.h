@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/09/28 14:23:30  dpg1
+// Fixed some bugs in handling the Python interpreter lock.
+//
 // Revision 1.6  1999/09/24 09:33:34  dpg1
 // Version numbers now come from make file.
 //
@@ -320,6 +323,21 @@ public:
     //    cout << "Py_OmniProxyCallDesc created: " << op << " " << len << endl;
   }
 
+  virtual ~Py_OmniProxyCallDesc() {
+    assert(!tstate_);
+  }
+
+  inline void releaseInterpreterLock() {
+    assert(!tstate_);
+    tstate_ = PyEval_SaveThread();
+  }
+
+  inline void reacquireInterpreterLock() {
+    assert(tstate_);
+    PyEval_RestoreThread(tstate_);
+    tstate_ = 0;
+  }
+
   virtual CORBA::ULong alignedSize(CORBA::ULong msgsize);
 
   virtual void marshalArguments(GIOP_C& giop_client);
@@ -371,7 +389,17 @@ public:
   }
 
   virtual ~Py_OmniOWProxyCallDesc() {
-    if (tstate_) PyEval_RestoreThread(tstate_);
+    assert(!tstate_);
+  }
+
+  inline void releaseInterpreterLock() {
+    tstate_ = PyEval_SaveThread();
+  }
+
+  inline void reacquireInterpreterLock() {
+    assert(tstate_);
+    PyEval_RestoreThread(tstate_);
+    tstate_ = 0;
   }
 
   virtual CORBA::ULong alignedSize(CORBA::ULong msgsize);
