@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.20  1999/03/11 16:26:10  djr
+  Updated copyright notice
+
   Revision 1.19  1999/01/07 09:51:11  djr
   New implementation of proxy calls which reduces the size of
   the code generated.
@@ -1453,6 +1456,17 @@ o2be_attribute::produce_wrapproxy_wr_skel(std::fstream& s,
   IND(s); s << "}\n";
 }
 
+void
+o2be_attribute::produce_decls_at_global_scope_in_hdr(std::fstream& s)
+{
+  o2be_operation::check_and_produce_unnamed_argument_tc_decl(s,field_type());
+}
+
+void
+o2be_attribute::produce_dynskel(std::fstream& s)
+{
+  o2be_operation::check_and_produce_unnamed_argument_tc_value(s,field_type());
+}
 
 const char*
 o2be_attribute::mangled_read_signature()
