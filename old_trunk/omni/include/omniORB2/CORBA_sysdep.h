@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.38  1999/08/15 13:52:40  sll
+ Updated compiler defines for SGI and AIX.
+
  Revision 1.37  1999/06/26 17:53:40  sll
  Use namespace if compiler is SGI MIPSpro 7.2.1 or HP aCC.
  Added support for Irix 6.5 in 64bit mode.
@@ -617,6 +620,8 @@ strdup (char* str)
 #include <iostream.h>
 #endif
 
-#define ENABLE_CLIENT_IR_SUPPORT
+// #define ENABLE_CLIENT_IR_SUPPORT
+// Define ENABLE_CLIENT_IR_SUPPORT to use as client to an Interface Repository
+
 
 #endif // __CORBA_SYSDEP_H__
