@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.4  2000/11/07 18:28:21  sll
+# Use helper marshal functions if the interface is a forward declaration.
+#
 # Revision 1.17.2.3  2000/11/03 19:26:01  sll
 # Simplified the marshalling functions.
 #
@@ -329,13 +332,9 @@ def unmarshall(to, environment, type, decl, name, from_where):
 def sort_exceptions(ex):
     # sort the exceptions into lexicographical order
     def lexicographic(exception_a, exception_b):
-        # use their full C++ name
-        name_a = string.join(id.mapID(exception_a.scopedName()))
-        name_b = string.join(id.mapID(exception_b.scopedName()))
-        # name_a <=> name_b
-        if name_a < name_b: return -1
-        if name_a > name_b: return 1
-        return 0
+        name_a = exception_a.repoId()
+        name_b = exception_b.repoId()
+        return cmp(name_a, name_b)
         
     raises = ex[:]
     raises.sort(lexicographic)
