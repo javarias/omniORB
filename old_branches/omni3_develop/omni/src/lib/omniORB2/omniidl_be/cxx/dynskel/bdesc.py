@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.1  2000/02/14 18:34:56  dpg1
+# New omniidl merged in.
+#
 # Revision 1.12  2000/01/20 18:26:44  djs
 # Moved large C++ output strings into an external template file
 #
@@ -156,7 +159,7 @@ def write_array_desc(where, aliasType, dims):
 #ifndef _@private_prefix@_tcParser_getElementDesc@this_cname@__
 #define _@private_prefix@_tcParser_getElementDesc@this_cname@__
 static CORBA::Boolean
-@private_prefix@_tcParser_getElementDesc@this_cname@(tcArrayDesc* _adesc, CORBA::ULong _index, tcDescriptor &_desc)
+@private_prefix@_tcParser_getElementDesc@this_cname@(tcArrayDesc* _adesc, CORBA::ULong _index, tcDescriptor &_desc, _CORBA_ULong& _contiguous)
 {
   @type@ (&@private_prefix@_tmp)@tail_dims@ = (*((@type@(*)@index_string@)_adesc->opq_array))[_index];
   @builddesc@
@@ -473,7 +476,8 @@ def sequence(type):
                 
 
     # something very strange happens here with strings and casting
-    thing = "(*((" + sequence_template + "*)_desc->opq_seq))[_index]"
+    sequence_desc = "((" + sequence_template + "*)_desc->opq_seq)"
+    thing = "(*" + sequence_desc + ")[_index]"
     if is_array:
         thing = docast(seqType, None, thing)
 
@@ -488,11 +492,24 @@ def sequence(type):
     elif tyutil.isSequence(seqType):
         # element is an _anonymous_ sequence
         desc.out(str(sequence(seqType)))
+
+    elementDesc = util.StringStream()
+    # djr and jnw's "Super-Hacky Optimisation"
+    if isinstance(deref_seqType, idltype.Base)   and \
+       not(tyutil.isVariableType(deref_seqType)) and \
+       not(is_array):
+        elementDesc.out(template.sequence_elementDesc_contiguous,
+                        sequence = sequence_desc)
+    else:
+        elementDesc.out(template.sequence_elementDesc_noncontiguous,
+                        private_prefix = config.privatePrefix(),
+                        thing_cname = seqType_cname,
+                        thing = thing)
     
     desc.out(template.anon_sequence,
              cname = memberType_cname, thing_cname = seqType_cname,
              sequence_template = sequence_template,
-             thing = thing,
+             elementDesc = str(elementDesc),
              private_prefix = config.privatePrefix())
     return desc
 

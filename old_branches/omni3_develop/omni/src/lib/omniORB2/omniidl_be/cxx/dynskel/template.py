@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  2000/01/20 18:26:45  djs
+# Moved large C++ output strings into an external template file
+#
 
 """C++ templates for the DynSK.cc file"""
 
@@ -49,7 +52,7 @@ getdesc_array = """\
 #ifndef _@private_prefix@_tcParser_getElementDesc@this_cname@__
 #define _@private_prefix@_tcParser_getElementDesc@this_cname@__
 static CORBA::Boolean
-@private_prefix@_tcParser_getElementDesc@this_cname@(tcArrayDesc* _adesc, CORBA::ULong _index, tcDescriptor &_desc)
+@private_prefix@_tcParser_getElementDesc@this_cname@(tcArrayDesc* _adesc, CORBA::ULong _index, tcDescriptor &_desc, _CORBA_ULong& _contiguous)
 {
   @type@ (&@private_prefix@_tmp)@tail_dims@ = (*((@type@(*)@index_string@)_adesc->opq_array))[_index];
   @builddesc@
@@ -74,6 +77,15 @@ builddesc_extern = """\
 extern void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @name@&);
 """
 
+sequence_elementDesc_contiguous = """\
+_newdesc.p_streamdata = @sequence@->NP_data();
+_contiguous = @sequence@->length() - _index;
+"""
+
+sequence_elementDesc_noncontiguous = """\
+@private_prefix@_buildDesc@thing_cname@(_newdesc, @thing@);
+"""
+
 anon_sequence = """\
 #ifndef _@private_prefix@_tcParser_buildDesc@cname@__
 #define _@private_prefix@_tcParser_buildDesc@cname@__
@@ -90,9 +102,9 @@ static CORBA::ULong
 }
 
 static CORBA::Boolean
-@private_prefix@_tcParser_getElementDesc@cname@(tcSequenceDesc* _desc, CORBA::ULong _index, tcDescriptor& _newdesc)
+@private_prefix@_tcParser_getElementDesc@cname@(tcSequenceDesc* _desc, CORBA::ULong _index, tcDescriptor& _newdesc, _CORBA_ULong& _contiguous)
 {
-  @private_prefix@_buildDesc@thing_cname@(_newdesc, @thing@);
+  @elementDesc@
   return 1;
 }
 
