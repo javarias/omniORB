@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.8  1997/08/21 22:04:49  sll
+  Changed to use the new platform identification proprocessor macro.
+
 // Revision 1.7  1997/05/06  15:22:38  sll
 // Public release.
 //
@@ -40,6 +43,8 @@
 #include <stdlib.h>
 
 #include "libcWrapper.h"
+
+omni_mutex          LibcWrapper::non_reentrant;
 
 int
 LibcWrapper::gethostbyname(const char *name,
@@ -84,6 +89,20 @@ again:
     return -1;
   }
 
+#elif defined(__hpux__)
+
+  // Use gethostbyname_r() on HPUX 10.20
+  //  int gethostbyname_r(const char *name, struct hostent *result, 
+  //                       struct hostent_data *buffer);
+  // -1 = Error, 0 is OK
+  extern int h_errno;
+  hostent_data hd;		// see netdb.h
+  hd.hostf = NULL;
+  hd.current = NULL;
+  if (gethostbyname_r(name, &h.pd_ent, &hd) == -1) {
+    rc = h_errno;   // Error
+    return -1;
+  }
   
 #else
 
@@ -102,7 +121,7 @@ again:
 #else
   if ((hp = ::gethostbyname(name)) == NULL) 
     {
-#ifdef __NT__
+#ifdef __WIN32__
     rc = 0;
 #else
     rc = h_errno;
@@ -150,7 +169,7 @@ again:
   }
   total += naddrs * sizeof(char *);
 
-  if (!h.pd_buffer) {
+  if (h.pd_buffer) {
     delete [] h.pd_buffer;
     h.pd_buffer = 0;
   }
