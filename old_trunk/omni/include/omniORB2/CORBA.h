@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.36  1999/06/02 16:07:44  sll
+ Enabled IR client support for all platforms. Previously, IR client is
+ not available with compilers that do not support namespace.
+
  Revision 1.35  1999/05/26 12:21:35  sll
  Use ENABLE_CLIENT_IR_SUPPORT alone to enable IR support.
 
@@ -194,6 +198,18 @@ _CORBA_MODULE_BEG
 # ifndef NO_FLOAT
   typedef _CORBA_Float   Float;
   typedef _CORBA_Double  Double;
+# endif
+
+  typedef _CORBA_Boolean& Boolean_out;
+  typedef _CORBA_Char&    Char_out;
+  typedef _CORBA_Octet&   Octet_out;
+  typedef _CORBA_Short&   Short_out;
+  typedef _CORBA_UShort&  UShort_out;
+  typedef _CORBA_Long&    Long_out;
+  typedef _CORBA_ULong&   ULong_out;
+# ifndef NO_FLOAT
+  typedef _CORBA_Float&   Float_out;
+  typedef _CORBA_Double&  Double_out;
 # endif
 
 
@@ -592,15 +608,26 @@ _CORBA_MODULE_BEG
 
   class Any_OUT_arg {
   public:
-    inline Any_OUT_arg(Any*& p) : _data(p) {}
+    inline Any_OUT_arg(Any*& p) : _data(p) { _data = (Any*) 0; }
     inline Any_OUT_arg(Any_var& p) : _data(p.pd_data) {
       p = (Any*)0;
     }
+    inline Any_OUT_arg(Any_OUT_arg& p) : _data(p._data) {}
+    inline Any_OUT_arg& operator=(Any_OUT_arg& p) {
+      _data = p._data; return *this;
+    }
+    inline Any_OUT_arg& operator=(Any* p) { _data = p; return *this; }
+
+    operator Any*& () { return _data; }
+    Any*& ptr() { return _data; }
+
     Any*& _data;
   private:
     Any_OUT_arg();
+    Any_OUT_arg& operator=(const Any_var&);
   };
 
+  typedef Any_OUT_arg Any_out;
 
   //////////////////////////////////////////////////////////////////////
   ////////////////////////////// Exception /////////////////////////////
