@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2000/11/15 17:22:19  sll
+  Consolidated all the state variables of a giopstream that is associated
+  with a strand to a giopStreamInfo structure.
+  Added char, wchar codeset convertor support to giopStream.
+
   Revision 1.1.4.2  2000/11/03 19:12:06  sll
   Use new marshalling functions for byte, octet and char. Use get_octet_array
   instead of get_char_array and put_octet_array instead of put_char_array.
@@ -561,7 +566,7 @@ giopStream::get_octet_array(CORBA::Octet* b,int size,
   }
   else {
     throw omniORB::fatalException(__FILE__,__LINE__,
-				  "giopStream::get_char_array() entered with the wrong state.");
+				  "giopStream::get_octet_array() entered with the wrong state.");
   }
 #endif
 
@@ -717,7 +722,7 @@ giopStream::put_octet_array(const CORBA::Octet* b, int size,
   }
   else {
     throw omniORB::fatalException(__FILE__,__LINE__,
-				  "giopStream::put_char_array() entered with the wrong state.");
+				  "giopStream::put_octet_array() entered with the wrong state.");
   }
 #endif
 
