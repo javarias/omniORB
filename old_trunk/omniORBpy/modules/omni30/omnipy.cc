@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.34  2000/04/27 11:04:19  dpg1
+// Catch exceptions thrown by ORB_init().
+//
 // Revision 1.33  2000/04/25 13:36:17  dpg1
 // If an object is deactivated while invocations on it are happening, the
 // deletion is performed by a callback at the end of the invoke(). The
@@ -151,6 +154,7 @@
 #endif
 
 #include <omnipy.h>
+#include <common/pyThreadCache.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -441,6 +445,9 @@ extern "C" {
     delete [] argv;
 
     omniPy::setTwin(pyorb, orb, ORB_TWIN);
+
+    // Initialise the thread state cache
+    omnipyThreadCache::init();
 
     Py_INCREF(Py_None);
     return Py_None;

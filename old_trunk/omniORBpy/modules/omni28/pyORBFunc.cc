@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.4  2000/04/27 11:04:50  dpg1
+// Add shutdown() and destroy() operations.
+//
 // Revision 1.3  2000/03/17 15:57:07  dpg1
 // Correct, and more consistent handling of invalid strings in
 // string_to_object().
@@ -44,6 +47,7 @@
 
 
 #include <omnipy.h>
+#include <common/pyThreadCache.h>
 
 
 extern "C" {
@@ -177,7 +181,9 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     try {
+      omniPy::InterpreterUnlocker _u;
       CORBA::BOA::getBOA()->impl_shutdown();
+      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
@@ -196,7 +202,9 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     try {
+      omniPy::InterpreterUnlocker _u;
       orb->NP_destroy();
+      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 

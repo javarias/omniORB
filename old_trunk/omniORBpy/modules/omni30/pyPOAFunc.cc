@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.11  2000/05/24 11:11:24  dpg1
+// POA functions now properly release servant references when exceptions
+// are thrown.
+//
 // Revision 1.10  2000/05/24 10:35:38  dpg1
 // _this() wasn't catching exceptions.
 //
@@ -1005,7 +1009,7 @@ extern "C" {
     }
     catch (PortableServer::POA::WrongPolicy& ex) {
       PyObject* pyPOA = PyObject_GetAttrString(omniPy::pyPortableServerModule,
-					       "POA");
+					       (char*)"POA");
       OMNIORB_ASSERT(pyPOA);
       raisePOAException(pyPOA, "WrongPolicy");
       Py_DECREF(pyPOA);

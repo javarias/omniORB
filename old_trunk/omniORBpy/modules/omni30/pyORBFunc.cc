@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.5  2000/04/28 15:31:05  dpg1
+// Accidentally broke resolve_initial_references() for pseudo objects.
+//
 // Revision 1.4  2000/04/27 11:04:00  dpg1
 // Support for ORB core Interoperable Naming Service changes.
 // Add shutdown() and destroy() operations.
@@ -48,7 +51,7 @@
 
 
 #include <omnipy.h>
-
+#include <common/pyThreadCache.h>
 
 extern "C" {
 
@@ -183,9 +186,13 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     try {
+      omniPy::InterpreterUnlocker _u;
       orb->shutdown(wait);
+      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    omnipyThreadCache::shutdown();
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -202,7 +209,9 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     try {
+      omniPy::InterpreterUnlocker _u;
       orb->destroy();
+      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 

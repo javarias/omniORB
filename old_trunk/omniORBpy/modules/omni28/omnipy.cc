@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.34  2000/04/27 11:04:35  dpg1
+// Catch exceptions thrown by ORB_init().
+//
 // Revision 1.33  2000/03/24 16:48:58  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -148,6 +151,7 @@
 #endif
 
 #include <omnipy.h>
+#include <common/pyThreadCache.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -440,6 +444,9 @@ extern "C" {
     delete [] argv;
 
     omniPy::setTwin(pyorb, orb, ORB_TWIN);
+
+    // Initialise the thread state cache
+    omnipyThreadCache::init();
 
     Py_INCREF(Py_None);
     return Py_None;
