@@ -2472,9 +2472,10 @@ o2be_operation::produceUnMarshalCode(std::fstream& s, AST_Decl* decl,
 
     case tObjref:
       {
-	IND(s); s << argname << " = "
-		  << o2be_interface::narrow_from_decl(decl)->fqname()
-		  << "_Helper::unmarshalObjRef(" << netstream << ");\n";
+	IND(s);
+	s << argname << " = "
+	  << o2be_interface::narrow_from_decl(decl)->unambiguous_name(used_in)
+	  << "_Helper::unmarshalObjRef(" << netstream << ");\n";
       }
       break;
 
@@ -2804,7 +2805,7 @@ o2be_operation::produceUnMarshalCode(std::fstream& s, AST_Decl* decl,
 		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
 	      }
 	      s << " = "
-		<< o2be_interface::narrow_from_decl(tdecl)->fqname()
+		<< o2be_interface::narrow_from_decl(tdecl)->unambiguous_name(used_in)
 		<< "_Helper::unmarshalObjRef(" << netstream << ");\n";
  	    }
 	    break;
@@ -2918,9 +2919,10 @@ o2be_operation::produceMarshalCode(std::fstream& s, AST_Decl* decl,
 
     case tObjref:
       {
-	IND(s); s << o2be_interface::narrow_from_decl(decl)->fqname()
-		  << "_Helper::marshalObjRef(" << argname << ","
-		  << netstream << ");\n";
+	IND(s);
+	s << o2be_interface::narrow_from_decl(decl)->unambiguous_name(used_in)
+	  << "_Helper::marshalObjRef(" << argname << ","
+	  << netstream << ");\n";
       }
       break;
 
@@ -3186,7 +3188,7 @@ o2be_operation::produceMarshalCode(std::fstream& s, AST_Decl* decl,
 	      while (tdecl->node_type() == AST_Decl::NT_typedef) {
 		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
 	      }
-	      IND(s); s << o2be_interface::narrow_from_decl(tdecl)->fqname()
+	      IND(s); s << o2be_interface::narrow_from_decl(tdecl)->unambiguous_name(used_in)
 			<< "_Helper::marshalObjRef(";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
@@ -3308,10 +3310,11 @@ o2be_operation::produceSizeCalculation(std::fstream& s, AST_Decl* decl,
 
     case tObjref:
       {
-	IND(s); s << sizevar << " = "
-		  << o2be_interface::narrow_from_decl(decl)->fqname()
-		  << "_Helper::NP_alignedSize("
-		  << argname << "," << sizevar << ");\n";
+	IND(s);
+	s << sizevar << " = "
+	  << o2be_interface::narrow_from_decl(decl)->unambiguous_name(used_in)
+	  << "_Helper::NP_alignedSize("
+	  << argname << "," << sizevar << ");\n";
       }
       break;
 
@@ -3507,7 +3510,7 @@ o2be_operation::produceSizeCalculation(std::fstream& s, AST_Decl* decl,
 		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
 	      }
 	      IND(s); s << sizevar << " = "
-			<< o2be_interface::narrow_from_decl(tdecl)->fqname()
+			<< o2be_interface::narrow_from_decl(tdecl)->unambiguous_name(used_in)
 			<< "_Helper::NP_alignedSize(";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
