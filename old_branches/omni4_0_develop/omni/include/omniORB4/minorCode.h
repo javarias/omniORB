@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/06/11 17:59:21  sll
+  New minor code to indicate error in initialising a transport.
+
   Revision 1.1.4.3  2001/06/08 17:12:08  dpg1
   Merge all the bug fixes from omni3_develop.
 
@@ -65,6 +68,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_11 OMNIORBMinorCode(11)
 #define OMNIORBMinorCode_12 OMNIORBMinorCode(12)
 #define OMNIORBMinorCode_13 OMNIORBMinorCode(13)
+#define OMNIORBMinorCode_14 OMNIORBMinorCode(14)
+#define OMNIORBMinorCode_15 OMNIORBMinorCode(15)
+#define OMNIORBMinorCode_16 OMNIORBMinorCode(16)
 
  
 // Taken from CORBA Spec. 2.4 Table 4-3.
@@ -169,7 +175,9 @@ enum TRANSIENT_minor {
   TRANSIENT_NoUsableProfile               = OMGMinorCode(2),
   TRANSIENT_FailedOnForwarded             = OMNIORBMinorCode_1,
   TRANSIENT_ConnectFailed                 = OMNIORBMinorCode_2,
-  TRANSIENT_CallTimedout                  = OMNIORBMinorCode_8
+  TRANSIENT_CallTimedout                  = OMNIORBMinorCode_8,
+  TRANSIENT_BiDirConnIsGone               = OMNIORBMinorCode_14,
+  TRANSIENT_BiDirConnUsedWithNoPOA        = OMNIORBMinorCode_16
 };
 
 enum OBJ_ADAPTER_minor {
@@ -177,7 +185,8 @@ enum OBJ_ADAPTER_minor {
   OBJ_ADAPTER_NoServant                   = OMGMinorCode(2),
   OBJ_ADAPTER_NoDefaultServant            = OMGMinorCode(3),
   OBJ_ADAPTER_NoServantManager            = OMGMinorCode(4),
-  OBJ_ADAPTER_WrongIncarnatePolicy        = OMGMinorCode(5)
+  OBJ_ADAPTER_WrongIncarnatePolicy        = OMGMinorCode(5),
+  OBJ_ADAPTER_BiDirNotAllowed             = OMNIORBMinorCode_15
 };
 
 
@@ -187,7 +196,7 @@ enum DATA_CONVERSION_minor {
 
 enum OBJECT_NOT_EXIST_minor {
   OBJECT_NOT_EXIST_NoMatch                = OMGMinorCode(1),
-  Object_Not_Exist_IncarnateFailed        = OMGMinorCode(2)
+  OBJECT_NOT_EXIST_IncarnateFailed        = OMGMinorCode(2)
 };
 
 enum INITIALISE_minor {
