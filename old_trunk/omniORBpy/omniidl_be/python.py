@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19  1999/12/21 16:06:15  dpg1
+# DOH!  global= not module= !
+#
 # Revision 1.18  1999/12/21 16:05:11  dpg1
 # New module= option.
 #
@@ -151,8 +154,8 @@ import_idl_file = """\
 import @ifilename@"""
 
 open_imported_module_name = """\
-_0_@imodname@     = omniORB.openModule("@imodname@")
-_0_POA_@imodname@ = omniORB.openModule("POA_@imodname@")"""
+_0_@imodname@     = omniORB.openModule("@package@@imodname@")
+_0_POA_@imodname@ = omniORB.openModule("@package@POA_@imodname@")"""
 
 forward_interface = """\
 
@@ -227,7 +230,7 @@ del @ifid@, _objref_@ifid@"""
 
 skeleton_class = """
 # @ifid@ skeleton
-__name__ = "POA_@modname@"
+__name__ = "@package@POA_@modname@"
 class @ifid@ (@inherits@):
     _NP_RepositoryId = _0_@modname@.@ifid@._NP_RepositoryId
 
@@ -245,7 +248,7 @@ skeleton_end = """
 @ifid@._omni_skeleton = @ifid@
 _0_POA_@modname@.@ifid@ = @ifid@
 del @ifid@
-__name__ = "@modname@"\
+__name__ = "@package@@modname@"\
 """
 
 constant_at_module_scope = """\
@@ -567,7 +570,8 @@ class PythonVisitor:
     def visitModule(self, node):
         if self.handleImported(node):
             imodname = dotName(node.scopedName())
-            self.st.out(open_imported_module_name, imodname=imodname)
+            self.st.out(open_imported_module_name, imodname=imodname,
+                        package=module_package)
 
         assert self.at_module_scope
 
@@ -771,7 +775,8 @@ class PythonVisitor:
         self.st.out(skeleton_class,
                     ifid     = ifid,
                     inherits = inherits,
-                    modname  = self.modname)
+                    modname  = self.modname,
+                    package  = module_package)
 
         # Operations and attributes
         methodl = []
@@ -805,7 +810,10 @@ class PythonVisitor:
             for inheritclass in inheritl:
                 self.st.out(skeleton_inheritmap, inheritclass = inheritclass)
 
-        self.st.out(skeleton_end, ifid = ifid, modname = self.modname)
+        self.st.out(skeleton_end,
+                    ifid    = ifid,
+                    modname = self.modname,
+                    package = module_package)
 
     #
     # Constant
