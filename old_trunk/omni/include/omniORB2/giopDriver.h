@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:28:30  sll
+  Initial revision
+
   */
 
 #ifndef __GIOPDRIVER_H__
@@ -84,6 +87,7 @@ public:
     static const _CORBA_ULong versionLen;
 #define omniORB_GIOP_Basetypes_SysExceptRepoID_maxIDLen 31
   };
+  static size_t max_giop_message_size;
 };
 
 class GIOP_C : public GIOP_Basetypes, public NetBufferedStream {
