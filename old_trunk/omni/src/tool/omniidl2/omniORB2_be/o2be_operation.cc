@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include "idl.hh"
@@ -281,16 +284,20 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in)
 	      {
 		ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
 		if (mapping.is_arrayslice) {
-		  IND(s); s << "_" << a->uqname() << " = new (";
+		  IND(s); s << "_" << a->uqname() << " = new ";
 		  declareVarType(s,a->field_type(),0,1);
-		  s << ")[";
-		  s << o2be_array::narrow_from_decl(a->field_type())->getSliceDim();
+		  AST_Decl *truetype = a->field_type();
+		  while (truetype->node_type() == AST_Decl::NT_typedef) {
+		    truetype = o2be_typedef::narrow_from_decl(truetype)->base_type();
+		  }
+		  s << "[";
+		  s << o2be_array::narrow_from_decl(truetype)->getSliceDim();
 		  s  << "];\n";
 		}
 		else if (mapping.is_reference && mapping.is_pointer) {
-		  IND(s); s << "_" << a->uqname() << " = new (";
+		  IND(s); s << "_" << a->uqname() << " = new ";
 		  declareVarType(s,a->field_type());
-		  s << ");\n";
+		  s << ";\n";
 		}
 	      }
 	    i.next();
@@ -301,16 +308,20 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in)
 	  argMapping mapping;
 	  argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
 	  if (mapping.is_arrayslice) {
-	    IND(s); s << "_result = new (";
+	    IND(s); s << "_result = new ";
 	    declareVarType(s,return_type(),0,1);
-	    s << ")[";
-	    s << o2be_array::narrow_from_decl(return_type())->getSliceDim();
+	    AST_Decl *truetype = return_type();
+	    while (truetype->node_type() == AST_Decl::NT_typedef) {
+	      truetype = o2be_typedef::narrow_from_decl(truetype)->base_type();
+	    }
+	    s << "[";
+	    s << o2be_array::narrow_from_decl(truetype)->getSliceDim();
 	    s  << "];\n";
 	  }
 	  else if (mapping.is_pointer) {
-	    IND(s); s << "_result = new (";
+	    IND(s); s << "_result = new ";
 	    declareVarType(s,return_type());
-	    s << ");\n";
+	    s << ";\n";
 	  }
 	}
     }
@@ -660,10 +671,6 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
 
   IND(s); s << "_s.RequestReceived();\n";
 
-  if (!no_user_exception()) {
-    IND(s); s << "try {\n";
-    INC_INDENT_LEVEL();
-  }
   IND(s);
   if (!return_is_void()) {
     argMapping mapping;
@@ -679,7 +686,16 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
       {
 	declareVarType(s,return_type());
       }
-    s << " _result = ";
+    s << " _result;\n";
+  }
+
+  if (!no_user_exception()) {
+    IND(s); s << "try {\n";
+    INC_INDENT_LEVEL();
+  }
+  IND(s);
+  if (!return_is_void()) {
+    s << "_result = ";
     produce_invoke(s);
     s << ";\n";
   }
@@ -724,9 +740,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
-	  (mapping.is_arrayslice) ||
-	  (mapping.is_pointer)) 
+      if ((ntype == tObjref || ntype == tString || mapping.is_pointer)
+	  && !mapping.is_arrayslice) 
 	{
 	  // These are declared as <type>_var variable 
 	  if (ntype == tString) {
@@ -759,9 +774,9 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if (ntype == tObjref || ntype == tString ||
-		  (mapping.is_arrayslice) ||
-		  (mapping.is_reference && mapping.is_pointer)) 
+	      if ((ntype == tObjref || ntype == tString ||
+		   (mapping.is_reference && mapping.is_pointer))
+		  && !mapping.is_arrayslice)
 		{
 		  // These are declared as <type>_var variable 
 		  if (ntype == tString) {
@@ -808,9 +823,8 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
     {
       argMapping mapping;
       argType ntype = ast2ArgMapping(return_type(),wResult,mapping);
-      if (ntype == tObjref || ntype == tString ||
-	  (mapping.is_arrayslice) ||
-	  (mapping.is_pointer)) 
+      if ((ntype == tObjref || ntype == tString || mapping.is_pointer)
+	  && !mapping.is_arrayslice) 
 	{
 	  // These are declared as <type>_var variable 
 	  if (ntype == tString) 
@@ -843,9 +857,9 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
 	  case AST_Argument::dir_OUT:
 	    {
 	      ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
-	      if (ntype == tObjref || ntype == tString ||
-		  (mapping.is_arrayslice) ||
-		  (mapping.is_reference && mapping.is_pointer)) 
+	      if ((ntype == tObjref || ntype == tString ||
+		   (mapping.is_reference && mapping.is_pointer))
+		  && !mapping.is_arrayslice)
 		{
 		  // These are declared as <type>_var variable 
 		  if (ntype == tString) 
@@ -1074,15 +1088,6 @@ o2be_operation::ast2ArgMapping(AST_Decl *decl,
 			       o2be_operation::argWhich dir,
 			       o2be_operation::argMapping &mapping)
 {
-#if 0
-  if (decl->node_type() == AST_Decl::NT_array ||
-      decl->node_type() == AST_Decl::NT_sequence)
-    {
-      // No array or sequence declaration in argument list
-      throw o2be_internal_error(__FILE__,__LINE__,"Unexpected argument type");
-    }
-#endif
-
   while (decl->node_type() == AST_Decl::NT_typedef) {
     decl = o2be_typedef::narrow_from_decl(decl)->base_type();
   }
@@ -1197,15 +1202,20 @@ void
 o2be_operation::declareVarType(fstream &s,AST_Decl *decl,idl_bool is_var,
 			       idl_bool is_arrayslice)
 {
-  if (decl->node_type() == AST_Decl::NT_interface)
+  AST_Decl *truetype = decl;
+  while (truetype->node_type() == AST_Decl::NT_typedef) {
+    truetype = o2be_typedef::narrow_from_decl(truetype)->base_type();
+  }
+
+  if (truetype->node_type() == AST_Decl::NT_interface)
     {
       if (!is_var)
-	s << o2be_interface::narrow_from_decl(decl)->objref_fqname();
+	s << o2be_interface::narrow_from_decl(truetype)->objref_fqname();
       else
-	s << o2be_name::narrow_and_produce_fqname(decl) << "_var";
+	s << o2be_name::narrow_and_produce_fqname(truetype) << "_var";
     }
   else 
-    if (decl->node_type() == AST_Decl::NT_string)
+    if (truetype->node_type() == AST_Decl::NT_string)
       {
 	if (!is_var)
 	  s << "char *";
@@ -1459,7 +1469,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	      }
 
 
-	      IND(s); s << "if (!(" 
+	      IND(s); s << "if (!((char*&)" 
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -1471,7 +1481,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	      INC_INDENT_LEVEL();
 	      IND(s); s << "throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);\n";
 	      DEC_INDENT_LEVEL();
-	      IND(s); s << netstream << ".get_char_array((CORBA::Char *)" 
+	      IND(s); s << netstream << ".get_char_array((CORBA::Char *)((char *)" 
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -1479,7 +1489,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
-	      s << ",_len);\n";
+	      s << "),_len);\n";
 	      break;
 	    }
 	  case tObjref:
@@ -1491,8 +1501,13 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
+
+	      AST_Decl *tdecl = o2be_array::narrow_from_decl(decl)->getElementType();
+	      while (tdecl->node_type() == AST_Decl::NT_typedef) {
+		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
+	      }
 	      s << " = "
-		<< o2be_interface::narrow_from_decl(decl)->fqname()
+		<< o2be_interface::narrow_from_decl(tdecl)->fqname()
 		<< "::unmarshalObjRef(" << netstream << ");\n";
 #if 0
 	      IND(s); s << "CORBA::Object_ptr _obj = CORBA::UnMarshalObjRef("
@@ -1737,7 +1752,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	      }
 
 	      IND(s); s << "_len >>= " << netstream << ";\n";
-	      IND(s); s << netstream << ".put_char_array((CORBA::Char *)"
+	      IND(s); s << netstream << ".put_char_array((CORBA::Char *)((char*)"
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -1745,12 +1760,16 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
-	      s << ",_len);\n";
+	      s << "),_len);\n";
 	      break;
 	    }
 	  case tObjref:
 	    {
-	      IND(s); s << o2be_interface::narrow_from_decl(decl)->fqname()
+	      AST_Decl *tdecl = o2be_array::narrow_from_decl(decl)->getElementType();
+	      while (tdecl->node_type() == AST_Decl::NT_typedef) {
+		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
+	      }
+	      IND(s); s << o2be_interface::narrow_from_decl(tdecl)->fqname()
 			<< "::marshalObjRef(" << argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -2026,8 +2045,12 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	    }
 	  case tObjref:
 	    {
+	      AST_Decl *tdecl = o2be_array::narrow_from_decl(decl)->getElementType();
+	      while (tdecl->node_type() == AST_Decl::NT_typedef) {
+		tdecl = o2be_typedef::narrow_from_decl(tdecl)->base_type();
+	      }
 	      IND(s); s << sizevar << " = "
-			<< o2be_interface::narrow_from_decl(decl)->fqname()
+			<< o2be_interface::narrow_from_decl(tdecl)->fqname()
 			<< "::NP_alignedSize("
 			<< argname;
 	      ndim = 0;
@@ -2036,7 +2059,7 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
-	      s << sizevar << ");\n";
+	      s << "," << sizevar << ");\n";
 #if 0
 	      IND(s); s << sizevar << " = CORBA::AlignedObjRef("
 			<< argname;
