@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.1  2000/02/18 23:01:25  djs
+# Updated example implementation code generating module
+#
 # Revision 1.1  2000/02/13 15:54:15  djs
 # Beginnings of code to generate example interface implementations
 #
@@ -38,18 +41,19 @@ interface_def = """\
 //
 // Example class implementing IDL interface @fq_name@
 //
-class @fq_name@_i: public @fq_POA_name@,
+class @impl_fqname@: public @fq_POA_name@,
                 public PortableServer::RefCountServantBase {
+private:
+  // Make sure all instances are built on the heap by making the
+  // destructor non-public
+  //virtual ~@impl_name@();
 public:
-  // standard constructor and destructor
-  @name@_i();
-  virtual ~@name@_i();
+  // standard constructor
+  @impl_name@();
+  virtual ~@impl_name@();
 
-  // methods corresponding to defined IDL operations
+  // methods corresponding to defined IDL attributes and operations
   @operations@
-
-  // methods corresponding to defined IDL attributes
-  @attributes@
 };
 """
 
@@ -57,17 +61,14 @@ interface_code = """\
 //
 // Example implementational code for IDL interface @fqname@
 //
-@fqname@_i::@name@_i(){
+@impl_fqname@::@impl_name@(){
   // add extra constructor code here
 }
-@fqname@_i::~@name@_i(){
+@impl_fqname@::~@impl_name@(){
   // add extra destructor code here
 }
-//   Methods corresponding to IDL operations
+//   Methods corresponding to IDL attributes and operations
 @operations@
-
-//   Methods corresponding to IDL attributes
-@attributes@
 
 // End of example implementational code
 """
@@ -75,8 +76,8 @@ interface_code = """\
 interface_ior = """\
 {
   // IDL interface: @fqname@
-  obj = @inst_name@->_this();
-  CORBA::String_var sior(orb->object_to_string(obj));
+  CORBA::Object_var ref = @inst_name@->_this();
+  CORBA::String_var sior(orb->object_to_string(ref));
   cout << \"IDL object @fqname@ IOR = '\" << (char*)sior << \"'\" << endl;
 }
 """
@@ -113,9 +114,6 @@ int main(int argc, char** argv)
     // Obtain a reference to each object and output the stringified
     // IOR to stdout
     @output_references@
-
-    // Decrement the objects reference counts
-    @dec_reference_counts@
 
     // Obtain a POAManager, and tell the POA to start accepting
     // requests on its objects.
