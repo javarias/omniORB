@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.17  2000/01/31 10:51:42  dpg1
+# Fix to exception throwing.
+#
 # Revision 1.16  2000/01/18 17:14:13  dpg1
 # Support for pickle
 #
@@ -134,7 +137,8 @@ class SystemException (Exception):
                ", Completed: " + str(self.completed) + "."
 
 class UserException (Exception):
-    pass
+    def __str__(self):
+        return ""
 
 
 # All the standard system exceptions...
