@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.19  1999/08/17 14:49:20  sll
+  Fixed bug introduced by the previous change. Now works correctly if the
+  application defined loader returns a nil object reference.
+
   Revision 1.18  1999/08/14 16:38:17  sll
   Added support for python binding.
   Changed locate object code as locateObject no longer throws an exception.
@@ -148,7 +152,7 @@ GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
 {
   if (pd_state != GIOP_S::RequestIsBeingProcessed)
     throw omniORB::fatalException(__FILE__,__LINE__,
-      "GIOP_S::RequestReceived() entered with the wrong state.");				  
+				  "GIOP_S::RequestReceived() entered with the wrong state.");				  
   if (skip_msg)
     {
       skip(RdMessageUnRead(),1);
@@ -230,14 +234,14 @@ GIOP_S::ReplyHeaderSize()
 
 void
 GIOP_S::InitialiseReply(const GIOP::ReplyStatusType status,
-		       const size_t  msgsize)
+			const size_t  msgsize)
 {
   if (!pd_response_expected)
     throw terminateProcessing();
 
   if (pd_state != GIOP_S::WaitingForReply)
     throw omniORB::fatalException(__FILE__,__LINE__,
-      "GIOP_S::InitialiseReply() entered with the wrong state.");
+				  "GIOP_S::InitialiseReply() entered with the wrong state.");
 
   size_t bodysize = msgsize-sizeof(MessageHeader::Reply)-sizeof(CORBA::ULong);
   if (bodysize > MaxMessageSize())
@@ -257,7 +261,7 @@ GIOP_S::InitialiseReply(const GIOP::ReplyStatusType status,
   pd_state = GIOP_S::ReplyIsBeingComposed;
 
 
- // Marshall the GIOP Message Header
+  // Marshall the GIOP Message Header
 
   WrMessageSize(msgsize);
   put_char_array((CORBA::Char*) MessageHeader::Reply,
@@ -283,20 +287,20 @@ GIOP_S::ReplyCompleted()
     {
       if (pd_state != GIOP_S::WaitingForReply)
 	throw omniORB::fatalException(__FILE__,__LINE__,
-	  "GIOP_S::ReplyCompleted() entered with the wrong state.");
+				      "GIOP_S::ReplyCompleted() entered with the wrong state.");
       pd_state = GIOP_S::Idle;
       return;
     }
 
   if (pd_state != GIOP_S::ReplyIsBeingComposed)
     throw omniORB::fatalException(__FILE__,__LINE__,
-	  "GIOP_S::ReplyCompleted() entered with the wrong state.");
+				  "GIOP_S::ReplyCompleted() entered with the wrong state.");
 
   flush(1);
 
   if (WrMessageSpaceLeft())
     throw omniORB::fatalException(__FILE__,__LINE__,
-     "GIOP_S::ReplyCompleted() reported wrong reply message size.");
+				  "GIOP_S::ReplyCompleted() reported wrong reply message size.");
 
   if (pd_operation != &pd_op_buffer[0]) {
     delete [] pd_operation;
@@ -551,9 +555,9 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
     return;
   }
 
-    // Note: If this is a one way invocation, we choose to return a 
-    // MessageError Message instead of returning a Reply with System Exception
-    // message because the other-end says do not send me a reply!
+  // Note: If this is a one way invocation, we choose to return a 
+  // MessageError Message instead of returning a Reply with System Exception
+  // message because the other-end says do not send me a reply!
 
   try {
     // In future, we have to partially decode the object key to
@@ -610,22 +614,22 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 	
 	  // All done...
 	  ReplyCompleted();
+	  return;
 	}
       }
 
-      if (!obj) {
-	RequestReceived(1);
-	if (!pd_response_expected) {
-	  // This is a one way invocation, we choose to return a MessageError
-	  // Message instead of returning a Reply with System Exception
-	  // message because the other-end says do not send me a reply!
-	  SendMsgErrorMessage();
-	  ReplyCompleted();
-	}
-	else {
-	  CORBA::OBJECT_NOT_EXIST ex(0,CORBA::COMPLETED_NO);
-	  MarshallSystemException(this,SysExceptRepoID::OBJECT_NOT_EXIST,ex);
-	}
+      // No application-defined loader, or the loader returned nil
+      RequestReceived(1);
+      if (!pd_response_expected) {
+	// This is a one way invocation, we choose to return a MessageError
+	// Message instead of returning a Reply with System Exception
+	// message because the other-end says do not send me a reply!
+	SendMsgErrorMessage();
+	ReplyCompleted();
+      }
+      else {
+	CORBA::OBJECT_NOT_EXIST ex(0,CORBA::COMPLETED_NO);
+	MarshallSystemException(this,SysExceptRepoID::OBJECT_NOT_EXIST,ex);
       }
     }
   }
