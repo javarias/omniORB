@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.5  2000/04/26 18:22:56  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+# Removed superfluous externs in front of function definitions
+#
 # Revision 1.15.2.4  2000/04/05 10:58:03  djs
 # Scoping problem with generated proxies for attributes (not operations)
 #
@@ -262,12 +267,12 @@ def operation(operation):
     unmarshal_arguments_decl = ""
     if need_to_marshal:
         marshal_arguments_decl = """\
-        virtual CORBA::ULong alignedSize(CORBA::ULong size_in);
-        virtual void marshalArguments(GIOP_C&);
+virtual CORBA::ULong alignedSize(CORBA::ULong size_in);
+virtual void marshalArguments(GIOP_C&);
 """
     if need_to_unmarshal:
         unmarshal_arguments_decl = """\
-        virtual void unmarshalReturnedValues(GIOP_C&);
+virtual void unmarshalReturnedValues(GIOP_C&);
 """
 
     # are there any user exceptions
@@ -276,7 +281,7 @@ def operation(operation):
     has_user_exceptions = raises != []
     if has_user_exceptions:
         user_exceptions_decl = \
-                             "virtual void userException(GIOP_C&, const char*);\n"
+"virtual void userException(GIOP_C&, const char*);\n"
     
     # Write the proxy class definition
     stream.out(template.interface_proxy_class,
