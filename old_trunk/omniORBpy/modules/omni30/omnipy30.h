@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.24  2000/06/12 15:36:08  dpg1
+// Support for exception handler functions. Under omniORB 3, local
+// operation dispatch modified so exceptions handlers are run.
+//
 // Revision 1.23  2000/05/11 11:58:25  dpg1
 // Throw system exceptions with OMNIORB_THROW.
 //
@@ -122,7 +126,7 @@
 
 #include <omniORB3/CORBA.h>
 #include <omniORB3/callDescriptor.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include "omnipy30_sysdep.h"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -301,6 +305,16 @@ public:
   static
   CORBA::Object_ptr makeLocalObjRef(const char* targetRepoId,
 				    CORBA::Object_ptr objref);
+
+  // Copy a Python object reference in an argument or return value.
+  // Compares the type of the objref with the target type, and creates
+  // a new objref of the target type if they are not compatible. Sets
+  // Python exception status to BAD_PARAM and returns 0 if the Python
+  // object is not an object reference.
+  static
+  PyObject* copyObjRefArgument(PyObject*               pytargetRepoId,
+			       PyObject*               pyobjref,
+			       CORBA::CompletionStatus compstatus);
 
   // Mirror of omniURI::stringToObject()
   static
