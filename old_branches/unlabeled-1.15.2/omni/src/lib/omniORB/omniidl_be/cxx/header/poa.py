@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.4  2000/05/04 14:35:04  djs
+# Added new flag splice-modules which causes all continuations to be output
+# as one lump. Default is now to output them in pieces following the IDL.
+#
 # Revision 1.15.2.3  2000/04/26 18:22:30  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -174,11 +178,29 @@ def visitInterface(node):
 
     POA_name = POA_prefix() + iname
 
+    # deal with inheritance
+    inherits = []
+    for i in node.inherits():
+        name = id.Name(i.scopedName())
+        i_POA_name = name.unambiguous(environment)
+        
+        if name.relName(environment) == i.scopedName():
+            # fully qualified POA name has a POA_ on the front
+            i_POA_name = "POA_" + i_POA_name
+            
+        inherits.append("public virtual " + i_POA_name)
+        
+    if node.inherits() == []:
+        inherits.append("public virtual PortableServer::ServantBase")
+
+    inherits_str = string.join(inherits, ",\n  ")
+
     # build the normal POA class first
     stream.out(template.POA_interface,
                POA_name = POA_name,
                scopedID = scopedID,
-               impl_scopedID = impl_scopedID)
+               impl_scopedID = impl_scopedID,
+               inherits = inherits_str)
 
     if config.TieFlag():
         tie.__init__(stream)

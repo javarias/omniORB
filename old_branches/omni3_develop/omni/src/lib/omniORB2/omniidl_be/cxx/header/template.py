@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.6  2000/05/18 15:57:33  djs
+# Added missing T* data constructor for bounded sequence types
+#
 # Revision 1.3.2.5  2000/03/20 11:50:20  djs
 # Removed excess buffering- output templates have code attached which is
 # lazily evaluated when required.
@@ -174,7 +177,7 @@ _CORBA_MODULE_END
 POA_interface = """\
 class @POA_name@ :
   public virtual @impl_scopedID@,
-  public virtual PortableServer::ServantBase
+  @inherits@
 {
 public:
   virtual ~@POA_name@();
@@ -314,7 +317,7 @@ private:
 interface_sk = """\
 class _sk_@name@ :
   public virtual _impl_@name@,
-  public virtual omniOrbBoaServant
+  @sk_inherits@
 {
 public:
   virtual ~_sk_@name@();
