@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.11  2001/10/17 16:44:06  dpg1
+  Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
   Revision 1.2.2.10  2001/08/21 11:02:16  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -743,6 +746,11 @@ omniInitialReferences::invoke_bootstrap_agentImpl(omniCallHandle& handle)
   omni_tracedmutex_lock sync(ba_lock);
 
   if( !the_bootagentImpl )  return 0;
+
+  // The upcall asserts that a localId is set, as a sanity-check. This
+  // is the one dispatch case in which there isn't a localIdentity, so
+  // we pretend.
+  handle.localId((omniLocalIdentity*)1);
 
   ((omniServant*) the_bootagentImpl)->_dispatch(handle);
   return 1;
