@@ -30,6 +30,10 @@
  
 /*
   $Log$
+  Revision 1.10  1998/08/14 13:50:00  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.9  1998/04/18 10:10:41  sll
   Added support for Borland C++
 
@@ -76,13 +80,20 @@
 #include <sys/time.h>
 #endif
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(HAS_Cplusplus_Namespace) 
+
+#if defined(_MSC_VER)
 // MSVC++ does not give the variable external linkage otherwise. Its a bug.
 namespace omniORB {
   objectKey seed;
 }
+#else
+omniORB::objectKey       omniORB::seed;
+#endif
+
 // operators are defined in the omniORB namespace
 #define OPERATOR_PREFIX omniORB::
+
 #else
 // operators are defined in the global namespace
 omniORB::objectKey       omniORB::seed;
