@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/03/13 16:05:40  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.1.2.8  2002/03/11 12:21:07  dpg1
   ETS things.
 
@@ -327,11 +332,11 @@ void win32_get_ifinfo(omnivector<const char*>& ifaddrs) {
                   NULL,NULL) == SOCKET_ERROR ) {
 
       if ( WSAGetLastError() != WSAEFAULT || lastlen != 0 ) {
-	if ( omniORB::trace(1) ) {
+	if ( omniORB::trace(2) ) {
 	  omniORB::logger log;
 	  log << "Warning: WSAIoctl SIO_ADDRESS_LIST_QUERY failed. Unable to obtain the list of all interface addresses.\n";
-	  return;
 	}
+	return;
       }
     }
     else {
