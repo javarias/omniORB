@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2000/09/27 17:30:28  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -367,6 +370,19 @@ cdrEncapsulationStream::cdrEncapsulationStream(const CORBA::Octet* databuffer,
       put_char_array((const CORBA::Char*)databuffer,bufsize);
     }
 
+  {
+    CORBA::Boolean endian;
+    ::operator<<=(endian,*this);
+    setByteSwapFlag(endian);
+  }
+}
+
+cdrEncapsulationStream::cdrEncapsulationStream(cdrStream& s,
+					       CORBA::ULong fetchsize)
+  : cdrMemoryStream(fetchsize)
+{
+  s.copy_to(*this,fetchsize);
+  rewindInputPtr();
   {
     CORBA::Boolean endian;
     ::operator<<=(endian,*this);

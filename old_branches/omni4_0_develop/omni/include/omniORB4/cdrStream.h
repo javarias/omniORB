@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/09/27 16:54:08  sll
+  *** empty log message ***
+
 */
 
 #ifndef __CDRSTREAM_H__
@@ -555,6 +558,10 @@ public:
   cdrEncapsulationStream(const _CORBA_Octet* databuffer, 
 			 _CORBA_ULong bufsize,
 			 _CORBA_Boolean allowAlign4 = 0);
+
+  cdrEncapsulationStream(cdrStream& s,_CORBA_ULong fetchsize);
+  // copy from <s> <fetchsize> bytes of data.
+
 
   void getOctetStream(_CORBA_Octet*& databuffer, _CORBA_ULong& max, 
 		      _CORBA_ULong& len);
