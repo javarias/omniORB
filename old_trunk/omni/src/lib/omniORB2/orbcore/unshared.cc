@@ -32,6 +32,9 @@
 
 /*
   $Log$
+// Revision 1.6  1997/08/26  15:29:25  sll
+// Added initFile.h include.
+//
   Revision 1.5  1997/05/06 15:32:58  sll
   Public release.
 
@@ -70,6 +73,9 @@ initFile*	    omni::configFile = 0;
 omni_mutex          omniObject::objectTableLock;
 omniObject*         omniObject::proxyObjectTable = 0;
 omniObject**        omniObject::localObjectTable = 0;
+
+omni_mutex          omniObject::wrappedObjectTableLock;
+_wrap_proxy**        omniObject::wrappedObjectTable = 0;
 
 proxyObjectFactory* proxyObjectFactory::proxyStubs = 0;
 
