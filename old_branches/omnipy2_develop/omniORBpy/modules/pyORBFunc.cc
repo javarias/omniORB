@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.3  2000/12/04 18:57:23  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.1.2.2  2000/11/22 14:42:56  dpg1
 // Fix segfault in string_to_object and resolve_initial_references with
 // nil objref.
@@ -100,10 +104,11 @@ extern "C" {
     RAISE_PY_BAD_PARAM_IF(!objref);
 
     CORBA::String_var str;
-    {
+    try {
       omniPy::InterpreterUnlocker _u;
       str = orb->object_to_string(objref);
     }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     return PyString_FromString((char*)str);
   }
 
