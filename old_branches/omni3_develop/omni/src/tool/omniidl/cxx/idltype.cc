@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  1999/11/17 17:16:59  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.4  1999/11/04 17:16:54  dpg1
 // Changes for NT.
 //
@@ -54,7 +57,7 @@ kindAsString() const
   case tk_short:              return "short";
   case tk_long:               return "long";
   case tk_ushort:             return "unsigned short";
-  case tk_ulong:              return "undigned long";
+  case tk_ulong:              return "unsigned long";
   case tk_float:              return "float";
   case tk_double:             return "double";
   case tk_boolean:            return "boolean";
