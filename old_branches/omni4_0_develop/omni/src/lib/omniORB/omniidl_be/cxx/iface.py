@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.2  2000/11/03 19:30:21  sll
+# Rationalise code generation. Consolidate all code that use call descriptors
+# into the CallDescriptor class.
+#
 # Revision 1.1.4.1  2000/10/12 15:37:47  sll
 # Updated from omni3_1_develop.
 #
@@ -315,7 +319,8 @@ class _objref_I(Class):
       call_descriptor.out_objrefcall(body,
                                      callable.operation_name(),
                                      argnames,
-                                     localcall_fn)
+                                     localcall_fn,
+                                     self._environment)
       method.cc(stream, body)
 
 class _pof_I(Class):
