@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5  1999/04/21 11:24:37  djr
+ Added marshalling methods, plus a few minor mods.
+
 */
 
 #include <context.h>
@@ -133,7 +136,7 @@ ContextImpl::set_one_value(const char* prop_name, const CORBA::Any& value)
 CORBA::Status
 ContextImpl::set_values(CORBA::NVList_ptr values)
 {
-  if( CORBA::is_nil(values) )
+  if( !CORBA::NVList::PR_is_valid(values) || CORBA::is_nil(values) )
     throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
 
   CORBA::ULong count = values->count();
@@ -365,6 +368,9 @@ ContextImpl::add_values(ContextImpl* c, CORBA::Flags op_flags,
 			const char* pattern, int wildcard,
 			CORBA::NVList_ptr val_list)
 {
+  if (!CORBA::NVList::PR_is_valid(val_list))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   CORBA::ULong bottom, top;
   omni_mutex_lock lock(c->pd_lock);
 
@@ -496,13 +502,15 @@ static NilContext _nilContext;
 /////////////////////////////// Context //////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-CORBA::Context::~Context() {}
+CORBA::Context::~Context() { pd_magic = 0; }
 
 
 CORBA::Context_ptr
 CORBA::Context::_duplicate(Context_ptr p)
 {
-  if( p ) {
+  if (!PR_is_valid(p))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+  if( !CORBA::is_nil(p) ) {
     ContextImpl* c = (ContextImpl*) p;
     omni_mutex_lock sync(c->pd_lock);
     c->pd_refCount++;
@@ -647,9 +655,9 @@ CORBA::Context::unmarshalContext(MemBufferedStream& s)
 //////////////////////////////////////////////////////////////////////
 
 void
-CORBA::release(Context_ptr p)
+CORBA::release(CORBA::Context_ptr p)
 {
-  if( !p->NP_is_nil() )
+  if( CORBA::Context::PR_is_valid(p) && !CORBA::is_nil(p) )
     ((ContextImpl*)p)->decrRefCount();
 }
 
