@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.11  2003/01/27 11:56:57  dgrisby
+// Correctly handle invalid returns from application code.
+//
 // Revision 1.1.2.10  2002/01/18 15:49:44  dpg1
 // Context support. New system exception construction. Fix None call problem.
 //
@@ -66,6 +69,25 @@
 #include <pyThreadCache.h>
 #include <omniORB4/IOP_C.h>
 
+#ifdef HAS_Cplusplus_Namespace
+namespace {
+#endif
+  class cdLockHolder {
+  public:
+    inline cdLockHolder(omniPy::Py_omniCallDescriptor* cd) : cd_(cd) {
+      cd->reacquireInterpreterLock();
+    }
+    inline ~cdLockHolder() {
+      cd_->releaseInterpreterLock();
+    }
+  private:
+    omniPy::Py_omniCallDescriptor* cd_;
+  };
+#ifdef HAS_Cplusplus_Namespace
+};
+#endif
+
+
 OMNI_USING_NAMESPACE(omni)
 
 
@@ -83,14 +105,12 @@ omniPy::Py_omniCallDescriptor::initialiseCall(cdrStream&)
   // initialiseCall() is called with the interpreter lock
   // released. Reacquire it so we can touch the descriptor objects
   // safely
-  reacquireInterpreterLock();
+  cdLockHolder _l(this);
 
   for (int i=0; i < in_l_; i++)
     omniPy::validateType(PyTuple_GET_ITEM(in_d_,i),
 			 PyTuple_GET_ITEM(args_,i),
 			 CORBA::COMPLETED_NO);
-
-  releaseInterpreterLock();
 }
 
 
@@ -114,21 +134,24 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
       omniPy::marshalContext(stream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
   }
   else {
-    reacquireInterpreterLock();
+    cdLockHolder _l(this);
 
     in_marshal_ = 1;
     PyUnlockingCdrStream pystream(stream);
 
-    for (i=0; i < in_l_; i++)
-      omniPy::marshalPyObject(pystream,
-			      PyTuple_GET_ITEM(in_d_,i),
-			      PyTuple_GET_ITEM(args_,i));
-    if (ctxt_d_)
-      omniPy::marshalContext(pystream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
-
+    try {
+      for (i=0; i < in_l_; i++)
+	omniPy::marshalPyObject(pystream,
+				PyTuple_GET_ITEM(in_d_,i),
+				PyTuple_GET_ITEM(args_,i));
+      if (ctxt_d_)
+	omniPy::marshalContext(pystream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
+    }
+    catch (...) {
+      in_marshal_ = 0;
+      throw;
+    }
     in_marshal_ = 0;
-
-    releaseInterpreterLock();
   }
 }
 
@@ -138,7 +161,7 @@ omniPy::Py_omniCallDescriptor::unmarshalReturnedValues(cdrStream& stream)
 {
   if (out_l_ == -1) return;  // Oneway operation
 
-  reacquireInterpreterLock();
+  cdLockHolder _l(this);
 
   if (out_l_ == 0) {
     Py_INCREF(Py_None);
@@ -164,7 +187,6 @@ omniPy::Py_omniCallDescriptor::unmarshalReturnedValues(cdrStream& stream)
       }
     }
   }
-  releaseInterpreterLock();
 }
 
 
