@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/13 15:56:30  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.11  2000/01/13 14:16:20  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -82,10 +86,12 @@ self._libVersion    = "omniORB_3_0" # library version
 self._hdrsuffix     = ".hh"         # suffix for header files
 self._skelsuffix    = "SK.cc"       # suffix for stub files
 self._dynskelsuffix = "DynSK.cc"    # suffix for the dynamic stuff
+self._implsuffix    = "_i.cc"
 
 self._defs_fragment  = "_defs"      # header definitions fragment suffix
 self._opers_fragment = "_operators" # header operators fragment suffix
 self._poa_fragment   = "_poa"       # header POA fragment suffix
+
 
 self._name_prefix   = "_0RL"        # private name prefix
 
@@ -118,6 +124,13 @@ def setTypecodeFlag(flag):
     self._typecode = flag
 def TypecodeFlag():
     return self._typecode
+
+# generate example implementation code
+self._examplecode = 0
+def setExampleFlag(flag):
+    self._examplecode = flag
+def ExampleFlag():
+    return self._examplecode
 
 # generate code for 'tie' implementational skeletons
 self._tie = 0
@@ -184,6 +197,9 @@ def opers_fragment_suffix():
 # suffix to be added to basename to get the filename of the operators fragment file
 def poa_fragment_suffix():
     return self._poa_fragment
+
+def implsuffix():
+    return self._implsuffix
 
 # prefix to be added to avoid occasional name clashes
 def privatePrefix():

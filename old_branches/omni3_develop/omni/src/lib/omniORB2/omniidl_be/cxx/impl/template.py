@@ -28,19 +28,22 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  2000/02/13 15:54:15  djs
+# Beginnings of code to generate example interface implementations
+#
 
 ## Example code to actually implement an interface
 ##
 interface_def = """\
 //
-// Example class implementing IDL interface @fqname@
+// Example class implementing IDL interface @fq_name@
 //
 class @fq_name@_i: public @fq_POA_name@,
                 public PortableServer::RefCountServantBase {
 public:
   // standard constructor and destructor
   @name@_i();
-  ~@name@_i();
+  virtual ~@name@_i();
 
   // methods corresponding to defined IDL operations
   @operations@
@@ -54,10 +57,10 @@ interface_code = """\
 //
 // Example implementational code for IDL interface @fqname@
 //
-@name@_i(){
+@fqname@_i::@name@_i(){
   // add extra constructor code here
 }
-~@name@_i(){
+@fqname@_i::~@name@_i(){
   // add extra destructor code here
 }
 //   Methods corresponding to IDL operations
@@ -72,7 +75,7 @@ interface_code = """\
 interface_ior = """\
 {
   // IDL interface: @fqname@
-  obj = my@name@->_this();
+  obj = @inst_name@->_this();
   CORBA::String_var sior(orb->object_to_string(obj));
   cout << \"IDL object @fqname@ IOR = '\" << (char*)sior << \"'\" << endl;
 }
@@ -84,7 +87,7 @@ main = """\
 //
 
 #include <iostream.h>
-#include <@idl_hh>
+#include <@idl_hh@>
 
 @interfaces@
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.1  2000/02/14 18:34:56  dpg1
+# New omniidl merged in.
+#
 # Revision 1.12  2000/01/20 18:25:53  djs
 # Got rid of some superfluous whitespace
 #
@@ -290,6 +293,15 @@ def zip(a, b):
     if a == [] or b == []: return []
     return [(a[0], b[0])] + zip(a[1:], b[1:])
 
+def fold(list, base, fn):
+    if len(list) == 1:
+        return fn(list[0], base)
+    first = fn(list[0], list[1])
+    rest = [first] + list[2:]
+    return fold(rest, base, fn)
+
+def append(x, y):
+    return x + y
 
 # ------------------------------------------------------------------
 # Useful C++ things
