@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.3  2000/06/19 14:18:33  dpg1
+// Explicit cast to (const char*) when using String_var with logger.
+//
 // Revision 1.1.2.2  2000/05/24 17:18:11  dpg1
 // Rename IIOP::DEFAULT_PORT IIOP::DEFAULT_CORBALOC_PORT
 //
@@ -46,7 +49,7 @@
 #include <initialiser.h>
 #include <ropeFactory.h>
 #include <tcpSocket.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <omniORB3/omniURI.h>
 #include <initRefs.h>
 

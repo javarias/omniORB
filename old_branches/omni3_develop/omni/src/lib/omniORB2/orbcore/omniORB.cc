@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/14 16:22:13  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.3  1999/09/30 12:25:59  djr
   Minor changes.
 
@@ -45,7 +48,7 @@
 #pragma hdrstop
 #endif
 
-#include <exception.h>
+#include <exceptiondefs.h>
 
 #include <stdlib.h>
 #if defined(UnixArchitecture) || defined(__VMS)

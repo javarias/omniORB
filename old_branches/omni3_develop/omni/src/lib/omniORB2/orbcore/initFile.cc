@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30.6.7  2000/06/19 14:18:33  dpg1
+  Explicit cast to (const char*) when using String_var with logger.
+
   Revision 1.30.6.6  2000/05/24 17:21:07  dpg1
   Fix const-correctness in error functions
 
@@ -132,7 +135,7 @@
 #include <initRefs.h>
 #include <gatekeeper.h>
 #include <initialiser.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <corbaOrb.h>
 
 #include <stdio.h>

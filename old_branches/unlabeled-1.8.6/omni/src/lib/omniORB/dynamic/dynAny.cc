@@ -29,6 +29,10 @@
 
 /* 
    $Log$
+   Revision 1.8.6.4  1999/10/26 20:18:18  sll
+   DynAny no longer do alias expansion on the typecode. In other words, all
+   aliases in the typecode are preserved.
+
    Revision 1.8.6.3  1999/10/14 16:21:56  djr
    Implemented logging when system exceptions are thrown.
 
@@ -270,7 +274,7 @@
 #include <dynAny.h>
 #include <tcParser.h>
 #include <anyP.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 // Note:

@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/06/19 13:56:25  dpg1
+  Explicit cast to (const char*) when using String_var with logger.
+
   Revision 1.1.2.1  2000/04/27 10:50:04  dpg1
   Interoperable Naming Service
 
@@ -87,7 +90,7 @@
 #include <ropeFactory.h>
 #include <tcpSocket.h>
 #include <initialiser.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <poaimpl.h>
 #include <omniORB3/omniURI.h>
 

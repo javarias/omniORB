@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.1.2.13  2000/04/27 10:51:13  dpg1
+  Interoperable Naming Service
+
+  stringToObject() and objectToString() moved to uri.cc.
+
   Revision 1.1.2.12  2000/04/13 17:48:58  djr
   Minor improvement -- reduces times when need to verify object's type.
 
@@ -85,7 +90,7 @@
 #include <ropeFactory.h>
 #include <anonObject.h>
 #include <initialiser.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #if defined(HAS_Cplusplus_Namespace)

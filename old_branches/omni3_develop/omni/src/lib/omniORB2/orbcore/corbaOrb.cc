@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.18  2000/06/19 14:18:33  dpg1
+  Explicit cast to (const char*) when using String_var with logger.
+
   Revision 1.29.6.17  2000/06/02 14:17:05  dpg1
   Add static install() method to initialiser so extra initialisers /
   deinitialisers can be added at run time (needed by omniORBpy).
@@ -180,7 +183,7 @@
 #include <poaimpl.h>
 #include <initialiser.h>
 #include <dynamicLib.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <omniORB3/omniURI.h>
 
 #ifdef _HAS_SIGNAL

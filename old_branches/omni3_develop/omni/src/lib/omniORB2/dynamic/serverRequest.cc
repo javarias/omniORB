@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.7.6.2  1999/10/14 16:22:00  djr
+ Implemented logging when system exceptions are thrown.
+
  Revision 1.7.6.1  1999/09/22 14:26:36  djr
  Major rewrite of orbcore to support POA.
 
@@ -50,7 +53,7 @@
 #include <pseudo.h>
 #include <context.h>
 #include <dynException.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 CORBA::ServerRequest::~ServerRequest()  {}

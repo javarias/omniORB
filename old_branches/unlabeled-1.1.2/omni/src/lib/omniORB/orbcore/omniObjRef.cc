@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/03/01 17:57:41  dpg1
+  New omniObjRef::_compatibleServant() function to support object
+  references and servants written for languages other than C++.
+
   Revision 1.1.2.4  1999/11/08 09:45:17  djr
   Fixed bug in omniObjRef::_real_is_a().
 
@@ -56,7 +60,7 @@
 #include <objectAdapter.h>
 #include <ropeFactory.h>
 #include <excepthandler.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 CORBA::Boolean

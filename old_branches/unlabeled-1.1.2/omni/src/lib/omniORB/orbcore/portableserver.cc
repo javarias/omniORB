@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.1.2.8  2000/04/27 10:52:12  dpg1
+  Interoperable Naming Service
+
+  omniInitialReferences::get() renamed to omniInitialReferences::resolve().
+
   Revision 1.1.2.7  2000/01/03 18:43:32  djr
   Fixed bug in ref counting of POA Policy objects.
 
@@ -59,7 +64,7 @@
 #include <omniORB3/callDescriptor.h>
 #include <initRefs.h>
 #include <dynamicLib.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// Policy Interfaces /////////////////////////

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.6.13  2000/06/22 09:01:29  djr
+  Fixed assertion failure (locking bug).
+
   Revision 1.13.6.12  2000/06/02 14:20:15  dpg1
   Using boa_lock for the nil BOA's condition variable caused an
   assertion failure on exit.
@@ -78,7 +81,7 @@
 #include <localIdentity.h>
 #include <initRefs.h>
 #include <dynamicLib.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <stdio.h>
 #include <stdlib.h>
 

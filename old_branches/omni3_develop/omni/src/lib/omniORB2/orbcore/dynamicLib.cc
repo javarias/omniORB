@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/14 16:22:08  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.2  1999/09/27 11:01:11  djr
   Modifications to logging.
 
@@ -44,7 +47,7 @@
 #endif
 
 #include <dynamicLib.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 static void init();

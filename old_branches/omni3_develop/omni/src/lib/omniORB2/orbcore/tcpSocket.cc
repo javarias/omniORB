@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.8.6.4  1999/10/16 13:22:55  djr
+  Changes to support compiling on MSVC.
+
   Revision 1.8.6.3  1999/10/14 16:22:17  djr
   Implemented logging when system exceptions are thrown.
 
@@ -83,7 +86,7 @@
 #include <ropeFactory.h>
 #include <tcpSocket.h>
 #include <gatekeeper.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #ifndef Swap16

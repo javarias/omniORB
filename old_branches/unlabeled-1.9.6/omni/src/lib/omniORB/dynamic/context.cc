@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.9.6.3  1999/10/29 13:18:10  djr
+ Changes to ensure mutexes are constructed when accessed.
+
  Revision 1.9.6.2  1999/10/14 16:21:55  djr
  Implemented logging when system exceptions are thrown.
 
@@ -61,7 +64,7 @@
 
 #include <context.h>
 #include <pseudo.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 #include <ctype.h>
 #include <dynamicLib.h>

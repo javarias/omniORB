@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14.6.4  2000/02/09 15:01:29  djr
+  Fixed _CORBA_String_member bug.
+
   Revision 1.14.6.3  2000/01/31 11:12:34  djr
   Fixed bug in unmarshalling of String_member.
 
@@ -88,7 +91,7 @@
 #pragma hdrstop
 #endif
 
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 char*

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.12.6.2  1999/10/14 16:22:12  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.12.6.1  1999/09/22 14:26:54  djr
   Major rewrite of orbcore to support POA.
 
@@ -64,7 +67,7 @@
 #pragma hdrstop
 #endif
 
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #define DIRECT_RCV_CUTOFF 1024

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  1999/10/14 16:22:05  djr
+ Implemented logging when system exceptions are thrown.
+
  Revision 1.1.2.2  1999/10/04 17:08:31  djr
  Some more fixes/MSVC work-arounds.
 
@@ -44,7 +47,7 @@
 #endif
 
 #include <omniORB3/callDescriptor.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////// omniCallDescriptor /////////////////////////

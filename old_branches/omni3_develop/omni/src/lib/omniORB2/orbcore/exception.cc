@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.9.6.4  2000/06/12 11:16:23  dpg1
+  Global exception handlers were returning a zero cookie.
+
   Revision 1.9.6.3  1999/10/14 16:22:08  djr
   Implemented logging when system exceptions are thrown.
 
@@ -76,7 +79,7 @@
 
 #include <excepthandler.h>
 #include <omniORB3/omniObjRef.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)

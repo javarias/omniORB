@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/27 17:32:14  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.3  1999/10/14 16:22:14  djr
   Implemented logging when system exceptions are thrown.
 
@@ -48,7 +51,7 @@
 
 #include <omniORB3/omniServant.h>
 #include <localIdentity.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 omniServant::~omniServant()

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.20  2000/06/12 11:15:52  dpg1
+  Clarifying comment about TRANSIENT exceptions on exiting HOLDING
+  state.
+
   Revision 1.1.2.19  2000/06/02 16:09:59  dpg1
   If an object is deactivated while its POA is in the HOLDING state,
   clients which were held now receive a TRANSIENT exception when the POA
@@ -108,7 +112,7 @@
 #include <omniORB3/callDescriptor.h>
 #include <localIdentity.h>
 #include <poamanager.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <ropeFactory.h>
 
 #include <ctype.h>

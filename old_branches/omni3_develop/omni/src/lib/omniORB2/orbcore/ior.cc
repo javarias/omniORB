@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.9.6.4  2000/04/27 10:50:30  dpg1
+  Interoperable Naming Service
+
+  IOR: prefix is not case sensitive.
+
   Revision 1.9.6.3  1999/10/14 16:22:11  djr
   Implemented logging when system exceptions are thrown.
 
@@ -67,7 +72,7 @@
 #pragma hdrstop
 #endif
 
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #ifndef Swap16

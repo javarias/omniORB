@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2000/02/04 18:11:03  djr
+  Minor mods for IRIX (casting pointers to ulong instead of int).
+
   Revision 1.1.2.5  2000/01/20 11:51:37  djr
   (Most) Pseudo objects now used omni::poRcLock for ref counting.
   New assertion check OMNI_USER_CHECK.
@@ -55,7 +58,7 @@
 
 #include <poamanager.h>
 #include <poaimpl.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////// PortableServer::POAManager /////////////////////

@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.8.6.4  2000/02/15 13:43:43  djr
+ * Fixed bug in create_union_tc() -- problem if discriminator was an alias.
+ *
  * Revision 1.8.6.3  1999/10/14 17:31:34  djr
  * Minor corrections.
  *
@@ -67,7 +70,7 @@
 #define __TYPECODE_H__
 
 #include <omniutilities.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 ///////////////////////////

@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.19.6.8  2000/02/07 15:27:36  dpg1
+  Silly mistake in _is_equivalent() for pseudo object references.
+
   Revision 1.19.6.7  2000/02/04 18:11:01  djr
   Minor mods for IRIX (casting pointers to ulong instead of int).
 
@@ -88,7 +91,7 @@
 #include <objectAdapter.h>
 #include <ropeFactory.h>
 #include <anonObject.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// CORBA::Object ///////////////////////////

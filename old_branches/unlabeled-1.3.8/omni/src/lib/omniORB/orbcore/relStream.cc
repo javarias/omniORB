@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.3.8.4  2000/01/28 15:57:09  djr
+  Removed superflouous ref counting in Strand_iterator.
+  Removed flags to indicate that Ropes and Strands are heap allocated.
+  Improved allocation of client requests to strands.
+
   Revision 1.3.8.3  1999/10/14 16:22:16  djr
   Implemented logging when system exceptions are thrown.
 
@@ -53,7 +58,7 @@
 #endif
 
 #include <relStream.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 #include <limits.h>
 
 
