@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2004/02/11 17:00:19  dgrisby
+  HAVE_STD on Linux and Solaris.
+
   Revision 1.1.2.11  2003/08/21 15:00:28  dgrisby
   Patches for Borland compiler.
 
@@ -382,7 +385,13 @@
 #  define HAVE_STRTOULL 1
 #  define HAVE_ISNANORINF
 #  define HAVE_NAN_H
-#  define OMNI_SOCKNAME_SIZE_T size_t
+#  if __OSVERSION__ == 4
+#    define OMNI_SOCKNAME_SIZE_T int
+#  elif __OSVERSION__ == 5 || __OSVERSION__ == 6
+#    define OMNI_SOCKNAME_SIZE_T size_t
+#  else
+#    define OMNI_SOCKNAME_SIZE_T socklen_t
+#  endif
 #  if __OSVERSION__ == 5 && (!defined(__GNUG__) || __GNUG__ < 3)
 #    define NEED_GETHOSTNAME_PROTOTYPE
 #  endif
