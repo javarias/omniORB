@@ -125,8 +125,9 @@ void initFile::initialize()
 
 	  if(numVals == 0) 
 	    {
-	      // No values found:
-	      noValsFound();
+	      if (omniORB::traceLevel >= 2)
+		noValsFound();
+	      return;
 	    }
 	  
 	  use_registry = 1;
@@ -444,8 +445,11 @@ void initFile::noValsFound()
   if (omniORB::traceLevel > 0) {
     cerr << "Configuration error: No values found in registry key " 
 	 << INIT_REGKEY << endl;
+    cerr << "Either set the environment variable OMNIORB_CONFIG to point"
+         << "\nto the omniORB configuration file, or enter the IOR for the"
+         << "\nnaming service in to the registry in the (string) value"
+         << "\nNAMESERVICE , under the registry entry " << INIT_REGKEY << endl;
   }
-  throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
 }
 
 
