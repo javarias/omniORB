@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.6.8  1999/10/27 17:32:10  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.13.6.7  1999/10/14 16:22:05  djr
   Implemented logging when system exceptions are thrown.
 
@@ -150,13 +153,16 @@ CORBA::BOA::_narrow(CORBA::Object_ptr obj)
 }
 
 
-static omniOrbBOA the_nil_boa(1 /* is nil */);
-
-
 CORBA::BOA_ptr
 CORBA::BOA::_nil()
 {
-  return &the_nil_boa;
+  static omniOrbBOA* _the_nil_ptr = 0;
+  if( !_the_nil_ptr ) {
+    omni::nilRefLock().lock();
+    if( !_the_nil_ptr )  _the_nil_ptr = new omniOrbBOA(1 /* is nil */);
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
 }
 
 

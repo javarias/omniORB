@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.9.6.2  1999/10/14 16:21:55  djr
+ Implemented logging when system exceptions are thrown.
+
  Revision 1.9.6.1  1999/09/22 14:26:29  djr
  Major rewrite of orbcore to support POA.
 
@@ -481,7 +484,7 @@ ContextImpl::loseChild(ContextImpl* child)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-class NilContext : public CORBA::Context {
+class omniNilContext : public CORBA::Context {
 public:
   virtual const char* context_name() const {
     _CORBA_invoked_nil_pseudo_ref();
@@ -522,8 +525,6 @@ public:
   }
 };
 
-static NilContext _nilContext;
-
 //////////////////////////////////////////////////////////////////////
 /////////////////////////////// Context //////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -543,14 +544,20 @@ CORBA::Context::_duplicate(Context_ptr p)
     return c;
   }
   else
-    return &_nilContext;
+    return _nil();
 }
 
 
 CORBA::Context_ptr
 CORBA::Context::_nil()
 {
-  return &_nilContext;
+  static omniNilContext* _the_nil_ptr = 0;
+  if( !_the_nil_ptr ) {
+    omni::nilRefLock().lock();
+    if( !_the_nil_ptr )  _the_nil_ptr = new omniNilContext;
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
 }
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  1999/10/27 17:32:14  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.7  1999/10/21 12:34:06  djr
   Removed duplicate include of exception.h.
 
@@ -154,13 +157,16 @@ PortableServer::POA::_narrow(CORBA::Object_ptr obj)
 }
 
 
-static omniOrbPOA the_nil_poa;
-
-
 PortableServer::POA_ptr
 PortableServer::POA::_nil()
 {
-  return &the_nil_poa;
+  static omniOrbPOA* _the_nil_ptr = 0;
+  if( !_the_nil_ptr ) {
+    omni::nilRefLock().lock();
+    if( !_the_nil_ptr )  _the_nil_ptr = new omniOrbPOA();
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
 }
 
 
@@ -322,8 +328,6 @@ static omniOrbPOA* theRootPOA = 0;
 
 omniOrbPOA::~omniOrbPOA()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
-
   if( pd_policy.single_threaded )  delete pd_call_lock;
 }
 

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.5  1999/10/27 17:32:16  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.4  1999/10/16 13:22:54  djr
   Changes to support compiling on MSVC.
 
@@ -119,12 +122,16 @@ PortableServer::name::_narrow(CORBA::Object_ptr obj)  \
   return p ? p : _nil();  \
 }  \
   \
-static PortableServer::name the_nil_##name;  \
-  \
 PortableServer::name##_ptr  \
 PortableServer::name::_nil()  \
 {  \
-  return &the_nil_##name;  \
+  static name* _the_nil_ptr = 0;  \
+  if( !_the_nil_ptr ) {  \
+    omni::nilRefLock().lock();  \
+    if( !_the_nil_ptr )  _the_nil_ptr = new name;  \
+    omni::nilRefLock().unlock();  \
+  }  \
+  return _the_nil_ptr;  \
 }  \
   \
 const char*  \
