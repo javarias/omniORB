@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.2  2000/09/27 17:50:28  sll
+ Updated to use the new cdrStream abstraction.
+ Added extra members for use in the upcalls on the server side.
+
  Revision 1.2.2.1  2000/07/17 10:35:50  sll
  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -58,6 +62,7 @@
 
 #include <omniORB4/callDescriptor.h>
 #include <exceptiondefs.h>
+#include <dynamicLib.h>
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////// omniCallDescriptor /////////////////////////
@@ -156,3 +161,29 @@ void omniLocalOnlyCallDescriptor::marshalArguments(cdrStream&)
 {
   OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
 }
+
+//////////////////////////////////////////////////////////////////////
+///////////////////// omniClientCallMarshaller    ////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void
+omniClientCallMarshaller::marshal(cdrStream& s) {
+  pd_descriptor.marshalArguments(s);
+  const omniCallDescriptor::ContextInfo* cinfo = pd_descriptor.context_info();
+  if (cinfo) {
+    omniDynamicLib::ops->marshal_context(s, cinfo->context,
+					 cinfo->expected,
+					 cinfo->num_expected);
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////
+///////////////////// omniServerCallMarshaller    ////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void
+omniServerCallMarshaller::marshal(cdrStream& s) {
+  pd_descriptor.marshalReturnedValues(s);
+}
+
