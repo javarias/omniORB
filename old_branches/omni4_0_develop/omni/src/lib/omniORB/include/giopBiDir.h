@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:28:02  sll
+  Added GIOP BiDir support.
+
   */
 
 
@@ -37,12 +40,14 @@
 
 #include <giopRope.h>
 
-#if !defined(_core_attr)
-# if defined(_OMNIORB_LIBRARY)
-#   define _core_attr
-# else
-#   define _core_attr _OMNIORB_NTDLL_IMPORT
-# endif
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -139,5 +144,7 @@ class BiDirClientRope : public giopRope {
 };
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __GIOPBIDIR_H__

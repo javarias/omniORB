@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/07/31 16:20:30  sll
+  New primitives to acquire read lock on a connection.
+
   Revision 1.1.4.2  2001/05/01 16:07:32  sll
   All GIOP implementations should now work with fragmentation and abitrary
   sizes non-copy transfer.
@@ -45,12 +48,14 @@
 #ifndef __GIOPSTREAM_H__
 #define __GIOPSTREAM_H__
 
-#if !defined(_core_attr)
-# if defined(_OMNIORB_LIBRARY)
-#   define _core_attr
-# else
-#   define _core_attr _OMNIORB_NTDLL_IMPORT
-# endif
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -496,5 +501,7 @@ protected:
 
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __GIOPSTREAM_H__
