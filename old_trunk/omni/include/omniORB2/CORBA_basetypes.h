@@ -6,9 +6,13 @@
 // Copyright (C) Olivetti Research Limited, 1996
 //
 // Description:
+//	*** PROPRIETORY INTERFACE ***
 
 /*
  $Log$
+ Revision 1.1  1997/01/08 17:28:30  sll
+ Initial revision
+
  */
 
 #ifndef __CORBA_BASETYPES_H__
