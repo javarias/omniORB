@@ -29,14 +29,18 @@
 
 /*
   $Log$
+  Revision 1.12  1997/12/09 20:45:54  sll
+  Added support for system exception handlers.
+  Added support for late bindings.
+
  * Revision 1.11  1997/09/20  16:23:53  dpg1
  * Added second argument, is_cxx_type to _widenFromTheMostDerivedIntf().
  * Added a new hash table of wrapped objects, and a mutex for it, for
  * LifeCycle support.
  *
- * Revision 1.10  1997/08/26  15:25:26  sll
- * Removed initFile.h include.
- *
+  Revision 1.10  1997/08/26 15:25:26  sll
+  Removed initFile.h include.
+
   Revision 1.9  1997/05/06 16:09:13  sll
   Public release.
 
@@ -71,7 +75,6 @@ class omniObject;
 class initFile;
 class omniORB;
 class omniObjectManager;
-class _wrap_proxy;
 
 #include <omniORB2/rope.h>
 
@@ -94,6 +97,7 @@ public:
 #endif
 
   static const _CORBA_Boolean myByteOrder;
+  static _CORBA_ULong         traceLevel;
 
   enum alignment_t { ALIGN_1 = 1, ALIGN_2 = 2, ALIGN_4 = 4, ALIGN_8 = 8 };
   static const alignment_t max_alignment;  // Maximum value of alignment_t
@@ -430,7 +434,7 @@ public:
   static omniObject*         proxyObjectTable;
   static omniObject**        localObjectTable;
   static omni_mutex          wrappedObjectTableLock;
-  static _wrap_proxy**       wrappedObjectTable;
+  static void**              wrappedObjectTable;
 
   static void                globalInit();
   // This function is not thread-safe and should be called once only.
