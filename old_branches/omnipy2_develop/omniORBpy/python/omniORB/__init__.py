@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.16  2003/10/28 13:59:43  dgrisby
+# myIPAddresses function.
+#
 # Revision 1.26.2.15  2003/03/12 11:17:49  dgrisby
 # Any / TypeCode fixes.
 #
@@ -449,11 +452,15 @@ class EnumItem:
         self._n = name
         self._v = value
         return
+
     def __str__(self):
         return self._n
 
     def __repr__(self):
         return self._n
+
+    def __cmp__(self, other):
+        return cmp(self._v, other._v)
 
 class AnonymousEnumItem (EnumItem):
     def __init__(self, value):
