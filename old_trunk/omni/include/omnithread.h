@@ -18,6 +18,9 @@
 
 /* 
  * $Log$
+ * Revision 1.3  1997/04/01  12:28:50  ewc
+ * *** empty log message ***
+ *
  * Revision 1.2  1995/08/17  10:14:55  tjr
  * new version of OMNI thread abstraction
  *
@@ -88,7 +91,7 @@ class omni_thread;
 #else
 
 // Not using MSVC++ to compile
-#define _OMNITHREAD_NTDLL
+#define _OMNITHREAD_NTDLL_
 
 #endif
  // _MSC_VER
@@ -108,7 +111,7 @@ class omni_thread;
 #endif
 
 #if !defined(__NT__)
-#define _OMNITHREAD_NTDLL
+#define _OMNITHREAD_NTDLL_
 #endif
 
 #if (!defined(OMNI_MUTEX_IMPLEMENTATION) || \
