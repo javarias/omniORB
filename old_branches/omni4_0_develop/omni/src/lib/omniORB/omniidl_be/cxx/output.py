@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.5  2001/08/15 10:29:53  dpg1
+# Update DSI to use Current, inProcessIdentity.
+#
 # Revision 1.1.4.4  2001/04/10 10:55:31  dpg1
 # Minor fix to new output routine.
 #
@@ -54,12 +57,18 @@ import string
 createdFiles = []
 
 def createFile(filename):
-    if filename in createdFiles:
-        file = open(filename, "a")
-    else:
-        file = open(filename, "w")
-        createdFiles.append(filename)
-    return file
+    try:
+        if filename in createdFiles:
+            file = open(filename, "a")
+        else:
+            file = open(filename, "w")
+            createdFiles.append(filename)
+        return file
+    except IOError:
+        import sys
+        sys.stderr.write("omniidl: Cannot open file '%s' for writing.\n" %
+                         filename)
+        sys.exit(1)
 
 def listAllCreatedFiles():
     return createdFiles
