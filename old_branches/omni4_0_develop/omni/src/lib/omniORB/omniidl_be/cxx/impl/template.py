@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.2  2000/10/12 15:37:52  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.4  2000/07/13 15:25:59  dpg1
 # Merge from omni3_develop for 3.0 release.
 #
@@ -86,7 +89,7 @@ interface_ior = """\
   // IDL interface: @fqname@
   CORBA::Object_var ref = @inst_name@->_this();
   CORBA::String_var sior(orb->object_to_string(ref));
-  cout << \"IDL object @fqname@ IOR = '\" << (char*)sior << \"'\" << endl;
+  cout << "IDL object @fqname@ IOR = '" << (char*)sior << "'" << endl;
 }
 """
 
@@ -104,10 +107,10 @@ int main(int argc, char** argv)
 {
   try {
     // Initialise the ORB.
-    CORBA::ORB_var orb = CORBA::ORB_init(argc, argv, \"omniORB3\");
+    CORBA::ORB_var orb = CORBA::ORB_init(argc, argv);
 
     // Obtain a reference to the root POA.
-    CORBA::Object_var obj = orb->resolve_initial_references(\"RootPOA\");
+    CORBA::Object_var obj = orb->resolve_initial_references("RootPOA");
     PortableServer::POA_var poa = PortableServer::POA::_narrow(obj);
 
     // We allocate the objects on the heap.  Since these are reference
@@ -132,19 +135,19 @@ int main(int argc, char** argv)
     orb->destroy();
   }
   catch(CORBA::SystemException&) {
-    cerr << \"Caught CORBA::SystemException.\" << endl;
+    cerr << "Caught CORBA::SystemException." << endl;
   }
   catch(CORBA::Exception&) {
-    cerr << \"Caught CORBA::Exception.\" << endl;
+    cerr << "Caught CORBA::Exception." << endl;
   }
   catch(omniORB::fatalException& fe) {
-    cerr << \"Caught omniORB::fatalException:\" << endl;
-    cerr << \"  file: \" << fe.file() << endl;
-    cerr << \"  line: \" << fe.line() << endl;
-    cerr << \"  mesg: \" << fe.errmsg() << endl;
+    cerr << "Caught omniORB::fatalException:" << endl;
+    cerr << "  file: " << fe.file() << endl;
+    cerr << "  line: " << fe.line() << endl;
+    cerr << "  mesg: " << fe.errmsg() << endl;
   }
   catch(...) {
-    cerr << \"Caught unknown exception.\" << endl;
+    cerr << "Caught unknown exception." << endl;
   }
 
   return 0;
