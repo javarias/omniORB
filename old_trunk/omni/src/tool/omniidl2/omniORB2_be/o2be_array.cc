@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 19:55:17  sll
+  *** empty log message ***
+
 // Revision 1.5  1997/05/06  13:49:08  sll
 // Public release.
 //
@@ -123,7 +126,7 @@ o2be_array::getNumOfElements()
 {
   size_t dim = 1;
   AST_Expression **d = dims();
-  int i;
+  unsigned long i;
   for (i=0; i < n_dims(); i++)
     {
       AST_Expression::AST_ExprValue *v = d[i]->ev();

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.7  1997/12/09 19:55:11  sll
+  *** empty log message ***
+
   Revision 1.6  1997/08/21 21:13:57  sll
   Names of internal variables inside the stub code now all start with the
   prefix __ to avoid potential clash with identifiers defined in IDL.
@@ -2047,7 +2050,7 @@ match_disc_value(o2be_union_branch& b,AST_Decl *decl,disc_value_t v)
 	      return I_TRUE;
 	    break;
 	  case AST_PredefinedType::PT_boolean:
-	    if (bv->u.bval == v.b_val)
+	    if (bv->u.bval == (unsigned long)v.b_val)
 	      return I_TRUE;
 	    break;
 	  default:

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16  1997/12/12 21:00:33  sll
+  *** empty log message ***
+
   Revision 1.15  1997/12/12 18:42:50  sll
   New configuration option GATEKEEPER_ALLOWFILE and GATEKEEPER_DENYFILE.
 
@@ -197,7 +200,7 @@ void initFile::initialize()
   
   while(getnextentry(entryname,data))
     {
-      if (strcmp(entryname,"NAMESERVICE") == 0)
+      if (strcmp((const char*)entryname,"NAMESERVICE") == 0)
 	{
 	  if (multcheck[0] == 1)
 	    multerr(entryname);
