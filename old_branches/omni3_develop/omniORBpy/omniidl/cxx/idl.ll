@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  2000/02/04 12:17:10  dpg1
+// Support for VMS.
+//
 // Revision 1.6  1999/12/28 17:44:01  dpg1
 // Stupid string allocation bug.
 //
@@ -339,7 +342,7 @@ L{STR} {
   return PRAGMA_PREFIX;
 }
 
-^{SPACE}*#{SPACE}*pragma{SPACE}*id{SPACE}* {
+^{SPACE}*#{SPACE}*pragma{SPACE}*ID{SPACE}* {
   BEGIN(known_pragma);
   return PRAGMA_ID;
 }
