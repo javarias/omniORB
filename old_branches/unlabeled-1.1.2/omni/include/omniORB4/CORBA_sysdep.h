@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.8  2000/03/10 16:45:52  dpg1
+ MSVC++ can't catch exceptions by base class.
+
  Revision 1.1.2.7  2000/02/23 12:57:15  dpg1
  Some support for NextStep x86.
 
@@ -186,6 +189,8 @@
 // No side-effect on other gcc compilers. May be removed in future once
 // the bug is fixed.
 #define EGCS_WORKAROUND
+
+#define NEED_DUMMY_RETURN
 
 // Minor version number 91 is for egcs version 1.*  Some older
 // versions of 1.* may not support namespaces properly - this is
