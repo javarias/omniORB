@@ -27,6 +27,11 @@
 
 /*
   $Log$
+  Revision 1.14  1998/08/19 15:53:57  sll
+  New member functions void produce_binary_operators_in_hdr and the like
+  are responsible for generating binary operators <<= etc in the global
+  namespace.
+
   Revision 1.13  1998/08/13 22:44:56  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -209,6 +214,14 @@ o2be_sequence::o2be_sequence(AST_Expression *v, AST_Type *t)
       o2be_sequence *s = o2be_sequence::narrow_from_decl(d);
       d = s->base_type();
     }
+
+  if (d->node_type() == AST_Decl::NT_except) {
+    // XXX The source contains sequence of exceptions. This is illegal syntax
+    //     but the frontend grammer let this through. For the moment, we
+    //     trap this error here.
+    idl_global->err()->syntax_error(IDL_GlobalData::PS_SequenceTypeSeen);
+    return;
+  }
   
   char *p,*q;
   // Don't look for the scope name if the type is pre-defined
