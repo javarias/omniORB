@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/17 17:07:47  djs
+# Better handling of recursive types.
+#
 # Revision 1.10  2000/01/14 11:56:45  djs
 # Marked unused function as redundant. Not deleted as it might be useful
 # later.
@@ -87,10 +90,9 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, util, name, config
-
 from omniidl.be.cxx.skel import mangler
+from omniidl.be.cxx.dynskel import template
 
 import bdesc
 
@@ -216,10 +218,8 @@ def bstring(type):
     bound = type.bound()
     desc = util.StringStream()
     if bound != 0:
-        desc.out("""\
-#ifndef @private_prefix@_buildDesc_c@n@string
-#define @private_prefix@_buildDesc_c@n@string @private_prefix@_buildDesc_cstring
-#endif""", n = str(bound), private_prefix = config.privatePrefix())
+        desc.out(template.bdesc_string,
+                 n = str(bound), private_prefix = config.privatePrefix())
     return desc
     
 
@@ -277,8 +277,9 @@ def array(aliasType, declarator = None, scopedName = ""):
     if defined_outside:
         if full_dims != []:
             if tyutil.isTypedef(aliasType):
-                # the old backend will only recurse once per AST declaration node
-                # (even though each function block has #ifdef,define,endif guards)
+                # the old backend will only recurse once per AST declaration
+                # node (even though each function block has
+                # #ifdef,define,endif guards)
                 alias_declarator = aliasType.decl()
                 if not(self.__seenDeclarators.has_key(alias_declarator)):
                     self.__seenDeclarators[alias_declarator] = 1
@@ -345,18 +346,7 @@ _desc.p_array.opq_array = &""" + config.privatePrefix() + """_tmp;"""
         dims_index = map(lambda x:"[" + str(x) + "]", element_dims)
         dims_tail_index = dims_index[1:]
         this_cname = canonDims(current_dims) + alias_cname
-        desc.out("""\
-#ifndef _@private_prefix@_tcParser_getElementDesc@this_cname@__
-#define _@private_prefix@_tcParser_getElementDesc@this_cname@__
-static CORBA::Boolean
-@private_prefix@_tcParser_getElementDesc@this_cname@(tcArrayDesc* _adesc, CORBA::ULong _index, tcDescriptor &_desc)
-{
-  @type@ (&@private_prefix@_tmp)@tail_dims@ = (*((@type@(*)@index_string@)_adesc->opq_array))[_index];
-  @builddesc@
-  return 1;
-}
-#endif
-""",
+        desc.out(template.getdesc_array,
                  this_cname = this_cname,
                  type = element_name,
                  tail_dims = string.join(dims_tail_index, ""),
@@ -376,17 +366,7 @@ static CORBA::Boolean
     elif tyutil.isTypeCode(deref_aliasType):
         argtype = "CORBA::TypeCode_member"
         
-    desc.out("""\
-#ifndef _@private_prefix@_tcParser_buildDesc@decl_cname@__
-#define _@private_prefix@_tcParser_buildDesc@decl_cname@__
-static void
-@private_prefix@_buildDesc@decl_cname@(tcDescriptor& _desc, const @dtype@(*_data)@tail_dims@)
-{
-  _desc.p_array.getElementDesc = @private_prefix@_tcParser_getElementDesc@decl_cname@;
-  _desc.p_array.opq_array = (void*) _data;
-}
-#endif
-""",
+    desc.out(template.builddesc_array,
              decl_cname = decl_cname,
              tail_dims = tail_dims,
              dtype = argtype,
@@ -436,9 +416,8 @@ def interface(type):
             self.__buildDesc[cname] = "defined"
             env = name.Environment()
             objref_name = tyutil.objRefTemplate(deref_type, "Member", env)
-            desc.out("""\
-extern void @private_prefix@_buildDesc@cname@(tcDescriptor &, const @objref@&);""",
-                     cname = cname, objref = objref_name,
+            desc.out(template.builddesc_extern,
+                     cname = cname, name = objref_name,
                      private_prefix = config.privatePrefix())
     return desc
 
@@ -507,41 +486,8 @@ def sequence(type):
         # element is an _anonymous_ sequence
         desc.out(str(sequence(seqType)))
     
-    desc.out("""\
-#ifndef _@private_prefix@_tcParser_buildDesc@cname@__
-#define _@private_prefix@_tcParser_buildDesc@cname@__
-static void
-@private_prefix@_tcParser_setElementCount@cname@(tcSequenceDesc* _desc, CORBA::ULong _len)
-{
-  ((@sequence_template@*)_desc->opq_seq)->length(_len);
-}
-
-static CORBA::ULong
-@private_prefix@_tcParser_getElementCount@cname@(tcSequenceDesc* _desc)
-{
-  return ((@sequence_template@*)_desc->opq_seq)->length();
-}
-
-static CORBA::Boolean
-@private_prefix@_tcParser_getElementDesc@cname@(tcSequenceDesc* _desc, CORBA::ULong _index, tcDescriptor& _newdesc)
-{
-  @private_prefix@_buildDesc@thing_cname@(_newdesc, @thing@);
-  return 1;
-}
-
-static void
-@private_prefix@_buildDesc@cname@(tcDescriptor &_desc, const @sequence_template@& _data)
-{
-  _desc.p_sequence.opq_seq = (void*) &_data;
-  _desc.p_sequence.setElementCount =
-    @private_prefix@_tcParser_setElementCount@cname@;
-  _desc.p_sequence.getElementCount =
-    @private_prefix@_tcParser_getElementCount@cname@;
-  _desc.p_sequence.getElementDesc =
-    @private_prefix@_tcParser_getElementDesc@cname@;
-  }
-#endif
-""", cname = memberType_cname, thing_cname = seqType_cname,
+    desc.out(template.anon_sequence,
+             cname = memberType_cname, thing_cname = seqType_cname,
              sequence_template = sequence_template,
              thing = thing,
              private_prefix = config.privatePrefix())
@@ -649,20 +595,7 @@ CORBA::ULong""")
     else:
         desc.out("""\
 static CORBA::ULong""")
-    desc.out("""\
-@private_prefix@_tcParser_getMemberCount_@guard_name@(tcStructDesc *_desc)
-{
-  return @num_members@;
-}
-
-void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor &_desc, const @fqname@& _data)
-{
-  _desc.p_struct.getMemberDesc = @private_prefix@_tcParser_getMemberDesc_@guard_name@;
-  _desc.p_struct.getMemberCount = @private_prefix@_tcParser_getMemberCount_@guard_name@;
-  _desc.p_struct.opq_struct = (void *)&_data;
-}
-
-""",
+    desc.out(template.builddesc_member,
              guard_name = guard_name,
              fqname = fqname,
              num_members = str(num_members),
@@ -673,17 +606,15 @@ void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor &_desc, const @fqname
 
 def external(type):
     scopedName = type.decl().scopedName()
-    guard_name = tyutil.guardName(scopedName)
+    guard_name = "_c" + tyutil.guardName(scopedName)
     env = name.Environment()
     fqname = env.nameToString(scopedName)
-    fn_name = config.privatePrefix() + "_buildDesc_c" + guard_name
 
     desc = util.StringStream()
-    desc.out("""\
-extern void @private_prefix@_buildDesc_c@guard_name@(tcDescriptor &, const @fqname@&);""",
-             guard_name = guard_name,
+    desc.out(template.builddesc_extern,
+             cname = guard_name,
              private_prefix = config.privatePrefix(),
-             fqname = fqname)
+             name = fqname)
     return desc
 
 

@@ -28,12 +28,15 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  2000/01/17 17:06:30  djs
+# Added tcParser #ifdefs for bounded strings
+#
 
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, util, config, name
+from omniidl.be.cxx.dynskel import template
 
 import tcstring
 
@@ -74,12 +77,8 @@ def visitUnion(node):
 def visitStringType(type):
     if type.bound() == 0:
         return
-    stream.out("""\
-#if !defined(___tc_string_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_String_TC)
-#define ___tc_string_@n@_value__
-const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
-#endif
-""", n = str(type.bound()))    
+    stream.out(template.tc_string,
+               n = str(type.bound()))    
 
 def visitAttribute(node):
     attrType = node.attrType()
