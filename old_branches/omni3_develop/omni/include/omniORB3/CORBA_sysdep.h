@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  2000/02/04 14:48:09  djr
+ Added a couple of feature test macros.
+
  Revision 1.1.2.5  2000/01/27 11:11:24  djr
  Correction.
 
@@ -354,6 +357,11 @@
 # define _OMNIORB_HOST_BYTE_ORDER_ 1
 # if !defined(__WIN32__)
 #  define _HAS_SIGNAL 1
+# endif
+# if defined(__nextstep__)
+#  define _USE_MACH_SIGNAL 1
+#  define _NO_STRDUP 1
+#  define _USE_GETHOSTNAME 1
 # endif
 #elif defined(__aix__) && defined(__powerpc__)
 # define _OMNIORB_HOST_BYTE_ORDER_ 0
