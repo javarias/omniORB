@@ -25,6 +25,9 @@
 # Description:
 #
 #   Initialise the AMI module
+#
+# $Id$
+# $Log$
 
 # Once __init__ has been called, AMI code will automagically be output
 # along with the normal stubs.
