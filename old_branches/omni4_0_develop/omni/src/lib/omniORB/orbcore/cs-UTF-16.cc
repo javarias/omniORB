@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2000/11/16 12:33:44  dpg1
+  Minor fixes to permit use of UShort as WChar.
+
   Revision 1.1.2.3  2000/11/10 15:41:36  dpg1
   Native code sets throw BAD_PARAM if they are given a null transmission
   code set.
@@ -55,7 +58,8 @@ public:
 			    _CORBA_WChar c);
 
   virtual void marshalWString(cdrStream& stream, omniCodeSet::TCS_W* tcs,
-			      _CORBA_ULong bound, const _CORBA_WChar* s);
+			      _CORBA_ULong bound, _CORBA_ULong len,
+			      const _CORBA_WChar* s);
 
   virtual _CORBA_WChar unmarshalWChar(cdrStream& stream,
 				      omniCodeSet::TCS_W* tcs);
@@ -97,6 +101,7 @@ public:
   virtual _CORBA_Boolean fastMarshalWString  (cdrStream&          stream,
 					      omniCodeSet::NCS_W* ncs,
 					      _CORBA_ULong        bound,
+					      _CORBA_ULong        len,
 					      const _CORBA_WChar* s);
 
   virtual _CORBA_Boolean fastUnmarshalWChar  (cdrStream&          stream,
@@ -138,27 +143,26 @@ NCS_W_UTF_16::marshalWChar(cdrStream& stream,
 }
 
 void
-NCS_W_UTF_16::marshalWString(cdrStream& stream,
+NCS_W_UTF_16::marshalWString(cdrStream&          stream,
 			     omniCodeSet::TCS_W* tcs,
-			     _CORBA_ULong bound,
+			     _CORBA_ULong        bound,
+			     _CORBA_ULong        len,
 			     const _CORBA_WChar* ws)
 {
   if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
-  if (tcs->fastMarshalWString(stream, this, bound, ws)) return;
+  if (tcs->fastMarshalWString(stream, this, bound, len, ws)) return;
 
-  _CORBA_ULong len = _CORBA_WString_helper::len(ws) + 1;
-
-  if (bound && len >= bound)
+  if (bound && len > bound)
     OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
 
 #if (SIZEOF_WCHAR == 2)
   tcs->marshalWString(stream, len, ws);
 #else
-  omniCodeSet::UniChar*    us = omniCodeSetUtil::allocU(len);
+  omniCodeSet::UniChar*    us = omniCodeSetUtil::allocU(len+1);
   omniCodeSetUtil::HolderU uh(us);
   _CORBA_WChar             wc;
 
-  for (_CORBA_ULong i=0; i<len; i++) {
+  for (_CORBA_ULong i=0; i<=len; i++) {
     wc = ws[i];
     if (wc > 0xffff) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
     us[i] = wc;
@@ -191,7 +195,6 @@ NCS_W_UTF_16::unmarshalWString(cdrStream& stream,
   omniCodeSet::UniChar* us;
   len = tcs->unmarshalWString(stream, bound, us);
   OMNIORB_ASSERT(us);
-  OMNIORB_ASSERT(len > 0);
 
 #if (SIZEOF_WCHAR == 2)
   ws = us;
@@ -202,7 +205,7 @@ NCS_W_UTF_16::unmarshalWString(cdrStream& stream,
   ws = omniCodeSetUtil::allocW(len);
   omniCodeSetUtil::HolderW wh(ws);
 
-  for (_CORBA_ULong i=0; i<len; i++)
+  for (_CORBA_ULong i=0; i<=len; i++)
     ws[i] = us[i];
 
   wh.drop();
@@ -240,7 +243,7 @@ TCS_W_UTF_16::marshalWString(cdrStream& stream,
 
   // Just to be different, wstring is marshalled without a terminating
   // null. Length is in octets.
-  _CORBA_ULong mlen = len * 2;  // len - 1 to strip null, + 1 for BOM
+  _CORBA_ULong mlen = (len+1) * 2;  // len + 1 for BOM
   mlen >>= stream;
 
   // Send a suitable BOM so that we can marshal with native endian,
@@ -371,7 +374,7 @@ TCS_W_UTF_16::unmarshalWString(cdrStream& stream,
     stream.get_octet_array((_CORBA_Octet*)(us+1), (len-1)*2, omni::ALIGN_2);
 
     if (omni::myByteOrder) {
-      // We are little endian
+      // We are little endian, so byteswap the string
       for (_CORBA_ULong i=0; i < len; i++) {
 	uc    = us[i];
 	us[i] = ((uc & 0xff00) >> 8) | ((uc & 0x00ff) << 8);
@@ -380,7 +383,7 @@ TCS_W_UTF_16::unmarshalWString(cdrStream& stream,
   }
   us[len] = 0;
   uh.drop();
-  return len+1;
+  return len;
 }
 
 
@@ -401,6 +404,7 @@ _CORBA_Boolean
 TCS_W_UTF_16::fastMarshalWString(cdrStream&          stream,
 				 omniCodeSet::NCS_W* ncs,
 				 _CORBA_ULong        bound,
+				 _CORBA_ULong        len,
 				 const _CORBA_WChar* s)
 {
   return 0;

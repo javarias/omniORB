@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.4  2000/11/15 17:19:36  sll
+  Added cdrStream::marshalString and unmarshalString.
+
   Revision 1.17.2.3  2000/11/03 18:46:19  sll
   Moved string marshal functions into cdrStream.
 
@@ -216,18 +219,23 @@ _CORBA_Sequence_String::operator <<= (cdrStream& s)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-void 
-_CORBA_null_string_ptr(_CORBA_Boolean unmarshal)
+void
+_CORBA_String_helper::
+unmarshal_zero_length_string()
 {
-  if (unmarshal) {
-    omniORB::log << "Warning: unmarshal received a zero size string.\n"
-		 << "         Substituted with a proper nil string \"\\0\".\n";
-    omniORB::log.flush();
+  if (omniORB::strictIIOP) {
+    if (omniORB::trace(1)) {
+      omniORB::log << "Error: received an invalid zero length string.\n"
+		   << "       CORBA::MARSHAL is thrown.\n";
+      omniORB::log.flush();
+    }
+    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
   }
   else {
-    omniORB::log << "Warning: try to marshal a null pointer as a string.\n"
-		 << "         Substituted with a proper nil string \"\\0\".\n";
-    omniORB::log.flush();
+    if (omniORB::trace(1)) {
+      omniORB::log << "Warning: received an invalid zero length string.\n"
+		   << "         Substituted with a proper empty string.\n";
+      omniORB::log.flush();
+    }
   }
-
 }

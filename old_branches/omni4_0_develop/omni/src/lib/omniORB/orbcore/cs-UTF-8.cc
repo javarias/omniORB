@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/11/17 19:12:07  dpg1
+  Better choice of exceptions in UTF-8.
+
   Revision 1.1.2.4  2000/11/16 12:33:44  dpg1
   Minor fixes to permit use of UShort as WChar.
 
@@ -57,7 +60,7 @@ public:
   void marshalChar(cdrStream& stream, omniCodeSet::TCS_C* tcs, _CORBA_Char c);
 
   void marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
-		     _CORBA_ULong bound, const char* s);
+		     _CORBA_ULong bound, _CORBA_ULong len, const char* s);
 
   _CORBA_Char unmarshalChar(cdrStream& stream, omniCodeSet::TCS_C* tcs);
 
@@ -94,6 +97,7 @@ public:
   _CORBA_Boolean fastMarshalString  (cdrStream&          stream,
 				     omniCodeSet::NCS_C* ncs,
 				     _CORBA_ULong        bound,
+				     _CORBA_ULong        len,
 				     const char*         s);
 
   _CORBA_Boolean fastUnmarshalChar  (cdrStream&          stream,
@@ -216,10 +220,10 @@ NCS_C_UTF_8::marshalChar(cdrStream& stream,
 
 void
 NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
-			   _CORBA_ULong bound, const char* s)
+			   _CORBA_ULong bound, _CORBA_ULong len, const char* s)
 {
   if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
-  if (tcs->fastMarshalString(stream, this, bound, s)) return;
+  if (tcs->fastMarshalString(stream, this, bound, len, s)) return;
 
   omniCodeSetUtil::BufferU ub;
   CORBA::ULong        	   lc;
@@ -263,7 +267,7 @@ NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
   }
   // Null terminator
   ub.insert(0);
-  tcs->marshalString(stream, ub.length(), ub.buffer());
+  tcs->marshalString(stream, ub.length() - 1, ub.buffer());
 }
 
 
@@ -295,13 +299,12 @@ NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
   omniCodeSet::UniChar* us;
   len = tcs->unmarshalString(stream, bound, us);
   OMNIORB_ASSERT(us);
-  OMNIORB_ASSERT(len > 0);
 
   omniCodeSetUtil::HolderU uh(us);
   omniCodeSetUtil::BufferC b;
   omniCodeSet::UniChar     uc;
 
-  for (_CORBA_ULong i=0; i<len; i++) {
+  for (_CORBA_ULong i=0; i<=len; i++) {
     uc = us[i];
 
     if      (uc < 0x0080) {
@@ -348,7 +351,7 @@ NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
   OMNIORB_ASSERT(uc == 0); // Last char must be zero
 
   s = b.extract();
-  return b.length();
+  return b.length() - 1;
 }
 
 
@@ -375,7 +378,7 @@ TCS_C_UTF_8::marshalString(cdrStream& stream,
   omniCodeSetUtil::BufferC b;
   omniCodeSet::UniChar     uc;
 
-  for (_CORBA_ULong i=0; i<len; i++) {
+  for (_CORBA_ULong i=0; i<=len; i++) {
     uc = us[i];
 
     if      (uc < 0x0080) {
@@ -502,7 +505,7 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
     OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
 
   us = ub.extract();
-  return ub.length();
+  return ub.length() - 1;
 }
 
 
@@ -522,15 +525,16 @@ _CORBA_Boolean
 TCS_C_UTF_8::fastMarshalString(cdrStream&          stream,
 			       omniCodeSet::NCS_C* ncs,
 			       _CORBA_ULong        bound,
+			       _CORBA_ULong        len,
 			       const char*         s)
 {
   if (ncs->id() == id()) { // Null transformation
-    _CORBA_ULong len = strlen(s) + 1;
-    if (bound && len >= bound)
+    if (bound && len > bound)
       OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
 
-    len >>= stream;
-    stream.put_octet_array((const _CORBA_Octet*)s, len);
+    _CORBA_ULong mlen = len + 1;
+    mlen >>= stream;
+    stream.put_octet_array((const _CORBA_Octet*)s, mlen);
     return 1;
   }
   else if (ncs->kind() == omniCodeSet::CS_8bit) { // Simple 8 bit code set
@@ -598,29 +602,29 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
 				 char*&              s)
 {
   if (ncs->id() == id()) { // Null transformation
-    len <<= stream;
+    _CORBA_ULong mlen; mlen <<= stream;
 
-    if (len == 0) // Zero length is invalid
+    if (mlen == 0) // Zero length is invalid
       OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
 
-    if (bound && len >= bound)
+    if (bound && mlen >= bound)
       OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
 
-    s = omniCodeSetUtil::allocC(len);
+    s = omniCodeSetUtil::allocC(mlen);
     omniCodeSetUtil::HolderC h(s);
 
-    stream.get_octet_array((_CORBA_Octet*)s, len);
-    if (s[len-1] != '\0') OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+    stream.get_octet_array((_CORBA_Octet*)s, mlen);
+    if (s[mlen-1] != '\0') OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
 
     h.drop();
+    len = mlen - 1;
     return 1;
   }
   else if (ncs->kind() == omniCodeSet::CS_8bit) { // Simple 8-bit set
 
     const _CORBA_Char** fromU = ((omniCodeSet::NCS_C_8bit*)ncs)->fromU();
 
-    _CORBA_ULong mlen;
-    mlen <<= stream;
+    _CORBA_ULong mlen; mlen <<= stream;
 
     if (mlen == 0)
       OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
@@ -667,7 +671,7 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
       OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
 
     s   = b.extract();
-    len =  b.length();
+    len = b.length() - 1;
     return 1;
   }
   return 0;

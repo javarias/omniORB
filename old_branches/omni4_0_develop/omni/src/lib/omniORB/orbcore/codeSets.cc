@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/11/15 17:18:47  sll
+  Added marshalling operators for the TAG_CODE_SETS component.
+
   Revision 1.1.2.2  2000/11/02 10:16:27  dpg1
   Correct some minor errors in code set implementation. Remove Big5
   converter since it's wrong.
@@ -262,6 +265,7 @@ _CORBA_Boolean
 omniCodeSet::TCS_C::fastMarshalString(cdrStream&    stream,
 				      NCS_C*        ncs,
 				      _CORBA_ULong  bound,
+				      _CORBA_ULong  len,
 				      const char*   s)
 {
   return 0;
@@ -297,6 +301,7 @@ _CORBA_Boolean
 omniCodeSet::TCS_W::fastMarshalWString(cdrStream&          stream,
 				       NCS_W*              ncs,
 				       _CORBA_ULong        bound,
+				       _CORBA_ULong        len,
 				       const _CORBA_WChar* s)
 {
   return 0;

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.4  2000/11/09 12:27:50  dpg1
+ Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
  Revision 1.2.2.3  2000/11/03 19:04:34  sll
  Renamed _CORBA_Unbounded_Sequence__String to _CORBA_Unbounded_Sequence_String
  and _CORBA_Bounded_Sequence__String to _CORBA_Bounded_Sequence_String
@@ -106,6 +109,13 @@ static inline char* dup(const char* s) {
   return r;
 }
 // As CORBA::string_dup().
+
+static void unmarshal_zero_length_string();
+// Marshalling code calls this if we receive a zero length string. All
+// strings should be at least length 1 because they contain a
+// terminating null. Logs an error message, and throws MARSHAL if
+// strict IIOP, otherwise the marshalling code treats it as an empty
+// string.
 
 };
 
