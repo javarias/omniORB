@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.3  2000/11/03 19:19:46  sll
+# visitTypedef() just rely on types.base() to give the right type name for
+# object reference, instead of adding in a "_ptr" suffix.
+#
 # Revision 1.33.2.2  2000/10/12 15:37:50  sll
 # Updated from omni3_1_develop.
 #
@@ -557,6 +561,7 @@ def visitTypedef(node):
                     
             # Non-array of objrect reference
             elif d_type.objref():
+                derefTypeID = string.replace(derefTypeID,"_ptr","")
                 # Note that the base name is fully flattened
                 is_CORBA_Object = d_type.type().scopedName() ==\
                                   ["CORBA", "Object"]
@@ -1009,7 +1014,9 @@ def visitUnion(node):
         kind = switchType.type().kind()
         if switchType.integer():
             (low, high) = ast.integer_type_ranges[kind]
-            s = str(min_unused(low))
+            s = str(min_unused(low+1)) # just (low) is fine but use (low+1) to
+                                       # keep g++ from complaining
+                                       # about the constant being too large.
             if s[-1] == 'L': s = s[:-1]
             return s
 
