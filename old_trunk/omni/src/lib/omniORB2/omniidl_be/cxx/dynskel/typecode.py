@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/12/24 18:16:39  djs
+# Array handling and TypeCode building fixes (esp. across multiple files)
+#
 # Revision 1.4  1999/12/16 16:10:05  djs
 # Fix to make the output order consistent with the old compiler
 #
@@ -406,7 +409,7 @@ def visitMember(node):
         node.memberType().decl().accept(self)
 
 def visitEnum(node):
-    if not(node.mainFile()):
+    if not(node.mainFile()) and not(self.__override):
         return
     
     scopedName = node.scopedName()
