@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.23.2.2  2000/08/07 09:19:23  dpg1
+// Long long support
+//
 // Revision 1.23.2.1  2000/07/26 16:11:10  dpg1
 // Fix potential segfault in passing an invalid sequence/array of
 // unsigned long in a local call.
@@ -317,13 +320,13 @@ omniPy::alignedSize(CORBA::ULong            msgsize,
 
 #else
 
-  case CORBA::tk_longlong:
+  case 23:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
     break;
 
-  case CORBA::tk_ulonglong:
+  case 24:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
@@ -708,11 +711,11 @@ omniPy::alignedSize(CORBA::ULong            msgsize,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 #endif
@@ -860,11 +863,11 @@ omniPy::alignedSize(CORBA::ULong            msgsize,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 #endif
@@ -1071,11 +1074,11 @@ omniPy::alignedSize(CORBA::ULong            msgsize,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 #endif
@@ -1224,11 +1227,11 @@ omniPy::alignedSize(CORBA::ULong            msgsize,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    break;
 #endif
@@ -3238,13 +3241,13 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
 #else
 
-  case CORBA::tk_longlong:
+  case 23:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
     break;
 
-  case CORBA::tk_ulonglong:
+  case 24:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
@@ -3555,13 +3558,13 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
@@ -3711,13 +3714,13 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
@@ -3920,13 +3923,13 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
 #else
 
-  case CORBA::tk_longlong:
+  case 23:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
     break;
 
-  case CORBA::tk_ulonglong:
+  case 24:
     {
       OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
     }
@@ -4238,13 +4241,13 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
@@ -4394,13 +4397,13 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
+	  case 23:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
 	    break;
 
-	  case CORBA::tk_ulonglong:
+	  case 24:
 	    {
 	      OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
 	    }
@@ -4682,8 +4685,8 @@ omniPy::copyArgument(PyObject*               d_o,
 
 #else
 
-  case CORBA::tk_longlong:
-  case CORBA::tk_ulonglong:
+  case 23:
+  case 24:
     {
       CORBA::NO_IMPLEMENT ex(0,compstatus);
       return omniPy::handleSystemException(ex);
@@ -5142,13 +5145,15 @@ omniPy::copyArgument(PyObject*               d_o,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
-	  case CORBA::tk_ulonglong:
-	    for (i=0; i<len; i++)
-	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-	    Py_DECREF(r_o);
-	    CORBA::NO_IMPLEMENT ex(0,compstatus);
-	    return omniPy::handleSystemException(ex);
+	  case 23:
+	  case 24:
+	    {
+	      for (i=0; i<len; i++)
+		Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      Py_DECREF(r_o);
+	      CORBA::NO_IMPLEMENT ex(0,compstatus);
+	      return omniPy::handleSystemException(ex);
+	    }
 #endif
 	  default:
 	    OMNIORB_ASSERT(0);
@@ -5340,13 +5345,15 @@ omniPy::copyArgument(PyObject*               d_o,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
-	  case CORBA::tk_ulonglong:
-	    for (i=0; i<len; i++)
-	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-	    Py_DECREF(r_o);
-	    CORBA::NO_IMPLEMENT ex(0,compstatus);
-	    return omniPy::handleSystemException(ex);
+	  case 23:
+	  case 24:
+	    {
+	      for (i=0; i<len; i++)
+		Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      Py_DECREF(r_o);
+	      CORBA::NO_IMPLEMENT ex(0,compstatus);
+	      return omniPy::handleSystemException(ex);
+	    }
 #endif
 	  default:
 	    OMNIORB_ASSERT(0);
@@ -5612,13 +5619,15 @@ omniPy::copyArgument(PyObject*               d_o,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
-	  case CORBA::tk_ulonglong:
-	    for (i=0; i<len; i++)
-	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-	    Py_DECREF(r_o);
-	    CORBA::NO_IMPLEMENT ex(0,compstatus);
-	    return omniPy::handleSystemException(ex);
+	  case 23:
+	  case 24:
+	    {
+	      for (i=0; i<len; i++)
+		Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      Py_DECREF(r_o);
+	      CORBA::NO_IMPLEMENT ex(0,compstatus);
+	      return omniPy::handleSystemException(ex);
+	    }
 #endif
 	  default:
 	    OMNIORB_ASSERT(0);
@@ -5810,13 +5819,15 @@ omniPy::copyArgument(PyObject*               d_o,
 	    }
 	    break;
 #else
-	  case CORBA::tk_longlong:
-	  case CORBA::tk_ulonglong:
-	    for (i=0; i<len; i++)
-	      Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
-	    Py_DECREF(r_o);
-	    CORBA::NO_IMPLEMENT ex(0,compstatus);
-	    return omniPy::handleSystemException(ex);
+	  case 23:
+	  case 24:
+	    {
+	      for (i=0; i<len; i++)
+		Py_INCREF(Py_None); PyList_SET_ITEM(r_o, i, Py_None);
+	      Py_DECREF(r_o);
+	      CORBA::NO_IMPLEMENT ex(0,compstatus);
+	      return omniPy::handleSystemException(ex);
+	    }
 #endif
 	  default:
 	    OMNIORB_ASSERT(0);
