@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.11  1999/12/07 16:09:19  dpg1
+// Sequence and array now cope with tuples as well as lists.
+//
 // Revision 1.10  1999/09/30 11:27:08  dpg1
 // Unmarshalling object references specified as CORBA::Object now works.
 //
@@ -63,7 +66,6 @@
 // Initial revision
 //
 
-#include <iostream.h>
 #include <omnipy.h>
 
 
@@ -161,15 +163,15 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // Size of TypeCode
-      t_o             = PyDict_GetItemString(adict, "_t");
+      t_o             = PyDict_GetItemString(adict, (char*)"_t");
       assert(t_o && PyInstance_Check(t_o));
       PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
-      PyObject* desc  = PyDict_GetItemString(tdict, "_d");
+      PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
       assert(desc);
       msgsize         = alignedSizeTypeCode(msgsize, desc);
 
       // Size of Any's contents
-      t_o             = PyDict_GetItemString(adict, "_v");
+      t_o             = PyDict_GetItemString(adict, (char*)"_v");
       assert(t_o);
       msgsize         = alignedSize(msgsize, desc, t_o);
     }
@@ -180,7 +182,7 @@ omniPy::alignedSize(CORBA::ULong msgsize,
       if (!PyInstance_Check(a_o)) throw CORBA::BAD_PARAM();
 
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-      t_o             = PyDict_GetItemString(tdict, "_d");
+      t_o             = PyDict_GetItemString(tdict, (char*)"_d");
       assert(t_o);
       msgsize         = alignedSizeTypeCode(msgsize, t_o);
     }
@@ -248,8 +250,8 @@ omniPy::alignedSize(CORBA::ULong msgsize,
 
       PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
 
-      PyObject* discriminant = PyDict_GetItemString(udict, "_d");
-      PyObject* value        = PyDict_GetItemString(udict, "_v");
+      PyObject* discriminant = PyDict_GetItemString(udict, (char*)"_d");
+      PyObject* value        = PyDict_GetItemString(udict, (char*)"_v");
       assert(discriminant && value);
 
       t_o = PyTuple_GET_ITEM(d_o, 4); // Discriminant descriptor
@@ -563,8 +565,9 @@ omniPy::alignedSize(CORBA::ULong msgsize,
     break;
 
   default:
-    cout << "!!! alignedSize(): unsupported typecode: "
-	 << (CORBA::ULong)tk << endl;
+    omniORB::log << "!!! alignedSize(): unsupported typecode: "
+		 << (CORBA::ULong)tk << "\n";
+    omniORB::log.flush();
     abort();
   }
   //  cout << "  alignedSize() returning " << msgsize << "." << endl;
@@ -697,15 +700,15 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // TypeCode
-      t_o             = PyDict_GetItemString(adict, "_t");
+      t_o             = PyDict_GetItemString(adict, (char*)"_t");
       PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
-      PyObject* desc  = PyDict_GetItemString(tdict, "_d");
+      PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
       marshalTypeCode(stream, desc);
 
       //      cout << "about to marshal Any's contents..." << endl;
 
       // Any's contents
-      t_o             = PyDict_GetItemString(adict, "_v");
+      t_o             = PyDict_GetItemString(adict, (char*)"_v");
       marshalPyObject(stream, desc, t_o);
       //      cout << "Any marshalled." << endl;
     }
@@ -715,7 +718,7 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
     {
       //      cout << "about to marshal TypeCode..." << endl;
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-      t_o             = PyDict_GetItemString(tdict, "_d"); assert(t_o);
+      t_o             = PyDict_GetItemString(tdict, (char*)"_d"); assert(t_o);
       marshalTypeCode(stream, t_o);
       //      cout << "TypeCode marshalled." << endl;
     }
@@ -769,8 +772,8 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
     {
       PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
 
-      PyObject* discriminant = PyDict_GetItemString(udict, "_d");
-      PyObject* value        = PyDict_GetItemString(udict, "_v");
+      PyObject* discriminant = PyDict_GetItemString(udict, (char*)"_d");
+      PyObject* value        = PyDict_GetItemString(udict, (char*)"_v");
       t_o = PyTuple_GET_ITEM(d_o, 4); // Discriminant descriptor
 
       marshalPyObject(stream, t_o, discriminant);
@@ -795,7 +798,7 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
   case CORBA::tk_enum: // repoId, name, item list
     {
       PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
-					  "_v");
+					  (char*)"_v");
       if (!ev) throw CORBA::BAD_PARAM();
       CORBA::ULong e = PyInt_AS_LONG(ev);
       e >>= stream;
@@ -969,8 +972,9 @@ omniPy::marshalPyObject(NetBufferedStream& stream,
     break;
 
   default:
-    cout << "!!! marshalArguments(): unsupported typecode: "
-	 << (CORBA::ULong)tk << endl;
+    omniORB::log << "!!! marshalArguments(): unsupported typecode: "
+		 << (CORBA::ULong)tk << "\n";
+    omniORB::log.flush();
     abort();
   }
   //  cout << "  marshalArguments done." << endl;
@@ -1103,15 +1107,15 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
       PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
       // TypeCode
-      t_o             = PyDict_GetItemString(adict, "_t");
+      t_o             = PyDict_GetItemString(adict, (char*)"_t");
       PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
-      PyObject* desc  = PyDict_GetItemString(tdict, "_d");
+      PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
       marshalTypeCode(stream, desc);
 
       //      cout << "about to marshal Any's contents..." << endl;
 
       // Any's contents
-      t_o             = PyDict_GetItemString(adict, "_v");
+      t_o             = PyDict_GetItemString(adict, (char*)"_v");
       marshalPyObject(stream, desc, t_o);
       //      cout << "Any marshalled." << endl;
     }
@@ -1120,7 +1124,7 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
   case CORBA::tk_TypeCode:
     {
       PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-      t_o             = PyDict_GetItemString(tdict, "_d"); assert(t_o);
+      t_o             = PyDict_GetItemString(tdict, (char*)"_d"); assert(t_o);
       marshalTypeCode(stream, t_o);
     }
     break;
@@ -1173,8 +1177,8 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
     {
       PyObject* udict = ((PyInstanceObject*)a_o)->in_dict;
 
-      PyObject* discriminant = PyDict_GetItemString(udict, "_d");
-      PyObject* value        = PyDict_GetItemString(udict, "_v");
+      PyObject* discriminant = PyDict_GetItemString(udict, (char*)"_d");
+      PyObject* value        = PyDict_GetItemString(udict, (char*)"_v");
       t_o = PyTuple_GET_ITEM(d_o, 4); // Discriminant descriptor
 
       marshalPyObject(stream, t_o, discriminant);
@@ -1199,7 +1203,7 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
   case CORBA::tk_enum: // repoId, name, item list
     {
       PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
-					  "_v");
+					  (char*)"_v");
       if (!ev) throw CORBA::BAD_PARAM();
       CORBA::ULong e = PyInt_AS_LONG(ev);
       e >>= stream;
@@ -1373,8 +1377,9 @@ omniPy::marshalPyObject(MemBufferedStream& stream,
     break;
 
   default:
-    cout << "!!! marshalArguments(): unsupported typecode: "
-	 << (CORBA::ULong)tk << endl;
+    omniORB::log << "!!! marshalArguments(): unsupported typecode: "
+		 << (CORBA::ULong)tk << "\n";
+    omniORB::log.flush();
     abort();
   }
   //  cout << "  marshalArguments done." << endl;
@@ -1798,8 +1803,9 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
     break;
 
   default:
-    cout << " !!! unmarshalReturnedValues(): unsupported typecode: "
-	 << (CORBA::ULong)tk << endl;
+    omniORB::log << " !!! unmarshalReturnedValues(): unsupported typecode: "
+		 << (CORBA::ULong)tk << "\n";
+    omniORB::log.flush();
     abort();
   }
   //  cout << "unmarshalPyObject() ends." << endl;
@@ -2222,10 +2228,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
     break;
 
   default:
-    cout << " !!! unmarshalReturnedValues(): unsupported typecode: "
-	 << (CORBA::ULong)tk << endl;
+    omniORB::log << " !!! unmarshalReturnedValues(): unsupported typecode: "
+		 << (CORBA::ULong)tk << "\n";
+    omniORB::log.flush();
     abort();
   }
   return r_o;
 }
-

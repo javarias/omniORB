@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.11  1999/11/25 11:21:36  dpg1
+// Proper support for server-side _is_a().
+//
 // Revision 1.10  1999/11/16 17:32:36  dpg1
 // Changes for AIX.
 //
@@ -68,8 +71,6 @@
 
 #include <omnipy.h>
 
-//#include <iostream.h>
-
 
 // Helper class to create a Python ThreadState object and grab the
 // Python interpreter lock, then release the lock and delete the
@@ -97,7 +98,8 @@ public:
 
   ~lockWithNewThreadState() {
     // Remove the dummy Thread object
-    PyObject* meth = PyObject_GetAttrString(dummy_thread_, "_Thread__delete");
+    PyObject* meth = PyObject_GetAttrString(dummy_thread_,
+					    (char*)"_Thread__delete");
     assert(meth);
     PyEval_CallObject(meth, omniPy::pyEmptyTuple);
     Py_DECREF(meth);
@@ -139,7 +141,7 @@ Py_Servant::Py_Servant(PyObject* pyservant, PyObject* opdict,
   Py_INCREF(pyservant_);
   Py_INCREF(opdict_);
 
-  pyskeleton_ = PyObject_GetAttrString(pyservant_, "_omni_skeleton");
+  pyskeleton_ = PyObject_GetAttrString(pyservant_, (char*)"_omni_skeleton");
   assert(pyskeleton_ && PyClass_Check(pyskeleton_));
 
   omniObject::PR_IRRepositoryId(repoId);
@@ -182,7 +184,7 @@ Py_Servant::_widenFromTheMostDerivedIntf(const char* repoId,
   else {
     lockWithNewThreadState _t;
     PyObject* isa = PyObject_CallMethod(omniPy::pyomniORBmodule,
-					"static_is_a", "Ns",
+					(char*)"static_is_a", (char*)"Ns",
 					pyskeleton_, repoId);
     if (!isa)
       PyErr_Print();
@@ -319,8 +321,8 @@ Py_Servant::dispatch(GIOP_S&        giop_server,
 
     //    cout << "Exception may be one we know..." << endl;
 
-    PyObject* erepoId = PyObject_GetAttrString(evalue, "_NP_RepositoryId");
-
+    PyObject* erepoId = PyObject_GetAttrString(evalue,
+					       (char*)"_NP_RepositoryId");
     if (!erepoId) {
       omniORB::log << "omniORBpy: *** Warning: caught an unexpected "
 		   << "exception during up-call.\n"

@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.11  1999/09/29 09:05:03  dpg1
+// Now releases the Python interpreter lock before invoke's call to
+// _is_a().
+//
 // Revision 1.10  1999/09/28 14:23:30  dpg1
 // Fixed some bugs in handling the Python interpreter lock.
 //
@@ -63,7 +67,6 @@
 // Initial revision
 //
 
-#include <iostream.h>
 #include <omnipy.h>
 
 

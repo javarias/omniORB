@@ -32,6 +32,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.8  1999/11/16 17:32:36  dpg1
+// Changes for AIX.
+//
 // Revision 1.7  1999/10/11 16:52:51  dpg1
 // Fixed reference counting bug when receiving a reference to a local C++
 // object.
@@ -60,8 +63,6 @@
 #include <omnipy.h>
 #include <ropeFactory.h>   // Internal omniORB interface
 #include <objectManager.h> // Internal omniORB interface
-
-#include <iostream.h>
 
 
 #if defined(HAS_Cplusplus_Namespace)
@@ -95,7 +96,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
   }
   if (!objrefClass) {
     // No target type, or stub code bug:
-    objrefClass     = PyObject_GetAttrString(pyCORBAmodule, "Object");
+    objrefClass     = PyObject_GetAttrString(pyCORBAmodule, (char*)"Object");
     fullTypeUnknown = 1;
   }
 
@@ -108,7 +109,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
   if (fullTypeUnknown) {
     PyObject* idstr = PyString_FromString(actualRepoId);
     PyDict_SetItemString(((PyInstanceObject*)pyobjref)->in_dict,
-			 "_NP_RepositoryId", idstr);
+			 (char*)"_NP_RepositoryId", idstr);
   }
 
   omniPy::setTwin(pyobjref, (CORBA::Object_ptr)objref, OBJREF_TWIN);

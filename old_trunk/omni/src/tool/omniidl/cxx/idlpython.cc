@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.12  1999/12/01 11:35:22  dpg1
+// Include path for Python.h changed to be consistent with omnipy module.
+//
 // Revision 1.11  1999/11/17 14:34:42  dpg1
 // More multi-platform support (NT and AIX).
 //
@@ -138,8 +141,10 @@ private:
 PythonVisitor::
 PythonVisitor()
 {
-  idlast_  = PyImport_ImportModule("omniidl.idlast");  ASSERT_PYOBJ(idlast_);
-  idltype_ = PyImport_ImportModule("omniidl.idltype"); ASSERT_PYOBJ(idltype_);
+  idlast_  = PyImport_ImportModule((char*)"omniidl.idlast");
+  idltype_ = PyImport_ImportModule((char*)"omniidl.idltype");
+  ASSERT_PYOBJ(idlast_);
+  ASSERT_PYOBJ(idltype_);
 }
 
 PythonVisitor::
@@ -190,8 +195,8 @@ PythonVisitor::
 registerPyDecl(const ScopedName* sn, PyObject* pydecl)
 {
   PyObject* pysn = scopedNameToList(sn);
-  PyObject* r    = PyObject_CallMethod(idlast_, "registerDecl", "NO",
-				       pysn, pydecl);
+  PyObject* r    = PyObject_CallMethod(idlast_, (char*)"registerDecl",
+				       (char*)"NO", pysn, pydecl);
   ASSERT_PYOBJ(r); Py_DECREF(r);
 }
 
@@ -200,7 +205,8 @@ PythonVisitor::
 findPyDecl(const ScopedName* sn)
 {
   PyObject* pysn   = scopedNameToList(sn);
-  PyObject* pydecl = PyObject_CallMethod(idlast_, "findDecl", "N", pysn);
+  PyObject* pydecl = PyObject_CallMethod(idlast_, (char*)"findDecl",
+					 (char*)"N", pysn);
   ASSERT_PYOBJ(pydecl);
   return pydecl;
 }
@@ -239,7 +245,8 @@ visitAST(AST* a)
     d->accept(*this);
     PyList_SetItem(pydecls, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "AST", "sNN", a->file(), pydecls,
+  result_ = PyObject_CallMethod(idlast_, (char*)"AST", (char*)"sNN",
+				a->file(), pydecls,
 				pragmasToList(a->pragmas()));
   ASSERT_RESULT;
 }
@@ -258,7 +265,7 @@ visitModule(Module* m)
     d->accept(*this);
     PyList_SetItem(pydecls, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Module", "siiNsNsN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Module", (char*)"siiNsNsN",
 				m->file(), m->line(), (int)m->mainFile(),
 				pragmasToList(m->pragmas()),
 				m->identifier(),
@@ -295,7 +302,7 @@ visitInterface(Interface* i)
   }
 
   PyObject* pyintf =
-    PyObject_CallMethod(idlast_, "Interface", "siiNsNsiN",
+    PyObject_CallMethod(idlast_, (char*)"Interface", (char*)"siiNsNsiN",
 			i->file(), i->line(), (int)i->mainFile(),
 			pragmasToList(i->pragmas()),
 			i->identifier(),
@@ -313,7 +320,8 @@ visitInterface(Interface* i)
     d->accept(*this);
     PyList_SetItem(pycontents, l, result_);
   }
-  PyObject* r = PyObject_CallMethod(pyintf, "_setContents", "N", pycontents);
+  PyObject* r = PyObject_CallMethod(pyintf, (char*)"_setContents",
+				    (char*)"N", pycontents);
   ASSERT_PYOBJ(r); Py_DECREF(r);
   result_ = pyintf;
 }
@@ -322,7 +330,7 @@ void
 PythonVisitor::
 visitForward(Forward* f)
 {
-  result_ = PyObject_CallMethod(idlast_, "Forward", "siiNsNsi",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Forward", (char*)"siiNsNsi",
 				f->file(), f->line(), (int)f->mainFile(),
 				pragmasToList(f->pragmas()),
 				f->identifier(),
@@ -355,8 +363,9 @@ visitConst(Const* c)
   case IdlType::tk_boolean:
     pyv = PyInt_FromLong(c->constAsBoolean()); break;
 
-  case IdlType::tk_char:  pyv = Py_BuildValue("c", c->constAsChar()); break;
-  case IdlType::tk_octet: pyv = PyInt_FromLong(c->constAsOctet());    break;
+  case IdlType::tk_char:  pyv = Py_BuildValue((char*)"c", c->constAsChar());
+    break;
+  case IdlType::tk_octet: pyv = PyInt_FromLong(c->constAsOctet()); break;
 
   case IdlType::tk_string:
     pyv = PyString_FromString(c->constAsString()); break;
@@ -388,7 +397,7 @@ visitConst(Const* c)
   default:
     assert(0);
   }
-  result_ = PyObject_CallMethod(idlast_, "Const", "siiNsNsNiN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Const", (char*)"siiNsNsNiN",
 				c->file(), c->line(), (int)c->mainFile(),
 				pragmasToList(c->pragmas()),
 				c->identifier(),
@@ -412,7 +421,7 @@ visitDeclarator(Declarator* d)
   for (i=0, s = d->sizes(); s; s = s->next(), ++i)
     PyList_SetItem(pysizes, i, PyInt_FromLong(s->size()));
 
-  result_ = PyObject_CallMethod(idlast_, "Declarator", "siiNsNsN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Declarator",(char*)"siiNsNsN",
 				d->file(), d->line(), (int)d->mainFile(),
 				pragmasToList(d->pragmas()),
 				d->identifier(),
@@ -444,7 +453,7 @@ visitTypedef(Typedef* t)
     d->accept(*this);
     PyList_SetItem(pydeclarators, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Typedef", "siiNNiN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Typedef", (char*)"siiNNiN",
 				t->file(), t->line(), (int)t->mainFile(),
 				pragmasToList(t->pragmas()),
 				pyaliasType, (int)t->constrType(),
@@ -455,7 +464,7 @@ visitTypedef(Typedef* t)
   // loop which Python's GC won't collect :-(
   for (i=0; i<l; ++i) {
     PyObject_CallMethod(PyList_GetItem(pydeclarators, i),
-			"_setAlias", "O", result_);
+			(char*)"_setAlias", (char*)"O", result_);
   }
 }
 
@@ -480,7 +489,7 @@ visitMember(Member* m)
     d->accept(*this);
     PyList_SetItem(pydeclarators, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Member", "siiNNiN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Member", (char*)"siiNNiN",
 				m->file(), m->line(), (int)m->mainFile(),
 				pragmasToList(m->pragmas()),
 				pymemberType, (int)m->constrType(),
@@ -496,7 +505,7 @@ visitStruct(Struct* s)
   int     i;
 
   PyObject* pystruct = 
-    PyObject_CallMethod(idlast_, "Struct", "siiNsNsi",
+    PyObject_CallMethod(idlast_, (char*)"Struct", (char*)"siiNsNsi",
 			s->file(), s->line(), (int)s->mainFile(),
 			pragmasToList(s->pragmas()),
 			s->identifier(),
@@ -513,7 +522,8 @@ visitStruct(Struct* s)
     m->accept(*this);
     PyList_SetItem(pymembers, i, result_);
   }
-  PyObject* r = PyObject_CallMethod(pystruct, "_setMembers", "N", pymembers);
+  PyObject* r = PyObject_CallMethod(pystruct, (char*)"_setMembers",
+				    (char*)"N", pymembers);
   ASSERT_PYOBJ(r); Py_DECREF(r);
   result_ = pystruct;
 }
@@ -532,7 +542,7 @@ visitException(Exception* e)
     m->accept(*this);
     PyList_SetItem(pymembers, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Exception", "siiNsNsN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Exception", (char*)"siiNsNsN",
 				e->file(), e->line(), (int)e->mainFile(),
 				pragmasToList(e->pragmas()),
 				e->identifier(),
@@ -558,7 +568,8 @@ visitCaseLabel(CaseLabel* l)
     pyv = PyLong_FromUnsignedLong(l->labelAsULong()); break;
 
   case IdlType::tk_boolean: pyv = PyInt_FromLong(l->labelAsBoolean());  break;
-  case IdlType::tk_char:    pyv = Py_BuildValue("c", l->labelAsChar()); break;
+  case IdlType::tk_char:    pyv = Py_BuildValue((char*)"c", l->labelAsChar());
+    break;
 #ifdef HAS_LongLong
   case IdlType::tk_longlong:
     sprintf(buffer, "%Ld", l->labelAsLongLong());
@@ -576,7 +587,7 @@ visitCaseLabel(CaseLabel* l)
   default:
     assert(0);
   }
-  result_ = PyObject_CallMethod(idlast_, "CaseLabel", "siiNiNi",
+  result_ = PyObject_CallMethod(idlast_, (char*)"CaseLabel", (char*)"siiNiNi",
 				l->file(), l->line(), (int)l->mainFile(),
 				pragmasToList(l->pragmas()),
 				(int)l->isDefault(), pyv,
@@ -608,7 +619,7 @@ visitUnionCase(UnionCase* c)
   c->declarator()->accept(*this);
   PyObject* pydeclarator = result_;
 
-  result_ = PyObject_CallMethod(idlast_, "UnionCase", "siiNNNiN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"UnionCase", (char*)"siiNNNiN",
 				c->file(), c->line(), (int)c->mainFile(),
 				pragmasToList(c->pragmas()),
 				pylabels, pycaseType, (int)c->constrType(),
@@ -628,7 +639,7 @@ visitUnion(Union* u)
   PyObject* pyswitchType = result_;
 
   PyObject* pyunion =
-    PyObject_CallMethod(idlast_, "Union", "siiNsNsNii",
+    PyObject_CallMethod(idlast_, (char*)"Union", (char*)"siiNsNsNii",
 			u->file(), u->line(), (int)u->mainFile(),
 			pragmasToList(u->pragmas()),
 			u->identifier(),
@@ -649,7 +660,8 @@ visitUnion(Union* u)
     PyList_SetItem(pycases, i, result_);
   }
 
-  PyObject* r = PyObject_CallMethod(pyunion, "_setCases", "N", pycases);
+  PyObject* r = PyObject_CallMethod(pyunion, (char*)"_setCases",
+				    (char*)"N", pycases);
   ASSERT_PYOBJ(r); Py_DECREF(r);
   result_ = pyunion;
 }
@@ -658,7 +670,7 @@ void
 PythonVisitor::
 visitEnumerator(Enumerator* e)
 {
-  result_ = PyObject_CallMethod(idlast_, "Enumerator", "siiNsNs",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Enumerator", (char*)"siiNsNs",
 				e->file(), e->line(), (int)e->mainFile(),
 				pragmasToList(e->pragmas()),
 				e->identifier(),
@@ -681,7 +693,7 @@ visitEnum(Enum* e)
     n->accept(*this);
     PyList_SetItem(pyenumerators, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Enum", "siiNsNsN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Enum", (char*)"siiNsNsN",
 				e->file(), e->line(), (int)e->mainFile(),
 				pragmasToList(e->pragmas()),
 				e->identifier(),
@@ -708,7 +720,7 @@ visitAttribute(Attribute* a)
   for (i=0, d = a->declarators(); d; d = (Declarator*)d->next(), ++i)
     PyList_SetItem(pyidentifiers, i, PyString_FromString(d->identifier()));    
 
-  result_ = PyObject_CallMethod(idlast_, "Attribute", "siiNiNN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Attribute", (char*)"siiNiNN",
 				a->file(), a->line(), (int)a->mainFile(),
 				pragmasToList(a->pragmas()),
 				(int)a->readonly(), pyattrType,
@@ -723,7 +735,7 @@ visitParameter(Parameter* p)
   p->paramType()->accept(*this);
   PyObject* pyparamType = result_;
 
-  result_ = PyObject_CallMethod(idlast_, "Parameter", "siiNiNs",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Parameter", (char*)"siiNiNs",
 				p->file(), p->line(), (int)p->mainFile(),
 				pragmasToList(p->pragmas()),
 				p->direction(), pyparamType, p->identifier());
@@ -761,7 +773,7 @@ visitOperation(Operation* o)
   for (i=0, c = o->contexts(); c; c = c->next(), ++i)
     PyList_SetItem(pycontexts, i, PyString_FromString(c->context()));
 
-  result_ = PyObject_CallMethod(idlast_, "Operation", "siiNiNsNNN",
+  result_ = PyObject_CallMethod(idlast_,(char*)"Operation",(char*)"siiNiNsNNN",
 				o->file(), o->line(), (int)o->mainFile(),
 				pragmasToList(o->pragmas()),
 				(int)o->oneway(), pyreturnType,
@@ -774,7 +786,7 @@ void
 PythonVisitor::
 visitNative(Native* n)
 {
-  result_ = PyObject_CallMethod(idlast_, "Native", "siiNsNs",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Native", (char*)"siiNsNs",
 				n->file(), n->line(), (int)n->mainFile(),
 				pragmasToList(n->pragmas()),
 				n->identifier(),
@@ -805,7 +817,7 @@ visitStateMember(StateMember* s)
     d->accept(*this);
     PyList_SetItem(pydeclarators, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "StateMember", "siiNiNiN",
+  result_ = PyObject_CallMethod(idlast_,(char*)"StateMember",(char*)"siiNiNiN",
 				s->file(), s->line(), (int)s->mainFile(),
 				pragmasToList(s->pragmas()),
 				s->memberAccess(), pymemberType,
@@ -826,7 +838,7 @@ visitFactory(Factory* f)
     p->accept(*this);
     PyList_SetItem(pyparameters, i, result_);
   }
-  result_ = PyObject_CallMethod(idlast_, "Factory", "siiNsN",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Factory", (char*)"siiNsN",
 				f->file(), f->line(), (int)f->mainFile(),
 				pragmasToList(f->pragmas()),
 				f->identifier(), pyparameters);
@@ -837,7 +849,8 @@ void
 PythonVisitor::
 visitValueForward(ValueForward* f)
 {
-  result_ = PyObject_CallMethod(idlast_, "ValueForward", "siiNsNsi",
+  result_ = PyObject_CallMethod(idlast_,
+				(char*)"ValueForward", (char*)"siiNsNsi",
 				f->file(), f->line(), (int)f->mainFile(),
 				pragmasToList(f->pragmas()),
 				f->identifier(),
@@ -859,7 +872,7 @@ visitValueBox(ValueBox* b)
   b->boxedType()->accept(*this);
   PyObject* pyboxedType = result_;
 
-  result_ = PyObject_CallMethod(idlast_, "ValueBox", "siiNsNsNi",
+  result_ = PyObject_CallMethod(idlast_, (char*)"ValueBox", (char*)"siiNsNsNi",
 				b->file(), b->line(), (int)b->mainFile(),
 				pragmasToList(b->pragmas()),
 				b->identifier(),
@@ -910,7 +923,7 @@ visitValueAbs(ValueAbs* a)
   }
 
   PyObject* pyvalue =
-    PyObject_CallMethod(idlast_, "ValueAbs", "siiNsNsNN",
+    PyObject_CallMethod(idlast_, (char*)"ValueAbs", (char*)"siiNsNsNN",
 			a->file(), a->line(), (int)a->mainFile(),
 			pragmasToList(a->pragmas()),
 			a->identifier(),
@@ -928,7 +941,8 @@ visitValueAbs(ValueAbs* a)
     d->accept(*this);
     PyList_SetItem(pycontents, l, result_);
   }
-  PyObject* r = PyObject_CallMethod(pyvalue, "_setContents", "N", pycontents);
+  PyObject* r = PyObject_CallMethod(pyvalue, (char*)"_setContents",
+				    (char*)"N", pycontents);
   ASSERT_PYOBJ(r); Py_DECREF(r);
   result_ = pyvalue;
 }
@@ -976,7 +990,7 @@ visitValue(Value* v)
   }
 
   PyObject* pyvalue =
-    PyObject_CallMethod(idlast_, "Value", "siiNsNsiNiN",
+    PyObject_CallMethod(idlast_, (char*)"Value", (char*)"siiNsNsiNiN",
 			v->file(), v->line(), (int)v->mainFile(),
 			pragmasToList(v->pragmas()),
 			v->identifier(),
@@ -995,7 +1009,8 @@ visitValue(Value* v)
     d->accept(*this);
     PyList_SetItem(pycontents, l, result_);
   }
-  PyObject* r = PyObject_CallMethod(pyvalue, "_setContents", "N", pycontents);
+  PyObject* r = PyObject_CallMethod(pyvalue, (char*)"_setContents",
+				    (char*)"N", pycontents);
   ASSERT_PYOBJ(r); Py_DECREF(r);
   result_ = pyvalue;
 }
@@ -1006,7 +1021,8 @@ void
 PythonVisitor::
 visitBaseType(BaseType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, "baseType", "i", (int)t->kind());
+  result_ = PyObject_CallMethod(idltype_, (char*)"baseType", (char*)"i",
+				(int)t->kind());
   ASSERT_RESULT;
 }
 
@@ -1014,7 +1030,8 @@ void
 PythonVisitor::
 visitStringType(StringType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, "stringType", "i", t->bound());
+  result_ = PyObject_CallMethod(idltype_, (char*)"stringType",
+				(char*)"i", t->bound());
   ASSERT_RESULT;
 }
 
@@ -1022,7 +1039,8 @@ void
 PythonVisitor::
 visitWStringType(WStringType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, "wstringType", "i", t->bound());
+  result_ = PyObject_CallMethod(idltype_, (char*)"wstringType",
+				(char*)"i", t->bound());
   ASSERT_RESULT;
 }
 
@@ -1031,7 +1049,7 @@ PythonVisitor::
 visitSequenceType(SequenceType* t)
 {
   t->seqType()->accept(*this);
-  result_ = PyObject_CallMethod(idltype_, "sequenceType", "Ni",
+  result_ = PyObject_CallMethod(idltype_, (char*)"sequenceType", (char*)"Ni",
 				result_, t->bound());
   ASSERT_RESULT;
 }
@@ -1040,7 +1058,7 @@ void
 PythonVisitor::
 visitFixedType(FixedType* t)
 {
-  result_ = PyObject_CallMethod(idltype_, "fixedType", "i",
+  result_ = PyObject_CallMethod(idltype_, (char*)"fixedType", (char*)"i",
 				t->digits(), t->scale());
   ASSERT_RESULT;
 }
@@ -1051,17 +1069,22 @@ visitDeclaredType(DeclaredType* t)
 {
   if (t->decl()) {
     result_ =
-      PyObject_CallMethod(idltype_, "declaredType", "NNi",
+      PyObject_CallMethod(idltype_, (char*)"declaredType", (char*)"NNi",
 			  findPyDecl(t->declRepoId()->scopedName()),
 			  scopedNameToList(t->declRepoId()->scopedName()),
 			  (int)t->kind());
   }
   else {
     if (t->kind() == IdlType::tk_objref) {
-      PyObject* pysn   = Py_BuildValue("[ss]", "CORBA", "Object");
-      PyObject* pydecl = PyObject_CallMethod(idlast_, "findDecl", "O", pysn);
-      result_ = PyObject_CallMethod(idltype_, "declaredType", "NNi",
-				    pydecl, pysn, (int)t->kind());
+      PyObject* pysn   = Py_BuildValue((char*)"[ss]", (char*)"CORBA",
+				       (char*)"Object");
+
+      PyObject* pydecl = PyObject_CallMethod(idlast_, (char*)"findDecl",
+					     (char*)"O", pysn);
+
+      result_          = PyObject_CallMethod(idltype_, (char*)"declaredType",
+					     (char*)"NNi", pydecl, pysn,
+					     (int)t->kind());
     }
     else abort();
   }
@@ -1073,7 +1096,7 @@ extern "C" {
   {
     PyObject* pyfile;
 
-    if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &pyfile))
+    if (!PyArg_ParseTuple(args, (char*)"O!", &PyFile_Type, &pyfile))
       return 0;
 
     FILE*       file   = PyFile_AsFile(pyfile);
@@ -1102,7 +1125,7 @@ extern "C" {
   {
     PyObject* pyfile;
 
-    if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &pyfile))
+    if (!PyArg_ParseTuple(args, (char*)"O!", &PyFile_Type, &pyfile))
       return 0;
 
     FILE*       file   = PyFile_AsFile(pyfile);
@@ -1122,15 +1145,15 @@ extern "C" {
   }
 
   static PyMethodDef omniidl_methods[] = {
-    {"compile",        IdlPyCompile,        METH_VARARGS},
-    {"dump",           IdlPyDump,           METH_VARARGS},
+    {(char*)"compile",        IdlPyCompile,        METH_VARARGS},
+    {(char*)"dump",           IdlPyDump,           METH_VARARGS},
     {NULL, NULL}
   };
 
   void DLL_EXPORT init_omniidl()
   {
-    PyObject* m = Py_InitModule("_omniidl", omniidl_methods);
-    PyObject_SetAttrString(m, "version",
+    PyObject* m = Py_InitModule((char*)"_omniidl", omniidl_methods);
+    PyObject_SetAttrString(m, (char*)"version",
 			   PyString_FromString(IDLMODULE_VERSION));
   }
 }
@@ -1156,7 +1179,7 @@ main(int argc, char** argv)
     fprintf(stderr, "%s: could not import main python file.\n", argv[0]);
     exit(1);
   }
-  PyObject* r = PyObject_CallMethod(pymain, "main", "");
+  PyObject* r = PyObject_CallMethod(pymain, (char*)"main", (char*)"");
   Py_XDECREF(r);
   return 0;
 }
