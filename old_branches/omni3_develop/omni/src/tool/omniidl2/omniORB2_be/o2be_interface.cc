@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.39.6.4  1999/09/29 13:12:03  djr
+  Updated mapping of operation signatures for skeletons to use T_out types.
+  Renamed all flags relating to backwards-compatiblity.
+
   Revision 1.39.6.3  1999/09/27 11:41:27  djr
   Generate old BOA-style tie templates.
 
@@ -1981,7 +1985,11 @@ internal_produce_tie_call_wrappers(o2be_interface* intf,
       i.next();
       if( opl[op->uqname()] )  continue;
       opl.insert(op->uqname(), "");
-      IND(s);  op->produce_client_decl(s, o2be_global::root());
+      IND(s);
+      if( idl_global->compile_flags() & IDL_BE_OLD_SKEL_SIGNATURES )
+	op->produce_decl(s, o2be_global::root());
+      else
+	op->produce_client_decl(s, o2be_global::root());
       s << " { ";
       if( !op->return_is_void() )  s << "return ";
       s << "pd_obj->";

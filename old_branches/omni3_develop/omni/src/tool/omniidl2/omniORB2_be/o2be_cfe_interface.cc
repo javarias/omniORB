@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.28.6.2  1999/09/29 13:12:02  djr
+  Updated mapping of operation signatures for skeletons to use T_out types.
+  Renamed all flags relating to backwards-compatiblity.
+
   Revision 1.28.6.1  1999/09/24 10:05:23  djr
   Updated for omniORB3.
 
@@ -431,6 +435,13 @@ BE_parse_args(int argc, char **argv)
 	  else if( !strcmp(optarg, "old_signatures") )
 	    idl_global->set_compile_flags(idl_global->compile_flags() |
 					  IDL_BE_OLD_SKEL_SIGNATURES);
+	  else {
+	    usage();
+	    idl_global->set_compile_flags(idl_global->compile_flags() |
+					  IDL_CF_ONLY_USAGE);
+	    return;
+	  }
+	  break;
 
 	case '?':
 	case ':':
