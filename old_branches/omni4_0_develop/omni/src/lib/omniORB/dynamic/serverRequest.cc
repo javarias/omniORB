@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.2  2000/09/27 17:25:43  sll
+ Changed include/omniORB3 to include/omniORB4.
+
  Revision 1.8.2.1  2000/07/17 10:35:42  sll
  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -75,7 +78,7 @@ omniServerRequest::~omniServerRequest()  {}
 const char*
 omniServerRequest::operation()
 {
-  return pd_giop_s.operation();
+  return pd_giop_s.invokeInfo().operation();
 }
 
 
@@ -95,16 +98,18 @@ omniServerRequest::arguments(CORBA::NVList_ptr& parameters)
   pd_state = SR_ERROR;
 
   // unmarshal the arguments
+  cdrStream& s = pd_giop_s;
+
   CORBA::ULong num_args = pd_params->count();
 
   for( CORBA::ULong i = 0; i < num_args; i++){
     CORBA::NamedValue_ptr arg = pd_params->item(i);
     if( arg->flags() & CORBA::ARG_IN || arg->flags() & CORBA::ARG_INOUT )
-      arg->value()->NP_unmarshalDataOnly(pd_giop_s);
+      arg->value()->NP_unmarshalDataOnly(s);
   }
 
   // If there is no space left for context info...
-  if( pd_giop_s.RdMessageUnRead() < 4 )
+  if ( !s.checkInputOverrun(1,4) )
     pd_giop_s.RequestReceived();
 
   pd_state = SR_GOT_PARAMS;
@@ -121,9 +126,11 @@ omniServerRequest::ctx()
     OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
   }
 
-  if( pd_giop_s.RdMessageUnRead() >= 4 ) {
+  cdrStream& s = pd_giop_s;
+
+  if( s.checkInputOverrun(1,4) ) {
     pd_state = SR_ERROR;
-    pd_context = CORBA::Context::unmarshalContext(pd_giop_s);
+    pd_context = CORBA::Context::unmarshalContext(s);
     pd_giop_s.RequestReceived();
     pd_state = SR_GOT_CTX;
   }
@@ -139,7 +146,8 @@ omniServerRequest::set_result(const CORBA::Any& value)
     pd_state = SR_DSI_ERROR;
     OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
   }
-  if( pd_state == SR_GOT_PARAMS && pd_giop_s.RdMessageUnRead() > 0 )
+  if( pd_state == SR_GOT_PARAMS && 
+      ((cdrStream&)pd_giop_s).checkInputOverrun(1,1) )
     pd_giop_s.RequestReceived();
 
   pd_result = value;
