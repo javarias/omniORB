@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2003/01/16 11:08:26  dgrisby
+  Patches to support Digital Mars C++. Thanks Christof Meerwald.
+
   Revision 1.1.2.2  2001/08/22 13:31:31  dpg1
   Christof's fixes for gcc 3.0.1.
 
@@ -58,6 +61,14 @@ public:
     // the application has asked for the object to be deactivated, and
     // we are waiting for outstanding invocations to complete. New
     // incoming calls are still dispatched in this state.
+
+    DEACTIVATING_OA = 20,
+    // the object is being deactivated because the object adapter is
+    // being destroyed. At the time of OA destruction, the object was
+    // idle.  However, as in DEACTIVATING, new incoming calls are
+    // still dispatched. The difference is that when the last call
+    // finishes, the thread doing the call does not continue with
+    // etherealisation, since the OA destruction thread will do it.
 
     ETHEREALISING = 8,
     // all invocations have completed, and the object is ready to be
@@ -112,6 +123,12 @@ public:
   void setActive(omniServant* servant, _OMNI_NS(omniObjAdapter)* adapter);
 
   void setDeactivating();
+  // Deactivating due to a deactivate_object call.
+
+  void setDeactivatingOA();
+  // Deactivating due to object adapter destruction. Sets state to
+  // DEACTIVATING_OA or DEACTIVATING depending on whether object is
+  // idle.
 
   void setEtherealising();
   // Remove from the servant's list of activations
