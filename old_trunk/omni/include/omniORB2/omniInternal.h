@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1996/10/15 08:57:18  sll
+  Initial revision
+
  */
 
 #ifndef __OMNIORB_H__
@@ -20,7 +23,12 @@
 #include <iostream.h>
 
 #include <stddef.h>
+
+#if !defined(__atmos__) && !defined(_WIN32)
 #include <strings.h>
+#else
+#include <string.h>
+#endif
 #include <omniORB2/CORBA_sysdep.h>
 #include <omniORB2/CORBA_basetypes.h>
 #include <omniORB2/CORBA_templates.h>
@@ -63,7 +71,6 @@ public:
 
 
   static void objectIsReady(omniObject *obj);
-
   static void objectDuplicate(omniObject *obj);
   // Increment the reference count.
 
@@ -82,7 +89,6 @@ public:
   //          call to BOA::dispose().
 
   static omniObject *locateObject(omniObjectKey &k);
-
   static void disposeObject(omniObject *obj);
   // If the reference count of the object is 0, call the delete operator
   // to remove the object.
@@ -156,7 +162,10 @@ public:
   };
 };
 
-struct omniObjectKey {
+class omniObjectKey {
+
+public:
+
   _CORBA_ULong hi;
   _CORBA_ULong med;
   _CORBA_ULong lo;
