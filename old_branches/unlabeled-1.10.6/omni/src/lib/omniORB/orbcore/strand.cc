@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.10.6.6  2000/01/28 15:57:10  djr
+  Removed superflouous ref counting in Strand_iterator.
+  Removed flags to indicate that Ropes and Strands are heap allocated.
+  Improved allocation of client requests to strands.
+
   Revision 1.10.6.5  1999/10/14 16:22:17  djr
   Implemented logging when system exceptions are thrown.
 
@@ -626,6 +631,10 @@ Strand_iterator::Strand_iterator(const Rope *r,
 
 Strand_iterator::~Strand_iterator()
 {
+  if (pd_s) {
+    pd_s->decrRefCount(1);
+    pd_s = 0;                // Be paranoid
+  }
   if (!pd_leave_mutex)
     ((Rope *)pd_rope)->pd_lock.unlock();
   return;
@@ -635,6 +644,7 @@ Strand *
 Strand_iterator::operator() ()
 {
   if (pd_s) {
+    pd_s->decrRefCount(1);
     pd_s = pd_s->pd_next;
   }
   else if (!pd_initialised) {
@@ -645,6 +655,9 @@ Strand_iterator::operator() ()
     Strand *p=pd_s;
     pd_s = pd_s->pd_next;
     delete p;
+  }
+  if (pd_s) {
+    pd_s->incrRefCount(1);
   }
   return pd_s;
 }
@@ -786,13 +799,11 @@ Rope_iterator::operator() ()
 	      // First close down all the strands before calling
 	      // the dtor of the Rope.
 	      LOGMESSAGE(10,"Rope_iterator","delete unused Rope.");
-	      CORBA::Boolean can_delete = 1;
 
 	      {
 		Strand_iterator next_strand(rp);
 		Strand* p;
 		while ((p = next_strand())) {
-		  can_delete = 0;
 		  if (p->is_unused(1)) {
 		    p->_setStrandIsDying();
 		  }
@@ -801,8 +812,15 @@ Rope_iterator::operator() ()
 		  }
 		}
 	      }
-	      if (can_delete)  delete rp;
-	      continue;
+	      if (!rp->pd_head) {
+		// notice that Strand_iterator does not returns
+		// strands that are in the dying state. So there
+		// may still be (dying) strands associated with the Rope
+		// even when Strand_iterator returns no strands.
+		// The only way to ensure there is no strand left is to
+		// look for pd_head == 0.
+		delete rp;
+	      }
 	    }
 	}
       break;
