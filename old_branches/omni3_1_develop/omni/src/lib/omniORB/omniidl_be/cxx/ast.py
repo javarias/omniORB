@@ -28,6 +28,14 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.2  2000/09/14 16:03:01  djs
+# Remodularised C++ descriptor name generator
+# Bug in listing all inherited interfaces if one is a forward
+# repoID munging function now handles #pragma ID in bootstrap.idl
+# Naming environments generating code now copes with new IDL AST types
+# Modified type utility functions
+# Minor tidying
+#
 # Revision 1.1.2.1  2000/08/21 11:34:32  djs
 # Lots of omniidl/C++ backend changes
 #
@@ -248,7 +256,7 @@ def splitRepoId(repoId):
 
     search = regex.search(str)
     if not(search):
-        # assume #pragme ID "a/b/c:1.0"
+        # assume #pragme ID "a/b/c:1.0", technically legal but dodgy
         return ("", string.split(format, "/"), str)
 
     return (format, string.split(search.group(1), "/"), search.group(2))
