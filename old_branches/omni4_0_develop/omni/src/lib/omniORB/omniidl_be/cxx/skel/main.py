@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.9  2001/10/29 17:42:41  dpg1
+# Support forward-declared structs/unions, ORB::create_recursive_tc().
+#
 # Revision 1.29.2.8  2001/06/08 17:12:19  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -506,7 +509,11 @@ def visitUnion(node):
         decl = c.declarator()
         decl_scopedName = id.Name(decl.scopedName())
         decl_name = decl_scopedName.simple()
-        isDefault = defaultCase == c
+
+        if defaultCase == c:
+            isDefault = 1
+        else:
+            isDefault = 0
         
         for l in c.labels():
             value = l.value()
