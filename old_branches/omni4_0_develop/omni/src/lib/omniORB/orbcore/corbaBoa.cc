@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.16  2002/05/29 14:28:45  dgrisby
+  Bug using identity after deletion in BOA. Reported by Tihomir Sokcevic.
+
   Revision 1.16.2.15  2002/01/16 11:31:58  dpg1
   Race condition in use of registerNilCorbaObject/registerTrackedObject.
   (Reported by Teemu Torma).
@@ -146,12 +149,16 @@
 #include <stdlib.h>
 
 #if defined(UnixArchitecture) || defined(__VMS)
-#include <sys/time.h>
-#include <unistd.h>
+#  ifdef __vxWorks__
+#    include <time.h>
+#  else
+#    include <sys/time.h>
+#  endif
+#  include <unistd.h>
 #elif defined(NTArchitecture)
-#include <sys/types.h>
-#include <sys/timeb.h>
-#include <process.h>
+#  include <sys/types.h>
+#  include <sys/timeb.h>
+#  include <process.h>
 #endif
 
 OMNI_USING_NAMESPACE(omni)
@@ -531,7 +538,7 @@ omniOrbBOA::obj_is_ready(CORBA::Object_ptr, CORBA::ImplementationDef_ptr)
   omniORB::logs(1, "CORBA::BOA::obj_is_ready() is not supported.  Use\n"
 		" _obj_is_ready(boa) on the object implementation instead.");
 
-  OMNIORB_THROW(NO_IMPLEMENT,NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
 }
 
 
@@ -556,7 +563,7 @@ omniOrbBOA::create(const CORBA::ReferenceData& ref,
 		   CORBA::_objref_InterfaceDef* intf,
 		   CORBA::ImplementationDef_ptr impl)
 {
-  // XXX not implemented yet
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
   return 0;
 }
 
@@ -564,7 +571,7 @@ omniOrbBOA::create(const CORBA::ReferenceData& ref,
 CORBA::ReferenceData*
 omniOrbBOA::get_id(CORBA::Object_ptr obj)
 {
-  // XXX not implemented yet
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
   return 0;
 }
 
@@ -573,7 +580,7 @@ void
 omniOrbBOA::change_implementation(CORBA::Object_ptr obj,
 				  CORBA::ImplementationDef_ptr impl)
 {
-  // XXX not implemented yet
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
   return;
 }
 
@@ -581,7 +588,7 @@ omniOrbBOA::change_implementation(CORBA::Object_ptr obj,
 CORBA::Principal_ptr
 omniOrbBOA::get_principal(CORBA::Object_ptr obj, CORBA::Environment_ptr env)
 {
-  // XXX not implemented yet
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
   return 0;
 }
 
@@ -589,16 +596,14 @@ omniOrbBOA::get_principal(CORBA::Object_ptr obj, CORBA::Environment_ptr env)
 void
 omniOrbBOA::deactivate_impl(CORBA::ImplementationDef_ptr impl)
 {
-  // XXX not implemented yet
-  return;
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
 }
 
 
 void
 omniOrbBOA::deactivate_obj(CORBA::Object_ptr obj)
 {
-  // XXX not implemented yet
-  return;
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, CORBA::COMPLETED_NO);
 }
 
 ///////////////////
@@ -1248,6 +1253,12 @@ omniORB::generateNewKey(omniORB::objectKey& k)
       ftime(&v);
       omniORB_seed.hi = v.time;
       omniORB_seed.med = v.millitm + getpid();
+      omniORB_seed.lo = 0;
+#elif defined(__vxWorks__)
+      struct timespec v;
+      clock_gettime(CLOCK_REALTIME, &v);
+      omniORB_seed.hi = v.tv_sec;
+      omniORB_seed.med = (v.tv_nsec << 2);
       omniORB_seed.lo = 0;
 #endif
       // 

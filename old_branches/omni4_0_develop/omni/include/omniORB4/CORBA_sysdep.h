@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.21  2003/01/16 12:47:08  dgrisby
+ Const cast macro. Thanks Matej Kenda.
+
  Revision 1.2.2.20  2003/01/16 11:08:26  dgrisby
  Patches to support Digital Mars C++. Thanks Christof Meerwald.
 
@@ -156,6 +159,13 @@
 #  include <stdio.h>
 #  undef __ptr
 #endif
+
+
+#if defined(__sgi)
+#  define OMNI_NEED_STATIC_FUNC_TO_FORCE_LINK
+#endif
+
+
 
 
 //

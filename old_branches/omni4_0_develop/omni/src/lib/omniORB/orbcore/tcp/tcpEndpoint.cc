@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.17  2003/01/06 11:11:55  dgrisby
+  New AddrInfo instead of gethostbyname.
+
   Revision 1.1.2.16  2002/10/04 11:11:46  dgrisby
   Transport fixes: ENOTSOCK for Windows, SOMAXCONN in listen().
 
@@ -354,6 +357,14 @@ tcpEndpoint::notifyReadable(SocketHandle_t fd) {
     if (sock == RC_SOCKET_ERROR) {
       return 0;
     }
+#if defined(__vxWorks__)
+    // vxWorks "forgets" socket options
+    static const int valtrue = 1;
+    if(setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
+		  (const char*)&valtrue, sizeof(valtrue)) == ERROR) {
+      return 0;
+    }
+#endif
     pd_new_conn_socket = sock;
     setSelectable(pd_socket,1,0,1);
     return 1;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.14  2002/02/13 16:04:01  dpg1
+  Rearrange includes so omnithread sees system dependencies.
+
   Revision 1.2.2.13  2001/09/24 14:26:01  dpg1
   Safer static translation unit counts for omnithread and final clean-up.
 
@@ -185,7 +188,7 @@
 
 #include <stddef.h>
 
-#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__)
+#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__) && !defined(__vxWorks__)
 #include <strings.h>
 #include <string.h>
 #else

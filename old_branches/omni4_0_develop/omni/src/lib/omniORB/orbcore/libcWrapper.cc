@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.9  2003/01/06 11:11:55  dgrisby
+  New AddrInfo instead of gethostbyname.
+
   Revision 1.19.2.8  2002/11/04 17:41:42  dgrisby
   Don't use gethostbyname for IP addresses on Win32.
 
@@ -114,6 +117,11 @@
 
 #if !defined(HAVE_STRCASECMP) || !defined(HAVE_STRNCASECMP)
 #  include <ctype.h>  //  for toupper and tolower.
+#endif
+
+#ifdef __vxWorks__
+#  include <hostLib.h>
+#  include <resolvLib.h>
 #endif
 
 #include "libcWrapper.h"

@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.15  2002/02/13 16:03:17  dpg1
+// Memory leak due to missing virtual destructor.
+//
 // Revision 1.2.2.14  2002/02/01 11:20:40  dpg1
 // Silly bug in string_to_object wil nil objref.
 //
@@ -641,6 +644,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 }
 
 
+#ifndef __vxWorks__
 
 /////////////////////////////////////////////////////////////////////////////
 // corbaname: format
@@ -988,13 +992,18 @@ omniURI::addrAndNameToURI(const char* addr, const char* sn)
   return url;
 }
 
+#endif //__vxWorks__
+
 
 /////////////////////////////////////////////////////////////////////////////
 // initialiser
 /////////////////////////////////////////////////////////////////////////////
 static iorURIHandler       iorURIHandler_;
 static corbalocURIHandler  corbalocURIHandler_;
+
+#ifndef __vxWorks__
 static corbanameURIHandler corbanameURIHandler_;
+#endif //__vxWorks__
 
 // No need to register the initialiser to ORB_init unless attach () does
 // something.
@@ -1003,7 +1012,9 @@ public:
   omni_uri_initialiser() {
     handlers.push_back(&iorURIHandler_);
     handlers.push_back(&corbalocURIHandler_);
+#ifndef __vxWorks__
     handlers.push_back(&corbanameURIHandler_);
+#endif //__vxWorks__
   }
 
   void attach() {}

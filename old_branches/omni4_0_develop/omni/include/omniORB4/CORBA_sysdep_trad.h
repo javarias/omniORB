@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2003/01/16 11:08:26  dgrisby
+  Patches to support Digital Mars C++. Thanks Christof Meerwald.
+
   Revision 1.1.2.5  2002/11/06 11:58:28  dgrisby
   Partial AIX patches.
 
@@ -400,6 +403,9 @@
 #  undef HAVE_STRNCASECMP
 #  undef HAVE_UNAME
 #  undef HAVE_GETHOSTNAME
+
+#elif defined(__vxWorks__)
+#  undef HAVE_GETTIMEOFDAY
 
 #endif
 
