@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.9  2001/09/19 17:26:52  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.2.2.8  2001/08/15 10:26:14  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -378,7 +381,30 @@ PortableServer::ObjectId_to_string(const ObjectId& id)
 
   for( int i = 0; i < len; i++ )
     if( (char) (s[i] = id[i]) == '\0' ) {
-      delete[] s;
+      _CORBA_String_helper::free(s);
+      OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectId, CORBA::COMPLETED_NO);
+    }
+
+  s[len] = '\0';
+  return s;
+}
+
+
+_CORBA_WChar*
+PortableServer::ObjectId_to_wstring(const ObjectId& id)
+{
+  if (id.length() % SIZEOF_WCHAR != 0)
+    OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectId, CORBA::COMPLETED_NO);
+
+  int len = id.length() / SIZEOF_WCHAR;
+
+  _CORBA_WChar* s = _CORBA_WString_helper::alloc(len);
+
+  _CORBA_WChar* buf = (_CORBA_WChar*)id.NP_data();
+
+  for( int i = 0; i < len; i++ )
+    if( (s[i] = buf[i]) == 0 ) {
+      _CORBA_WString_helper::free(s);
       OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectId, CORBA::COMPLETED_NO);
     }
 
@@ -397,6 +423,22 @@ PortableServer::string_to_ObjectId(const char* s)
   id.length(len);
 
   for( int i = 0; i < len; i++ )  id[i] = *s++;
+
+  return pid;
+}
+
+
+PortableServer::ObjectId*
+PortableServer::wstring_to_ObjectId(const _CORBA_WChar* s)
+{
+  int len = _CORBA_WString_helper::len(s);
+  ObjectId* pid = new ObjectId(len * SIZEOF_WCHAR);
+  
+  pid->length(len * SIZEOF_WCHAR);
+
+  _CORBA_WChar* buf = (_CORBA_WChar*)pid->NP_data();
+
+  for( int i = 0; i < len; i++ )  *buf++ = *s++;
 
   return pid;
 }

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.10  2001/10/17 16:44:01  dpg1
+  Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
   Revision 1.2.2.9  2001/08/01 10:08:20  dpg1
   Main thread policy.
 
@@ -764,7 +767,10 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
   //////////////////////////////////////////////////////////////////////
 
   _CORBA_MODULE_FN char* ObjectId_to_string(const ObjectId& id);
+  _CORBA_MODULE_FN _CORBA_WChar* ObjectId_to_wstring(const ObjectId& id);
+
   _CORBA_MODULE_FN ObjectId* string_to_ObjectId(const char* s);
+  _CORBA_MODULE_FN ObjectId* wstring_to_ObjectId(const _CORBA_WChar* s);
 
 
 #include <omniORB4/poa_defs.h>
