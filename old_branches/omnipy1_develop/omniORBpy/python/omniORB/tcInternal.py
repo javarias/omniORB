@@ -30,6 +30,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.9.2.2  2001/05/11 16:27:23  dpg1
+# TypeCode.get_compact_typecode() was broken.
+#
 # Revision 1.9.2.1  2000/08/07 09:19:24  dpg1
 # Long long support
 #
@@ -634,28 +637,38 @@ class TypeCode_except (TypeCode_base):
 
 
 # Functions to test descriptor equivalent
-def equivalentDescriptors(a, b, seen={}):
+def equivalentDescriptors(a, b, seen=None):
+
+    if seen is None: seen = {}
 
     try:
-
-        if seen.has_key(id(a)): return 1
-        if a == b:              return 1
+        if a == b: return 1
 
         # If they don't trivially match, they must be tuples:
         if type(a) is not types.TupleType or type(b) is not types.TupleType:
             return 0
 
-        while a[0] == tv_alias:
-            a = a[3]
+        # Follow aliases and indirections
+        while a[0] == tv_alias or a[0] == tv__indirect:
+            if a[0] == tv_alias:
+                a = a[3]
+            else:
+                a = a[1][0]
 
-        while b[0] == tv_alias:
-            b = b[3]
+        while b[0] == tv_alias or b[0] == tv__indirect:
+            if b[0] == tv_alias:
+                b = b[3]
+            else:
+                b = b[1][0]
+
+        if seen.has_key((id(a),id(b))):
+            return 1
+
+        seen[id(a),id(b)] = None
 
         # Must be same kind
         if a[0] != b[0]:
             return 0
-
-        seen[id(a)] = 1
 
         if a[0] == tv_struct:
             # id
@@ -666,11 +679,14 @@ def equivalentDescriptors(a, b, seen={}):
                     return 0
 
             # members:
-            for i in range(4, len(a), 2):
+            if len(a) != len(b):
+                return 0
             
+            for i in range(4, len(a), 2):
                 # Member type
                 if not equivalentDescriptors(a[i+1], b[i+1], seen):
                     return 0
+
             return 1
 
         elif a[0] == tv_union:
@@ -743,15 +759,15 @@ def equivalentDescriptors(a, b, seen={}):
                     return 0
 
                 # members:
-                for i in range(4, len(self._d), 2):
+                if len(a) != len(b):
+                    return 0
 
+                for i in range(4, len(self._d), 2):
                     # Member type
                     if not equivalentDescriptors(a[i+1], b[i+1], seen):
                         return 0
-            return 1
 
-        elif a[0] == tv__indirect:
-            return equivalentDescriptors(a[1][0], b[1][0], seen)
+            return 1
 
         return 0
 
