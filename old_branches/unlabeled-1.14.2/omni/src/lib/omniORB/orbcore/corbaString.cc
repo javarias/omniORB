@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14  1999/06/18 20:52:29  sll
+  Updated with new sequence string implementation.
+
   Revision 1.13  1999/04/21 11:17:43  djr
   Strings now defined outside CORBA scope, and typedefed. New sequence types.
 
@@ -140,10 +143,8 @@ _CORBA_String_member::operator >>= (NetBufferedStream& s) const
 void
 _CORBA_String_member::operator <<= (NetBufferedStream& s)
 {
-  if( _ptr ) {
-    FREE_BYTES(_ptr);
-    _ptr = 0;
-  }
+  if( pd_rel && _ptr )  FREE_BYTES(_ptr);
+  _ptr = 0;
 
   CORBA::ULong len;
   len <<= s;
@@ -191,10 +192,8 @@ _CORBA_String_member::operator >>= (MemBufferedStream& s) const
 void
 _CORBA_String_member::operator <<= (MemBufferedStream& s)
 {
-  if( _ptr ) {
-    FREE_BYTES(_ptr);
-    _ptr = 0;
-  }
+  if( pd_rel && _ptr )  FREE_BYTES(_ptr);
+  _ptr = 0;
 
   CORBA::ULong len;
   len <<= s;
