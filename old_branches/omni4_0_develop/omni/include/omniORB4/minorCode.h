@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2003/03/10 11:13:17  dgrisby
+  BAD_PARAM with invalid fixed limits.
+
   Revision 1.1.4.14  2002/11/22 18:11:58  dgrisby
   Correct COMM_FAILURE minor code check.
 
@@ -197,7 +200,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_108 OMNIORBMinorCode(108)
 #define OMNIORBMinorCode_109 OMNIORBMinorCode(109)
 
-#define COMMA ,
+#define OMNI_COMMA ,
 #define DeclareValue(name,value) name = value
 
 // Taken from CORBA Spec. 2.4 Table 4-3.
@@ -210,7 +213,7 @@ code( UNKNOWN_SystemException, OMGMinorCode(2) ) sep \
 code( UNKNOWN_PythonException, OMNIORBMinorCode_98 )
 
 enum UNKNOWN_minor {
-  DECLARE_UNKNOWN_minors(DeclareValue,COMMA)
+  DECLARE_UNKNOWN_minors(DeclareValue,OMNI_COMMA)
 };
 
 // BAD_PARAM
@@ -283,7 +286,7 @@ code( BAD_PARAM_InvalidFixedPointLimits      , OMNIORBMinorCode_109 )
 
 
 enum BAD_PARAM_minor {
-  DECLARE_BAD_PARAM_minors(DeclareValue,COMMA)
+  DECLARE_BAD_PARAM_minors(DeclareValue,OMNI_COMMA)
 };
 
 // IMP_LIMIT
@@ -292,7 +295,7 @@ enum BAD_PARAM_minor {
 code( IMP_LIMIT_NoUsableProfile      , OMGMinorCode(1) )
 
 enum IMP_LIMIT_minor {
-  DECLARE_IMP_LIMIT_minors(DeclareValue,COMMA)
+  DECLARE_IMP_LIMIT_minors(DeclareValue,OMNI_COMMA)
 };
 
 // INV_OBJREF
@@ -309,7 +312,7 @@ code( INV_OBJREF_NoPythonTypeForPseudoObj , OMNIORBMinorCode_104 )
 
  
 enum INV_OBJREF_minor {
-  DECLARE_INV_OBJREF_minors(DeclareValue,COMMA)
+  DECLARE_INV_OBJREF_minors(DeclareValue,OMNI_COMMA)
 };
 
 // MARSHAL
@@ -344,7 +347,7 @@ code( MARSHAL_MessageTooLong                  , OMNIORBMinorCode_93 )
 
 
 enum MARSHAL_minor {
-  DECLARE_MARSHAL_minors(DeclareValue,COMMA)
+  DECLARE_MARSHAL_minors(DeclareValue,OMNI_COMMA)
 };
 
 // BAD_TYPECODE
@@ -359,7 +362,7 @@ code( BAD_TYPECODE_UnresolvedRecursiveTC, OMNIORBMinorCode_105 ) sep \
 code( BAD_TYPECODE_InvalidIndirection   , OMNIORBMinorCode_108 )
 
 enum BAD_TYPECODE_minor {
-  DECLARE_BAD_TYPECODE_minors(DeclareValue,COMMA)  
+  DECLARE_BAD_TYPECODE_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // NO_IMPLEMENT
@@ -373,7 +376,7 @@ code( NO_IMPLEMENT_Unsupported        , OMNIORBMinorCode_36 ) sep \
 code( NO_IMPLEMENT_NoPythonMethod     , OMNIORBMinorCode_99 )
 
 enum NO_IMPLEMENT_minor {
-  DECLARE_NO_IMPLEMENT_minors(DeclareValue,COMMA)  
+  DECLARE_NO_IMPLEMENT_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // NO_RESOURCES
@@ -384,7 +387,7 @@ code ( NO_RESOURCES_CodeSetNotSupported    , OMNIORBMinorCode_25 ) sep \
 code ( NO_RESOURCES_InitialRefNotFound     , OMNIORBMinorCode_51 )
 
 enum NO_RESOURCES_minor {
-  DECLARE_NO_RESOURCES_minors(DeclareValue,COMMA)  
+  DECLARE_NO_RESOURCES_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // BAD_INV_ORDER
@@ -414,7 +417,7 @@ code( BAD_INV_ORDER_RequestConfiguredOutOfOrder   , OMNIORBMinorCode_86 ) sep \
 code( BAD_INV_ORDER_DynAnyNotInitialised          , OMNIORBMinorCode_103 )
 
 enum BAD_INV_ORDER_minor {
-  DECLARE_BAD_INV_ORDER_minors(DeclareValue,COMMA)  
+  DECLARE_BAD_INV_ORDER_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // TRANSIENT
@@ -434,7 +437,7 @@ code( TRANSIENT_ObjDeactivatedWhileHolding, OMNIORBMinorCode_62 ) sep \
 code( TRANSIENT_PythonExceptionInORB      , OMNIORBMinorCode_106 )
 
 enum TRANSIENT_minor {
-  DECLARE_TRANSIENT_minors(DeclareValue,COMMA)  
+  DECLARE_TRANSIENT_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // OBJ_ADAPTER
@@ -452,7 +455,7 @@ code( OBJ_ADAPTER_ServantAlreadyActive, OMNIORBMinorCode_63 ) sep \
 code( OBJ_ADAPTER_IncompatibleServant , OMNIORBMinorCode_97 )
 
 enum OBJ_ADAPTER_minor {
-  DECLARE_OBJ_ADAPTER_minors(DeclareValue,COMMA)  
+  DECLARE_OBJ_ADAPTER_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // DATA_CONVERSION
@@ -463,7 +466,7 @@ code( DATA_CONVERSION_RangeError      , OMNIORBMinorCode_40 ) sep \
 code( DATA_CONVERSION_BadInput        , OMNIORBMinorCode_41 )
 
 enum DATA_CONVERSION_minor {
-  DECLARE_DATA_CONVERSION_minors(DeclareValue,COMMA)  
+  DECLARE_DATA_CONVERSION_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // OBJECT_NOT_EXIST
@@ -476,7 +479,7 @@ code( OBJECT_NOT_EXIST_POANotInitialised , OMNIORBMinorCode_58 ) sep \
 code( OBJECT_NOT_EXIST_DynAnyDestroyed   , OMNIORBMinorCode_102 )
 
 enum OBJECT_NOT_EXIST_minor {
-  DECLARE_OBJECT_NOT_EXIST_minors(DeclareValue,COMMA)  
+  DECLARE_OBJECT_NOT_EXIST_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // INV_POLICY
@@ -487,7 +490,7 @@ code( INV_POLICY_InvalidPolicyType              , OMGMinorCode(2) ) sep \
 code( INV_POLICY_NoPolicyFactoryForPolicyType   , OMGMinorCode(3) )
 
 enum INV_POLICY_minor {
-  DECLARE_INV_POLICY_minors(DeclareValue,COMMA)  
+  DECLARE_INV_POLICY_minors(DeclareValue,OMNI_COMMA)  
 };
 
 
@@ -497,7 +500,7 @@ enum INV_POLICY_minor {
 code( BAD_OPERATION_UnRecognisedOperationName, OMNIORBMinorCode_38 )
 
 enum BAD_OPERATION_minor {
-  DECLARE_BAD_OPERATION_minors(DeclareValue,COMMA)  
+  DECLARE_BAD_OPERATION_minors(DeclareValue,OMNI_COMMA)  
 };
 
 
@@ -511,7 +514,7 @@ code( COMM_FAILURE_UnMarshalResults   , OMNIORBMinorCode_6 ) sep \
 code( COMM_FAILURE_WaitingForReply    , OMNIORBMinorCode_7 )
 
 enum COMM_FAILURE_minor {
-  DECLARE_COMM_FAILURE_minors(DeclareValue,COMMA)  
+  DECLARE_COMM_FAILURE_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // INTF_REPOS
@@ -521,7 +524,7 @@ code( INTF_REPOS_NotAvailable                , OMNIORBMinorCode_39 ) sep \
 code( INTF_REPOS_PrimaryInterfaceReturnedZero, OMNIORBMinorCode_68 )
 
 enum INTF_REPOS_minor {
-  DECLARE_INTF_REPOS_minors(DeclareValue,COMMA)  
+  DECLARE_INTF_REPOS_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // INITIALIZE
@@ -538,7 +541,7 @@ code( INITIALIZE_NotOmniThread        , OMNIORBMinorCode_56 )
 
 
 enum INITIALIZE_minor {
-  DECLARE_INITIALIZE_minors(DeclareValue,COMMA)  
+  DECLARE_INITIALIZE_minors(DeclareValue,OMNI_COMMA)  
 };
 
 // BAD_CONTEXT
@@ -549,7 +552,7 @@ code( BAD_CONTEXT_StartingScopeNotFound , OMNIORBMinorCode_76 )
 
 
 enum BAD_CONTEXT_minor {
-  DECLARE_BAD_CONTEXT_minors(DeclareValue,COMMA)
+  DECLARE_BAD_CONTEXT_minors(DeclareValue,OMNI_COMMA)
 };
 
 inline CORBA::Boolean is_COMM_FAILURE_minor(CORBA::ULong w) {
