@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.7  1997/12/09 18:34:12  sll
+  Updated to support the new rope and strand interface.
+
 // Revision 1.6  1997/05/06  15:24:40  sll
 // Public release.
 //
@@ -464,7 +467,7 @@ NetBufferedStream::WrMessageSize(size_t msgsize)
 }
 
 void
-NetBufferedStream::RdMessageSize(size_t msgsize,CORBA::Boolean byteorder)
+NetBufferedStream::RdMessageSize(size_t msgsize,CORBA::Char byteorder)
 {
   giveback_received();
   pd_read = 0;
