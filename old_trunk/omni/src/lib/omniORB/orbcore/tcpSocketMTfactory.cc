@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.17  1999/05/22 17:40:11  sll
+  Added #ifdef for ciao so that CCia would not complain about gnu/linux
+  specifics.
+
   Revision 1.16  1999/03/11 16:25:57  djr
   Updated copyright notice
 
@@ -900,7 +904,7 @@ realConnect(tcpSocketEndpoint* r)
 
 
 #if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
-
+#if defined(__SUNPRO_CC) && __SUNPRO_CC <= 0x420
 #include <signal.h>
 extern "C" void abort()
 {
@@ -912,7 +916,7 @@ extern "C" void abort()
 
 typedef void (*PFV)();
 extern PFV set_terminate(PFV);
-
+#endif
 #endif
 
 void*
@@ -921,7 +925,9 @@ tcpSocketRendezvouser::run_undetached(void *arg)
   tcpSocketIncomingRope* r = (tcpSocketIncomingRope*) arg;
 
 #if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
+#if defined(__SUNPRO_CC) && __SUNPRO_CC <= 0x420
   set_terminate(abort);
+#endif
 #endif
   if (omniORB::traceLevel >= 5) {
     omniORB::log << "tcpSocketMT Rendezvouser thread: starts.\n";
@@ -1128,7 +1134,9 @@ tcpSocketWorker::_realRun(void *arg)
   tcpSocketStrand* s = (tcpSocketStrand*)arg;
 
 #if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
+#if defined(__SUNPRO_CC) && __SUNPRO_CC <= 0x420
   set_terminate(abort);
+#endif
 #endif
   
   if (omniORB::traceLevel >= 5) {
