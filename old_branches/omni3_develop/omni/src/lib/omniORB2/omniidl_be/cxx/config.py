@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.4  2000/04/26 18:22:12  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.12.2.3  2000/03/13 15:27:05  djs
 # Turned off emulating old, broken behaviour.
 #
@@ -134,6 +138,13 @@ def setTypecodeFlag(flag):
     self._typecode = flag
 def TypecodeFlag():
     return self._typecode
+
+# do we splice reopened modules together into one chunk?
+self._splice = 0
+def setSpliceModulesFlag(flag):
+    self._splice = flag
+def SpliceModulesFlag():
+    return self._splice
 
 # generate example implementation code
 self._examplecode = 0

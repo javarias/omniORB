@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.3  2000/04/26 18:22:12  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.18.2.2  2000/02/18 23:01:19  djs
 # Updated example implementation code generating module
 #
@@ -117,16 +121,17 @@ import re, sys
 
 cpp_args = ["-D__OMNIIDL_CXX__"]
 usage_string = """\
-  -Wbh=<sufix>    Specify suffix for generated header files
-  -Wbs=<suffix>   Specify suffix for generated stub files
-  -Wba            Generate code for TypeCodes and Any
-  -Wbtp           Generate 'tie' implementation skeletons
-  -Wbtf           Generate flattened 'tie' implementation skeletons
-  -Wbexample      Generate example implementation code
-  -WbF            Generate code fragments (for expert only)
-  -WbBOA          Generate BOA compatible skeletons
-  -Wbold          Generate old CORBA 2.1 signatures for skeletons
-  -Wbold_prefix   Map C++ reserved words with prefix _"""
+  -Wbh=<sufix>      Specify suffix for generated header files
+  -Wbs=<suffix>     Specify suffix for generated stub files
+  -Wba              Generate code for TypeCodes and Any
+  -Wbtp             Generate 'tie' implementation skeletons
+  -Wbtf             Generate flattened 'tie' implementation skeletons
+  -Wbsplice-modules Splice together multiply opened modules into one 
+  -Wbexample        Generate example implementation code
+  -WbF              Generate code fragments (for expert only)
+  -WbBOA            Generate BOA compatible skeletons
+  -Wbold            Generate old CORBA 2.1 signatures for skeletons
+  -Wbold_prefix     Map C++ reserved words with prefix _"""
 
 # -----------------------------
 # Process back end specific arguments
@@ -149,6 +154,9 @@ def boa():
 def old():
     config.setOldFlag(1)
 
+def splice_modules():
+    config.setSpliceModulesFlag(1)
+
 def example():
     config.setExampleFlag(1)
 
@@ -170,6 +178,8 @@ def process_args(args):
             tie()
         elif arg == "tf":
             flat_tie()
+        elif arg == "splice-modules":
+            splice_modules()
         elif arg == "example":
             example()
         elif arg == "F":
@@ -215,6 +225,7 @@ def run(tree, args):
     config.setTieFlag(0)
     config.setFlatTieFlag(0)
     config.setFragmentFlag(0)
+    config.setSpliceModulesFlag(0)
     config.setExampleFlag(0)
     config.setBOAFlag(0)
     config.setOldFlag(0)
