@@ -28,6 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.2.8  2001/11/14 17:13:43  dpg1
+// Long double support.
+//
 // Revision 1.1.2.7  2001/11/08 16:33:51  dpg1
 // Local servant POA shortcut policy.
 //
@@ -282,7 +285,10 @@ CORBA::Fixed::operator CORBA::LongDouble() const
     s = (s + pd_val[i]) / 10;
   }
 
-  return r + s;
+  if (pd_negative)
+    return -(r + s);
+  else
+    return r + s;
 }
 
 #  else
@@ -302,7 +308,10 @@ CORBA::Fixed::operator CORBA::Double() const
     s = (s + pd_val[i]) / 10;
   }
 
-  return r + s;
+  if (pd_negative)
+    return -(r + s);
+  else
+    return r + s;
 }
 
 #  endif
