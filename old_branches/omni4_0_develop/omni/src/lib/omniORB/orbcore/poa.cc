@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.40  2003/07/02 11:01:06  dgrisby
+  Race condition in POA destruction.
+
   Revision 1.2.2.39  2003/06/27 09:35:27  dgrisby
   Silly locking bug. Thanks Vladimir Panov.
 
@@ -954,13 +957,11 @@ omniOrbPOA::set_servant(PortableServer::Servant p_servant)
   if( pd_policy.req_processing != RPP_DEFAULT_SERVANT )
     throw WrongPolicy();
 
-  pd_lock.lock();
+  omni_tracedmutex_lock l(pd_lock);
 
   if( pd_defaultServant )  pd_defaultServant->_remove_ref();
   if( p_servant         )  p_servant->_add_ref();
   pd_defaultServant = p_servant;
-
-  pd_lock.unlock();
 }
 
 
@@ -1958,7 +1959,15 @@ omniOrbPOA::lastInvocationHasCompleted(omniLocalIdentity* id)
     omni::internalLock->lock();
     entry->setDead();
     omni::internalLock->unlock();
-    servant->_remove_ref();
+    try {
+      servant->_remove_ref();
+    }
+    catch (...) {
+      // _remove_ref should not throw exceptions, but in case it does,
+      // we deal with it here.
+      met_detached_object();
+      throw;
+    }
     met_detached_object();
   }
 }
