@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8  1999/11/04 17:16:55  dpg1
+// Changes for NT.
+//
 // Revision 1.7  1999/11/04 11:46:19  dpg1
 // Now uses our own version of the GNU C preprocessor.
 //
@@ -936,3 +939,31 @@ extern "C" {
 			   PyString_FromString(IDLMODULE_VERSION));
   }
 }
+
+#ifdef __WIN32__
+
+// It's awkward to make a command named `omniidl' on NT which runs
+// Python, so we make the front-end a Python executable which always
+// runs omniidl.main.
+
+int
+main(int argc, char** argv)
+{
+  Py_Initialize();
+  PySys_SetArgv(argc, argv);
+
+  init_omniidl();
+
+  PyObject* pymain = PyImport_ImportModule("omniidl.main");
+
+  if (!pymain) {
+    PyErr_Print();
+    fprintf(stderr, "%s: could not import main python file.\n", argv[0]);
+    exit(1);
+  }
+  PyObject* r = PyObject_CallMethod(pymain, "main", "");
+  Py_XDECREF(r);
+  return 0;
+}
+
+#endif

@@ -31,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.10  1999/09/29 15:46:50  dpg1
+// lockWithNewThreadState now creates a dummy threading.Thread object so
+// threading doesn't get upset that it's not there. Very dependent on the
+// implementation of threading.py.
+//
 // Revision 1.9  1999/09/29 11:25:56  dpg1
 // Nil objects now map to None. They work too, which is more than can be
 // said for the old mapping...
@@ -66,7 +71,7 @@
 #define _omnipy_h_
 
 #include <iostream.h>
-#include <python1.5/Python.h>
+#include <Python.h>
 
 #include <omniORB2/CORBA.h>
 #include <omniORB2/proxyCall.h>
@@ -189,7 +194,7 @@ remTwin(PyObject* obj, char* name)
 ////////////////////////////////////////////////////////////////////////////
 
 _CORBA_MODULE_VAR PyInterpreterState* pyInterpreter;
-_CORBA_MODULE_VAR omni_mutex          pyInterpreterLock;
+_CORBA_MODULE_VAR omni_mutex*         pyInterpreterLock;
 
 ////////////////////////////////////////////////////////////////////////////
 // Global pointers to Python objects                                      //
