@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.35  2002/11/08 01:20:46  dgrisby
+  Initialise oid prefix member in nil POA.
+
   Revision 1.2.2.34  2002/10/14 15:16:20  dgrisby
   Fix create_POA / destroy deadlock, unique persistent system ids.
 
@@ -3385,9 +3388,21 @@ postinvoke()
   }
   catch (...) {
     pd_poa->exitAdapter();
+    pd_poa = 0;
     throw;
   }
   pd_poa->exitAdapter();
+  pd_poa = 0;
+}
+
+omniOrbPOA::
+SLPostInvokeHook::
+~SLPostInvokeHook()
+{
+  if (pd_poa) {
+    // Postinvoke hasn't run yet. Do it now
+    postinvoke();
+  }
 }
 
 

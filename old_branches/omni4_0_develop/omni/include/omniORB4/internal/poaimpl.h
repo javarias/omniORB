@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2002/10/14 15:14:54  dgrisby
+  Fix create_POA / destroy deadlock, unique persistent system ids.
+
   Revision 1.1.4.10  2001/11/13 14:11:44  dpg1
   Tweaks for CORBA 2.5 compliance.
 
@@ -384,6 +387,8 @@ private:
     {}
 
     virtual void postinvoke();
+
+    virtual ~SLPostInvokeHook();
 
   private:
     omniOrbPOA*                            pd_poa;
