@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:05  sll
+  *** empty log message ***
+
 */
 
 #ifndef __SSLTRANSPORTIMPL_H__
@@ -46,6 +49,7 @@ class sslTransportImpl : public giopTransportImpl {
   CORBA::Boolean isValid(const char* param);
   CORBA::Boolean addToIOR(const char* param);
   sslContext*    getContext() const { return pd_ctx; }
+  const omnivector<const char*>* getInterfaceAddress();
 
   sslTransportImpl(sslContext* ctx);
   ~sslTransportImpl();

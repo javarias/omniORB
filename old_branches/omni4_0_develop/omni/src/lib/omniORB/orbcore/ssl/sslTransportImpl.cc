@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/03 17:41:25  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.1.2.4  2001/07/31 16:16:22  sll
   New transport interface to support the monitoring of active connections.
 
@@ -165,6 +169,12 @@ sslTransportImpl::addToIOR(const char* param) {
     return 1;
   }
   return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////
+const omnivector<const char*>* 
+sslTransportImpl::getInterfaceAddress() {
+  return giopTransportImpl::getInterfaceAddress("giop:tcp");
 }
 
 

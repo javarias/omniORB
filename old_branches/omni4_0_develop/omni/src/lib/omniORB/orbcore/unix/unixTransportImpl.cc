@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/17 17:12:42  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.2.2  2001/08/08 15:59:23  sll
   Now accepts shorthand endpoint string "giop:unix:". Make use of
   unixTransportDirectory.
@@ -87,7 +90,7 @@ unixTransportImpl::toEndpoint(const char* param) {
   if (strlen(param) == 0) {
     param = orbParameters::unixTransportDirectory;
     
-    char* p = strchr(param,'%');
+    char* p = (char*) strchr(param,'%');
     if (p && *(p+1) == 'u') {
       struct passwd* pw = getpwuid(getuid());
       if (!pw) {
@@ -96,7 +99,7 @@ unixTransportImpl::toEndpoint(const char* param) {
 	return 0;
       }
       CORBA::String_var format = param;
-      p = strchr(format,'%');
+      p = (char*) strchr(format,'%');
       *(p+1) = 's';
       dname = CORBA::string_alloc(strlen(format)+strlen(pw->pw_name));
       sprintf(dname,format,pw->pw_name);
@@ -165,6 +168,13 @@ unixTransportImpl::addToIOR(const char* param) {
   return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////
+const omnivector<const char*>* 
+unixTransportImpl::getInterfaceAddress() {
+  // There is no sensible interface address. Return an empty list.
+  static omnivector<const char*> empty;
+  return &empty;
+}
 
 const unixTransportImpl _the_unixTransportImpl;
 
