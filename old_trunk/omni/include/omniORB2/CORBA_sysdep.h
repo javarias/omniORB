@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.19  1998/04/18 10:06:25  sll
+ Added section for Borland C++. (Not actually working yet.)
+
  Revision 1.18  1998/04/09 19:17:59  sll
  Extra macros defined for specifying initializers in the declaration
  of integral constants.
@@ -201,6 +204,7 @@
 #define _HAS_SIGNAL 1
 #else
 #include <string.h>
+#include <stdlib.h>
 // Pre 7.x VMS does not have strdup.
 inline static char *
 strdup (char* str)
