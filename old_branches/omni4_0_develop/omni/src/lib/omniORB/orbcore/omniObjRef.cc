@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.26  2001/11/12 13:46:08  dpg1
+  _unchecked_narrow, improved _narrow.
+
   Revision 1.2.2.25  2001/11/08 16:33:52  dpg1
   Local servant POA shortcut policy.
 
@@ -536,8 +539,6 @@ omniObjRef::_systemExceptionHandler(void* new_handler,void* cookie)
 
 omniObjRef::~omniObjRef()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
-
   if( pd_refCount ) {
     if( omniORB::traceLevel > 0 ) {
       omniORB::logger log;
@@ -548,6 +549,8 @@ omniObjRef::~omniObjRef()
   }
 
   if (!pd_ior) return; // Nil
+
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   {
     omni_tracedmutex_lock sync(*omni::objref_rc_lock);
