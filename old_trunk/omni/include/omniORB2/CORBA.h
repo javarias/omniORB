@@ -31,6 +31,10 @@
 
 /*
  $Log$
+ Revision 1.20  1998/04/07 19:55:53  sll
+ Updated to use namespace if available.
+ Moved inline functions of Any and TypeCode out of this header file.
+
  * Revision 1.19  1998/02/20  14:44:44  ewc
  * Changed to compile with aCC on HPUX
  *
@@ -1481,7 +1485,7 @@ typedef _CORBA_Double  Double;
 
   class _nil_TypeCode : public virtual TypeCode {
   public:
-    _nil_TypeCode() : TypeCode(tk_null) {  }
+    _nil_TypeCode() : TypeCode(tk_null,0) {  }
     virtual ~_nil_TypeCode() {}
 
     virtual Boolean NP_is_nil() const;
