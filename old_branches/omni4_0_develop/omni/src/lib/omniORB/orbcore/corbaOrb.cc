@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.33.2.2  2000/09/27 17:54:29  sll
+  Updated to identify the ORB as omniORB4. Added initialiser calls to the new
+  code.
+
   Revision 1.33.2.1  2000/07/17 10:35:52  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -232,6 +236,7 @@ extern "C" int sigaction(int, const struct sigaction *, struct sigaction *);
 ///////////////////////////////////////////////////////////////////////
 //          Per module initialisers.
 //
+extern omniInitialiser& omni_omniIOR_initialiser_;
 extern omniInitialiser& omni_uri_initialiser_;
 extern omniInitialiser& omni_corbaOrb_initialiser_;
 extern omniInitialiser& omni_giopStreamImpl_initialiser_;
@@ -304,6 +309,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
   }
 
   // URI initialiser must be called before args are parsed
+  omni_omniIOR_initialiser_.attach();
   omni_uri_initialiser_.attach();
 
   if( !parse_ORB_args(argc,argv,orb_identifier) ) {
@@ -327,10 +333,10 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
     omni_scavenger_initialiser_.attach();
     omni_ropeFactory_initialiser_.attach();
     omni_giopStreamImpl_initialiser_.attach();
+    omni_interceptor_initialiser_.attach();
     omni_initFile_initialiser_.attach();
     omni_initRefs_initialiser_.attach();
     omni_hooked_initialiser_.attach();
-    omni_interceptor_initialiser_.attach();
 
     if( bootstrapAgentHostname ) {
       // The command-line option -ORBInitialHost has been specified.
@@ -571,10 +577,10 @@ omniOrbORB::actual_shutdown()
   omniObjAdapter::shutdown();
 
   // Call detach method of the initialisers in reverse order.
-  omni_interceptor_initialiser_.detach();
   omni_hooked_initialiser_.detach();
   omni_initRefs_initialiser_.detach();
   omni_initFile_initialiser_.detach();
+  omni_interceptor_initialiser_.detach();
   omni_giopStreamImpl_initialiser_.detach();
   omni_ropeFactory_initialiser_.detach();
   omni_scavenger_initialiser_.detach();
@@ -582,6 +588,7 @@ omniOrbORB::actual_shutdown()
   omni_corbaOrb_initialiser_.detach();
   omni_omniInternal_initialiser_.detach();
   omni_uri_initialiser_.detach();
+  omni_omniIOR_initialiser_.attach();
 
   proxyObjectFactory::shutdown();
 
