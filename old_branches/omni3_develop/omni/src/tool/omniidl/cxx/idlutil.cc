@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.5  2001/06/18 17:42:59  dpg1
+// Preliminary support for Darwin / Mac OS X.
+//
 // Revision 1.3.2.4  2001/02/20 17:39:57  dpg1
 // FreeBSD update -- use strtouq instead of strtoull.
 //
@@ -161,6 +164,28 @@ IdlIntLiteral
 idl_strtoul(const char* text, int base)
 {
   return strtouq(text, 0, base);
+}
+
+#  elif defined(__hpux__)
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  IdlIntLiteral ull;
+  switch (base) {
+  case 8:
+    sscanf(text, "%llo", &ull);
+    break;
+  case 10:
+    sscanf(text, "%lld", &ull);
+    break;
+  case 16:
+    sscanf(text, "%llx", &ull);
+    break;
+  default:
+    abort();
+  }
+  return ull;
 }
 
 #  else
