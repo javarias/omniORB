@@ -11,6 +11,10 @@
  
 /*
   $Log$
+// Revision 1.5  1997/04/24  16:00:04  sll
+// - In setRopeAndKey(), do not use omni::objectToIopProfiles() as the
+//   function use getRopeAndKey() and this would cause a deadlock.
+//
 // Revision 1.4  1997/04/22  17:49:55  sll
 // - New atomic functions getRopeAndKey, setRopeAndKey, resetRopeAndKey to
 //   get or set the Rope and object key associated with an object.
@@ -326,6 +330,9 @@ omniObject::dispatch(GIOP_S &_s,const char *_op,
     }
   else
     return 0;
+
+  // For MSVC++ 4.2:
+  return 0;
 }
 
 
