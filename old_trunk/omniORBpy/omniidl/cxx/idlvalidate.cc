@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.1  2000/03/06 15:03:47  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 // Revision 1.2  1999/11/02 17:07:24  dpg1
 // Changes to compile on Solaris.
 //
@@ -38,6 +41,7 @@
 #include <idlvalidate.h>
 #include <idlerr.h>
 #include <idlast.h>
+#include <idlconfig.h>
 
 void
 AstValidateVisitor::
@@ -59,12 +63,14 @@ void
 AstValidateVisitor::
 visitForward(Forward* f)
 {
-  if (f->isFirst() && !f->definition()) {
-    char* ssn = f->scopedName()->toString();
-    IdlWarning(f->file(), f->line(),
-	       "Forward declared interface `%s' was never fully defined",
-	       ssn);
-    delete [] ssn;
+  if (Config::forwardWarning) {
+    if (f->isFirst() && !f->definition()) {
+      char* ssn = f->scopedName()->toString();
+      IdlWarning(f->file(), f->line(),
+		 "Forward declared interface `%s' was never fully defined",
+		 ssn);
+      delete [] ssn;
+    }
   }
 }
 
@@ -72,11 +78,13 @@ void
 AstValidateVisitor::
 visitValueForward(ValueForward* f)
 {
-  if (f->isFirst() && !f->definition()) {
-    char* ssn = f->scopedName()->toString();
-    IdlWarning(f->file(), f->line(),
-	       "Forward declared valuetype `%s' was never fully defined",
-	       ssn);
-    delete [] ssn;
+  if (Config::forwardWarning) {
+    if (f->isFirst() && !f->definition()) {
+      char* ssn = f->scopedName()->toString();
+      IdlWarning(f->file(), f->line(),
+		 "Forward declared valuetype `%s' was never fully defined",
+		 ssn);
+      delete [] ssn;
+    }
   }
 }

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.1  2000/03/06 15:03:45  dpg1
+# Minor bug fixes to omniidl. New -nf and -k flags.
+#
 # Revision 1.13  1999/11/29 16:43:51  dpg1
 # Forgot a case in registerDecl().
 #
@@ -121,16 +124,20 @@ Functions:
   pragmas()       -- list of strings containing #pragmas which occurred
                      before any declarations. Later #pragmas are
                      attached to Decl objects.
+  comments()      -- list of strings containing comments which occurred
+                     before any declarations.
   accept(visitor) -- visitor pattern accept. See idlvisitor.py."""
 
-    def __init__(self, file, declarations, pragmas):
+    def __init__(self, file, declarations, pragmas, comments):
         self.__file         = file
         self.__declarations = declarations
         self.__pragmas      = pragmas
+        self.__comments     = comments
 
     def file(self):            return self.__file
     def declarations(self):    return self.__declarations
     def pragmas(self):         return self.__pragmas
+    def comments(self):        return self.__comments
     def accept(self, visitor): visitor.visitAST(self)
 
 
@@ -145,13 +152,16 @@ Functions:
                      false if it was an included file.
   pragmas()       -- list of strings containing #pragmas which
                      immediately followed this declaration.
+  comments()      -- list of strings containing comments which
+                     immediately followed this declaration.
   accept(visitor) -- visitor pattern accept. See idlvisitor.py."""
 
-    def __init__(self, file, line, mainFile, pragmas):
+    def __init__(self, file, line, mainFile, pragmas, comments):
         self.__file     = file
         self.__line     = line
         self.__mainFile = mainFile
         self.__pragmas  = pragmas
+        self.__comments = comments
 
     def accept(self, visitor): pass
 
@@ -159,6 +169,7 @@ Functions:
     def line(self):     return self.__line
     def mainFile(self): return self.__mainFile
     def pragmas(self):  return self.__pragmas
+    def comments(self): return self.__comments
 
 
 class DeclRepoId :
@@ -197,11 +208,11 @@ Functions:
                      that module. You will probably not have any use
                      for this."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  definitions):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__definitions  = definitions
@@ -228,11 +239,11 @@ Functions:
   callables()    -- subset of contents() containing Operations and
                     Attributes."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  abstract, inherits):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__abstract     = abstract
@@ -268,11 +279,11 @@ Functions:
   fullDecl() -- Interface object corresponding to full interface
                 declaration or None if there is no full declaration."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  abstract):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__abstract = abstract
@@ -296,11 +307,11 @@ Functions:
   value()     -- value of the constant. Either an integer or an
                  Enumerator object."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  constType, constKind, value):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__constType = constType
@@ -325,11 +336,11 @@ Functions:
   alias() -- Typedef object for this declarator if this is a typedef
              declarator. None otherwise."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  sizes):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__sizes = sizes
@@ -353,10 +364,10 @@ Functions:
                    within this typedef declaration.
   declarators() -- list of Declarator objects."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  aliasType, constrType, declarators):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__aliasType   = aliasType
         self.__constrType  = constrType
@@ -379,10 +390,10 @@ Functions:
                    within the member declaration.
   declarators() -- list of Declarator objects."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  memberType, constrType, declarators):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__memberType  = memberType
         self.__constrType  = constrType
@@ -403,11 +414,11 @@ Functions:
   members()   -- list of Member objects for the struct contents.
   recursive() -- boolean: true if the struct is recursive."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  recursive):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__recursive = recursive
@@ -428,11 +439,11 @@ Function:
 
   members() -- list of Member objects for the exception contents."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  members):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__members    = members
@@ -454,10 +465,10 @@ Functions:
                  none of the other union labels.
   labelKind() -- TypeCode kind of label."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  default, value, labelKind):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__default   = default
         self.__value     = value
@@ -481,10 +492,10 @@ Functions:
                   within the case.
   declarator() -- Declarator object"""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  labels, caseType, constrType, declarator):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__labels     = labels
         self.__caseType   = caseType
@@ -511,11 +522,11 @@ Functions:
   recursive()  -- boolean: true if the union is recursive."""
   
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  switchType, constrType, recursive):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__switchType = switchType
@@ -538,10 +549,10 @@ class Enumerator (Decl, DeclRepoId):
 
 No non-inherited functions."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
     def accept(self, visitor): visitor.visitEnumerator(self)
@@ -554,11 +565,11 @@ Function:
 
   enumerators() -- list of Enumerator objects."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  enumerators):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__enumerators = enumerators
@@ -577,10 +588,10 @@ Functions:
   attrType()    -- IdlType.Type object for the attribute's type.
   identifiers() -- list of strings containing the attribute identifiers."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  readonly, attrType, identifiers):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__readonly = readonly
         self.__attrType = attrType
@@ -605,10 +616,10 @@ Functions:
   paramType()  -- IdlType.Type object for the parameter type.
   identifier() -- string of parameter identifier."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  direction, paramType, identifier):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__direction  = direction
         self.__is_in      = (direction == 0 or direction == 2)
@@ -638,11 +649,11 @@ Functions:
   raises()     -- list of Exception objects.
   contexts()   -- list of strings for context expressions."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  oneway, returnType, identifier,
                  parameters, raises, contexts):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__oneway     = oneway
         self.__returnType = returnType
@@ -669,10 +680,10 @@ Native should not be used in normal IDL.
 
 No non-inherited functions."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
     def accept(self, visitor): visitor.visitNative(self)
@@ -689,10 +700,10 @@ Functions:
                     the StateMember.
   declarators()  -- list of Declarator objects."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  memberAccess, memberType, constrType, declarators):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__memberAccess = memberAccess
         self.__memberType   = memberType
@@ -716,10 +727,10 @@ Functions:
   identifier() -- string.
   parameters() -- list of Parameter objects."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, parameters):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
 
         self.__identifier = identifier
         self.__parameters = parameters
@@ -740,11 +751,11 @@ Function:
                 valuetype declaration or None if there is no full
                 declaration."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  abstract):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__abstract = abstract
@@ -766,11 +777,11 @@ Functions:
   constrType() -- boolean: true if boxed type is declared inside the
                   ValueBox declaration."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  boxedType, constrType):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__boxedType  = boxedType
@@ -796,11 +807,11 @@ Functions:
   callables()    -- subset of contents() containing Operations and
                     Attributes."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  inherits, supports):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__inherits     = inherits
@@ -848,11 +859,11 @@ Functions:
   callables()    -- subset of contents() containing Operations,
                     Attributes, StateMembers and Factorys."""
 
-    def __init__(self, file, line, mainFile, pragmas,
+    def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
                  custom, inherits, truncatable, supports):
 
-        Decl.__init__(self, file, line, mainFile, pragmas)
+        Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__custom       = custom
@@ -964,13 +975,13 @@ strings. Raises DeclNotFound if the name is not recognised."""
 
 # Declarations of non-basic `built-in' types
 
-CORBAObject = Interface("<built in>", 0, 0, [],
+CORBAObject = Interface("<built in>", 0, 0, [], [],
                         "Object", ["CORBA", "Object"],
                         "IDL:omg.org/CORBA/Object:1.0",
                         0, [])
 registerDecl(["CORBA", "Object"], CORBAObject)
 
-CORBAModule = Module("<built in>", 0, 0, [], "CORBA", ["CORBA"],
+CORBAModule = Module("<built in>", 0, 0, [], [], "CORBA", ["CORBA"],
                      "IDL:omg.org/CORBA:1.0", [CORBAObject])
 registerDecl(["CORBA"], CORBAModule)
 

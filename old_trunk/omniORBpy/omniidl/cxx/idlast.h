@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8.2.1  2000/03/06 15:03:48  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 // Revision 1.8  2000/02/04 12:17:09  dpg1
 // Support for VMS.
 //
@@ -90,6 +93,36 @@ private:
   friend class Decl;
 };
 
+// Comment class stores a list of comment strings:
+class Comment {
+public:
+  Comment(const char* commentText)
+    : commentText_(idl_strdup(commentText)), next_(0) {
+    mostRecent_ = this;
+  }
+
+  ~Comment() {
+    delete [] commentText_;
+    if (next_) delete next_;
+  }
+
+  const char* commentText() const { return commentText_; }
+  Comment*    next()        const { return next_; }
+
+  static void add   (const char* commentText);
+  static void append(const char* commentText);
+  static void clear() { mostRecent_ = 0; }
+
+private:
+  char*           commentText_;
+  Comment*        next_;
+  static Comment* mostRecent_;
+
+  friend class AST;
+  friend class Decl;
+};
+
+
 
 // AST class represents the whole IDL definition
 class AST {
@@ -98,16 +131,18 @@ public:
   ~AST();
   static AST*           tree();
   static _CORBA_Boolean process(FILE* f, const char* name);
+  static void           clear();
 
   Decl*       declarations()              { return declarations_; }
   const char* file()                      { return file_; }
   Pragma*     pragmas()                   { return pragmas_; }
-  void        clear();
+  Comment*    comments()                  { return comments_; }
 
   void        accept(AstVisitor& visitor) { visitor.visitAST(this); }
 
   void        setFile(const char* f);
   void        addPragma(const char* pragmaText);
+  void        addComment(const char* commentText);
 
 private:
   void        setDeclarations(Decl* d);
@@ -117,6 +152,8 @@ private:
   static AST* tree_;
   Pragma*     pragmas_;
   Pragma*     lastPragma_;
+  Comment*    comments_;
+  Comment*    lastComment_;
   friend int  yyparse();
 };
 
@@ -134,7 +171,6 @@ public:
   };
 
   Decl(Kind kind, const char* file, int line, _CORBA_Boolean mainFile);
-
   virtual ~Decl();
 
   // Declaration kind
@@ -147,6 +183,7 @@ public:
   _CORBA_Boolean    mainFile()   const { return mainFile_; }
   const Scope*      inScope()    const { return inScope_; }
   const Pragma*     pragmas()    const { return pragmas_; }
+  const Comment*    comments()   const { return comments_; }
 
   // Linked list
   Decl* next() { return next_; }
@@ -163,12 +200,14 @@ public:
 				const ScopedName* sn);
 
   static Decl* mostRecent() { return mostRecent_; }
+  static void  clear()      { mostRecent_ = 0; }
 
   // Visitor pattern accept(). The visitor is responsible for
   // recursively visiting children if it needs to
   virtual void accept(AstVisitor& visitor) = 0;
 
   void addPragma(const char* pragmaText);
+  void addComment(const char* commentText);
 
 private:
   Kind              kind_;
@@ -178,6 +217,8 @@ private:
   const Scope*      inScope_;
   Pragma*           pragmas_;
   Pragma*           lastPragma_;
+  Comment*          comments_;
+  Comment*          lastComment_;
 
   static Decl*      mostRecent_;
 
