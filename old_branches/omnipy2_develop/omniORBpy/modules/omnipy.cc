@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.18  2002/02/18 18:48:13  dpg1
+// Autoconf support.
+//
 // Revision 1.1.2.17  2002/01/18 15:49:44  dpg1
 // Context support. New system exception construction. Fix None call problem.
 //
@@ -844,6 +847,10 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     omniPy::initPOAManagerFunc(d);
     omniPy::initPOACurrentFunc(d);
     omniPy::initomniFunc(d);
+
+    // Set up the C++ API singleton
+    PyObject* api = PyCObject_FromVoidPtr((void*)&omniPy::cxxAPI, 0);
+    PyDict_SetItemString(d, (char*)"API", api);
 
     omniInitialiser::install(&the_omni_python_initialiser);
   }

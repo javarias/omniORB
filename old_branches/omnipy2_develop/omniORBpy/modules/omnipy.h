@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.17  2002/03/18 12:40:38  dpg1
+// Support overriding _non_existent.
+//
 // Revision 1.2.4.16  2002/01/18 15:49:44  dpg1
 // Context support. New system exception construction. Fix None call problem.
 //
@@ -84,6 +87,7 @@
 #include <exceptiondefs.h>
 #include <objectTable.h>
 #include <orbParameters.h>
+#include <omniORBpy.h>
 #include "omnipy_sysdep.h"
 
 
@@ -168,6 +172,14 @@ public:
   ////////////////////////////////////////////////////////////////////////////
 
   static CORBA::ORB_ptr orb;
+
+
+  ////////////////////////////////////////////////////////////////////////////
+  // C++ API objrect                                                        //
+  ////////////////////////////////////////////////////////////////////////////
+
+  static omniORBpyAPI cxxAPI;
+
 
   ////////////////////////////////////////////////////////////////////////////
   // Twin object handling                                                   //
