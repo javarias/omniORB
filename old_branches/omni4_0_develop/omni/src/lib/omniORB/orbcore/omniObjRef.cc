@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2000/11/03 19:12:07  sll
+  Use new marshalling functions for byte, octet and char. Use get_octet_array
+  instead of get_char_array and put_octet_array instead of put_char_array.
+
   Revision 1.2.2.4  2000/10/06 16:37:48  sll
   _invoke() can now cope with a call descriptor with no local call function.
 
@@ -211,7 +215,7 @@ omniObjRef::_assertExistsAndTypeVerified()
 }
 
 CORBA::Boolean 
-omniObjRef::_is_equivalent(omniObjRef* o_obj)
+omniObjRef::__is_equivalent(omniObjRef* o_obj)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
@@ -248,7 +252,7 @@ omniObjRef::_is_equivalent(omniObjRef* o_obj)
 }
 
 CORBA::ULong
-omniObjRef::_hash(CORBA::ULong maximum)
+omniObjRef::__hash(CORBA::ULong maximum)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/10/03 17:37:07  sll
+  Changed omniIOR synchronisation mutex from omni::internalLock to its own
+  mutex.
+
   Revision 1.2.2.2  2000/09/27 17:16:20  sll
   Replaced data member pd_iopProfiles with pd_ior which contains decoded
   members of the IOR.
@@ -233,14 +237,14 @@ public:
   //  Really ought to only call this if you know no-one else
   // is accessing this reference, or holding <omni::internalLock>.
 
-  _CORBA_Boolean _is_equivalent(omniObjRef* other_obj);
+  _CORBA_Boolean __is_equivalent(omniObjRef* other_obj);
   // Returns true if this and the other_obj is equivalent. In other
   // words, they both have the same object key and in the same address space.
   // Caller must not hold <omni::internalLock>
   // other_obj must not be nil.
   // This function is thread-safe.
 
-  _CORBA_ULong _hash(_CORBA_ULong maximum);
+  _CORBA_ULong __hash(_CORBA_ULong maximum);
   // Returns the result of passing the object key through the ORB's hash
   // function. The return value is not larger than maximum.
   // Caller must not hold <omni::internalLock>
