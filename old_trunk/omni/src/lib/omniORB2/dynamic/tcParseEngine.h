@@ -28,6 +28,9 @@
 
 
 /* $Log$
+ * Revision 1.3  1998/08/05 17:57:09  sll
+ * Added comments to document the interface as much as I could.
+ *
  * Revision 1.2  1998/04/07 19:38:25  sll
  * Replace cerr with omniORB::log.
  *
@@ -38,8 +41,6 @@
 
 #ifndef __tcParseEngine_h__
 #define __tcParseEngine_h__
-
-#include <omniORB2/CORBA.h>
 
 class tcParseEngine
 {
