@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.28  2002/02/11 14:47:03  dpg1
+  Bug in cleanup of nil POA.
+
   Revision 1.2.2.27  2002/01/16 11:31:59  dpg1
   Race condition in use of registerNilCorbaObject/registerTrackedObject.
   (Reported by Teemu Torma).
@@ -637,13 +640,13 @@ omniOrbPOA::destroy(CORBA::Boolean etherealize_objects,
   }
 
   {
-    // If we're not already in the INACTIVE state, change state to DISCARDING
+    // If we're in the HOLDING state, change state to DISCARDING
 
     omni::internalLock->lock();
 
     int old_state = pd_rq_state;
 
-    if (pd_rq_state != (int) PortableServer::POAManager::INACTIVE)
+    if (pd_rq_state == (int) PortableServer::POAManager::HOLDING)
       pd_rq_state = (int) PortableServer::POAManager::DISCARDING;
 
     omni::internalLock->unlock();
