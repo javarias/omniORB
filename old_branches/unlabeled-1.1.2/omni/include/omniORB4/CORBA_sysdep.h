@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.15  2000/08/07 15:34:33  dpg1
+ Partial back-port of long long from omni3_1_develop.
+
  Revision 1.1.2.14  2000/07/07 10:31:33  sll
  DEC C++ 6.{0,1} on Digital Unix needs OMNI_REQUIRES_FQ_BASE_CTOR.
 
@@ -322,8 +325,6 @@
 #endif
 #define _HAS_NOT_GOT_strcasecmp
 #define _HAS_NOT_GOT_strncasecmp
-// No current version of MSVC++ can catch exceptions by base class
-#undef HAS_Cplusplus_catch_exception_by_base
 
 #define HAS_LongLong
 #define _CORBA_LONGLONG_DECL   __int64
