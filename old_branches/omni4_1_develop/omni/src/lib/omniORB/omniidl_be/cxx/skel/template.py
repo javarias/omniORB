@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.3  2004/10/13 17:58:25  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.6.2.2  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -214,7 +217,7 @@ void @name@_Helper::marshalObjRef(::@name@_ptr obj, cdrStream& s) {
 }
 """
 
-interface_duplicate = """\
+interface_duplicate_narrow = """\
 void @name@_Helper::duplicate(::@name@_ptr obj) {
   if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
 }
@@ -225,29 +228,7 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
   if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
   return obj;
 }
-"""
 
-abstract_interface_duplicate = """\
-void @name@_Helper::duplicate(::@name@_ptr obj) {
-  if (obj) {
-    if (!obj->_to_value())
-      obj->_to_object();
-  }
-}
-
-@name@_ptr
-@name@::_duplicate(::@name@_ptr obj)
-{
-  if (obj) {
-    if (!obj->_to_value())
-      obj->_to_object();
-  }
-  return obj;
-}
-"""
-
-
-interface_class = """\
 @name@_ptr
 @name@::_narrow(CORBA::Object_ptr obj)
 {
@@ -264,8 +245,82 @@ interface_class = """\
   _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
   return e ? e : _nil();
 }
+"""
+
+interface_narrow_abstract = """\
+@name@_ptr
+@name@::_narrow(CORBA::AbstractBase_ptr obj)
+{
+  return _narrow(obj->_NP_to_object());
+}
+
+@name@_ptr
+@name@::_unchecked_narrow(CORBA::AbstractBase_ptr obj)
+{
+  return _unchecked_narrow(obj->_NP_to_object());
+}
+"""
 
 
+abstract_interface_duplicate_narrow = """\
+void @name@_Helper::duplicate(::@name@_ptr obj) {
+  if (obj) {
+    if (!obj->_to_value())
+      obj->_to_object();
+  }
+}
+
+@name@_ptr
+@name@::_duplicate(::@name@_ptr obj)
+{
+  if (obj) {
+    if (!obj->_to_value())
+      obj->_to_object();
+  }
+  return obj;
+}
+
+@name@_ptr
+@name@::_narrow(CORBA::AbstractBase_ptr obj)
+{
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  _ptr_type e = 0;
+  
+  CORBA::ValueBase* v = obj->_to_value();
+  if (v) {
+    e = (_ptr_type) v->_ptrToValue(_PD_repoId);
+  }
+  else {
+    CORBA::Object_ptr o = obj->_NP_to_object();
+    if (o && !o->_NP_is_nil()) {
+      e = (_ptr_type) o->_PR_getobj()->_realNarrow(_PD_repoId);
+    }
+  }  
+  return e ? e : _nil();
+}
+
+@name@_ptr
+@name@::_unchecked_narrow(CORBA::AbstractBase_ptr obj)
+{
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  _ptr_type e = 0;
+  
+  CORBA::ValueBase* v = obj->_to_value();
+  if (v) {
+    e = (_ptr_type) v->_ptrToValue(_PD_repoId);
+  }
+  else {
+    CORBA::Object_ptr o = obj->_NP_to_object();
+    if (o && !o->_NP_is_nil()) {
+      e = (_ptr_type) o->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+    }
+  }  
+  return e ? e : _nil();
+}
+"""
+
+
+interface_nil = """\
 @name@_ptr
 @name@::_nil()
 {

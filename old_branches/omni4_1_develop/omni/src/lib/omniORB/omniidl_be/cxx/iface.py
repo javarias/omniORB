@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.4  2004/10/13 17:58:22  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.1.6.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -316,8 +319,21 @@ class I(Class):
                  operations = string.join(methodl, "\n"))
 
     else:
+      abstract_base = 0
+      for i in self.interface().allInherits():
+        if i.abstract():
+          abstract_base = 1
+          break
+
+      if abstract_base:
+        abstract_narrows = omniidl_be.cxx.header.template.\
+                           interface_abstract_narrows
+      else:
+        abstract_narrows = ""
+
       stream.out(omniidl_be.cxx.header.template.interface_type,
                  name=self.interface().name().simple(),
+                 abstract_narrows = abstract_narrows,
                  Other_IDL = self._other_idl)
 
 
@@ -672,7 +688,7 @@ class _impl_I(Class):
                name = node_name.fullyQualify())
 
     if not self.interface().abstract():
-      # Are we derived from an abstract interface
+      # Are we derived from an abstract interface?
       inherit_abstract = 0
       for i in self.interface().inherits():
         if i.abstract():
