@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 16:57:15  sll
+  Replaced marshalling operators for MemBufferedStream and NetBufferedStream
+  with just one type for cdrStream.
+
   Revision 1.2.2.1  2000/07/17 10:35:36  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -65,5 +69,13 @@ inline void
 PortableServer::ServantLocator::_marshalObjRef(PortableServer::ServantLocator_ptr obj, cdrStream& s) {
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
+
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::ThreadPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::LifespanPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::IdUniquenessPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::IdAssignmentPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::ImplicitActivationPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::ServantRetentionPolicy)
+OMNIORB_DECLARE_POLICY_OBJECT_OPERATORS(PortableServer::RequestProcessingPolicy)
 
 #endif  // __OMNI_POA_OPERATORS_H__
