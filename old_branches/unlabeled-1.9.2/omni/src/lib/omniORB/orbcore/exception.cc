@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.9  1999/06/18 20:53:10  sll
+  New function _CORBA_bad_param_freebuf().
+
   Revision 1.8  1999/03/11 16:25:52  djr
   Updated copyright notice
 
@@ -216,6 +219,7 @@ _omni_callTransientExceptionHandler(omniObject* obj,
 							    ex);
   }
   else {
+    cookie = omni_globalTransientExcHandlerCookie;
     return (*omni_globalTransientExcHandler)(cookie,
 					     nretries,
 					     ex);
@@ -235,6 +239,7 @@ _omni_callCommFailureExceptionHandler(omniObject* obj,
 							      ex);
   }
   else {
+    cookie = omni_globalCommFailureExcHandlerCookie;
     return (*omni_globalCommFailureExcHandler)(cookie,
 					       nretries,
 					       ex);
@@ -254,6 +259,7 @@ _omni_callSystemExceptionHandler(omniObject* obj,
 							 ex);
   }
   else {
+    cookie = omni_globalSystemExcHandlerCookie;
     return (*omni_globalSystemExcHandler)(cookie,
 					  nretries,
 					  ex);
