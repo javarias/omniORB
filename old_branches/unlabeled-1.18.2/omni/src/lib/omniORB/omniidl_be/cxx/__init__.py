@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.5  2000/05/24 17:16:34  dpg1
+# Minor omniidl usage message fix.
+#
 # Revision 1.18.2.4  2000/05/04 14:34:50  djs
 # Added new flag splice-modules which causes all continuations to be output
 # as one lump. Default is now to output them in pieces following the IDL.
@@ -121,7 +124,7 @@ from omniidl_be.cxx import id
 
 from omniidl_be.cxx import config
 
-import re, sys
+import re, sys, os.path
 
 cpp_args = ["-D__OMNIIDL_CXX__"]
 usage_string = """\
@@ -208,13 +211,9 @@ def process_args(args):
 def run(tree, args):
     """Entrypoint to the C++ backend"""
 
-    filename = tree.file()
-    regex = re.compile(r"(.*/|)(.+)\.idl")
-    match = regex.search(filename)
-    if match:
-        config.setBasename(match.group(2))
-    else:
-        raise "Unable to work out basename of input file"
+    filename     = os.path.basename(tree.file())
+    basename,ext = os.path.splitext(filename)
+    config.setBasename(basename)
 
     # build the list of include files
     walker = config.WalkTreeForIncludes()
