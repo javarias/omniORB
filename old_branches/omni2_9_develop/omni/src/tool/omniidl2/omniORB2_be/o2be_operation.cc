@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.34.4.3  1999/11/04 20:16:07  sll
+  Server side stub now use a descriptor mechanism similar to the client size
+  stub.
+
   Revision 1.34.4.2  1999/09/25 17:00:31  sll
   Merged changes from omni2_8_develop branch.
 
@@ -894,7 +898,7 @@ o2be_operation::produce_server_skel_aux(std::fstream& s)
   s << "obj->";
   if (has_variable_out_arg() || has_pointer_inout_arg()) {
     // Use the indirection function in the base class
-    s << intf->uqname() << "::";
+    s << intf->fqname() << "::";
   }
   s << uqname() << "(";
   {
