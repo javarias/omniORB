@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.8  1999/09/24 13:28:37  dpg1
+# RootPOA added to list_initial_services() list.
+#
 # Revision 1.7  1999/09/24 09:22:01  dpg1
 # Added copyright notices.
 #
@@ -55,10 +58,10 @@
 #
 
 
-import threading, types, exceptions
-
 import _omnipy
 import omniORB
+
+import threading, types, exceptions
 
 
 #############################################################################

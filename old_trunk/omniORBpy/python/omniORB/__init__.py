@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7  1999/09/24 09:22:01  dpg1
+# Added copyright notices.
+#
 # Revision 1.6  1999/09/23 16:28:16  dpg1
 # __doc__ strings now created for existing modules without them.
 #
@@ -51,7 +54,16 @@
 # Initial revision
 #
 
-import sys, threading, types, imp
+import sys, types, imp
+
+try:
+    import threading
+except ImportError:
+    print """
+Error: your Python executable was not built with thread support.
+       omniORBpy requires threads. Sorry.
+"""
+    raise ImportError("Python executable has no thread support")
 
 import _omnipy
 
