@@ -29,6 +29,18 @@
 
 /*
   $Log$
+  Revision 1.22.6.13  2000/06/27 15:18:15  sll
+  On some platforms, e.g. HPUX 11 and Windows NT, shutdown() does not unblock
+  a thread in recv() when the socket is of the active type, i.e.  a connect()
+  was called on the socket previously.  This is now fixed by using select or
+  poll before calling into recv on these platforms.  This is only done when
+  the strand is outgoing. shutdown() seems to work fine on incoming strands.
+
+  connect() is now non-blocking, except on OpenVMS. Previously, this is only
+  done on Solaris. The effect is that client call timeout also works even
+  when a connection cannot be established and the kernel takes a long time to
+  report this as an error.
+
   Revision 1.22.6.12  2000/06/22 10:37:51  dpg1
   Transport code now throws omniConnectionBroken exception rather than
   CORBA::COMM_FAILURE when things go wrong. This allows the invocation
@@ -593,9 +605,10 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
   }
   
   {
-# if (defined(__GLIBC__) && __GLIBC__ >= 2)
+# if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
     // GNU C library uses socklen_t * instead of int* in getsockname().
     // This is suppose to be compatible with the upcoming POSIX standard.
+    // FreeBSD 4.0 uses it too.
     socklen_t l;
 # elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
     size_t l;
@@ -1342,14 +1355,15 @@ tcpSocketRendezvouser::run_undetached(void *arg)
       tcpSocketHandle_t new_sock;
       struct sockaddr_in raddr;
  
-#if (defined(__GLIBC__) && __GLIBC__ >= 2)
+#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
       // GNU C library uses socklen_t * instead of int* in accept ().
       // This is suppose to be compatible with the upcoming POSIX standard.
+      // FreeBSD 4.0 uses it too.
       socklen_t l;
 #elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
-    size_t l;
+      size_t l;
 #else
-    int l;
+      int l;
 #endif
 
       l = sizeof(struct sockaddr_in);
@@ -1501,9 +1515,10 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 
     tcpSocketHandle_t new_sock;
     struct sockaddr_in raddr;
-#if (defined(__GLIBC__) && __GLIBC__ >= 2)
+#if (defined(__GLIBC__) && __GLIBC__ >= 2) || (defined(__freebsd__) && __OSVERSION__ >= 4)
     // GNU C library uses socklen_t * instead of int* in accept ().
     // This is suppose to be compatible with the upcoming POSIX standard.
+    // FreeBSD 4.0 uses it too.
     socklen_t l;
 #elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
     size_t l;
