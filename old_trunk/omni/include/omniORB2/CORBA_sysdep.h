@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.14  1998/01/20 16:45:57  sll
+ Added support for OpenVMS.
+
  Revision 1.13  1997/12/09 20:40:21  sll
  Various platform specific updates.
 
@@ -58,6 +61,11 @@
 #     define SIZEOF_INT  4
 #     define SIZEOF_PTR  8
 #  endif
+
+// Activate temporary workaround for a bug in post-1.0 egcs snapshots
+// No side-effect on other gcc compilers. May be removed in future once
+// the bug is fixed.
+#define EGCS_WORKAROUND
 
 #elif defined(__DECCXX)
 // DEC C++ compiler
