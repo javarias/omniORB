@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.8.2  1999/09/24 15:01:36  djr
+ Added module initialisers, and sll's new scavenger implementation.
+
  Revision 1.2.4.1  1999/09/21 20:37:16  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -63,7 +66,7 @@ class reliableStreamStrand : public Strand {
 
 public:
 
-  reliableStreamStrand(size_t buffer_size, Rope* r, CORBA::Boolean h);
+  reliableStreamStrand(size_t buffer_size, Rope* r);
   virtual ~reliableStreamStrand();
 
   size_t MaxMTU() const;
