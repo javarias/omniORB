@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.19.2.6  2001/03/13 10:32:05  dpg1
+ * Fixed point support.
+ *
  * Revision 1.19.2.5  2000/11/17 19:09:36  dpg1
  * Support codeset conversion in any.
  *
@@ -150,6 +153,7 @@
 #include <anyP.h>
 #include <typecode.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 ////////////////////////////////////////////////////////////////////////
 // In pre-2.8.0 versions, the CORBA::Any extraction operator for

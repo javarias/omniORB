@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+   Revision 1.11.2.6  2000/11/17 19:09:37  dpg1
+   Support codeset conversion in any.
+
    Revision 1.11.2.5  2000/11/09 12:27:53  dpg1
    Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -299,6 +302,7 @@
 #include <anyP.h>
 #include <exceptiondefs.h>
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 // Note:
 //  The constructors in this file NEVER throw exceptions. This
@@ -465,6 +469,7 @@ DynAnyImpl::assign(CORBA::DynAny_ptr da)
 
   dai->pd_buf.rewindInputPtr();
   pd_buf.rewindPtrs();
+
   dai->pd_buf.copy_to(pd_buf,dai->pd_buf.bufSize());
   setValid();
 }
@@ -2443,6 +2448,7 @@ DynUnionDisc::assign(CORBA::DynAny_ptr da)
 
   dai->pd_buf.rewindInputPtr();
   pd_buf.rewindPtrs();
+
   dai->pd_buf.copy_to(pd_buf,dai->pd_buf.bufSize());
   setValid();
 
@@ -3017,6 +3023,10 @@ DynArrayImpl::nthComponentTC(unsigned n)
   return actualTc()->NP_content_type();
 }
 
+OMNI_NAMESPACE_END(omni)
+
+OMNI_USING_NAMESPACE(omni)
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////////// _narrow //////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -3254,6 +3264,8 @@ CORBA::release(CORBA::DynAny_ptr p)
 ///////////////////////////// CORBA::ORB /////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 // <tc> is consumed. Since 2.8.0 it no longer have to alias-expand
 static DynAnyImplBase*
 create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
@@ -3352,6 +3364,7 @@ create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du)
   return da;
 }
 
+OMNI_NAMESPACE_END(omni)
 
 CORBA::DynAny_ptr
 CORBA::ORB::create_dyn_any(const Any& value)

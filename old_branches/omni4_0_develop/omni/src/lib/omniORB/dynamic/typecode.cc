@@ -27,8 +27,12 @@
 //      Implementation of the CORBA::TypeCode psuedo object
 //	
 
+
 /* 
  * $Log$
+ * Revision 1.38.2.10  2001/03/13 10:32:06  dpg1
+ * Fixed point support.
+ *
  * Revision 1.38.2.9  2000/12/05 17:41:00  dpg1
  * New cdrStream functions to marshal and unmarshal raw strings.
  *
@@ -217,6 +221,7 @@
 #include <typecode.h>
 #include <tcParser.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 // CORBA::TypeCode - core class function implementation
 //
@@ -530,7 +535,11 @@ CORBA::TypeCode::NP_recursive_sequence_tc(CORBA::ULong bound,
 // of the typecode functionnality it is important to ensure
 // that any statically initialised data is properly constructed.
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 static void check_static_data_is_initialised();
+
+OMNI_NAMESPACE_END(omni)
 
 CORBA::TypeCode_ptr
 CORBA::TypeCode::PR_struct_tc(const char* id, const char* name,
@@ -764,6 +773,8 @@ CORBA::release(TypeCode_ptr o)
   if( CORBA::TypeCode::PR_is_valid(o) && !CORBA::is_nil(o) )
     TypeCode_collector::releaseRef(ToTcBase(o));
 }
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// TypeCode_base ///////////////////////////
@@ -4814,6 +4825,8 @@ TypeCode_union_helper::has_implicit_default(TypeCode_base* tc)
   return npossible > tc->NP_member_count();
 }
 
+OMNI_NAMESPACE_END(omni)
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////// CORBA::TypeCode_member ///////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -5069,6 +5082,7 @@ CORBA::TypeCode_ptr         CORBA::_tc_longdouble;
 
 #endif
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 // This is needed to ensure that access to statically initialised
 // objects is safe during the static initialisation process. The
@@ -5147,3 +5161,5 @@ public:
   static TypeCodeInitialiser typecode_initialiser;
 };
 TypeCodeInitialiser TypeCodeInitialiser::typecode_initialiser;
+
+OMNI_NAMESPACE_END(omni)

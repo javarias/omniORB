@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.12.2.5  2000/12/05 17:41:00  dpg1
+ New cdrStream functions to marshal and unmarshal raw strings.
+
  Revision 1.12.2.4  2000/11/03 19:07:31  sll
  Use new marshalling functions for byte, octet and char. Use get_octet_array
  instead of get_char_array.
@@ -100,6 +103,8 @@ extern int strcasecmp(const char *s1, const char *s2);
 extern int strncasecmp(const char *s1, const char *s2, size_t n);
 #endif
 
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 ContextImpl::ContextImpl(const char* name, CORBA::Context_ptr parent)
 {
@@ -547,6 +552,10 @@ public:
     return _nil();
   }
 };
+
+OMNI_NAMESPACE_END(omni)
+
+OMNI_USING_NAMESPACE(omni)
 
 //////////////////////////////////////////////////////////////////////
 /////////////////////////////// Context //////////////////////////////
