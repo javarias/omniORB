@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.10  2001/01/29 10:52:47  djs
+# In order to fix interface inheritance name ambiguity problem the
+# call-base-class-by-typedef (rather than direct) MSVC workaround was
+# extended. A lot of the time a base class A::B::C is now referred to by a
+# typedef _A_B_C instead of with the scoped name.
+# Hopefully the OMNI_BASE_CTOR macro is nolonger needed.
+#
 # Revision 1.1.2.9  2000/08/30 10:14:39  dpg1
 # BOA constructor with object key failed to set the key in the servant.
 #
@@ -613,12 +620,24 @@ switch(_pd__d) {
 const_namespace = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage othewise.
-namespace @scope@ {
-  extern const @type@ @name@=@value@;
-}
+@open_namespace@
+  extern const @type@ @simple_name@ = @value@;
+@close_namespace@
 #else
-const @type@ @scopedName@ = @value@;
+const @type@ @name@ = @value@;
 #endif
+"""
+
+const_simple = """\
+const @type@ @name@ = @value@;
+"""
+
+const_in_interface = """\
+const @type@ @name@ _init_in_cldef_( = @value@ );
+"""
+
+const_init_in_def = """\
+_init_in_def_( const @type@ @name@ = @value@; )
 """
 
 ##

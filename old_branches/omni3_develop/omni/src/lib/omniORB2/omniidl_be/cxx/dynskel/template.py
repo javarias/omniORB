@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.10  2000/07/04 12:57:52  djs
+# Fixed Any insertion/extraction operators for unions and exceptions
+#
 # Revision 1.1.2.9  2000/06/30 09:33:05  djs
 # Removed more possible nameclashes with user supplied names.
 #
@@ -635,10 +638,9 @@ const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@);
 external_linkage = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
-@namespace@
-namespace @scope@ {
+@open_namespace@
   const CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
-}
+@close_namespace@
 #else
 const CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
 #endif

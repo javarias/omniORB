@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.15  2001/04/25 16:55:11  dpg1
+# Properly handle files #included at non-file scope.
+#
 # Revision 1.27.2.14  2001/04/03 18:29:47  djs
 # A previous fix of referring to an interface's ancestors by a flat typedef
 # rather than a scoped name fell over when the interface was inherited from
@@ -994,31 +997,35 @@ def visitConst(node):
     
     if init_in_def:
         if self.__insideInterface:
-            stream.out("""\
-const @type@ @name@ _init_in_cldef_( = @value@ );
-""",
+            stream.out(template.const_in_interface,
                        type = type_string, name = name, value = value)
         else:
-            stream.out("""\
-_init_in_def_( const @type@ @name@ = @value@; )
-""",
+            stream.out(template.const_init_in_def,
                        type = type_string, name = name, value = value)
         return
 
     # not init_in_def
-    if self.__insideModule and not(self.__insideInterface):
+    if self.__insideModule and not self.__insideInterface:
         scopedName = node.scopedName()
         scopedName = map(id.mapID, scopedName)
-        scope_str = idlutil.ccolonName(scopedName[0:len(scopedName)-1])
-        name_str = scopedName[len(scopedName)-1]
+
+        open_namespace  = ""
+        close_namespace = ""
+
+        for s in scopedName[:-1]:
+            open_namespace  = open_namespace  + "namespace " + s + " { "
+            close_namespace = close_namespace + "} "
+
+        simple_name = scopedName[-1]
+
         stream.out(template.const_namespace,
-                   type = type_string, scope = scope_str, name = name_str,
-                   scopedName = name, value = value)
+                   open_namespace = open_namespace,
+                   close_namespace = close_namespace,
+                   type = type_string, simple_name = simple_name,
+                   name = name, value = value)
         
     else:
-        stream.out("""\
-const @type@ @name@ = @value@;
-""",
+        stream.out(template.const_simple,
                    type = type_string, name = name, value = value)
         
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.14  2001/04/25 16:55:09  dpg1
+# Properly handle files #included at non-file scope.
+#
 # Revision 1.14.2.13  2001/03/21 16:41:10  dpg1
 # Wrong member count in TypeCode for union with multiple case labels.
 #
@@ -253,20 +256,16 @@ const CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
                   tc_name = tc_name, mangled_name = mangled_name)
         return
 
-    # do we need to make a namespace alias?
-    namespace = ""
-    if len(scope) > 1:
-        flatscope = string.join(scope, "_")
-        realscope = string.join(scope, "::")
-        namespace = "namespace " + flatscope + " = " + realscope + ";"
-    elif scope == []:
-        return
-    else:
-        flatscope = scope[0]
+    open_namespace  = ""
+    close_namespace = ""
 
+    for s in scope:
+        open_namespace  = open_namespace + "namespace " + s + " { "
+        close_namespace = close_namespace + "} "
+    
     where.out(template.external_linkage,
-              namespace = namespace,
-              scope = flatscope,
+              open_namespace = open_namespace,
+              close_namespace = close_namespace,
               tc_name = tc_name,
               mangled_name = mangled_name,
               tc_unscoped_name = tc_unscoped_name)
