@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.17  2003/08/29 13:31:42  dgrisby
+// Support Pythons with UCS-4 Unicode.
+//
 // Revision 1.1.2.16  2003/07/18 11:28:18  dgrisby
 // Reference count bug. Thanks Scott Robertson.
 //
@@ -1268,7 +1271,7 @@ validateTypeArray(PyObject* d_o, PyObject* a_o,
       }
     }
     else
-      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_PythonValueOutOfRange, compstatus);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
   }
   else { // Complex type
     if (PyList_Check(a_o)) {
@@ -1289,6 +1292,8 @@ validateTypeArray(PyObject* d_o, PyObject* a_o,
 	omniPy::validateType(elm_desc, PyTuple_GET_ITEM(a_o, i), compstatus);
       }
     }
+    else
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
   }
 }
 
