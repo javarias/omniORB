@@ -28,6 +28,13 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/03 18:49:17  sll
+  Separate out the marshalling of byte, octet and char into 3 set of distinct
+  marshalling functions.
+  Renamed put_char_array and get_char_array to put_octet_array and
+  get_octet_array.
+  New string marshal member functions.
+
   Revision 1.1.2.1  2000/10/27 15:42:08  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -115,6 +122,7 @@ NCS_W_UTF_16::marshalWChar(cdrStream& stream,
 			   omniCodeSet::TCS_W* tcs,
 			   _CORBA_WChar wc)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   if (tcs->fastMarshalWChar(stream, this, wc)) return;
 
 #if (SIZEOF_WCHAR == 4)
@@ -130,6 +138,7 @@ NCS_W_UTF_16::marshalWString(cdrStream& stream,
 			     _CORBA_ULong bound,
 			     const _CORBA_WChar* ws)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   if (tcs->fastMarshalWString(stream, this, bound, ws)) return;
 
   _CORBA_ULong len = _CORBA_WString_helper::len(ws) + 1;
@@ -157,6 +166,7 @@ _CORBA_WChar
 NCS_W_UTF_16::unmarshalWChar(cdrStream& stream,
 			     omniCodeSet::TCS_W* tcs)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   _CORBA_WChar wc;
   if (tcs->fastUnmarshalWChar(stream, this, wc)) return wc;
 
@@ -169,6 +179,7 @@ NCS_W_UTF_16::unmarshalWString(cdrStream& stream,
 			       _CORBA_ULong bound,
 			       _CORBA_WChar*& ws)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   _CORBA_ULong len;
   if (tcs->fastUnmarshalWString(stream, this, bound, len, ws)) return len;
 

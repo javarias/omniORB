@@ -28,6 +28,13 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/03 18:49:17  sll
+  Separate out the marshalling of byte, octet and char into 3 set of distinct
+  marshalling functions.
+  Renamed put_char_array and get_char_array to put_octet_array and
+  get_octet_array.
+  New string marshal member functions.
+
   Revision 1.1.2.1  2000/10/27 15:42:09  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -191,6 +198,7 @@ void
 NCS_C_UTF_8::marshalChar(cdrStream& stream,
 			 omniCodeSet::TCS_C* tcs, _CORBA_Char c)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   if (tcs->fastMarshalChar(stream, this, c)) return;
 
   if ((c & 0x80) == 0)
@@ -203,6 +211,7 @@ void
 NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 			   _CORBA_ULong bound, const char* s)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   if (tcs->fastMarshalString(stream, this, bound, s)) return;
 
   omniCodeSetUtil::BufferU ub;
@@ -254,6 +263,7 @@ NCS_C_UTF_8::marshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 _CORBA_Char
 NCS_C_UTF_8::unmarshalChar(cdrStream& stream, omniCodeSet::TCS_C* tcs)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   _CORBA_Char c;
   if (tcs->fastUnmarshalChar(stream, this, c)) return c;
 
@@ -271,6 +281,7 @@ _CORBA_ULong
 NCS_C_UTF_8::unmarshalString(cdrStream& stream, omniCodeSet::TCS_C* tcs,
 			     _CORBA_ULong bound, char*& s)
 {
+  if (!tcs) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
   _CORBA_ULong len;
   if (tcs->fastUnmarshalString(stream, this, bound, len, s)) return len;
 
