@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.10  2001/08/17 17:12:39  sll
+ Modularise ORB configuration parameters.
+
  Revision 1.2.2.9  2001/08/03 17:41:23  sll
  System exception minor code overhaul. When a system exeception is raised,
  a meaning minor code is provided.
@@ -560,10 +563,10 @@ class endpointHandler : public orbOptions::Handler {
 public:
 
   endpointHandler() : 
-    orbOptions::Handler("endpoint",
-			"endpoint = <endpoint uri>",
+    orbOptions::Handler("endPoint",
+			"endPoint = <endpoint uri>",
 			1,
-                        "-ORBendpoint = <endpoint uri>\n"
+                        "-ORBendPoint = <endpoint uri>\n"
 "          <endpoint uri> = \"giop:tcp:<host>:<port>\" |\n"
 "                          *\"giop:ssl:<host>:<port>\" |\n"
 "                          *\"giop:unix:<filename>\"   |\n"
@@ -608,10 +611,10 @@ class endpointNoPublishHandler : public orbOptions::Handler {
 public:
 
   endpointNoPublishHandler() : 
-    orbOptions::Handler("endpointNoPublish",
-			"endpointNoPublish = <endpoint uri>",
+    orbOptions::Handler("endPointNoPublish",
+			"endPointNoPublish = <endpoint uri>",
 			1,
-			"-ORBendpointNoPublish <endpoint uri>") {}
+			"-ORBendPointNoPublish <endpoint uri>") {}
 
 
   void visit(const char* value) throw (orbOptions::BadParam) {
@@ -643,10 +646,10 @@ class endpointNoListenHandler : public orbOptions::Handler {
 public:
 
   endpointNoListenHandler() : 
-    orbOptions::Handler("endpointNoListen",
-			"endpointNoListen = <endpoint uri>",
+    orbOptions::Handler("endPointNoListen",
+			"endPointNoListen = <endpoint uri>",
 			1,
-			"-ORBendpointNoListen <endpoint uri>") {}
+			"-ORBendPointNoListen <endpoint uri>") {}
 
 
   void visit(const char* value) throw (orbOptions::BadParam) {
@@ -713,9 +716,9 @@ public:
       if ( only_listen || only_publish ) {
 	if ( omniORB::trace(1) ) {
 	  omniORB::logger log;
-	  log << "CORBA::ORB_init failed -- endpointNoListen or \n"
-	         "endpointNoPublish cannot be used alone.\n"
-	         "At least 1 endpoint or endpointNoPublish should be specified.\n";
+	  log << "CORBA::ORB_init failed -- endPointNoListen or \n"
+	         "endPointNoPublish cannot be used alone.\n"
+	         "At least 1 endpoint or endPointNoPublish should be specified.\n";
 	}
 	OMNIORB_THROW(INITIALIZE,INITIALIZE_InvalidORBInitArgs,
 		      CORBA::COMPLETED_NO);
