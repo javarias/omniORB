@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 17:12:34  sll
+  Modularise ORB configuration parameters.
+
 */
 
 #ifndef __ORBOPTIONS_H__
@@ -174,6 +177,17 @@ class orbOptions {
   //
   // Thread Safety preconditions:
   //    Not thread safe
+
+  ////////////////////////////////////////////////////////////////////////
+  void importFromFile(const char* filename) throw (Unknown,BadParam);
+
+#if defined(NTArchitecture)
+  ////////////////////////////////////////////////////////////////////////
+  void importFromRegistry() throw (Unknown,BadParam);
+#endif
+
+  ////////////////////////////////////////////////////////////////////////
+  void importFromEnv() throw (Unknown,BadParam);
 
   ////////////////////////////////////////////////////////////////////////
   sequenceString* usage() const;

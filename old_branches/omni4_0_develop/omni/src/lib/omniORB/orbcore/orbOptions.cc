@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 17:12:41  sll
+  Modularise ORB configuration parameters.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -219,6 +222,19 @@ orbOptions::extractInitOptions(int& argc,char** argv)
     }
   }
   
+}
+
+////////////////////////////////////////////////////////////////////////
+void
+orbOptions::importFromEnv() {
+  
+  omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
+
+  for (; i != last; i++) {
+    const char* value = getenv((*i)->key());
+    if (value && strlen(value)) addOption((*i)->key(),value);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////

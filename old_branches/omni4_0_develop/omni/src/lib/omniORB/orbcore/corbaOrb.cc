@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.22  2001/08/17 17:12:35  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.33.2.21  2001/08/08 15:57:11  sll
   New options unixTransportDirectory & unixTransportPermission.
 
@@ -321,7 +324,6 @@ ORBAsyncInvoker* orbAsyncInvoker = 0;
 extern omniInitialiser& omni_omniIOR_initialiser_;
 extern omniInitialiser& omni_corbaOrb_initialiser_;
 extern omniInitialiser& omni_omniInternal_initialiser_;
-extern omniInitialiser& omni_initFile_initialiser_;
 extern omniInitialiser& omni_initRefs_initialiser_;
 extern omniInitialiser& omni_hooked_initialiser_;
 extern omniInitialiser& omni_interceptor_initialiser_;
@@ -430,9 +432,10 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
   }
 
   const char* option_src_1 = "configuration file";
-  const char* option_src_2 = "argument";
-  const char* option_src_3 = "option list";
-  const char* option_src_4 = "-ORB arguments";
+  const char* option_src_2 = "environment variable";
+  const char* option_src_3 = "argument";
+  const char* option_src_4 = "option list";
+  const char* option_src_5 = "-ORB arguments";
   const char* option_source;
   try {
 
@@ -440,19 +443,45 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
 
     // Parse configuration file
     option_source = option_src_1;
-    // XXX not done yet.
-    
+
+#if !defined(NTArchitecture)
+    const char* config_fname = CONFIG_DEFAULT_LOCATION;
+#else
+    const char* config_fname = 0;
+#endif
+    {
+      const char* f = getenv(CONFIG_ENV);
+      if (f) config_fname = f;
+    }
+    if (config_fname) {
+      orbOptions::singleton().importFromFile(config_fname);
+    }
+#if defined(NTArchitecture)
+    else {
+      // Parse configuration from registry on NT if no configuration
+      // file is specified.
+      orbOptions::singleton().importFromRegistry();
+    }
+#endif
+
+    // Parse configuration from environment variables
+    option_source = option_src_2;
+    orbOptions::singleton().importFromEnv();
+
+
     if ( orb_identifier && strlen(orb_identifier) ) {
-      option_source = option_src_2;
+      option_source = option_src_3;
       orbOptions::singleton().addOption("id",orb_identifier);
     }
 
+    // Parse configuration from argument <options>
     if (options) {
-      option_source = option_src_3;
+      option_source = option_src_4;
       orbOptions::singleton().addOptions(options);
     }
 
-    option_source = option_src_4;
+    // Parse configurations from argv
+    option_source = option_src_5;
     orbOptions::singleton().extractInitOptions(argc,argv);
 
   }
@@ -470,7 +499,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
       omniORB::logger l;
       l << "ORB_init failed: Bad parameter (" << ex.value 
 	<< ") for option " 
-	<< ((option_source == option_src_4) ? "-ORB" : "")
+	<< ((option_source == option_src_5) ? "-ORB" : "")
 	<< ex.key << " in " <<  option_source << " reason: " 
 	<< ex.why << "\n";
     }
@@ -515,7 +544,6 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     omni_giopRope_initialiser_.attach();
     omni_giopserver_initialiser_.attach();
     omni_giopbidir_initialiser_.attach();
-    omni_initFile_initialiser_.attach();
     omni_giopStrand_initialiser_.attach();
     omni_omniCurrent_initialiser_.attach();
     omni_dynamiclib_initialiser_.attach();
@@ -747,7 +775,6 @@ omniOrbORB::destroy()
     omni_dynamiclib_initialiser_.detach();
     omni_omniCurrent_initialiser_.detach();
     omni_giopStrand_initialiser_.detach();
-    omni_initFile_initialiser_.detach();
     omni_giopbidir_initialiser_.detach();
     omni_giopserver_initialiser_.detach();
     omni_giopRope_initialiser_.detach();
