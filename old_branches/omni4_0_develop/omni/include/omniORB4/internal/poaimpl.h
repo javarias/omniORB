@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2001/11/08 16:33:50  dpg1
+  Local servant POA shortcut policy.
+
   Revision 1.1.4.8  2001/08/17 15:00:48  dpg1
   Fixes for pre-historic compilers.
 
@@ -162,6 +165,8 @@ public:
   PortableServer::Servant id_to_servant(const PortableServer::ObjectId& oid);
   virtual
   CORBA::Object_ptr id_to_reference(const PortableServer::ObjectId& oid);
+
+  virtual CORBA::OctetSeq* id();
 
   ////////////////////////////
   // Override CORBA::Object //
@@ -506,7 +511,7 @@ private:
     // then a mutex is allocated.
 
     MainThreadSync                     pd_main_thread_sync;
-    // This is used to implement the main thread polict. if
+    // This is used to implement the main thread policy. if
     // (pd_policy.threading == TP_MAIN_THREAD) then a mutex and
     // condition variable are allocated. These are used by the main
     // thread to signal the upcall thread when the call finishes.

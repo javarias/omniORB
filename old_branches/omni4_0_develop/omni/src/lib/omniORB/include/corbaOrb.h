@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/11/06 15:41:37  dpg1
+  Reimplement Context. Remove CORBA::Status. Tidying up.
+
   Revision 1.1.4.3  2001/09/19 17:26:46  dpg1
   Full clean-up after orb->destroy().
 
@@ -79,6 +82,9 @@ public:
   virtual void run();
   virtual void shutdown(CORBA::Boolean);
   virtual void destroy();
+
+  virtual void register_initial_reference(const char* id,
+					  CORBA::Object_ptr obj);
 
   virtual CORBA::Boolean _non_existent();
   virtual void* _ptrToObjRef(const char*);

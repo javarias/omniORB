@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.11  2001/10/19 11:05:25  dpg1
+  ObjectId to/from wstring
+
   Revision 1.2.2.10  2001/10/17 16:44:01  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -568,6 +571,8 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
     virtual ObjectId* reference_to_id(CORBA::Object_ptr reference) = 0;
     virtual Servant id_to_servant(const ObjectId& oid) = 0;
     virtual CORBA::Object_ptr id_to_reference(const ObjectId& oid) = 0;
+
+    virtual CORBA::OctetSeq* id() = 0;
 
     //////////////////////////
     // CORBA Object members //

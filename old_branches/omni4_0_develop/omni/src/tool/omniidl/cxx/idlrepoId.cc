@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.5  2001/10/17 16:48:33  dpg1
+// Minor error message tweaks
+//
 // Revision 1.5.2.4  2000/11/03 12:20:58  dpg1
 // #pragma ID can now be declared more than once for a type, as long as
 // the id is the same.
@@ -51,6 +54,9 @@
 // *** empty log message ***
 //
 
+#include <iostream.h>
+
+
 #include <idlrepoId.h>
 #include <idlast.h>
 #include <idlutil.h>
@@ -59,6 +65,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 // Globals from lexer/parser
 extern int   yylineno;
@@ -231,12 +238,38 @@ setRepoId(const char* repoId, const char* file, int line)
     riline_ = line;
 
     for (; *repoId && *repoId != ':'; ++repoId);
-    if (*repoId == '\0') {
-      IdlWarning(file, line,
-		 "Repository id of '%s' set to invalid string '%s'",
-		 identifier_, repoId_);
+    if (*repoId == '\0') goto invalid;
+
+    // If the repoId set is in OMG IDL format, we must figure out the
+    // version number, so a future #pragma version can succeed if the
+    // same version is given. Evil spec.
+
+    if (!strncmp(repoId_, "IDL:", 4)) {
+      const char* c;
+      for (c=repoId_ + 4; *c && *c != ':'; ++c);
+      if (*c++ == '\0') goto invalid;
+
+      // c should now point to a string of the form maj.min
+      if (sscanf(c, "%hu.%hu", &maj_, &min_) != 2)
+	goto invalid;
+
+      // Check there's no trailing garbage
+      for (; *c && isdigit(*c); ++c);
+      if (*c++ != '.') goto invalid;
+      for (; *c && isdigit(*c); ++c);
+      if (*c != '\0') goto invalid;
+    }
+    else {
+      maj_ = -1; // Make sure a future #pragma version complains
     }
   }
+  return;
+
+ invalid:
+  IdlWarning(file, line,
+	     "Repository id of '%s' set to invalid string '%s'",
+	     identifier_, repoId_);
+  maj_ = -1;
 }
 
 void
@@ -244,10 +277,12 @@ DeclRepoId::
 setVersion(IDL_Short maj, IDL_Short min, const char* file, int line)
 {
   if (set_) {
-    IdlError(file, line, "Cannot set version of '%s' to '%d.%d'",
-	     identifier_, maj, min);
-    IdlErrorCont(rifile_, riline_,
-		 "Repository id previously set to '%s' here", repoId_);
+    if (maj_ != maj || min_ != min) {
+      IdlError(file, line, "Cannot set version of '%s' to '%d.%d'",
+	       identifier_, maj, min);
+      IdlErrorCont(rifile_, riline_,
+		   "Repository id previously set to '%s' here", repoId_);
+    }
   }
   else {
     delete [] repoId_;

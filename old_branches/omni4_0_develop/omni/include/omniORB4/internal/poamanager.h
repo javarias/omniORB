@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:15  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.2  2000/09/27 17:41:41  sll
   Updated include/omniORB3 to include/omniORB4
 
@@ -67,7 +71,8 @@ public:
   inline omniOrbPOAManager(int is_nil = 0)
     : OMNIORB_BASE_CTOR(PortableServer::)POAManager(is_nil),
       pd_refCount(1),
-      pd_state(HOLDING)
+      pd_state(HOLDING),
+      pd_deactivated(0)
     {}
 
   ////////////////////////////////
@@ -107,6 +112,7 @@ private:
 
   int    pd_refCount;
   State  pd_state;
+  int    pd_deactivated; // Becomes true when deactivation has finished
 };
 
 OMNI_NAMESPACE_END(omni)

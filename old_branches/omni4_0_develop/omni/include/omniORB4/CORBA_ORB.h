@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/11/06 15:41:34  dpg1
+  Reimplement Context. Remove CORBA::Status. Tidying up.
+
   Revision 1.1.2.4  2001/10/29 17:42:35  dpg1
   Support forward-declared structs/unions, ORB::create_recursive_tc().
 
@@ -243,6 +246,8 @@ public:
   TypeCode_ptr create_recursive_tc(const char* id);
 
   Policy_ptr create_policy(PolicyType,const Any&);
+
+  virtual void register_initial_reference(const char* id, Object_ptr obj) = 0;
     
   // omniORB internal.
   static _core_attr const char* _PD_repoId;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.12  2001/11/09 16:14:02  dpg1
+  Fix server-side boostrap agent.
+
   Revision 1.2.2.11  2001/10/17 16:44:06  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -326,6 +329,38 @@ setFromFile(const char* identifier, CORBA::Object_ptr obj)
 }
 
 void
+omniInitialReferences::setFromORB(const char* identifier,
+				  CORBA::Object_ptr obj)
+{
+  if (!identifier || *identifier == '\0')
+    throw CORBA::ORB::InvalidName();
+
+  if (CORBA::is_nil(obj))
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_RegisterNilObject,
+		    CORBA::COMPLETED_NO);
+
+  omni_tracedmutex_lock sync(sl_lock);
+
+  CORBA::ULong index;
+  for (index=0; index < the_fileServiceList.length(); index++) {
+    if (strcmp((const char*)the_fileServiceList[index].id,identifier) == 0)
+      throw CORBA::ORB::InvalidName();
+  }
+  for (index=0; index < the_argsServiceList.length(); index++) {
+    if (strcmp((const char*)the_argsServiceList[index].id,identifier) == 0)
+      throw CORBA::ORB::InvalidName();
+  }
+  OMNIORB_ASSERT(index == the_argsServiceList.length());
+
+  the_argsServiceList.length(index+1);
+  the_argsServiceList[index].id = identifier;
+  the_argsServiceList[index].uri = (char*)0;
+  the_argsServiceList[index].ref = CORBA::Object::_duplicate(obj);
+}
+
+
+
+void
 omniInitialReferences::setDefaultInitRefFromArgs(const char* defInit)
 {
   omni_tracedmutex_lock sync(sl_lock);
@@ -435,7 +470,7 @@ resolveArgs(const char* id, unsigned int cycles)
   if (ref && omniORB::trace(10)) {
     omniORB::logger l;
     l << "Initial reference `" << id
-      << "' resolved from -ORBInitRef argument.\n";
+      << "' resolved from -ORBInitRef argument / ORB registration.\n";
   }
   return ref;
 }
@@ -633,8 +668,8 @@ omniInitialReferences::resolve(const char* id, unsigned int cycles)
   // bootstrap agent.
   if ((result = resolvePseudo     (id, cycles))) return result;
   if ((result = resolveArgs       (id, cycles))) return result;
-  if ((result = resolveArgsDefault(id, cycles))) return result;
   if ((result = resolveFile       (id, cycles))) return result;
+  if ((result = resolveArgsDefault(id, cycles))) return result;
   if ((result = resolveFileDefault(id, cycles))) return result;
   if ((result = resolveBootAgent  (id, cycles))) return result;
 

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.10  2001/10/17 16:44:03  dpg1
+ Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
  Revision 1.8.2.9  2001/08/17 13:42:48  dpg1
  callDescriptor::userException() no longer has to throw an exception.
 
@@ -169,6 +172,8 @@ omniServerRequest::ctx()
 		  CORBA::COMPLETED_NO);
   }
 
+  pd_state = SR_GOT_CTX;
+
   return pd_calldesc->pd_context;
 }
 
@@ -177,13 +182,22 @@ omniServerRequest::ctx()
 void
 omniServerRequest::set_result(const CORBA::Any& value)
 {
-  if( !(pd_state == SR_GOT_PARAMS) ) {
-    pd_state = SR_DSI_ERROR;
-    OMNIORB_THROW(BAD_INV_ORDER,
-		  BAD_INV_ORDER_SetResultCalledOutOfOrder,
-		  CORBA::COMPLETED_NO);
+  if( CORBA::is_nil(pd_calldesc->pd_context) ) {
+    if( pd_state != SR_GOT_PARAMS && pd_state != SR_GOT_CTX ) {
+      pd_state = SR_DSI_ERROR;
+      OMNIORB_THROW(BAD_INV_ORDER,
+		    BAD_INV_ORDER_SetResultCalledOutOfOrder,
+		    CORBA::COMPLETED_NO);
+    }
   }
-
+  else {
+    if( pd_state != SR_GOT_CTX ) {
+      pd_state = SR_DSI_ERROR;
+      OMNIORB_THROW(MARSHAL,
+		    MARSHAL_ServerRequestWrongOrder,
+		    CORBA::COMPLETED_NO);
+    }
+  }
   pd_calldesc->pd_result = value;
   pd_state = SR_GOT_RESULT;
 }
@@ -214,6 +228,7 @@ omniServerRequest::set_exception(const CORBA::Any& value)
 
   switch( pd_state ) {
   case SR_GOT_PARAMS:
+  case SR_GOT_CTX:
   case SR_GOT_RESULT:
   case SR_EXCEPTION:
   case SR_ERROR:

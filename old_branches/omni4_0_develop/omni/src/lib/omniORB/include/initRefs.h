@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/10/17 16:44:05  dpg1
+  Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
   Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
   In process identity.
 
@@ -92,6 +95,9 @@ public:
   // Set initial references from the configuration file and the
   // command line arguments respectively. Return true if the uri looks
   // syntactically valid, false if it is definitely invalid.
+
+  static void setFromORB(const char* identifier, CORBA::Object_ptr obj);
+  // Implementation of CORBA 2.5 ORB::register_initial_reference().
 
   static void setDefaultInitRefFromFile(const char* defInit);
   static void setDefaultInitRefFromArgs(const char* defInit);
