@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:58  dpg1
+// *** empty log message ***
+//
 
 #include <idlerr.h>
 #include <idlutil.h>
@@ -128,8 +131,8 @@ IdlReportErrors()
   if (errorCount > 0 || warningCount > 0)
     fprintf(stderr, ".\n");
   
-  if (errorCount > 0)
-    return 0;
-  else
-    return 1;
+  _CORBA_Boolean ret = (errorCount == 0);
+  errorCount         = 0;
+  warningCount       = 0;
+  return ret;
 }
