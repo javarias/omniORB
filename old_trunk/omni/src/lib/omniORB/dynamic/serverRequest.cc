@@ -29,11 +29,15 @@
 
 /*
  $Log$
+ Revision 1.5  1999/04/21 13:40:10  djr
+ Use CORBA::Context::unmarshalContext() for unmarshalling context ...
+
 */
 
 #include <dynamicImplementation.h>
 #include <pseudo.h>
 #include <context.h>
+#include <dynException.h>
 
 
 CORBA::ServerRequest::~ServerRequest() {}
@@ -130,8 +134,13 @@ void
 ServerRequestImpl::exception(CORBA::Any* value)
 {
   if( !(pd_state == SR_GOT_PARAMS || pd_state == SR_GOT_CTX) ) {
-    pd_state = SR_ERROR;
-    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+    if (isaSystemException(value)) {
+      pd_giopS->RequestReceived(1);
+    }
+    else {
+      pd_state = SR_ERROR;
+      throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+    }
   }
   if( !value ) {
     pd_state = SR_ERROR;
