@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+   Revision 1.5  1999/03/11 16:25:58  djr
+   Updated copyright notice
+
    Revision 1.4  1999/01/07 16:58:16  djr
    New implementation using new version of TypeCode and Any.
 
@@ -257,8 +260,8 @@ create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root);
 static DynUnionDisc*
 create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du);
 
-
-CORBA::DynAny::~DynAny() {}
+CORBA::DynAny::DynAny() { pd_magic = CORBA::DynAny::PR_magic; }
+CORBA::DynAny::~DynAny() { pd_magic = 0; }
 CORBA::DynEnum::~DynEnum() {}
 CORBA::DynStruct::~DynStruct() {}
 CORBA::DynUnion::~DynUnion() {}
@@ -400,6 +403,9 @@ DynAnyImpl::~DynAnyImpl()
 void
 DynAnyImpl::assign(CORBA::DynAny_ptr da)
 {
+  if ( !CORBA::DynAny::PR_is_valid(da) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(da) )  throw CORBA::DynAny::Invalid();
 
   DynAnyImplBase* daib = ToDynAnyImplBase(da);
@@ -524,6 +530,9 @@ DynAnyImpl::insert_string(const char* value)
 void
 DynAnyImpl::insert_reference(CORBA::Object_ptr value)
 {
+  if ( !CORBA::Object::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -534,6 +543,9 @@ DynAnyImpl::insert_reference(CORBA::Object_ptr value)
 void
 DynAnyImpl::insert_typecode(CORBA::TypeCode_ptr value)
 {
+  if ( !CORBA::TypeCode::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -931,6 +943,9 @@ DynAnyConstrBase::~DynAnyConstrBase()
 void
 DynAnyConstrBase::assign(CORBA::DynAny_ptr da)
 {
+  if ( !CORBA::DynAny::PR_is_valid(da) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(da) )  throw CORBA::DynAny::Invalid();
 
   DynAnyImplBase* daib = ToDynAnyImplBase(da);
@@ -1047,6 +1062,9 @@ DynAnyConstrBase::insert_string(const char* value)
 void
 DynAnyConstrBase::insert_reference(CORBA::Object_ptr value)
 {
+  if ( !CORBA::Object::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -1057,6 +1075,9 @@ DynAnyConstrBase::insert_reference(CORBA::Object_ptr value)
 void
 DynAnyConstrBase::insert_typecode(CORBA::TypeCode_ptr value)
 {
+  if ( !CORBA::TypeCode::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -1667,6 +1688,9 @@ DynUnionImpl::~DynUnionImpl()
 void
 DynUnionImpl::assign(CORBA::DynAny_ptr da)
 {
+  if ( !CORBA::DynAny::PR_is_valid(da) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(da) )  throw CORBA::DynAny::Invalid();
 
   DynAnyImplBase* daib = ToDynAnyImplBase(da);
@@ -1805,6 +1829,9 @@ DynUnionImpl::insert_string(const char* value)
 void
 DynUnionImpl::insert_reference(CORBA::Object_ptr value)
 {
+  if ( !CORBA::Object::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -1816,6 +1843,9 @@ DynUnionImpl::insert_reference(CORBA::Object_ptr value)
 void
 DynUnionImpl::insert_typecode(CORBA::TypeCode_ptr value)
 {
+  if ( !CORBA::TypeCode::PR_is_valid(value) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(value) )  throw CORBA::DynAny::InvalidValue();
 
   Lock sync(this);
@@ -2269,6 +2299,9 @@ DynUnionDisc::~DynUnionDisc()
 void
 DynUnionDisc::assign(CORBA::DynAny_ptr da)
 {
+  if ( !CORBA::DynAny::PR_is_valid(da) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(da) )  throw CORBA::DynAny::Invalid();
 
   DynAnyImplBase* daib = ToDynAnyImplBase(da);
@@ -2831,6 +2864,9 @@ DynArrayImpl::nthComponentTC(unsigned n)
 CORBA::DynAny_ptr
 CORBA::DynAny::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p))  return CORBA::DynAny::_duplicate(p);
   else                    return CORBA::DynAny::_nil();
 }
@@ -2839,6 +2875,9 @@ CORBA::DynAny::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynEnum_ptr
 CORBA::DynEnum::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) ) {
     switch( p->NP_nodetype() ) {
     case dt_enum:
@@ -2860,6 +2899,9 @@ CORBA::DynEnum::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynFixed_ptr
 CORBA::DynFixed::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) && p->NP_nodetype() == dt_fixed ) {
     CORBA::DynAny::_duplicate(p);
     return (DynFixedImpl*) p->NP_narrow();
@@ -2873,6 +2915,9 @@ CORBA::DynFixed::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynStruct_ptr
 CORBA::DynStruct::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) && p->NP_nodetype() == dt_struct ) {
     CORBA::DynAny::_duplicate(p);
     return (DynStructImpl*) p->NP_narrow();
@@ -2885,6 +2930,9 @@ CORBA::DynStruct::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynUnion_ptr
 CORBA::DynUnion::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) && p->NP_nodetype() == dt_union ) {
     CORBA::DynAny::_duplicate(p);
     return (DynUnionImpl*) p->NP_narrow();
@@ -2897,6 +2945,9 @@ CORBA::DynUnion::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynSequence_ptr
 CORBA::DynSequence::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) && p->NP_nodetype() == dt_seq ) {
     CORBA::DynAny::_duplicate(p);
     return (DynSequenceImpl*) p->NP_narrow();
@@ -2909,6 +2960,9 @@ CORBA::DynSequence::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynArray_ptr
 CORBA::DynArray::_narrow(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) && p->NP_nodetype() == dt_array ) {
     CORBA::DynAny::_duplicate(p);
     return (DynArrayImpl*) p->NP_narrow();
@@ -2924,6 +2978,9 @@ CORBA::DynArray::_narrow(CORBA::DynAny_ptr p)
 CORBA::DynAny_ptr
 CORBA::DynAny::_duplicate(CORBA::DynAny_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( !CORBA::is_nil(p) ) {
     ToDynAnyImplBase(p)->incrRefCount();
     return p;
@@ -2936,6 +2993,9 @@ CORBA::DynAny::_duplicate(CORBA::DynAny_ptr p)
 CORBA::DynEnum_ptr
 CORBA::DynEnum::_duplicate(CORBA::DynEnum_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -2949,6 +3009,9 @@ CORBA::DynEnum::_duplicate(CORBA::DynEnum_ptr p)
 CORBA::DynFixed_ptr
 CORBA::DynFixed::_duplicate(CORBA::DynFixed_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -2962,6 +3025,9 @@ CORBA::DynFixed::_duplicate(CORBA::DynFixed_ptr p)
 CORBA::DynStruct_ptr
 CORBA::DynStruct::_duplicate(CORBA::DynStruct_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -2974,6 +3040,9 @@ CORBA::DynStruct::_duplicate(CORBA::DynStruct_ptr p)
 CORBA::DynUnion_ptr
 CORBA::DynUnion::_duplicate(CORBA::DynUnion_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -2986,6 +3055,9 @@ CORBA::DynUnion::_duplicate(CORBA::DynUnion_ptr p)
 CORBA::DynSequence_ptr
 CORBA::DynSequence::_duplicate(CORBA::DynSequence_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -2999,6 +3071,9 @@ CORBA::DynSequence::_duplicate(CORBA::DynSequence_ptr p)
 CORBA::DynArray_ptr
 CORBA::DynArray::_duplicate(CORBA::DynArray_ptr p)
 {
+  if ( !CORBA::DynAny::PR_is_valid(p) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if (!CORBA::is_nil(p)) {
     CORBA::DynAny::_duplicate(p);
     return p;
@@ -3011,7 +3086,8 @@ CORBA::DynArray::_duplicate(CORBA::DynArray_ptr p)
 void
 CORBA::release(CORBA::DynAny_ptr p)
 {
-  if( !CORBA::is_nil(p) )  ToDynAnyImplBase(p)->decrRefCount();
+  if( CORBA::DynAny::PR_is_valid(p) && !CORBA::is_nil(p) )  
+    ToDynAnyImplBase(p)->decrRefCount();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3022,6 +3098,9 @@ CORBA::release(CORBA::DynAny_ptr p)
 static DynAnyImplBase*
 create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
 {
+  if ( !CORBA::TypeCode::PR_is_valid(tc) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(tc) )
     throw CORBA::BAD_TYPECODE(0, CORBA::COMPLETED_NO);
 
@@ -3079,6 +3158,9 @@ create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
 static DynUnionDisc*
 create_dyn_any_discriminator(TypeCode_base* tc, DynUnionImpl* du)
 {
+  if ( !CORBA::TypeCode::PR_is_valid(tc) )
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   if( CORBA::is_nil(tc) )
     throw CORBA::BAD_TYPECODE(0, CORBA::COMPLETED_NO);
 
@@ -3119,6 +3201,9 @@ CORBA::ORB::create_dyn_any(const Any& value)
 CORBA::DynAny_ptr
 CORBA::ORB::create_basic_dyn_any(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   switch( aetc->kind() ) {
@@ -3151,6 +3236,9 @@ CORBA::ORB::create_basic_dyn_any(TypeCode_ptr tc)
 CORBA::DynStruct_ptr
 CORBA::ORB::create_dyn_struct(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_struct && aetc->kind() != CORBA::tk_except ) {
@@ -3165,6 +3253,9 @@ CORBA::ORB::create_dyn_struct(TypeCode_ptr tc)
 CORBA::DynSequence_ptr
 CORBA::ORB::create_dyn_sequence(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_sequence ) {
@@ -3179,6 +3270,9 @@ CORBA::ORB::create_dyn_sequence(TypeCode_ptr tc)
 CORBA::DynArray_ptr
 CORBA::ORB::create_dyn_array(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_array ) {
@@ -3193,6 +3287,9 @@ CORBA::ORB::create_dyn_array(TypeCode_ptr tc)
 CORBA::DynUnion_ptr
 CORBA::ORB::create_dyn_union(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_union ) {
@@ -3207,6 +3304,9 @@ CORBA::ORB::create_dyn_union(TypeCode_ptr tc)
 CORBA::DynEnum_ptr
 CORBA::ORB::create_dyn_enum(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_enum ) {
@@ -3222,6 +3322,9 @@ CORBA::ORB::create_dyn_enum(TypeCode_ptr tc)
 CORBA::DynFixed_ptr
 CORBA::ORB::create_dyn_fixed(TypeCode_ptr tc)
 {
+  if (!CORBA::TypeCode::PR_is_valid(tc))
+    throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
+
   TypeCode_base* aetc = TypeCode_base::aliasExpand(ToTcBase_Checked(tc));
 
   if( aetc->kind() != CORBA::tk_fixed )
