@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2003/09/26 16:12:54  dgrisby
+  Start of valuetype support.
+
   Revision 1.4.2.1  2003/03/23 21:02:51  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -53,6 +56,14 @@
 #ifdef HAS_pch
 #pragma hdrstop
 #endif
+
+
+OMNI_NAMESPACE_BEGIN(omni)
+
+// See the description of this variable in omniInternal.h
+const char* omniORB_4_1_dyn = "omniORB dynamic library version 4.1.x";
+
+OMNI_NAMESPACE_END(omni)
 
 
 //////////////////////////////////////////////////////////////////////

@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.13.2.1  2003/03/23 21:02:50  dgrisby
+   Start of omniORB 4.1.x development branch.
+
    Revision 1.11.2.17  2002/12/18 15:59:14  dgrisby
    Proper clean-up of recursive TypeCodes.
 
@@ -253,7 +256,7 @@ DynAnyImplBase::from_any(const CORBA::Any& value)
   CORBA::TypeCode_var value_tc = value.type();
   if( !value_tc->equivalent(tc()) )  throw DynamicAny::DynAny::TypeMismatch();
 
-  cdrMemoryStream buf(((AnyP*)value.NP_pd())->theMemoryStream(), 1);
+  cdrAnyMemoryStream buf(((AnyP*)value.NP_pd())->theMemoryStream());
 
   if( !copy_from(buf) )  throw DynamicAny::DynAny::InvalidValue();
 }
@@ -263,7 +266,7 @@ DynAnyImplBase::to_any()
 {
   CHECK_NOT_DESTROYED;
   CORBA::Any* a = new CORBA::Any(tc(), 0);
-  cdrMemoryStream& buf = ((AnyP*)a->NP_pd())->getWRableMemoryStream();
+  cdrAnyMemoryStream& buf = ((AnyP*)a->NP_pd())->getWRableMemoryStream();
 
   // <buf> should already be rewound.
 
@@ -535,7 +538,7 @@ DynAnyImpl::insert_string(const char* value)
     throw DynamicAny::DynAny::TypeMismatch();
 
   CORBA::ULong maxlen = actualTc()->NP_length();
-  cdrMemoryStream& buf = doWrite(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = doWrite(CORBA::tk_string);
   try {
     buf.marshalString(value,maxlen);
   }
@@ -616,7 +619,7 @@ DynAnyImpl::insert_wstring(const CORBA::WChar* value)
     throw DynamicAny::DynAny::TypeMismatch();
 
   CORBA::ULong maxlen = actualTc()->NP_length();
-  cdrMemoryStream& buf = doWrite(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = doWrite(CORBA::tk_wstring);
   try {
     buf.marshalWString(value,maxlen);
   }
@@ -732,7 +735,7 @@ char*
 DynAnyImpl::get_string()
 {
   CHECK_NOT_DESTROYED;
-  cdrMemoryStream& buf = doRead(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = doRead(CORBA::tk_string);
 
   CORBA::ULong length;
   CORBA::ULong maxlen = actualTc()->NP_length();
@@ -808,7 +811,7 @@ CORBA::WChar*
 DynAnyImpl::get_wstring()
 {
   CHECK_NOT_DESTROYED;
-  cdrMemoryStream& buf = doRead(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = doRead(CORBA::tk_wstring);
 
   CORBA::ULong length;
   CORBA::ULong maxlen = actualTc()->NP_length();
@@ -819,7 +822,7 @@ DynAnyImpl::get_wstring()
 CORBA::Any*
 DynAnyImpl::get_any()
 {
-  cdrMemoryStream& buf = doRead(CORBA::tk_any);
+  cdrAnyMemoryStream& buf = doRead(CORBA::tk_any);
 
   CORBA::Any* value = new CORBA::Any();
   *value <<= buf;
@@ -831,7 +834,7 @@ DynAnyImpl::get_dyn_any()
 {
   // This could be made faster by short-cutting the Any step, but it's
   // probably not worth the effort.
-  cdrMemoryStream& buf = doRead(CORBA::tk_any);
+  cdrAnyMemoryStream& buf = doRead(CORBA::tk_any);
   CORBA::Any a;
   a <<= buf;
   return factory_create_dyn_any(a);
@@ -983,9 +986,9 @@ DynAnyImpl::set_to_initial_value()
 
 
 int
-DynAnyImpl::copy_to(cdrMemoryStream& mbs)
+DynAnyImpl::copy_to(cdrAnyMemoryStream& mbs)
 {
-  cdrMemoryStream src(pd_buf, 1);
+  cdrAnyMemoryStream src(pd_buf);
   try {
     tcParser::copyStreamToStream(tc(), src, mbs);
   }
@@ -997,7 +1000,7 @@ DynAnyImpl::copy_to(cdrMemoryStream& mbs)
 
 
 int
-DynAnyImpl::copy_from(cdrMemoryStream& mbs)
+DynAnyImpl::copy_from(cdrAnyMemoryStream& mbs)
 {
   try {
     setInvalid();
@@ -1362,7 +1365,7 @@ DynAnyConstrBase::assign(DynamicAny::DynAny_ptr da)
 
   // We do the copy via an intermediate buffer.
 
-  cdrMemoryStream buf;
+  cdrAnyMemoryStream buf;
 
   if( !daib->copy_to(buf) )
     throw DynamicAny::DynAny::InvalidValue();
@@ -1487,7 +1490,7 @@ DynAnyConstrBase::insert_string(const char* value)
     throw DynamicAny::DynAny::TypeMismatch();
 
   CORBA::ULong maxlen = tc->NP_length();
-  cdrMemoryStream& buf = writeCurrent(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = writeCurrent(CORBA::tk_string);
   try {
     buf.marshalString(value,maxlen);
   }
@@ -1572,7 +1575,7 @@ DynAnyConstrBase::insert_wstring(const CORBA::WChar* value)
     throw DynamicAny::DynAny::TypeMismatch();
 
   CORBA::ULong maxlen = tc->NP_length();
-  cdrMemoryStream& buf = writeCurrent(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = writeCurrent(CORBA::tk_wstring);
   try {
     buf.marshalWString(value,maxlen);
   }
@@ -1693,7 +1696,7 @@ DynAnyConstrBase::get_string()
 {
   CHECK_NOT_DESTROYED;
 
-  cdrMemoryStream& buf = readCurrent(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = readCurrent(CORBA::tk_string);
 
   TypeCode_base* tc = (TypeCode_base*)TypeCode_base::NP_expand(nthComponentTC(pd_curr_index));
   CORBA::ULong maxlen = tc->NP_length();
@@ -1770,7 +1773,7 @@ CORBA::WChar*
 DynAnyConstrBase::get_wstring()
 {
   CHECK_NOT_DESTROYED;
-  cdrMemoryStream& buf = readCurrent(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = readCurrent(CORBA::tk_wstring);
 
   TypeCode_base* tc = (TypeCode_base*)TypeCode_base::NP_expand(nthComponentTC(pd_curr_index));
   CORBA::ULong maxlen = tc->NP_length();
@@ -2145,11 +2148,11 @@ DynAnyConstrBase::set_to_initial_value()
 }
 
 int
-DynAnyConstrBase::copy_to(cdrMemoryStream& mbs)
+DynAnyConstrBase::copy_to(cdrAnyMemoryStream& mbs)
 {
   if( pd_n_in_buf != pd_first_in_comp )  return 0;
 
-  cdrMemoryStream src(pd_buf, 1);
+  cdrAnyMemoryStream src(pd_buf);
   pd_read_index = -1;
 
   unsigned i;
@@ -2174,7 +2177,7 @@ DynAnyConstrBase::copy_to(cdrMemoryStream& mbs)
 
 
 int
-DynAnyConstrBase::copy_from(cdrMemoryStream& mbs)
+DynAnyConstrBase::copy_from(cdrAnyMemoryStream& mbs)
 {
   pd_buf.rewindPtrs();
   pd_read_index = 0;
@@ -2333,7 +2336,7 @@ DynAnyConstrBase::component_to_any(unsigned i, CORBA::Any& a)
     return 1;
   }
   else if( i >= pd_first_in_comp ) {
-    cdrMemoryStream& buf = ((AnyP*)a.NP_pd())->getWRableMemoryStream();
+    cdrAnyMemoryStream& buf = ((AnyP*)a.NP_pd())->getWRableMemoryStream();
     return pd_components[i]->copy_to(buf);
   }
   else
@@ -2350,7 +2353,7 @@ DynAnyConstrBase::component_from_any(unsigned i, const CORBA::Any& a)
   if( canAppendComponent(i) ) {
     AnyP* anyp = (AnyP*)a.NP_pd();
     try {
-      cdrMemoryStream src(anyp->theMemoryStream(), 1);
+      cdrAnyMemoryStream src(anyp->theMemoryStream());
       tcParser::copyStreamToMemStream_flush(anyp->getTC(), src, pd_buf);
     }
     catch(CORBA::MARSHAL&) {
@@ -2367,7 +2370,7 @@ DynAnyConstrBase::component_from_any(unsigned i, const CORBA::Any& a)
 
   if( i < pd_first_in_comp )  createComponent(i);
 
-  cdrMemoryStream buf(((AnyP*)a.NP_pd())->theMemoryStream(), 1);
+  cdrAnyMemoryStream buf(((AnyP*)a.NP_pd())->theMemoryStream());
   return pd_components[i]->copy_from(buf);
 }
 
@@ -3097,7 +3100,7 @@ DynUnionImpl::assign(DynamicAny::DynAny_ptr da)
 
   // We do the copy via an intermediate buffer.
 
-  cdrMemoryStream buf;
+  cdrAnyMemoryStream buf;
 
   if( !daib->copy_to(buf) )
     throw DynamicAny::DynAny::InvalidValue();
@@ -3248,7 +3251,7 @@ DynUnionImpl::insert_string(const char* value)
 
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
 
-  cdrMemoryStream& buf = writeCurrent(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = writeCurrent(CORBA::tk_string);
   try {
     buf.marshalString(value,maxlen);
   }
@@ -3340,7 +3343,7 @@ DynUnionImpl::insert_wstring(const CORBA::WChar* value)
 
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
 
-  cdrMemoryStream& buf = writeCurrent(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = writeCurrent(CORBA::tk_wstring);
   try {
     buf.marshalWString(value,maxlen);
   }
@@ -3458,7 +3461,7 @@ char*
 DynUnionImpl::get_string()
 {
   CHECK_NOT_DESTROYED;
-  cdrMemoryStream& buf = readCurrent(CORBA::tk_string);
+  cdrAnyMemoryStream& buf = readCurrent(CORBA::tk_string);
 
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
   try {
@@ -3535,7 +3538,7 @@ CORBA::WChar*
 DynUnionImpl::get_wstring()
 {
   CHECK_NOT_DESTROYED;
-  cdrMemoryStream& buf = readCurrent(CORBA::tk_wstring);
+  cdrAnyMemoryStream& buf = readCurrent(CORBA::tk_wstring);
 
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
   CORBA::WChar* value = buf.unmarshalWString(maxlen);
@@ -3834,7 +3837,7 @@ DynUnionImpl::set_to_initial_value()
 
 
 int
-DynUnionImpl::copy_to(cdrMemoryStream& mbs)
+DynUnionImpl::copy_to(cdrAnyMemoryStream& mbs)
 {
   if( !pd_disc->copy_to(mbs) )  return 0;
 
@@ -3843,7 +3846,7 @@ DynUnionImpl::copy_to(cdrMemoryStream& mbs)
 
 
 int
-DynUnionImpl::copy_from(cdrMemoryStream& mbs)
+DynUnionImpl::copy_from(cdrAnyMemoryStream& mbs)
 {
   if( !pd_disc->copy_from(mbs) )  return 0;
 
@@ -4145,7 +4148,7 @@ DynSequenceImpl::NP_nodetype() const
 //////////////
 
 int
-DynSequenceImpl::copy_to(cdrMemoryStream& mbs)
+DynSequenceImpl::copy_to(cdrAnyMemoryStream& mbs)
 {
   // Write the length of the sequence.
   CORBA::ULong(pd_n_components) >>= mbs;
@@ -4156,7 +4159,7 @@ DynSequenceImpl::copy_to(cdrMemoryStream& mbs)
 
 
 int
-DynSequenceImpl::copy_from(cdrMemoryStream& mbs)
+DynSequenceImpl::copy_from(cdrAnyMemoryStream& mbs)
 {
   CORBA::ULong len;
   try {

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.4  2004/02/16 10:10:31  dgrisby
+# More valuetype, including value boxes. C++ mapping updates.
+#
 # Revision 1.36.2.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -307,7 +310,11 @@ def __init__(stream):
 
 # Returns the prefix required inside a const declaration (it depends on
 # exactly what the declaration is nested inside)
-def const_qualifier(insideModule, insideClass):
+def const_qualifier(insideModule=None, insideClass=None):
+    if insideModule is None:
+        insideModule = __insideModule
+        insideClass  = __insideClass
+
     if not insideModule and not insideClass:
         return "_CORBA_GLOBAL_VAR"
     elif insideClass:
@@ -695,6 +702,9 @@ def visitTypedef(node):
                         elif d_seqType.objref():
                             element = seqType.base(environment)
                             element_ptr = element
+                        elif d_seqType.value():
+                            element = seqType.base(environment)
+                            element_ptr = element + "*"
                         # only if an anonymous sequence
                         elif seqType.sequence():
                             element = d_seqType.sequenceTemplate(environment)
@@ -760,6 +770,9 @@ def visitTypedef(node):
                     elif d_seqType.objref():
                         element_reference = d_seqType.objRefTemplate("Element",
                                                                      environment)
+                    elif d_seqType.value() or d_seqType.valuebox():
+                        element_reference = d_seqType.valueTemplate("Element",
+                                                                    environment)
                     # only if an anonymous sequence
                     elif seqType.sequence():
                         element_reference = d_seqType.sequenceTemplate(environment) + "&"

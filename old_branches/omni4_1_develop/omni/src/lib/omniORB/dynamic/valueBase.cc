@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2003/11/06 11:56:56  dgrisby
+  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
   Revision 1.1.2.1  2003/09/26 16:12:54  dgrisby
   Start of valuetype support.
 
@@ -60,7 +63,7 @@ CORBA::ValueBase::_ptrToValue(const char* repoId)
 const char* CORBA::ValueBase::_PD_repoId = "IDL:omg.org/CORBA/ValueBase:1.0";
 
 void
-CORBA::ValueBase::_NP_marshal(const CORBA::ValueBase* v, cdrStream& s)
+CORBA::ValueBase::_NP_marshal(CORBA::ValueBase* v, cdrStream& s)
 {
   omniValueType::marshal(v, _PD_repoId, s);
 }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2003/09/26 16:12:53  dgrisby
+  Start of valuetype support.
+
 */
 
 #ifndef __OMNI_VALUETYPE_H__
@@ -51,7 +54,7 @@ struct _omni_ValueIds {
 
 class omniValueType {
 public:
-  static void marshal(const CORBA::ValueBase* val,
+  static void marshal(CORBA::ValueBase* val,
 		      const char* repoId,
 		      cdrStream& stream);
   // Marshal the value, in a context where the IDL specifies the value
