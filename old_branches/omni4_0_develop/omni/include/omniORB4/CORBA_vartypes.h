@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.1  2000/07/17 10:35:33  sll
+ Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
  Revision 1.3  2000/07/13 15:26:05  dpg1
  Merge from omni3_develop for 3.0 release.
 
@@ -153,21 +156,10 @@ public:
 
   inline T_member& operator= (const T_element& p);
 
-  inline size_t _NP_alignedSize(size_t initialoffset) const {
-    return CORBA::Object::_NP_alignedSize(_ptr,initialoffset);
-  }
-  inline void operator>>= (NetBufferedStream& s) const {
+  inline void operator>>= (cdrStream& s) const {
     CORBA::Object::_marshalObjRef(_ptr,s);
   }
-  inline void operator<<= (NetBufferedStream& s) {
-    Object_ptr _result = CORBA::Object::_unmarshalObjRef(s);
-    CORBA::release(_ptr);
-    _ptr = _result;
-  }
-  inline void operator>>= (MemBufferedStream& s) const {
-    CORBA::Object::_marshalObjRef(_ptr,s);
-  }
-  inline void operator<<= (MemBufferedStream& s) {
+  inline void operator<<= (cdrStream& s) {
     Object_ptr _result = CORBA::Object::_unmarshalObjRef(s);
     CORBA::release(_ptr);
     _ptr = _result;
