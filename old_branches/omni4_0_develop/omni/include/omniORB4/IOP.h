@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/10/04 16:52:04  sll
+  New helper function dumpComponent().
+
   Revision 1.2.2.2  2000/09/27 17:06:09  sll
   Updated to use the new cdrStream abstraction.
   Updated to include the latest componentID, service context ID etc.
@@ -302,7 +305,7 @@ public:
 
   struct ServiceContext {
     ServiceID              context_id;
-    _CORBA_Unbounded_Sequence__Octet context_data;
+    _CORBA_Unbounded_Sequence_Octet context_data;
 
     // the following are omniORB private functions
     void operator>>= (cdrStream &s);

@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:09:16  sll
+  New member maxGIOPVersion(), getInterceptors(), noFirewallNavigation,
+  giopTargetAddressMode.
+  LOCATION_FORWARD ctor takes an extra argument to indicate permanent
+  location forwarding.
+
   Revision 1.2.2.1  2000/07/17 10:35:35  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -259,7 +265,7 @@ _CORBA_MODULE_BEG
                                       const objectKey &k2);             //
   //                                                                    //
   //                                                                    //
-  typedef _CORBA_Unbounded_Sequence_Octet seqOctets;                    //
+  typedef _CORBA_Unbounded_Sequence_Octet seqOctets;                   //
   // Convert a key to a sequence of octets.                             //
   _CORBA_MODULE_FN seqOctets* keyToOctetSequence(const objectKey &k1);  //
   //                                                                    //

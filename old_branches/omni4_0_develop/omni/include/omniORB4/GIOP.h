@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:07:07  sll
+  Updated to include definitions for GIOP 1.1 and 1.2.
+
   Revision 1.2.2.1  2000/07/17 10:35:33  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -98,9 +101,9 @@ public:
     IOP::ServiceContextList	service_context;
     _CORBA_ULong                request_id;
     _CORBA_Boolean              response_expected;
-    _CORBA_Unbounded_Sequence__Octet object_key;
+    _CORBA_Unbounded_Sequence_Octet object_key;
     _CORBA_Char*                operation;
-    _CORBA_Unbounded_Sequence__Octet requesting_principal;
+    _CORBA_Unbounded_Sequence_Octet requesting_principal;
   };
 
   enum ReplyStatusType {
@@ -126,7 +129,7 @@ public:
   struct LocateRequestHeader {
   public:
     _CORBA_ULong          request_id;
-    _CORBA_Unbounded_Sequence__Octet object_key;
+    _CORBA_Unbounded_Sequence_Octet object_key;
   };
 
   enum LocateStatusType {
