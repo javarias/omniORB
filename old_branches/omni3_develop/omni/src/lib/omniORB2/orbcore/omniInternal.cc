@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.2.11  2000/03/01 17:57:41  dpg1
+  New omniObjRef::_compatibleServant() function to support object
+  references and servants written for languages other than C++.
+
   Revision 1.1.2.10  2000/02/22 12:25:38  dpg1
   A few things made `publicly' accessible so omniORBpy can get its hands
   on them.
@@ -605,7 +609,8 @@ omni::createObjRef(const char* mostDerivedRepoId,
   if( !pof ) {
     pof = proxyObjectFactory::lookup(targetRepoId);
     OMNIORB_ASSERT(pof);
-    target_intf_not_confirmed = 1;
+    if( strcmp(targetRepoId, CORBA::Object::_PD_repoId) )
+      target_intf_not_confirmed = 1;
   }
 
   if( !release_profiles )  profiles = new IOP::TaggedProfileList(*profiles);
