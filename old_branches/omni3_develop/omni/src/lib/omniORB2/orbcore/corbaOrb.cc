@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.29.6.17  2000/06/02 14:17:05  dpg1
+  Add static install() method to initialiser so extra initialisers /
+  deinitialisers can be added at run time (needed by omniORBpy).
+
   Revision 1.29.6.16  2000/05/24 17:19:41  dpg1
   Add documented but non-existent -ORBobjectTableSize and
   -ORBno_bootstrap_agent arguments
@@ -728,7 +732,7 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	    if (omniORB::trace(1)) {
 	      omniORB::logger l;
 	      l << "CORBA::ORB_init failed: syntactically incorrect URI `"
-		<< uri << "'\n";
+		<< (const char*)uri << "'\n";
 	    }
 	    return 0;
 	  }

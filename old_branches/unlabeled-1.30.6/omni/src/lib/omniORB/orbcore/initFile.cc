@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30.6.6  2000/05/24 17:21:07  dpg1
+  Fix const-correctness in error functions
+
   Revision 1.30.6.5  2000/04/27 10:49:33  dpg1
   Interoperable Naming Service
 
@@ -290,7 +293,7 @@ void initFile::initialize()
 	if (omniORB::trace(1)) {
 	  omniORB::logger l;
 	  l << "Configuration error: invalid ORBInitRef parameter `"
-	    << data << "'.\n";
+	    << (const char*)data << "'.\n";
 	}
 	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
       }
@@ -306,7 +309,7 @@ void initFile::initialize()
 	if (omniORB::trace(1)) {
 	  omniORB::logger l;
 	  l << "Configuration error: syntactically incorrect URI `"
-	    << uri << "'\n";
+	    << (const char*)uri << "'\n";
 	}
 	OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
       }
