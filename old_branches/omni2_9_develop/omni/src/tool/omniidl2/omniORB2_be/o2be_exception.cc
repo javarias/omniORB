@@ -25,6 +25,11 @@
 
 /*
   $Log$
+  Revision 1.19.4.1  1999/09/15 20:28:44  sll
+  Fixed bug - exception constructor does not duplicate object reference arg.
+  Back port from version5.7 tree
+  Update stub to use new cdrstreams.
+
   Revision 1.18  1999/07/19 09:49:32  djr
   Put back prefix Exception/UserException onto type id of exceptions.
 
@@ -86,6 +91,7 @@
 #include <idl.hh>
 #include <idl_extern.hh>
 #include <o2be.h>
+#include <o2be_stringbuf.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
@@ -299,7 +305,10 @@ o2be_exception::produce_hdr(std::fstream &s)
   IND(s); s << "static " << uqname()
 	    << "* _narrow(CORBA::Exception* e);\n";
   IND(s); s << "// NOTE: deprecated function from CORBA 2.2. Should use _downcast instead.\n";
+#if 0
   IND(s); s << "void operator>>= (cdrStream &) const;\n";
+#endif
+  IND(s); s << "static _core_attr CORBA::Boolean marshalException(cdrStream&,const CORBA::UserException*);\n";
   IND(s); s << "void operator<<= (cdrStream &);\n";
   IND(s); s << "static _core_attr CORBA::Exception::insertExceptionToAny    insertToAnyFn;\n";
   IND(s); s << "static _core_attr CORBA::Exception::insertExceptionToAnyNCP insertToAnyFnNCP;\n";
@@ -690,6 +699,7 @@ o2be_exception::produce_skel(std::fstream &s)
   IND(s); s << "}\n";
   DEC_INDENT_LEVEL();
 
+#if 0
   IND(s); s << "void\n";
   IND(s); s << fqname() << "::operator>>= (cdrStream &_n) const\n";
   IND(s); s << "{\n";
@@ -724,6 +734,54 @@ o2be_exception::produce_skel(std::fstream &s)
   }
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n\n";
+#endif
+  IND(s); s << "CORBA::Boolean\n";
+  IND(s); s << fqname() << "::marshalException(cdrStream &_n,const CORBA::UserException* ex)\n";
+  IND(s); s << "{\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "const " << fqname() << "* _0RL_ex;\n";
+  IND(s); s << "if ( !(_0RL_ex = " 
+	    << fqname() << "::_downcast(ex)) ) return 0;\n";
+  
+  o2be_operation::produceConstStringMarshalCode(s,"_n",repoIdConstName(),
+						repoIdConstLen());
+  {
+    UTL_ScopeActiveIterator i(this, UTL_Scope::IK_decls);
+    while (!i.is_done())
+      {
+	AST_Decl* d = i.item();
+	i.next();
+	if( d->node_type() != AST_Decl::NT_field )  continue;
+
+	o2be_operation::argMapping mapping;
+	o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(
+		     AST_Field::narrow_from_decl(d)->field_type(),
+		     o2be_operation::wIN,mapping);
+
+	if (ntype == o2be_operation::tTypeCode) {
+	  ntype = o2be_operation::tTypeCodeMember;
+	  mapping.is_pointer = I_FALSE;
+	}	      
+
+	StringBuf fieldname;
+	fieldname += "(_0RL_ex->";
+	fieldname += o2be_field::narrow_from_decl(d)->uqname();
+	fieldname += ")";
+	o2be_operation::produceMarshalCode(
+                     s,
+		     AST_Field::narrow_from_decl(d)->field_type(),
+		     ScopeAsDecl(defined_in()),
+		     "_n",
+		     (const char*) fieldname,
+		     ntype,
+		     mapping);
+	fieldname.clear();
+      }
+  }
+  IND(s); s << "return 1;\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n\n";
+
 
   IND(s); s << "void\n";
   IND(s); s << fqname() << "::operator<<= (cdrStream &_n)\n";

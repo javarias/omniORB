@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.27  1999/08/09 12:26:05  sll
+ Removed pd_out_adptarg_name from o2be_array
+
  Revision 1.26  1999/06/18 20:46:12  sll
  *** empty log message ***
 
@@ -792,9 +795,19 @@ public:
   void produce_proxy_wr_skel(std::fstream& s,o2be_interface &defined_in);
   // produce the definition of the proxy's method to set this attribute
 
+  void produce_server_skel_aux(std::fstream& s);
+  // Generate the support functions and upcall descriptor of this operation.
+  // The code is used by the code fragment produced by produce_server_skel.
+
+  void produce_server_rd_call_desc(std::fstream& s, const char* class_name);
+  // Generate the upcall descriptor for read attribute operation.
+
   void produce_server_rd_skel(std::fstream& s,o2be_interface &defined_in);
   // produce the code fragment within the server's dispatch routine
   // to handle getting this attribute
+
+  void produce_server_wr_call_desc(std::fstream& s, const char* class_name);
+  // Generate the upcall descriptor for write attribute operation.
 
   void produce_server_wr_skel(std::fstream& s,o2be_interface &defined_in);
   // produce the code fragment within the server's dispatch routine
@@ -889,6 +902,13 @@ public:
 			  const char* alias_prefix=0);
   // Produce the definition of the proxy's method to invoke this
   // operation.
+
+  void produce_server_skel_aux(std::fstream& s);
+  // Generate the support functions and upcall descriptor of this operation.
+  // The code is used by the code fragment produced by produce_server_skel.
+
+  void produce_server_call_desc(std::fstream& s, const char* class_name);
+  // Generate the upcall descriptor for this operation signature.
 
   void produce_server_skel(std::fstream& s, o2be_interface& defined_in);
   // Produce the code fragment within the server's dispatch routine
@@ -1017,6 +1037,10 @@ private:
   static
   void
   check_and_produce_unnamed_argument_tc_value(std::fstream& s,AST_Decl* d);
+
+  static
+  void
+  declareUpcallVarType(std::fstream&,AST_Decl*,AST_Decl*,argWhich);
 
 private:
   char* pd_mangled_signature;
@@ -1527,6 +1551,23 @@ public:
   static char* generate_unique_name(const char* prefix);//DH
   // Generates a unique identifier each time it is called.
   // <prefix> is used as a prefix!! eg. _0RL_ctx_
+};
+
+
+class o2be_upcall_desc {
+public:
+  static void produce_descriptor(std::fstream& s, o2be_operation& op);
+  static void produce_descriptor(std::fstream& s, o2be_attribute& attr);
+  // Generate the upcall descriptor(s) for the given operation,
+  // if necassary. (ie. the call descriptor is generated at
+  // most once for a given signature. Some signatures are
+  // defined in the library, and so not generated at all).
+
+  static const char* descriptor_name(o2be_operation& op);
+  static const char* read_descriptor_name(o2be_attribute& attr);
+  static const char* write_descriptor_name(o2be_attribute& attr);
+  // These return the name of the call descriptor class for the
+  // given operation or attribute.
 };
 
 

@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.4.2  1999/09/25 17:00:29  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.39.2.1  1999/09/24 11:33:31  sll
   Removed else if nesting in stub dispatch function. This makes life easier
   for MS VC++ when compiling an interface with a pathologically large
@@ -1567,13 +1570,27 @@ o2be_interface::produce_skel(std::fstream &s)
 	}
     }
   
+  // server upcall descriptor classes and support functions
+  {
+    UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+    while (!i.is_done())
+      {
+	AST_Decl *d = i.item();
+	if (d->node_type() == AST_Decl::NT_op) {
+	  o2be_operation::narrow_from_decl(d)->produce_server_skel_aux(s);
+	}
+	else if (d->node_type() == AST_Decl::NT_attr) {
+	  o2be_attribute::narrow_from_decl(d)->produce_server_skel_aux(s);
+	}
+	i.next();
+      }
+  }
 
   // server skeleton dispatch function
   IND(s); s << "CORBA::Boolean\n";
   IND(s); s << server_fqname() << "::dispatch(GIOP_S &_giop_s,const char *_0RL_op,CORBA::Boolean _0RL_response_expected)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "cdrStream& _0RL_s = (cdrStream&)_giop_s;\n";
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
     while (!i.is_done())
