@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.9  1999/06/18 21:17:31  sll
+  Updated copyright notice.
+
   Revision 1.8  1999/05/26 11:46:30  sll
   Replaced WrTimedLock with WrTestLock.
   Changed the operator() of Strand_iterator to increment the ref count
@@ -573,10 +576,7 @@ public:
     return *this;
   }
 
-  virtual ~Endpoint() {
-    delete [] pd_protocolname;
-    return;
-  }
+  virtual ~Endpoint();
 
   _CORBA_Boolean is_protocol(const _CORBA_Char *name) const {
     if (strcmp((const char *)name,(char *)pd_protocolname) == 0) {
