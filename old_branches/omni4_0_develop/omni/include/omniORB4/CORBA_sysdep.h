@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.23  2003/03/02 17:10:40  dgrisby
+ AIX patches integrated in main tree.
+
  Revision 1.2.2.22  2003/02/17 02:03:07  dgrisby
  vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -181,6 +184,13 @@
 #if defined(_MSC_VER)
 
 #  define NEED_DUMMY_RETURN
+
+// VC.NET 2003 (v. 7.1) has problems recognizing inline friend
+// operators.
+
+#  if (_MSC_VER == 1310)
+#    define OMNI_NO_INLINE_FRIENDS
+#  endif
 
 //
 // _OMNIORB_LIBRARY         is defined when the omniORB library is compiled.
