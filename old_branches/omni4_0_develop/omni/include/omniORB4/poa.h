@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.12  2001/11/13 14:11:44  dpg1
+  Tweaks for CORBA 2.5 compliance.
+
   Revision 1.2.2.11  2001/10/19 11:05:25  dpg1
   ObjectId to/from wstring
 
@@ -430,7 +433,10 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
 
   protected:
     inline POAManager(int is_nil = 0) {
-      _PR_setobj((omniObjRef*) (is_nil ? 0:1));
+      if (is_nil)
+	_PR_setobj((omniObjRef*)0);
+      else
+	_PR_setobj((omniObjRef*)1);
     }
     virtual ~POAManager();
 
@@ -587,7 +593,12 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
     static POA_ptr _the_root_poa();
 
   protected:
-    inline POA(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+    inline POA(int nil) {
+      if (nil)
+	_PR_setobj((omniObjRef*)0);
+      else
+	_PR_setobj((omniObjRef*)1);
+    }
     virtual ~POA();
 
   private:

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/11/13 14:11:43  dpg1
+  Tweaks for CORBA 2.5 compliance.
+
   Revision 1.1.2.5  2001/11/06 15:41:34  dpg1
   Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -254,7 +257,12 @@ public:
   virtual ~ORB();
 
 protected:
-  inline ORB(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+  inline ORB(int nil) {
+    if (nil)
+      _PR_setobj((omniObjRef*)0);
+    else
+      _PR_setobj((omniObjRef*)1);
+  }
 
 private:
   ORB(const ORB&);

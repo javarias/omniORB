@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2002/03/18 15:13:09  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.2.5  2001/10/29 17:44:59  dpg1
   Missing loop increment.
 
@@ -434,7 +439,7 @@ orbOptions::addKVULong(const char* key, CORBA::ULong value,
 
   l = strlen(key) + 16;
   kv = CORBA::string_alloc(l);
-  sprintf(kv,"%s = %lu",key,value);
+  sprintf(kv,"%s = %lu",key,(unsigned long)value);
 
   l = result.length();
   result.length(l+1);

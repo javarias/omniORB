@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:44  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -88,7 +91,12 @@ public:
   static _core_attr const char* _PD_repoId;
 
 protected:
-  inline BOA(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+  inline BOA(int nil) {
+    if (nil)
+      _PR_setobj((omniObjRef*)0);
+    else
+      _PR_setobj((omniObjRef*)1);
+  }
   virtual ~BOA();
 
 private:

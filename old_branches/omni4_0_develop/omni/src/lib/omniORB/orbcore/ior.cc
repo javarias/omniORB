@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.23  2003/02/03 16:53:14  dgrisby
+  Force type in constructor argument to help confused compilers.
+
   Revision 1.10.2.22  2003/01/14 14:18:12  dgrisby
   Don't overwrite component data when decoding multi component profile.
 
@@ -515,7 +518,7 @@ omniIOR::dump_TAG_ORB_TYPE(const IOP::TaggedComponent& c)
   else {
     len += 16;
     outstr = CORBA::string_alloc(len);
-    sprintf(outstr,"%s 0x%08lx","TAG_ORB_TYPE",orb_type);
+    sprintf(outstr,"%s 0x%08lx","TAG_ORB_TYPE",(unsigned long)orb_type);
   }
   return outstr._retn();
 }
@@ -964,7 +967,7 @@ IOP::dumpComponent(const IOP::TaggedComponent& c) {
     strcpy(p,tagname);
   }
   else {
-    sprintf(p,"unknown tag(0x%08lx)",c.tag);
+    sprintf(p,"unknown tag(0x%08lx)",(unsigned long)c.tag);
   }
   p += strlen(p);
   *p++ = ' ';

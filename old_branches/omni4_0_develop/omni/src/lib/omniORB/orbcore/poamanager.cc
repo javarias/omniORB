@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2002/01/16 11:32:00  dpg1
+  Race condition in use of registerNilCorbaObject/registerTrackedObject.
+  (Reported by Teemu Torma).
+
   Revision 1.2.2.8  2001/11/13 14:11:46  dpg1
   Tweaks for CORBA 2.5 compliance.
 
@@ -337,7 +341,12 @@ omniOrbPOAManager::deactivate(CORBA::Boolean etherealize_objects,
 
   void** args = new void* [3];
   args[0] = ppoas;
-  args[1] = (void*) (int) etherealize_objects;
+
+  if (etherealize_objects)
+    args[1] = (void*)1;
+  else
+    args[1] = (void*)0;
+
   args[2] = &pd_deactivated;
 
   if( wait_for_completion )

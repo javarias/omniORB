@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2003/02/03 16:53:14  dgrisby
+  Force type in constructor argument to help confused compilers.
+
   Revision 1.1.2.14  2002/11/26 14:51:50  dgrisby
   Implement missing interceptors.
 
@@ -360,7 +363,7 @@ static void write_codeset_name(char* buf, const char* cname,
     strcat(buf,cname);
   else {
     char* p = buf + strlen(buf);
-    sprintf(p,"0x%08lx",id);
+    sprintf(p,"0x%08lx",(unsigned long)id);
   }
 }
 
