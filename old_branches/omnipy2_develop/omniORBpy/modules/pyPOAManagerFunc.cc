@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.2  2000/12/04 18:57:24  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.1.2.1  2000/10/13 13:55:26  dpg1
 // Initial support for omniORB 4.
 //
@@ -59,6 +63,17 @@ omniPy::createPyPOAManagerObject(const PortableServer::POAManager_ptr pm)
 }
 
 
+static PyObject*
+raiseAdapterInactive(PyObject* pyPM)
+{
+  PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
+  OMNIORB_ASSERT(excc);
+  PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
+  PyErr_SetObject(excc, exci);
+  return 0;
+}
+
+
 extern "C" {
 
   static PyObject* pyPM_activate(PyObject* self, PyObject* args)
@@ -76,11 +91,7 @@ extern "C" {
       pm->activate();
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
-      OMNIORB_ASSERT(excc);
-      PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
-      PyErr_SetObject(excc, exci);
-      return 0;
+      return raiseAdapterInactive(pyPM);
     }
     Py_INCREF(Py_None); return Py_None;
   }
@@ -101,11 +112,7 @@ extern "C" {
       pm->hold_requests(wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
-      OMNIORB_ASSERT(excc);
-      PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
-      PyErr_SetObject(excc, exci);
-      return 0;
+      return raiseAdapterInactive(pyPM);
     }
     Py_INCREF(Py_None); return Py_None;
   }
@@ -126,11 +133,7 @@ extern "C" {
       pm->discard_requests(wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
-      OMNIORB_ASSERT(excc);
-      PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
-      PyErr_SetObject(excc, exci);
-      return 0;
+      return raiseAdapterInactive(pyPM);
     }
     Py_INCREF(Py_None); return Py_None;
   }
@@ -151,11 +154,7 @@ extern "C" {
       pm->deactivate(eo, wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
-      OMNIORB_ASSERT(excc);
-      PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
-      PyErr_SetObject(excc, exci);
-      return 0;
+      return raiseAdapterInactive(pyPM);
     }
     Py_INCREF(Py_None); return Py_None;
   }
