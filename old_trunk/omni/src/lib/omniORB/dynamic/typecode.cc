@@ -30,6 +30,11 @@
 
 /* 
  * $Log$
+ * Revision 1.12  1998/08/15 14:33:47  sll
+ * Added NEED_DUMMY_RETURN macros to avoid better compiler to complain about
+ * unreachable code.
+ * Moved from CORBA.h inline member functions and operators.
+ *
  * Revision 1.11  1998/08/14 13:55:01  sll
  * Added pragma hdrstop to control pre-compile header if the compiler feature
  * is available.
@@ -2536,24 +2541,14 @@ CORBA::IRObject::_nil()
 
 /**************************************************************************/
 
-#if defined(HAS_Cplusplus_Namespace) 
-
-// operators are defined in the CORBA namespace
-#define OPERATOR_PREFIX CORBA::
-
-#else
-// operators are defined in the global namespace
-#define OPERATOR_PREFIX
-#endif
-
 void
-OPERATOR_PREFIX operator>>= (CORBA::DefinitionKind _e,NetBufferedStream &s)
+operator>>= (CORBA::DefinitionKind _e,NetBufferedStream &s)
 {
   ::operator>>=((CORBA::ULong)_e,s);
 }
 
 void
-OPERATOR_PREFIX operator<<= (CORBA::DefinitionKind &_e,NetBufferedStream &s) 
+operator<<= (CORBA::DefinitionKind &_e,NetBufferedStream &s) 
 {
   CORBA::ULong _0RL_e;
   _0RL_e <<= s;
@@ -2584,13 +2579,13 @@ OPERATOR_PREFIX operator<<= (CORBA::DefinitionKind &_e,NetBufferedStream &s)
 }
 
 void 
-OPERATOR_PREFIX operator>>= (CORBA::DefinitionKind _e,MemBufferedStream &s)
+operator>>= (CORBA::DefinitionKind _e,MemBufferedStream &s)
 {
   ::operator>>=((CORBA::ULong)_e,s);
 }
 
 void
-OPERATOR_PREFIX operator<<= (CORBA::DefinitionKind &_e,MemBufferedStream &s)
+operator<<= (CORBA::DefinitionKind &_e,MemBufferedStream &s)
 {
   CORBA::ULong _0RL_e;
   _0RL_e <<= s;
