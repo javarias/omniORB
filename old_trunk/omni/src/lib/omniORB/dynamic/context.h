@@ -26,6 +26,10 @@
 // Description:
 //
 
+/*
+ $Log$
+*/
+
 #ifndef __CONTEXT_H__
 #define __CONTEXT_H__
 
@@ -69,6 +73,8 @@ public:
   //  Must not hold <pd_lock>.
 
 private:
+  friend class CORBA::Context;
+
   ContextImpl(const ContextImpl&);             // not implemented
   ContextImpl& operator=(const ContextImpl&);  // not implemented
 
