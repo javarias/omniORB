@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.7  2001/09/24 10:48:25  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.1.2.6  2001/08/01 10:12:36  dpg1
 // Main thread policy.
 //
@@ -309,7 +312,7 @@ PyUserException::operator<<=(cdrStream& stream)
 
 void
 omniPy::
-PyUserException::_raise()
+PyUserException::_raise() const
 {
   OMNIORB_ASSERT(desc_);
   OMNIORB_ASSERT(exc_);

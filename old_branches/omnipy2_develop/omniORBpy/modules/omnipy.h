@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.14  2001/09/24 10:48:25  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.2.4.13  2001/08/21 10:52:41  dpg1
 // Update to new ORB core APIs.
 //
@@ -660,7 +663,7 @@ public:
     void operator<<=(cdrStream& stream);
 
     // Inherited virtual functions
-    virtual void              _raise();
+    virtual void              _raise() const;
     virtual const char*       _NP_repoId(int* size)          const;
     virtual void              _NP_marshal(cdrStream& stream) const;
     virtual CORBA::Exception* _NP_duplicate()         	     const;
