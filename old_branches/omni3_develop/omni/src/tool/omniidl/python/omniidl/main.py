@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.4  2000/02/22 16:44:50  dpg1
+# Cosmetic change.
+#
 # Revision 1.15.2.3  2000/02/17 11:18:05  dpg1
 # Multiple -p flags now preserve the order, rather than reversing it.
 #
@@ -104,7 +107,7 @@ import getopt, os, os.path, string
 
 import idlast, idltype
 
-cmdname = os.path.basename(sys.argv[0])
+cmdname = "omniidl"
 
 def version():
     print "omniidl version 0.1"
