@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/08/31 16:59:59  sll
+  Support '^' prefix in address field.
+  Do host address lookup in extractIPv4 if necessary.
+
   Revision 1.1.2.3  2001/08/31 11:56:52  sll
   Change the default preference to unix,tcp,ssl.
   Minor fix to extractIPv4.
@@ -449,8 +453,8 @@ public:
   clientTransportRuleHandler() : 
     orbOptions::Handler("clientTransportRule",
 			"clientTransportRule = <address mask>  [action]+",
-			0,
-			0) {}
+			1,
+			"-ORBclientTransportRule \"<address mask>  [action]+\"") {}
 
   void visit(const char* value,
 	     orbOptions::Source)  throw (orbOptions::BadParam) {
@@ -484,8 +488,8 @@ public:
   serverTransportRuleHandler() : 
     orbOptions::Handler("serverTransportRule",
 			"serverTransportRule = <address mask>  [action]+",
-			0,
-			0) {}
+			1,
+			"-ORBserverTransportRule \"<address mask>  [action]+\"") {}
 
   void visit(const char* value,
 	     orbOptions::Source) throw (orbOptions::BadParam) {
