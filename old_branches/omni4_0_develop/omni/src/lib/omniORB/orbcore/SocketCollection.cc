@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2003/02/17 01:46:23  dgrisby
+  Pipe to kick select thread (on Unix).
+
   Revision 1.1.2.12  2003/01/28 12:17:09  dgrisby
   Bug with Select() ignoring data in buffer indications.
 
@@ -256,11 +259,13 @@ SocketCollection::setSelectable(SocketHandle_t sock,
     }
     // Wake up the thread blocked in select() if we can.
     if (pd_pipe_write > 0) {
+#ifdef UnixArchitecture
       if (!pd_pipe_full) {
 	char data = '\0';
 	pd_pipe_full = 1;
 	write(pd_pipe_write, &data, 1);
       }
+#endif
     }
     else {
       pd_select_cond.signal();
@@ -383,9 +388,11 @@ SocketCollection::Select() {
 	  nready--;
 
           if (fd == pd_pipe_read) {
+#ifdef UnixArchitecture
             char data;
             read(pd_pipe_read, &data, 1);
             pd_pipe_full = 0;
+#endif
           }
 	  else {
 	    if (FD_ISSET(fd,&pd_fdset_2)) {
