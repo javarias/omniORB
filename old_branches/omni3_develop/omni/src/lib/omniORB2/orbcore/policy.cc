@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.6.5  1999/10/29 13:18:20  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.2.6.4  1999/10/16 13:22:54  djr
   Changes to support compiling on MSVC.
 
@@ -80,9 +83,6 @@ void
 CORBA::Policy::destroy()
 {
   if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();
-
-  // We use reference counting -- don't allow destroying.
-  throw NO_PERMISSION();
 }
 
 
