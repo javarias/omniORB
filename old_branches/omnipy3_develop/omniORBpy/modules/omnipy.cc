@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.3  2003/07/10 22:13:25  dgrisby
+// Abstract interface support.
+//
 // Revision 1.1.4.2  2003/05/20 17:10:23  dgrisby
 // Preliminary valuetype support.
 //
@@ -575,7 +578,7 @@ extern "C" {
   omnipy_invoke(PyObject* self, PyObject* args)
   {
     // Arg format
-    //  (objref, op_name, (in_desc, out_desc, exc_desc), args)
+    //  (objref, op_name, (in_desc, out_desc, exc_desc [, ctxt]), args)
     //
     //  exc_desc is a dictionary containing a mapping from repoIds to
     //  tuples of the form (exception class, marshal desc., param count)
@@ -584,11 +587,6 @@ extern "C" {
     char*  op;
     size_t op_len;
 
-    /*
-    if (!PyArg_ParseTuple(args, "Os#(OOO)O", &pyobjref, &op, &op_len,
-			  &in_d, &out_d, &exc_d, &op_args))
-      return 0;
-    */
     PyObject* o;
     PyObject* desc;
 

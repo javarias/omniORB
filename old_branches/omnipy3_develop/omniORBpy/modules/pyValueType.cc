@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.3  2003/09/26 15:57:07  dgrisby
+// Refactor repoId handling.
+//
 // Revision 1.1.2.2  2003/07/10 22:15:02  dgrisby
 // Fix locking issues (merge from omnipy2_develop).
 //
@@ -37,7 +40,6 @@
 
 #include <omnipy.h>
 #include <pyThreadCache.h>
-#include <valueTracker.h>
 
 OMNI_USING_NAMESPACE(omni)
 
