@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  2000/01/19 17:05:16  djs
+# Modified to use an externally stored C++ output template.
+#
 
 """C++ templates for the SK.cc file"""
 
@@ -73,7 +76,8 @@ void @name@_Helper::marshalObjRef(@name@_ptr obj, MemBufferedStream& s) {
 
 @name@_ptr @name@_Helper::unmarshalObjRef(MemBufferedStream& s) {
   return @name@::_unmarshalObjRef(s);
-}"""
+}
+"""
 
 interface_class = """\
 @name@_ptr

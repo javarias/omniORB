@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.1  2000/02/14 18:34:54  dpg1
+# New omniidl merged in.
+#
 # Revision 1.17  2000/01/20 12:47:09  djs
 # *** empty log message ***
 #
@@ -271,7 +274,8 @@ def operation(operation):
         argument_type_names = argument_instance(argument_type)
         # declare the argument
         get_arguments.out("""\
-@argument_type_name@ @argument_name@;""",
+@argument_type_name@ @argument_name@;
+""",
                           argument_type_name = argument_type_names[direction],
                           argument_name = argument_prefixed_name)
         # consider the need to demarshal it
@@ -355,7 +359,8 @@ def operation(operation):
             result_mapping = result_mapping + "_var"
             
         decl_result.out("""\
-@result_type@ result;""", result_type = result_mapping)
+@result_type@ result;
+""", result_type = result_mapping)
 
         marshal_name = "result"
         align_name = "result"
