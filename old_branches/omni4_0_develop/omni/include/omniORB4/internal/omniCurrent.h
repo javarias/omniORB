@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/10/14 20:06:41  dgrisby
+  Per objref / per thread timeouts.
+
   Revision 1.1.2.2  2001/08/17 17:12:34  sll
   Modularise ORB configuration parameters.
 
@@ -71,7 +74,7 @@ public:
     if (!_OMNI_NS(orbParameters)::supportCurrent) return 0;
 
     omni_thread* thr = omni_thread::self();
-    if (!thr) return 0;
+    if (!thr || !thread_key) return 0;
 
     omniCurrent* current = (omniCurrent*)(thr->get_value(thread_key));
     if (!current)
@@ -81,6 +84,7 @@ public:
 
   static inline omniCurrent* get(omni_thread* thr)
   {
+    if (!thread_key) return 0;
     omniCurrent* current = (omniCurrent*)(thr->get_value(thread_key));
     if (!current)
       current = new omniCurrent(thr);
