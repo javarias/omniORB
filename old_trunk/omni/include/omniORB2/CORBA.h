@@ -29,6 +29,13 @@
 
 /*
  $Log$
+ Revision 1.41  1999/06/27 16:44:42  sll
+ enclose Any extraction operator for string with test for macro
+ _NO_ANY_STRING_EXTRACTION_. Define this macro as compiler option would
+ remove the operators from the declaration. This make it easier to
+ find the code in the source where the operators are used. Hence make it
+ easier to fix old code which uses the pre-2.8.0 semantics.
+
  Revision 1.40  1999/06/25 13:54:17  sll
  Removed Any::operator>>=(Object_ptr&) const.
 
@@ -1404,7 +1411,8 @@ _CORBA_MODULE_BEG
 
   class InterfaceDef;
 
-  class ImplementationDef;
+  class ImplementationDef { // Not used. 
+  };
   typedef ImplementationDef* ImplementationDef_ptr;
 
   class OperationDef;
