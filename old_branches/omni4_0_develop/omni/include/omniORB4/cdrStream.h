@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2002/03/11 12:23:03  dpg1
+  Tweaks to avoid compiler warnings.
+
   Revision 1.1.2.17  2001/11/14 17:13:41  dpg1
   Long double support.
 
@@ -774,6 +777,10 @@ public:
   // Data in the buffer is little-endian (<littleendian> = TRUE(1)) or
   // big-endian (<littleendian> = FALSE(0)). Setup the cdrStream
   // accordingly.
+
+  inline _CORBA_Boolean readOnly() { return pd_readonly_and_external_buffer; }
+  // Return true if the stream is read-only -- i.e. it is using an
+  // external buffer.
 
   cdrMemoryStream(const cdrMemoryStream&, _CORBA_Boolean read_only = 0);
   // Copy a stream. If the source stream is read-only, or <read_only>
