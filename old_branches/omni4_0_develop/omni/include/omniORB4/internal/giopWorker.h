@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/07/13 15:21:22  sll
+  Added access functions.
+
   Revision 1.1.4.1  2001/04/18 17:18:59  sll
   Big checkin with the brand new internal APIs.
 
@@ -48,6 +51,7 @@ public:
 	     CORBA::Boolean singleshot=0);
 
   void execute();
+  void real_execute();
 
   void terminate();
   // finish off this task, call by another thread.
