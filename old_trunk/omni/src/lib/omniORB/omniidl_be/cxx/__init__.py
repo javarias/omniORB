@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/11 11:35:36  djs
+# Added support for fragment generation (-F) mode
+#
 # Revision 1.12  2000/01/10 15:39:34  djs
 # Better name and scope handling.
 #
@@ -92,7 +95,8 @@ cpp_args = ["-D__OMNIIDL_CXX__"]
 usage_string = """\
   -Wba            Generate code for TypeCodes and Any
   -Wbtp           Generate 'tie' implementation skeletons
-  -Wbtf           Generate flattened 'tie' implementation skeletons"""
+  -Wbtf           Generate flattened 'tie' implementation skeletons
+  -WbF            Generates code fragments (for expert only)"""
 
 # -----------------------------
 # Process back end specific arguments
