@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.18  1999/01/07 15:33:34  djr
+  New configuration variable omniORB::diiThrowsSysExceptions
+  New command line options -ORBdiiThrowsSysExceptions
+                           -ORBinConScanPeriod
+                           -ORBoutConScanPeriod
+
   Revision 1.17  1998/08/26 21:52:29  sll
   Added configuration variable omniORB::maxTcpConnectionPerServer.
 
@@ -116,7 +122,7 @@ CORBA::Boolean                  omniORB::strictIIOP = 0;
 #if defined(HAS_Cplusplus_Namespace)
 char*                           omniORB::serverName = 0;
 #else
-CORBA::String_var		omniORB::serverName = (const char*)"unknown";
+CORBA::String_var		omniORB::serverName((const char*) "unknown");
 #endif
 CORBA::Boolean                  omniORB::tcAliasExpand = 0;
 unsigned int                    omniORB::maxTcpConnectionPerServer = 5;
