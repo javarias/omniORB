@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.5  1997/12/09 19:55:01  sll
+  *** empty log message ***
+
   Revision 1.4  1997/08/27 17:55:07  sll
   If the true type of an interface is Object, use CORBA::Object_member as
   the field member type name.
@@ -138,8 +141,18 @@ o2be_typedef::produce_skel(fstream &s)
 {
   AST_Decl *decl = base_type();
 
+  while (decl->node_type() == AST_Decl::NT_typedef) {
+    decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+  }
+
   if (decl->node_type() == AST_Decl::NT_array)
-    o2be_array::narrow_from_decl(decl)->produce_skel(s,this);
+    {
+      if (base_type()->node_type() == AST_Decl::NT_array)
+	o2be_array::narrow_from_decl(decl)->produce_skel(s,this);
+      else
+	o2be_array::produce_typedef_skel(s,this,
+					 o2be_typedef::narrow_from_decl(base_type()));
+    }
 }
 
 const char*
