@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/04/18 18:18:11  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.4  2000/11/22 14:37:59  dpg1
   Code set marshalling functions now take a string length argument.
 
@@ -148,7 +151,7 @@ omniCodeSet::getNCS_C(const char* name)
 {
   omniCodeSet::Base* cs;
   for (cs = ncs_c_head; cs; cs = cs->pd_next) {
-    if (!strcmp(cs->name(), name))
+    if (omni::strMatch(cs->name(), name))
       return (NCS_C*)cs;
   }
   return 0;
@@ -159,7 +162,7 @@ omniCodeSet::getNCS_W(const char* name)
 {
   omniCodeSet::Base* cs;
   for (cs = ncs_w_head; cs; cs = cs->pd_next) {
-    if (!strcmp(cs->name(), name))
+    if (omni::strMatch(cs->name(), name))
       return (NCS_W*)cs;
   }
   return 0;
@@ -172,7 +175,8 @@ omniCodeSet::getTCS_C(const char* name, GIOP::Version v)
   omniCodeSet::TCS_C* tcs;
   for (cs = tcs_c_head; cs; cs = cs->pd_next) {
     tcs = (omniCodeSet::TCS_C*)cs;
-    if (!strcmp(cs->name(), name) && versionMatch(tcs->giopVersion(), v))
+    if (omni::strMatch(cs->name(), name) &&
+	versionMatch(tcs->giopVersion(), v))
       return tcs;
   }
   return 0;
@@ -185,7 +189,8 @@ omniCodeSet::getTCS_W(const char* name, GIOP::Version v)
   omniCodeSet::TCS_W* tcs;
   for (cs = tcs_w_head; cs; cs = cs->pd_next) {
     tcs = (omniCodeSet::TCS_W*)cs;
-    if (!strcmp(cs->name(), name) && versionMatch(tcs->giopVersion(), v))
+    if (omni::strMatch(cs->name(), name) &&
+	versionMatch(tcs->giopVersion(), v))
       return tcs;
   }
   return 0;

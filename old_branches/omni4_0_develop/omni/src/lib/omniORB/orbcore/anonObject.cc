@@ -30,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.3  2001/04/18 18:18:11  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.2  2000/09/27 17:43:55  sll
   Updated to match the changes in the proxyFactory class.
 
@@ -66,7 +69,7 @@ omniAnonObjRef::_ptrToObjRef(const char* repoId)
 {
   OMNIORB_ASSERT(repoId);
 
-  if( !strcmp(repoId, CORBA::Object::_PD_repoId) )
+  if( omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 
   return 0;

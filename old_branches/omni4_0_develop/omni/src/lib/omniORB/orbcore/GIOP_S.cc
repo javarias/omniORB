@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/05/29 17:03:50  dpg1
+  In process identity.
+
   Revision 1.1.4.4  2001/05/04 13:55:27  sll
   When a system exception is raised, send the exception before skipping rest
   of the input message. Helpful if the client sends a message shorter than
@@ -249,7 +252,7 @@ GIOP_S::handleRequest() {
       int i, repoid_size;  \
       const char* repoid = ex._NP_repoId(&repoid_size); \
       for( i = 0; i < pd_n_user_excns; i++ ) \
-	if( !strcmp(pd_user_excns[i], repoid) ) { \
+	if( omni::strMatch(pd_user_excns[i], repoid) ) { \
 	  impl()->sendUserException(this,ex); \
 	  break; \
 	} \

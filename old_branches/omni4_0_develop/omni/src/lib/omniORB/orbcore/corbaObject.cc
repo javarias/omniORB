@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.20.2.4  2001/04/18 18:18:10  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.20.2.3  2000/11/07 18:44:03  sll
   Renamed omniObjRef::_hash and _is_equivalent to __hash and __is_equivalent
   to avoid name clash with the member functions of CORBA::Object.
@@ -131,8 +134,8 @@ CORBA::Object::_is_a(const char* repoId)
   if( _NP_is_pseudo() )  return _ptrToObjRef(repoId) ? 1 : 0;
 
   if( _NP_is_nil() ) {
-    if( strcmp(repoId, "") == 0 )  return 1;
-    else                           return 0;
+    if( omni::strMatch(repoId, "") )  return 1;
+    else                              return 0;
   }
   else {
     return pd_obj->_real_is_a(repoId);
@@ -241,7 +244,7 @@ CORBA::Object::_ptrToObjRef(const char* repoId)
 {
   OMNIORB_ASSERT(repoId);
 
-  if( !strcmp(repoId, CORBA::Object::_PD_repoId) )
+  if( omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 
   return 0;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.8  2001/05/29 17:03:48  dpg1
+  In process identity.
+
   Revision 1.2.2.7  2001/05/10 15:08:37  dpg1
   _compatibleServant() replaced with _localServantTarget().
   createIdentity() now takes a target string.
@@ -406,7 +409,30 @@ _CORBA_MODULE_BEG
   //  Must not hold <internalLock>.
   //?? Error behaviour?
 
-  // stringToObject() and objectToString() now live in omniURI.h
+  _CORBA_MODULE_FN inline _CORBA_Boolean strMatch(const char* a,
+						  const char* b)
+  {
+    do {
+      if (*a != *b) return 0;
+    } while (*a++ && *b++);
+    return 1;
+  }
+
+  _CORBA_MODULE_FN inline _CORBA_Boolean ptrStrMatch(const char* a,
+						     const char* b)
+  {
+    if (a==b) return 1;
+    do {
+      if (*a != *b) return 0;
+    } while (*a++ && *b++);
+    return 1;
+  }
+  // Surprisingly, having these inline string matching functions gives
+  // a noticable performance improvement over using strcmp().
+  // ptrStrMatch() is used in cases where it's likely that the string
+  // pointers are the same; strMatch() is for cases where they
+  // definitely aren't, and saves a little bit of inline code.
+
 
   _CORBA_MODULE_FN void assertFail(const char* file, int line, const char* exp);
   _CORBA_MODULE_FN void ucheckFail(const char* file, int line, const char* exp);

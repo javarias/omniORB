@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.9  2001/05/09 16:59:08  sll
+  Added unmarshalObjectKey() to allow quick extraction of the object key.
+
   Revision 1.10.2.8  2001/04/18 18:18:07  sll
   Big checkin with the brand new internal APIs.
 
@@ -585,7 +588,7 @@ omniIOR::unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent& c ,
   i    = addresses.begin();
   last = addresses.end();
   for (; i != last; i++) {
-    if (strcmp((*i)->type(),"giop:tcp") == 0) {
+    if (omni::strMatch((*i)->type(),"giop:tcp")) {
       tcpaddr = (*i)->address();
       break;
     }

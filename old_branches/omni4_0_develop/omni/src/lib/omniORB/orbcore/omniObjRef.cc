@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.13  2001/05/29 17:03:52  dpg1
+  In process identity.
+
   Revision 1.2.2.12  2001/05/11 14:26:29  sll
   Use OMNIORB_THROW in rethrows to get better tracing info.
 
@@ -121,8 +124,8 @@ omniObjRef::_real_is_a(const char* repoId)
 {
   if( !repoId )  return 0;
 
-  if( _ptrToObjRef(repoId) )                   return 1;
-  if( !strcmp(repoId, pd_mostDerivedRepoId) )  return 1;
+  if( _ptrToObjRef(repoId) )                             return 1;
+  if( omni::ptrStrMatch(repoId, pd_mostDerivedRepoId) )  return 1;
 
   // Reach here because pd_flags.type_verified == 0, and we could not
   // verify the inheritance relationship using compile-time information.
@@ -422,9 +425,15 @@ omniObjRef::~omniObjRef()
     }
   }
 
-  if( pd_intfRepoId != pd_mostDerivedRepoId )
-    delete[] pd_intfRepoId;
-  if( pd_mostDerivedRepoId )  delete[] pd_mostDerivedRepoId;
+  if (pd_flags.static_repoId) {
+    if (pd_mostDerivedRepoId != pd_intfRepoId)
+      delete [] pd_mostDerivedRepoId;
+  }
+  else {
+    if( pd_intfRepoId != pd_mostDerivedRepoId )
+      delete[] pd_intfRepoId;
+    if( pd_mostDerivedRepoId )  delete[] pd_mostDerivedRepoId;
+  }
 
   if (pd_ior) {
     pd_ior->release();
@@ -446,7 +455,8 @@ omniObjRef::omniObjRef()
 
 
 omniObjRef::omniObjRef(const char* intfRepoId, omniIOR* ior,
-		       omniIdentity* id, omniLocalIdentity* lid)
+		       omniIdentity* id, omniLocalIdentity* lid,
+		       _CORBA_Boolean static_repoId)
   : pd_refCount(1),
     pd_ior(ior),
     pd_id(id),
@@ -457,15 +467,21 @@ omniObjRef::omniObjRef(const char* intfRepoId, omniIOR* ior,
   OMNIORB_ASSERT(ior);
   OMNIORB_ASSERT(id);
 
-  pd_intfRepoId = new char[strlen(intfRepoId) + 1];
-  strcpy(pd_intfRepoId, intfRepoId);
+  if (static_repoId) {
+    pd_intfRepoId = (char*)intfRepoId; // Excuse the dodgy cast :-)
+  }
+  else {
+    pd_intfRepoId = new char[strlen(intfRepoId) + 1];
+    strcpy(pd_intfRepoId, intfRepoId);
+  }
 
-  if( strcmp(intfRepoId, ior->repositoryID()) ) {
+  if( omni::ptrStrMatch(intfRepoId, ior->repositoryID()) ) {
+    pd_mostDerivedRepoId = pd_intfRepoId;
+  }
+  else {
     pd_mostDerivedRepoId = new char[strlen(ior->repositoryID()) + 1];
     strcpy(pd_mostDerivedRepoId, ior->repositoryID());
   }
-  else
-    pd_mostDerivedRepoId = pd_intfRepoId;
 
   pd_flags.forward_location = 0;
   pd_flags.type_verified = 1;
@@ -473,6 +489,7 @@ omniObjRef::omniObjRef(const char* intfRepoId, omniIOR* ior,
   pd_flags.transient_exception_handler = 0;
   pd_flags.commfail_exception_handler = 0;
   pd_flags.system_exception_handler = 0;
+  pd_flags.static_repoId = static_repoId;
 }
 
 

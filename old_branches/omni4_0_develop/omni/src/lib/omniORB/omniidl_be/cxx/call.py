@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.5  2001/05/02 14:20:15  sll
+# Make sure that getStream() is used instead of casting to get a cdrStream
+# from a IOP_C and IOP_S.
+#
 # Revision 1.1.4.4  2001/04/19 09:30:12  sll
 #  Big checkin with the brand new internal APIs.
 # Scoped where appropriate with the omni namespace.
@@ -660,7 +664,7 @@ class CallDescriptor:
                 repoID_str = id.Name(repoID).fullyQualify()
                 exname = id.Name(scopedName).fullyQualify()
                 block.out( \
-                      "if ( strcmp(repoId, @repoID_str@) == 0 ) {\n" + \
+                      "if ( omni::strMatch(repoId, @repoID_str@) ) {\n" + \
                       "  @exname@ _ex;\n" + \
                       "  _ex <<= s;\n" + \
                       "  iop_client.RequestCompleted();\n" + \

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.5  2001/04/18 18:18:07  sll
+ Big checkin with the brand new internal APIs.
+
  Revision 1.2.2.4  2000/11/09 12:27:57  dpg1
  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -490,7 +493,7 @@ omniObjAdapter::matchMyEndpoints(const char* addr)
 {
   for ( omnivector<const char*>::iterator i = oa_endpoints.begin();
 	i != oa_endpoints.end(); i++) {
-    if (strcmp((*i),addr) == 0) return 1;
+    if (omni::ptrStrMatch((*i),addr)) return 1;
   }
   return 0;
 }

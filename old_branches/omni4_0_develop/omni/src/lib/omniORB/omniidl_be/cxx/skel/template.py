@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.7  2001/05/29 17:03:50  dpg1
+# In process identity.
+#
 # Revision 1.3.2.6  2001/05/02 14:20:15  sll
 # Make sure that getStream() is used instead of casting to get a cdrStream
 # from a IOP_C and IOP_S.
@@ -175,7 +178,7 @@ interface_objref = """\
 
 @fq_objref_name@::@objref_name@(omniIOR* ior, omniIdentity* id, omniLocalIdentity* lid) :
    @inherits_str@
-   omniObjRef(@name@::_PD_repoId, ior, id, lid)
+   omniObjRef(@name@::_PD_repoId, ior, id, lid, 1)
 {
   _PR_setobj(this);
 }
@@ -183,17 +186,17 @@ interface_objref = """\
 void*
 @fq_objref_name@::_ptrToObjRef(const char* id)
 {
-  if( !strcmp(id, CORBA::Object::_PD_repoId) )
-    return (CORBA::Object_ptr) this;
-  if( !strcmp(id, @name@::_PD_repoId) )
+  if( omni::ptrStrMatch(id, @name@::_PD_repoId) )
     return (@name@_ptr) this;
   @_ptrToObjRef@
+  if( omni::ptrStrMatch(id, CORBA::Object::_PD_repoId) )
+    return (CORBA::Object_ptr) this;
   return 0;
 }
 """
 
 interface_objref_repoID = """\
-if( !strcmp(id, @inherits_fqname@::_PD_repoId) )
+if( omni::ptrStrMatch(id, @inherits_fqname@::_PD_repoId) )
   return (@inherits_fqname@_ptr) this;
 """
 
@@ -326,7 +329,7 @@ omniObjRef*
 CORBA::Boolean
 @pof_name@::is_a(const char* id) const
 {
-  if( !strcmp(id, @name@::_PD_repoId) )
+  if( omni::ptrStrMatch(id, @name@::_PD_repoId) )
     return 1;
   @Other_repoIDs@
   return 0;
@@ -336,7 +339,7 @@ const @pof_name@ _the_pof_@idname@;
 """
 
 interface_pof_repoID = """\
-if( !strcmp(id, @inherited@::_PD_repoId) )
+if( omni::ptrStrMatch(id, @inherited@::_PD_repoId) )
   return 1;
 """
 
@@ -365,11 +368,11 @@ CORBA::Boolean
 void*
 @impl_fqname@::_ptrToInterface(const char* id)
 {
-  if( !strcmp(id, CORBA::Object::_PD_repoId) )
-    return (void*) 1;
-  if( !strcmp(id, @name@::_PD_repoId) )
+  if( omni::ptrStrMatch(id, @name@::_PD_repoId) )
     return (@impl_name@*) this;
   @_ptrToInterface@
+  if( omni::ptrStrMatch(id, CORBA::Object::_PD_repoId) )
+    return (void*) 1;
   return 0;
 }
 
@@ -387,7 +390,7 @@ if( @impl_inherited_name@::_dispatch(_handle) ) {
 """
 
 interface_impl_repoID = """\
-if( !strcmp(id, @inherited_name@::_PD_repoId) )
+if( omni::ptrStrMatch(id, @inherited_name@::_PD_repoId) )
   return (@impl_inherited_name@*) this;
 """
 
@@ -409,7 +412,7 @@ _ctxt = CORBA::Context::unmarshalContext(iop_s);
 """
 
 interface_operation_dispatch = """\
-if( !strcmp(op, \"@idl_operation_name@\") ) {
+if( omni::strMatch(op, \"@idl_operation_name@\") ) {
 
   @call_descriptor@ _call_desc(@call_desc_args@);
   @context@

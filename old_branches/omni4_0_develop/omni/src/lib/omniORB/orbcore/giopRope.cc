@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/08 17:06:53  sll
+  Client side now closes the connection if it encounters any error in
+  processing a call.
+
   Revision 1.1.4.1  2001/04/18 18:10:49  sll
   Big checkin with the brand new internal APIs.
 
@@ -474,7 +478,7 @@ giopRope::match(const giopAddressList& addrlist) const
   j    = pd_addresses.begin();
   last = addrlist.end();
   for (; i != last; i++, j++) {
-    if (strcmp((*i)->address(),(*j)->address())) return 0;
+    if (!omni::ptrStrMatch((*i)->address(),(*j)->address())) return 0;
   }
   return 1;
 }

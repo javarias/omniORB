@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.10  2001/05/29 17:03:52  dpg1
+  In process identity.
+
   Revision 1.2.2.9  2001/05/10 15:08:37  dpg1
   _compatibleServant() replaced with _localServantTarget().
   createIdentity() now takes a target string.
@@ -735,7 +738,7 @@ omni::createObjRef(const char* targetRepoId,
   proxyObjectFactory* pof = proxyObjectFactory::lookup(ior->repositoryID());
 
   if( pof && !pof->is_a(targetRepoId) &&
-      strcmp(targetRepoId, CORBA::Object::_PD_repoId) ) {
+      !omni::ptrStrMatch(targetRepoId, CORBA::Object::_PD_repoId) ) {
 
     // We know that <mostDerivedRepoId> is not derived from
     // <targetRepoId>. 
@@ -771,7 +774,7 @@ omni::createObjRef(const char* targetRepoId,
     // create an object reference while another thread is shutting
     // down the ORB.
 
-    if( strcmp(targetRepoId, CORBA::Object::_PD_repoId) )
+    if( !omni::ptrStrMatch(targetRepoId, CORBA::Object::_PD_repoId) )
       target_intf_not_confirmed = 1;
   }
 
@@ -818,7 +821,7 @@ omni::createObjRef(const char* mostDerivedRepoId,
 
     while( objref ) {
 
-      if( !strcmp(mostDerivedRepoId, objref->_mostDerivedRepoId()) &&
+      if( omni::ptrStrMatch(mostDerivedRepoId, objref->_mostDerivedRepoId()) &&
 	  objref->_ptrToObjRef(targetRepoId) ) {
 
 	omniORB::logs(15, "createObjRef -- reusing reference from local"

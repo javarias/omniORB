@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.4  2001/04/18 18:18:05  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.3  2000/11/09 12:27:58  dpg1
   Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -124,12 +127,12 @@ PortableServer::name::_ptrToObjRef(const char* repoId)  \
 {  \
   OMNIORB_ASSERT(repoId );  \
   \
-  if( !strcmp(repoId, CORBA::Object::_PD_repoId) )  \
-    return (CORBA::Object_ptr) this;  \
-  if( !strcmp(repoId, CORBA::Policy::_PD_repoId) )  \
-    return (CORBA::Policy_ptr) this;  \
-  if( !strcmp(repoId, PortableServer::name::_PD_repoId) )  \
+  if( omni::ptrStrMatch(repoId, PortableServer::name::_PD_repoId) )  \
     return (PortableServer::name##_ptr) this;  \
+  if( omni::ptrStrMatch(repoId, CORBA::Policy::_PD_repoId) )  \
+    return (CORBA::Policy_ptr) this;  \
+  if( omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId) )  \
+    return (CORBA::Object_ptr) this;  \
   \
   return 0;  \
 }  \
