@@ -27,6 +27,13 @@
 
 /*
  $Log$
+ Revision 1.16  1998/08/19 15:49:11  sll
+ Binary operators <<= and friends are now generated in a separate pass.
+ The member functions void produce_binary_operators_in_hdr and the like
+ in the backend classes are responsible for generating the code for the
+ operators. This is necessary to avoid problems with C++ compilers that
+ support namespace but not the koenig lookup rule.
+
  Revision 1.15  1998/05/20 18:23:37  sll
  New option (-t) enable the generation of tie implementation template.
 
@@ -1267,5 +1274,18 @@ private:
   const char *pd_errmsg;
   o2be_fileio_error();
 };
+
+class o2be_fe_error {
+public:
+  o2be_fe_error(const char *errmsg) {
+    pd_errmsg = errmsg;
+  }
+  ~o2be_fe_error() {}
+  const char *errmsg() const { return pd_errmsg; }
+private:
+  const char *pd_errmsg;
+  o2be_fe_error();
+};
+
 
 #endif
