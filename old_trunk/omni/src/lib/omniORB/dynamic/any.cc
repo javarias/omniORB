@@ -28,6 +28,9 @@
 
 
 /* $Log$
+ * Revision 1.3  1998/04/08 16:07:32  sll
+ * Minor change to help some compiler to find the right TypeCode ctor.
+ *
  * Revision 1.2  1998/04/07 19:30:45  sll
  * Moved inline functions to this module.
  *
@@ -188,6 +191,8 @@ CORBA::Any::operator>>= (NetBufferedStream& s) const
                                                             CORBA::tk_string) 
     fillerLen = (pd_tc->pd_param).alreadyWritten() % 4;
 
+  MemBufferedStream tmpInBuf(pd_mbuf,1);
+
 #if !defined(NO_FLOAT)
   if ((pd_tc->pd_tck == CORBA::tk_double || pd_tc->pd_tck == CORBA::tk_any || 
        pd_tc->pd_tck == CORBA::tk_struct || pd_tc->pd_tck == CORBA::tk_union ||
@@ -195,7 +200,6 @@ CORBA::Any::operator>>= (NetBufferedStream& s) const
       s.WrMessageAlreadyWritten()%8 > 0 && s.WrMessageAlreadyWritten()%8 <= 4)
     {
       MemBufferedStream outBuf;
-      MemBufferedStream tmpInBuf(pd_mbuf,1);
 
       PR_fill(fillerLen,outBuf);
       tmpInBuf.skip(fillerLen);
@@ -210,9 +214,9 @@ CORBA::Any::operator>>= (NetBufferedStream& s) const
   else
 #endif
     {
-      s.put_char_array((_CORBA_Char*) (omni::ptr_arith_t) pd_mbuf.data() +
+      s.put_char_array((_CORBA_Char*) (omni::ptr_arith_t) tmpInBuf.data() +
 		       (omni::ptr_arith_t) fillerLen, 
-		       pd_mbuf.alreadyWritten() - fillerLen);
+		       tmpInBuf.alreadyWritten() - fillerLen);
     }
 }
 
@@ -236,6 +240,7 @@ CORBA::Any::operator>>= (MemBufferedStream& m) const
   if (pd_tc->pd_tck > CORBA::tk_Principal && pd_tc->pd_tck != CORBA::tk_string)
     fillerLen = (pd_tc->pd_param).alreadyWritten() % 4;
 
+  MemBufferedStream tmpInBuf(pd_mbuf,1);
 
 #if !defined(NO_FLOAT)
   if ((pd_tc->pd_tck == CORBA::tk_double || pd_tc->pd_tck == CORBA::tk_any || 
@@ -243,7 +248,6 @@ CORBA::Any::operator>>= (MemBufferedStream& m) const
        pd_tc->pd_tck > CORBA::tk_string) && 
       m.alreadyWritten()%8 > 0 && m.alreadyWritten()%8 <= 4)
    {
-     MemBufferedStream tmpInBuf(pd_mbuf,1);
      tmpInBuf.skip(fillerLen);
 
      tcParseEngine tcEngine(pd_tc,&tmpInBuf);
@@ -252,9 +256,9 @@ CORBA::Any::operator>>= (MemBufferedStream& m) const
   else
 #endif  
     {
-      m.put_char_array((_CORBA_Char*) (omni::ptr_arith_t) pd_mbuf.data() +
+      m.put_char_array((_CORBA_Char*) (omni::ptr_arith_t) tmpInBuf.data() +
 		       (omni::ptr_arith_t) fillerLen, 
-		       pd_mbuf.alreadyWritten() - fillerLen);
+		       tmpInBuf.alreadyWritten() - fillerLen);
     }
 }
 
