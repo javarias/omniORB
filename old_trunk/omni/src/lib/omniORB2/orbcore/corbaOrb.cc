@@ -29,8 +29,11 @@
 
 /*
   $Log$
-  Revision 1.34  2000/07/13 15:25:58  dpg1
-  Merge from omni3_develop for 3.0 release.
+  Revision 1.29.6.25  2000/09/21 14:22:48  sll
+  Workaround for Sun C++ 5.0 or Forte WS 6.0 compiler bug.
+
+  Revision 1.29.6.24  2000/08/30 15:18:44  dpg1
+  New environment variable OMNIORB_PRINCIPAL.
 
   Revision 1.29.6.23  2000/08/08 15:01:43  dpg1
   -ORBpoa_iiop_port no longer overrides OMNIORB_USEHOSTNAME.
@@ -217,6 +220,9 @@
 #define MY_ORB_ID           "omniORB3"
 #define OLD_ORB_ID          "omniORB2"
 
+#ifndef OMNIORB_PRINCIPAL_VAR
+#  define OMNIORB_PRINCIPAL_VAR "OMNIORB_PRINCIPAL"
+#endif
 
 static omniOrbORB*          the_orb              = 0;
 static int                  orb_destroyed        = 0;
@@ -296,6 +302,18 @@ CORBA::ORB::_nil()
 const char*
 CORBA::ORB::_PD_repoId = "IDL:omg.org/CORBA/ORB:1.0";
 
+#if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
+#if defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x500
+
+#include <exception.h>
+static void omni_abort()
+{
+  abort();
+}
+
+#endif
+#endif
+
 
 CORBA::ORB_ptr
 CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
@@ -355,6 +373,18 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
   catch (...) {
     OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
   }
+
+#if defined(__sunos__) && defined(__sparc__) && __OSVERSION__ >= 5
+#if defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x500
+  // Sun C++ 5.0 or Forte C++ 6.0 generated code will segv occasionally
+  // when concurrent threads throw an exception. The stack trace points
+  // to a problem in the exception unwinding. The workaround seems to be
+  // to install explicitly an uncaught exception handler, which is what
+  // we do here.
+  set_terminate(omni_abort);
+#endif
+#endif
+
 
   the_orb = new omniOrbORB(0);
   the_orb->_NP_incrRefCount();
@@ -1291,8 +1321,19 @@ public:
   void attach() {
 
     // myPrincipalID, to be used in the principal field of IIOP calls
-    CORBA::ULong l = strlen("nobody")+1;
-    CORBA::Octet *p = (CORBA::Octet *) "nobody";
+
+    CORBA::ULong  l;
+    CORBA::Octet* p;
+
+    char* env = getenv(OMNIORB_PRINCIPAL_VAR);
+    if (env) {
+      l = strlen(env) + 1;
+      p = (CORBA::Octet*)env;
+    }
+    else {
+      l = strlen("nobody")+1;
+      p = (CORBA::Octet *) "nobody";
+    }
     omni::myPrincipalID.length(l);
     unsigned int i;
     for (i=0; i < l; i++) {
