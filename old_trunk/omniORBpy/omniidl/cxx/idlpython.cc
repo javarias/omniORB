@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7  1999/11/04 11:46:19  dpg1
+// Now uses our own version of the GNU C preprocessor.
+//
 // Revision 1.6  1999/11/02 17:07:26  dpg1
 // Changes to compile on Solaris.
 //
@@ -48,8 +51,9 @@
 // First revision.
 //
 
-#include <python1.5/Python.h>
+#include <Python.h>
 
+#include <idlsysdep.h>
 #include <idlast.h>
 #include <idltype.h>
 #include <idlscope.h>
@@ -925,7 +929,7 @@ extern "C" {
     {NULL, NULL}
   };
 
-  void init_omniidl()
+  void DLL_EXPORT init_omniidl()
   {
     PyObject* m = Py_InitModule("_omniidl", omniidl_methods);
     PyObject_SetAttrString(m, "version",

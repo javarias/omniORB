@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  1999/11/03 17:24:05  dpg1
+// Added optional pragmas all over the place.
+//
 // Revision 1.4  1999/11/02 17:07:28  dpg1
 // Changes to compile on Solaris.
 //
@@ -43,6 +46,7 @@
 
 %{
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <idlutil.h>

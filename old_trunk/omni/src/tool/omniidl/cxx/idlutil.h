@@ -28,15 +28,16 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:53  dpg1
+// *** empty log message ***
+//
 
 #ifndef _idlutil_h_
 #define _idlutil_h_
 
 #include <assert.h>
 
-// Types
-#include <CORBA_sysdep.h>    // ***
-#include <CORBA_basetypes.h> // ***
+#include <idlsysdep.h>
 
 #ifdef HAS_LongLong
 typedef _CORBA_ULongLong IdlIntLiteral;
@@ -58,5 +59,10 @@ _CORBA_WChar* idl_wstrdup(const _CORBA_WChar* s);
 int           idl_wstrlen(const _CORBA_WChar* s);
 _CORBA_WChar* idl_wstrcpy(_CORBA_WChar* a, const _CORBA_WChar* b);
 _CORBA_WChar* idl_wstrcat(_CORBA_WChar* a, const _CORBA_WChar* b);
+
+#ifdef NO_STRCASECMP
+int strcasecmp(const char* s1, const char* s2);
+#endif
+
 
 #endif // _idlutil_h_

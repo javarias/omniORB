@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/02 17:07:24  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.2  1999/10/29 15:44:14  dpg1
 // DeclaredType() now takes extra DeclRepoId* argument.
 //
@@ -78,6 +81,7 @@ kindAsString() const
   case tk_abstract_interface: return "abstract interface";
   }
   assert(0);
+  return ""; // To keep MSVC happy
 }
 
 IdlType*

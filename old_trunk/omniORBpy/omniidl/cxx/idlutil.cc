@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/11/02 17:07:24  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.1  1999/10/27 14:05:54  dpg1
 // *** empty log message ***
 //
@@ -85,3 +88,18 @@ _CORBA_WChar* idl_wstrcat(_CORBA_WChar* a, const _CORBA_WChar* b)
   *a = 0;
   return r;
 }
+
+#ifdef NO_STRCASECMP
+#include <ctype.h>
+
+int strcasecmp(const char* s1, const char* s2)
+{
+  for (; *s1 && *s2; ++s1, ++s2)
+    if (toupper(*s1) != toupper(*s2))
+      break;
+
+  if      (!*s1 && !*s2)                return 0;
+  else if (toupper(*s1) < toupper(*s2)) return -1;
+  else                                  return 1;
+}
+#endif

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  1999/11/02 17:07:25  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.5  1999/11/02 12:10:51  dpg1
 // Small bug in addUse()
 //
@@ -48,6 +51,7 @@
 #include <idlscope.h>
 #include <idlast.h>
 #include <idlerr.h>
+#include <idlutil.h>
 
 #include <string.h>
 
