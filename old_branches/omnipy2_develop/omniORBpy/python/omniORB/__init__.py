@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.18  2003/11/10 16:50:29  dgrisby
+# Last checking broke hashability.
+#
 # Revision 1.26.2.17  2003/11/10 16:31:58  dgrisby
 # __cmp__ for enum items.
 #
@@ -187,6 +190,14 @@ Error: your Python executable was not built with thread support.
 import _omnipy
 
 _coreVersion = _omnipy.coreVersion()
+
+
+# Add path to COS stubs if need be
+_cospath = os.path.join(os.path.dirname(__file__), "COS")
+if _cospath not in sys.path:
+    sys.path.append(_cospath)
+del _cospath
+
 
 # Public functions
 
