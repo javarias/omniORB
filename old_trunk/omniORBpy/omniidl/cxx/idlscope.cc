@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/02 10:01:46  dpg1
+// Minor fixes.
+//
 // Revision 1.2  1999/10/29 10:01:50  dpg1
 // Global scope initialisation changed.
 //
@@ -689,8 +692,7 @@ addModule(const char* identifier, Scope* scope, Decl* decl,
   if (*identifier == '_')
     ++identifier;
   else
-    if (keywordClash(identifier, file, line))
-      return;
+    keywordClash(identifier, file, line);
 
   Entry* clash = iFind(identifier);
 
@@ -750,8 +752,7 @@ addDecl(const char* identifier, Scope* scope, Decl* decl, IdlType* idltype,
   if (*identifier == '_')
     ++identifier;
   else
-    if (keywordClash(identifier, file, line))
-      return;
+    keywordClash(identifier, file, line);
 
   Entry* clash = iFind(identifier);
 
@@ -846,8 +847,7 @@ addCallable(const char* identifier, Scope* scope, Decl* decl,
   if (*identifier == '_')
     ++identifier;
   else
-    if (keywordClash(identifier, file, line))
-      return;
+    keywordClash(identifier, file, line);
 
   Entry* clash = iFind(identifier);
 
@@ -999,8 +999,7 @@ addInstance(const char* identifier, Decl* decl, IdlType* idltype,
   if (*identifier == '_')
     ++identifier;
   else
-    if (keywordClash(identifier, file, line))
-      return;
+    keywordClash(identifier, file, line);
 
   Entry* clash = iFind(identifier);
 
