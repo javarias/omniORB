@@ -28,8 +28,16 @@
 //    Implementation of Python servant object
 
 // $Id$
-
 // $Log$
+// Revision 1.24.2.4  2000/09/21 11:05:49  dpg1
+// Fix race condition with Py_omniServant deletion.
+//
+// Revision 1.24.2.3  2000/09/19 09:24:16  dpg1
+// More paranoid about clearing Python error status
+//
+// Revision 1.24.2.2  2000/09/01 14:13:01  dpg1
+// Memory leak when returning invalid data
+//
 // Revision 1.24.2.1  2000/08/17 08:46:06  dpg1
 // Support for omniORB.LOCATION_FORWARD exception
 //
@@ -242,7 +250,7 @@ private:
 omniPy::
 Py_omniServant::Py_omniServant(PyObject* pyservant, PyObject* opdict,
 			       const char* repoId)
-  : pyservant_(pyservant), opdict_(opdict)
+  : pyservant_(pyservant), opdict_(opdict), refcount_(1)
 {
   repoId_ = CORBA::string_dup(repoId);
 
@@ -260,12 +268,50 @@ Py_omniServant::Py_omniServant(PyObject* pyservant, PyObject* opdict,
 omniPy::
 Py_omniServant::~Py_omniServant()
 {
-  omnipyThreadCache::lock _t;
   omniPy::remTwin(pyservant_, SERVANT_TWIN);
   Py_DECREF(pyservant_);
   Py_DECREF(opdict_);
   Py_DECREF(pyskeleton_);
   CORBA::string_free(repoId_);
+}
+
+
+void
+omniPy::
+Py_omniServant::_add_ref()
+{
+  omnipyThreadCache::lock _t;
+  OMNIORB_ASSERT(refcount_ > 0);
+  ++refcount_;
+}
+
+void
+omniPy::
+Py_omniServant::_locked_add_ref()
+{
+  OMNIORB_ASSERT(refcount_ > 0);
+  ++refcount_;
+}
+
+void
+omniPy::
+Py_omniServant::_remove_ref()
+{
+  omnipyThreadCache::lock _t;
+  if (--refcount_ > 0) return;
+
+  OMNIORB_ASSERT(refcount_ == 0);
+  delete this;
+}
+
+void
+omniPy::
+Py_omniServant::_locked_remove_ref()
+{
+  if (--refcount_ > 0) return;
+
+  OMNIORB_ASSERT(refcount_ == 0);
+  delete this;
 }
 
 
@@ -319,6 +365,8 @@ Py_omniServant::_default_POA()
 	   "Returning Root POA\n";
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
   CORBA::Object_var obj = omniPy::orb->resolve_initial_references("RootPOA");
   return PortableServer::POA::_narrow(obj);
@@ -490,19 +538,26 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
     if (out_l >= 0) {
       CORBA::ULong msgsize = GIOP_S::ReplyHeaderSize();
 
-      if (out_l == 1) {
-	msgsize = omniPy::alignedSize(msgsize,
-				      PyTuple_GET_ITEM(out_d, 0),
-				      result,
-				      CORBA::COMPLETED_MAYBE);
-      }
-      else if (out_l > 1) {
-	for (i=0; i < out_l; i++) {
+      try {
+	if (out_l == 1) {
 	  msgsize = omniPy::alignedSize(msgsize,
-					PyTuple_GET_ITEM(out_d,  i),
-					PyTuple_GET_ITEM(result, i),
+					PyTuple_GET_ITEM(out_d, 0),
+					result,
 					CORBA::COMPLETED_MAYBE);
 	}
+	else if (out_l > 1) {
+	  for (i=0; i < out_l; i++) {
+	    msgsize = omniPy::alignedSize(msgsize,
+					  PyTuple_GET_ITEM(out_d,  i),
+					  PyTuple_GET_ITEM(result, i),
+					  CORBA::COMPLETED_MAYBE);
+	  }
+	}
+      }
+      catch (...) {
+	// alignedSize() can throw BAD_PARAM and others
+	Py_DECREF(result);
+	throw;
       }
       giop_s.InitialiseReply(GIOP::NO_EXCEPTION, msgsize);
 
@@ -775,7 +830,6 @@ Py_ServantActivator::Py_ServantActivator(PyObject*   pysa,
 
 Py_ServantActivator::~Py_ServantActivator()
 {
-  omnipyThreadCache::lock _t;
   Py_DECREF(pysa_);
 }
 
@@ -915,10 +969,7 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
-  {
-    omniPy::InterpreterUnlocker _u;
-    pyos->_remove_ref();
-  }
+  pyos->_locked_remove_ref();
 
   if (result)
     Py_DECREF(result);
@@ -929,6 +980,8 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
 }
 
@@ -960,7 +1013,6 @@ Py_ServantLocator::Py_ServantLocator(PyObject*   pysl,
 
 Py_ServantLocator::~Py_ServantLocator()
 {
-  omnipyThreadCache::lock _t;
   Py_DECREF(pysl_);
 }
 
@@ -1116,10 +1168,7 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
-  {
-    omniPy::InterpreterUnlocker _u;
-    pyos->_remove_ref();
-  }
+  pyos->_locked_remove_ref();
 
   if (result)
     Py_DECREF(result);
@@ -1130,6 +1179,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
 }
 
@@ -1161,7 +1212,6 @@ Py_AdapterActivator::Py_AdapterActivator(PyObject*   pyaa,
 
 Py_AdapterActivator::~Py_AdapterActivator()
 {
-  omnipyThreadCache::lock _t;
   Py_DECREF(pyaa_);
 }
 
@@ -1204,6 +1254,8 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
   return 0;
 }
@@ -1255,7 +1307,7 @@ omniPy::getServantForPyObject(PyObject* pyservant)
   // Is there a Py_omniServant already?
   pyos = (omniPy::Py_omniServant*)omniPy::getTwin(pyservant, SERVANT_TWIN);
   if (pyos) {
-    pyos->_add_ref();
+    pyos->_locked_add_ref();
     return pyos;
   }
 
@@ -1283,7 +1335,6 @@ omniPy::getServantForPyObject(PyObject* pyservant)
     pyos = new omniPy::Py_omniServant(pyservant, opdict,
 				      PyString_AS_STRING(pyrepoId));
   }
-
   Py_DECREF(opdict);
   Py_DECREF(pyrepoId);
 
