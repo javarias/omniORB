@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/09/13 16:45:03  sll
+  Changed thread id callback function for the openssl library.
+  Only provide one for non-win32 platform and use pthread_self() directly.
+
   Revision 1.1.2.6  2001/09/13 15:36:01  sll
   Provide hooks to openssl for thread safety.
   Switched to select v2 or v3 methods but accept only v3 or tls v1 protocol.
@@ -334,7 +338,7 @@ void sslContext_locking_callback(int mode, int type, const char *,int) {
 #ifndef __WIN32__
 extern "C"
 unsigned long sslContext_thread_id(void) {
-  unsigned long id = pthread_self();
+  unsigned long id = (unsigned long)pthread_self();
   {
     omniORB::logger log;
     log << "thread_id " << id << "\n";
