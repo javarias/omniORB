@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.26  2004/07/01 19:16:23  dgrisby
+  Client call interceptor oneway and response expected flipped. Thanks
+  John Fardo.
+
   Revision 1.1.4.25  2004/06/18 14:45:24  dgrisby
   Obscure and rare bug in GIOP 1.2 system exception sending.
 
@@ -221,6 +225,11 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // another 1.2 message. It does not say if a GIOP 1.0 or 1.1 message
     // can interleave with a GIOP 1.2 message. Our interpretation is to
     // disallow this.
+    //
+    // *** HERE: when we support GIOP > 1.2, we can get here (or
+    // rather the equivalent place in GIOP 1.3+) due to receiving a
+    // reply message on the receiver thread of a bidirectional
+    // connection.
     inputTerminalProtocolError(g, __FILE__, __LINE__);
     // never reach here
   }
