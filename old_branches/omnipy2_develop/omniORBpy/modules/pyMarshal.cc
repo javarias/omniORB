@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.5  2001/04/09 15:22:16  dpg1
+// Fixed point support.
+//
 // Revision 1.1.2.4  2000/11/22 14:43:58  dpg1
 // Support code set conversion and wchar/wstring.
 //
@@ -2666,9 +2669,9 @@ unmarshalPyObjectSequence(cdrStream& stream, PyObject* d_o)
     }
   }
   else {
-    // Slight abuse of max giop message size, but it gives us a handy
-    // measure of what we consider to be a "too long" sequence.
-    if (len > GIOP_Basetypes::max_giop_message_size)
+    // If the sequence length field is greater than the number of
+    // octets left in the message, they're clearly lying.
+    if (!stream.checkInputOverrun(1, len))
       OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_NO);
 
     r_o = PyList_New(len);
@@ -3109,30 +3112,11 @@ const omniPy::UnmarshalPyObjectFn omniPy::unmarshalPyObjectFns[] = {
 
 
 
-static inline
-PyObject*
-setPyBadParam(CORBA::CompletionStatus compstatus)
-{
-  CORBA::BAD_PARAM ex(0,compstatus);
-  omniPy::handleSystemException(ex);
-  return 0;
-}
-
-static inline
-PyObject*
-setPyNoImplement(CORBA::CompletionStatus compstatus)
-{
-  CORBA::NO_IMPLEMENT ex(0,compstatus);
-  omniPy::handleSystemException(ex);
-  return 0;
-}
-
-
 static PyObject*
 copyArgumentNull(PyObject* d_o, PyObject* a_o,
 		 CORBA::CompletionStatus compstatus)
 {
-  if (a_o != Py_None) return setPyBadParam(compstatus);
+  if (a_o != Py_None) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -3141,7 +3125,7 @@ static PyObject*
 copyArgumentVoid(PyObject* d_o, PyObject* a_o,
 		 CORBA::CompletionStatus compstatus)
 {
-  if (a_o != Py_None) return setPyBadParam(compstatus);
+  if (a_o != Py_None) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -3152,10 +3136,11 @@ copyArgumentShort(PyObject* d_o, PyObject* a_o,
 {
   if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-    if (l < -0x8000 || l > 0x7fff) return setPyBadParam(compstatus);
+    if (l < -0x8000 || l > 0x7fff) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     Py_INCREF(a_o); return a_o;
   }
-  else return setPyBadParam(compstatus);
+  else OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3166,11 +3151,12 @@ copyArgumentLong(PyObject* d_o, PyObject* a_o,
 #if SIZEOF_LONG > 4
     long l = PyInt_AS_LONG(a_o);
     if (l < -0x80000000L || l > 0x7fffffffL)
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #endif
     Py_INCREF(a_o); return a_o;
   }
-  else return setPyBadParam(compstatus);
+  else OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3179,10 +3165,11 @@ copyArgumentUShort(PyObject* d_o, PyObject* a_o,
 {
   if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-    if (l < 0 || l > 0xffff) return setPyBadParam(compstatus);
+    if (l < 0 || l > 0xffff) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     Py_INCREF(a_o); return a_o;
   }
-  else return setPyBadParam(compstatus);
+  else OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3192,23 +3179,24 @@ copyArgumentULong(PyObject* d_o, PyObject* a_o,
   if (PyLong_Check(a_o)) {
     unsigned long ul = PyLong_AsUnsignedLong(a_o);
     if (ul == (unsigned long)-1 && PyErr_Occurred())
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #if SIZEOF_LONG > 4
-    if (ul > 0xffffffffL) return setPyBadParam(compstatus);
+    if (ul > 0xffffffffL) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #endif
     Py_INCREF(a_o); return a_o;
   }
   else if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
 #if SIZEOF_LONG > 4
-    if (l < 0 || l > 0xffffffffL) return setPyBadParam(compstatus);
+    if (l < 0 || l > 0xffffffffL) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #else
-    if (l < 0) return setPyBadParam(compstatus);
+    if (l < 0) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #endif
     return PyLong_FromLong(l);
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3222,7 +3210,8 @@ copyArgumentFloat(PyObject* d_o, PyObject* a_o,
     return PyFloat_FromDouble((double)(PyInt_AS_LONG(a_o)));
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3236,7 +3225,8 @@ copyArgumentDouble(PyObject* d_o, PyObject* a_o,
     return PyFloat_FromDouble((double)(PyInt_AS_LONG(a_o)));
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3253,7 +3243,8 @@ copyArgumentBoolean(PyObject* d_o, PyObject* a_o,
     }
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3264,7 +3255,8 @@ copyArgumentChar(PyObject* d_o, PyObject* a_o,
     Py_INCREF(a_o); return a_o;
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3273,38 +3265,39 @@ copyArgumentOctet(PyObject* d_o, PyObject* a_o,
 {
   if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-    if (l < 0 || l > 0xff) return setPyBadParam(compstatus);
+    if (l < 0 || l > 0xff) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     Py_INCREF(a_o); return a_o;
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
 copyArgumentAny(PyObject* d_o, PyObject* a_o,
 		CORBA::CompletionStatus compstatus)
 {
-  if (!PyInstance_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyInstance_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
   // TypeCode
   PyObject* tc = PyDict_GetItemString(adict, (char*)"_t");
 
-  if (!(tc && PyInstance_Check(tc))) return setPyBadParam(compstatus);
+  if (!(tc && PyInstance_Check(tc))) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* tdict = ((PyInstanceObject*)tc)->in_dict;
   PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
-  if (!desc) return setPyBadParam(compstatus);
+  if (!desc) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // Any's contents
   PyObject* val = PyDict_GetItemString(adict, (char*)"_v");
-  if (!val) return setPyBadParam(compstatus);
+  if (!val) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // Copy contents
   PyObject* cval = omniPy::copyArgument(desc, val, compstatus);
 
-  if (!cval) return setPyBadParam(compstatus);
+  if (!cval) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // Construct new Any
   PyObject* argtuple = PyTuple_New(2);
@@ -3321,11 +3314,11 @@ static PyObject*
 copyArgumentTypeCode(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus)
 {
-  if (!PyInstance_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyInstance_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
   PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
-  if (!desc) return setPyBadParam(compstatus);
+  if (!desc) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   Py_INCREF(a_o); return a_o;
 }
@@ -3334,7 +3327,8 @@ static PyObject*
 copyArgumentPrincipal(PyObject* d_o, PyObject* a_o,
 		      CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -3392,7 +3386,7 @@ copyArgumentStruct(PyObject* d_o, PyObject* a_o,
       }
       else {
 	Py_DECREF(argtuple);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
   }
@@ -3411,7 +3405,7 @@ copyArgumentStruct(PyObject* d_o, PyObject* a_o,
       }
       if (!(value && t_o)) {
 	Py_DECREF(argtuple);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
   }
@@ -3433,18 +3427,18 @@ copyArgumentUnion(PyObject* d_o, PyObject* a_o,
   // default (label, name, descr) or None,
   // {label: (label, name, descr), ...}
 
-  if (!PyInstance_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyInstance_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* udict  = ((PyInstanceObject*)a_o)->in_dict;
   PyObject* discr  = PyDict_GetItemString(udict, (char*)"_d");
   PyObject* value  = PyDict_GetItemString(udict, (char*)"_v");
 
-  if (!(discr && value)) return setPyBadParam(compstatus);
+  if (!(discr && value)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* t_o    = PyTuple_GET_ITEM(d_o, 4);
   PyObject* cdiscr = omniPy::copyArgument(t_o, discr, compstatus);
 
-  if (!cdiscr) return setPyBadParam(compstatus);
+  if (!cdiscr) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* cvalue = 0;
   PyObject* cdict  = PyTuple_GET_ITEM(d_o, 8);
@@ -3479,8 +3473,9 @@ copyArgumentUnion(PyObject* d_o, PyObject* a_o,
   }
   else {
     Py_DECREF(cdiscr);
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   }
+  return 0;
 }
 
 static PyObject*
@@ -3488,18 +3483,18 @@ copyArgumentEnum(PyObject* d_o, PyObject* a_o,
 		 CORBA::CompletionStatus compstatus)
 { // repoId, name, item list
 
-  if (!PyInstance_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyInstance_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
 				      (char*)"_v");
 
-  if (!(ev && PyInt_Check(ev))) return setPyBadParam(compstatus);
+  if (!(ev && PyInt_Check(ev))) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* t_o = PyTuple_GET_ITEM(d_o, 3);
   long      e   = PyInt_AS_LONG(ev);
 
-  if (e >= PyTuple_GET_SIZE(t_o))      return setPyBadParam(compstatus);
-  if (PyTuple_GET_ITEM(t_o, e) != a_o) return setPyBadParam(compstatus);
+  if (e >= PyTuple_GET_SIZE(t_o))      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+  if (PyTuple_GET_ITEM(t_o, e) != a_o) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   Py_INCREF(a_o); return a_o;
 }
@@ -3514,17 +3509,17 @@ copyArgumentString(PyObject* d_o, PyObject* a_o,
 
   CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
-  if (!PyString_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyString_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   CORBA::ULong len = PyString_GET_SIZE(a_o);
 
-  if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+  if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // Annoyingly, we have to scan the string to check there are no
   // nulls
   char* str = PyString_AS_STRING(a_o);
   for (CORBA::ULong i=0; i<len; i++)
-    if (str[i] == '\0') return setPyBadParam(compstatus);
+    if (str[i] == '\0') OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // After all that, we don't actually have to copy the string,
   // since they're immutable
@@ -3550,15 +3545,15 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
 
     if (etk == CORBA::tk_octet || etk == CORBA::tk_char) {
       // Mapping says octet and char use a string
-      if (!PyString_Check(a_o)) return setPyBadParam(compstatus);
+      if (!PyString_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       len = PyString_GET_SIZE(a_o);
-      if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+      if (max_len > 0 && len > max_len)	OMNIORB_THROW(BAD_PARAM,0,compstatus);
       Py_INCREF(a_o);
       return a_o;
     }
     else if (PyList_Check(a_o)) {
       len = PyList_GET_SIZE(a_o);
-      if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+      if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM,0,compstatus);
 
       r_o = PyList_New(len);
 
@@ -3730,7 +3725,8 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
       case 24:
 	{
 	  Py_DECREF(r_o);
-	  return setPyNoImplement(compstatus);
+	  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+	  return 0;
 	}
 #endif
       default:
@@ -3740,12 +3736,12 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
 	return r_o;
       else {
 	Py_DECREF(r_o);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
     else if (PyTuple_Check(a_o)) {
       len = PyTuple_GET_SIZE(a_o);
-      if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+      if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM,0,compstatus);
 
       r_o = PyList_New(len);
 
@@ -3918,7 +3914,8 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
       case 24:
 	{
 	  Py_DECREF(r_o);
-	  return setPyNoImplement(compstatus);
+	  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+	  return 0;
 	}
 #endif
       default:
@@ -3928,18 +3925,18 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
 	return r_o;
       else {
 	Py_DECREF(r_o);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
     else
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   }
   else { // Complex type
     int valid = 1;
 
     if (PyList_Check(a_o)) {
       len = PyList_GET_SIZE(a_o);
-      if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+      if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM,0,compstatus);
 
       r_o = PyList_New(len);
 
@@ -3955,7 +3952,7 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
     }
     else if (PyTuple_Check(a_o)) {
       len = PyTuple_GET_SIZE(a_o);
-      if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+      if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM,0,compstatus);
 
       r_o = PyList_New(len);
 
@@ -3970,15 +3967,16 @@ copyArgumentSequence(PyObject* d_o, PyObject* a_o,
       }
     }
     else
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
     if (valid)
       return r_o;
     else {
       Py_DECREF(r_o);
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     }
   }
+  return 0;
 }
 
 static PyObject*
@@ -3999,15 +3997,15 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
 
     if (etk == CORBA::tk_octet || etk == CORBA::tk_char) {
       // Mapping says octet and char use a string
-      if (!PyString_Check(a_o)) return setPyBadParam(compstatus);
+      if (!PyString_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       len = PyString_GET_SIZE(a_o);
-      if (len != arr_len) return setPyBadParam(compstatus);
+      if (len != arr_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       Py_INCREF(a_o);
       return a_o;
     }
     else if (PyList_Check(a_o)) {
       len = PyList_GET_SIZE(a_o);
-      if (len != arr_len) return setPyBadParam(compstatus);
+      if (len != arr_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
       r_o = PyList_New(len);
 
@@ -4179,7 +4177,8 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
       case 24:
 	{
 	  Py_DECREF(r_o);
-	  return setPyNoImplement(compstatus);
+	  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+	  return 0;
 	}
 #endif
       default:
@@ -4189,12 +4188,12 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
 	return r_o;
       else {
 	Py_DECREF(r_o);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
     else if (PyTuple_Check(a_o)) {
       len = PyTuple_GET_SIZE(a_o);
-      if (len != arr_len) return setPyBadParam(compstatus);
+      if (len != arr_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
       r_o = PyList_New(len);
 
@@ -4367,7 +4366,8 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
       case 24:
 	{
 	  Py_DECREF(r_o);
-	  return setPyNoImplement(compstatus);
+	  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+	  return 0;
 	}
 #endif
       default:
@@ -4377,18 +4377,18 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
 	return r_o;
       else {
 	Py_DECREF(r_o);
-	return setPyBadParam(compstatus);
+	OMNIORB_THROW(BAD_PARAM, 0, compstatus);
       }
     }
     else
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
   }
   else { // Complex type
     int valid = 1;
 
     if (PyList_Check(a_o)) {
       len = PyList_GET_SIZE(a_o);
-      if (len != arr_len) return setPyBadParam(compstatus);
+      if (len != arr_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
       r_o = PyList_New(len);
 
@@ -4404,7 +4404,7 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
     }
     else if (PyTuple_Check(a_o)) {
       len = PyTuple_GET_SIZE(a_o);
-      if (len != arr_len) return setPyBadParam(compstatus);
+      if (len != arr_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
       r_o = PyList_New(len);
 
@@ -4419,15 +4419,16 @@ copyArgumentArray(PyObject* d_o, PyObject* a_o,
       }
     }
     else
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
     if (valid)
       return r_o;
     else {
       Py_DECREF(r_o);
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     }
   }
+  return 0;
 }
 
 static PyObject*
@@ -4443,7 +4444,7 @@ copyArgumentExcept(PyObject* d_o, PyObject* a_o,
 		   CORBA::CompletionStatus compstatus)
 { // class, repoId, exc name, name, descriptor, ...
 
-  if (!PyInstance_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyInstance_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
 
@@ -4461,7 +4462,7 @@ copyArgumentExcept(PyObject* d_o, PyObject* a_o,
     name    = PyTuple_GET_ITEM(d_o, j++);
     OMNIORB_ASSERT(PyString_Check(name));
     value   = PyDict_GetItem(sdict, name);
-    if (!value) return setPyBadParam(compstatus);
+    if (!value) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
     t_o = omniPy::copyArgument(PyTuple_GET_ITEM(d_o, j++), value, compstatus);
 
@@ -4470,7 +4471,7 @@ copyArgumentExcept(PyObject* d_o, PyObject* a_o,
     }
     else {
       Py_DECREF(argtuple);
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     }
   }
   PyObject* r_o = PyEval_CallObject(PyTuple_GET_ITEM(d_o, 1), argtuple);
@@ -4487,7 +4488,7 @@ copyArgumentLongLong(PyObject* d_o, PyObject* a_o,
   if (PyLong_Check(a_o)) {
     CORBA::LongLong ll = PyLong_AsLongLong(a_o);
     if (ll == -1 && PyErr_Occurred())
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     Py_INCREF(a_o); return a_o;
   }
   else if (PyInt_Check(a_o)) {
@@ -4495,10 +4496,11 @@ copyArgumentLongLong(PyObject* d_o, PyObject* a_o,
     return PyLong_FromLong(l);
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #else
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
 #endif
+  return 0;
 }
 
 static PyObject*
@@ -4509,26 +4511,28 @@ copyArgumentULongLong(PyObject* d_o, PyObject* a_o,
   if (PyLong_Check(a_o)) {
     CORBA::ULongLong ll = PyLong_AsUnsignedLongLong(a_o);
     if (ll == (CORBA::ULongLong)-1 && PyErr_Occurred())
-      return setPyBadParam(compstatus);
+      OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     Py_INCREF(a_o); return a_o;
   }
   else if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-    if (l < 0) return setPyBadParam(compstatus);
+    if (l < 0) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
     return PyLong_FromLong(l);
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #else
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
 #endif
+  return 0;
 }
 
 static PyObject*
 copyArgumentLongDouble(PyObject* d_o, PyObject* a_o,
 		       CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
@@ -4540,10 +4544,11 @@ copyArgumentWChar(PyObject* d_o, PyObject* a_o,
     Py_INCREF(a_o); return a_o;
   }
   else
-    return setPyBadParam(compstatus);
+    OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 #else
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
 #endif
+  return 0;
 }
 
 static PyObject*
@@ -4556,24 +4561,25 @@ copyArgumentWString(PyObject* d_o, PyObject* a_o,
 
   CORBA::ULong max_len = PyInt_AS_LONG(t_o);
 
-  if (!PyUnicode_Check(a_o)) return setPyBadParam(compstatus);
+  if (!PyUnicode_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   CORBA::ULong len = PyUnicode_GET_SIZE(a_o);
 
-  if (max_len > 0 && len > max_len) return setPyBadParam(compstatus);
+  if (max_len > 0 && len > max_len) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // Annoyingly, we have to scan the string to check there are no
   // nulls
   Py_UNICODE* str = PyUnicode_AS_UNICODE(a_o);
   for (CORBA::ULong i=0; i<len; i++)
-    if (str[i] == 0) return setPyBadParam(compstatus);
+    if (str[i] == 0) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
 
   // After all that, we don't actually have to copy the string,
   // since they're immutable
   Py_INCREF(a_o);
   return a_o;
 #else
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 #endif
 }
 
@@ -4581,52 +4587,56 @@ static PyObject*
 copyArgumentFixed(PyObject* d_o, PyObject* a_o,
 		  CORBA::CompletionStatus compstatus)
 {
+  if (!omnipyFixed_Check(a_o)) OMNIORB_THROW(BAD_PARAM, 0, compstatus);
+
   PyObject* t_o;
 
   t_o = PyTuple_GET_ITEM(d_o, 1); int dlimit = PyInt_AS_LONG(t_o);
   t_o = PyTuple_GET_ITEM(d_o, 2); int slimit = PyInt_AS_LONG(t_o);
 
-  try {
-    CORBA::Fixed f(*(((omnipyFixedObject*)a_o)->ob_fixed));
-    f.PR_setLimits(dlimit, slimit);
-    return omniPy::newFixedObject(f);
-  }
-  OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+  CORBA::Fixed f(*(((omnipyFixedObject*)a_o)->ob_fixed));
+  f.PR_setLimits(dlimit, slimit);
+  return omniPy::newFixedObject(f);
 }
 
 static PyObject*
 copyArgumentValue(PyObject* d_o, PyObject* a_o,
 		  CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
 copyArgumentValueBox(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
 copyArgumentNative(PyObject* d_o, PyObject* a_o,
 		   CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
 copyArgumentAbstractInterface(PyObject* d_o, PyObject* a_o,
 			      CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 static PyObject*
 copyArgumentLocalInterface(PyObject* d_o, PyObject* a_o,
 			   CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+  return 0;
 }
 
 PyObject*
@@ -4685,3 +4695,70 @@ const omniPy::CopyArgumentFn omniPy::copyArgumentFns[] = {
   copyArgumentAbstractInterface,
   copyArgumentLocalInterface
 };
+
+
+
+//
+// PyUnlockingCdrStream
+//
+
+void
+omniPy::
+PyUnlockingCdrStream::put_octet_array(const _CORBA_Octet* b, int size,
+				      omni::alignment_t align)
+{
+  omniPy::InterpreterUnlocker _u;
+  cdrStreamAdapter::put_octet_array(b, size, align);
+}
+
+void
+omniPy::
+PyUnlockingCdrStream::get_octet_array(_CORBA_Octet* b,int size,
+				      omni::alignment_t align)
+{
+  omniPy::InterpreterUnlocker _u;
+  cdrStreamAdapter::get_octet_array(b, size, align);
+}
+  
+void
+omniPy::
+PyUnlockingCdrStream::skipInput(_CORBA_ULong size)
+{
+  omniPy::InterpreterUnlocker _u;
+  cdrStreamAdapter::skipInput(size);
+}
+
+void
+omniPy::
+PyUnlockingCdrStream::copy_to(cdrStream& stream, int size,
+			      omni::alignment_t align=omni::ALIGN_1)
+{
+  omniPy::InterpreterUnlocker _u;
+  cdrStreamAdapter::copy_to(stream, size, align);
+}
+
+void
+omniPy::
+PyUnlockingCdrStream::fetchInputData(omni::alignment_t align, size_t required)
+{
+  omniPy::InterpreterUnlocker _u;
+  cdrStreamAdapter::fetchInputData(align, required);
+}
+
+_CORBA_Boolean
+omniPy::
+PyUnlockingCdrStream::
+reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
+{
+  omniPy::InterpreterUnlocker _u;
+  return cdrStreamAdapter::reserveOutputSpaceForPrimitiveType(align, required);
+}
+
+_CORBA_Boolean
+omniPy::
+PyUnlockingCdrStream::
+maybeReserveOutputSpace(omni::alignment_t align, size_t required)
+{
+  omniPy::InterpreterUnlocker _u;
+  return cdrStreamAdapter::maybeReserveOutputSpace(align, required);
+}

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.4  2001/04/09 15:22:16  dpg1
+# Fixed point support.
+#
 # Revision 1.29.2.3  2000/11/22 14:43:58  dpg1
 # Support code set conversion and wchar/wstring.
 #
@@ -214,7 +217,7 @@ import_idl_file = """\
 import @ifilename@"""
 
 open_imported_module_name = """\
-_0_@imodname@     = omniORB.openModule("@package@@imodname@")
+_0_@imodname@ = omniORB.openModule("@package@@imodname@")
 _0_@s_imodname@ = omniORB.openModule("@package@@s_imodname@")"""
 
 forward_interface = """\

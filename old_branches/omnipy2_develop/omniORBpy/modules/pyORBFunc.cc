@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.4  2001/03/13 10:38:07  dpg1
+// Fixes from omnipy1_develop
+//
 // Revision 1.1.2.3  2000/12/04 18:57:23  dpg1
 // Fix deadlock when trying to lock omniORB internal lock while holding
 // the Python interpreter lock.
@@ -235,7 +238,7 @@ extern "C" {
 }
 
 
-class omni_python_initialiser : public omniInitialiser {
+class omni_python_initialiser : public _OMNI_NS(omniInitialiser) {
 public:
   void attach() { }
   void detach() {
@@ -253,5 +256,5 @@ omniPy::initORBFunc(PyObject* d)
   PyDict_SetItemString(d, (char*)"orb_func", m);
 
   omni_python_initialiser* init = new omni_python_initialiser();
-  omniInitialiser::install(init);
+  _OMNI_NS(omniInitialiser)::install(init);
 }
