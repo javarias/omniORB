@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.4  1999/10/18 17:28:17  djr
+ Fixes for building MSVC dlls.
+
  Revision 1.1.2.3  1999/10/18 11:27:36  djr
  Centralised list of system exceptions.
 
@@ -1456,7 +1459,7 @@ _CORBA_MODULE_BEG
     static void _marshalObjRef(Object_ptr, MemBufferedStream&);
     static Object_ptr _unmarshalObjRef(MemBufferedStream&);
 
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
     static _core_attr const ULong _PR_magic;
 
   private:
@@ -2068,7 +2071,7 @@ _CORBA_MODULE_BEG
     virtual void _NP_decrRefCount();
     // Override Object.
 
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
 
   private:
     Policy(const Policy&);
@@ -2163,7 +2166,7 @@ _CORBA_MODULE_BEG
     static BOA_ptr _nil();
     static BOA_ptr getBOA();
 
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
 
   protected:
     inline BOA(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
@@ -2379,7 +2382,7 @@ _CORBA_MODULE_BEG
 #endif
 
     // omniORB internal.
-    static const char* _PD_repoId;
+    static _core_attr const char* _PD_repoId;
     virtual ~ORB();
 
   protected:

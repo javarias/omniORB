@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.10  1999/10/18 17:27:01  djr
+  Work-around for MSVC scoping bug.
+
   Revision 1.39.6.9  1999/10/16 13:22:57  djr
   Changes to support compiling on MSVC.
 
@@ -410,7 +413,7 @@ o2be_interface::produce_hdr(std::fstream& s)
    "    return result;\n"
    "  }\n\n"
 
-   "  static const char* _PD_repoId;\n\n"
+   "  static _core_attr const char* _PD_repoId;\n\n"
 
    "  // Other IDL defined within this scope.\n\n"
   );
