@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.2  2000/08/07 09:19:24  dpg1
+# Long long support
+#
 # Revision 1.27.2.1  2000/07/18 15:31:29  dpg1
 # Bug with inheritance from typedef
 #
@@ -298,13 +301,22 @@ _0_@modname@.@cname@ = @value@"""
 constant = """\
 @cname@ = @value@"""
 
-typedef_at_module_scope = """\
+typedef_header = """\
 
 # typedef ... @tdname@
 class @tdname@:
     _NP_RepositoryId = "@repoId@"
     def __init__(self):
-        raise RuntimeError("Cannot construct objects of this type.")
+        raise RuntimeError("Cannot construct objects of this type.")"""
+
+typedef_struct_union_header = """\
+
+# typedef ... @tdname@
+class @tdname@ (@parent@):
+    _NP_RepositoryId = "@repoId@"
+"""
+
+typedef_at_module_scope = """\
 _0_@modname@.@tdname@ = @tdname@
 _0_@modname@._d_@tdname@  = @desc@
 _0_@modname@._ad_@tdname@ = (omniORB.tcInternal.tv_alias, @tdname@._NP_RepositoryId, "@tdname@", @tddesc@)
@@ -313,12 +325,6 @@ omniORB.registerType(@tdname@._NP_RepositoryId, _0_@modname@._ad_@tdname@, _0_@m
 del @tdname@"""
 
 typedef = """\
-
-# typedef ... @tdname@
-class @tdname@:
-    _NP_RepositoryId = "@repoId@"
-    def __init__(self):
-        raise RuntimeError("Cannot construct objects of this type.")
 _d_@tdname@  = @desc@
 _ad_@tdname@ = (omniORB.tcInternal.tv_alias, @tdname@._NP_RepositoryId, "@tdname@", @tddesc@)
 _tc_@tdname@ = omniORB.tcInternal.createTypeCode(_ad_@tdname@)
@@ -940,11 +946,29 @@ class PythonVisitor:
                                                        decl, [])
                 tddesc = typeAndDeclaratorToDescriptor(node.aliasType(),
                                                        decl, [], 1)
+
+                unaliased_type = node.aliasType().unalias()
+
+                if len(decl.sizes()) == 0 and \
+                   unaliased_type.kind() in [idltype.tk_struct,
+                                             idltype.tk_union]:
+
+                    parent = dotName(fixupScopedName(unaliased_type.decl().\
+                                                     scopedName()))
+
+                    self.st.out(typedef_struct_union_header,
+                                tdname = tdname,
+                                repoId = decl.repoId(),
+                                parent = parent)
+                else:
+                    self.st.out(typedef_header,
+                                tdname  = tdname,
+                                repoId  = decl.repoId())
+
                 self.st.out(typedef_at_module_scope,
                             tdname  = tdname,
                             desc    = desc,
                             tddesc  = tddesc,
-                            repoId  = decl.repoId(),
                             modname = self.modname)
             else:
                 desc   = typeAndDeclaratorToDescriptor(node.aliasType(),
@@ -953,11 +977,29 @@ class PythonVisitor:
                 tddesc = typeAndDeclaratorToDescriptor(node.aliasType(),
                                                        decl,
                                                        self.currentScope, 1)
+
+                unaliased_type = node.aliasType().unalias()
+
+                if len(decl.sizes()) == 0 and \
+                   unaliased_type.kind() in [idltype.tk_struct,
+                                             idltype.tk_union]:
+
+                    parent = dotName(fixupScopedName(unaliased_type.decl().\
+                                                     scopedName()))
+
+                    self.st.out(typedef_struct_union_header,
+                                tdname = tdname,
+                                repoId = decl.repoId(),
+                                parent = parent)
+                else:
+                    self.st.out(typedef_header,
+                                tdname  = tdname,
+                                repoId  = decl.repoId())
+
                 self.st.out(typedef,
                             tdname  = tdname,
                             desc    = desc,
-                            tddesc  = tddesc,
-                            repoId  = decl.repoId())
+                            tddesc  = tddesc)
     #
     # Struct
     #
@@ -1517,8 +1559,11 @@ def valueToString(val, kind, scope=[]):
     else:
         return str(val)
 
+__translate_table = string.maketrans(" -.,", "____")
+
 def outputFileName(idlname):
-    return string.replace(os.path.basename(idlname), ".", "_")
+    global __translate_table
+    return string.translate(os.path.basename(idlname), __translate_table)
 
 def checkStubPackage(package):
     """Check the given package name for use as a stub directory
