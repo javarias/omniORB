@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/01/02 18:13:43  dpg1
+  Platform fixes/additions.
+
   Revision 1.1.2.10  2001/08/15 10:26:08  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -180,7 +183,7 @@ public:
     _OMNI_NS(giopAddressList)          pd_addresses;
     _CORBA_ULong                       pd_orb_type;
     _OMNI_NS(omniCodeSet::TCS_C)*      pd_tcs_c;
-    _OMNI_NS(omniCodeSet::TCS_W)*                pd_tcs_w;
+    _OMNI_NS(omniCodeSet::TCS_W)*      pd_tcs_w;
     IORExtraInfoList                   pd_extra_info;
   };
 
