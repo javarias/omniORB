@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.7  2000/05/04 14:35:02  djs
+# Added new flag splice-modules which causes all continuations to be output
+# as one lump. Default is now to output them in pieces following the IDL.
+#
 # Revision 1.31.2.6  2000/04/26 18:22:28  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -666,11 +670,14 @@ def visitTypedef(node):
                 def bounds(bounded = bounded, derivedName = derivedName,
                            element_ptr = element_ptr,
                            templateName = templateName):
-                    if not(bounded):
-                        stream.out(template.sequence_type_bounds,
-                                   name = derivedName,
-                                   element = element_ptr,
-                                   derived = templateName)
+                    if bounded:
+                        ctor_template = template.sequence_bounded_ctors
+                    else:
+                        ctor_template = template.sequence_unbounded_ctors
+                    stream.out(ctor_template,
+                               name = derivedName,
+                               element = element_ptr,
+                               derived = templateName)
                         
                 # output the main sequence definition
                 stream.out(template.sequence_type,
