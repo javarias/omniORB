@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.3  2000/04/26 18:22:57  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+# Removed superfluous externs in front of function definitions
+#
 # Revision 1.1.2.2  2000/04/20 15:11:28  djr
 # Fixed bug when duplicating a nil object reference.
 #
@@ -262,6 +267,7 @@ interface_ALIAS = """\
 #define __@guard_name@__ALIAS__
 typedef @fqname@ @flat_fqname@;
 typedef @impl_fqname@ @impl_flat_fqname@;
+typedef @objref_fqname@ @objref_flat_fqname@;
 #endif
 """
 
