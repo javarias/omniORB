@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.8.2.5  2001/04/19 09:15:43  sll
+ Big checkin with the brand new internal APIs.
+ Scoped where appropriate with the omni namespace.
+
  Revision 1.8.2.4  2000/10/09 16:24:59  sll
  Progress internal state to SR_GOT_CTX and bypass SR_GOT_PARAMS in
  arguments() when there is no context pending to be retrieved.
@@ -193,6 +197,16 @@ omniServerRequest::set_result(const CORBA::Any& value)
 
 
 ////////////////////////////////////////////////////////////////////////
+static
+CORBA::Boolean isASystemException(const char* repoId) {
+#define TEST_IS_A_SYSEXCEPTION(name) \
+  if (strcmp("IDL:omg.org/CORBA/" #name ":1.0",repoId) == 0) return 1;
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(TEST_IS_A_SYSEXCEPTION)
+  return 0;
+#undef TEST_IS_A_SYSEXCEPTION
+}
+
+////////////////////////////////////////////////////////////////////////
 void
 omniServerRequest::set_exception(const CORBA::Any& value)
 {
@@ -210,7 +224,16 @@ omniServerRequest::set_exception(const CORBA::Any& value)
     break;
 
   case SR_READY:
-    pd_state = SR_DSI_ERROR;
+    {
+      if (isASystemException(tc->id())) {
+	OMNIORB_ASSERT(pd_calldesc == 0);
+	pd_calldesc = new serverRequestCallDescriptor("",0,
+						      CORBA::NVList::_nil());
+	pd_giop_s.SkipRequestBody();
+	break;
+      }
+      pd_state = SR_DSI_ERROR;
+    }
   case SR_DSI_ERROR:
     OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
   }
@@ -229,12 +252,11 @@ public:
       value(v), repoid(id) {}
 
   const char* _NP_repoId(int* size) const {
-    *size = strlen(repoid);
+    *size = strlen(repoid) + 1;
     return repoid;
   }
 
   void _NP_marshal(cdrStream& s) const {
-    s.marshalRawString(repoid);
     value.NP_marshalDataOnly(s);
   }
 
