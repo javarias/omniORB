@@ -29,8 +29,11 @@
 //    objects, rather than C++ objects
 
 // $Id$
-
 // $Log$
+// Revision 1.17.2.2  2000/11/29 17:11:18  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.17.2.1  2000/11/21 10:59:58  dpg1
 // Segfault when string_to_object returns a nil objref.
 //
@@ -453,7 +456,8 @@ omniPy::createObjRef(const char*             mostDerivedRepoId,
 
 
 CORBA::Object_ptr
-omniPy::makeLocalObjRef(const char* targetRepoId, CORBA::Object_ptr objref)
+omniPy::makeLocalObjRef(const char* targetRepoId,
+			const CORBA::Object_ptr objref)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
@@ -470,7 +474,6 @@ omniPy::makeLocalObjRef(const char* targetRepoId, CORBA::Object_ptr objref)
 				    ooref->_iopProfiles(), 0,
 				    key.return_key(), 1);
   }
-  CORBA::release(objref);
   return (CORBA::Object_ptr)newooref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
 

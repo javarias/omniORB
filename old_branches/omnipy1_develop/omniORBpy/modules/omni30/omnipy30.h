@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.25.2.3  2000/11/29 17:11:18  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.25.2.2  2000/09/21 11:05:49  dpg1
 // Fix race condition with Py_omniServant deletion.
 //
@@ -313,13 +317,12 @@ public:
   // When a POA creates a reference to a Python servant, it does not
   // have a proxy object factory for it, so it creates an
   // omniAnonObjRef. This function converts one of them into a
-  // Py_omniObjRef with a reference to the local servant. It
-  // decrements the refcount of the original objref.
+  // Py_omniObjRef with a reference to the local servant.
   //
   // Caller must NOT hold the Python interpreter lock.
   static
   CORBA::Object_ptr makeLocalObjRef(const char* targetRepoId,
-				    CORBA::Object_ptr objref);
+				    const CORBA::Object_ptr objref);
 
   // Copy a Python object reference in an argument or return value.
   // Compares the type of the objref with the target type, and creates
