@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:35  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:05  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -41,10 +44,6 @@
 #define __OMNIOBJKEY_H__
 
 #include <string.h>
-
-
-class MemBufferedStream;
-class NetBufferedStream;
 
 
 // This is just big enough to fit a root poa key.
