@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2002/03/18 15:13:08  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.4.4  2001/09/20 13:26:14  dpg1
   Allow ORB_init() after orb->destroy().
 
@@ -503,7 +508,7 @@ public:
       if (omniORB::trace(25)) {
 	GIOP::Version v = giopStreamImpl::maxVersion()->version();
 	omniORB::logger log;
-	log << " Maximum supported GIOP version is " << (int)v.major 
+	log << "Maximum supported GIOP version is " << (int)v.major 
 	    << "." << (int)v.minor << "\n";
       }
     }

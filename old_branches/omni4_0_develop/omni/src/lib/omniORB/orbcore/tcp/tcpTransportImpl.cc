@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2002/04/28 20:43:25  dgrisby
+  Windows, FreeBSD, ETS fixes.
+
   Revision 1.1.2.10  2002/03/28 17:44:35  dpg1
   return in wrong place.
 
@@ -251,9 +254,10 @@ void unix_get_ifinfo(omnivector<const char*>& ifaddrs) {
       if ( errno != EINVAL || lastlen != 0 ) {
 	if ( omniORB::trace(1) ) {
 	  omniORB::logger log;
-	  log << "Warning: ioctl SIOCGICONF failed. Unable to obtain the list of all interface addresses.\n";
-	  return;
+	  log << "Warning: ioctl SIOCGICONF failed.\n"
+	      << "Unable to obtain the list of all interface addresses.\n";
 	}
+	return;
       }
     }
     else {
@@ -324,12 +328,12 @@ void win32_get_ifinfo(omnivector<const char*>& ifaddrs) {
   if ( WSAIoctl(sock, SIO_GET_INTERFACE_LIST, NULL,0,
                 (LPVOID)&info, sizeof(info), (LPDWORD)&retlen,
 		NULL,NULL) == SOCKET_ERROR ) {
-    if ( omniORB::trace(1) ) {
+    if ( omniORB::trace(2) ) {
       omniORB::logger log;
       int err = WSAGetLastError();
       log << "Warning: WSAIoctl SIO_GET_INTERFACE_LIST failed.\n"
 	  << "Unable to obtain the list of all interface addresses.\n"
-	  << "WSAGetLastError() = " << err << endl;
+	  << "WSAGetLastError() = " << err << "\n";
     }
     return;
   }
