@@ -1,4 +1,5 @@
 // This is a test file.
+// Next modification.
 
 /*
   $Log$
