@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.12  2000/06/27 16:23:26  sll
+# Merged OpenVMS port.
+#
 # Revision 1.15.2.11  2000/06/20 13:55:58  dpg1
 # omniidl now keeps the C++ tree until after the back-ends have run.
 # This means that back-ends can be C++ extension modules.
@@ -134,10 +137,11 @@ import idlast, idltype
 cmdname = "omniidl"
 
 def version():
-    print "omniidl version 0.1"
+    print "omniidl version 1.0"
 
 def usage():
-    print "\nUsage:", cmdname, "[flags] -b<back_end> file1 file2 ..."
+    global backends
+    print "\nUsage:", cmdname, "-b<back_end> [flags] file1 file2 ..."
     print """
 The supported flags are:
 
@@ -160,6 +164,17 @@ The supported flags are:
   -u              Print this usage message and exit
   -v              Trace compilation stages"""
 
+    if backends == []:
+        print """
+You must select a target back-end with -b. For C++, use -bcxx:
+
+  omniidl -bcxx file.idl
+
+Too see options specific to C++, use:
+
+  omniidl -bcxx -u
+"""
+
 preprocessor_args = []
 preprocessor_only = 0
 
@@ -168,7 +183,7 @@ if hasattr(_omniidl, "__file__"):
 else:
     preprocessor_path = os.path.dirname(sys.argv[0])
 
-if sys.platform!="OpenVMS":
+if sys.platform != "OpenVMS":
     preprocessor      = os.path.join(preprocessor_path, "omnicpp")
     preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
 			_omniidl.version
@@ -198,7 +213,7 @@ def parseArgs(args):
         opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:n:kKC:dVuhvqp:")
     except getopt.error, e:
         sys.stderr.write("Error in arguments: " + e + "\n")
-        sys.stderr.write("Use " + cmdname + " -u for usage\n")
+        sys.stderr.write("Use `" + cmdname + " -u' for usage\n")
         sys.exit(1)
 
     for opt in opts:
@@ -322,11 +337,12 @@ def main(argv=None):
     files = parseArgs(argv[1:])
 
     if print_usage:
-        usage()
+        usage()        
 
     elif len(files) == 0:
         if not quiet:
-            sys.stderr.write(cmdname + ": No files specified\n")
+            sys.stderr.write(cmdname + ": No files specified. Use `" \
+                             + cmdname + " -u' for usage.\n")
         sys.exit(1)
 
     # Import back-ends, and add any pre-processor arguments
