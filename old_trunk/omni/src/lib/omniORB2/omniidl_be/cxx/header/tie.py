@@ -28,6 +28,13 @@
 #
 # $Id$
 # $Log$
+# Revision 1.3  2000/01/07 20:31:29  djs
+# Regression tests in CVSROOT/testsuite now pass for
+#   * no backend arguments
+#   * tie templates
+#   * flattened tie templates
+#   * TypeCode and Any generation
+#
 # Revision 1.2  1999/12/26 16:43:53  djs
 # Fix for (not) generating tie templates of #included .idl
 #
@@ -84,7 +91,6 @@ def POA_prefix(nested):
 # Control arrives here
 #
 def visitAST(node):
-    #print "yup"
     for n in node.declarations():
         n.accept(self)
 
@@ -164,6 +170,9 @@ def template(env, node, nested = self.__nested):
                 param_id = tyutil.mapID(parameter.identifier())
                 signature.append(param_type_name + " " + param_id)
                 call.append(param_id)
+
+                #print "env = " + str(env)
+                #print "name " + param_type_name
 
             if has_return_value:
                 return_str = "return "
@@ -299,5 +308,6 @@ def visitException(node):
     pass
 def visitTypedef(node):
     for d in node.declarators():
-        add(tyutil.name(d.scopedName()))
+        add(d.identifier())
+        #add(tyutil.name(d.scopedName()))
     pass
