@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/29 15:44:45  dpg1
+// First revision.
+//
 
 #include <python1.5/Python.h>
 
@@ -91,7 +94,6 @@ private:
 
   PyObject* idlast_;
   PyObject* idltype_;
-  PyObject* idlutil_;
 
   PyObject* result_; // Current working value
 };
@@ -101,7 +103,6 @@ PythonVisitor()
 {
   idlast_  = PyImport_ImportModule("idlast");  ASSERT_PYOBJ(idlast_);
   idltype_ = PyImport_ImportModule("idltype"); ASSERT_PYOBJ(idltype_);
-  idlutil_ = PyImport_ImportModule("idlutil"); ASSERT_PYOBJ(idlutil_);
 }
 
 PythonVisitor::
@@ -109,7 +110,6 @@ PythonVisitor::
 {
   Py_DECREF(idlast_);
   Py_DECREF(idltype_);
-  Py_DECREF(idlutil_);
 }
 
 
@@ -874,8 +874,32 @@ extern "C" {
     return result;
   }
 
+  static PyObject* IdlPyDump(PyObject* self, PyObject* args)
+  {
+    PyObject* pyfile;
+
+    if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &pyfile))
+      return 0;
+
+    FILE*       file   = PyFile_AsFile(pyfile);
+    PyObject*   pyname = PyFile_Name(pyfile);
+    const char* name   = PyString_AsString(pyname);
+
+    _CORBA_Boolean success = AST::process(file, name);
+
+    if (success) {
+      DumpVisitor v;
+      AST::tree()->accept(v);
+    }
+    AST::tree()->clear();
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   static PyMethodDef omniidl_methods[] = {
-    {"compile",        IdlPyCompile,        METH_VARARGS}
+    {"compile",        IdlPyCompile,        METH_VARARGS},
+    {"dump",           IdlPyDump,           METH_VARARGS}
   };
 
   void init_omniidl()
