@@ -35,6 +35,11 @@
 
 /*
  $Log$
+ Revision 1.5  1999/05/20 18:37:34  sll
+ These proxyCall functions support context. This is separated from
+ the equivalent version in the orbcore library. The orbcore version
+ only support calls without context.
+
  Revision 1.4  1999/04/21 13:11:18  djr
  Added support for contexts.
 
@@ -59,7 +64,8 @@ _again:
 #else
   while(1) {
 #endif
-    o->assertObjectExistent();
+    if (omniORB::verifyObjectExistsAndType)
+      o->assertObjectExistent();
     omniRopeAndKey ropeAndKey;
     CORBA::Boolean fwd = o->getRopeAndKey(ropeAndKey);
     CORBA::Boolean reuse = 0;
