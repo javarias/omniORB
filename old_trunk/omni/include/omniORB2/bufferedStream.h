@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.15  1998/04/07 19:54:46  sll
+  Added extra marshalling functions when C++ bool type is used to represent
+  CORBA::Boolean.
+
  * Revision 1.14  1998/03/09  14:33:21  ewc
  * Calls to NP_data() scoped to satisfy aC++ on HPUX
  *
@@ -419,6 +423,7 @@ public:
 
   MemBufferedStream &operator=(const MemBufferedStream&);
 
+  // XXX shallowCopy- deprecated function. Do not use in new code.
   void shallowCopy(const MemBufferedStream&);
 
   friend inline void operator>>= (const _CORBA_Char a,MemBufferedStream &s) {
@@ -628,6 +633,7 @@ public:
     return pd_in_mkr;
   }
 
+  // XXX setSize- deprecated function. Do not use in new code.
   void* setSize(size_t sz) {
     if (sz > size()) {
       omni::ptr_arith_t p1 = 
