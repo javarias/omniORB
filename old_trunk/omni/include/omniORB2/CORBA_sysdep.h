@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.18  1998/04/09 19:17:59  sll
+ Extra macros defined for specifying initializers in the declaration
+ of integral constants.
+
  Revision 1.17  1998/04/08 16:11:20  sll
  Added support for Reliant UNIX 5.43.
 
@@ -111,6 +115,10 @@
 #define HAS_Cplusplus_Namespace
 #define HAS_Std_Namespace
 #endif
+
+#elif defined(__BCPLUSPLUS__)
+#define HAS_Cplusplus_Namespace
+
 #endif
 
 #if defined(__hpux__)
