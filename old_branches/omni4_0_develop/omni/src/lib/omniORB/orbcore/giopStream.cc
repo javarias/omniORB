@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.27  2003/09/25 13:47:44  dgrisby
+  Log connection attempts.
+
   Revision 1.1.4.26  2003/07/30 14:25:28  dgrisby
   Increase direct send cut-off to 16k.
 
@@ -513,7 +516,7 @@ giopStream::CommFailure::_raise(CORBA::ULong minor,
 {
   if (status != CORBA::COMPLETED_NO) retry = 0;
 #ifndef OMNIORB_NO_EXCEPTION_LOGGING
-  if( omniORB::trace(10) ) {
+  if( omniORB::traceExceptions ) {
     omniORB::logger l;
     l << "throw giopStream::CommFailure from "
       << omniExHelper::strip(filename) 	

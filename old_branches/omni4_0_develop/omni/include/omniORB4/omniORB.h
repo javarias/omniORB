@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.20  2004/03/02 15:31:22  dgrisby
+  Support for persistent server identifier.
+
   Revision 1.2.2.19  2002/10/14 20:06:03  dgrisby
   Per objref / per thread timeouts.
 
@@ -217,6 +220,13 @@ _CORBA_MODULE_BEG
   //     This value can be changed at runtime either by command-line   //
   //     option: -ORBtraceLevel <n>, or by direct assignment to this   //
   //     variable.                                                     //
+  //                                                                   //
+  _CORBA_MODULE_VAR _core_attr _CORBA_Boolean traceExceptions;         //
+  //                                                                   //
+  //     This value can be changed at runtime either by command-line   //
+  //     option: -ORBtraceExceptions, or by direct assignment to this  //
+  //     variable.  If true, then system exceptions are logged when    //
+  //     they are thrown.                                              //
   //                                                                   //
   _CORBA_MODULE_VAR _core_attr _CORBA_Boolean traceInvocations;        //
   //                                                                   //
