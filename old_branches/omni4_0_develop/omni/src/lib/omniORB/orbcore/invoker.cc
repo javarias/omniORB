@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/09/10 23:17:11  dgrisby
+  Thread interceptors.
+
   Revision 1.1.2.4  2002/02/25 11:18:02  dpg1
   Avoid thread churn in invoker.
 
@@ -74,7 +77,7 @@
 #include <interceptors.h>
 #include <stdlib.h>
 
-OMNI_USING_NAMESPACE(omni);
+OMNI_USING_NAMESPACE(omni)
 
 unsigned int omniAsyncInvoker::idle_timeout = 10;
 
