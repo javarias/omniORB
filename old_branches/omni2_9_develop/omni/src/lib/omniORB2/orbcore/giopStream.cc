@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  1999/11/04 20:20:19  sll
+  GIOP engines can now do callback to the higher layer to calculate total
+  message size if necessary.
+  Where applicable, changed to use the new server side descriptor-based stub.
+
   Revision 1.1.2.4  1999/10/05 20:35:33  sll
   Added support to GIOP 1.2 to recognise all TargetAddress mode.
   Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
@@ -1065,6 +1070,18 @@ requestInfo::unmarshalIORAddressingInfo(cdrStream& s)
     }
     // Reach here either we have got the key of the target object
     // or we have the target address info in targetAddress().
+    if (keysize() < 0 && vp == GIOP::ProfileAddr) {
+      // The target object is not in this address space and the target
+      // addressing mode is ProfileAddr. Therefore,
+      // targetAddress().ior.type_id has not been initialised.  There may
+      // be a MapTargetAddressToObjectFunction handler registered to
+      // further decode the target address. We initialised the type id
+      // field to a zero length string just in case the handler wants to
+      // look at it.
+      PTRACE("unmarshalRequestHeader","ProfileAddr addressing to unknown target.");
+      ta.ior.type_id = CORBA::string_alloc(0);
+      *((char*)ta.ior.type_id) = '\0';
+    }
   }
 }
 
