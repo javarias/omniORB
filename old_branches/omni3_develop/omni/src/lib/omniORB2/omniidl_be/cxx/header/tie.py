@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11.2.1  2000/02/14 18:34:54  dpg1
+# New omniidl merged in.
+#
 # Revision 1.11  2000/01/20 12:46:40  djs
 # Renamed a function to avoid a name clash with a module.
 #
@@ -138,7 +141,10 @@ def write_template(environment, node, nested = 0):
     # templates are outside the normal inheritance structure
     where = util.StringStream()
 
-    def buildCallables(interface, where, environment, continuation):
+    # defined_so_far contains keys corresponding to method names which
+    # have been defined already (and which should not be included twice)
+    def buildCallables(interface, where, environment, continuation,
+                       defined_so_far = {}):
         global_env = name.Environment()
         callables = interface.callables()
         operations = filter(lambda x:isinstance(x, idlast.Operation),
@@ -146,11 +152,17 @@ def write_template(environment, node, nested = 0):
         for operation in operations:
             returnType = operation.returnType()
             identifier = operation.identifier()
+            if (defined_so_far.has_key(identifier)):
+                # don't repeat it
+                continue
+            defined_so_far[identifier] = 1
+            
             parameters = operation.parameters()
             has_return_value = not(tyutil.isVoid(returnType))
             # FIXME: return types are fully scoped but argument types
             # arent?
-            returnType_name = tyutil.operationArgumentType(returnType, global_env)[0]
+            returnType_name = tyutil.operationArgumentType(returnType,
+                                                           global_env)[0]
             operation_name = tyutil.mapID(identifier)
             
             signature = []
@@ -162,10 +174,12 @@ def write_template(environment, node, nested = 0):
                 if config.EMULATE_BUGS() and not(config.OldFlag()):
                     # the old compiler scopes this bit wrong (but only when
                     # _not_ generating old skeletons?!)
-                    argtypes = tyutil.operationArgumentType(paramType, environment,
+                    argtypes = tyutil.operationArgumentType(paramType,
+                                                            environment,
                                                             virtualFn = 1)
                 else:
-                    argtypes = tyutil.operationArgumentType(paramType, global_env,
+                    argtypes = tyutil.operationArgumentType(paramType,
+                                                            global_env,
                                                             virtualFn = 1)
                 param_type_name = argtypes[dir]
                 param_id = tyutil.mapID(parameter.identifier())
@@ -200,6 +214,11 @@ def write_template(environment, node, nested = 0):
             attrType_name_IN = attrType_names[1]
             
             for identifier in identifiers:
+                if defined_so_far.has_key(identifier):
+                    # don't repeat it
+                    continue
+                defined_so_far[identifier] = 1
+                
                 id = tyutil.mapID(identifier)
                 where.out("""\
   @attr_type_ret_name@ @attribute_name@() { return pd_obj->@attribute_name@(); }""", attr_type_ret_name = attrType_name_RET,
@@ -210,7 +229,7 @@ def write_template(environment, node, nested = 0):
                               attr_type_in_name = attrType_name_IN)                    
         # do the recursive bit
         for i in interface.inherits():
-            continuation(i, where, environment, continuation)
+            continuation(i, where, environment, continuation, defined_so_far)
 
         # done
         return
