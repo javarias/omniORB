@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.22  2002/02/25 11:17:13  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.1.4.21  2002/02/13 16:02:39  dpg1
   Stability fixes thanks to Bastiaan Bakker, plus threading
   optimisations inspired by investigating Bastiaan's bug reports.
@@ -681,7 +684,8 @@ void
 giopStream::releaseInputBuffer(giopStream_Buffer* p) {
 
   if (!pd_rdlocked || pd_strand->spare || (p->end - p->start) < giopStream::bufferSize ) {
-    delete p;
+    char* c = (char*)p;
+    delete [] c;
     return;
   }
   p->next = pd_strand->spare;
