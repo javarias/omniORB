@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/01 10:05:00  dpg1
+// New file attribute to AST.
+//
 // Revision 1.3  1999/10/29 15:42:43  dpg1
 // DeclaredType() now takes extra DeclRepoId* argument.
 // Code to detect recursive structs and unions.
@@ -929,6 +932,7 @@ Union(const char* file, int line, _CORBA_Boolean mainFile,
     DeclRepoId(identifier),
     switchType_(0),
     cases_(0),
+    recursive_(0),
     finished_(0)
 {
   Scope* s  = Scope::current()->newUnionScope(identifier, file, line);
