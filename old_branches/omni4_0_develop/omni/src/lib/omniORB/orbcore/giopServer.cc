@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.22  2002/09/04 23:29:30  dgrisby
+  Avoid memory corruption with multiple list removals.
+
   Revision 1.22.2.21  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -761,7 +764,6 @@ giopServer::notifyRzDone(giopRendezvouser* r, CORBA::Boolean exit_on_error)
       log << ", it will no longer be serviced.\n";
     }
     ept->Shutdown();
-    delete ept;
   }
   else {
     pd_endpoints.push_back(ept);

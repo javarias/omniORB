@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/08/23 14:18:38  dgrisby
+  Avoid init exceptioni when SSL linked but not configured.
+
   Revision 1.1.2.7  2002/04/16 12:44:27  dpg1
   Fix SSL accept bug, clean up logging.
 
@@ -245,8 +248,10 @@ public:
   }
 
   void detach() { 
-    // XXX Once created, we do not delete sslTransportImpl or sslContext.
-    //     Should be deleted when ORB->destroy() is called.
+    if (_the_sslTransportImpl) delete _the_sslTransportImpl;
+    _the_sslTransportImpl = 0;
+    if (sslContext::singleton) delete sslContext::singleton;
+    sslContext::singleton = 0;
   }
 
 
