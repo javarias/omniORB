@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  1999/09/22 14:26:56  djr
+ Major rewrite of orbcore to support POA.
+
 */
 
 #ifndef __OMNI_OBJECTADAPTER_H__
@@ -165,11 +168,6 @@ public:
   // method invocations complete (in which case the
   // omniLocalIdentity calls this).
   //  The caller must not hold any locks.
-
-  virtual char* ppObject(omniLocalIdentity*) = 0;
-  // Pretty print a description of this object, and return as
-  // a string (which the caller must deallocate).
-  //?? May not need this ...
 
 
   ////////////////////
