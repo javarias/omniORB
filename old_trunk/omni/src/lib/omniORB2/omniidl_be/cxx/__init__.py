@@ -28,6 +28,12 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.12  2001/04/25 17:07:21  dpg1
+# Properly handle files #included at non-file scope.
+#
+# Revision 1.18.2.11  2001/04/25 16:55:07  dpg1
+# Properly handle files #included at non-file scope.
+#
 # Revision 1.18.2.10  2000/08/14 19:34:44  djs
 # Performs a quick scan of the AST looking for unsupported IDL constructs
 # before doing anything else.
@@ -160,6 +166,7 @@ usage_string = """\
   -WbBOA            Generate BOA compatible skeletons
   -Wbold            Generate old CORBA 2.1 signatures for skeletons
   -Wbold_prefix     Map C++ reserved words with prefix _
+  -Wbinline         Generate code for #included files inline with the main file
   -Wbkeep_inc_path  Preserve IDL #include path in header #includes
   -Wbuse_quotes     Use quotes in #includes: \"foo\" rather than <foo>"""
 
@@ -203,6 +210,8 @@ def process_args(args):
             config.state['SK Suffix']         = arg[2:]
         elif arg[:2] == "d=":
             config.state['DYNSK Suffix']      = arg[2:]
+        elif arg == "inline":
+            config.state['Inline Includes']   = 1
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 
@@ -220,7 +229,8 @@ def run(tree, args):
         # Check the input tree only contains stuff we understand
         support.checkIDL(tree)
         
-        # build the list of include files
+        # build the list of include files, and annotate nodes which
+        # should be processed in this run
         walker = config.WalkTreeForIncludes()
         tree.accept(walker)
         

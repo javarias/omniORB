@@ -32,6 +32,16 @@
 
 /*
  $Log$
+ Revision 1.1.2.23  2001/06/01 13:56:57  sll
+ Long long define for HPUX.
+ External CPP define guard for IR.h
+
+ Revision 1.1.2.22  2001/05/23 10:54:43  dpg1
+ Long long defines for SGI.
+
+ Revision 1.1.2.21  2001/04/23 14:50:20  dpg1
+ Extend GCC check to cope with GCC 3.
+
  Revision 1.1.2.20  2000/12/04 13:46:43  dpg1
  Support PowerPC Linux.
 
@@ -234,7 +244,8 @@
 // Minor version number 91 is for egcs version 1.*  Some older
 // versions of 1.* may not support namespaces properly - this is
 // only tested for egcs 1.1.1
-#  if __GNUC_MINOR__ >= 91 || __GNUC_MINOR__ == 9
+#  if (__GNUG__ == 2 && (__GNUC_MINOR__ >= 91 || __GNUC_MINOR__ == 9)) || \
+      (__GNUG__ >= 3)
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Cplusplus_Bool
 #  endif
@@ -363,6 +374,10 @@
 #define HAS_Cplusplus_Namespace
 #define HAS_Cplusplus_Bool
 #define OMNI_REQUIRES_FQ_BASE_CTOR
+#define HAS_LongLong
+#define _CORBA_LONGLONG_DECL long long
+#define _CORBA_ULONGLONG_DECL unsigned long long
+#define _CORBA_LONGLONG_CONST(x) (x##LL)
 #endif
 
 #if  _MIPS_SZINT == 64
@@ -395,6 +410,11 @@
 #define NEED_DUMMY_RETURN
 #define HAS_Cplusplus_Namespace
 #define HAS_Cplusplus_Bool
+#define HAS_LongLong
+#define _CORBA_LONGLONG_DECL   long long
+#define _CORBA_ULONGLONG_DECL  unsigned long long
+#define _CORBA_LONGLONG_CONST(x) (x##LL)
+
 #endif
 
 #endif

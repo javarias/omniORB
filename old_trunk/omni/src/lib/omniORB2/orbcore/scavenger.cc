@@ -28,6 +28,11 @@
  
 /*
   $Log$
+  Revision 1.10.6.5  2001/05/29 11:10:35  sll
+  Scavenger now get the real time after each scan. This is to cope with
+  the system clock set backward by a large amount. Seems to happen a lot to
+  some system.
+
   Revision 1.10.6.4  2000/01/07 14:51:14  djr
   Call timeouts are now disabled by default.
 
@@ -322,7 +327,7 @@ omniORB_Scavenger::run_undetached(void*)
   LOGMESSAGE(15,"","start.");
 
   unsigned long abs_sec,abs_nsec;
-  omni_thread::get_time(&abs_sec,&abs_nsec);
+  omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
 
   if (ScanPeriod)
     abs_sec += ScanPeriod;
@@ -336,8 +341,7 @@ omniORB_Scavenger::run_undetached(void*)
       poke = pd_cond.timedwait(abs_sec,abs_nsec);
       if (poke) {
 	LOGMESSAGE(15,"","woken by poke()");
-	omni_thread::get_time(&abs_sec,&abs_nsec);	
-	abs_sec += ScanPeriod;
+	omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
       }
     }
     else {
@@ -373,7 +377,7 @@ omniORB_Scavenger::run_undetached(void*)
       }
     }
 
-    abs_sec += ScanPeriod;
+    omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
   }
 
   LOGMESSAGE(15,"","exit.");
