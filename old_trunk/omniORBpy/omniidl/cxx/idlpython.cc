@@ -28,8 +28,8 @@
 
 // $Id$
 // $Log$
-// Revision 1.18  2000/03/06 15:15:54  dpg1
-// Minor bug fixes to omniidl. New -nf and -k flags.
+// Revision 1.15.2.4  2000/03/10 10:04:40  dpg1
+// Windows file/directory names are case insensitive.
 //
 // Revision 1.15.2.3  2000/03/06 15:03:48  dpg1
 // Minor bug fixes to omniidl. New -nf and -k flags.
@@ -1235,8 +1235,10 @@ extern "C" {
 
   static PyObject* IdlPyKeepComments(PyObject* self, PyObject* args)
   {
-    if (!PyArg_ParseTuple(args, (char*)"")) return 0;
-    Config::keepComments = 1;
+    int first;
+    if (!PyArg_ParseTuple(args, (char*)"i", &first)) return 0;
+    Config::keepComments  = 1;
+    Config::commentsFirst = first;
     Py_INCREF(Py_None); return Py_None;
   }
 
@@ -1277,7 +1279,7 @@ main(int argc, char** argv)
 "    bindir, archname = os.path.split(binarchdir)\n"
 "    treedir, bin     = os.path.split(bindir)\n"
 "    if string.lower(bin) == 'bin':\n"
-"        pylibdir   = os.path.join(treedir, 'lib', 'python')\n"
+"        pylibdir = os.path.join(treedir, 'lib', 'python')\n"
 "\n"
 "        if os.path.isdir(pylibdir):\n"
 "            sys.path.insert(0, pylibdir)\n"

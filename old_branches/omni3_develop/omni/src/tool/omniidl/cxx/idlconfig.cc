@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.1  2000/03/06 15:03:48  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 
 #include <idlconfig.h>
 
@@ -35,3 +38,4 @@
 _CORBA_Boolean Config::quiet          = 0;
 _CORBA_Boolean Config::forwardWarning = 1;
 _CORBA_Boolean Config::keepComments   = 0;
+_CORBA_Boolean Config::commentsFirst  = 0;

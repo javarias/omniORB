@@ -43,6 +43,7 @@ public:
   static _CORBA_Boolean quiet;           // Don't make any output
   static _CORBA_Boolean forwardWarning;  // Warn about unresolved forwards
   static _CORBA_Boolean keepComments;    // Keep comments from source
+  static _CORBA_Boolean commentsFirst;   // Comments come before declarations
 };
 
 

@@ -38,3 +38,4 @@
 _CORBA_Boolean Config::quiet          = 0;
 _CORBA_Boolean Config::forwardWarning = 1;
 _CORBA_Boolean Config::keepComments   = 0;
+_CORBA_Boolean Config::commentsFirst  = 0;

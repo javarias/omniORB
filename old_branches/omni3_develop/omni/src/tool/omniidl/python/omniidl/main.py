@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.9  2000/03/17 16:28:46  dpg1
+# Small improvement to error reporting.
+#
 # Revision 1.15.2.8  2000/03/16 11:09:30  dpg1
 # Better error reporting if import fails.
 #
@@ -140,7 +143,8 @@ The supported flags are:
   -bback_end      Select a back-end to be used. More than one permitted
   -Wbarg[,arg...] Send args to the back-end
   -nf             Do not warn about unresolved forward declarations
-  -k              Keep comments as strings to be used by the back-ends
+  -k              Comments after declarations are kept for the back-ends
+  -K              Comments before declarations are kept for the back-ends
   -Cdir           Change directory to dir before writing output
   -d              Dump the parsed IDL then exit
   -pdir           Path to omniidl back-ends ($TOP/lib/python)
@@ -177,7 +181,7 @@ def parseArgs(args):
     paths = []
 
     try:
-        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:n:kC:dVuhvqp:")
+        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:n:kKC:dVuhvqp:")
     except getopt.error, e:
         sys.stderr.write("Error in arguments: " + e + "\n")
         sys.stderr.write("Use " + cmdname + " -u for usage\n")
@@ -245,7 +249,11 @@ def parseArgs(args):
 
         elif o == "-k":
             preprocessor_args.append("-C")
-            _omniidl.keepComments()
+            _omniidl.keepComments(0)
+
+        elif o == "-K":
+            preprocessor_args.append("-C")
+            _omniidl.keepComments(1)
 
         elif o == "-d":
             dump_only = 1

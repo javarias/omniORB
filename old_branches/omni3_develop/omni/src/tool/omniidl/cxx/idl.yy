@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9  2000/02/04 12:17:09  dpg1
+// Support for VMS.
+//
 // Revision 1.8  1999/12/28 18:16:07  dpg1
 // positive_int_const isn't allowed to be zero.
 //
@@ -677,11 +680,15 @@ member_access:
     ;
 
 init_dcl:
-    init_dcl_header '(' init_param_decls_opt ')' ';' {
+    init_dcl_header '(' init_param_decls_opt ')' {
+      $1->closeParens();
+    } ';' {
       $1->finishConstruction($3);
       $$ = $1;
     }
-  | init_dcl_header '(' error ')' ';' {
+  | init_dcl_header '(' error ')' {
+      $1->closeParens();
+    } ';' {
       IdlSyntaxError(currentFile, yylineno,
 		     "Syntax error in factory parameters");
       $1->finishConstruction(0);
@@ -1259,14 +1266,16 @@ member_star:
     ;
 
 op_dcl:
-    op_header pragmas_opt parameter_dcls pragmas_opt
-        raises_expr_opt context_expr_opt {
-      $1->finishConstruction($3, $5, $6);
+    op_header pragmas_opt parameter_dcls {
+      $1->closeParens();
+    } pragmas_opt raises_expr_opt context_expr_opt {
+      $1->finishConstruction($3, $6, $7);
       $$ = $1;
     }
   | op_header error {
       IdlSyntaxError(currentFile, yylineno,
 		     "Syntax error in operation declaration");
+      $1->closeParens();
       $1->finishConstruction(0, 0, 0);
       $$ = $1;
     }
