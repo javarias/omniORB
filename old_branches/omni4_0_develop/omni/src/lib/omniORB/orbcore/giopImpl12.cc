@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.27  2004/10/18 00:23:54  dgrisby
+  Bug in trying to set up bidirectional GIOP with GIOP 1.0 and 1.1.
+
   Revision 1.1.4.26  2004/07/01 19:16:23  dgrisby
   Client call interceptor oneway and response expected flipped. Thanks
   John Fardo.
@@ -209,10 +212,12 @@ private:
   giopImpl12& operator=(const giopImpl12&);
 };
 
-
 ////////////////////////////////////////////////////////////////////////
 void
 giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
+
+  // On entry, this function owns the giopStream_Buffer. On exit, the
+  // buffer has either been assigned to another owner or deleted.
 
   unsigned char* hdr = (unsigned char*)b + b->start;
   GIOP::MsgType mtype = (GIOP::MsgType)hdr[7];
@@ -230,6 +235,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // rather the equivalent place in GIOP 1.3+) due to receiving a
     // reply message on the receiver thread of a bidirectional
     // connection.
+    giopStream_Buffer::deleteBuffer(b);
     inputTerminalProtocolError(g, __FILE__, __LINE__);
     // never reach here
   }
@@ -250,6 +256,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     }
   }
   else if ( mtype == GIOP::MessageError) {
+    giopStream_Buffer::deleteBuffer(b);
     inputTerminalProtocolError(g, __FILE__, __LINE__);
     // never reach here
   }
@@ -257,6 +264,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // orderly shutdown.
     CORBA::ULong minor;
     CORBA::Boolean retry;
+    giopStream_Buffer::deleteBuffer(b);
     g->notifyCommFailure(0,minor,retry);
     g->pd_strand->state(giopStrand::DYING);
     g->pd_strand->orderly_closed = 1;
@@ -266,6 +274,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // never reach here
   }
   else {
+    giopStream_Buffer::deleteBuffer(b);
     inputTerminalProtocolError(g, __FILE__, __LINE__);
     // never reach here
   }
@@ -281,6 +290,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
   case GIOP::LocateReply:
     if (!(g->pd_strand->isClient() || g->pd_strand->biDir)) {
       omniTransportLock->unlock();
+      giopStream_Buffer::deleteBuffer(b);
       inputTerminalProtocolError(g, __FILE__, __LINE__);
       // never reach here
     }
@@ -301,6 +311,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	  if (target->inputFullyBuffered()) {
 	    // a reply has already been received!
 	    omniTransportLock->unlock();
+	    giopStream_Buffer::deleteBuffer(b);
 	    inputTerminalProtocolError(g, __FILE__, __LINE__);
 	    // never reach here
 	  }
@@ -309,6 +320,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	    if (mtype != GIOP::Fragment) {
 	      // already got the header
 	      omniTransportLock->unlock();
+	      giopStream_Buffer::deleteBuffer(b);
 	      inputTerminalProtocolError(g, __FILE__, __LINE__);
 	      // never reach here
 	    }
@@ -316,6 +328,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	  else if (mtype == GIOP::Fragment) {
 	    // receive body before the header
 	    omniTransportLock->unlock();
+	    giopStream_Buffer::deleteBuffer(b);
 	    inputTerminalProtocolError(g, __FILE__, __LINE__);
 	    // never reach here
 	  }
@@ -341,6 +354,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
       {
 	if (g->pd_strand->isClient() && !g->pd_strand->biDir) {
 	  omniTransportLock->unlock();
+	  giopStream_Buffer::deleteBuffer(b);
 	  inputTerminalProtocolError(g, __FILE__, __LINE__);
 	  // never reach here
 	}
@@ -356,6 +370,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	  else if (target->requestId() == reqid) {
 	    // already have a request with the same id.
 	    omniTransportLock->unlock();
+	    giopStream_Buffer::deleteBuffer(b);
 	    inputTerminalProtocolError(g, __FILE__, __LINE__);
 	    // never reach here
 	  }
@@ -369,9 +384,11 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	unused->state(IOP_S::InputPartiallyBuffered);
 	unused->requestId(reqid);
       }
+      // falls through
     case GIOP::CancelRequest:
       if (g->pd_strand->isClient() && !g->pd_strand->biDir) {
 	omniTransportLock->unlock();
+	giopStream_Buffer::deleteBuffer(b);
 	inputTerminalProtocolError(g, __FILE__, __LINE__);
 	// never reach here
       }
@@ -392,6 +409,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	    if (target->inputFullyBuffered()) {
 	      // a reply has already been received!
 	      omniTransportLock->unlock();
+	      giopStream_Buffer::deleteBuffer(b);
 	      inputTerminalProtocolError(g, __FILE__, __LINE__);
 	      // never reach here
 	    }
@@ -445,10 +463,7 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
       if (!matched_target_is_client) {
 
 	((GIOP_S*)matched_target)->state(IOP_S::InputFullyBuffered);
-	if (omniORB::trace(40)) {
-	  omniORB::logger log;
-	  log << "Changed GIOP_S to InputFullyBuffered\n";
-	}
+	omniORB::logs(40, "Changed GIOP_S to InputFullyBuffered");
 	if (!g->pd_strand->isClient()) {
 	  g->pd_strand->server->notifyCallFullyBuffered(g->pd_strand->connection);
 	}
