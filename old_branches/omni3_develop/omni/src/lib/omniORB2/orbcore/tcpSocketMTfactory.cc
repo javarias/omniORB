@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.25  2002/05/10 14:00:31  dgrisby
+  Disable Nagle.
+
   Revision 1.22.6.24  2002/04/28 17:53:04  dgrisby
   FreeBSD patches.
 
@@ -622,7 +625,7 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
   {
     // Prevent Nagle's algorithm
     int valtrue = 1;
-    if (setsockopt(pd_rendezvous,SOL_TCP,TCP_NODELAY,
+    if (setsockopt(pd_rendezvous,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
 
       CLOSESOCKET(pd_rendezvous);
@@ -1286,7 +1289,7 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
   {
     // Prevent Nagle's algorithm
     int valtrue = 1;
-    if (setsockopt(sock,SOL_TCP,TCP_NODELAY,
+    if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
 
       CLOSESOCKET(sock);
