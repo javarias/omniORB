@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.4.3  1999/09/25 17:00:22  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.10.2.1  1999/09/21 20:37:17  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -102,7 +105,7 @@
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("strand " ## prefix ## ": ");\
+     omniORB::logger log("omniORB: strand " ## prefix ## ": ");\
 	log << message ## "\n";\
    }\
 } while (0)
@@ -463,8 +466,8 @@ Rope::incrRefCount(CORBA::Boolean held_anchor_mutex)
     pd_anchor->pd_lock.lock();
   {
     if (omniORB::trace(20)) {
-      omniORB::logger log("strand Rope::incrRefCount: ");
-      log << "old value = " << pd_refcount << "\n";
+      omniORB::logger log("omniORB: ");
+      log << "strand Rope::incrRefCount: old value = " << pd_refcount << "\n";
     }
   }
   assert(pd_refcount >= 0);
@@ -482,8 +485,8 @@ Rope::decrRefCount(CORBA::Boolean held_anchor_mutex)
 
   {
     if (omniORB::trace(20)) {
-      omniORB::logger log("strand Rope::decrRefCount: ");
-      log << "old value = " << pd_refcount << "\n";
+      omniORB::logger log("omniORB: ");
+      log << "strand Rope::decrRefCount: old value = " << pd_refcount << "\n";
     }
   }
 
