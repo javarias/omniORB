@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  2000/03/31 14:20:18  dpg1
+// Arguments to activate_object_with_id() were in the wrong order.
+//
 // Revision 1.5  2000/03/30 13:01:14  dpg1
 // Locking fixed for ~Py_omniServant().
 //
@@ -802,7 +805,7 @@ extern "C" {
 	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
 
 	if (pyos) {
-	  PyObject* pyservant = pyos->pyServant();
+	  pyservant = pyos->pyServant();
 	  pyos->_remove_ref();
 	}
       }
