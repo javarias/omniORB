@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/03 19:02:46  sll
+  Separate out the marshalling of byte, octet and char into 3 set of distinct
+  marshalling functions. Sequence of and sequence of array of these types
+  updated correspondingly.
+
   Revision 1.1.2.1  2000/09/27 16:54:09  sll
   *** empty log message ***
 
@@ -231,7 +236,7 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator>>= (cdrStream& s) cons
   pd_len >>= s;
   for (_CORBA_ULong i=0; i<pd_len; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
-      pd_buf[i][j] >>= s;
+      *((Telm*)(pd_buf[i]) + j) >>= s;
     }
   }
   return;
@@ -252,7 +257,7 @@ _CORBA_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (cdrStream& s)
   length(l);
   for (_CORBA_ULong i=0; i<l; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
-      pd_buf[i][j] <<= s;
+      *((Telm*)(pd_buf[i]) + j) <<= s;
     }
   }
   return;
@@ -266,7 +271,7 @@ _CORBA_Sequence_Array_Char<T,T_slice,dimension>::operator>>=(cdrStream& s) const
   pd_len >>= s;
   for (_CORBA_ULong i=0; i<pd_len; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
-      s.marshalChar(pd_buf[i][j]);
+      s.marshalChar(*((_CORBA_Char*)(pd_buf[i]) + j));
     }
   }
 }
@@ -285,7 +290,7 @@ _CORBA_Sequence_Array_Char<T,T_slice,dimension>::operator<<=(cdrStream& s)
   length(l);
   for (_CORBA_ULong i=0; i<l; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
-      pd_buf[i][j] =  s.unmarshalChar();
+      *((_CORBA_Char*)(pd_buf[i]) + j) =  s.unmarshalChar();
     }
   }
 }
