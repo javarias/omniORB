@@ -21,6 +21,8 @@
 #define __INITFILE_H__
 
 
+#define MAX_CONFIG 10   
+
 
 class initFile
 {
