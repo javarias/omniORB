@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/11/08 16:33:50  dpg1
+  Local servant POA shortcut policy.
+
   Revision 1.1.4.6  2001/09/03 16:52:05  sll
   New signature for locateRequest. Now accept a calldescriptor argument.
 
@@ -163,6 +166,9 @@ public:
   // deactivated and the local shortcut can no longer be used. It is,
   // of course, totally unthreadsafe.
 
+  static _CORBA_Boolean real_is_equivalent(const omniIdentity*,
+					   const omniIdentity*);
+
 protected:
   int pd_nInvocations;
   // This count gives the number of method calls in progress
@@ -187,9 +193,6 @@ protected:
   // may not yet exist either.
   //  We do not hold a reference to this adapter, since it will
   // (must!) outlive this object.
-
-  static _CORBA_Boolean real_is_equivalent(const omniIdentity*,
-					   const omniIdentity*);
 
   _CORBA_Boolean pd_deactivated;
   // True if this localIdentity is no longer active, and cannot be
