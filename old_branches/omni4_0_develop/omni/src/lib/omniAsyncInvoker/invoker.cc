@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/04/19 09:47:54  sll
+  New library omniAsyncInvoker.
+
 */
 
 #include <omnithread.h>
@@ -235,8 +238,8 @@ omniAsyncInvoker::insert(omniTask* t) {
 	  // Cannot start a new thread.
 	  return 0;
 	}
-	break;
       }
+      break;
     }
   case omniTask::DedicatedThread:
     {
