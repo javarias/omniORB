@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/09/20 13:26:13  dpg1
+  Allow ORB_init() after orb->destroy().
+
   Revision 1.1.4.5  2001/08/17 15:00:47  dpg1
   Fixes for pre-historic compilers.
 
@@ -107,9 +110,9 @@ public:
     Link* prev;
 
     Link() {
-			next = this;
-			prev = this;
-		}
+      next = this;
+      prev = this;
+    }
 
     void insert(Link& head);
     void remove();
