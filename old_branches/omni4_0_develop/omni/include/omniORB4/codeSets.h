@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/11/15 17:15:42  sll
+  Added definition for the TAG_CODE_SETS component.
+
   Revision 1.1.2.2  2000/11/09 12:23:04  dpg1
   Update to compile on Solaris
 
@@ -216,7 +219,7 @@ public:
     // Unicode based marshalling
     virtual void marshalChar  (cdrStream& stream, UniChar uc) = 0;
     virtual void marshalString(cdrStream& stream,
-			       _CORBA_ULong len, UniChar* us) = 0;
+			       _CORBA_ULong len, const UniChar* us) = 0;
 
     virtual UniChar unmarshalChar(cdrStream& stream) = 0;
 
@@ -279,7 +282,7 @@ public:
     // Unicode based marshalling
     virtual void marshalWChar  (cdrStream& stream, UniChar uc) = 0;
     virtual void marshalWString(cdrStream& stream,
-				_CORBA_ULong len, UniChar* us) = 0;
+				_CORBA_ULong len, const UniChar* us) = 0;
 
     virtual UniChar unmarshalWChar(cdrStream& stream) = 0;
 
@@ -380,7 +383,7 @@ public:
     // Inherited virtual functions
     virtual void marshalChar  (cdrStream& stream, UniChar uc);
     virtual void marshalString(cdrStream& stream,
-			       _CORBA_ULong len, UniChar* us);
+			       _CORBA_ULong len, const UniChar* us);
 
     virtual UniChar unmarshalChar(cdrStream& stream);
 
@@ -483,7 +486,7 @@ public:
     // Unicode based marshalling
     virtual void marshalWChar  (cdrStream& stream, UniChar uc);
     virtual void marshalWString(cdrStream& stream,
-				_CORBA_ULong len, UniChar* us);
+				_CORBA_ULong len, const UniChar* us);
 
     virtual UniChar unmarshalWChar(cdrStream& stream);
 
@@ -505,7 +508,7 @@ public:
     virtual _CORBA_Boolean fastUnmarshalWChar  (cdrStream&          stream,
 						NCS_W*              ncs,
 						_CORBA_WChar&       c);
-
+    
     virtual _CORBA_Boolean fastUnmarshalWString(cdrStream&          stream,
 						NCS_W*              ncs,
 						_CORBA_ULong        bound,

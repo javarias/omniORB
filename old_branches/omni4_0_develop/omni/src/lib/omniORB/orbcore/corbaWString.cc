@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/15 17:20:23  sll
+  Removed obsoluted marshalling functions.
+
   Revision 1.1.2.1  2000/10/27 15:42:07  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -42,7 +45,9 @@
 
 #include <exceptiondefs.h>
 
-const _CORBA_WChar*const _CORBA_WString_helper::empty_wstring = L"";
+// Empty string constant. Can't use L"", since _CORBA_WChar may not be
+// the same as wchar_t.
+const _CORBA_WChar*const _CORBA_WString_helper::empty_wstring = {0};
 
 
 _CORBA_WChar*

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/11/10 15:41:36  dpg1
+  Native code sets throw BAD_PARAM if they are given a null transmission
+  code set.
+
   Revision 1.1.2.2  2000/11/03 18:49:17  sll
   Separate out the marshalling of byte, octet and char into 3 set of distinct
   marshalling functions.
@@ -75,7 +79,8 @@ public:
 
   virtual void marshalWChar  (cdrStream& stream, omniCodeSet::UniChar uc);
   virtual void marshalWString(cdrStream& stream,
-			      _CORBA_ULong len, omniCodeSet::UniChar* us);
+			      _CORBA_ULong len,
+			      const omniCodeSet::UniChar* us);
 
   virtual omniCodeSet::UniChar unmarshalWChar(cdrStream& stream);
 
@@ -223,7 +228,8 @@ TCS_W_UTF_16::marshalWChar(cdrStream& stream, omniCodeSet::UniChar uc)
 
 void
 TCS_W_UTF_16::marshalWString(cdrStream& stream,
-			     _CORBA_ULong len, omniCodeSet::UniChar* us)
+			     _CORBA_ULong len,
+			     const omniCodeSet::UniChar* us)
 {
   // The CORBA 2.4 spec says that for UTF-16, if there is no BOM,
   // values are sent big-endian, regardless of the endianness of the

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/11/10 15:41:36  dpg1
+  Native code sets throw BAD_PARAM if they are given a null transmission
+  code set.
+
   Revision 1.1.2.2  2000/11/03 18:49:17  sll
   Separate out the marshalling of byte, octet and char into 3 set of distinct
   marshalling functions.
@@ -71,7 +75,7 @@ public:
   // Unicode based marshalling
   void marshalChar  (cdrStream& stream, omniCodeSet::UniChar uc);
   void marshalString(cdrStream& stream,
-		     _CORBA_ULong len, omniCodeSet::UniChar* us);
+		     _CORBA_ULong len, const omniCodeSet::UniChar* us);
 
   omniCodeSet::UniChar unmarshalChar(cdrStream& stream);
 
@@ -362,7 +366,8 @@ TCS_C_UTF_8::marshalChar(cdrStream& stream, omniCodeSet::UniChar uc)
 
 void
 TCS_C_UTF_8::marshalString(cdrStream& stream,
-			   _CORBA_ULong len, omniCodeSet::UniChar* us)
+			   _CORBA_ULong len,
+			   const omniCodeSet::UniChar* us)
 {
   omniCodeSetUtil::BufferC b;
   omniCodeSet::UniChar     uc;
