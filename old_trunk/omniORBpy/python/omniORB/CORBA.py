@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.16  2000/01/18 17:14:13  dpg1
+# Support for pickle
+#
 # Revision 1.15  1999/12/07 12:35:33  dpg1
 # id() function added.
 #
@@ -597,7 +600,7 @@ class Object:
 
     def _get_interface(self):
         # ***
-        raise NO_IMPLEMENT
+        raise NO_IMPLEMENT()
     
     def _is_a(self, repoId):
         if omniORB.static_is_a(self.__class__, repoId): return TRUE
