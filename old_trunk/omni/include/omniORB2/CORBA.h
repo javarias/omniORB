@@ -29,6 +29,11 @@
 
 /*
  $Log$
+ Revision 1.32  1999/04/21 13:41:10  djr
+ Added marshalling methods to CORBA::Context.
+ String types are now defined in stringtypes.h, and typedef inside the
+ CORBA module.
+
  Revision 1.31  1999/02/18 15:23:29  djr
  New type CORBA::Request_member. Corrected CORBA::ORB::RequestSeq to use
  this. CORBA::ORB::get_next_response now has Request_out parameter.
@@ -1928,7 +1933,7 @@ _CORBA_MODULE_BEG
     typedef char* ObjectId;
     typedef String_var ObjectId_var;
 
-    typedef _CORBA_Unbounded_Sequence<String_member> ObjectIdList;
+    typedef _CORBA_Unbounded_Sequence__String ObjectIdList;
 
     class ObjectIdList_OUT_arg;
 
