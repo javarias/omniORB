@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  1999/11/04 11:46:12  dpg1
+# Now uses our own version of the GNU C preprocessor.
+#
 # Revision 1.5  1999/11/02 12:17:26  dpg1
 # Top-level module name now has a prefix of _0_ to avoid clashes with
 # names of nested declarations.
@@ -218,14 +221,16 @@ typedef_at_module_scope = """\
 # typedef ... @tdname@
 _0_@modname@._d_@tdname@  = @desc@
 _0_@modname@._ad_@tdname@ = (omniORB.tcInternal.tv_alias, "@repoId@", "@tdname@", @tddesc@)
-_0_@modname@._tc_@tdname@ = omniORB.tcInternal.createTypeCode(_0_@modname@._ad_@tdname@)"""
+_0_@modname@._tc_@tdname@ = omniORB.tcInternal.createTypeCode(_0_@modname@._ad_@tdname@)
+omniORB.registerType(_0_@modname@._ad_@tdname@[1], _0_@modname@._ad_@tdname@, _0_@modname@._tc_@tdname@)"""
 
 typedef = """\
 
 # typedef ... @tdname@
 _d_@tdname@  = @desc@
 _ad_@tdname@ = (omniORB.tcInternal.tv_alias, "@repoId@", "@tdname@", @tddesc@)
-_tc_@tdname@ = omniORB.tcInternal.createTypeCode(_ad_@tdname@)"""
+_tc_@tdname@ = omniORB.tcInternal.createTypeCode(_ad_@tdname@)
+omniORB.registerType(_ad_@tdname@[1], _ad_@tdname@, _tc_@tdname@)"""
 
 recursive_struct_descr = """
 # Recursive struct @sname@
