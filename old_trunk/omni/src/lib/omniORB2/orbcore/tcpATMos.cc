@@ -3,7 +3,7 @@
 // tcpATMos.cc                Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.4  1998/08/14 13:53:25  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.3  1998/04/07 19:38:46  sll
   Replace cerr with omniORB::log.
 

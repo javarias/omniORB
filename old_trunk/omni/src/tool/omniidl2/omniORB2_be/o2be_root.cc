@@ -3,7 +3,7 @@
 // o2be_root.cc             Created on: 06/08/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.17  1999/01/07 09:37:19  djr
+  Separate stub skeleton into two files: fooSK.cc and fooDynSK.cc.
+  The latter contains code for TypeCode and Any.
+
   Revision 1.16  1998/10/26 12:12:15  sll
   Added check for frontend error flagged by the backend.
 

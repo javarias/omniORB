@@ -1,7 +1,7 @@
 //				Package : threadtests
 // diner.cc			Created : 23/1/95 sll
 //
-// Copyright (C) Olivetti Research Ltd 1994, 1995
+// Copyright (C) AT&T Laboratories Cambridge 1994, 1995
 //
 // Description:
 //     A solution to the infamous dining philosophers, implemented using
@@ -16,6 +16,9 @@
 
 /*
  $Log$
+ Revision 1.5  1997/12/09 20:21:58  sll
+ Replaced macro __NT__ with __WIN32__
+
 // Revision 1.4  1997/06/03  10:59:49  tjr
 // new omnithread interface using exceptions and lock class for mutex & sem.
 //

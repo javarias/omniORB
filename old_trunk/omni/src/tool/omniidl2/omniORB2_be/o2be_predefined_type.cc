@@ -2,7 +2,7 @@
 // o2be_predefined_type.cc  Created on: 9/8/96
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.8  1999/01/07 09:37:45  djr
+  Changes to support new implementation of TypeCode.
+
   Revision 1.7  1998/08/13 22:44:20  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.

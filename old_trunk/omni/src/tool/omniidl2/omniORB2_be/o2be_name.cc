@@ -3,7 +3,7 @@
 // o2be_name.cc             Created on: 12/08/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,11 @@
 
 /*
   $Log$
+  Revision 1.12  1999/01/07 09:43:43  djr
+  Two new 'names' for declarations, _idname() and canonical_name() which
+  produce names guarenteed to be unique for a given identifier and a
+  given IDL type respectively.
+
   Revision 1.11  1998/08/19 15:53:40  sll
   New member function variable_qualifier() replaces the static VarToken.
 

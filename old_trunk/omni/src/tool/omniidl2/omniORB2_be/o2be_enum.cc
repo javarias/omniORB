@@ -3,7 +3,7 @@
 // o2be_enum.cc             Created on: 12/08/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.10  1999/01/07 09:47:52  djr
+  Changes to support new TypeCode/Any implementation, which is now
+  placed in a new file ...DynSK.cc (by default).
+   Renamed local variables beginning with __.
+
   Revision 1.9  1998/08/19 15:51:37  sll
   New member functions void produce_binary_operators_in_hdr and the like
   are responsible for generating binary operators <<= etc in the global

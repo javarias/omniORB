@@ -3,7 +3,7 @@
 // nbufferedStream.cc         Created on: 14/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.10  1999/01/07 16:08:40  djr
+  get_char_array() and put_char_array() now take an alignment arguement.
+  New function copy_from(MemBufferedStream& ...)
+
   Revision 1.9  1998/08/14 13:49:17  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.

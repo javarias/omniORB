@@ -3,7 +3,7 @@
 // tcpATMosMTfactory.cc       Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.7  1998/11/09 10:58:05  sll
+  Removed the use of the reserved keyword "export".
+
   Revision 1.6  1998/08/14 13:53:49  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.

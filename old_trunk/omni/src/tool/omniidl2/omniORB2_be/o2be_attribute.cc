@@ -3,7 +3,7 @@
 // o2be_attribute.cc        Created on: 13/09/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.19  1999/01/07 09:51:11  djr
+  New implementation of proxy calls which reduces the size of
+  the code generated.
+
   Revision 1.18  1998/08/13 22:35:48  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available

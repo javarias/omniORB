@@ -3,7 +3,7 @@
 // tcpSocket.cc               Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.6  1998/08/14 13:54:13  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.5  1998/08/13 16:10:07  sll
   Now can accept IOR with IIOP 1.1 profile. IIOP 1.1 specific part of
   the profile is ignored silently.

@@ -3,7 +3,7 @@
 // o2be_array.cc            Created on: 07/10/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.15  1999/02/19 11:23:54  djr
+  Fixed dim_iterator - which fails if array type is nested more than
+  2 levels deep.
+
   Revision 1.14  1999/01/07 09:51:56  djr
   Changes to support new TypeCode/Any implementation, which is now
   placed in a new file ...DynSK.cc (by default). Other minor

@@ -3,7 +3,7 @@
 // LibcWrapper.h              Created on: 19/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1997/12/09 18:25:28  sll
+  Use __WIN32__ instead of __NT__
+
  * Revision 1.4  1997/05/06  15:23:10  sll
  * Public release.
  *

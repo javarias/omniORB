@@ -3,7 +3,7 @@
 // scavenger.cc               Created on: 5/8/97
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.5  1999/02/11 17:54:19  djr
+  Added class OutScavengerThreadKiller which kills the out scavenger
+  when global destructors are called.
+
   Revision 1.4  1998/08/14 13:51:58  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.

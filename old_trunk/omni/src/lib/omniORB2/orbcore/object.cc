@@ -3,7 +3,7 @@
 // object.cc                  Created on: 13/5/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16  1999/01/07 16:12:12  djr
+  Added support for the server side _interface() operation.
+
   Revision 1.15  1998/08/26 11:13:32  sll
   Minor updates to remove warnings when compiled with standard C++ compiler.
 
@@ -43,6 +46,9 @@
   Temporary work-around for egcs compiler.
 
   $Log$
+  Revision 1.16  1999/01/07 16:12:12  djr
+  Added support for the server side _interface() operation.
+
   Revision 1.15  1998/08/26 11:13:32  sll
   Minor updates to remove warnings when compiled with standard C++ compiler.
 

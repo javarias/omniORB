@@ -3,7 +3,7 @@
 // objectRef.cc               Created on: 20/5/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.22  1999/02/01 15:40:53  djr
+  Replace copy-initialisation of _var types with direct initialisation.
+
   Revision 1.21  1999/01/11 09:55:53  djr
   *** empty log message ***
 

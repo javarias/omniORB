@@ -3,7 +3,7 @@
 // ropeFactory.h              Created on: 30/9/97
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.4  1998/11/09 10:55:19  sll
+ Removed the use of reserved keyword "export".
+
  Revision 1.3  1997/12/09 18:44:43  sll
  New and extended ropeFactory interface.
 

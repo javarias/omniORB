@@ -3,7 +3,7 @@
 // initFile.cc                Created on: 10/01/97
 //                            Author    : Eoin Carroll  (ewc)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25  1998/09/23 09:56:24  sll
+  Close registry key on WIN32 in the dtor of initFile.
+
   Revision 1.24  1998/08/21 19:11:36  sll
   Now store the initial object reference to the NameService into
   omniInitialReferences::singleton().

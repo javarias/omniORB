@@ -3,7 +3,7 @@
 // corbaFloat.cc              Created on: 23/04/98
 //                            Author    :
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -30,6 +30,10 @@
 
 /* 
    $Log$
+   Revision 1.2  1998/08/14 13:44:04  sll
+   Added pragma hdrstop to control pre-compile header if the compiler feature
+   is available.
+
    Revision 1.1  1998/08/11 16:39:41  sll
    Initial revision
 

@@ -3,7 +3,7 @@
 // o2be_sequence.cc         Created on: 12/08/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.16  1999/01/07 09:33:46  djr
+  Changes to support new TypeCode/Any implementation, which is now
+  placed in a new file ...DynSK.cc (by default).
+
   Revision 1.15  1998/08/19 19:12:09  sll
   Catch the illegal IDL: a sequence of exception, in the ctor. The frontend
   grammer let this go through. Should really fix the frontend.

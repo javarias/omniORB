@@ -3,7 +3,7 @@
 // corbaString.cc             Created on: 20/9/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.11  1999/02/26 10:41:45  djr
+  Removed brackets round 'new char[(int)(len)]' to work around MSVC bug.
+
   Revision 1.10  1999/02/01 15:40:44  djr
   Initialise strings allocated with string_alloc() to zero length.
   Inline uses of string_alloc() and string_free().

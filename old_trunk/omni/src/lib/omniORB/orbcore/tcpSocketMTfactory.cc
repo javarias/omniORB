@@ -3,7 +3,7 @@
 // tcpSocketMTfactory.cc      Created on: 18/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15  1999/02/19 12:22:33  djr
+  Fixed typo: sunsos -> sunos
+
   Revision 1.14  1998/11/09 10:56:57  sll
   Removed the use of the reserved keyword "export".
 

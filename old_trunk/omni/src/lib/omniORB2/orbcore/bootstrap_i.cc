@@ -3,7 +3,7 @@
 // bootstrap_i.cc             Created on: 20/08/98
 //                            Author    : Sai-Lai Lo
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.6  1999/02/01 15:13:04  djr
+  Replace copy-initialisation of _var types with direct initialisation.
+
   Revision 1.5  1999/01/11 09:45:53  djr
   *** empty log message ***
 

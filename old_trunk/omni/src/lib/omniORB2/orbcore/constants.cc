@@ -3,7 +3,7 @@
 // constants.cc               Created on: 15/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.11  1999/01/07 15:16:15  djr
+  Changed version to 2.7
+
   Revision 1.10  1998/08/05 18:05:05  sll
   Version variable is changed to omniORB_2_6 (previously omniORB_2_5).
 

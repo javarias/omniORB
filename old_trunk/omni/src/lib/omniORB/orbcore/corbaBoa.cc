@@ -3,7 +3,7 @@
 // corbaBoa.cc                Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.7  1998/08/21 19:15:07  sll
+  Added new command line option: -BOAno_bootstrap_agent. If this option
+  is specified, do not initialise the special object that can respond to
+  incoming request for initial object references.
+
   Revision 1.6  1998/08/14 13:43:39  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.

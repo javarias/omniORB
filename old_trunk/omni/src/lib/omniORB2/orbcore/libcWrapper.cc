@@ -3,7 +3,7 @@
 // libcWrapper.cc             Created on: 19/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.16  1999/01/07 15:57:39  djr
+  Implemented strcasecmp() and strncasecmp() for those platforms that do
+  not have it.
+
   Revision 1.15  1998/10/20 17:54:29  sll
   On HPUX, allocate memory hostent_data the right way.
 

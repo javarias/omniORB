@@ -3,7 +3,7 @@
 // o2be_constant.cc         Created on: 12/08/1996
 //			    Author    : Sai-Lai Lo (sll)
 //
-//    Copyright (C) 1996, 1997 Olivetti & Oracle Research Laboratory
+//    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl2.
 //
@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.9  1999/01/07 09:48:01  djr
+  *** empty log message ***
+
   Revision 1.8  1998/08/19 15:51:01  sll
   o2be_name::VarToken is now replaced by a better name
   o2be_name::variable_qualifier.
