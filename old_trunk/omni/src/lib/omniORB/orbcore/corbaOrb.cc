@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13  1998/04/08 16:06:25  sll
+  Added support for Reliant UNIX 5.43.
+
   Revision 1.12  1998/04/07 19:32:38  sll
   Replace cerr with omniORB::log.
   Use namespace and bool type if available.
@@ -89,7 +92,11 @@ CORBA::Boolean           tcAliasExpand = 0;
 #else
 CORBA::ULong                    omniORB::traceLevel = 1;
 CORBA::Boolean                  omniORB::strictIIOP = 0;
+#if defined(HAS_Cplusplus_Namespace)
+char*                           omniORB::serverName = 0;
+#else
 CORBA::String_var		omniORB::serverName = (const char*)"unknown";
+#endif
 CORBA::Boolean                  omniORB::tcAliasExpand = 0; 
 #endif
 
