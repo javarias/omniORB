@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.21  1999/03/11 16:26:07  djr
+ Updated copyright notice
+
  Revision 1.20  1999/02/10 09:44:45  djr
  Fixed bug in which omniidl2 failed if constructed types were
  declared in an exception member declaration.
@@ -739,9 +742,9 @@ public:
   void produce_buildDesc_support(std::fstream& s);
   // Generates the tcDescriptor code required for this type.
 
-  static AST_Sequence *attach_seq_to_base_type(AST_Sequence *se);
+  static AST_Sequence* attach_seq_to_base_type(AST_Sequence* se);
 
-  const char* out_adptarg_name(o2be_typedef* tdef,AST_Decl* used_in) const;
+  const char* out_adptarg_name(o2be_typedef* tdef, AST_Decl* used_in);
 
 private:
   o2be_sequence();
@@ -749,6 +752,7 @@ private:
   idl_bool pd_have_produced_tcParser_buildDesc_code;
   idl_bool pd_have_calc_rec_seq_offset;
   size_t   pd_rec_seq_offset;
+  char* pd_out_adptarg_name;
 };
 
 
