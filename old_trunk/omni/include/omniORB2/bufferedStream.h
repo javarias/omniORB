@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16  1998/08/05 18:10:48  sll
+  *** empty log message ***
+
   Revision 1.15  1998/04/07 19:54:46  sll
   Added extra marshalling functions when C++ bool type is used to represent
   CORBA::Boolean.
@@ -699,7 +702,7 @@ template <class T>
 inline void
 _CORBA_Sequence<T>::operator>>= (NetBufferedStream &s) const
 {
-  ::operator>>=((const _CORBA_ULong)pd_len,s);
+  ::operator>>=(pd_len,s);
   for (int i=0; i<(int)pd_len; i++) {
     pd_buf[i] >>= s;
   }
