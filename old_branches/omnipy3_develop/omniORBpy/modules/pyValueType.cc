@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.5  2004/02/16 10:14:18  dgrisby
+// Use stream based copy for local calls.
+//
 // Revision 1.1.2.4  2003/11/06 12:00:36  dgrisby
 // ValueType TypeCode support; track ORB core changes.
 //
@@ -205,6 +208,10 @@ private:
 // Marshalling functions
 //
 
+static void validateMembers(PyObject* d_o, PyObject* a_o,
+			    CORBA::CompletionStatus compstatus,
+			    PyObject* track);
+
 void
 omniPy::
 validateTypeValue(PyObject* d_o, PyObject* a_o,
@@ -261,14 +268,7 @@ validateTypeValue(PyObject* d_o, PyObject* a_o,
       d_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, actualRepoId);
     }
 
-    // The descriptor has three times the number of value members, plus 7.
-    int members = (PyTuple_GET_SIZE(d_o) - 7) / 3;
-
-    PyObject* name;
-    PyObject* value;
-
-    int i, j;
-
+    // Check value modifier
     PyObject* pymod = PyTuple_GET_ITEM(d_o, 4);
     CORBA::ValueModifier mod = PyInt_AS_LONG(pymod);
 
@@ -279,20 +279,8 @@ validateTypeValue(PyObject* d_o, PyObject* a_o,
     if (mod == CORBA::VM_CUSTOM)
       OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
 
+    validateMembers(d_o, a_o, compstatus, track);
 
-    for (i=0,j=7; i < members; i++, j+=3) {
-      name    = PyTuple_GET_ITEM(d_o, j);
-      OMNIORB_ASSERT(PyString_Check(name));
-      value   = PyObject_GetAttr(a_o, name);
-      if (!value) {
-	PyErr_Clear();
-	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-      }
-
-      Py_DECREF(value); // Safe to DECREF now because object still holds a ref
-      omniPy::validateType(PyTuple_GET_ITEM(d_o, j+1), value,
-			   compstatus, track);
-    }
     if (track_alloc)
       Py_DECREF(track);
   }
@@ -302,6 +290,42 @@ validateTypeValue(PyObject* d_o, PyObject* a_o,
     throw;
   }
 }
+
+static void validateMembers(PyObject* d_o, PyObject* a_o,
+			    CORBA::CompletionStatus compstatus,
+			    PyObject* track)
+{
+  PyObject* t_o = PyTuple_GET_ITEM(d_o, 0);
+  OMNIORB_ASSERT(PyInt_Check(t_o) && PyInt_AS_LONG(t_o) == CORBA::tk_value);
+
+  // Check base
+  t_o = PyTuple_GET_ITEM(d_o, 6);
+  if (PyTuple_Check(t_o))
+    validateMembers(t_o, a_o, compstatus, track);
+
+  // The descriptor has three times the number of value members, plus 7.
+  int members = (PyTuple_GET_SIZE(d_o) - 7) / 3;
+
+  PyObject* name;
+  PyObject* value;
+
+  int i, j;
+
+  for (i=0,j=7; i < members; i++, j+=3) {
+    name    = PyTuple_GET_ITEM(d_o, j);
+    OMNIORB_ASSERT(PyString_Check(name));
+    value   = PyObject_GetAttr(a_o, name);
+    if (!value) {
+      PyErr_Clear();
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+    }
+
+    Py_DECREF(value); // Safe to DECREF now because object still holds a ref
+    omniPy::validateType(PyTuple_GET_ITEM(d_o, j+1), value,
+			 compstatus, track);
+  }
+}
+
 
 void
 omniPy::
@@ -331,6 +355,9 @@ marshalIndirection(cdrStream& stream, CORBA::Long pos)
   offset >>= stream;
 }
 
+
+static void
+marshalMembers(cdrValueChunkStream& stream, PyObject* d_o, PyObject* a_o);
 
 static void
 real_marshalPyObjectValue(cdrValueChunkStream& stream,
@@ -432,15 +459,30 @@ real_marshalPyObjectValue(cdrValueChunkStream& stream,
   // Finally, we marshal the members
   stream.startOutputValueBody();
 
+  if ((tag & REPOID_MASK) == REPOID_LIST)
+    tracker->startTruncatable();
+
+  marshalMembers(stream, d_o, a_o);
+
+  if ((tag & REPOID_MASK) == REPOID_LIST)
+    tracker->endTruncatable();
+
+  stream.endOutputValue();
+}
+
+static void
+marshalMembers(cdrValueChunkStream& stream, PyObject* d_o, PyObject* a_o)
+{
+  PyObject* t_o = PyTuple_GET_ITEM(d_o, 6);
+  if (PyTuple_Check(t_o))
+    marshalMembers(stream, t_o, a_o);
+
   int members = (PyTuple_GET_SIZE(d_o) - 7) / 3;
 
   PyObject* name;
   PyObject* value;
 
   int i, j;
-
-  if ((tag & REPOID_MASK) == REPOID_LIST)
-    tracker->startTruncatable();
 
   for (i=0,j=7; i < members; i++, j+=3) {
     name    = PyTuple_GET_ITEM(d_o, j);
@@ -449,13 +491,7 @@ real_marshalPyObjectValue(cdrValueChunkStream& stream,
     Py_DECREF(value); // Safe to DECREF now because object still holds a ref
     omniPy::marshalPyObject(stream, PyTuple_GET_ITEM(d_o, j+1), value);
   }
-
-  if ((tag & REPOID_MASK) == REPOID_LIST)
-    tracker->endTruncatable();
-
-  stream.endOutputValue();
-}
-
+}  
 
 
 void
@@ -611,7 +647,8 @@ unmarshalValueRepoId(cdrStream& stream, pyInputValueTracker* tracker)
   return pystring;
 }
 
-
+static void
+unmarshalMembers(cdrStream& stream, PyObject* desc, PyObject* instance);
 
 static PyObject*
 real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
@@ -637,7 +674,7 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
   }
 
   CORBA::Boolean truncating = 0;
-  int i, j;
+  int i;
 
   PyObject* instance  = 0;
   PyObject* factory   = 0;
@@ -775,23 +812,7 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
       tracker->add(instance, pos);
 
       // Finally, we have a blank value which we can unmarshal the members to.
-
-      int members = (PyTuple_GET_SIZE(desc) - 7) / 3;
-
-      PyObject* name;
-      PyObject* value;
-
-      for (i=0,j=7; i < members; i++, j+=3) {
-	name  = PyTuple_GET_ITEM(desc, j);
-	value = omniPy::unmarshalPyObject(stream, PyTuple_GET_ITEM(desc, j+1));
-	if (PyObject_SetAttr(instance, name, value) == -1) {
-	  // Error setting attribute, probably because the object has a
-	  // __setattr__ or __slots__.
-	  Py_DECREF(value);
-	  omniPy::handlePythonException();
-	}
-	Py_DECREF(value);
-      }
+      unmarshalMembers(stream, desc, instance);
     }
     else if (dtype == CORBA::tk_value_box) {
       PyObject* boxedtype = PyTuple_GET_ITEM(desc, 4);
@@ -846,6 +867,32 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
   return instance;
 }
 
+static void
+unmarshalMembers(cdrStream& stream, PyObject* desc, PyObject* instance)
+{
+  PyObject* t_o = PyTuple_GET_ITEM(desc, 6);
+  if (PyTuple_Check(t_o))
+    unmarshalMembers(stream, t_o, instance);
+
+  int members = (PyTuple_GET_SIZE(desc) - 7) / 3;
+
+  PyObject* name;
+  PyObject* value;
+
+  int i, j;
+
+  for (i=0,j=7; i < members; i++, j+=3) {
+    name  = PyTuple_GET_ITEM(desc, j);
+    value = omniPy::unmarshalPyObject(stream, PyTuple_GET_ITEM(desc, j+1));
+    if (PyObject_SetAttr(instance, name, value) == -1) {
+      // Error setting attribute, probably because the object has a
+      // __setattr__ or __slots__.
+      Py_DECREF(value);
+      omniPy::handlePythonException();
+    }
+    Py_DECREF(value);
+  }
+}
 
 
 PyObject*

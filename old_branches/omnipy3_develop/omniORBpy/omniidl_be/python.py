@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.4  2004/02/16 10:14:18  dgrisby
+# Use stream based copy for local calls.
+#
 # Revision 1.33.2.3  2003/07/10 22:13:25  dgrisby
 # Abstract interface support.
 #
@@ -1841,8 +1844,8 @@ class PythonVisitor:
             tbaseids = "None"
 
         basedesc = None
-        if cnode.inherits():
-            i = cnode.inherits()[0]
+        if node.inherits():
+            i = node.inherits()[0]
             while isinstance(i, idlast.Declarator):
                 i = i.alias().aliasType()
             if isinstance(i, idlast.Value):
@@ -1854,7 +1857,7 @@ class PythonVisitor:
             basedesc = "_0_CORBA.tcInternal.tv_null"
 
         mlist = []
-        for m in members:
+        for m in node.statemembers():
             for d in m.declarators():
                 mlist.append('"%s"' % mangle(d.identifier()))
                 mlist.append(typeAndDeclaratorToDescriptor(m.memberType(),
