@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.24.2.2  2000/09/01 14:13:01  dpg1
+// Memory leak when returning invalid data
+//
 // Revision 1.24.2.1  2000/08/17 08:46:06  dpg1
 // Support for omniORB.LOCATION_FORWARD exception
 //
@@ -319,6 +322,8 @@ Py_omniServant::_default_POA()
 	   "Returning Root POA\n";
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
   CORBA::Object_var obj = omniPy::orb->resolve_initial_references("RootPOA");
   return PortableServer::POA::_narrow(obj);
@@ -936,6 +941,8 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
 }
 
@@ -1137,6 +1144,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
 }
 
@@ -1211,6 +1220,8 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
       omniORB::logf("omniORBpy: Traceback follows:");
       PyErr_Print();
     }
+    else
+      PyErr_Clear();
   }
   return 0;
 }

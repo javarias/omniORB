@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.2  2000/08/18 11:40:01  dpg1
+// New omniORB.traceLevel function
+//
 // Revision 1.1.2.1  2000/08/14 16:10:32  dpg1
 // Missed out some explicit casts to (char*) for string constants.
 //
@@ -74,6 +77,8 @@ static CORBA::Boolean transientEH(void* cookie, CORBA::ULong retries,
 		      "Traceback follows:");
 	PyErr_Print();
       }
+      else
+	PyErr_Clear();
       return 0;
     }
     if (!PyInt_Check(r)) {
@@ -118,6 +123,8 @@ static CORBA::Boolean commFailureEH(void* cookie, CORBA::ULong retries,
 		      "Traceback follows:");
 	PyErr_Print();
       }
+      else
+	PyErr_Clear();
       return 0;
     }
     if (!PyInt_Check(r)) {
@@ -161,6 +168,8 @@ static CORBA::Boolean systemEH(void* cookie, CORBA::ULong retries,
 		      "Traceback follows:");
 	PyErr_Print();
       }
+      else
+	PyErr_Clear();
       return 0;
     }
     if (!PyInt_Check(r)) {
