@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.6  1999/05/25 17:39:35  sll
+ Added check for invalid arguments using magic number.
+
  Revision 1.5  1999/04/21 11:24:37  djr
  Added marshalling methods, plus a few minor mods.
 
@@ -124,11 +127,13 @@ ContextImpl::set_one_value(const char* prop_name, const CORBA::Any& value)
 
   CORBA::String_var name(CORBA::string_dup(prop_name));
 
-  char* strval;
+  const char* strval;
   if( !(value >>= strval) )
     throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
 
-  insert_single_consume(name._retn(), strval);
+  insert_single_consume(name._retn(), 
+			((omniORB::copyStringInAnyExtraction)?
+                                (char*)strval:CORBA::string_dup(strval)));
   RETURN_CORBA_STATUS;
 }
 
