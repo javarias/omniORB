@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/11/30 10:41:20  dpg1
+# Back-ends can now have their own usage string.
+#
 # Revision 1.9  1999/11/23 16:59:22  dpg1
 # New command line option -C to send output to a different directory.
 #
@@ -233,7 +236,7 @@ def main(argv=None):
             preprocessor_args.extend(be.cpp_args)
 
         if print_usage and hasattr(be, "usage_string"):
-            print "\nArguments specific to back-end `" + backend + "':\n"
+            print "\nArguments for back-end `" + backend + "':\n"
             print be.usage_string
 
     if print_usage:
