@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2  1998/03/20 12:28:49  sll
+ Added delay connect to tcpATMosStrand
+
  Revision 1.1  1997/12/09 18:43:20  sll
  Initial revision
 
@@ -100,7 +103,7 @@ public:
   }
 
   CORBA::Boolean isIncoming(Endpoint* addr) const;
-  void instantiateIncoming(Endpoint* addr,CORBA::Boolean export);
+  void instantiateIncoming(Endpoint* addr,CORBA::Boolean exportflag);
   void startIncoming();
   void stopIncoming();
   void removeIncoming();
@@ -209,7 +212,7 @@ private:
   tcpATMosIncomingRope(tcpATMosMTincomingFactory* f,
 			unsigned int maxStrands,
 			tcpATMosEndpoint *e,
-			CORBA::Boolean export);
+			CORBA::Boolean exportflag);
   // Create a tcpATMos incoming Rope.
   //   If e->port() == 0,
   //        Create a file handle with LPORT=0 to get the ip module
