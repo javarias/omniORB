@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.10.2.5  2000/11/15 17:24:45  sll
+  Added service context marshalling operators.
+  Added hooks to add TAG_CODE_SETS componment to an IOR.
+
   Revision 1.10.2.4  2000/11/03 19:12:07  sll
   Use new marshalling functions for byte, octet and char. Use get_octet_array
   instead of get_char_array and put_octet_array instead of put_char_array.
@@ -538,8 +542,9 @@ void insertSupportedComponents(omniIOR* ior)
   // Insert ORB TYPE
   omniIOR::add_TAG_ORB_TYPE(ior->iiop.components[index],ior);
 
-  // Insert CODE SET
-  omniIOR::add_TAG_CODE_SETS(ior->iiop.components[index+1],ior);
+  if (ior->iiop.version.major > 1 || ior->iiop.version.minor != 0)
+    // Insert CODE SET
+    omniIOR::add_TAG_CODE_SETS(ior->iiop.components[index+1],ior);
 }
 
 static
