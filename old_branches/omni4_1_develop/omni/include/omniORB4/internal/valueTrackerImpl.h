@@ -28,6 +28,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.4  2004/07/04 23:53:35  dgrisby
+// More ValueType TypeCode and Any support.
+//
 // Revision 1.1.2.3  2004/04/02 13:26:24  dgrisby
 // Start refactoring TypeCode to support value TypeCodes, start of
 // abstract interfaces support.
@@ -99,7 +102,7 @@ public:
   // nested value away, but later receives an indirection to it.
 
 private:
-  static _dyn_attr const CORBA::ULong PD_MAGIC = 0x432b4f56; // "C+OV"
+  static _dyn_attr const CORBA::ULong PD_MAGIC; // "C+OV"
   CORBA::ULong pd_magic;
 
   CORBA::ULong       pd_in_truncatable;
@@ -146,7 +149,7 @@ public:
   // As above for list of repoIds.
 
 private:
-  static _dyn_attr const CORBA::ULong PD_MAGIC = 0x432b4956; // "C+IV"
+  static _dyn_attr const CORBA::ULong PD_MAGIC; // "C+IV"
   CORBA::ULong pd_magic;
 
   CORBA::ULong      pd_in_truncatable;

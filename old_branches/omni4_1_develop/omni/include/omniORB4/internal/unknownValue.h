@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2004/10/13 17:58:19  dgrisby
+  Abstract interfaces support; values support interfaces; value bug fixes.
+
   Revision 1.1.2.1  2004/07/26 22:56:38  dgrisby
   Support valuetypes in Anys.
 
@@ -61,7 +64,7 @@ public:
   UnknownValue(CORBA::TypeCode_ptr tc);
   virtual ~UnknownValue();
 
-  static UnknownValue* _downcast(ValueBase*);
+  static UnknownValue* _downcast(CORBA::ValueBase*);
 
 #ifdef OMNI_HAVE_COVARIANT_RETURNS
   virtual UnknownValue* _copy_value();

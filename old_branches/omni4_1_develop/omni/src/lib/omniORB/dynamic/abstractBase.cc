@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2004/10/13 17:58:20  dgrisby
+  Abstract interfaces support; values support interfaces; value bug fixes.
+
   Revision 1.1.2.1  2004/04/02 13:26:24  dgrisby
   Start refactoring TypeCode to support value TypeCodes, start of
   abstract interfaces support.
@@ -108,7 +111,7 @@ CORBA::release(CORBA::AbstractBase_ptr a)
 CORBA::Boolean
 CORBA::_omni_AbstractBaseObjref::_NP_is_nil() const
 {
-  return this->CORBA::Object::_NP_is_nil();
+  return this->OMNIORB_BASE_CTOR(CORBA::)Object::_NP_is_nil();
 }
 
 CORBA::Object_ptr
