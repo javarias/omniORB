@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.9  2001/04/18 18:18:09  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.33.2.8  2000/11/20 11:59:44  dpg1
   API to configure code sets.
 
@@ -1324,6 +1327,7 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	  "    -ORBstrictIIOP <0|1>\n"
 	  "    -ORBtcAliasExpand <0|1>\n"
 	  "    -ORBgiopMaxMsgSize <n bytes>\n"
+	  "    -ORBmaxGIOPVersion <major no>.<minor no>\n"
 	  "    -ORBobjectTableSize <n entries>\n"
 	  "    -ORBserverName <name>\n"
 	  "    -ORBInitialHost <name>\n"
