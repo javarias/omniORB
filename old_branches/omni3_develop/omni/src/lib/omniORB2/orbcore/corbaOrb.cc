@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.21  2000/07/21 10:03:08  dpg1
+  String_var copy initialisations changed to direct initialisations.
+
   Revision 1.29.6.20  2000/07/10 10:56:43  sll
   Minor rearrangement to keep DEC C++ 5.6 happy.
 
@@ -651,6 +654,9 @@ CORBA::Boolean
 parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 {
   CORBA::Boolean orbId_match = 0;
+
+  if (orb_identifier[0] == '\0')
+    orb_identifier = MY_ORB_ID;
 
   if( orb_identifier && strcmp(orb_identifier, MY_ORB_ID)
                      && strcmp(orb_identifier, OLD_ORB_ID) ) {

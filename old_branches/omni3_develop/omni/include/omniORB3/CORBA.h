@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.9  2000/07/10 13:06:44  dpg1
+ Initialisation of Any insertion functions was missing from system
+ exceptions.
+
  Revision 1.1.2.8  2000/06/27 16:15:07  sll
  New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
  _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
@@ -2418,7 +2422,7 @@ _CORBA_MODULE_BEG
   typedef String_var ORBid_var;
 
   _CORBA_MODULE_FN ORB_ptr ORB_init(int& argc, char** argv,
-				    const char* orb_identifier);
+				    const char* orb_identifier="");
 
 
   //////////////////////////////////////////////////////////////////////
