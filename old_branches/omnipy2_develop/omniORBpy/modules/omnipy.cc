@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.20  2003/03/12 11:17:02  dgrisby
+// Registration of external pseudo object creation functions.
+//
 // Revision 1.1.2.19  2002/05/26 00:55:36  dgrisby
 // C++ API to convert object references to/from Python.
 //
@@ -129,6 +132,7 @@ PyObject* omniPy::pySERVANT_TWIN;
 PyObject* omniPy::pyPOA_TWIN;
 PyObject* omniPy::pyPOAMANAGER_TWIN;
 PyObject* omniPy::pyPOACURRENT_TWIN;
+PyObject* omniPy::pyNP_RepositoryId;
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -211,12 +215,14 @@ omniPy::newTwin(void* twin)
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Module inititaliser to hook orb destruction                            //
+// Module inititaliser to hook orb creation and destruction               //
 ////////////////////////////////////////////////////////////////////////////
 
 class omni_python_initialiser : public omniInitialiser {
 public:
-  void attach() { }
+  void attach() {
+    omniPy::registerInterceptors();
+  }
   void detach() {
     omnipyThreadCache::shutdown();
     if (omniPy::orb) omniPy::orb = 0;
@@ -383,6 +389,7 @@ extern "C" {
     omniPy::pyPOA_TWIN        = PyString_FromString((char*)"__omni_poa");
     omniPy::pyPOAMANAGER_TWIN = PyString_FromString((char*)"__omni_mgr");
     omniPy::pyPOACURRENT_TWIN = PyString_FromString((char*)"__omni_pct");
+    omniPy::pyNP_RepositoryId = PyString_FromString((char*)"_NP_RepositoryId");
 
     OMNIORB_ASSERT(omniPy::pyORB_TWIN);
     OMNIORB_ASSERT(omniPy::pyOBJREF_TWIN);
@@ -851,11 +858,13 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     omniPy::initPOAFunc(d);
     omniPy::initPOAManagerFunc(d);
     omniPy::initPOACurrentFunc(d);
+    omniPy::initInterceptorFunc(d);
     omniPy::initomniFunc(d);
 
     // Set up the C++ API singleton
     PyObject* api = PyCObject_FromVoidPtr((void*)&omniPy::cxxAPI, 0);
     PyDict_SetItemString(d, (char*)"API", api);
+    Py_DECREF(api);
 
     // Create an empty list for extrernal modules to register
     // additional pseudo object creation functions.
