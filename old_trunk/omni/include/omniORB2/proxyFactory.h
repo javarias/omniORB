@@ -11,6 +11,9 @@
 
 /*
  $Log$
+ * Revision 1.3  1997/03/09  12:34:40  sll
+ * Minor cleanup.
+ *
  Revision 1.2  1997/01/23 15:16:40  sll
  Added static member proxyStubs in proxyObjectFactory class.
 
@@ -23,7 +26,7 @@
 #define __PROXYFACTORY_H__
 
 class proxyObjectFactory_iterator;
-class proxyObjectFactory {
+class _OMNIORB2_NTDLL_ proxyObjectFactory {
 public:
   proxyObjectFactory();
   virtual ~proxyObjectFactory();

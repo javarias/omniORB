@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.2  1997/01/23 15:00:45  sll
+  Added global variable max_giop_message_size.
+
   Revision 1.1  1997/01/08 17:28:30  sll
   Initial revision
 
@@ -33,7 +36,8 @@
 // GIOP_C and GIOP_S implements the appropriate exclusive access to the
 // strand according to their internal states.
 
-class GIOP_Basetypes {
+
+class _OMNIORB2_NTDLL_ GIOP_Basetypes {
 public:
   class MessageHeader {
   public:

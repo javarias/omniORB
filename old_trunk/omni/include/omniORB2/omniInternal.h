@@ -11,6 +11,11 @@
 
 /*
   $Log$
+ * Revision 1.6  1997/03/10  11:38:49  sll
+ * - File renamed to clearly indicated that these are internal interfaces.
+ * - class omniORB renamed to class omni. (Class omniORB is now the public
+ *   API namespace.)
+ *
   Revision 1.5  1997/01/23 15:07:15  sll
   Redefined some local static variables to static members of class omniORB.
   They are initialised in a single file.
@@ -65,8 +70,9 @@ struct omniObjectKey {
   _CORBA_ULong lo;
 };
 
-class omni {
 
+
+class  _OMNIORB2_NTDLL_ omni {
 public:
 
 #if SIZEOF_PTR == SIZEOF_LONG
