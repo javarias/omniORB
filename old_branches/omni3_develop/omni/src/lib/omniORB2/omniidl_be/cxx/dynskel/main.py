@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.4  2000/03/24 22:30:18  djs
+# Major code restructuring:
+#   Control flow is more recursive and obvious
+#   Properly distinguishes between forward declarations and externs
+#   Only outputs definitions once
+#   Lots of assertions to check all is well
+#
 # Revision 1.12.2.3  2000/03/20 11:48:16  djs
 # Better handling of unions whose switch types are declared externally
 #
@@ -825,6 +832,9 @@ def visitUnion(node):
         stream.out("// forward declaration because union is recursive")
         forward(node)
 
+    # this may need an extern
+    node.switchType().accept(self)
+    
     # constructed types
     if node.constrType():
         node.switchType().decl().accept(self)
