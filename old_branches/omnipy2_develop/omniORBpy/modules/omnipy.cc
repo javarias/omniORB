@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.4  2001/04/09 15:22:15  dpg1
+// Fixed point support.
+//
 // Revision 1.1.2.3  2000/11/22 17:23:03  dpg1
 // Twin strings pre-allocated.
 //
@@ -39,7 +42,6 @@
 // Revision 1.1.2.1  2000/10/13 13:55:23  dpg1
 // Initial support for omniORB 4.
 //
-
 
 #ifdef __WIN32__
 #define DLL_EXPORT _declspec(dllexport)
@@ -334,27 +336,27 @@ extern "C" {
 
     omniPy::orb = orb;
 
-    // This is extremely horrid -- modify the Python list in place to
-    // reflect the changed argv. This leaks PyStringObjects, but they
-    // would have hung around for the program's life time anyway...
+    // Remove eaten arguments from Python argv list
     if (argc < orig_argc) {
-      int j;
+      int r;
       char *s, *t;
-      for (i=0, j=0; i<argc; i++, j++) {
+      for (i=0; i<argc; ++i) {
 	s = argv[i];
 
 	while (1) {
-	  o = PyList_GET_ITEM(pyargv, j);
+	  o = PyList_GetItem(pyargv, i); OMNIORB_ASSERT(o != 0);
 	  t = PyString_AS_STRING(o);
 	  if (s == t) break;
-	  j++;
-	  OMNIORB_ASSERT(j < orig_argc);
+	  r = PySequence_DelItem(pyargv, i);
+	  OMNIORB_ASSERT(r != -1);
 	}
-	PyList_SET_ITEM(pyargv, i, o);
       }
-      ((PyListObject*)pyargv)->ob_size = argc;
+      while (PyList_Size(pyargv) > argc) {
+	// Delete -ORB arguments at end
+	r = PySequence_DelItem(pyargv, i);
+	OMNIORB_ASSERT(r != -1);
+      }
     }
-
     delete [] argv;
 
     omniPy::setTwin(pyorb, orb, ORB_TWIN);
