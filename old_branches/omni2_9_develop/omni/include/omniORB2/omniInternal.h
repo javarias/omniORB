@@ -29,6 +29,14 @@
 
 /*
   $Log$
+  Revision 1.29.4.1  1999/09/15 20:18:14  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.29  1999/08/16 19:33:07  sll
   New per-compilation unit initialiser class omniInitialiser.
 
@@ -119,7 +127,10 @@
 #include <omniORB2/CORBA_basetypes.h>
 #include <omniORB2/seqTemplatedecls.h>
 #include <omniORB2/stringtypes.h>
+#ifndef __IOP_hh_EXTERNAL_GUARD__
 #include <omniORB2/IOP.h>
+#define __IOP_hh_EXTERNAL_GUARD__
+#endif
 #include <omniORB2/GIOP.h>
 #include <omniORB2/IIOP.h>
 #include <omniORB2/templatedecls.h>
@@ -145,6 +156,7 @@ extern void omniPy_objectIsReady(omniObject* obj);
 //   2.5.1.
 //
 extern _core_attr const char* omniORB_2_9;
+extern _core_attr const _CORBA_ULong omniORB_TAG_ORB_TYPE; // ATT\x00
 
 
 #include <omniORB2/rope.h>
@@ -240,7 +252,14 @@ public:
   // CORBA::Object from which all interfaces derived.
   //
   // If an exception occurs, <profiles> is freed.
-  
+
+  static void internal_init_BOA();
+  // This internal function make sure that the BOA is started.
+  // The application may be a pure client and do not initialise a BOA.
+  // On the otherhand, on occasions the ORB has to create internal
+  // CORBA objects to response to local and remote requests. The
+  // ctor of these internal objects call this function to ensure
+  // that the BOA is started.
 
 };
 
@@ -252,10 +271,6 @@ class omniObject {
 
 protected:
 
-#if 0
-  omniObject(omniObjectManager* p, const char* repoID); // ctor local object
-  omniObject(omniObjectManager*p, const char* repoID, const omniObjectKey& k);
-#endif
   omniObject(omniObjectManager* p = 0); // ctor local object
 
   omniObject(GIOPObjectInfo* objInfo,const char* use_as_repoID); // ctor proxy
@@ -443,8 +458,8 @@ public:
 
   static omniObjectManager*  nilObjectManager();
 
-protected:
-  void getKey(omniObjectKey&);
+  //protected:
+  void getKey(omniObjectKey&) const;
 
 private:
 
