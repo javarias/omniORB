@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2003/05/22 13:41:41  dgrisby
+  HPUX patches.
+
   Revision 1.1.2.13  2002/09/08 21:58:55  dgrisby
   Support for MSVC 7. (Untested.)
 
@@ -240,6 +243,11 @@ giopTransportImpl::giopTransportImpl(const char* t) : type(t), next(0) {
 
 ////////////////////////////////////////////////////////////////////////
 giopTransportImpl::~giopTransportImpl() {
+
+  giopTransportImpl** pp = &implHead();
+  while (*pp && *pp != this) pp = &((*pp)->next);
+
+  if (*pp == this) *pp = this->next;
 }
 
 ////////////////////////////////////////////////////////////////////////
