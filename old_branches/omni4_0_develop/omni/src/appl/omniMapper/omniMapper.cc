@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.1  2000/07/17 10:35:38  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.3  2000/07/13 15:26:04  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -33,7 +36,7 @@
 // Added omniMapper.
 //
 
-#include <omniORB3/CORBA.h>
+#include <omniORB4/CORBA.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -106,7 +109,7 @@ Mapper::do_redir()
     cout << "Mapping `" << (const char*)id_
 	 << "' to " << (const char*)ior << endl;
   }
-  throw omniORB::LOCATION_FORWARD(CORBA::Object::_duplicate(obj_));
+  throw omniORB::LOCATION_FORWARD(CORBA::Object::_duplicate(obj_),0);
 }
 
 
@@ -251,7 +254,7 @@ main(int argc, char** argv)
   argv[2] = new char[16];
   sprintf(argv[2], "%d", port);
 
-  orb = CORBA::ORB_init(argc, argv, "omniORB3");
+  orb = CORBA::ORB_init(argc, argv, "omniORB4");
 
   // Get hold of the INS POA and activate it
   {
