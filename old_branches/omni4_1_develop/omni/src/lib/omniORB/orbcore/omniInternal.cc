@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.1  2003/03/23 21:02:09  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.29  2003/01/16 11:08:26  dgrisby
   Patches to support Digital Mars C++. Thanks Christof Meerwald.
 
@@ -1170,9 +1173,8 @@ omni::assertFail(const char* file, int line, const char* expr)
 {
   if( omniORB::trace(1) ) {
     omniORB::logger l;
-    l << "Assertion failed.  This indicates a bug in the application using\n"
-      "omniORB, or maybe in omniORB itself. e.g. using the ORB after it has\n"
-      "been shut down.\n"
+    l << "Assertion failed.  This indicates a bug in the application\n"
+      "using omniORB, or maybe in omniORB itself.\n"
       " file: " << file << "\n"
       " line: " << line << "\n"
       " info: " << expr << "\n";

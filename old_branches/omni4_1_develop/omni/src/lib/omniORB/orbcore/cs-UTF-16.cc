@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:20  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.12  2001/11/14 19:11:45  dpg1
   Bug with empty UTF-16 wstring.
 
@@ -262,6 +265,7 @@ TCS_W_UTF_16::marshalWChar(cdrStream& stream, omniCodeSet::UniChar uc)
 
   _CORBA_Octet o;
 
+  stream.declareArrayLength(omni::ALIGN_1, 3);
   o = 2;                  stream.marshalOctet(o);
   o = (uc & 0xff00) >> 8; stream.marshalOctet(o);
   o = (uc & 0x00ff);      stream.marshalOctet(o);
@@ -290,6 +294,8 @@ TCS_W_UTF_16::marshalWString(cdrStream& stream,
   // null. Length is in octets.
   _CORBA_ULong mlen = (len+1) * 2;  // len + 1 for BOM
   mlen >>= stream;
+
+  stream.declareArrayLength(omni::ALIGN_2, mlen);
 
   // Send a suitable BOM so that we can marshal with native endian,
   // even if the rest of the stream is byte-swapped.

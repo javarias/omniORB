@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:20  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.12  2001/10/17 16:47:08  dpg1
   New minor codes
 
@@ -219,6 +222,7 @@ omniCodeSet::TCS_C_8bit::marshalString(cdrStream& stream,
   _CORBA_Char          c;
   omniCodeSet::UniChar uc;
 
+  stream.declareArrayLength(omni::ALIGN_1, len);
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];

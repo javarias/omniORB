@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:24  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.15  2003/02/03 16:53:14  dgrisby
   Force type in constructor argument to help confused compilers.
 
@@ -89,6 +92,7 @@
 #include <exceptiondefs.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <valueTracker.h>
 #include <stdio.h>
 
 OMNI_USING_NAMESPACE(omni)
@@ -118,7 +122,18 @@ cdrStream::cdrStream() : pd_unmarshal_byte_swap(0), pd_marshal_byte_swap(0),
 			 pd_outb_end(0), pd_outb_mkr(0),
 			 pd_tcs_c(0), pd_tcs_w(0),
 			 pd_ncs_c(orbParameters::nativeCharCodeSet),
-			 pd_ncs_w(orbParameters::nativeWCharCodeSet) {}
+			 pd_ncs_w(orbParameters::nativeWCharCodeSet),
+			 pd_valueTracker(0), pd_chunked(0)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+cdrStream::~cdrStream()
+{
+  if (pd_valueTracker) {
+    delete pd_valueTracker;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////////
 void*
@@ -163,6 +178,14 @@ cdrStream::copy_to(cdrStream& s,int size,omni::alignment_t align) {
   }
 }
 
+void
+cdrStream::chunkStreamDeclareArrayLength(omni::alignment_t, size_t)
+{
+  int not_a_chunked_stream = 0;
+  OMNIORB_ASSERT(not_a_chunked_stream);
+}
+
+
 /////////////////////////////////////////////////////////////////////////////
 #ifdef HAS_LongDouble
 #  if SIZEOF_LONG_DOUBLE == 12
@@ -173,7 +196,7 @@ cdrStream::copy_to(cdrStream& s,int size,omni::alignment_t align) {
 // Intel x86 extended double is odd. Firstly, it's 80 bits, not 96, so
 // the two most significant bytes are always zero. Secondly, the
 // significand _includes_ the most significant bit. IEEE floating
-// point always missed out the msb, as do the other floating point
+// point always misses out the msb, as do the other floating point
 // formats on x86. This means we have to do lots of bit shifting.
 //
 // This isn't the most efficient code in the world, but it's designed

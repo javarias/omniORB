@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:21  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.9  2001/10/17 16:47:08  dpg1
   New minor codes
 
@@ -215,6 +218,7 @@ omniCodeSet::TCS_W_16bit::marshalWChar(cdrStream& stream,
   _CORBA_Octet* p = (_CORBA_Octet*)&tc;
   _CORBA_Octet  o;
 
+  stream.declareArrayLength(omni::ALIGN_1, 2);
   if (stream.marshal_byte_swap()) {
     o = p[1]; stream.marshalOctet(o);
     o = p[0]; stream.marshalOctet(o);
@@ -238,6 +242,7 @@ omniCodeSet::TCS_W_16bit::marshalWString(cdrStream& stream,
   _CORBA_UShort        tc;
   omniCodeSet::UniChar uc;
   
+  stream.declareArrayLength(omni::ALIGN_2, mlen);
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     tc = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
@@ -351,6 +356,7 @@ omniCodeSet::TCS_W_16bit::fastMarshalWChar(cdrStream&          stream,
     _CORBA_Octet* p  = (_CORBA_Octet*)&tc;
     _CORBA_Octet  o;
 
+    stream.declareArrayLength(omni::ALIGN_1, 2);
     if (stream.marshal_byte_swap()) {
       o = p[1]; stream.marshalOctet(o);
       o = p[0]; stream.marshalOctet(o);
@@ -381,6 +387,7 @@ omniCodeSet::TCS_W_16bit::fastMarshalWString(cdrStream&          stream,
 
 #if (SIZEOF_WCHAR == 2)
     if (stream.marshal_byte_swap()) {
+      stream.declareArrayLength(omni::ALIGN_2, mlen);
       _CORBA_UShort tc;
       for (_CORBA_ULong i=0; i<len; i++) {
 	tc = ws[i]; tc >>= stream;
@@ -390,6 +397,7 @@ omniCodeSet::TCS_W_16bit::fastMarshalWString(cdrStream&          stream,
       stream.put_octet_array((const _CORBA_Char*)ws, mlen, omni::ALIGN_2);
     }
 #else
+    stream.declareArrayLength(omni::ALIGN_2, mlen);
     _CORBA_UShort tc;
     for (_CORBA_ULong i=0; i<len; i++) {
       tc = ws[i]; tc >>= stream;

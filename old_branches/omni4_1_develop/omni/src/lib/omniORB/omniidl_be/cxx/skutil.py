@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.1  2003/03/23 21:02:41  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.17.2.9  2001/06/19 16:41:49  sll
 # Type cast now correctly distinguishes between normal and array types.
 #
@@ -216,6 +219,28 @@ else """,
 
         # No quick route, generate iteration loop
         block = cxx.Block(to)
+        akind = d_type.type().kind()
+
+        # Valuetype chunked encoding needs to know array length before
+        # we marshal it item by item.
+        if array_marshal_helpers.has_key(akind):
+            to.out("""\
+@where@.declareArrayLength(@align@, @num@);""",
+                   where = to_where,
+                   num = str(n_elements * elmsize),
+                   align = alignment)
+
+        elif akind == idltype.tk_char:
+            to.out("""\
+@where@.declareArrayLength(omni::ALIGN_1, @num@);""",
+                   where = to_where,
+                   num = str(n_elements))
+
+        elif akind == idltype.tk_longdouble:
+            to.out("""\
+@where@.declareArrayLength(omni::ALIGN_8, @num@);""",
+                   where = to_where,
+                   num = str(n_elements * 16))
 
     loop = cxx.For(to, dims)
     indexing_string = loop.index()

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.1  2003/03/23 21:02:24  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.15.2.6  2001/08/06 15:49:17  sll
   Added IOP component TAG_OMNIORB_UNIX_TRANS for omniORB specific local
   transport using the unix domain socket.
@@ -306,3 +309,25 @@ IOP::ServiceIDtoName(IOP::ServiceID v)
 
 const CORBA::ULong CORBA::Exception::PR_magic       = 0x45584354U; // EXCT
 const CORBA::ULong CORBA::Object::_PR_magic         = 0x434F424AU; // COBJ
+
+
+////////////////////////////////////////////////////////////////////////////
+//             ValueType TypeCode related constants                       //
+////////////////////////////////////////////////////////////////////////////
+
+#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+// MSVC++ does not give the variables external linkage otherwise. Its a bug.
+namespace CORBA {
+
+_init_in_def_( const ValueModifier VM_NONE        = 0; )
+_init_in_def_( const ValueModifier VM_CUSTOM      = 1; )
+_init_in_def_( const ValueModifier VM_ABSTRACT    = 2; )
+_init_in_def_( const ValueModifier VM_TRUNCATABLE = 3; )
+
+};
+#else
+_init_in_def_( const CORBA::ValueModifier CORBA::VM_NONE        = 0; )
+_init_in_def_( const CORBA::ValueModifier CORBA::VM_CUSTOM      = 1; )
+_init_in_def_( const CORBA::ValueModifier CORBA::VM_ABSTRACT    = 2; )
+_init_in_def_( const CORBA::ValueModifier CORBA::VM_TRUNCATABLE = 3; )
+#endif
