@@ -3,6 +3,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.5  1999/09/22 15:46:11  dpg1
+# Fake POA implemented.
+#
 # Revision 1.4  1999/09/13 15:13:09  dpg1
 # Module handling.
 # Any coercion (*** not fully tested).
@@ -73,9 +76,11 @@ def openModule(mname, fname=None):
         mod = sys.modules[mname]
     else:
         mod = imp.new_module(mname)
+        sys.modules[mname] = mod
+
+    if not hasattr(mod, "__doc__") or mod.__doc__ is None:
         mod.__doc__ = "omniORB IDL module " + mname + "\n\n" + \
                       "Generated from:\n\n"
-        sys.modules[mname] = mod
 
     if fname is not None:
         mod.__doc__ = mod.__doc__ + "  " + fname + "\n"
