@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.7  2001/11/27 14:36:17  dpg1
+ Local _is_equivalent fix.
+
  Revision 1.1.2.6  2001/10/29 17:44:29  dpg1
  Wrong code when no catch by base class.
 
@@ -231,7 +234,9 @@ omniInProcessIdentity::locateRequest(omniCallDescriptor&) {
   if (adapter && adapter->objectExists(key(), keysize()))
     return;
   
-  OMNIORB_THROW(OBJECT_NOT_EXIST, 0, CORBA::COMPLETED_NO);
+  OMNIORB_THROW(OBJECT_NOT_EXIST,
+		OBJECT_NOT_EXIST_NoMatch,
+		CORBA::COMPLETED_NO);
 }
 
 
