@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/11/04 17:16:54  dpg1
+// Changes for NT.
+//
 // Revision 1.1  1999/10/27 14:05:53  dpg1
 // *** empty log message ***
 //
@@ -52,7 +55,7 @@ typedef _CORBA_Double IdlFloatLiteral;
 #endif
 
 // Version of strdup which uses new
-char* idl_strdup(const char* s);
+char*         idl_strdup(const char* s);
 _CORBA_WChar* idl_wstrdup(const _CORBA_WChar* s);
 
 // strlen, strcpy and strcat for wstring
