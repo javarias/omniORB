@@ -33,6 +33,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.25  1999/12/02 17:35:57  dpg1
+// _narrow, _is_a, _is_equivalent weren't unlocking the interpreter.
+//
 // Revision 1.24  1999/11/25 11:49:32  dpg1
 // Minor version number bumped since server-side _is_a() required an
 // incompatible change.
@@ -512,6 +515,12 @@ extern "C" {
     }
     catch (const CORBA::SystemException& ex) {
       omniPy::handleSystemException(ex);
+      return 0;
+    }
+    catch (CORBA::ORB::InvalidName& ex) {
+      // *** Should propogate this back to Python land
+      CORBA::BAD_PARAM bp;
+      omniPy::handleSystemException(bp);
       return 0;
     }
     return omniPy::createPyCorbaObjRef(0, objref);
