@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.9  1999/06/26 18:03:30  sll
+ Corrected minor bug in marshal.
+
  Revision 1.8  1999/06/25 13:50:24  sll
  Renamed compatibility flag to omniORB_27_CompatibleAnyExtraction.
 
@@ -43,6 +46,12 @@
  Added marshalling methods, plus a few minor mods.
 
 */
+
+#include <omniORB2/CORBA.h>
+
+#ifdef HAS_pch
+#pragma hdrstop
+#endif
 
 #include <context.h>
 #include <pseudo.h>
@@ -302,9 +311,9 @@ ContextImpl::decrRefCount()
     if( !pd_refCount ) {
       if( omniORB::traceLevel > 0 ) {
 	omniORB::log <<
-	  "Warning: omniORB2 has detected that CORBA::release() was called\n"
-	  " too many times for a CORBA::Context object - the object has\n"
-	  " already been destroyed.\n";
+	  "omniORB: WARNING -- CORBA::release() was called too many times\n"
+	  " for a CORBA::Context object - the object has already been\n"
+	  " destroyed.\n";
 	omniORB::log.flush();
       }
       return;
@@ -554,6 +563,9 @@ CORBA::Context::NP_alignedSize(CORBA::Context_ptr ctxt,
   for( int i = 0; i < whichlen; i++ ) {
 
     const char* value = c->lookup_single(which[i]);
+
+    // Missing context strings are silently not passed...
+    // See Henning & Vinoski p97.
     if( !value )  continue;
 
     int len = strlen(which[i]) + 1;
@@ -579,18 +591,24 @@ marshal(CORBA::Context_ptr ctxt, const char*const* which,
   }
   ContextImpl* c = (ContextImpl*) ctxt;
 
+  // First we need to count the number of context strings
+  // we actually have to pass.  This is very inefficient!
+  int n = 0;
+  for( int i = 0; i < whichlen; i++ )
+    if( c->lookup_single(which[i]) )  n++;
+
   // The length of the sequence of strings is twice the
   // number of context entries ...
-  CORBA::ULong(whichlen * 2) >>= s;
+  CORBA::ULong(n * 2) >>= s;
 
-  for( int i = 0; i < whichlen; i++ ) {
+  for( int j = 0; j < whichlen; j++ ) {
 
-    const char* value = c->lookup_single(which[i]);
+    const char* value = c->lookup_single(which[j]);
     if( !value )  continue;
 
-    CORBA::ULong len = strlen(which[i]) + 1;
+    CORBA::ULong len = strlen(which[j]) + 1;
     len >>= s;
-    s.put_char_array((CORBA::Char*) which[i], len);
+    s.put_char_array((CORBA::Char*) which[j], len);
 
     len = strlen(value) + 1;
     len >>= s;
