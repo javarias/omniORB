@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.11  1999/03/11 16:25:53  djr
+  Updated copyright notice
+
   Revision 1.10  1999/01/07 15:51:17  djr
   Changes needed due to changes to Net/MemBufferedStream.
 
@@ -49,7 +52,7 @@
   */
 
 #include <omniORB2/CORBA.h>
-
+#include <scavenger.h>
 
 GIOP_C::GIOP_C(Rope *r)
   : NetBufferedStream(r,1,1,0)
@@ -125,7 +128,10 @@ GIOP_C::InitialiseRequest(const void          *objkey,
 {
   if (pd_state != GIOP_C::Idle)
     throw omniORB::fatalException(__FILE__,__LINE__,
-      "GIOP_C::InitialiseRequest() entered with the wrong state.");				  
+      "GIOP_C::InitialiseRequest() entered with the wrong state.");
+ 
+  clicksSet(StrandScavenger::clientCallTimeLimit());
+
   size_t bodysize =msgsize-sizeof(MessageHeader::Request)-sizeof(CORBA::ULong);
   if (bodysize > MaxMessageSize()) {
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
@@ -317,6 +323,7 @@ GIOP_C::RequestCompleted(CORBA::Boolean skip_msg)
 	skip(0,1);
       }
     }
+  clicksSet(StrandScavenger::outIdleTimeLimit());
   pd_state = GIOP_C::Idle;
   return;
 }
@@ -328,6 +335,8 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
   if (pd_state != GIOP_C::Idle)
     throw omniORB::fatalException(__FILE__,__LINE__,
       "GIOP_C::IssueLocateRequest() entered with the wrong state.");
+
+  clicksSet(StrandScavenger::clientCallTimeLimit());
 
   CORBA::ULong msgsize = sizeof(MessageHeader::LocateRequest) + 
                          sizeof(CORBA::ULong);
