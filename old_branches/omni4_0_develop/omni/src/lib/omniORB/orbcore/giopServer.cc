@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.22.2.2  2000/09/27 18:21:53  sll
+  Use the new GIOP engine to handle a remote call.
+
   Revision 1.22.2.1  2000/07/17 10:35:53  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -600,7 +603,7 @@ GIOP_S::MaybeMarshalUserException(void* pex)
     if( !strcmp(user_exns[i], repoid) ) {
 
       GIOP_S_UserException_Marshaller m(ex);
-      InitialiseReply(GIOP::SYSTEM_EXCEPTION,m);
+      InitialiseReply(GIOP::USER_EXCEPTION,m);
       ReplyCompleted();
       break;
     }
