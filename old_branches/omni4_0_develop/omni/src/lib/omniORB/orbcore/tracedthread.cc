@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:36:00  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:25:54  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -50,13 +53,13 @@
 
 */
 
-#include <omniORB3/CORBA.h>
+#include <omniORB4/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
 #endif
 
-#include <omniORB3/tracedthread.h>
+#include <omniORB4/tracedthread.h>
 
 
 //////////////////////////////////////////////////////////////////////

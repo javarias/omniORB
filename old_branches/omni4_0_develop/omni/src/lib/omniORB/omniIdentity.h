@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.1  2000/07/17 10:35:40  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.3  2000/07/13 15:26:03  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -40,11 +43,6 @@
 
 #ifndef __OMNIIDENTITY_H__
 #define __OMNIIDENTITY_H__
-
-#ifndef __OMNIOBJKEY_H__
-#include <omniORB3/omniObjKey.h>
-#endif
-#include <string.h>
 
 
 class omniCallDescriptor;
