@@ -51,10 +51,10 @@ The branches in the <code>omniORBpy</code> package are
 
 <p>
 With omniORBpy 1.x you must checkout the <code>omniORBpy</code>
-package within the <code>src/lib</code> directory of an omniORBpy
-3.0.x tree. With omniORBpy 2.x, you must still do that if you use the
-old build system, but you can check it out anywhere you like if you
-use the autoconf based build.
+package within the <code>src/lib</code> directory of an omniORB 3.0.x
+tree. With omniORBpy 2.x, you must still do that if you use the old
+build system, but you can check it out anywhere you like if you use
+the autoconf based build.
 </p>
 
 </page>
