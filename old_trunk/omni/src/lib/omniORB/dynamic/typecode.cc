@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.32  1999/08/20 11:41:12  djr
+ * Yet another TypeCode alias-expand bug.
+ *
  * Revision 1.31  1999/08/06 16:55:17  sll
  * Added missing break statement in extractLabel. This bug affects enum
  * discriminator.
@@ -472,7 +475,8 @@ CORBA::TypeCode::PR_struct_tc(const char* id, const char* name,
 {
   check_static_data_is_initialised();
 
-  PR_structMember* new_members = new PR_structMember[memberCount];
+  TypeCode_struct::Member* new_members 
+    = new TypeCode_struct::Member[memberCount];
 
   for( ULong i = 0; i < memberCount; i++ ) {
     // We duplicate the name and consume the type.
@@ -530,7 +534,8 @@ CORBA::TypeCode::PR_exception_tc(const char* id, const char* name,
 {
   check_static_data_is_initialised();
 
-  PR_structMember* new_members = new PR_structMember[memberCount];
+  TypeCode_struct::Member* new_members =
+    new TypeCode_struct::Member[memberCount];
 
   for( ULong i = 0; i < memberCount; i++ ) {
     // We duplicate the name and consume the type.
@@ -1892,7 +1897,7 @@ TypeCode_array::removeOptionalNames()
 //////////////////////////////////////////////////////////////////////
 
 TypeCode_struct::TypeCode_struct(char* repositoryId, char* name,
-				 CORBA::PR_structMember* members,
+				 TypeCode_struct::Member* members,
 				 CORBA::ULong memberCount)
   : TypeCode_base(CORBA::tk_struct)
 {
@@ -1910,7 +1915,7 @@ TypeCode_struct::~TypeCode_struct()
 {
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
     CORBA::string_free(pd_members[i].name);
-    CORBA::release(pd_members[i].type);
+    if( pd_members[i].type )  CORBA::release(pd_members[i].type);
   }
   delete[] pd_members;
 }
@@ -1950,7 +1955,7 @@ TypeCode_struct::NP_unmarshalComplexParams(MemBufferedStream& s,
     // We need to initialised the members of <pd_members> to zero
     // to ensure we can destroy this properly in the case of an
     // exception being thrown.
-    _ptr->pd_members = new CORBA::PR_structMember[_ptr->pd_nmembers];
+    _ptr->pd_members = new TypeCode_struct::Member[_ptr->pd_nmembers];
     for( CORBA::ULong j = 0; j < _ptr->pd_nmembers; j++ ) {
       _ptr->pd_members[j].name = 0;
       _ptr->pd_members[j].type = 0;
@@ -2243,7 +2248,7 @@ TypeCode_struct::NP_aliasExpand(TypeCode_pairlist* tcpl)
   tc->pd_name = pd_name;
   tc->pd_nmembers = pd_nmembers;
 
-  CORBA::PR_structMember* members = new CORBA::PR_structMember[pd_nmembers];
+  TypeCode_struct::Member* members = new TypeCode_struct::Member[pd_nmembers];
   tc->pd_members = members;
 
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
@@ -2281,7 +2286,7 @@ TypeCode_struct::removeOptionalNames()
 //////////////////////////////////////////////////////////////////////
 
 TypeCode_except::TypeCode_except(char* repositoryId, char* name,
-				 CORBA::PR_structMember* members,
+				 TypeCode_struct::Member* members,
 				 CORBA::ULong memberCount)
   : TypeCode_base(CORBA::tk_except)
 {
@@ -2300,7 +2305,7 @@ TypeCode_except::~TypeCode_except()
 {
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
     CORBA::string_free(pd_members[i].name);
-    CORBA::release(pd_members[i].type);
+    if( pd_members[i].type )  CORBA::release(pd_members[i].type);
   }
   delete[] pd_members;
 }
@@ -2339,7 +2344,7 @@ TypeCode_except::NP_unmarshalComplexParams(MemBufferedStream& s,
     // We need to initialised the members of <pd_members> to zero
     // to ensure we can destroy this properly in the case of an
     // exception being thrown.
-    _ptr->pd_members = new CORBA::PR_structMember[_ptr->pd_nmembers];
+    _ptr->pd_members = new TypeCode_struct::Member[_ptr->pd_nmembers];
     for( CORBA::ULong j = 0; j < _ptr->pd_nmembers; j++ ) {
       _ptr->pd_members[j].name = 0;
       _ptr->pd_members[j].type = 0;
@@ -2628,7 +2633,7 @@ TypeCode_except::NP_aliasExpand(TypeCode_pairlist* tcpl)
   tc->pd_name = pd_name;
   tc->pd_nmembers = pd_nmembers;
 
-  CORBA::PR_structMember* members = new CORBA::PR_structMember[pd_nmembers];
+  TypeCode_struct::Member* members = new TypeCode_struct::Member[pd_nmembers];
   tc->pd_members = members;
 
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
@@ -5107,7 +5112,8 @@ CORBA::ORB::create_struct_tc(const char* id, const char* name,
       throw CORBA::BAD_PARAM(0,CORBA::COMPLETED_NO);
   }
 
-  PR_structMember* new_members = new PR_structMember[memberCount];
+  TypeCode_struct::Member* new_members =
+    new TypeCode_struct::Member[memberCount];
 
   for( i = 0; i < memberCount; i++ ) {
     // We duplicate the name and the type.
@@ -5157,7 +5163,8 @@ CORBA::ORB::create_exception_tc(const char* id, const char* name,
 				const CORBA::StructMemberSeq& members)
 {
   CORBA::ULong memberCount = members.length();
-  PR_structMember* new_members = new PR_structMember[memberCount];
+  TypeCode_struct::Member* new_members =
+    new TypeCode_struct::Member[memberCount];
 
   for( ULong i = 0; i < memberCount; i++ ) {
     // We duplicate the name and the type.

@@ -30,6 +30,10 @@
 
 /*
  * $Log$
+ * Revision 1.7  1999/07/01 10:28:14  djr
+ * Added two methods to TypeCode_pairlist.
+ * Declare inline methods as inline.
+ *
  * Revision 1.6  1999/06/18 21:00:31  sll
  * Updated to CORBA 2.3 mapping.
  *
@@ -623,11 +627,16 @@ private:
 class TypeCode_struct : public TypeCode_base {
 public:
 
+  struct Member {
+    char*               name;
+    CORBA::TypeCode_ptr type;
+  };
+
+
   TypeCode_struct(char* repositoryId, char* name,
-		  CORBA::PR_structMember* members,
-		  CORBA::ULong memberCount);
+		  Member* members, CORBA::ULong memberCount);
   // Consumes <repositoryId>, <name> and <members> (and all
-  // the strings and TypeCodes in <members>). Assumes all
+  // the strings and TypeCodes in <members>).  Assumes all
   // arguments are present and correct.
 
   virtual ~TypeCode_struct();
@@ -673,10 +682,11 @@ private:
 
   void generateAlignmentTable();
 
+
   CORBA::String_member pd_repoId;
   CORBA::String_member pd_name;
-  CORBA::PR_structMember* pd_members;
-  CORBA::ULong pd_nmembers;
+  Member*              pd_members;
+  CORBA::ULong         pd_nmembers;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -687,7 +697,7 @@ class TypeCode_except : public TypeCode_base {
 public:
 
   TypeCode_except(char* repositoryId, char* name,
-		  CORBA::PR_structMember* members,
+		  TypeCode_struct::Member* members,
 		  CORBA::ULong memberCount);
   // Consumes <repositoryId>, <name> and <members> (and all
   // the strings and TypeCodes in <members>). Assumes all
@@ -735,10 +745,11 @@ private:
 
   void generateAlignmentTable();
 
-  CORBA::String_member pd_repoId;
-  CORBA::String_member pd_name;
-  CORBA::PR_structMember* pd_members;
-  CORBA::ULong pd_nmembers;
+
+  CORBA::String_member     pd_repoId;
+  CORBA::String_member     pd_name;
+  TypeCode_struct::Member* pd_members;
+  CORBA::ULong             pd_nmembers;
 };
 
 //////////////////////////////////////////////////////////////////////
