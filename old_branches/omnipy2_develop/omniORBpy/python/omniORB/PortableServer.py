@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.9  2003/01/27 11:58:51  dgrisby
+# Correct IfR scoping.
+#
 # Revision 1.7.4.8  2002/05/28 22:04:41  dgrisby
 # Incorrect repoIds.
 #
@@ -505,13 +508,30 @@ omniORB.registerType(ForwardRequest._NP_RepositoryId,
 
 # Policies
 
+def _create_policy(ptype, val):
+    if ptype == 16:
+        return ThreadPolicy(val)
+    elif ptype == 17:
+        return LifespanPolicy(val)
+    elif ptype == 18:
+        return IdUniquenessPolicy(val)
+    elif ptype == 19:
+        return IdAssignmentPolicy(val)
+    elif ptype == 20:
+        return ImplicitActivationPolicy(val)
+    elif ptype == 21:
+        return ServantRetentionPolicy(val)
+    elif ptype == 22:
+        return RequestProcessingPolicy(val)
+    return None
+
+
 class ThreadPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omg.org/PortableServer/ThreadPolicy:1.0"
 
     def __init__(self, value):
         if value not in ThreadPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 16
 
@@ -525,8 +545,7 @@ class LifespanPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in LifespanPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 17
 
@@ -540,8 +559,7 @@ class IdUniquenessPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in IdUniquenessPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 18
 
@@ -555,8 +573,7 @@ class IdAssignmentPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in IdAssignmentPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 19
 
@@ -570,8 +587,7 @@ class ImplicitActivationPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in ImplicitActivationPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 20
 
@@ -585,8 +601,7 @@ class ServantRetentionPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in ServantRetentionPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 21
 
@@ -600,8 +615,7 @@ class RequestProcessingPolicy (CORBA.Policy):
 
     def __init__(self, value):
         if value not in RequestProcessingPolicyValue._items:
-            raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
-                                  COMPLETED_NO)
+            raise CORBA.PolicyError(CORBA.BAD_POLICY_TYPE)
         self._value       = value
         self._policy_type = 22
 
