@@ -9,7 +9,8 @@ some are discovered. The pages linked below list the bugs fixed in the
 specified omniORB versions. If a bug in the most recent release is
 affecting you, you should get the current development version from <a
 href="development.html">CVS</a>. Make sure you use the correct branch
-tag (<code>omni3_develop</code> for omniORB 3.0.x).
+tag (<code>omni4_0_develop</code> for omniORB 4.0.x;
+<code>omni3_develop</code> for omniORB 3.0.x).
 </p>
 
 <p>
