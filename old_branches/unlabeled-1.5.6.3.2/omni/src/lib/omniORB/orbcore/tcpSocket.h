@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.6.3.2.1  2000/02/24 11:47:25  djs
+ Pieces connected together and tested.
+
  Revision 1.5.6.3  2000/01/28 15:57:10  djr
  Removed superflouous ref counting in Strand_iterator.
  Removed flags to indicate that Ropes and Strands are heap allocated.
@@ -148,6 +151,10 @@ public:
 
   friend class nobody;
   friend class tcpSocketRendezvouser;
+  friend class OneToOneRendezvouser;
+  friend class PoolRendezvouser;
+  friend class SelectSignalRendezvouser;
+
   friend class tcpSocketWorker;
   friend class tcpStrandWorker;
 
@@ -244,6 +251,9 @@ public:
   Strand *newStrand();
   friend class tcpSocketMTincomingFactory;
   friend class tcpSocketRendezvouser;
+  friend class OneToOneRendezvouser;
+  friend class PoolRendezvouser;
+  friend class SelectSignalRendezvouser;
 
 private:
 
