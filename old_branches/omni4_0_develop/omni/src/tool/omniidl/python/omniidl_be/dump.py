@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.2  2000/10/10 10:18:54  dpg1
+# Update omniidl front-end from omni3_develop.
+#
 # Revision 1.6.2.3  2000/08/14 14:35:14  dpg1
 # IDL dumping now properly escapes string and char constants
 #
@@ -174,6 +177,11 @@ struct @id@ {""",
         self.st.out("""\
 };""")
 
+    def visitStructForward(self, node):
+        self.st.out("""\
+struct @id@;""", id = node.identifier())
+
+
     def visitException(self, node):
         self.st.out("""\
 exception @id@ {""",
@@ -256,6 +264,10 @@ union @id@ switch (@stype@) {""",
 
         self.st.out("};")
 
+
+    def visitUnionForward(self, node):
+        self.st.out("""\
+union @id@;""", id = node.identifier())
 
     def visitEnum(self, node):
         enuml = []

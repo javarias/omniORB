@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.3  2000/10/27 16:31:07  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.9.2.2  2000/10/10 10:18:50  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -164,6 +167,7 @@ float           return FLOAT;
 in              return IN;
 inout           return INOUT;
 interface       return INTERFACE;
+local           return LOCAL;
 long            return LONG;
 module          return MODULE;
 native          return NATIVE;

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.2  2000/10/27 16:31:10  dpg1
+// Clean up of omniidl dependencies and types, from omni3_develop.
+//
 // Revision 1.7.2.1  2000/07/17 10:36:05  sll
 // Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 //
@@ -54,6 +57,7 @@
 //
 
 #include <idltype.h>
+#include <idlast.h>
 #include <idlerr.h>
 
 const char*
@@ -94,10 +98,26 @@ kindAsString() const
   case tk_value_box:          return "value box";
   case tk_native:             return "native";
   case tk_abstract_interface: return "abstract interface";
+  case tk_local_interface:    return "local interface";
+  case ot_structforward:      return "forward struct";
+  case ot_unionforward:       return "forward union";
   }
   assert(0);
   return ""; // To keep MSVC happy
 }
+
+IdlType*
+IdlType::
+unalias()
+{
+  IdlType* t = this;
+  while (t && t->kind() == tk_alias) {
+    if (((Declarator*)((DeclaredType*)t)->decl())->sizes()) break;
+    t = ((Declarator*)((DeclaredType*)t)->decl())->alias()->aliasType();
+  }
+  return t;
+}
+
 
 IdlType*
 IdlType::

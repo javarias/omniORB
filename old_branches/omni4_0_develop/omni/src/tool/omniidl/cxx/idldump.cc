@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.2  2000/10/10 10:18:50  dpg1
+// Update omniidl front-end from omni3_develop.
+//
 // Revision 1.9.2.2  2000/08/29 10:20:26  dpg1
 // Operations and attributes now have repository ids.
 //
@@ -309,6 +312,14 @@ visitStruct(Struct* s)
 
 void
 DumpVisitor::
+visitStructForward(StructForward* s)
+{
+  printf("struct %s", s->identifier());
+}
+
+
+void
+DumpVisitor::
 visitException(Exception* e)
 {
   printf("exception %s {\n", e->identifier());
@@ -408,6 +419,13 @@ visitUnion(Union* u)
   --indent_;
   printIndent();
   printf("}");
+}
+
+void
+DumpVisitor::
+visitUnionForward(UnionForward* u)
+{
+  printf("union %s", u->identifier());
 }
 
 void
@@ -662,11 +680,13 @@ visitDeclaredType(DeclaredType* t)
 	printf("Object");
       break;
     }
-  DTCASE(tk_struct, Struct,     D_STRUCT)
-  DTCASE(tk_union,  Union,      D_UNION)
-  DTCASE(tk_enum,   Enum,       D_ENUM)
-  DTCASE(tk_alias,  Declarator, D_DECLARATOR)
-  DTCASE(tk_native, Native,     D_NATIVE)
+  DTCASE(tk_struct,        Struct,            D_STRUCT)
+  DTCASE(ot_structforward, StructForward,     D_STRUCTFORWARD)
+  DTCASE(tk_union,  	   Union,      	      D_UNION)
+  DTCASE(ot_unionforward,  UnionForward,      D_UNIONFORWARD)
+  DTCASE(tk_enum,   	   Enum,       	      D_ENUM)
+  DTCASE(tk_alias,  	   Declarator, 	      D_DECLARATOR)
+  DTCASE(tk_native, 	   Native,     	      D_NATIVE)
   default:
     printf("%s", t->kindAsString());
   }
