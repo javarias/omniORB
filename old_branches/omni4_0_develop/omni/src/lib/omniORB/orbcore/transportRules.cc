@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/09/24 16:16:10  sll
+  Allow serverTransportRule and clientTransportRule to be specified as
+  -ORB initialisation options.
+
   Revision 1.1.2.4  2001/08/31 16:59:59  sll
   Support '^' prefix in address field.
   Do host address lookup in extractIPv4 if necessary.
@@ -186,13 +190,10 @@ static char* extractIPv4(const char* endpoint) {
 	return ipv4._retn();
       else if (strncmp(endpoint,"giop",4) == 0) {
 	// try treating this as a hostname
-	LibcWrapper::hostent_var h;
-	int  rc;
-	if (LibcWrapper::gethostbyname(ipv4,h,rc) == 0) {
-	  ipv4 = tcpConnection::ip4ToString(*((CORBA::ULong*)
-					      h.hostent()->h_addr_list[0]));
-	  return ipv4._retn();
-	}
+	LibcWrapper::AddrInfo_var ai;
+	ai = LibcWrapper::getaddrinfo(ipv4, 0);
+	if ((LibcWrapper::AddrInfo*)ai)
+	  return ai->asString();
       }
     }
   }
