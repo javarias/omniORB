@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.27  1999/06/26 17:55:41  sll
+  Added string.h for all platforms by default.
+
   Revision 1.26  1999/06/18 21:15:17  sll
   Updated copyright notice.
 
@@ -119,6 +122,10 @@ class omniObject;
 class initFile;
 class omniObjectManager;
 
+// Function prototype for Python support. Declared as a friend of
+// omniObject.
+extern void omniPy_objectIsReady(omniObject* obj);
+
 // omniORB_x_y
 //   Define this variable to trap the mismatch of the stub and the runtime
 //   library. The two digits x,y should be the same as the shared library
@@ -186,6 +193,7 @@ public:
   //          call to BOA::dispose().
 
   static omniObject *locateObject(omniObjectManager*,omniObjectKey &k);
+  static omniObject *locatePyObject(omniObjectManager*,omniObjectKey &k);
   static void disposeObject(omniObject *obj);
   // If the reference count of the object is 0, call the delete operator
   // to remove the object.
@@ -301,11 +309,20 @@ protected:
 
   virtual ~omniObject();
 
+public:
+
   void  PR_IRRepositoryId(const char* s);
   // Set the IR repository ID of this object to <s>.
+
+  // NOTE: this function must only be called by createObjRef() and
+  // equivalent functions. It is only public so that other libraries
+  // can provide createObjRef() functions. Never call it in any other
+  // circumstance.
+  //
   // NOTE: this function is **not thread-safe**. It *should not* be called
   //       if there is any chance that the object might be accessed
   //       concurrently by another thread.
+  //
   // If this is a local object
   //    1. If omni::objectIsReady() has been called for this object,
   //       this function will throw a omniORB::fatalException().
@@ -319,8 +336,6 @@ protected:
   //       This will cause assertObjectExistent() to check the type and
   //       verify the existent of the object before it performs the next
   //       invocation.
-
-public:
 
   void setRopeAndKey(const omniRopeAndKey& l,_CORBA_Boolean keepIOP=1);
   // Set new values to the rope and key. If keepIOP is true, keep the
@@ -502,6 +517,7 @@ public:
   static omni_mutex          objectTableLock;
   static omniObject*         proxyObjectTable;
   static omniObject**        localObjectTable;
+  static omniObject**        localPyObjectTable;
   static omni_mutex          wrappedObjectTableLock;
   static void**              wrappedObjectTable;
 
@@ -544,15 +560,12 @@ private:
   friend void omni::objectIsReady(omniObject* obj);
   friend void omni::objectDuplicate(omniObject* obj);
   friend omniObject* omni::locateObject(omniObjectManager*,omniObjectKey &k);
+  friend omniObject* omni::locatePyObject(omniObjectManager*,omniObjectKey &k);
   friend void omni::disposeObject(omniObject* obj);
   friend void omni::objectRelease(omniObject* obj);
-  friend char* omni::objectToString(const omniObject* obj);
-  friend omniObject* omni::stringToObject(const char* str);
-  friend omniObject*  omni::createObjRef(const char* mostDerivedRepoId,
-					 const char* targetRepoId,
-					 IOP::TaggedProfileList* profiles,
-					 _CORBA_Boolean release);
   friend class ProxyObjectTableCleaner;
+
+  friend void omniPy_objectIsReady(omniObject* obj);
 };
 
 
