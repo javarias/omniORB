@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2001/08/15 10:26:08  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.2.9  2001/08/06 15:49:17  sll
   Added IOP component TAG_OMNIORB_UNIX_TRANS for omniORB specific local
   transport using the unix domain socket.
@@ -69,7 +72,9 @@
 
 #include <omniORB4/giopEndpoint.h>
 
-class _OMNI_NS(Rope);
+OMNI_NAMESPACE_BEGIN(omni)
+class Rope;
+OMNI_NAMESPACE_END(omni)
 
 class omniIOR {
 public:

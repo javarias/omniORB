@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.9  2001/10/17 16:47:08  dpg1
+  New minor codes
+
   Revision 1.17.2.8  2001/09/19 17:26:48  dpg1
   Full clean-up after orb->destroy().
 
@@ -258,7 +261,7 @@ void
 _CORBA_String_helper::
 unmarshal_zero_length_string()
 {
-  if (omniORB::strictIIOP) {
+  if (orbParameters::strictIIOP) {
     if (omniORB::trace(1)) {
       omniORB::log << "Error: received an invalid zero length string.\n"
 		   << "       CORBA::MARSHAL is thrown.\n";

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/11/12 13:47:09  dpg1
+  Minor fixes.
+
   Revision 1.1.2.1  2001/08/17 13:39:47  dpg1
   Split CORBA.h into separate bits.
 
@@ -88,6 +91,8 @@ typedef _CORBA_PseudoObj_Member<Policy, Policy_var> Policy_member;
 typedef _CORBA_Pseudo_Unbounded_Sequence<Policy, Policy_member> PolicyList;
 
 typedef _CORBA_Unbounded_Sequence_w_FixSizeElement<_CORBA_ULong,4,4> PolicyTypeSeq;
+
+class PolicyList_out;
 
 class PolicyList_var {
 public:
