@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.8  1997/08/08 09:34:57  sll
+  MarshalObjRef now always pass the repository ID of the most derived type
+  in the IOR.
+
   Revision 1.7  1997/05/06 15:26:37  sll
   Public release.
 
@@ -61,18 +65,7 @@
 //    is invalid. Of course, the problem will be resolved if the ORB is
 //    able to query the interface repository at runtime about D.
 //
-// 2. To avoid the problem described above, the ORB always passes down the
-//    wire the IRid of the interface type defined in the operation signature,
-//    instead of the actual IRid of the object (which may be a derived 
-//    interface). Strictly speaking, this is not CORBA compliant. For
-//    CORBA 2 section 10.6.2 specifies that "type ID is provided by the
-//    server and indicates the MOST DERIVED type at the time the reference
-//    is generated". Therefore we may experience interoperability problem with
-//    other ORBs in this area. The workaround is to make sure that all the 
-//    derived and base interfaces are compiled in. The long term solution is
-//    to add the IR support to the ORB.
-//    
-// 3. The interface information is provided by the stubs via the
+// 2. The interface information is provided by the stubs via the
 //    proxyObjectFactory class. For an interface type A, the stub of A contains
 //    a A_proxyObjectFactory class. This class is derived from the 
 //    proxyObjectFactory class. The proxyObjectFactory is an abstract class
@@ -228,6 +221,7 @@ omni::objectRelease(omniObject *obj)
 	}
 	p = &((*p)->pd_next);
       }
+      omniObject::objectTableLock.unlock();
       delete obj;
     }
     else {
@@ -239,11 +233,17 @@ omni::objectRelease(omniObject *obj)
 	}
 	p = &((*p)->pd_next);
       }
-      if (obj->pd_disposed)
+      if (obj->pd_disposed) {
+      omniObject::objectTableLock.unlock();
 	delete obj;   // call dtor if BOA->disposed() has been called.
+      }
+      else {
+      omniObject::objectTableLock.unlock();
+      }
     }
   }
-  omniObject::objectTableLock.unlock();
+  else
+    omniObject::objectTableLock.unlock();
   return;
 }
 
@@ -261,13 +261,22 @@ omni::disposeObject(omniObject *obj)
     obj->setRefCount(obj->getRefCount()-1);
 
   if (obj->getRefCount() == 0) {
-    // object has already been removed from the object table
+    // object has _NOT_ already been removed from the object table
+    omniObject **p = &omniObject::localObjectTable[omniORB::hash(obj->pd_objkey.native)];
+    while (*p) {
+      if (*p == obj) {
+      *p = obj->pd_next;
+      break;
+      }
+      p = &((*p)->pd_next);
+    }
+    omniObject::objectTableLock.unlock();
     delete obj;
   }
   else {
     obj->pd_disposed = 1;
+    omniObject::objectTableLock.unlock();
   }
-  omniObject::objectTableLock.unlock();
   return;
 }
 
@@ -431,7 +440,9 @@ omni::stringToObject(const char *str)
   }
 
   try {
-    return omni::createObjRef(repoId,0,profiles,1);
+    omniObject* newobj = omni::createObjRef(repoId,0,profiles,1);
+    delete [] repoId;
+    return newobj;
   }
   catch (...) {
     delete [] repoId;	
@@ -556,8 +567,6 @@ CORBA::AlignedObjRef(CORBA::Object_ptr obj,
 		     size_t repoIdSize,
 		     size_t initialoffset)
 {
-  repoId = obj->PR_getobj()->NP_IRRepositoryId();
-  repoIdSize = strlen(repoId)+1;
   omni::ptr_arith_t msgsize = omni::align_to((omni::ptr_arith_t)
                                                    initialoffset,
 						   omni::ALIGN_4);
@@ -565,6 +574,8 @@ CORBA::AlignedObjRef(CORBA::Object_ptr obj,
     return (size_t) (msgsize + 3 * sizeof(CORBA::ULong));
   }
   else {
+    repoId = obj->PR_getobj()->NP_IRRepositoryId();
+    repoIdSize = strlen(repoId)+1;
     msgsize += (omni::ptr_arith_t)(sizeof(CORBA::ULong)+repoIdSize);
     IOP::TaggedProfileList *pl = obj->PR_getobj()->iopProfiles();
     return pl->NP_alignedSize((size_t)msgsize);
