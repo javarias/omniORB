@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/10/17 16:47:08  dpg1
+  New minor codes
+
   Revision 1.1.2.5  2001/07/26 16:37:20  dpg1
   Make sure static initialisers always run.
 
@@ -323,7 +326,7 @@ TCS_W_UCS_4::marshalWString(cdrStream& stream,
   _CORBA_ULong         tc;
   omniCodeSet::UniChar uc;
   
-  for (_CORBA_ULong i=0; i<=len; i++) {
+  for (_CORBA_ULong i=0; i < len; i++) {
     uc = us[i];
 
     if (uc < 0xd800) {
