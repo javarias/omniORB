@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.15  2002/08/27 10:32:27  dgrisby
+  FreeBSD fixes.
+
   Revision 1.1.2.14  2002/08/16 16:00:55  dgrisby
   Bugs accessing uninitialised String_vars with [].
 
@@ -215,7 +218,7 @@ tcpEndpoint::Bind() {
     return 0;
   }
 
-  if (listen(pd_socket,5) == RC_SOCKET_ERROR) {
+  if (listen(pd_socket,SOMAXCONN) == RC_SOCKET_ERROR) {
     CLOSESOCKET(pd_socket);
     return 0;
   }

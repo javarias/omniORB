@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2002/09/08 22:12:22  dgrisby
+  Last checkin broke it.
+
   Revision 1.1.2.13  2002/09/08 21:58:49  dgrisby
   Support for MSVC 7. (Untested.)
 
@@ -134,7 +137,7 @@
 #  define ERRNO              ::WSAGetLastError()
 #  define EINPROGRESS        WSAEWOULDBLOCK
 #  define RC_EINTR           WSAEINTR
-#  define RC_EBADF           WSAEBADF
+#  define RC_EBADF           WSAENOTSOCK
 #  define NEED_SOCKET_SHUTDOWN_FLAG 1
 
 OMNI_NAMESPACE_BEGIN(omni)
