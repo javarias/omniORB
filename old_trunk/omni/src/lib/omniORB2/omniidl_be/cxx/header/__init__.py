@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/19 11:23:27  djs
+# Moved most C++ code to template file
+#
 # Revision 1.10  2000/01/17 17:00:21  djs
 # Runs tcParser #ifdefs for bounded strings
 #
@@ -185,10 +188,10 @@ def monolithic(stream, tree):
     main_poa = util.StringStream()
     main_tie = util.StringStream()
     
-    tie = omniidl.be.cxx.header.tie.__init__(main_tie)
     poa = omniidl.be.cxx.header.poa.__init__(main_poa)
     tree.accept(poa)
     if config.FlatTieFlag():
+        tie = omniidl.be.cxx.header.tie.__init__(main_tie)
         tree.accept(tie)
 
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
