@@ -29,6 +29,9 @@
 
 /*
   $Log$
+ * Revision 1.4  1997/05/06  15:23:10  sll
+ * Public release.
+ *
   */
 
 #ifndef __LIBCWRAPPER_H__
@@ -38,7 +41,7 @@
 #define _HAS_NETDB_
 
 
-#ifdef __NT__
+#ifdef __WIN32__
 #include <winsock.h>
 #else
 #include <netdb.h>
