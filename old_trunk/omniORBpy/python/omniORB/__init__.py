@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.11  1999/11/12 15:53:48  dpg1
+# New functions omniORB.importIDL() and omniORB.importIDLString().
+#
 # Revision 1.10  1999/10/18 08:25:57  dpg1
 # _is_a() now works properly for local objects.
 #
@@ -504,4 +507,3 @@ keywordMapping = {
 import omniORB, omniORB.PortableServer
 _omnipy.registerPyObjects(omniORB, threading)
 del omniORB
-del sys, types, string, imp, os, tempfile, threading
