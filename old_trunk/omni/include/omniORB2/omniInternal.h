@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14  1997/12/12 19:59:19  sll
+  Added version variable omniORB_x_y.
+
   Revision 1.13  1997/12/10 11:52:31  sll
   *** empty log message ***
 
@@ -87,7 +90,7 @@ class omniObjectManager;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.4.1.
 //
-extern const char* omniORB_2_4;
+extern const char* _OMNIORB2_NTDLL_ omniORB_2_4;
 
 #include <omniORB2/rope.h>
 
