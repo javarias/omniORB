@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2001/09/04 14:38:52  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.10  2001/09/03 16:55:41  sll
   Modified to match the new signature of the giopStream member functions that
   previously accept explicit deadline parameters. The deadline is now
@@ -140,6 +144,8 @@ public:
   // giopStream::CommFailure exception.  Therefore the caller should not
   // expect this function to return.
 
+  static void inputRaiseCommFailure(giopStream* g);
+
   static void outputNewMessage(giopStream* g);
 
   static void outputFlush(giopStream* g,CORBA::Boolean knownFragmentSize=0);
@@ -194,8 +200,15 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // never reach here
   }
   else if ( g->pd_strand->isClient() || g->pd_strand->biDir) {
-    // orderly shutdown. What to do?
-    inputTerminalProtocolError(g);
+    // orderly shutdown.
+    CORBA::ULong minor;
+    CORBA::Boolean retry;
+    g->notifyCommFailure(0,minor,retry);
+    g->pd_strand->state(giopStrand::DYING);
+    g->pd_strand->orderly_closed = 1;
+    giopStream::CommFailure::_raise(minor,
+				    CORBA::COMPLETED_NO,
+				    retry,__FILE__,__LINE__);
     // never reach here
   }
   else {
@@ -529,8 +542,15 @@ giopImpl12::inputReplyBegin(giopStream* g,
 	CORBA::ULong minor;
 	CORBA::Boolean retry;
 	g->notifyCommFailure(0,minor,retry);
+	CORBA::CompletionStatus status;
+	if (g->pd_strand->orderly_closed) {
+	  status = CORBA::COMPLETED_NO;
+	}
+	else {
+	  status = (CORBA::CompletionStatus)g->completion();
+	}
 	giopStream::CommFailure::_raise(minor,
-					(CORBA::CompletionStatus)g->completion(),
+					status,
 					retry,
 					__FILE__,__LINE__);
 	// never reaches here.
@@ -840,7 +860,8 @@ giopImpl12::unmarshalWildCardRequestHeader(giopStream* g) {
       // proper shutdown of a connection.
       // XXX what to do?
     }
-    // falls through
+    inputRaiseCommFailure(g);
+    break;
   default:
     inputTerminalProtocolError(g);
     // Never reach here.
@@ -1141,6 +1162,13 @@ giopImpl12::inputTerminalProtocolError(giopStream* g) {
       <<". Detected GIOP 1.2 protocol error in input message. "
       << "Connection is closed.\n";
   }
+
+  inputRaiseCommFailure(g);
+}
+
+////////////////////////////////////////////////////////////////////////
+void
+giopImpl12::inputRaiseCommFailure(giopStream* g) {
 
   CORBA::ULong minor;
   CORBA::Boolean retry;
