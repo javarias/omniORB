@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.13  2003/10/28 13:59:44  dgrisby
+// myIPAddresses function.
+//
 // Revision 1.1.2.12  2003/09/01 09:53:39  dgrisby
 // Avoid deadlock in dummy thread deletion.
 //
@@ -713,6 +716,33 @@ extern "C" {
     return pyaddrs;
   }
 
+  static char setPersistentServerIdentifier_doc [] =
+  "setPersistentServerIdentifier(ident)\n"
+  "\n"
+  "Sets an octet sequence used to persistently identify \"this\"\n"
+  "server. Stored object references matching this identifier are\n"
+  "re-written to use the current endpoint details.\n";
+
+  static PyObject* pyomni_setPersistentServerIdentifier(PyObject* self,
+							PyObject* args)
+  {
+    char* idstr;
+    int   idlen;
+
+    if (!PyArg_ParseTuple(args, (char*)"s#", &idstr, &idlen))
+      return 0;
+
+    CORBA::OctetSeq idseq(idlen, idlen, (CORBA::Octet*)idstr, 0);
+    try {
+      omniPy::InterpreterUnlocker _u;
+      omniORB::setPersistentServerIdentifier(idseq);
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
 
   static PyMethodDef pyomni_methods[] = {
     {(char*)"installTransientExceptionHandler",
@@ -766,6 +796,10 @@ extern "C" {
     {(char*)"myIPAddresses",
      pyomni_myIPAddresses,
      METH_VARARGS, myIPAddresses_doc},
+
+    {(char*)"setPersistentServerIdentifier",
+     pyomni_setPersistentServerIdentifier,
+     METH_VARARGS, setPersistentServerIdentifier_doc},
 
     {NULL,NULL}
   };
