@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/11/04 20:20:15  sll
+  GIOP engines can now do callback to the higher layer to calculate total
+  message size if necessary.
+  Where applicable, changed to use the new server side descriptor-based stub.
+
   Revision 1.1.2.2  1999/10/05 20:35:32  sll
   Added support to GIOP 1.2 to recognise all TargetAddress mode.
   Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
@@ -442,7 +447,9 @@ private:
 	 InputRequest,
 	 InputReply,
 	 InputLocateReply,
-         InputRequestCompleted } pd_state;
+         InputRequestCompleted,
+         InputPartiallyBuffered,
+         InputFullyBuffered } pd_state;
 	       
 public:
   // The following implement the abstract functions defined in cdrStream

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.11.4.2  1999/09/25 17:00:11  sll
+  Merged changes from omni2_8_develop branch.
+
   Revision 1.11.4.1  1999/09/15 20:18:13  sll
   Updated to use the new cdrStream abstraction.
   Marshalling operators for NetBufferedStream and MemBufferedStream are now
@@ -504,9 +507,10 @@ public:
 
     static void        setStrandIsDying(Strand*);
 
+    static omni_mutex& getMutex(Strand*);
+
   protected:
 
-    static omni_mutex& getMutex(Strand*);
     static omni_mutex& getMutex(Rope*);
     static Strand*     getStrand(Rope*);
 
