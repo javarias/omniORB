@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/07/03 15:46:40  dgrisby
+  Minor registry code bugfix.
+
   Revision 1.1.2.7  2002/03/18 15:13:09  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -283,11 +286,15 @@ void parseConfigReg(orbOptions& opt, HKEY rootkey) {
     DWORD subkeylen = subkeybufsize + 1;
     if ( RegEnumKeyEx(rootkey,index,
 		      (LPTSTR) ((char*)subkeybuf),&subkeylen,
-		      NULL,NULL,NULL,NULL) != ERROR_SUCCESS ) {
-      omniORB::logger log;
-      log << "Cannot red subkey name for index " << index << "\n";
+		      NULL,NULL,NULL,NULL) == ERROR_SUCCESS ) {
+      parseConfigInSubKey(opt,rootkey,subkeybuf);
     }
-    parseConfigInSubKey(opt,rootkey,subkeybuf);
+    else {
+      if (omniORB::trace(1)) {
+	omniORB::logger log;
+	log << "Cannot read subkey name for index " << index << "\n";
+      }
+    }
     index++;
   }
 }
