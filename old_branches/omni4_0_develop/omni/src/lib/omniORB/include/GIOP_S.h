@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:19:01  sll
+  Big checkin with the brand new internal APIs.
+
   */
 
 
@@ -93,9 +96,6 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
   GIOP::MsgType requestType() const { return pd_requestType; }
   void requestType(GIOP::MsgType m) { pd_requestType = m; }
 
-  //////////////////////////////////////////////////////////////////
-  inline CORBA::ULong  requestId() const { return pd_request_id; }
-  inline void requestId(CORBA::ULong v) { pd_request_id = v; }
 
   //////////////////////////////////////////////////////////////////
   inline CORBA::Boolean response_expected() const { 
@@ -192,7 +192,6 @@ private:
   CORBA::Octet             pd_pr_buffer[GIOP_S_INLINE_BUF_SIZE];
   CORBA::ULong             pd_principal_len;
 
-  CORBA::ULong             pd_request_id;
   CORBA::Boolean           pd_response_expected;
   CORBA::Boolean           pd_result_expected;
 

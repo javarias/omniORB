@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 18:10:51  sll
+  Big checkin with the brand new internal APIs.
+
   */
 
 #include <omniORB4/CORBA.h>
@@ -67,7 +70,6 @@ GIOP_S::GIOP_S(giopStrand* g,giopServer*server) : giopStream(g),
 		                            pd_operation((char*)pd_op_buffer),
 					    pd_principal(pd_pr_buffer),
 					    pd_principal_len(0),
-					    pd_request_id(0),
 					    pd_response_expected(1),
 					    pd_result_expected(1)
 {
@@ -82,7 +84,6 @@ GIOP_S::GIOP_S(const GIOP_S& src) : giopStream(src.pd_strand),
 				    pd_operation((char*)pd_op_buffer),
 				    pd_principal(pd_pr_buffer),
 				    pd_principal_len(0),
-				    pd_request_id(0),
 				    pd_response_expected(1),
 				    pd_result_expected(1)
 {
@@ -300,6 +301,10 @@ GIOP_S::handleRequest() {
     }
   }
 #undef MARSHAL_USER_EXCEPTION
+
+  catch(const giopStream::CommFailure&) {
+    throw;
+  }
 
   catch(...) {
     if( omniORB::traceLevel > 1 ) {

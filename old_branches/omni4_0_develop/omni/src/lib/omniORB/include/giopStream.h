@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:59  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.1  2001/02/23 16:47:04  sll
   Added new files.
 
@@ -393,6 +396,7 @@ private:
   // written with a sensible value when used.
   CORBA::ULong               pd_outputFragmentSize;
   CORBA::ULong               pd_outputMessageSize;
+  CORBA::ULong               pd_request_id;
 
   inline CORBA::ULong outputMessageSize() const {
     return pd_outputMessageSize;
@@ -434,6 +438,11 @@ private:
 
   void errorOnSend(int,const char*,CORBA::ULong);
   // internal helper function, do not use outside this class
+
+protected:
+  //////////////////////////////////////////////////////////////////
+  inline CORBA::ULong  requestId() const { return pd_request_id; }
+  inline void requestId(CORBA::ULong v) { pd_request_id = v; }
 
 };
 
