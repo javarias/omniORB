@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.8  2001/11/27 14:37:25  dpg1
+# long double TC descriptor.
+#
 # Revision 1.15.2.7  2001/11/13 15:23:52  dpg1
 # Bug in forward declared structs/unions.
 #
@@ -270,7 +273,7 @@ def canonTypeName(type, decl = None, useScopedName = 0):
     return canon_name
 
 
-def produce_signature(returnType, parameters, raises):
+def produce_signature(returnType, parameters, raises, oneway):
 
     returnType = types.Type(returnType)
     d_returnType = returnType.deref()
@@ -280,6 +283,11 @@ def produce_signature(returnType, parameters, raises):
         sig = "void"
     else:
         sig = canonTypeName(returnType, useScopedName = 1)
+
+    if oneway:
+        # Can only validly happen with void return, but you never know
+        # what the future may hold.
+        sig = ONEWAY_SEPARATOR + sig
         
     # parameter list
     for param in parameters:
