@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.9  2000/08/30 10:14:39  dpg1
+# BOA constructor with object key failed to set the key in the servant.
+#
 # Revision 1.1.2.8  2000/07/24 16:32:19  djs
 # Fixed typo in previous BOA skeleton bugfix.
 # Suppressed compiler warning (from gcc -Wall) when encountering a call with
@@ -288,12 +291,9 @@ if( !strcmp(id, @inherited@::_PD_repoId) )
 """
 
 interface_ALIAS = """\
-#ifndef __@guard_name@__ALIAS__
-#define __@guard_name@__ALIAS__
 typedef @fqname@ @flat_fqname@;
 typedef @impl_fqname@ @impl_flat_fqname@;
 typedef @objref_fqname@ @objref_flat_fqname@;
-#endif
 """
 
 interface_impl = """\
