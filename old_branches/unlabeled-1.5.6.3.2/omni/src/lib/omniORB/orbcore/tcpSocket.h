@@ -29,6 +29,22 @@
 
 /*
  $Log$
+ Revision 1.5.6.3.2.2  2000/03/01 17:08:35  djs
+ Restructuring of Rendezvouser into:
+                    Rendezvouser
+                   (abstract base)
+                 /               \
+                /                 \
+ OneToOneRendezvouser           PoolRendezvouser
+   (implements 1-1)              (abstract mplex)
+                                /                \
+                               /                  \
+                   SelectSignalRendezvouser        ?? another wakeup
+                   (uses select() and kill())      mechanism
+
+ SelectSignalRendezvouser still has a concurrency fault leading to a
+ SIGSEGV.
+
  Revision 1.5.6.3.2.1  2000/02/24 11:47:25  djs
  Pieces connected together and tested.
 
@@ -253,6 +269,7 @@ public:
   friend class tcpSocketRendezvouser;
   friend class OneToOneRendezvouser;
   friend class PoolRendezvouser;
+  friend class LeaderFollower;
   friend class SelectSignalRendezvouser;
 
 private:
