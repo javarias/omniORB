@@ -35,6 +35,10 @@
 
 /*
  $Log$
+ Revision 1.5  1999/05/20 18:36:03  sll
+ Revert to non-context version. Support for context is now in
+ an equivalent version in the dynamic library.
+
  Revision 1.4  1999/04/21 13:11:18  djr
  Added support for contexts.
 
@@ -58,7 +62,8 @@ _again:
 #else
   while(1) {
 #endif
-    o->assertObjectExistent();
+    if (omniORB::verifyObjectExistsAndType)
+      o->assertObjectExistent();
     omniRopeAndKey ropeAndKey;
     CORBA::Boolean fwd = o->getRopeAndKey(ropeAndKey);
     CORBA::Boolean reuse = 0;
