@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.7  2001/06/08 17:12:22  dpg1
+// Merge all the bug fixes from omni3_develop.
+//
 // Revision 1.2.2.6  2001/04/18 18:18:04  sll
 // Big checkin with the brand new internal APIs.
 //
@@ -637,7 +640,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
     omniIOR* ior= new omniIOR((const char*)"",
 			      key,
 			      addrlist,parsed.addr_count_,
-			      ver,0);
+			      ver,omniIOR::NoInterceptor);
     delete [] addrlist;
 
     omniObjRef* objref = omni::createObjRef(CORBA::Object::_PD_repoId,ior,0);

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/05/01 17:39:09  sll
+  Reading uninitialised variable in ~IORInfo().
+
   Revision 1.1.2.5  2001/04/18 18:18:07  sll
   Big checkin with the brand new internal APIs.
 
@@ -128,7 +131,7 @@ omniIOR::omniIOR(const char* repoId, omniLocalIdentity* id) :
 omniIOR::omniIOR(const char* repoId, 
 		 const _CORBA_Unbounded_Sequence_Octet& key,
 		 const IIOP::Address* addrs, CORBA::ULong naddrs,
-		 GIOP::Version ver, CORBA::Boolean callInterceptors) :
+		 GIOP::Version ver, interceptorOption callInterceptors) :
   pd_iopProfiles(0),
   pd_addr_selected_profile_index(-1),
   pd_addr_mode(GIOP::KeyAddr), 
@@ -158,11 +161,12 @@ omniIOR::omniIOR(const char* repoId,
 
   pd_iopProfiles = new IOP::TaggedProfileList();
 
-  {
+  if (callInterceptors == NoInterceptor) {
     _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,
-							 !callInterceptors);
+				(callInterceptors == DefaultInterceptors));
     omniORB::getInterceptors()->encodeIOR.visit(info);
   }
+
   {
     CORBA::ULong last = pd_iopProfiles->length();
     pd_iopProfiles->length(last+1);
@@ -265,7 +269,7 @@ omniIOR::newIIOPtaggedComponent(IOP::MultipleComponentProfile& p)
       newbuf[i].tag = oldbuf[i].tag;
       newbuf[i].component_data.replace(oldbuf[i].component_data.maximum(),
 				       oldbuf[i].component_data.length(),
-				       oldbuf[i].component_data.get_buffer(1),
+				       oldbuf[i].component_data.get_buffer(oldbuf[i].component_data.release()),
 				       1);
     }
     p.replace(newmax,len - 1,newbuf,1);

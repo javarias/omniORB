@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/05/09 17:00:27  sll
+  addr_selected_profile_index() now returns signed long.
+
   Revision 1.1.2.4  2001/04/18 17:50:44  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -174,10 +177,14 @@ public:
   //
   // ** Caller holds lock on internalLock.
 
+  enum interceptorOption { NoInterceptor, 
+			   DefaultInterceptors, 
+			   AllInterceptors };
+
   omniIOR(const char* repoId, 
 	  const _CORBA_Unbounded_Sequence_Octet& key,
 	  const IIOP::Address* addrs, _CORBA_ULong naddrs,
-	  GIOP::Version ver, _CORBA_Boolean call_interceptors);
+	  GIOP::Version ver, interceptorOption call_interceptors);
 
   ~omniIOR();
 
@@ -244,7 +251,7 @@ public:
   static void  unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent&, 
 					   omniIOR&);
   static char* dump_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent&);
-  static void  add_TAG_SSL_SEC_TRANS(_CORBA_UShort port,
+  static void  add_TAG_SSL_SEC_TRANS(const IIOP::Address&,
 				     _CORBA_UShort supports,
 				     _CORBA_UShort requires);
 

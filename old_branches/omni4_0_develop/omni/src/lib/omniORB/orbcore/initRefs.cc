@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/06/07 16:24:10  dpg1
+  PortableServer::Current support.
+
   Revision 1.2.2.5  2001/05/29 17:03:51  dpg1
   In process identity.
 
@@ -718,7 +721,7 @@ omniInitialReferences::initialise_bootstrap_agent(const char* host,
 
     GIOP::Version ver = { 1, 0 };
     omniIOR* ior= new omniIOR(CORBA_InitialReferences::_PD_repoId,
-			      objkey,&addr,1,ver,0);
+			      objkey,&addr,1,ver,omniIOR::NoInterceptor);
     
     omniObjRef* objref = omni::createObjRef(
                               CORBA_InitialReferences::_PD_repoId,ior,0);
