@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.10  2002/01/18 15:49:44  dpg1
+// Context support. New system exception construction. Fix None call problem.
+//
 // Revision 1.1.2.9  2001/09/24 10:48:25  dpg1
 // Meaningful minor codes.
 //
@@ -258,13 +261,17 @@ omniPy::Py_omniCallDescriptor::setAndValidateReturnedValues(PyObject* result)
 		    BAD_PARAM_WrongPythonType,
 		    CORBA::COMPLETED_MAYBE);
   }
-
-  if (out_l_ == 1) {
+  else if (out_l_ == 1) {
     omniPy::validateType(PyTuple_GET_ITEM(out_d_,0),
 			 result,
 			 CORBA::COMPLETED_MAYBE);
   }
   else {
+    if (!PyTuple_Check(result) || PyTuple_GET_SIZE(result) != out_l_)
+      OMNIORB_THROW(BAD_PARAM,
+		    BAD_PARAM_WrongPythonType,
+		    CORBA::COMPLETED_MAYBE);
+
     for (int i=0; i < out_l_; i++) {
       omniPy::validateType(PyTuple_GET_ITEM(out_d_,i),
 			   PyTuple_GET_ITEM(result,i),

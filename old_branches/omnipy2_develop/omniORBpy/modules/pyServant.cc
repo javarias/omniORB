@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.12  2002/03/18 12:40:38  dpg1
+// Support overriding _non_existent.
+//
 // Revision 1.1.2.11  2002/03/11 15:40:04  dpg1
 // _get_interface support, exception minor codes.
 //
@@ -717,6 +720,11 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
 			      result, CORBA::COMPLETED_MAYBE);
       }
       else {
+	if (!PyTuple_Check(result) || PyTuple_GET_SIZE(result) != out_l)
+	  OMNIORB_THROW(BAD_PARAM,
+			BAD_PARAM_WrongPythonType,
+			CORBA::COMPLETED_MAYBE);
+
 	retval = PyTuple_New(out_l);
 	
 	for (i=0; i < out_l; ++i) {
