@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:26:46  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #ifndef __CORBAORB_H__
@@ -63,13 +66,12 @@ public:
 
   void actual_shutdown();
 
-  inline void incrRefCount() { pd_refCount++; }
-  // Must hold <orb_lock>.
-
 private:
   void do_shutdown(CORBA::Boolean wait_for_completion);
 
   int pd_refCount;
+  // Protected by <omni::poRcLock>.
+
   int pd_destroyed;
   int pd_shutdown;
   int pd_shutdown_in_progress;

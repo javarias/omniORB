@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.10  2000/01/07 14:51:13  djr
+  Call timeouts are now disabled by default.
+
   Revision 1.29.6.9  2000/01/05 17:59:45  djr
   Added check for reinitialisation in ORB_init.
 
@@ -252,7 +255,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
     OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
   }
   if( the_orb ) {
-    the_orb->incrRefCount();
+    the_orb->_NP_incrRefCount();
     return the_orb;
   }
 
@@ -294,7 +297,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier)
   }
 
   the_orb = new omniOrbORB(0);
-  the_orb->incrRefCount();
+  the_orb->_NP_incrRefCount();
   return the_orb;
 }
 
@@ -435,11 +438,13 @@ omniOrbORB::run()
   // It is possible for there to be multiple threads stuck in
   // here -- so we need to be sure that shutdown wakes 'em all up!
 
-  omni_tracedmutex_lock sync(orb_lock);
+  orb_lock.lock();
 
   orb_n_blocked_in_run++;
   while( !pd_shutdown )  orb_signal.wait();
   orb_n_blocked_in_run--;
+
+  orb_lock.unlock();
 }
 
 
@@ -495,10 +500,11 @@ omniOrbORB::_non_existent()
 {
   CHECK_NOT_NIL_SHUTDOWN_OR_DESTROYED();
 
-  {
-    omni_tracedmutex_lock sync(orb_lock);
-    return pd_destroyed ? 1 : 0;
-  }
+  orb_lock.lock();
+  CORBA::Boolean ret = pd_destroyed ? 1 : 0;
+  orb_lock.unlock();
+
+  return ret;
 }
 
 
@@ -537,19 +543,24 @@ omniOrbORB::_ptrToObjRef(const char* repoId)
 void
 omniOrbORB::_NP_incrRefCount()
 {
-  orb_lock.lock();
+  omni::poRcLock->lock();
   pd_refCount++;
-  orb_lock.unlock();
+  omni::poRcLock->unlock();
 }
 
 
 void
 omniOrbORB::_NP_decrRefCount()
 {
-  orb_lock.lock();
+  omni::poRcLock->lock();
   int done = --pd_refCount > 0;
-  orb_lock.unlock();
+  omni::poRcLock->unlock();
   if( done )  return;
+
+  OMNIORB_USER_CHECK(pd_destroyed);
+  OMNIORB_USER_CHECK(pd_refCount == 0);
+  // If either of these fails then the application has released the
+  // ORB reference too many times.
 
   omniORB::logs(15, "No more references to the ORB -- deleted.");
 

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.7  1999/12/06 14:03:00  djr
+  *** empty log message ***
+
   Revision 1.1.2.6  1999/10/29 13:18:18  djr
   Changes to ensure mutexes are constructed when accessed.
 
@@ -74,6 +77,7 @@ using omniORB::operator==;
 
 const CORBA::Char                omni::myByteOrder = _OMNIORB_HOST_BYTE_ORDER_;
 omni_tracedmutex*                omni::internalLock = 0;
+omni_tracedmutex*                omni::poRcLock = 0;
 _CORBA_Unbounded_Sequence__Octet omni::myPrincipalID;
 const omni::alignment_t          omni::max_alignment = ALIGN_8;
 
@@ -215,7 +219,7 @@ omniInternal::resizeObjectTable()
   _CORBA_ULong newsize = objTblSizes[objectTableSizeI];
 
   if( omniORB::trace(15) ) {
-    omniORB::logf("Object table resized from %lu to %lu",
+    omniORB::logf("Object table resizing from %lu to %lu",
 		  (unsigned long) objectTableSize,
 		  (unsigned long) newsize);
   }
@@ -245,8 +249,8 @@ omniInternal::resizeObjectTable()
   objectTable = newtable;
   objectTableSize = newsize;
   maxNumObjects = objectTableSize * 2 / 3;
-  minNumObjects = objectTableSizeI ?
-    (objTblSizes[objectTableSizeI - 1] >> 1) : 0;
+  minNumObjects =
+    objectTableSizeI ? (objTblSizes[objectTableSizeI - 1] / 3) : 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -964,6 +968,20 @@ omni::assertFail(const char* file, int line, const char* expr)
   throw omniORB::fatalException(file, line, expr);
 }
 
+
+void
+omni::ucheckFail(const char* file, int line, const char* expr)
+{
+  if( omniORB::trace(1) ) {
+    omniORB::logger l;
+    l << "Application check failed. This indicates a bug in the application\n"
+      " using omniORB.  See the comment in the source code for more info.\n"
+      " file: " << file << "\n"
+      " line: " << line << "\n"
+      " info: " << expr << '\n';
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
@@ -975,6 +993,7 @@ public:
     OMNIORB_ASSERT(!objectTable);  OMNIORB_ASSERT(!omni::internalLock);
 
     omni::internalLock = new omni_tracedmutex;
+    omni::poRcLock = new omni_tracedmutex;
     objref_rc_lock = new omni_tracedmutex;
 
     numObjectsInTable = 0;
