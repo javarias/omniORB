@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/06/13 20:13:49  sll
+  Minor updates to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.2  2001/05/01 16:04:42  sll
   Silly use of sizeof() on const char*. Should use strlen().
 
@@ -96,7 +99,7 @@ tcpEndpoint::address() const {
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-tcpEndpoint::bind() {
+tcpEndpoint::Bind() {
 
   OMNIORB_ASSERT(pd_socket == RC_INVALID_SOCKET);
 
@@ -184,7 +187,7 @@ tcpEndpoint::bind() {
 
 /////////////////////////////////////////////////////////////////////////
 giopConnection*
-tcpEndpoint::accept() {
+tcpEndpoint::Accept() {
 
   OMNIORB_ASSERT(pd_socket != RC_INVALID_SOCKET);
 
@@ -201,11 +204,11 @@ tcpEndpoint::accept() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-tcpEndpoint::poke() {
+tcpEndpoint::Poke() {
 
   tcpAddress* target = new tcpAddress(pd_address);
   tcpConnection* conn;
-  if ((conn = (tcpConnection*)target->connect()) == 0) {
+  if ((conn = (tcpConnection*)target->Connect()) == 0) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "Warning: Fail to connect to myself ("
@@ -221,7 +224,7 @@ tcpEndpoint::poke() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-tcpEndpoint::shutdown() {
+tcpEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
 }
 

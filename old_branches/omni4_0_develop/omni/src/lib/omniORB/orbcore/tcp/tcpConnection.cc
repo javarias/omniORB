@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/06/13 20:13:49  sll
+  Minor updates to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.1  2001/04/18 18:10:44  sll
   Big checkin with the brand new internal APIs.
 
@@ -143,7 +146,7 @@ tcpConnection::ip4ToString(CORBA::ULong ipv4,CORBA::UShort port,
 
 /////////////////////////////////////////////////////////////////////////
 int
-tcpConnection::send(void* buf, size_t sz,
+tcpConnection::Send(void* buf, size_t sz,
 		    unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) {
 
@@ -212,7 +215,7 @@ tcpConnection::send(void* buf, size_t sz,
 
 /////////////////////////////////////////////////////////////////////////
 int
-tcpConnection::recv(void* buf, size_t sz,
+tcpConnection::Recv(void* buf, size_t sz,
 		    unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) {
 
@@ -297,7 +300,7 @@ tcpConnection::recv(void* buf, size_t sz,
 
 /////////////////////////////////////////////////////////////////////////
 void
-tcpConnection::shutdown() {
+tcpConnection::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
 }
 

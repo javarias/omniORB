@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/06/18 20:28:31  sll
+  Remove garbage after #endif
+
   Revision 1.1.2.1  2001/06/11 18:11:06  sll
   *** empty log message ***
 
@@ -47,15 +50,15 @@ OMNI_NAMESPACE_BEGIN(omni)
 class sslConnection : public giopConnection {
  public:
 
-  int send(void* buf, size_t sz,
+  int Send(void* buf, size_t sz,
 	   unsigned long deadline_secs = 0,
 	   unsigned long deadline_nanosecs = 0);
 
-  int recv(void* buf, size_t sz,
+  int Recv(void* buf, size_t sz,
 	   unsigned long deadline_secs = 0,
 	   unsigned long deadline_nanosecs = 0);
 
-  void shutdown();
+  void Shutdown();
 
   const char* myaddress();
 

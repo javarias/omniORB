@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2001/05/11 14:25:53  sll
+  Added operator for omniORB::logger to report system exception status and
+  minor code.
+
   Revision 1.1.4.8  2001/05/01 17:15:17  sll
   Non-copy input now works correctly.
 
@@ -583,7 +587,7 @@ giopStream::inputMessage(unsigned long deadline_secs,
 
   while ((buf->last - buf->start) < 12) {
 
-    int rsz = pd_strand->connection->recv((void*)
+    int rsz = pd_strand->connection->Recv((void*)
 					  ((omni::ptr_arith_t)buf+buf->last),
 					  (size_t) (buf->end - buf->last),
 					  deadline_secs, deadline_nanosecs);
@@ -613,7 +617,7 @@ giopStream::inputMessage(unsigned long deadline_secs,
     }
     total -= (buf->last - buf->start);
     while (total) {
-      int rsz = pd_strand->connection->recv((void*)
+      int rsz = pd_strand->connection->Recv((void*)
 					    ((omni::ptr_arith_t)buf+buf->last),
 					    (size_t) total,
 					    deadline_secs, deadline_nanosecs);
@@ -702,7 +706,7 @@ giopStream::inputChunk(CORBA::ULong maxsize,
   }
 
   while (maxsize) {
-    int rsz = pd_strand->connection->recv((void*)
+    int rsz = pd_strand->connection->Recv((void*)
 					  ((omni::ptr_arith_t)buf+buf->last),
 					  (size_t) maxsize,
 					  deadline_secs, deadline_nanosecs);
@@ -753,7 +757,7 @@ giopStream::inputCopyChunk(void* dest,
   }
 
   while (size) {
-    int rsz = pd_strand->connection->recv((void*)p,
+    int rsz = pd_strand->connection->Recv((void*)p,
 					  (size_t) size,
 					  deadline_secs, deadline_nanosecs);
     if (rsz > 0) {
@@ -779,7 +783,7 @@ giopStream::sendChunk(giopStream_Buffer* buf,
 
   if (!pd_strand->connection) {
     OMNIORB_ASSERT(pd_strand->address);
-    pd_strand->connection = pd_strand->address->connect(deadline_secs,
+    pd_strand->connection = pd_strand->address->Connect(deadline_secs,
 							deadline_nanosecs);
     if (!pd_strand->connection) {
       errorOnSend(TRANSIENT_ConnectFailed,__FILE__,__LINE__);
@@ -796,7 +800,7 @@ giopStream::sendChunk(giopStream_Buffer* buf,
   }
 
   while ((total = buf->last - first)) {
-    int ssz = pd_strand->connection->send((void*)
+    int ssz = pd_strand->connection->Send((void*)
 					  ((omni::ptr_arith_t)buf+first),
 					  total,
 					  deadline_secs, deadline_nanosecs);
@@ -819,7 +823,7 @@ giopStream::sendCopyChunk(void* buf,
 
   if (!pd_strand->connection) {
     OMNIORB_ASSERT(pd_strand->address);
-    pd_strand->connection = pd_strand->address->connect(deadline_secs,
+    pd_strand->connection = pd_strand->address->Connect(deadline_secs,
 							deadline_nanosecs);
     if (!pd_strand->connection) {
       errorOnSend(TRANSIENT_ConnectFailed,__FILE__,__LINE__);
@@ -833,7 +837,7 @@ giopStream::sendCopyChunk(void* buf,
   }
 
   while (size) {
-    int ssz = pd_strand->connection->send(buf,
+    int ssz = pd_strand->connection->Send(buf,
 					  size,
 					  deadline_secs, deadline_nanosecs);
     if (ssz > 0) {

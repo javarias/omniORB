@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:06  sll
+  *** empty log message ***
+
   Revision 1.1.2.1  2001/04/18 18:10:44  sll
   Big checkin with the brand new internal APIs.
 
@@ -43,7 +46,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
 int
-sslConnection::send(void* buf, size_t sz,
+sslConnection::Send(void* buf, size_t sz,
 		    unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) {
 
@@ -129,7 +132,7 @@ sslConnection::send(void* buf, size_t sz,
 
 /////////////////////////////////////////////////////////////////////////
 int
-sslConnection::recv(void* buf, size_t sz,
+sslConnection::Recv(void* buf, size_t sz,
 		    unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) {
 
@@ -233,7 +236,7 @@ sslConnection::recv(void* buf, size_t sz,
 
 /////////////////////////////////////////////////////////////////////////
 void
-sslConnection::shutdown() {
+sslConnection::Shutdown() {
   SSL_set_shutdown(pd_ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
   SSL_shutdown(pd_ssl);
   SHUTDOWNSOCKET(pd_socket);

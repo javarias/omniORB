@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/06/13 20:13:49  sll
+  Minor updates to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.2  2001/05/01 16:04:42  sll
   Silly use of sizeof() on const char*. Should use strlen().
 
@@ -95,7 +98,7 @@ tcpAddress::duplicate() const {
 
 /////////////////////////////////////////////////////////////////////////
 giopConnection*
-tcpAddress::connect(unsigned long deadline_secs,
+tcpAddress::Connect(unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) const {
 
   struct sockaddr_in raddr;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/05/11 14:30:12  sll
+  Message size limit is now enforced.
+
   Revision 1.1.4.4  2001/05/04 13:55:58  sll
   Silly mistake that causes non-copy marshalling to do the wrong thing
   in GIOP 1.0.
@@ -925,7 +928,7 @@ giopImpl10::sendMsgErrorMessage(giopStream* g) {
   hdr[7] = (char)GIOP::MessageError;
   hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
 
-  (void)  g->pd_strand->connection->send(hdr,12, 0, 0);
+  (void)  g->pd_strand->connection->Send(hdr,12, 0, 0);
   // XXX no deadline set.
 
   g->pd_strand->state(giopStrand::DYING);

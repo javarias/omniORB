@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:07  sll
+  *** empty log message ***
+
 */
 
 #ifndef __SSLADDRESS_H__
@@ -44,7 +47,7 @@ class sslAddress : public giopAddress {
   const char* type() const;
   const char* address() const;
   giopAddress* duplicate() const;
-  giopConnection* connect(unsigned long deadline_secs = 0,
+  giopConnection* Connect(unsigned long deadline_secs = 0,
 			  unsigned long deadline_nanosecs = 0) const;
 
   ~sslAddress() {}

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:06  sll
+  *** empty log message ***
+
 
 */
 
@@ -44,10 +47,10 @@ public:
   sslEndpoint(const char* address, sslContext* ctx);
   const char* type() const;
   const char* address() const;
-  CORBA::Boolean bind();
-  giopConnection* accept();
-  void poke();
-  void shutdown();
+  CORBA::Boolean Bind();
+  giopConnection* Accept();
+  void Poke();
+  void Shutdown();
 
   ~sslEndpoint();
 

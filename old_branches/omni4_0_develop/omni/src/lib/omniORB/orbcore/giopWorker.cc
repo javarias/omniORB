@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 18:10:48  sll
+  Big checkin with the brand new internal APIs.
+
 
 */
 
@@ -79,7 +82,7 @@ giopWorker::execute() {
 
 void
 giopWorker::terminate() {
-  pd_strand->connection->shutdown();
+  pd_strand->connection->Shutdown();
 }
 
 OMNI_NAMESPACE_END(omni)

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/04/18 18:10:43  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
 #ifndef __TCPENDPOINT_H__
@@ -43,10 +46,10 @@ public:
   tcpEndpoint(const char* address);
   const char* type() const;
   const char* address() const;
-  CORBA::Boolean bind();
-  giopConnection* accept();
-  void poke();
-  void shutdown();
+  CORBA::Boolean Bind();
+  giopConnection* Accept();
+  void Poke();
+  void Shutdown();
 
   ~tcpEndpoint();
 
@@ -58,6 +61,7 @@ public:
   tcpEndpoint();
   tcpEndpoint(const tcpEndpoint&);
 };
+
 
 OMNI_NAMESPACE_END(omni)
 

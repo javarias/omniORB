@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/06/18 20:27:56  sll
+  Use strchr instead of index() for maximal portability.
+
   Revision 1.1.2.1  2001/06/11 18:11:06  sll
   *** empty log message ***
 
@@ -98,7 +101,7 @@ sslEndpoint::address() const {
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-sslEndpoint::bind() {
+sslEndpoint::Bind() {
 
   OMNIORB_ASSERT(pd_socket == RC_INVALID_SOCKET);
 
@@ -186,7 +189,7 @@ sslEndpoint::bind() {
 
 /////////////////////////////////////////////////////////////////////////
 giopConnection*
-sslEndpoint::accept() {
+sslEndpoint::Accept() {
 
   OMNIORB_ASSERT(pd_socket != RC_INVALID_SOCKET);
 
@@ -242,11 +245,11 @@ sslEndpoint::accept() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-sslEndpoint::poke() {
+sslEndpoint::Poke() {
 
   sslAddress* target = new sslAddress(pd_address,pd_ctx);
   sslConnection* conn;
-  if ((conn = (sslConnection*)target->connect()) == 0) {
+  if ((conn = (sslConnection*)target->Connect()) == 0) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "Warning: Fail to connect to myself (" 
@@ -263,7 +266,7 @@ sslEndpoint::poke() {
 
 /////////////////////////////////////////////////////////////////////////
 void
-sslEndpoint::shutdown() {
+sslEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
 }
 

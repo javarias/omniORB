@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 18:10:50  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -46,7 +49,7 @@ giopRendezvouser::execute() {
     exit_on_error = 0;
     giopConnection* newconn = 0;
     try {
-      newconn = pd_endpoint->accept();
+      newconn = pd_endpoint->Accept();
       if (newconn)
 	pd_server->notifyRzNewConnection(this,newconn);
       else {
@@ -79,7 +82,7 @@ giopRendezvouser::execute() {
 
 void
 giopRendezvouser::terminate() {
-  pd_endpoint->poke();
+  pd_endpoint->Poke();
 }
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/06/18 20:27:56  sll
+  Use strchr instead of index() for maximal portability.
+
   Revision 1.1.2.1  2001/06/11 18:11:07  sll
   *** empty log message ***
 
@@ -97,7 +100,7 @@ sslAddress::duplicate() const {
 
 /////////////////////////////////////////////////////////////////////////
 giopConnection*
-sslAddress::connect(unsigned long deadline_secs,
+sslAddress::Connect(unsigned long deadline_secs,
 		    unsigned long deadline_nanosecs) const {
 
   struct sockaddr_in raddr;

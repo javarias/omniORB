@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:26:29  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
 #ifndef __GIOPENDPOINT_H__
@@ -73,7 +76,7 @@ public:
   // return the string that describe this remote address.
   // The string format is described in str2Address().
 
-  virtual giopConnection* connect(unsigned long deadline_secs = 0,
+  virtual giopConnection* Connect(unsigned long deadline_secs = 0,
 				  unsigned long deadline_nanosecs = 0)const =0;
   // Connect to the remote address.
   // Return 0 if no connection can be established.
@@ -131,19 +134,19 @@ public:
   // return the string that describe this endpoint.
   // The string format is described in str2Endpoint().
 
-  virtual _CORBA_Boolean bind() = 0;
+  virtual _CORBA_Boolean Bind() = 0;
   // Establish a binding to the this address.
   // Return TRUE(1) if the binding has been established successfully,
   // otherwise returns FALSE(0).
 
-  virtual giopConnection* accept() = 0;
+  virtual giopConnection* Accept() = 0;
   // Accept a new connection. Returns 0 if no connection can be
   // accepted.
 
-  virtual void poke() = 0;
+  virtual void Poke() = 0;
   // Call to unblock any thread blocking in accept().
 
-  virtual void shutdown() = 0;
+  virtual void Shutdown() = 0;
   // Remove the binding.
 
   giopEndpoint() {}
@@ -160,13 +163,13 @@ class giopConnection {
 public:
   // None of the members raise an exception.
 
-  virtual int send(void* buf, size_t sz,
+  virtual int Send(void* buf, size_t sz,
 		   unsigned long deadline_secs = 0,
 		   unsigned long deadline_nanosecs = 0) = 0;
-  virtual int recv(void* buf, size_t sz,
+  virtual int Recv(void* buf, size_t sz,
 		   unsigned long deadline_secs = 0,
 		   unsigned long deadline_nanosecs = 0) = 0;
-  virtual void   shutdown() = 0;
+  virtual void   Shutdown() = 0;
 
   virtual const char* myaddress() = 0;
   virtual const char* peeraddress() = 0;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/04/18 18:10:44  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
 #ifndef __TCPADDRESS_H__
@@ -44,7 +47,7 @@ class tcpAddress : public giopAddress {
   const char* type() const;
   const char* address() const;
   giopAddress* duplicate() const;
-  giopConnection* connect(unsigned long deadline_secs = 0,
+  giopConnection* Connect(unsigned long deadline_secs = 0,
 			  unsigned long deadline_nanosecs = 0) const;
 
   ~tcpAddress() {}
