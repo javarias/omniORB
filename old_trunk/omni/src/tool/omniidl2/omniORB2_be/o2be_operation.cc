@@ -28,6 +28,9 @@
 
 /*
   $Log$
+// Revision 1.17  1997/12/23  19:30:37  sll
+// Now generate correct stub for multi-dimensional array of object references.
+//
   Revision 1.16  1997/12/10 11:35:30  sll
   Updated life cycle service stub.
 
@@ -3304,16 +3307,18 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	INC_INDENT_LEVEL();
 	IND(s); s << "CORBA::ULong _len;\n";
 	IND(s); s << "_len <<= " << netstream << ";\n";
+	IND(s); s << "if (!_len) {\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "if (omniORB::traceLevel > 1)\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "_CORBA_null_string_ptr(1);\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "_len = 1;\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "}\n";
 	if (!no_size_check) 
 	  {
-	    IND(s); s << "if (!_len || " << netstream << ".RdMessageUnRead() < _len)\n";
-	    INC_INDENT_LEVEL();
-	    IND(s); s << "throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);\n";
-	    DEC_INDENT_LEVEL();
-	  }
-	else
-	  {
-	    IND(s); s << "if (!_len)\n";
+	    IND(s); s << "else if ( " << netstream << ".RdMessageUnRead() < _len)\n";
 	    INC_INDENT_LEVEL();
 	    IND(s); s << "throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);\n";
 	    DEC_INDENT_LEVEL();
@@ -3331,8 +3336,15 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	INC_INDENT_LEVEL();
 	IND(s); s << "throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);\n";
 	DEC_INDENT_LEVEL();
+	IND(s); s << "if (_len > 1)\n";
+	INC_INDENT_LEVEL();
 	IND(s); s << netstream << ".get_char_array((CORBA::Char *)" 
 		  << "((char *)" << argname << "),_len);\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "else\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "*((CORBA::Char*)((char*)" << argname << ")) <<= " << netstream << ";\n";
+	DEC_INDENT_LEVEL();
 	DEC_INDENT_LEVEL();
 	IND(s); s << "}\n";
       }
@@ -3480,16 +3492,18 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	    {
 	      IND(s); s << "CORBA::ULong _len;\n";
 	      IND(s); s << "_len <<= " << netstream << ";\n";
+	      IND(s); s << "if (!_len) {\n";
+	      INC_INDENT_LEVEL();
+	      IND(s); s << "if (omniORB::traceLevel > 1)\n";
+	      INC_INDENT_LEVEL();
+	      IND(s); s << "_CORBA_null_string_ptr(1);\n";
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "_len = 1;\n";
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "}\n";
 	      if (!no_size_check)
 		{
-		  IND(s); s << "if (!_len || " << netstream << ".RdMessageUnRead() < _len)\n";
-		  INC_INDENT_LEVEL();
-		  IND(s); s << "throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);\n";
-		  DEC_INDENT_LEVEL();
-		}
-	      else
-		{
-		  IND(s); s << "if (!_len)\n";
+		  IND(s); s << "else if ( " << netstream << ".RdMessageUnRead() < _len)\n";
 		  INC_INDENT_LEVEL();
 		  IND(s); s << "throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);\n";
 		  DEC_INDENT_LEVEL();
@@ -3529,6 +3543,9 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	      INC_INDENT_LEVEL();
 	      IND(s); s << "throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);\n";
 	      DEC_INDENT_LEVEL();
+
+	      IND(s); s << "if (_len > 1)\n";
+	      INC_INDENT_LEVEL();
 	      IND(s); s << netstream << ".get_char_array((CORBA::Char *)((char *)";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
@@ -3545,6 +3562,26 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 		  ndim++;
 		}
 	      s << "),_len);\n";
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "else\n";
+	      INC_INDENT_LEVEL();
+	      IND(s); s << "*((CORBA::Char*)((char*) ";
+	      if (!mapping.is_arrayslice) {
+		s << argname;
+	      }
+	      else {
+		s << "(("
+		  << o2be_name::narrow_and_produce_unambiguous_name(decl,used_in)
+		  << "_slice*) " << argname << ")";
+	      }
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << ")) <<= " << netstream << " ;\n";
+	      DEC_INDENT_LEVEL();	      
 	      break;
 	    }
 	  case tObjref:
@@ -3638,7 +3675,9 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
       {      
 	IND(s); s << "{\n";
 	INC_INDENT_LEVEL();
-	IND(s); s << "CORBA::ULong _len = strlen((const char *)"<< argname <<")+1;\n";
+	IND(s); s << "CORBA::ULong _len = (((const char*) " << argname
+		  << ")? strlen((const char*) " << argname
+		  << ") + 1 : 1);\n"; 
 	if (o2be_string::narrow_from_decl(decl)->max_length()) {
 	  IND(s); s << "if (_len > " 
 		    << o2be_string::narrow_from_decl(decl)->max_length()
@@ -3649,8 +3688,21 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	  IND(s); s << "}\n";
 	}
 	IND(s); s << "_len >>= " << netstream << ";\n";
+        IND(s); s << "if (_len > 1)\n";
+	INC_INDENT_LEVEL();
 	IND(s); s << netstream << ".put_char_array((const CORBA::Char *)((const char*) " 
 		  << argname << "),_len);\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "else {\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "if ((const char*) " << argname << " == 0 && omniORB::traceLevel > 1)\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "_CORBA_null_string_ptr(0);\n";	
+	DEC_INDENT_LEVEL();
+	IND(s); s << "CORBA::Char _tempchar = '\\0';\n";
+	IND(s); s << "_tempchar >>= " << netstream << ";\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "}\n";
 	DEC_INDENT_LEVEL();
 	IND(s); s << "}\n";
       }
@@ -3783,7 +3835,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	    }
 	  case tString:
 	    {
-	      IND(s); s << "CORBA::ULong _len = strlen((const char *)";
+	      IND(s); s << "CORBA::ULong _len = (((const char*) ";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
 	      }
@@ -3798,7 +3850,22 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
-	      IND(s); s << ")+1;\n";
+	      s << ")? strlen((const char*) ";
+	      if (!mapping.is_arrayslice) {
+		s << argname;
+	      }
+	      else {
+		s << "(("
+		  << o2be_name::narrow_and_produce_unambiguous_name(decl,used_in)
+		  << "_slice*) " << argname << ")";
+	      }
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << ") + 1 : 1);\n"; 
 
 	      AST_Decl *sdecl = o2be_array::narrow_from_decl(decl)->getElementType();
 	      while (sdecl->node_type() == AST_Decl::NT_typedef) {
@@ -3815,6 +3882,9 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	      }
 
 	      IND(s); s << "_len >>= " << netstream << ";\n";
+
+	      IND(s); s << "if (_len > 1)\n";
+	      INC_INDENT_LEVEL();
 	      IND(s); s << netstream << ".put_char_array((const CORBA::Char *)((const char*)";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
@@ -3831,6 +3901,33 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 		  ndim++;
 		}
 	      s << "),_len);\n";
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "else {\n";
+	      INC_INDENT_LEVEL();
+	      IND(s); s << "if ((const char*) ";
+
+	      if (!mapping.is_arrayslice) {
+		s << argname;
+	      }
+	      else {
+		s << "(("
+		  << o2be_name::narrow_and_produce_unambiguous_name(decl,used_in)
+		  << "_slice*) " << argname << ")";
+	      }
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << " == 0 && omniORB::traceLevel > 1)\n";
+	      INC_INDENT_LEVEL();
+	      IND(s); s << "_CORBA_null_string_ptr(0);\n";	
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "CORBA::Char _tempchar = '\\0';\n";
+	      IND(s); s << "_tempchar >>= " << netstream << ";\n";
+	      DEC_INDENT_LEVEL();
+	      IND(s); s << "}\n";
 	      break;
 	    }
 	  case tObjref:
@@ -3938,8 +4035,9 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
     case tString:
       IND(s); s << sizevar << " = omni::align_to(" << sizevar 
 		<< ",omni::ALIGN_4);\n";
-      IND(s); s << sizevar << " += 4 + strlen((const char *)" 
-		<< argname << ") + 1;\n";  
+      IND(s); s << sizevar << " += 4 + (((const char*) " << argname
+		  << ")? strlen((const char*) " << argname
+		  << ") + 1 : 1);\n";      
       break;
 
     case tObjref:
@@ -4108,7 +4206,7 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	    {
 	      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
 			<< ",omni::ALIGN_4);\n";
-	      IND(s); s << sizevar << " += 4 + strlen((const char *)";
+	      IND(s); s << sizevar << " += 4 + (((const char*) ";
 	      if (!mapping.is_arrayslice) {
 		s << argname;
 	      }
@@ -4123,7 +4221,22 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 		  s << "[_i" << ndim << "]";
 		  ndim++;
 		}
-	      s << ") + 1;\n";
+	      s << ")? strlen((const char*) ";
+	      if (!mapping.is_arrayslice) {
+		s << argname;
+	      }
+	      else {
+		s << "(("
+		  << o2be_name::narrow_and_produce_unambiguous_name(decl,used_in)
+		  << "_slice*) " << argname << ")";
+	      }
+	      ndim = 0;
+	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
+		{
+		  s << "[_i" << ndim << "]";
+		  ndim++;
+		}
+	      s << ") + 1 : 1);\n";
 	      break;
 	    }
 	  case tObjref:
