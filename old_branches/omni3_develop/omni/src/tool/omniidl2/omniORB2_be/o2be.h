@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.27.6.2  1999/10/13 15:17:59  djr
+ Fixed problem with call descriptors shared between ops and attrs.
+
  Revision 1.27.6.1  1999/09/24 10:05:21  djr
  Updated for omniORB3.
 
@@ -645,6 +648,7 @@ public:
   // Returns the type name for the c++ type we will be
   // using as the element, suitably scoped.
 
+  void produce_copy_loops (std::fstream& s, const char* to, const char* from);
   void produce_hdr (std::fstream& s, o2be_typedef* tdef);
   void produce_skel(std::fstream& s, o2be_typedef* tdef);
   void produce_dynskel(std::fstream& s, o2be_typedef* tdef);
