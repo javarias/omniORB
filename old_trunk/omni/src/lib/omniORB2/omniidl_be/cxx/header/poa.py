@@ -28,12 +28,15 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  1999/11/04 19:05:09  djs
+# Finished moving code from tmp_omniidl. Regression tests ok.
+#
 
 """Produce the main header POA definitions for the C++ backend"""
 
 from omniidl import idlast, idltype, idlutil
 
-from omniidl.be.cxx import tyutil, util
+from omniidl.be.cxx import tyutil, name
 
 import poa
 
@@ -45,14 +48,18 @@ def __init__(stream):
 
 
 self.__nested = 0
-self.__scope = []
+
+self.__environment = name.Environment()
 
 def enter(scope):
-    self.__scope.append(scope)
+    self.__environment = self.__environment.enterScope(scope)
 def leave():
-    self.__scope = self.__scope[0:-1]
+    self.__environment = self.__environment.leaveScope()
 def currentScope():
-    return self.__scope
+    return self.__environment.scope()
+def addName(name):
+    self.__environment.add(name)
+
 
 def POA_prefix():
     if not(self.__nested):
