@@ -29,6 +29,9 @@
 
 /*
   $Log$
+// Revision 1.9  1997/05/06  15:21:25  sll
+// Public release.
+//
   */
 
 
@@ -247,6 +250,12 @@ int initFile::read_file(char* config_fname)
 
   fread((void*) fData,1,fsize,iFile);
   fclose(iFile);
+
+#ifdef __NT__
+  // If file contains CRs, fsize will not be true length of string
+  fsize = strlen(fData);
+#endif
+
   return 0;
 }
 
