@@ -31,6 +31,10 @@
 # $Id$
 
 # $Log$
+# Revision 1.7  1999/11/01 20:59:42  dpg1
+# Fixed bug in insertIndirections() if the same node is indirected to
+# more than once.
+#
 # Revision 1.6  1999/09/24 09:22:00  dpg1
 # Added copyright notices.
 #
@@ -912,8 +916,9 @@ def r_insertIndirections(d, seen, ind):
         r_insertIndirections(d[1], seen, ind)
 
     elif k == tv_alias:
-        seen[d[1]] = d
-        r_insertIndirections(d[3], seen, ind)
+        if not seen.has_key(d[1]):
+            seen[d[1]] = d
+            r_insertIndirections(d[3], seen, ind)
 
     elif k == tv_except:
         if not seen.has_key(d[2]):
@@ -923,4 +928,5 @@ def r_insertIndirections(d, seen, ind):
 
     elif k == tv__indirect:
         if type(d[1][0]) == types.StringType:
-            ind.append(d[1])
+            if d[1] not in ind:
+                ind.append(d[1])
