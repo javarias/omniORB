@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.18  1999/04/21 13:04:54  djr
+  sequence<string> now uses a pre-defined type.
+
   Revision 1.17  1999/03/11 16:26:09  djr
   Updated copyright notice
 
@@ -861,7 +864,8 @@ o2be_sequence::produce_typedef_hdr(std::fstream& s, o2be_typedef* tdef)
     break;
   }
 
-  IND(s); s << "typedef " << var_type << ' ' << tdef->uqname() << "_var;\n\n";
+  IND(s); s << "typedef " << (const char*)var_type 
+	    << ' ' << tdef->uqname() << "_var;\n\n";
 }
 
 
