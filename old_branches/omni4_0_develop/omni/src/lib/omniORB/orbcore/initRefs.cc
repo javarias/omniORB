@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.13  2001/11/13 14:11:45  dpg1
+  Tweaks for CORBA 2.5 compliance.
+
   Revision 1.2.2.12  2001/11/09 16:14:02  dpg1
   Fix server-side boostrap agent.
 
@@ -154,7 +157,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 ////////////////////////////////////////////////////////////////////////////
 //             Configuration options                                      //
 ////////////////////////////////////////////////////////////////////////////
-CORBA::Boolean orbParameters::supportBootstrapAgent = 1;
+CORBA::Boolean orbParameters::supportBootstrapAgent = 0;
 // Applies to the server side. 1 means enable the support for Sun's
 // bootstrap agent protocol.  This enables interoperability between omniORB
 // servers and Sun's javaIDL clients. When this option is enabled, an

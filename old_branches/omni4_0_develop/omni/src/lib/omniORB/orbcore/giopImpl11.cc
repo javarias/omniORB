@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2002/07/04 15:14:41  dgrisby
+  Correct usage of MessageErrors, fix log messages.
+
   Revision 1.1.4.14  2002/03/27 11:44:52  dpg1
   Check in interceptors things left over from last week.
 
@@ -1151,7 +1154,7 @@ giopImpl11::marshalRequestHeader(giopStream* g) {
   s.put_octet_array((CORBA::Octet*) calldesc.op(), calldesc.op_len());
 
   // principal
-  operator>>= ((CORBA::ULong)0,s);
+  omni::myPrincipalID >>= s;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.9  2002/02/25 11:17:12  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.10.2.8  2002/01/15 16:38:13  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.
@@ -155,8 +158,8 @@ omni_defaultTransientExcHandler(void*,
   if (ex.minor() == TRANSIENT_FailedOnForwarded) {
     if (omniORB::trace(10)) {
       omniORB::logger log;
-      log << "Invocation on a location forwarded object has failed. Retry "
-	  << n_retries << "th times.\n";
+      log << "Invocation on a location forwarded object has failed. "
+	  << n_retries << " retries.\n";
     }
     unsigned long secs;
     secs = ((n_retries < 30) ? n_retries : 30);
