@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/06/11 18:11:06  sll
+  *** empty log message ***
+
 */
 
 #include <stdlib.h>
@@ -190,13 +193,14 @@ sslContext::seed_PRNG() {
 #else
     srand(_getpid());
 #endif
-    for(int i = 0 ; i < 128 ; ++i)
+    int i;
+    for(i = 0 ; i < 128 ; ++i)
       data[i] = rand();
 
     unsigned long abs_sec, abs_nsec;
     omni_thread::get_time(&abs_sec,&abs_nsec);
     srand(abs_sec + abs_nsec);
-    for(int i = 128 ; i < 256 ; ++i)
+    for(i = 128 ; i < 256 ; ++i)
       data[i] = rand();
 
     RAND_seed((unsigned char *)data, (256 * (sizeof(int))));
