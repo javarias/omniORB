@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // BiDirPolicy.h              Created on: 30/7/2001
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:10:39  sll
+  Added GIOP BiDir support.
+
   */
 
 
@@ -46,8 +49,7 @@ const BidirectionalPolicyValue BOTH               _init_in_decl_( = 1 );
 
 const CORBA::PolicyType BIDIRECTIONAL_POLICY_TYPE _init_in_decl_( = 37 );
 
-OMNIORB_DECLARE_POLICY_OBJECT(BidirectionalPolicy, BIDIRECTIONAL_POLICY_TYPE)
-
+OMNIORB_DECLARE_POLICY_OBJECT(BidirectionalPolicy, 37)
 
 _CORBA_MODULE_END
 
