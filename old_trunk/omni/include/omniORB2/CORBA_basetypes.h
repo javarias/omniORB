@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ * Revision 1.5  1998/01/20  16:45:45  sll
+ * Added support for OpenVMS.
+ *
  Revision 1.4  1997/08/21 22:21:38  sll
  New extern function _CORBA_use_nil_ptr_as_nil_objref().
 
@@ -148,5 +151,5 @@ extern void _CORBA_new_operator_return_null();
 extern void _CORBA_bound_check_error();
 extern void _CORBA_marshal_error();
 extern _CORBA_Boolean _CORBA_use_nil_ptr_as_nil_objref();
-
+extern void _CORBA_null_string_ptr(_CORBA_Boolean);
 #endif // __CORBA_BASETYPES_H__
