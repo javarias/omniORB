@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.13  2001/08/15 10:14:41  dpg1
+ Remove obsolete USE_omniORB_logStream.
+
  Revision 1.2.2.12  2001/06/21 11:35:17  sll
  Define size of wchar_t for freebsd and darwin.
 
@@ -322,8 +325,10 @@
 #  if __SUNPRO_CC < 0x420
 #    define NEED_DUMMY_RETURN
 #  elif __SUNPRO_CC >= 0x500
-#    define HAS_Cplusplus_Namespace
-#    define HAS_Std_Namespace
+#    if __SUNPRO_CC_COMPAT >= 5
+#      define HAS_Cplusplus_Namespace
+#      define HAS_Std_Namespace
+#    endif
 #  endif
 
 #  define HAS_LongLong
