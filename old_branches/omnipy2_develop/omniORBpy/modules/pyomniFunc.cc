@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.9  2002/05/26 00:56:22  dgrisby
+// traceInvocations() function.
+//
 // Revision 1.1.2.8  2002/02/25 15:33:50  dpg1
 // Expose omniORB logger to Python.
 //
@@ -402,6 +405,31 @@ extern "C" {
     return 0;
   }
 
+  static char traceThreadId_doc [] =
+  "traceThreadId(int) -> None\n"
+  "traceThreadId()    -> int\n"
+  "\n"
+  "Set or get the omniORB thread id tracing flag.\n";
+
+  static PyObject* pyomni_traceThreadId(PyObject* self, PyObject* args)
+  {
+    if (PyTuple_GET_SIZE(args) == 0) {
+      return PyInt_FromLong(omniORB::traceThreadId);
+    }
+    else if (PyTuple_GET_SIZE(args) == 1) {
+      PyObject* pytl = PyTuple_GET_ITEM(args, 0);
+
+      if (PyInt_Check(pytl)) {
+	omniORB::traceThreadId = PyInt_AS_LONG(pytl);
+	Py_INCREF(Py_None);
+	return Py_None;
+      }
+    }
+    PyErr_SetString(PyExc_TypeError,
+		    (char*)"Operation requires a single integer argument");
+    return 0;
+  }
+
 
   static char log_doc [] =
   "log(level, string)\n"
@@ -561,6 +589,10 @@ extern "C" {
     {(char*)"traceInvocations",
      pyomni_traceInvocations,
      METH_VARARGS, traceInvocations_doc},
+
+    {(char*)"traceThreadId",
+     pyomni_traceThreadId,
+     METH_VARARGS, traceThreadId_doc},
 
     {(char*)"log",
      pyomni_log,
