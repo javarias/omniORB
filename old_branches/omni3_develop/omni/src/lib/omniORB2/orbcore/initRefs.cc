@@ -31,6 +31,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2000/06/27 16:15:11  sll
+  New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
+  _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
+  sequence of string and a sequence of object reference.
+
   Revision 1.1.2.3  2000/06/22 10:40:15  dpg1
   exception.h renamed to exceptiondefs.h to avoid name clash on some
   platforms.
@@ -494,7 +499,7 @@ resolveFileDefault(const char* id, unsigned int cycles)
 static CORBA::Object_ptr
 resolveBootAgent(const char* id, unsigned int cycles)
 {
-  CORBA::Object_ptr result;
+  CORBA::Object_ptr result = 0;
   CORBA::Boolean    update = 0;
   {
     omni_tracedmutex_lock sync(sl_lock);

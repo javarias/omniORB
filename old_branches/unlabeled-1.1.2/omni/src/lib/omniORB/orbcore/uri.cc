@@ -30,6 +30,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.5  2000/06/27 15:40:58  sll
+// Workaround for Cygnus gcc's inability to recognise _CORBA_Octet*& and
+// CORBA::Octet*& are the same type.
+//
 // Revision 1.1.2.4  2000/06/22 10:40:17  dpg1
 // exception.h renamed to exceptiondefs.h to avoid name clash on some
 // platforms.
@@ -47,7 +51,6 @@
 //
 
 #include <stdlib.h>
-#include <ctype.h>
 #include <omniORB3/CORBA.h>
 #include <omniORB3/Naming.hh>
 #include <initialiser.h>
@@ -56,6 +59,7 @@
 #include <exceptiondefs.h>
 #include <omniORB3/omniURI.h>
 #include <initRefs.h>
+#include <ctype.h>
 
 #define MAX_STRING_TO_OBJECT_CYCLES 10
 
