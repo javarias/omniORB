@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/12/01 17:03:37  djs
+# Added new modules
+#
 # Revision 1.4  1999/11/12 17:18:39  djs
 # Lots of header generation bugfixes
 #
@@ -47,6 +50,7 @@ from omniidl.be.cxx import config
 import omniidl.be.cxx.header.defs
 import omniidl.be.cxx.header.opers
 import omniidl.be.cxx.header.poa
+import omniidl.be.cxx.header.tie
 import omniidl.be.cxx.header.forward
 import omniidl.be.cxx.header.marshal
 
@@ -131,8 +135,13 @@ def monolithic(stream, tree):
     defs = omniidl.be.cxx.header.defs.__init__(stream)
     tree.accept(defs)
 
+    tie = omniidl.be.cxx.header.tie.__init__(stream)
     poa = omniidl.be.cxx.header.poa.__init__(stream)
     tree.accept(poa)
+    if config.FlatTieFlag():
+        tree.accept(tie)
+
+    
     #poa_defs(stream, node)
 
     stream.out("""\
