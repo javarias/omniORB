@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.8  2001/10/17 16:50:25  dpg1
+# Incorrect code with multiple out arguments
+#
 # Revision 1.1.4.7  2001/08/15 10:26:10  dpg1
 # New object table behaviour, correct POA semantics.
 #
@@ -665,14 +668,16 @@ class CallDescriptor:
         if self.__exceptions != []:
             block = output.StringStream()
             exceptions = skutil.sort_exceptions(self.__exceptions)
+            repoIDs = []
             for exception in exceptions:
                 scopedName = exception.scopedName()
                 repoID = scopedName + ["_PD_repoId"]
                 repoID_str = id.Name(repoID).fullyQualify()
+                repoIDs.append(repoID_str)
                 exname = id.Name(scopedName).fullyQualify()
                 block.out(template.interface_proxy_exn_handle,
                           repoID_str = repoID_str, exname = exname)
-            repoIDs = map(lambda x: "\"" + x.repoId() + "\"", exceptions)
+
             # write the user exception template
             stream.out(template.interface_proxy_exn,
                        call_descriptor = self.__name,
