@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.7  2001/10/17 16:48:32  dpg1
+// Minor error message tweaks
+//
 // Revision 1.9.2.6  2001/06/13 11:28:20  dpg1
 // Proper omniidl support for wchar/wstring constants.
 //
@@ -410,16 +413,16 @@ L{STR} {
   return PRAGMA;
 }
 
-<unknown_pragma>([^\\\n]|(\\[^\n]))+ {
+<unknown_pragma>([^\\\n\r]|(\\[^\n\r]))+ {
   yylval.string_val = idl_strdup(yytext);
   return UNKNOWN_PRAGMA_BODY;
 }
 
-<INITIAL,known_pragma,unknown_pragma>\\\n {
+<INITIAL,known_pragma,unknown_pragma>\\(\n|(\r\n)) {
   /* Continue line if it ends with \ */
 }
 
-<known_pragma,unknown_pragma>\n {
+<known_pragma,unknown_pragma>\n|(\r\n) {
   BEGIN(INITIAL);
   return END_PRAGMA;
 }
