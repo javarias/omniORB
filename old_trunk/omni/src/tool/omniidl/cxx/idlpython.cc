@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11  1999/11/17 14:34:42  dpg1
+// More multi-platform support (NT and AIX).
+//
 // Revision 1.10  1999/11/11 15:55:19  dpg1
 // Python back-end interface now supports valuetype declarations.
 // Back-ends still don't support them, though.
@@ -61,7 +64,11 @@
 // First revision.
 //
 
+#ifdef __WIN32__
 #include <Python.h>
+#else
+#include <python1.5/Python.h>
+#endif
 
 #include <idlsysdep.h>
 #include <idlast.h>
