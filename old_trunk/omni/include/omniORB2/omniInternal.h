@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.21  1998/08/21 19:27:08  sll
+  New omniObject member noExistentCheck.
+
   Revision 1.20  1998/08/05 18:11:09  sll
   Updated version variable to omniORB_2_6 (previously omniORB_2_5).
 
@@ -78,7 +81,7 @@
 #include <assert.h>
 #include <stddef.h>
 
-#if !defined(__atmos__) && !defined(_WIN32)
+#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS)
 #include <strings.h>
 #else
 #include <string.h>
