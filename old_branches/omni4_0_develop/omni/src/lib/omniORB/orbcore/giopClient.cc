@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.13.2.3  2000/10/09 16:21:54  sll
+  Removed reference to omniConnectionBroken.
+
   Revision 1.13.2.2  2000/09/27 18:21:35  sll
   Use the new GIOP engine to drive a remote call.
 
@@ -195,7 +198,10 @@ GIOP_C::RequestCompleted(CORBA::Boolean skip_msg)
     throw omniORB::fatalException(__FILE__,__LINE__,
       "GIOP_C::RequestCompleted() entered with the wrong state.");
 
-  pd_cdrStream->inputMessageEnd(skip_msg);
+  if (pd_response_expected) {
+    pd_cdrStream->inputMessageEnd(skip_msg);
+  }
+
   pd_state = GIOP_C::Idle;
 }
 
