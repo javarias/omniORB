@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/11/23 18:46:34  djs
+# Constant fixes
+# Moved exception constructor argument generator into a more central place
+#
 # Revision 1.9  1999/11/19 20:08:09  djs
 # Removed references to a non-existant utility function
 #
@@ -79,6 +83,7 @@ isFragment = 0
 # State information (used to be passed as arguments during recursion)
 self.__insideInterface = 0
 self.__insideModule = 0
+self.__insideClass = 0
 
 # IDL (not C++) scope, should be filtered through tyutil.mapID before
 # being used
@@ -122,7 +127,9 @@ def visitModule(node):
     if not(isFragment):
         stream.out("""\
 _CORBA_MODULE @name@
-_CORBA_MODULE_BEG""", name = name)
+
+_CORBA_MODULE_BEG
+""", name = name)
         stream.inc_indent()
 
     insideModule = self.__insideModule
@@ -159,6 +166,8 @@ def visitInterface(node):
 
     insideInterface = self.__insideInterface
     self.__insideInterface = 1
+    insideClass = self.__insideClass
+    self.__insideClass = 1
     
     # the ifndef guard name contains scope information
     guard = tyutil.guardName(scope)
@@ -400,7 +409,16 @@ private:
                virtual_attributes = virtual_attributes_str)
 
     self.__insideInterface = insideInterface
+    self.__insideClass = insideClass
 
+    # Typecode and Any
+    if config.TypecodeFlag():
+        qualifier = tyutil.const_qualifier(self.__insideModule,
+                                               self.__insideClass)
+        stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;
+""", qualifier = qualifier, name = name)
+        
     leave()
 
     
@@ -544,6 +562,17 @@ def visitTypedef(node):
         # declarator or not
         array_declarator = d.sizes() != []
 
+        # Typecode and Any
+        if config.TypecodeFlag():
+            qualifier = tyutil.const_qualifier(self.__insideModule,
+                                               self.__insideClass)
+            stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;
+""",
+                       qualifier = qualifier, name = derivedName)
+                    
+
+
         # is it a simple alias (ie not an array at this level)?
         if not(array_declarator):
             # not an array declarator but a simple declarator to an array
@@ -558,7 +587,8 @@ typedef @base@_slice @derived@_slice;
 typedef @base@_copyHelper @derived@_copyHelper;
 typedef @base@_var @derived@_var;
 typedef @base@_out @derived@_out;
-typedef @base@_forany @derived@_forany;""",
+typedef @base@_forany @derived@_forany;
+""",
                            base = basicReferencedTypeID,
                            derived = derivedName)
                 # the declaration of the alloc(), dup() and free() methods
@@ -584,16 +614,19 @@ extern void @derived@_free( @derived@_slice* p);
             elif tyutil.isString(derefType):
                 stream.out("""\
 typedef char* @name@;
-typedef CORBA::String_var @name@_var;""",
+typedef CORBA::String_var @name@_var;
+""",
                            name = derivedName)
 
             # Non-array of basic type
             elif isinstance(derefType, idltype.Base):
+
                 # typedefs to basic types are always fully qualified?
                 # IDL oddity?
                 basicReferencedTypeID = environment.principalID(aliasType, 1)
                 stream.out("""\
-typedef @base@ @derived@;""",
+typedef @base@ @derived@;
+""",
                            base = basicReferencedTypeID,
                            derived = derivedName)
             # a typedef to a struct or union, or a typedef to a
@@ -602,14 +635,15 @@ typedef @base@ @derived@;""",
                  tyutil.isUnion(derefType)  or \
                  (tyutil.isSequence(derefType) and \
                   tyutil.isTypedef(aliasType)):
+
                 stream.out("""\
 typedef @base@ @name@;
 typedef @base@_var @name@_var;
 typedef @base@_out @name@_out;
-
 """,
                            base = basicReferencedTypeID,
                            name = derivedName)
+                    
             # Non-array of objrect reference
             elif tyutil.isObjRef(derefType):
                 # Note that the base name is fully flattened
@@ -869,7 +903,6 @@ typedef @base@ @name@;""",
                  not(is_array):
                 typestring = sequenceTemplate
                              
-
             stream.out("""\
 typedef @type@ @name@@dims@;
 typedef @type@ @name@_slice@taildims@;""",
@@ -967,6 +1000,8 @@ def visitStruct(node):
 
     scope = currentScope()
     environment = self.__environment
+    insideClass = self.__insideClass
+    self.__insideClass = 1
 #    print "[[[ scope = " + repr(scope) + "]]]"
             
     stream.out("""\
@@ -981,6 +1016,7 @@ struct @name@ {""", name = name)
     stream.out("""\
 typedef _CORBA_ConstrType_@type@_Var<@name@> _var_type;""",
                name = name, type = type)
+
     # First pass through the members outputs code for all the user
     # declared new types
     user_decls = filter(lambda x: isinstance(x.memberType(),
@@ -1073,6 +1109,17 @@ typedef @name@::_var_type @name@_var;
 typedef _CORBA_ConstrType_@type@_OUT_arg< @name@,@name@_var > @name@_out;
 """, type = type,name = name)
 
+    self.__insideClass = insideClass
+
+    # TypeCode and Any
+    if config.TypecodeFlag():
+        # structs in C++ are classes with different default privacy policies
+        qualifier = tyutil.const_qualifier(self.__insideModule,
+                                           self.__insideClass)
+        stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;""",
+                   qualifier = qualifier, name = name)
+
     node.written = name
 #    print "[[[ scope = " + repr(currentScope()) + "]]]"
     leave()
@@ -1088,6 +1135,8 @@ def visitException(node):
 
     scope = currentScope()
     environment = self.__environment
+    insideClass = self.__insideClass
+    self.__insideClass = 1
     
     # if the exception has no members, inline some no-ops
     no_members = (node.members() == [])
@@ -1199,6 +1248,16 @@ private:
                constructor = ctor,
                inline = inline, body = body,
                alignedSize = alignedSize)
+    self.__insideClass = insideClass
+
+    # Typecode and Any
+    if config.TypecodeFlag():
+        qualifier = tyutil.const_qualifier(self.__insideModule,
+                                           self.__insideClass)
+        stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;
+""", qualifier = qualifier, name = exname)
+    
     leave()
 
 
@@ -1210,6 +1269,8 @@ def visitUnion(node):
 
     scope = currentScope()
     environment = self.__environment
+    insideClass = self.__insideClass
+    self.__insideClass = 1
     
     switchType = node.switchType()
     
@@ -1608,7 +1669,18 @@ public:
   void operator<<= (NetBufferedStream&);
   void operator>>= (MemBufferedStream&) const;
   void operator<<= (MemBufferedStream&);
-
+  """)
+    # Typecode and Any
+    if config.TypecodeFlag():
+        guard_name = tyutil.guardName(node.scopedName())
+        stream.out("""\
+#if defined(__GNUG__) || defined(__DECCXX) && (__DECCXX_VER < 60000000)
+    friend class _0RL_tcParser_unionhelper_@name@;
+#else
+    friend class ::_0RL_tcParser_unionhelper_@name@;
+#endif
+""", name = guard_name)
+    stream.out("""\
 private:
   """)
 
@@ -1725,6 +1797,16 @@ typedef _CORBA_ConstrType_@isVariable@_OUT_arg< @Name@,@Name@_var > @Name@_out;
 """,
                isVariable = isVariable,
                Name = name)
+
+    # TypeCode and Any
+    if config.TypecodeFlag():
+        qualifier = tyutil.const_qualifier(self.__insideModule,
+                                          self.__insideInterface)
+        stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;""",
+                   qualifier = qualifier, name = name)
+
+    self.__insideClass = insideClass
     leave()
 
 
@@ -1741,6 +1823,16 @@ def visitEnum(node):
 enum @name@ { @memberlist@ };
 typedef @name@& @name@_out;
 """, name = name, memberlist = string.join(memberlist, ", "))
+
+    # TypeCode and Any
+    if config.TypecodeFlag():
+        insideModule = self.__insideModule
+        insideInterface = self.__insideInterface
+        qualifier = tyutil.const_qualifier(insideModule, insideInterface)
+        stream.out("""\
+@qualifier@ _dyn_attr const CORBA::TypeCode_ptr _tc_@name@;""",
+                   qualifier = qualifier, name = name)
+    
     node.written = name
     return name
 
