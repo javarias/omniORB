@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.12  1999/09/24 09:22:04  dpg1
+// Added copyright notices.
+//
 // Revision 1.11  1999/09/23 16:29:45  dpg1
 // Forgot to update initial references code with twin changes,
 //
@@ -357,8 +360,9 @@ extern "C" {
       else
 	objref = CORBA::Object::_nil();
     }
-    catch (...) {
-      PyErr_SetString(PyExc_RuntimeError, "Error creating object reference");
+    catch (CORBA::SystemException& ex) {
+      omniPy::handleSystemException(ex);
+      return 0;
     }
 
     return omniPy::createPyCorbaObjRef(0, objref);
