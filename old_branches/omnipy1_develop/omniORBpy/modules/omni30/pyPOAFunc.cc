@@ -29,6 +29,11 @@
 
 // $Id$
 // $Log$
+// Revision 1.12.2.4  2001/05/03 15:25:02  dpg1
+// Various places released object references while holding the
+// interpreter lock. Object reference deletion locks omni::internalLock,
+// so this could cause deadlocks against Servant::_add_ref().
+//
 // Revision 1.12.2.3  2001/02/14 15:22:20  dpg1
 // Fix bug using repoId strings after deletion.
 //
@@ -132,6 +137,8 @@ static
 CORBA::Policy_ptr createPolicyObject(PortableServer::POA_ptr poa,
 				     PyObject* pypolicy)
 {
+  if (!pypolicy) OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+
   CORBA::Policy_ptr policy = 0;
 
   PyObject* pyptype  = PyObject_GetAttrString(pypolicy, (char*)"_policy_type");
@@ -225,7 +232,8 @@ extern "C" {
 			  &pyPOA, &name, &pyPM, &pypolicies))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PySequence_Check(pypolicies));
+    RAISE_PY_BAD_PARAM_IF(!(PyList_Check(pypolicies) ||
+			    PyTuple_Check(pypolicies)));
 
     PortableServer::POA_ptr poa =
       (PortableServer::POA_ptr)omniPy::getTwin(pyPOA, POA_TWIN);

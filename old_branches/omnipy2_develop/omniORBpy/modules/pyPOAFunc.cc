@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/09/24 10:48:27  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.1.2.5  2001/06/15 10:59:26  dpg1
 // Apply fixes from omnipy1_develop.
 //
@@ -98,6 +101,9 @@ static
 CORBA::Policy_ptr createPolicyObject(PortableServer::POA_ptr poa,
 				     PyObject* pypolicy)
 {
+  if (!pypolicy)
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
+
   CORBA::Policy_ptr policy = 0;
 
   PyObject* pyptype  = PyObject_GetAttrString(pypolicy, (char*)"_policy_type");
@@ -191,7 +197,8 @@ extern "C" {
 			  &pyPOA, &name, &pyPM, &pypolicies))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PySequence_Check(pypolicies),
+    RAISE_PY_BAD_PARAM_IF(!(PyList_Check(pypolicies) ||
+			    PyTuple_Check(pypolicies)),
 			  BAD_PARAM_WrongPythonType);
 
     PortableServer::POA_ptr poa =
