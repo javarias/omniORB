@@ -29,6 +29,10 @@
 
 /* 
   $Log$
+  Revision 1.1.2.3  2000/09/20 13:25:29  djs
+  Added Messaging::ExceptionHolder destructor
+  Added omniAMICall_var type
+
   Revision 1.1.2.2  2000/09/14 16:04:16  djs
   Added module initialiser for AMI module
 
@@ -62,7 +66,7 @@ static unsigned long  queue_length  = 0; // number of call descriptors in q
 
 const  unsigned int   maxWorkers    = 5;
 const  unsigned int   timeout       = 30;
-const  unsigned int   queueMax      = 128;
+const  unsigned int   queueMax      = 65536;
 
 ///////////////////////////////////////////////////////////////////////
 // AMI::Worker (implementation of worker thread) //////////////////////
