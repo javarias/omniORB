@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.2  2000/12/05 17:44:10  dpg1
+# Remove dead repoId checking code.
+#
 # Revision 1.1.4.1  2000/10/12 15:37:46  sll
 # Updated from omni3_1_develop.
 #
@@ -145,8 +148,7 @@ def defaultLabel(case):
 
 # raise x to the power of y (integer only)
 def power(x, y):
-    if y == 0L: return 1L
-    return x * power(x, y - 1L)
+    return long(x) ** y
 
 # from CORBA 2.3 spec 3.10.1.1 Integer types
 SHORT_MIN     = - power(2, (16 - 1))
