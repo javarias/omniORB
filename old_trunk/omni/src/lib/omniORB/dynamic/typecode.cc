@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.27  1999/06/18 21:00:22  sll
+ * Updated to CORBA 2.3 mapping.
+ *
  * Revision 1.26  1999/05/25 17:54:48  sll
  * Added check for invalid arguments using magic numbers.
  * Perform casting of integer label values in union members.
@@ -1346,7 +1349,8 @@ TypeCode_alias::NP_extendedEqual(const TypeCode_base*  TCp,
       return 0;
   }
 
-  return (NP_equal(TCp->NP_content_type(),is_equivalent, tcpl));
+  return (NP_content_type()->NP_equal(TCp->NP_content_type(),is_equivalent,
+				      tcpl));
 }
 
 
