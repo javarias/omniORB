@@ -29,10 +29,13 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:26:25  sll
+  Big checkin with the brand new internal APIs.
+
 */
 
-#ifndef __UTILITIES_H__
-#define __UTILITIES_H__
+#ifndef __OMNIUTILITIES_H__
+#define __OMNIUTILITIES_H__
 
 
 template <class InputIterator, class OutputIterator>
@@ -139,4 +142,4 @@ private:
 };
 
 
-#endif  // __UTILITIES_H__
+#endif  // __OMNIUTILITIES_H__
