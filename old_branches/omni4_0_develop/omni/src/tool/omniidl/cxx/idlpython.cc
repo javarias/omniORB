@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.4  2000/11/01 12:45:56  dpg1
+// Update to CORBA 2.4 specification.
+//
 // Revision 1.17.2.3  2000/10/27 16:31:09  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -433,14 +436,14 @@ visitInterface(Interface* i)
   }
 
   PyObject* pyintf =
-    PyObject_CallMethod(idlast_, (char*)"Interface", (char*)"siiNNsNsiN",
+    PyObject_CallMethod(idlast_, (char*)"Interface", (char*)"siiNNsNsiiN",
 			i->file(), i->line(), (int)i->mainFile(),
 			pragmasToList(i->pragmas()),
 			commentsToList(i->comments()),
 			i->identifier(),
 			scopedNameToList(i->scopedName()),
 			i->repoId(),
-			(int)i->abstract(), pyinherits);
+			(int)i->abstract(), (int)i->local(), pyinherits);
   ASSERT_PYOBJ(pyintf);
   registerPyDecl(i->scopedName(), pyintf);
 
@@ -462,14 +465,14 @@ void
 PythonVisitor::
 visitForward(Forward* f)
 {
-  result_ = PyObject_CallMethod(idlast_, (char*)"Forward", (char*)"siiNNsNsi",
+  result_ = PyObject_CallMethod(idlast_, (char*)"Forward", (char*)"siiNNsNsii",
 				f->file(), f->line(), (int)f->mainFile(),
 				pragmasToList(f->pragmas()),
 				commentsToList(f->comments()),
 				f->identifier(),
 				scopedNameToList(f->scopedName()),
 				f->repoId(),
-				(int)f->abstract());
+				(int)f->abstract(), (int)f->local());
   ASSERT_RESULT;
   registerPyDecl(f->scopedName(), result_);
 }

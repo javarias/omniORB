@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.3  2000/11/01 12:45:56  dpg1
+// Update to CORBA 2.4 specification.
+//
 // Revision 1.11.2.2  2000/10/10 10:18:50  dpg1
 // Update omniidl front-end from omni3_develop.
 //
@@ -162,6 +165,8 @@ void
 DumpVisitor::
 visitInterface(Interface* i)
 {
+  if (i->abstract()) printf("abstract ");
+  if (i->local())    printf("local ");
   printf("interface %s ", i->identifier());
 
   if (i->inherits()) {
@@ -190,6 +195,8 @@ void
 DumpVisitor::
 visitForward(Forward* f)
 {
+  if (f->abstract()) printf("abstract ");
+  if (f->local())    printf("local ");
   printf("interface %s; // RepoId = %s", f->identifier(), f->repoId());
 }
 
@@ -664,6 +671,7 @@ visitDeclaredType(DeclaredType* t)
   switch(t->kind()) {
   case IdlType::tk_objref:
   case IdlType::tk_abstract_interface:
+  case IdlType::tk_local_interface:
     {
       if (t->decl()) {
 	if (t->decl()->kind() == Decl::D_INTERFACE) {
