@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/17 17:12:36  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.2.7  2001/08/08 15:57:45  sll
   Allows something like giop:unix: to be used.
 
@@ -276,7 +279,7 @@ public:
 			"-ORBunixTransportDirectory <dir name>") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
     orbParameters::unixTransportDirectory = value;
   }
 
@@ -310,7 +313,7 @@ public:
 			"-ORBunixTransportPermission <mode bits in octal radix>") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     unsigned int v;
     if( sscanf(value,"%o",&v) != 1 ) {

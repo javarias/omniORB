@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/17 17:12:38  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.4.1  2001/04/18 18:10:48  sll
   Big checkin with the brand new internal APIs.
 
@@ -235,7 +238,7 @@ public:
 			1,
 			"-ORBmaxGIOPVersion < 1.0 | 1.1 | 1.2 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     unsigned int ma, mi;
     if ( sscanf(value, "%u.%u", &ma, &mi) != 2 || ma > 255 || mi > 255) {
@@ -268,7 +271,7 @@ public:
 			1,
 			"-ORBgiopMaxMsgSize < n >= 8192 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 8192) {
@@ -297,7 +300,7 @@ public:
 			1,
 			"-ORBclientCallTimeOutPeriod < n >= 0 in msecs >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -328,7 +331,7 @@ public:
 			1,
 			"-ORBserverCallTimeOutPeriod < n >= 0 in msecs >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -359,7 +362,7 @@ public:
 			1,
 			"-ORBmaxInterleavedCallsPerConnection < n > 0 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -391,7 +394,7 @@ public:
 			1,
 			"-ORBgiopTargetAddressMode < 0,1,2 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -442,7 +445,7 @@ public:
 			"-ORBstrictIIOP < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

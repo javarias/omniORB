@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.20  2001/08/20 13:27:43  dpg1
+  Correct description of objectTableSize configuration setting.
+
   Revision 1.2.2.19  2001/08/17 17:12:40  sll
   Modularise ORB configuration parameters.
 
@@ -1159,7 +1162,7 @@ public:
 			1,
 			"-ORBtraceLevel < n >= 0 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -1189,7 +1192,7 @@ public:
 			"-ORBtraceInvocations < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -1217,7 +1220,7 @@ public:
 			1,
 			"-ORBobjectTableSize < n >= 0 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -1247,7 +1250,7 @@ public:
 			"-ORBabortOnInternalError < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/08/17 17:12:38  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.4.5  2001/07/31 16:27:59  sll
   Added GIOP BiDir support.
 
@@ -663,7 +666,7 @@ public:
 			1,
 			"-ORBscanGranularity < n >= 0 sec >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -691,7 +694,7 @@ public:
 			1,
 			"-ORBoutConScanPeriod < n >= 0 sec >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -719,7 +722,7 @@ public:
 			1,
 			"-ORBinConScanPeriod < n >= 0 sec >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {

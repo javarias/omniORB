@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.12  2001/08/17 17:12:37  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.22.2.11  2001/07/31 16:28:00  sll
   Added GIOP BiDir support.
 
@@ -1020,7 +1023,7 @@ public:
 			"-ORBthreadPerConnectionPolicy < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -1048,7 +1051,7 @@ public:
 			1,
 			"-ORBthreadPerConnectionUpperLimit < n >= 1 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
@@ -1077,7 +1080,7 @@ public:
 			1,
 			"-ORBthreadPerConnectionLowerLimit < n >= 1 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
@@ -1105,7 +1108,7 @@ public:
 			1,
 			"-ORBmaxServerThreadPerConnection < n >= 1 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
@@ -1135,7 +1138,7 @@ public:
 			1,
 			"-ORBmaxServerThreadPoolSize < n >= 1 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {

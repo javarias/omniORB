@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.20  2001/08/17 17:12:40  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.2.2.19  2001/08/15 17:59:11  dpg1
   Minor POA bugs.
 
@@ -927,7 +930,7 @@ public:
 			"-ORBverifyObjectExistsAndType < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

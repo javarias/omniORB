@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/17 17:12:35  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.2.7  2001/08/03 17:41:18  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -535,7 +538,7 @@ public:
 			1,
 			"-ORBnativeCharCodeSet <code set name, e.g. ISO-8859-1>") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
     
     omniCodeSet::NCS_C* v = omniCodeSet::getNCS_C(value);
     if (!v) {
@@ -567,7 +570,7 @@ public:
 			1,
 			"-ORBnativeWCharCodeSet <code set name, e.g. UTF-16>") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
     
     omniCodeSet::NCS_W* v = omniCodeSet::getNCS_W(value);
     if (!v) {

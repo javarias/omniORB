@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.11  2001/08/20 15:08:36  sll
+ Changed option name endpoint* to endPoint*.
+
  Revision 1.2.2.10  2001/08/17 17:12:39  sll
  Modularise ORB configuration parameters.
 
@@ -575,7 +578,7 @@ public:
 "                          * may not be supported on the platform.\n") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
@@ -617,7 +620,7 @@ public:
 			"-ORBendPointNoPublish <endpoint uri>") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
@@ -652,7 +655,7 @@ public:
 			"-ORBendPointNoListen <endpoint uri>") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();

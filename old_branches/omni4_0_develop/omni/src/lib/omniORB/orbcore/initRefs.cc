@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2001/08/17 17:12:39  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.2.2.8  2001/08/03 17:41:22  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -769,8 +772,13 @@ public:
 			"-ORBDefaultInitRef <Default URI> (standard option)") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
-    omniInitialReferences::setDefaultInitRefFromArgs(value);
+  void visit(const char* value,orbOptions::Source src) throw (orbOptions::BadParam) {
+    if (src == orbOptions::fromArgv) {
+      omniInitialReferences::setDefaultInitRefFromArgs(value);
+    }
+    else {
+      omniInitialReferences::setDefaultInitRefFromFile(value);
+    }
   }
 
   void dump(orbOptions::sequenceString& result) {
@@ -793,7 +801,7 @@ public:
 			"-ORBInitRef <ObjectID>=<ObjectURI> (standard option)") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value, orbOptions::Source src) throw (orbOptions::BadParam) {
 
     unsigned int slen = strlen(value) + 1;
     CORBA::String_var id(CORBA::string_alloc(slen));
@@ -801,8 +809,15 @@ public:
     if (sscanf(value, "%[^=]=%s", (char*)id, (char*)uri) != 2) {
       throw orbOptions::BadParam(key(),value,"Invalid argument, expect <ObjectID>=<ObjectURI>");
     }
-    if (!omniInitialReferences::setFromArgs(id, uri)) {
-      throw orbOptions::BadParam(key(),value,"Invalid argument, expect <ObjectID>=<ObjectURI>");
+    if (src == orbOptions::fromArgv) {
+      if (!omniInitialReferences::setFromArgs(id, uri)) {
+	throw orbOptions::BadParam(key(),value,"Invalid argument, expect <ObjectID>=<ObjectURI>");
+      }
+    }
+    else {
+      if (!omniInitialReferences::setFromFile(id, uri)) {
+	throw orbOptions::BadParam(key(),value,"Invalid argument, expect <ObjectID>=<ObjectURI>");
+      }
     }
   }
 
@@ -839,7 +854,7 @@ public:
 			"-ORBsupportBootstrapAgent < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -868,7 +883,7 @@ public:
 			"-ORBbootstrapAgentPort < 1-65535 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || !(v >=1 && v <=65535) ) {
@@ -897,7 +912,7 @@ public:
 			"-ORBbootstrapAgentHostname <hostname>") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     orbParameters::bootstrapAgentHostname = value;
   }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/20 10:46:48  sll
+  New orb configuration parsing now works with NT registry.
+
   Revision 1.1.2.2  2001/08/20 08:19:22  sll
   Read the new ORB configuration file format. Can still read old format.
   Can also set configuration parameters from environment variables.
@@ -85,6 +88,11 @@ class orbOptions {
   };
 
   ////////////////////////////////////////////////////////////////////////
+  enum Source { fromFile, fromEnvironment, fromRegistry, fromArgv, 
+		fromArray, fromInternal };
+
+
+  ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
 
   class Handler {
@@ -96,7 +104,7 @@ class orbOptions {
     CORBA::Boolean argvYes() const { return argvYes_; }
     CORBA::Boolean argvHasNoValue() const { return argvHasNoValue_; }
 
-    virtual void visit(const char* value) throw (BadParam) = 0;
+    virtual void visit(const char* value,Source source) throw (BadParam) = 0;
     virtual void dump(sequenceString& result) = 0;
 
   protected:
@@ -157,7 +165,8 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void addOption(const char* key, const char* value) throw (Unknown,BadParam);
+  void addOption(const char* key, const char* value, 
+		 Source source=fromInternal) throw (Unknown,BadParam);
   // Add to the internal option list a <key,value> tuple.
   // Both arguments are copied.
   //
@@ -358,11 +367,12 @@ class orbOptions {
 
   struct HandlerValuePair {
 
-    HandlerValuePair(Handler* h, const char* v) :
-      handler_(h),value_(v) {}
+    HandlerValuePair(Handler* h, const char* v, Source s) :
+      handler_(h),value_(v),source_(s) {}
 
     Handler*               handler_;
     CORBA::String_var      value_;
+    Source                 source_;
   };
   omnivector<HandlerValuePair*>   pd_values;
 

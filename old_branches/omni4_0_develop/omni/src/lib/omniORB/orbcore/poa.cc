@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.18  2001/08/20 10:43:57  sll
+  Fixed minor bug detected by MSVC++
+
   Revision 1.2.2.17  2001/08/17 17:12:41  sll
   Modularise ORB configuration parameters.
 
@@ -3533,7 +3536,7 @@ public:
 			1,
 			"-ORBpoaHoldRequestTimeout < n >= 0 in msec >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {

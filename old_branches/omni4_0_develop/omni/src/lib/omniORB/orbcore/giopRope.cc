@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2001/08/17 17:12:37  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.4.10  2001/08/06 15:50:27  sll
   In filterAndSortAddressList, make unix transport as the first choice if
   available. This is just a temporary solution until we have table driven
@@ -640,7 +643,7 @@ public:
 			"-ORBoneCallPerConnection < 0 | 1 >") {}
 
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -668,7 +671,7 @@ public:
 			1,
 			"-ORBmaxGIOPConnectionPerServer < n > 0 >") {}
 
-  void visit(const char* value) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
