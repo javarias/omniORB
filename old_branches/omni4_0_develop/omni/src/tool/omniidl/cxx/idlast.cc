@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.10  2001/10/29 17:42:42  dpg1
+// Support forward-declared structs/unions, ORB::create_recursive_tc().
+//
 // Revision 1.16.2.9  2001/10/17 16:48:32  dpg1
 // Minor error message tweaks
 //
@@ -1200,8 +1203,7 @@ Member(const char* file, int line, IDL_Boolean mainFile,
 	s->setRecursive();
 	IdlWarning(file, line,
 		   "Anonymous sequences for recursive structures "
-		   "are deprecated in CORBA 2.4. Use a forward "
-		   "declaration instead.");
+		   "are deprecated. Use a forward declaration instead.");
       }
     }
     else if (t->kind() == IdlType::tk_union) {
@@ -1210,8 +1212,7 @@ Member(const char* file, int line, IDL_Boolean mainFile,
 	u->setRecursive();
 	IdlWarning(file, line,
 		   "Anonymous sequences for recursive unions "
-		   "are deprecated in CORBA 2.4. Use a forward "
-		   "declaration instead.");
+		   "are deprecated. Use a forward declaration instead.");
       }
     }
     else if (t->kind() == IdlType::ot_structforward) {
@@ -1588,8 +1589,7 @@ UnionCase(const char* file, int line, IDL_Boolean mainFile,
 	s->setRecursive();
 	IdlWarning(file, line,
 		   "Anonymous sequences for recursive structures "
-		   "are deprecated in CORBA 2.4. Use a forward "
-		   "declaration instead.");
+		   "are deprecated. Use a forward declaration instead.");
       }
     }
     else if (t->kind() == IdlType::tk_union) {
@@ -1598,8 +1598,7 @@ UnionCase(const char* file, int line, IDL_Boolean mainFile,
 	u->setRecursive();
 	IdlWarning(file, line,
 		   "Anonymous sequences for recursive unions "
-		   "are deprecated in CORBA 2.4. Use a forward "
-		   "declaration instead.");
+		   "are deprecated. Use a forward declaration instead.");
       }
     }
     else if (t->kind() == IdlType::ot_structforward) {
