@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  2000/03/03 09:44:04  djr
+ Fix to prevent tracedmutex assertion failure.
+
  Revision 1.1.2.5  1999/10/27 17:32:12  djr
  omni::internalLock and objref_rc_lock are now pointers.
 
@@ -55,7 +58,7 @@
 #include <localIdentity.h>
 #include <ropeFactory.h>
 #include <scavenger.h>
-#include <bootstrap_i.h>
+#include <initRefs.h>
 #include <poaimpl.h>
 #include <corbaBoa.h>
 #include <exception.h>
