@@ -10,6 +10,9 @@
 
 /*
  $Log$
+ Revision 1.1  1997/01/08 17:28:30  sll
+ Initial revision
+
 */
 
 #ifndef __PROXYFACTORY_H__
@@ -35,7 +38,8 @@ public:
   // Return true if <base_repoId> is the interface repository ID of
   // a base interface.
 
-  friend proxyObjectFactory_iterator;
+  friend class proxyObjectFactory_iterator;
+  static proxyObjectFactory* proxyStubs;
 
 private:
   proxyObjectFactory *pd_next;
