@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.8.4.4  1999/10/05 20:35:36  sll
+  Added support to GIOP 1.2 to recognise all TargetAddress mode.
+  Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
+
   Revision 1.8.4.3  1999/10/02 18:21:30  sll
   Added support to decode optional tagged components in the IIOP profile.
   Added support to negogiate with a firewall proxy- GIOPProxy to invoke
@@ -116,7 +120,7 @@ tcpSocketFactoryType::init()
   singleton->pd_optionalcomponents[0].tag = IOP::TAG_ORB_TYPE;
   cdrEncapsulationStream s(8,1);
   omniORB_TAG_ORB_TYPE >>= s;
-  CORBA::Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
+  _CORBA_Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
   singleton->pd_optionalcomponents[0].component_data.replace(max,len,p,1);
   
   if (omniORB::trace(2)) {
@@ -223,7 +227,7 @@ tcpSocketFactoryType::encodeIOPprofile(const ropeFactoryType::EndpointList& addr
       s.put_char_array((const CORBA::Char*)tcpaddr->host(),hlen);
       tcpaddr->port() >>= s;
 
-      CORBA::Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
+      _CORBA_Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
       alternate_iiop_address[index].component_data.replace(max,len,p,1);
     }
   }
@@ -301,7 +305,7 @@ tcpSocketFactoryType::encodeIOPprofile(const ropeFactoryType::EndpointList& addr
       }
     }
 
-    CORBA::Octet* p;
+    _CORBA_Octet* p;
     CORBA::ULong max;
     CORBA::ULong len;
     s.getOctetStream(p,max,len);
