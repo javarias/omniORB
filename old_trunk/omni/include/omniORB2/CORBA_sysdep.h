@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.34  1999/06/02 16:40:56  sll
+ Enable IR client support on all platforms
+
  Revision 1.33  1999/05/31 14:07:34  sll
  Added flags for SUN C++ 5.0.
 
@@ -118,6 +121,9 @@
 #define __CORBA_SYSDEP_H__
 
 
+#define HAS_Cplusplus_const_cast
+// Unset this define if the compiler does not support const_cast<T*>
+
 #if defined(__GNUG__)
 // GNU G++ compiler
 
@@ -162,6 +168,7 @@
 //#     define NEED_DUMMY_RETURN
 #  else
 #     define NEED_DUMMY_RETURN
+#     undef  HAS_Cplusplus_const_cast
 #  endif
 
 #elif defined(__SUNPRO_CC) 
@@ -406,13 +413,13 @@ strdup (char* str)
 #endif
 
 #ifndef _CORBA_MODULE_VAR
-#define _CORBA_MODULE_VAR extern _LC_attr
+#define _CORBA_MODULE_VAR extern
 #else
 #error "Name conflict: _CORBA_MODULE_VAR is already defined."
 #endif
 
 #ifndef _CORBA_GLOBAL_VAR
-#define _CORBA_GLOBAL_VAR extern _LC_attr
+#define _CORBA_GLOBAL_VAR extern
 #else
 #error "Name conflict: _CORBA_GLOBAL_VAR is already defined."
 #endif
@@ -512,25 +519,25 @@ strdup (char* str)
 #endif
 
 #ifndef _CORBA_MODULE_VAR
-#define _CORBA_MODULE_VAR static _LC_attr
+#define _CORBA_MODULE_VAR static
 #else
 #error "Name conflict: _CORBA_MODULE_VAR is already defined."
 #endif
 
 #ifndef _CORBA_GLOBAL_VAR
-#define _CORBA_GLOBAL_VAR extern _LC_attr
+#define _CORBA_GLOBAL_VAR extern
 #else
 #error "Name conflict: _CORBA_GLOBAL_VAR is already defined."
 #endif
 
 #ifndef _CORBA_MODULE_VARINT
-#define _CORBA_MODULE_VARINT static _LC_attr
+#define _CORBA_MODULE_VARINT static _core_attr
 #else
 #error "Name conflict: _CORBA_MODULE_VARINT is already defined."
 #endif
 
 #ifndef _CORBA_GLOBAL_VARINT
-#define _CORBA_GLOBAL_VARINT extern _LC_attr
+#define _CORBA_GLOBAL_VARINT extern _core_attr
 #else
 #error "Name conflict: _CORBA_GLOBAL_VARINT is already defined."
 #endif
