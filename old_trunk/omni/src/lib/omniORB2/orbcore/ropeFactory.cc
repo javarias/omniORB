@@ -28,6 +28,9 @@
 
 /*
  $Log$
+// Revision 1.2  1998/03/04  14:45:04  sll
+// Added omniORB::giopServerThreadWrapper.
+//
  Revision 1.1  1997/12/09 18:43:19  sll
  Initial revision
 
@@ -120,7 +123,7 @@ ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
 }
 
 
-static giopServerThreadWrapper* giopServerThreadWrapperP;
+static omniORB::giopServerThreadWrapper* giopServerThreadWrapperP = 0;
 
 void
 omniORB::
