@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.20  2001/02/05 12:22:35  dpg1
+  Failed to properly cope with an interrupted recv() call on Windows.
+
   Revision 1.22.6.19  2000/10/20 16:39:13  sll
   Typo bug fix to poll() call. Only has an effect on HPUX.
 
@@ -286,8 +289,12 @@
 
 
 #if defined(__hpux__)
-#include <poll.h>
-#define USE_POLL_ON_RECV
+#  if __OSVERSION__ >= 11
+#    include <poll.h>
+#    define USE_POLL_ON_RECV
+#  else
+#    define USE_SELECT_ON_RECV
+#  endif
 #endif
 
 #if !defined(__VMS)
