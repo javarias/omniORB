@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/07/31 15:56:48  sll
+  Make sure pd_nthreads is kept in sync with the actual no. of threads
+  serving the Anytime tasks.
+
   Revision 1.1.2.3  2001/06/13 20:08:13  sll
   Minor update to make the ORB compiles with MSVC++.
 
@@ -163,13 +167,12 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 omniAsyncInvoker::omniAsyncInvoker(unsigned int max) {
   pd_keep_working = 1;
-  pd_lock = new omni_mutex();
-  pd_cond = new omni_condition(pd_lock);
+  pd_lock  = new omni_mutex();
+  pd_cond  = new omni_condition(pd_lock);
   pd_idle_threads = 0;
   pd_nthreads = 0;
   pd_maxthreads = max;
   pd_totalthreads = 0;
-  pd_dthreads = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -183,28 +186,25 @@ omniAsyncInvoker::~omniAsyncInvoker() {
     t->pd_next = 0;
     t->pd_cond.signal();
   }
-  for (unsigned int i = 0; i < pd_dthreads; i++) {
-    // signal to unblock any dedicated threads.
-    pd_cond->signal();
-  }
+  // Wait for threads to exit
   while (pd_totalthreads) {
     pd_cond->wait();
   }
   pd_lock->unlock();
 
-  delete pd_lock;
   delete pd_cond;
+  delete pd_lock;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 int
 omniAsyncInvoker::insert(omniTask* t) {
 
-  omni_mutex_lock sync(*pd_lock);
-
   switch (t->category()) {
   case omniTask::AnyTime:
     {
+      omni_mutex_lock sync(*pd_lock);
+
       if (pd_idle_threads) {
 	omniAsyncWorker* w = pd_idle_threads;
 	pd_idle_threads = w->pd_next;
@@ -231,6 +231,8 @@ omniAsyncInvoker::insert(omniTask* t) {
     }
   case omniTask::ImmediateDispatch:
     {
+      omni_mutex_lock sync(*pd_lock);
+
       if (pd_idle_threads) {
 	omniAsyncWorker* w = pd_idle_threads;
 	pd_idle_threads = w->pd_next;
@@ -254,8 +256,7 @@ omniAsyncInvoker::insert(omniTask* t) {
     }
   case omniTask::DedicatedThread:
     {
-      t->enq(pd_dedicate_tq);
-      pd_cond->signal();
+      return insert_dedicated(t);
     }
   }
   return 1;
@@ -265,56 +266,52 @@ omniAsyncInvoker::insert(omniTask* t) {
 int
 omniAsyncInvoker::cancel(omniTask* t) {
 
-  omni_mutex_lock sync(*pd_lock);
+  if (t->category() == omniTask::AnyTime) {
+    omni_mutex_lock sync(*pd_lock);
+    omniTaskLink* l;
 
-  omniTaskLink* l;
-
-  for (l = pd_anytime_tq.next; l != &pd_anytime_tq; l =l->next) {
-    if ((omniTask*)l == t) {
-      l->deq();
-      return 1;
+    for (l = pd_anytime_tq.next; l != &pd_anytime_tq; l =l->next) {
+      if ((omniTask*)l == t) {
+	l->deq();
+	return 1;
+      }
     }
   }
-  for (l=pd_dedicate_tq.next; l != &pd_dedicate_tq; l =l->next) {
-    if ((omniTask*)l == t) {
-      l->deq();
-      return 1;
-    }
+  else if (t->category() == omniTask::DedicatedThread) {
+    return cancel_dedicated(t);
   }
   return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void
-omniAsyncInvoker::perform(int polling) {
+//
+// Default do-nothing implementations of dedicated thread functions
 
-  pd_lock->lock();
-  pd_totalthreads++;
-  pd_dthreads++;
- again:
-  while ( pd_keep_working && !omniTaskLink::is_empty(pd_dedicate_tq) ) {
-    omniTask* t = (omniTask*) pd_dedicate_tq.next;
-    t->deq();
-    pd_lock->unlock();
-    try {
-      t->execute();
-    }
-    catch(...) {
-      LOG(1,"omniAsyncInvoker: Warning- unexpected exception caught while executing a task.\n");
-    }
-    pd_lock->lock();
-  }
-  if ( pd_keep_working && !polling ) {
-    pd_cond->wait();
-    goto again;
-  }
-  pd_totalthreads--;
-  pd_dthreads--;
-  if (pd_totalthreads == 0) {
-    pd_cond->signal();
-  }
-  pd_lock->unlock();
+int
+omniAsyncInvoker::work_pending()
+{
+  return 0;
 }
+
+void
+omniAsyncInvoker::perform(unsigned long secs, unsigned long nanosecs)
+{
+  LOG(1, "omniAsyncInvoker::perform() not implemented. aborting...\n");
+  abort();
+}
+
+int
+omniAsyncInvoker::insert_dedicated(omniTask*)
+{
+  return 0;
+}
+
+int
+omniAsyncInvoker::cancel_dedicated(omniTask*)
+{
+  return 0;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 void
