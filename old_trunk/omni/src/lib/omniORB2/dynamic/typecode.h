@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.4  1999/03/11 16:25:59  djr
+ * Updated copyright notice
+ *
  * Revision 1.3  1999/02/18 15:49:30  djr
  * Simplified NP_namesEqualOrNull()
  *
@@ -807,7 +810,7 @@ private:
     Discriminator          alabel;  // undefined if default member
     CORBA::TypeCode_member atype;
   };
-  typedef _CORBA_Pseudo_Unbounded_Sequence<TcUnionMember> TcUnionMemberSeq;
+  typedef _CORBA_PseudoValue_Sequence<TcUnionMember> TcUnionMemberSeq;
 
   CORBA::String_member   pd_repoId;
   CORBA::String_member   pd_name;
