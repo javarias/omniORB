@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.14  2000/03/06 16:38:45  dpg1
+// Additions to compile on Solaris.
+//
 // Revision 1.13  2000/03/03 17:41:41  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -155,17 +158,18 @@ public:
 		   CORBA::Boolean                  remaining_activations);
 
   void*                   _ptrToInterface(const char* repoId);
+
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return omniPy::Py_omniServant::_is_a(logical_type_id);
+    return Py_omniServant::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return omniPy::Py_omniServant::_default_POA();
+    return Py_omniServant::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return omniPy::Py_omniServant::_mostDerivedRepoId();
+    return Py_omniServant::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return omniPy::Py_omniServant::_dispatch(giop_s);
+    return Py_omniServant::_dispatch(giop_s);
   }
 
 private:
@@ -195,17 +199,18 @@ public:
 		  PortableServer::Servant         serv);
 
   void*                   _ptrToInterface(const char* repoId);
+
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return omniPy::Py_omniServant::_is_a(logical_type_id);
+    return Py_omniServant::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return omniPy::Py_omniServant::_default_POA();
+    return Py_omniServant::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return omniPy::Py_omniServant::_mostDerivedRepoId();
+    return Py_omniServant::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return omniPy::Py_omniServant::_dispatch(giop_s);
+    return Py_omniServant::_dispatch(giop_s);
   }
 
 private:
@@ -228,17 +233,18 @@ public:
 				 const char*             name);
 
   void*                   _ptrToInterface(const char* repoId);
+
   CORBA::Boolean          _is_a(const char* logical_type_id) {
-    return omniPy::Py_omniServant::_is_a(logical_type_id);
+    return Py_omniServant::_is_a(logical_type_id);
   }
   PortableServer::POA_ptr _default_POA() {
-    return omniPy::Py_omniServant::_default_POA();
+    return Py_omniServant::_default_POA();
   }
   const char* _mostDerivedRepoId() {
-    return omniPy::Py_omniServant::_mostDerivedRepoId();
+    return Py_omniServant::_mostDerivedRepoId();
   }
   CORBA::Boolean _dispatch(GIOP_S& giop_s) {
-    return omniPy::Py_omniServant::_dispatch(giop_s);
+    return Py_omniServant::_dispatch(giop_s);
   }
 
 private:
@@ -525,7 +531,7 @@ Py_omniServant::_dispatch(GIOP_S& giop_s)
 Py_ServantActivator::Py_ServantActivator(PyObject*   pysa,
 					 PyObject*   opdict,
 					 const char* repoId)
-  : omniPy::Py_omniServant(pysa, opdict, repoId), pysa_(pysa)
+  : Py_omniServant(pysa, opdict, repoId), pysa_(pysa)
 {
   Py_INCREF(pysa);
 }
@@ -542,13 +548,13 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
   PyObject *method, *argtuple, *pyservant;
   lockWithNewThreadState _t;
 
-  method = PyObject_GetAttrString(pysa_, "incarnate");
+  method = PyObject_GetAttrString(pysa_, (char*)"incarnate");
   if (!method) {
     PyErr_Clear();
     throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
-  argtuple = Py_BuildValue("s#N",
+  argtuple = Py_BuildValue((char*)"s#N",
 			   (const char*)oid.NP_data(), oid.length(),
 			   omniPy::createPyPOAObject(poa));
 
@@ -627,13 +633,13 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
   if (!pyos) throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
 
-  method = PyObject_GetAttrString(pysa_, "etherealize");
+  method = PyObject_GetAttrString(pysa_, (char*)"etherealize");
   if (!method) {
     PyErr_Clear();
     throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
-  argtuple = Py_BuildValue("s#NNii",
+  argtuple = Py_BuildValue((char*)"s#NNii",
 			   (const char*)oid.NP_data(), oid.length(),
 			   omniPy::createPyPOAObject(poa),
 			   pyos->pyServant(),
@@ -664,7 +670,7 @@ Py_ServantActivator::_ptrToInterface(const char* repoId)
   if (!strcmp(repoId, CORBA::Object::_PD_repoId))
     return (void*)1;
   if (!strcmp(repoId, "Py_omniServant"))
-    return (Py_omniServant*)this;
+    return (omniPy::Py_omniServant*)this;
   if (!strcmp(repoId, PortableServer::ServantActivator::_PD_repoId))
     return (PortableServer::_impl_ServantActivator*)this;
   if (!strcmp(repoId, PortableServer::ServantManager::_PD_repoId))
@@ -679,7 +685,7 @@ Py_ServantActivator::_ptrToInterface(const char* repoId)
 Py_ServantLocator::Py_ServantLocator(PyObject*   pysl,
 				     PyObject*   opdict,
 				     const char* repoId)
-  : omniPy::Py_omniServant(pysl, opdict, repoId), pysl_(pysl)
+  : Py_omniServant(pysl, opdict, repoId), pysl_(pysl)
 {
   Py_INCREF(pysl);
 }
@@ -698,13 +704,13 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
   PyObject *method, *argtuple, *rettuple, *pyservant, *pycookie;
   lockWithNewThreadState _t;
 
-  method = PyObject_GetAttrString(pysl_, "preinvoke");
+  method = PyObject_GetAttrString(pysl_, (char*)"preinvoke");
   if (!method) {
     PyErr_Clear();
     throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
-  argtuple = Py_BuildValue("s#Ns",
+  argtuple = Py_BuildValue((char*)"s#Ns",
 			   (const char*)oid.NP_data(), oid.length(),
 			   omniPy::createPyPOAObject(poa),
 			   operation);
@@ -798,13 +804,13 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
   pyos = (omniPy::Py_omniServant*)serv->_ptrToInterface("Py_omniServant");
   if (!pyos) throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
 
-  method = PyObject_GetAttrString(pysl_, "postinvoke");
+  method = PyObject_GetAttrString(pysl_, (char*)"postinvoke");
   if (!method) {
     PyErr_Clear();
     throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(poa);
-  argtuple = Py_BuildValue("s#NsNN",
+  argtuple = Py_BuildValue((char*)"s#NsNN",
 			   (const char*)oid.NP_data(), oid.length(),
 			   omniPy::createPyPOAObject(poa),
 			   operation,
@@ -835,7 +841,7 @@ Py_ServantLocator::_ptrToInterface(const char* repoId)
   if (!strcmp(repoId, CORBA::Object::_PD_repoId))
     return (void*)1;
   if (!strcmp(repoId, "Py_omniServant"))
-    return (Py_omniServant*)this;
+    return (omniPy::Py_omniServant*)this;
   if (!strcmp(repoId, PortableServer::ServantLocator::_PD_repoId))
     return (PortableServer::_impl_ServantLocator*)this;
   if (!strcmp(repoId, PortableServer::ServantManager::_PD_repoId))
@@ -850,7 +856,7 @@ Py_ServantLocator::_ptrToInterface(const char* repoId)
 Py_AdapterActivator::Py_AdapterActivator(PyObject*   pyaa,
 					 PyObject*   opdict,
 					 const char* repoId)
-  : omniPy::Py_omniServant(pyaa, opdict, repoId), pyaa_(pyaa)
+  : Py_omniServant(pyaa, opdict, repoId), pyaa_(pyaa)
 {
   Py_INCREF(pyaa);
 }
@@ -867,13 +873,14 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
   PyObject *method, *argtuple, *pyresult;
   lockWithNewThreadState _t;
 
-  method = PyObject_GetAttrString(pyaa_, "unknown_adapter");
+  method = PyObject_GetAttrString(pyaa_, (char*)"unknown_adapter");
   if (!method) {
     PyErr_Clear();
     throw CORBA::OBJ_ADAPTER(); // *** Good choice of exn?
   }
   PortableServer::POA::_duplicate(parent);
-  argtuple = Py_BuildValue("Ns", omniPy::createPyPOAObject(parent), name);
+  argtuple = Py_BuildValue((char*)"Ns",
+			   omniPy::createPyPOAObject(parent), name);
 
   // Do the up-call
   pyresult = PyEval_CallObject(method, argtuple);
@@ -907,7 +914,7 @@ Py_AdapterActivator::_ptrToInterface(const char* repoId)
   if (!strcmp(repoId, CORBA::Object::_PD_repoId))
     return (void*)1;
   if (!strcmp(repoId, "Py_omniServant"))
-    return (Py_omniServant*)this;
+    return (omniPy::Py_omniServant*)this;
   if (!strcmp(repoId, PortableServer::AdapterActivator::_PD_repoId))
     return (PortableServer::_impl_AdapterActivator*)this;
 

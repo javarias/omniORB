@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.18  2000/03/03 17:41:42  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.17  2000/02/04 12:17:11  dpg1
 // Support for VMS.
 //
@@ -359,9 +362,6 @@ public:
   class Py_omniCallDescriptor : public omniCallDescriptor {
   public:
 
-    friend void omniPy::Py_localCallBackFunction(omniCallDescriptor* cd,
-						 omniServant* svnt);
-
     inline Py_omniCallDescriptor(const char* op, int op_len,
 				 CORBA::Boolean oneway,
 				 PyObject* in_d, PyObject* out_d,
@@ -417,8 +417,14 @@ public:
     PyObject*      out_d_;
     int            out_l_;
     PyObject*      exc_d_;
+
+    // These should be private, but MSVC won't let me declare
+    // Py_localCallBackFunction to be a friend :-(
+  public:
     PyObject*      args_;
     PyObject*      result_;
+
+  private:
     PyThreadState* tstate_;
 
     Py_omniCallDescriptor(const Py_omniCallDescriptor&);
