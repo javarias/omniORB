@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.4  2000/06/05 18:12:25  dpg1
+// Support for __omni_pragma
+//
 // Revision 1.7.2.3  2000/04/26 09:55:48  dpg1
 // cccp escapes characters like \ in line directives, so
 // parseLineDirective() needs to use escapedStringToString().
@@ -337,10 +340,10 @@ L{STR} {
   return FIXED_PT_LITERAL;
 }
 
-"//".*\n { Comment::add(yytext); }
+"//".*\n { Comment::add(yytext, currentFile, yylineno); }
 
 "/*" {
-  Comment::add(yytext);
+  Comment::add(yytext, currentFile, yylineno);
   BEGIN(comment);
 }
 

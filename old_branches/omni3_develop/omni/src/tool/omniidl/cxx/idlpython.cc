@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.6  2000/06/06 15:21:47  dpg1
+// Comments and pragmas attached to attribute declarators are now
+// attached to the Python Attribute object.
+//
 // Revision 1.15.2.5  2000/06/05 18:13:27  dpg1
 // Comments can be attached to subsequent declarations (with -K). Better
 // idea of most recent decl in operation declarations
@@ -212,10 +216,15 @@ pragmasToList(const Pragma* ps)
   for (i=0, p = ps; p; p = p->next(), ++i);
 
   PyObject* pylist = PyList_New(i);
+  PyObject* pypragma;
 
-  for (i=0, p = ps; p; p = p->next(), ++i)
-    PyList_SetItem(pylist, i, PyString_FromString(p->pragmaText()));
+  for (i=0, p = ps; p; p = p->next(), ++i) {
 
+    pypragma = PyObject_CallMethod(idlast_, (char*)"Pragma", (char*)"ssi",
+				   p->pragmaText(), p->file(), p->line());
+    ASSERT_PYOBJ(pypragma);
+    PyList_SetItem(pylist, i, pypragma);
+  }
   return pylist;
 }
 
@@ -229,10 +238,15 @@ commentsToList(const Comment* cs)
   for (i=0, c = cs; c; c = c->next(), ++i);
 
   PyObject* pylist = PyList_New(i);
+  PyObject* pycomment;
 
-  for (i=0, c = cs; c; c = c->next(), ++i)
-    PyList_SetItem(pylist, i, PyString_FromString(c->commentText()));
+  for (i=0, c = cs; c; c = c->next(), ++i) {
 
+    pycomment = PyObject_CallMethod(idlast_, (char*)"Comment", (char*)"ssi",
+				    c->commentText(), c->file(), c->line());
+    ASSERT_PYOBJ(pycomment);
+    PyList_SetItem(pylist, i, pycomment);
+  }
   return pylist;
 }
 

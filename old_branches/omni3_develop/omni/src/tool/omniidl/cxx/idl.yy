@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.1  2000/06/05 18:13:26  dpg1
+// Comments can be attached to subsequent declarations (with -K). Better
+// idea of most recent decl in operation declarations
+//
 // Revision 1.9  2000/02/04 12:17:09  dpg1
 // Support for VMS.
 //
@@ -1443,7 +1447,7 @@ pragma_version:
 
 unknown_pragma:
     PRAGMA unknown_pragma_body_plus END_PRAGMA {
-      Pragma::add($2);
+      Pragma::add($2, currentFile, yylineno);
     }
     ;
 
