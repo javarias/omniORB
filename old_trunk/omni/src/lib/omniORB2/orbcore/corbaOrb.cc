@@ -29,6 +29,10 @@
 
 /*
   $Log$
+// Revision 1.10  1998/02/26  10:41:18  sll
+// Parse_ORB_args once again handles the case when argv is a NULL pointer
+// properly.
+//
 // Revision 1.9  1998/01/27  15:32:14  ewc
 // Added -ORBtcAliasExpand flag
 //
@@ -186,6 +190,9 @@ CORBA::ORB_init(int &argc,char **argv,const char *orb_identifier)
 
 #endif
 
+    // Initialise a giopServerThreadWrapper singelton
+    omniORB::giopServerThreadWrapper::setGiopServerThreadWrapper(
+       new omniORB::giopServerThreadWrapper);
 
     // Start the thread to cleanup idle outgoing strands.
     StrandScavenger::initOutScavenger();
