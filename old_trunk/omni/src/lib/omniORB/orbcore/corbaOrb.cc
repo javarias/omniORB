@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.16  1998/08/21 19:13:32  sll
+  Use omniInitialReferences::singleton() to manage initial object references.
+  New command line options: -ORBInitialHost, -ORBInitialPort.
+
   Revision 1.15  1998/08/14 13:44:57  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -99,7 +103,7 @@ CORBA::ULong             traceLevel = 1;
 CORBA::Boolean           strictIIOP = 0;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0; 
-
+unsigned int             maxTcpConnectionPerServer = 5;
 }
 
 #else
@@ -111,6 +115,7 @@ char*                           omniORB::serverName = 0;
 CORBA::String_var		omniORB::serverName = (const char*)"unknown";
 #endif
 CORBA::Boolean                  omniORB::tcAliasExpand = 0; 
+unsigned int                    omniORB::maxTcpConnectionPerServer = 5;
 #endif
 
 _CORBA_Unbounded_Sequence_Octet omni::myPrincipalID;
