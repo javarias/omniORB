@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5.2.1  2001/02/23 16:50:44  sll
+  SLL work in progress.
+
   Revision 1.2.2.5  2000/11/15 17:00:55  sll
   Added marshalling operators for ServiceContext.
 
@@ -207,6 +210,9 @@ public:
   static _core_attr const ComponentId TAG_DCE_NO_PIPES;
   static _core_attr const ComponentId TAG_DCE_SEC_MECH;
   static _core_attr const ComponentId TAG_INET_SEC_TRANS;
+  static _core_attr const ComponentId TAG_GROUP; // FT SPEC
+  static _core_attr const ComponentId TAG_PRIMARY; // FT SPEC
+  static _core_attr const ComponentId TAG_HEARTBEAT_ENABLED; // FT SPEC
 
 
   static const char* ComponentIDtoName(ComponentId);
@@ -407,6 +413,8 @@ public:
   static _core_attr const ServiceID UnknownExceptionInfo;
   static _core_attr const ServiceID RTCorbaPriority;
   static _core_attr const ServiceID RTCorbaPriorityRange;
+  static _core_attr const ServiceID GROUP_VERSION; // FT SPEC
+  static _core_attr const ServiceID REQUEST;       // FT SPEC
 
   static const char* ServiceIDtoName(ServiceID);
   // omniORB private function.

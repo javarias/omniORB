@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4.2.1  2001/02/23 16:50:36  sll
+  SLL work in progress.
+
   Revision 1.1.2.4  2000/11/15 17:25:11  sll
   Added char, wchar codeset convertor support.
 
@@ -60,6 +63,7 @@ omniIOR::omniIOR(char* repoId, IOP::TaggedProfileList* iop) :
   pd_orb_type(0),
   pd_tcs_c(0),
   pd_tcs_w(0),
+  pd_is_IOGR(0),
   pd_refCount(1)
 {
   {
@@ -78,6 +82,7 @@ omniIOR::omniIOR(char* repoId, IOP::TaggedProfile* iop, CORBA::ULong niops,
   pd_orb_type(0),
   pd_tcs_c(0),
   pd_tcs_w(0),
+  pd_is_IOGR(0),
   pd_refCount(1)
 {    
   {
@@ -97,6 +102,7 @@ omniIOR::omniIOR(const char* repoId, omniIdentity* id) :
   pd_orb_type(0),
   pd_tcs_c(0),
   pd_tcs_w(0),
+  pd_is_IOGR(0),
   pd_refCount(1)
 {
   {
@@ -128,6 +134,7 @@ omniIOR::omniIOR(const char* repoId,
   pd_orb_type(0),
   pd_tcs_c(0),
   pd_tcs_w(0),
+  pd_is_IOGR(0),
   pd_refCount(1)
 {
   {

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15.2.3.2.1  2001/02/23 16:50:39  sll
+  SLL work in progress.
+
   Revision 1.15.2.3  2000/11/03 19:10:24  sll
   Use OMNIORB_FOR_EACH_SYS_EXCEPTION to define repository IDs.
 
@@ -141,6 +144,11 @@ const IOP::ComponentId IOP::TAG_DCE_BINDING_NAME = 101;
 const IOP::ComponentId IOP::TAG_DCE_NO_PIPES = 102;
 const IOP::ComponentId IOP::TAG_DCE_SEC_MECH = 103;
 const IOP::ComponentId IOP::TAG_INET_SEC_TRANS = 123;
+const IOP::ComponentId IOP::TAG_GROUP = 90001; // XXX NEED THE REAL CONSTANT !!
+const IOP::ComponentId IOP::TAG_PRIMARY = 90002; // XXX NEED THE REAL CONSTANT!
+const IOP::ComponentId IOP::TAG_HEARTBEAT_ENABLED = 90003; 
+                                               // XXX NEED THE REAL CONSTANT !
+
 
 static struct {
   IOP::ComponentId id;
@@ -217,6 +225,8 @@ const IOP::ServiceID IOP::FORWARDED_IDENTITY = 8;
 const IOP::ServiceID IOP::UnknownExceptionInfo = 9;
 const IOP::ServiceID IOP::RTCorbaPriority = 10;
 const IOP::ServiceID IOP::RTCorbaPriorityRange = 11;
+const IOP::ServiceID IOP::GROUP_VERSION = 90001;// XXX NEED THE REAL CONSTANT !
+const IOP::ServiceID IOP::REQUEST = 90002; // XXX NEED THE REAL CONSTANT !
 
 static struct {
   IOP::ServiceID id;

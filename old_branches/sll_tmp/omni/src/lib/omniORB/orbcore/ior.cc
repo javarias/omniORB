@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.7.2.1  2001/02/23 16:50:37  sll
+  SLL work in progress.
+
   Revision 1.10.2.7  2000/12/05 17:39:31  dpg1
   New cdrStream functions to marshal and unmarshal raw strings.
 
@@ -384,6 +387,51 @@ omniIOR::dump_TAG_ORB_TYPE(const IOP::TaggedComponent& c)
   return outstr._retn();
 }
 
+//////////////////////////////////////////////////////////////////////////
+void
+omniIOR::unmarshal_TAG_GROUP(const IOP::TaggedComponent& c , omniIOR* ior)
+{
+  OMNIORB_ASSERT(c.tag == IOP::TAG_GROUP);
+  ior->pd_is_IOGR = 1;
+
+#if 0
+  cdrEncapsulationStream e(c.component_data.get_buffer(),
+			   c.component_data.length(),1);
+  GIOP::Version ftsvc_ver;
+  CORBA::FT::FTDomainId ftdom_id;
+  CORBA::FT::ObjectGroupId objgrp_id; 
+  CORBA::FT::ObjectGroupRefVersion objgrp_ver;
+  ftsvc_ver <<= e;
+  ftdom_id <<= e;
+  objgrp_id <<= e;
+  objgrp_ver <<= e;
+  // XXX STORE IN EXTRA INFO PART OF IOR
+#endif
+}
+
+
+char*
+omniIOR::dump_TAG_GROUP(const IOP::TaggedComponent& c)
+{
+  OMNIORB_ASSERT(c.tag == IOP::TAG_GROUP);
+
+#if 0
+  cdrEncapsulationStream e(c.component_data.get_buffer(),
+			   c.component_data.length(),1);
+  GIOP::Version ftsvc_ver;
+  CORBA::FT::FTDomainId ftdom_id;
+  CORBA::FT::ObjectGroupId objgrp_id; 
+  CORBA::FT::ObjectGroupRefVersion objgrp_ver;
+  ftsvc_ver <<= e;
+  ftdom_id <<= e;
+  objgrp_id <<= e;
+  objgrp_ver <<= e;
+  // XXX Format everything into a string
+#endif
+  CORBA::String_var outstr = CORBA::string_dup("TAG_GROUP");
+  return outstr._retn();
+}
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 //////////////////////////////////////////////////////////////////////////
@@ -428,6 +476,11 @@ static struct {
   { IOP::TAG_DCE_NO_PIPES, 0, 0 },
   { IOP::TAG_DCE_SEC_MECH, 0, 0 },
   { IOP::TAG_INET_SEC_TRANS, 0, 0 },
+  { IOP::TAG_GROUP,
+    omniIOR::unmarshal_TAG_GROUP,
+    omniIOR::dump_TAG_GROUP  },
+  { IOP::TAG_PRIMARY, 0, 0 }, 
+  { IOP::TAG_HEARTBEAT_ENABLED, 0, 0 }, 
   { 0xffffffff, 0, 0 }
 };
 
