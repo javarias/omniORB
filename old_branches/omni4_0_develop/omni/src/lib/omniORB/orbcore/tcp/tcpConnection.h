@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/07/31 16:16:17  sll
+  New transport interface to support the monitoring of active connections.
+
   Revision 1.1.2.5  2001/07/13 15:33:28  sll
   Revised declaration to match the changes in giopConnection.
 
@@ -58,7 +61,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 class tcpEndpoint;
 
 class tcpConnection : public giopConnection, public SocketLink {
- public:
+public:
 
   int Send(void* buf, size_t sz,
 	   unsigned long deadline_secs = 0,
@@ -91,7 +94,7 @@ class tcpConnection : public giopConnection, public SocketLink {
 
   friend class tcpEndpoint;
 
- private:
+private:
   SocketCollection* pd_belong_to;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;

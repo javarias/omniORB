@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2001/11/26 10:51:04  dpg1
+  Wrong endpoint address when getsockname() fails.
+
   Revision 1.1.2.9  2001/09/07 11:27:15  sll
   Residual changes needed for the changeover to use orbParameters.
 
@@ -189,6 +192,13 @@ sslConnection::Recv(void* buf, size_t sz,
 
   do {
 
+#ifdef NEED_SOCKET_SHUTDOWN_FLAG
+    // Unfortunately, select() on Windows does not return an error
+    // after the socket has shutdown. We have to use this hack.
+    if (pd_shutdown)
+      return -1;
+#endif
+
     struct timeval t;
 
     if (deadline_secs || deadline_nanosecs) {
@@ -289,6 +299,9 @@ sslConnection::Shutdown() {
   SSL_set_shutdown(pd_ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
   SSL_shutdown(pd_ssl);
   SHUTDOWNSOCKET(pd_socket);
+#ifdef NEED_SOCKET_SHUTDOWN_FLAG
+  pd_shutdown = 1;
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
