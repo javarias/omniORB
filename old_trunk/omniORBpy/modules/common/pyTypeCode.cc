@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/12/15 12:17:18  dpg1
+// Changes to compile with SunPro CC 5.0.
+//
 // Revision 1.6  1999/12/15 11:04:05  dpg1
 // Small bug in alignedSize() for enum.
 //
@@ -1357,6 +1360,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the structure
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1428,6 +1432,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the union
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1527,12 +1532,13 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
       d_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, repoId);
 
       if (d_o) {
-	// Static knowledge of the structure
+	// Static knowledge of the enum
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
-	// Don't know this structure
+	// Don't know this enum
 	d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
 	PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
 	PyTuple_SET_ITEM(d_o, 1, repoId);
@@ -1627,18 +1633,29 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
       encap.copy_from(stream, size);
       CORBA::Boolean bo; bo <<= encap; encap.byteOrder(bo);
 
-      OffsetDescriptorMap eodm(odm, tc_offset + 8);
+      PyObject* repoId; UNMARSHAL_PYSTRING(encap, repoId);
 
-      d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
-      PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
+      d_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, repoId);
 
-      // repoId and name
-      UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 1, t_o);
-      UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 2, t_o);
+      if (d_o) {
+	// Static knowledge of the alias
+	Py_INCREF(d_o);
+	Py_DECREF(repoId);
+      }
+      else {
+	OffsetDescriptorMap eodm(odm, tc_offset + 8);
 
-      // TypeCode
-      t_o = r_unmarshalTypeCode(encap, eodm);
-      PyTuple_SET_ITEM(d_o, 3, t_o);
+	d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
+	PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
+	PyTuple_SET_ITEM(d_o, 1, repoId);
+
+	// repoId and name
+	UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 2, t_o);
+
+	// TypeCode
+	t_o = r_unmarshalTypeCode(encap, eodm);
+	PyTuple_SET_ITEM(d_o, 3, t_o);
+      }
     }
     break;
 
@@ -1658,6 +1675,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the exception
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1823,6 +1841,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the structure
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1894,6 +1913,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the union
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1993,12 +2013,13 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
       d_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, repoId);
 
       if (d_o) {
-	// Static knowledge of the structure
+	// Static knowledge of the enum
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
-	// Don't know this structure
+	// Don't know this enum
 	d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
 	PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
 	PyTuple_SET_ITEM(d_o, 1, repoId);
@@ -2093,18 +2114,29 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
       encap.copy_from(stream, size);
       CORBA::Boolean bo; bo <<= encap; encap.byteOrder(bo);
 
-      OffsetDescriptorMap eodm(odm, tc_offset + 8);
+      PyObject* repoId; UNMARSHAL_PYSTRING(encap, repoId);
 
-      d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
-      PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
+      d_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, repoId);
 
-      // repoId and name
-      UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 1, t_o);
-      UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 2, t_o);
+      if (d_o) {
+	// Static knowledge of the alias
+	Py_INCREF(d_o);
+	Py_DECREF(repoId);
+      }
+      else {
+	OffsetDescriptorMap eodm(odm, tc_offset + 8);
 
-      // TypeCode
-      t_o = r_unmarshalTypeCode(encap, eodm);
-      PyTuple_SET_ITEM(d_o, 3, t_o);
+	d_o = PyTuple_New(4); odm.add(d_o, tc_offset);
+	PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
+	PyTuple_SET_ITEM(d_o, 1, repoId);
+
+	// repoId and name
+	UNMARSHAL_PYSTRING(encap, t_o); PyTuple_SET_ITEM(d_o, 2, t_o);
+
+	// TypeCode
+	t_o = r_unmarshalTypeCode(encap, eodm);
+	PyTuple_SET_ITEM(d_o, 3, t_o);
+      }
     }
     break;
 
@@ -2124,6 +2156,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
       if (d_o) {
 	// Static knowledge of the exception
 	Py_INCREF(d_o);
+	Py_DECREF(repoId);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
