@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.14  1998/08/14 13:48:27  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.13  1998/08/11 19:08:33  sll
   Added CPP macro to recognise SCO OpenServer 5.
 
@@ -117,7 +121,7 @@ again:
   // -1 = Error, 0 is OK
   extern int h_errno;
   if (!h.pd_buffer) {
-    h.pd_buffer = (char*) (new hostent_data);
+    h.pd_buffer = new char[sizeof(hostent_data)];
     memset((void*)h.pd_buffer,0,sizeof(hostent_data));
   }
   if (gethostbyname_r(name,&h.pd_ent,(hostent_data*)h.pd_buffer) == -1) {
