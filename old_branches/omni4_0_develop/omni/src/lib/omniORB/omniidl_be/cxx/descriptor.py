@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.4  2001/06/08 17:12:12  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.1.4.3  2001/03/26 11:11:54  dpg1
 # Python clean-ups. Output routine optimised.
 #
@@ -138,9 +141,9 @@ class HashVisitor(idlvisitor.AstVisitor):
         # equivalent to >> only without sign extension
         # (python uses 2's complement signed arithmetic)
         def rshift(x, distance):
-            sign_bit = x & 0x80000000
+            sign_bit = x & 0x80000000L
             # remove the sign bit to make it unsigned
-            x = x & 0x7fffffff
+            x = x & 0x7fffffffL
             # perform shift (thinks number is unsigned, no extension)
             x = x >> distance
             # add sign bit back in
@@ -150,12 +153,12 @@ class HashVisitor(idlvisitor.AstVisitor):
 
         def lshift(x, distance):
             # same as non-sign extended case
-            return x << distance
+            return (x << distance) & 0xffffffffL
 
-        (high, low) = (0, 0)
+        high = low = 0L
         for char in string_seed:
-            tmp  = rshift((high & 0xfe000000), 25)
-            high = (lshift(high, 7)) ^ (rshift((low & 0xfe000000), 25))
+            tmp  = rshift((high & 0xfe000000L), 25)
+            high = (lshift(high, 7)) ^ (rshift((low & 0xfe000000L), 25))
             low  = lshift(low, 7) ^ tmp
             low  = low ^ (ord(char))
 
