@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.4  2001/06/01 11:09:26  dpg1
+// Make use of new omni::ptrStrCmp() and omni::strCmp().
+//
 // Revision 1.1.2.3  2001/05/10 15:16:02  dpg1
 // Big update to support new omniORB 4 internals.
 //
@@ -44,7 +47,6 @@
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <omniORB4/IOP_C.h>
-#include <iostream.h>
 
 
 omniPy::Py_omniCallDescriptor::~Py_omniCallDescriptor()
@@ -67,18 +69,21 @@ omniPy::Py_omniCallDescriptor::initialiseCall(cdrStream&)
     omniPy::validateType(PyTuple_GET_ITEM(in_d_,i),
 			 PyTuple_GET_ITEM(args_,i),
 			 CORBA::COMPLETED_NO);
+
+  releaseInterpreterLock();
 }
 
 
 void
 omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 {
-  // We should always hold the interpreter lock when entering this
-  // function. The call to releaseInterpreterLock() will assert that
-  // this is true. It's very unlikely that we will crash in the
-  // mean-time if something has gone wrong.
-
   if (in_marshal_) {
+    if (omniORB::trace(1)) {
+      omniORB::logger l;
+      l <<
+	"Warning: omniORBpy marshalArguments re-entered. "
+	"Untested code may fail.\n";
+    }
     // Re-entered to figure out the size
     for (int i=0; i < in_l_; i++)
       omniPy::marshalPyObject(stream,
@@ -86,6 +91,8 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 			      PyTuple_GET_ITEM(args_,i));
   }
   else {
+    reacquireInterpreterLock();
+
     in_marshal_ = 1;
     PyUnlockingCdrStream pystream(stream);
 
@@ -94,8 +101,8 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 			      PyTuple_GET_ITEM(in_d_,i),
 			      PyTuple_GET_ITEM(args_,i));
     in_marshal_ = 0;
-    releaseInterpreterLock();
   }
+  releaseInterpreterLock();
 }
 
 
