@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.25  2000/09/21 14:22:48  sll
+  Workaround for Sun C++ 5.0 or Forte WS 6.0 compiler bug.
+
   Revision 1.29.6.24  2000/08/30 15:18:44  dpg1
   New environment variable OMNIORB_PRINCIPAL.
 
@@ -693,7 +696,7 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 {
   CORBA::Boolean orbId_match = 0;
 
-  if (orb_identifier[0] == '\0')
+  if (orb_identifier && orb_identifier[0] == '\0')
     orb_identifier = MY_ORB_ID;
 
   if( orb_identifier && strcmp(orb_identifier, MY_ORB_ID)
