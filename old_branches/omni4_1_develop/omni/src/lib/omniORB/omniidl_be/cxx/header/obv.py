@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.2  2003/11/06 11:56:56  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
 # Revision 1.1.2.1  2003/10/23 11:25:55  dgrisby
 # More valuetype support.
 #
@@ -100,9 +103,7 @@ def visitModule(node):
     return
 
 def visitInterface(node):
-    # *** HERE: Abstract interface?
     pass
-
 def visitTypedef(node):
     pass
 def visitEnum(node):

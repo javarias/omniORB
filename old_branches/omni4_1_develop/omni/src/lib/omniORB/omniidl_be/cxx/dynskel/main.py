@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.5  2004/07/23 10:29:58  dgrisby
+# Completely new, much simpler Any implementation.
+#
 # Revision 1.16.2.4  2004/07/04 23:53:38  dgrisby
 # More ValueType TypeCode and Any support.
 #
@@ -213,10 +216,17 @@ def visitInterface(node):
     tc_name    = scopedName.prefix("_tc_").fullyQualify()
     prefix     = config.state['Private Prefix']
 
-    stream.out(template.interface,
-               guard_name = guard_name,
-               fqname = fqname, tc_name = tc_name,
-               private_prefix = prefix)
+    if node.abstract():
+        stream.out(template.abstract_interface,
+                   guard_name = guard_name,
+                   fqname = fqname, tc_name = tc_name,
+                   private_prefix = prefix)
+    else:
+        stream.out(template.interface,
+                   guard_name = guard_name,
+                   fqname = fqname, tc_name = tc_name,
+                   private_prefix = prefix)
+
 
 def visitForward(node):
     pass
@@ -372,5 +382,15 @@ def visitValueBox(node):
                private_prefix = prefix)
 
 def visitValueAbs(node):
-    print "*** valueabs dynskel main"
+    scopedName = id.Name(node.scopedName())
+    guard_name = scopedName.guard()
+    fqname     = scopedName.fullyQualify()
+    prefix     = config.state['Private Prefix']
+    
+    for d in node.declarations():
+        d.accept(self)
 
+    stream.out(template.value,
+               guard_name     = guard_name,
+               fqname         = fqname,
+               private_prefix = prefix)

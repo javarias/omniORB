@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2004/07/23 10:29:56  dgrisby
+  Completely new, much simpler Any implementation.
+
   Revision 1.1.4.2  2004/02/16 10:10:28  dgrisby
   More valuetype, including value boxes. C++ mapping updates.
 
@@ -219,10 +222,10 @@ public:
     to_object(Object_out obj) : ref(obj._data) { }
     Object_ptr& ref;
   };
-//   struct to_abstract_base {
-//     to_abstract_base(AbstractBase_ptr& base) : ref(base) {}
-//     AbstractBase_ptr& ref;
-//   };
+  struct to_abstract_base {
+    to_abstract_base(AbstractBase_ptr& base) : ref(base) {}
+    AbstractBase_ptr& ref;
+  };
   struct to_value {
     to_value(ValueBase*& base) : ref(base) {}
     ValueBase*& ref;
@@ -236,7 +239,7 @@ public:
   Boolean operator>>=(to_wstring s) const;
   Boolean operator>>=(to_fixed f) const;
   Boolean operator>>=(to_object o) const;
-  //  Boolean operator>>=(to_abstract_base a) const;
+  Boolean operator>>=(to_abstract_base a) const;
   Boolean operator>>=(to_value v) const;
   Boolean operator>>=(const CORBA::SystemException*& e) const;
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.32.2.4  2004/07/04 23:53:39  dgrisby
+# More ValueType TypeCode and Any support.
+#
 # Revision 1.32.2.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -296,6 +299,14 @@ def visitInterface(node):
     # the class itself
     node_name = id.Name(node.scopedName())
     objref_name = node_name.prefix("_objref_")
+
+    if node.abstract():
+        stream.out(template.abstract_interface_duplicate,
+                   name = node_name.fullyQualify())
+    else:
+        stream.out(template.interface_duplicate,
+                   name = node_name.fullyQualify())
+
     stream.out(template.interface_class,
                name = node_name.fullyQualify(),
                objref_name = objref_name.unambiguous(environment),

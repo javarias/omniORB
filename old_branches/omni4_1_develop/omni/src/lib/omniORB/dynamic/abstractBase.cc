@@ -29,32 +29,43 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2004/04/02 13:26:24  dgrisby
+  Start refactoring TypeCode to support value TypeCodes, start of
+  abstract interfaces support.
+
 */
 
 #include <omniORB4/CORBA.h>
 
+
+const char*
+CORBA::AbstractBase::_PD_repoId = "IDL:omg.org/CORBA/AbstractBase:1.0";
+
+
 CORBA::AbstractBase_ptr
 CORBA::AbstractBase::_duplicate(CORBA::AbstractBase_ptr a)
 {
-  if (!a->_to_value())
-    a->_to_object();
-
+  if (a) {
+    if (!a->_to_value())
+      a->_to_object();
+  }
   return a;
 }
 
 CORBA::AbstractBase_ptr
 CORBA::AbstractBase::_narrow(CORBA::AbstractBase_ptr a)
 {
-  if (!a->_to_value())
-    a->_to_object();
-
+  if (a) {
+    if (!a->_to_value())
+      a->_to_object();
+  }
   return a;
 }
 
 CORBA::AbstractBase_ptr
 CORBA::AbstractBase::_nil()
 {
-  // *** HERE: use a singleton object?
+  // *** HERE: use a singleton object.
   return 0;
 }
 
@@ -80,6 +91,19 @@ CORBA::AbstractBase::_NP_to_value()
   return 0;
 }
 
+void
+CORBA::release(CORBA::AbstractBase_ptr a)
+{
+  if (a) {
+    CORBA::ValueBase* v = a->_NP_to_value();
+    if (v) {
+      v->_remove_ref();
+      return;
+    }
+    CORBA::Object_ptr o = a->_NP_to_object();
+    CORBA::release(o);
+  }
+}
 
 CORBA::Boolean
 CORBA::_omni_AbstractBaseObjref::_NP_is_nil() const

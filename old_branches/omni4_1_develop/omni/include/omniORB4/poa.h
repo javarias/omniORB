@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2004/07/23 10:29:57  dgrisby
+  Completely new, much simpler Any implementation.
+
   Revision 1.4.2.2  2004/02/16 10:10:28  dgrisby
   More valuetype, including value boxes. C++ mapping updates.
 
@@ -665,7 +668,7 @@ _CORBA_MODULE_BEG
       public virtual ServantBase
   {
   public:
-    ValueRefCountBase();
+    ValueRefCountBase() {}
 
     virtual void  _add_ref();
     virtual void  _remove_ref();

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19.2.6  2004/07/31 23:45:44  dgrisby
+# ifdef for forward declared union typecodes.
+#
 # Revision 1.19.2.5  2004/07/04 23:53:38  dgrisby
 # More ValueType TypeCode and Any support.
 #
@@ -768,7 +771,13 @@ def visitInterface(node):
     
     repoID = node.repoId()
     iname = id.Name(node.scopedName()).simple()
-    typecode = 'CORBA::TypeCode::PR_interface_tc("' + repoID + '", "' +\
+
+    if node.abstract():
+        func = "PR_abstract_interface_tc"
+    else:
+        func = "PR_interface_tc"
+
+    typecode = 'CORBA::TypeCode::' + func + '("' + repoID + '", "' +\
                iname + '", &' + config.state['Private Prefix'] + '_tcTrack)'
 
     node.accept(tcstring)
@@ -1044,7 +1053,7 @@ def visitValue(node):
             visitValueForward(inherits[0])
             bscopedName = inherits[0].scopedName()
             concrete_base = mangleName(config.state['Private Prefix'] +
-                                       "_tc_", scopedName)
+                                       "_tc_", bscopedName)
         else:
             concrete_base = "CORBA::TypeCode::PR_null_tc()"
 

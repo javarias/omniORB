@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2004/07/26 22:56:39  dgrisby
+  Support valuetypes in Anys.
+
   Revision 1.1.2.3  2004/07/04 23:53:37  dgrisby
   More ValueType TypeCode and Any support.
 
@@ -117,6 +120,33 @@ CORBA::DefaultValueRefCountBase::_refcount_value()
 
 CORBA::DefaultValueRefCountBase::~DefaultValueRefCountBase() {
   OMNIORB_ASSERT(_pd_refCount == 0);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+///////////////// PortableServer::ValueRefCountBase //////////////////
+//////////////////////////////////////////////////////////////////////
+
+
+void
+PortableServer::ValueRefCountBase::_add_ref()
+{
+  PortableServer::ServantBase::_add_ref();
+}
+
+void
+PortableServer::ValueRefCountBase::_remove_ref()
+{
+  PortableServer::ServantBase::_remove_ref();
+}
+
+CORBA::ULong
+PortableServer::ValueRefCountBase::_refcount_value()
+{
+  return PortableServer::ServantBase::_refcount_value();
+}
+
+PortableServer::ValueRefCountBase::~ValueRefCountBase() {
 }
 
 

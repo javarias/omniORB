@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.3  2003/11/06 11:56:57  dgrisby
+// Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+//
 // Revision 1.1.2.2  2003/07/10 21:52:31  dgrisby
 // Value chunks should start after URL / repoids.
 //
@@ -497,7 +500,8 @@ void
 cdrValueChunkStream::
 chunkStreamDeclareArrayLength(omni::alignment_t align, size_t size)
 {
-  OMNIORB_ASSERT(!pd_inHeader);
+  if (pd_inHeader)
+    return;
 
   if (!pd_inChunk) {
     // Start a new chunk

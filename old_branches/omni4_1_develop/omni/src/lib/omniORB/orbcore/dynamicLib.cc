@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:18  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.8  2001/11/06 15:41:38  dpg1
   Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -83,23 +86,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //             Configuration options                                      //
 ////////////////////////////////////////////////////////////////////////////
-
-CORBA::Boolean  omniORB::omniORB_27_CompatibleAnyExtraction = 0;
-// In omniORB pre-2.8.0 versions, the CORBA::Any extraction operator for
-//   1. unbounded string operator>>=(char*&)
-//   2. bounded string   operator>>=(to_string)
-//   3. object reference operator>>=(A_ptr&) for interface A
-// Returns a copy of the value. The caller must free the returned
-// value later.
-//
-// With 2.8.0 and later, the semantics becomes non-copy, i.e. the Any
-// still own the storage of the returned value.
-// This would cause problem in programs that is written to use the
-// pre-2.8.0 semantics. To make it easier for the transition,
-// set omniORB_27_CompatibleAnyExtraction to 1.
-// This would revert the semantics to the pre-2.8.0 versions.
-//
-// Valid values = 0 or 1
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -245,35 +231,6 @@ public:
 static diiThrowsSysExceptionsHandler diiThrowsSysExceptionsHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
-class omniORB_27_CompatibleAnyExtractionHandler : public orbOptions::Handler {
-public:
-
-  omniORB_27_CompatibleAnyExtractionHandler() : 
-    orbOptions::Handler("omniORB_27_CompatibleAnyExtraction",
-			"omniORB_27_CompatibleAnyExtraction = 0 or 1",
-			1,
-			"-ORBomniORB_27_CompatibleAnyExtraction < 0 | 1 >") {}
-
-
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
-    CORBA::Boolean v;
-    if (!orbOptions::getBoolean(value,v)) {
-      throw orbOptions::BadParam(key(),value,
-				 orbOptions::expect_boolean_msg);
-    }
-    omniORB::omniORB_27_CompatibleAnyExtraction = v;
-  }
-
-  void dump(orbOptions::sequenceString& result) {
-    orbOptions::addKVBoolean(key(),omniORB::omniORB_27_CompatibleAnyExtraction,
-			     result);
-  }
-};
-
-static omniORB_27_CompatibleAnyExtractionHandler omniORB_27_CompatibleAnyExtractionHandler_;
-
-/////////////////////////////////////////////////////////////////////////////
 class useTypeCodeIndirectionsHandler : public orbOptions::Handler {
 public:
 
@@ -341,7 +298,6 @@ public:
   omni_dynamiclib_initialiser() {
     orbOptions::singleton().registerHandler(tcAliasExpandHandler_);
     orbOptions::singleton().registerHandler(diiThrowsSysExceptionsHandler_);
-    orbOptions::singleton().registerHandler(omniORB_27_CompatibleAnyExtractionHandler_);
     orbOptions::singleton().registerHandler(useTypeCodeIndirectionsHandler_);
     orbOptions::singleton().registerHandler(acceptMisalignedTcIndirectionsHandler_);
   }

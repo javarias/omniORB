@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18.2.2  2004/02/16 10:10:33  dgrisby
+// More valuetype, including value boxes. C++ mapping updates.
+//
 // Revision 1.18.2.1  2003/03/23 21:01:44  dgrisby
 // Start of omniORB 4.1.x development branch.
 //
@@ -423,8 +426,11 @@ setInherited(ValueInheritSpec* inherited, const char* file, int line)
 
       switch (e->kind()) {
       case Entry::E_CALLABLE:
-      case Entry::E_INHERITED:
 	addInherited(e->identifier(), e->scope(), e->decl(), e, file, line);
+	break;
+      case Entry::E_INHERITED:
+	addInherited(e->identifier(), e->scope(), e->decl(), e->inh_from(),
+		     file, line);
 	break;
       default:
 	break;
@@ -1159,11 +1165,11 @@ addInherited(const char* id, Scope* scope, Decl* decl,
 	// It's not clear whether this is OK, but the spec doesn't say
 	// it's definitely illegal
 
-//  	IdlWarning(file, line,
-//  		   "Inherited %s '%s' clashes with interface name '%s'",
-//  		   decl->kindAsString(), id, clash->identifier());
-//  	IdlWarningCont(decl->file(), decl->line(),
-//  		       "(%s '%s' declared here)", decl->kindAsString(), id);
+ 	IdlWarning(file, line,
+ 		   "Inherited %s '%s' clashes with interface name '%s'",
+ 		   decl->kindAsString(), id, clash->identifier());
+ 	IdlWarningCont(decl->file(), decl->line(),
+ 		       "(%s '%s' declared here)", decl->kindAsString(), id);
 	break;
       }
     }

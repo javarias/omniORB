@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2004/07/04 23:53:35  dgrisby
+  More ValueType TypeCode and Any support.
+
   Revision 1.1.2.2  2003/11/06 11:56:55  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -77,7 +80,7 @@ public:
   inline _CORBA_Value_Var() : _pd_val(0) {}
   inline _CORBA_Value_Var(T* p) { _pd_val = p; }
   inline _CORBA_Value_Var(const T_var& p) : _pd_val(p._pd_val) {
-    if (_pd_val) _pd_val->add_ref();
+    if (_pd_val) _pd_val->_add_ref();
   }
   inline _CORBA_Value_Var(const T_member& p);
   inline _CORBA_Value_Var(const T_element& p);

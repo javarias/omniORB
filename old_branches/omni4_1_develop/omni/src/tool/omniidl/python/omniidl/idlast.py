@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.5  2003/11/06 11:56:57  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
 # Revision 1.20.2.4  2003/09/04 14:00:35  dgrisby
 # ValueType IDL updates.
 #
@@ -329,7 +332,8 @@ Functions:
   declarations() -- subset of contents() containing types, constants
                     and exceptions.
   callables()    -- subset of contents() containing Operations and
-                    Attributes."""
+                    Attributes.
+  all_callables()-- callables of this and inherited interfaces."""
 
     def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, scopedName, repoId,
@@ -362,6 +366,16 @@ Functions:
     def contents(self):     return self.__contents
     def declarations(self): return self.__declarations
     def callables(self):    return self.__callables
+    def all_callables(self):
+        r = []
+        # This loop is very inefficient, but the lists should be quite
+        # short.
+        for b in self.__inherits:
+            for c in b.all_callables():
+                if c not in r:
+                    r.append(c)
+        r.extend(self.__callables)
+        return r
 
 
 class Forward (Decl, DeclRepoId):
