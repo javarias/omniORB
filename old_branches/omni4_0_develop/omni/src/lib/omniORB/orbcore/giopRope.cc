@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 18:10:49  sll
+  Big checkin with the brand new internal APIs.
+
   */
 
 
@@ -264,6 +267,16 @@ giopRope::releaseClient(IOP_C* iop_c) {
 
   CORBA::Boolean remove = 0;
   CORBA::Boolean avail = 1;
+
+  if (giop_c->state() != IOP_C::Idle && s->state() != giopStrand::DYING ) {
+    s->state(giopStrand::DYING);
+    if (omniORB::trace(30)) {
+      omniORB::logger l;
+      l << "Unexpected error encountered in talking to the server "
+	<< s->connection->peeraddress()
+	<< " , the connection is closed immediately.\n";
+    }
+  }
 
   if ( s->state()== giopStrand::DYING ) {
     remove = 1;
