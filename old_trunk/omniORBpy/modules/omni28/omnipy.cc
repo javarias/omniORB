@@ -3,6 +3,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  1999/06/07 14:58:45  dpg1
+// Descriptors unflattened again.
+//
 // Revision 1.5  1999/06/07 10:11:18  dpg1
 // Split into separate files.
 //
@@ -25,22 +28,22 @@
 #include <python1.5/Python.h>
 
 #include <omnipy.h>
-#include <pyProxyCallWrapper.h>
 
 #include <iostream.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
-// Pointers to Python objects                                             //
+// Global pointers to Python objects                                      //
 ////////////////////////////////////////////////////////////////////////////
 
-PyObject* pyCORBAmodule;	// The CORBA module
-PyObject* pyCORBAmoduleDict;	//  Its dictionary
-PyObject* pyCORBAsysExcMap;	//  The system exception map
-PyObject* pyomniORBmodule;	// The omniORB module
-PyObject* pyomniORBmoduleDict;	//  Its dictionary
-PyObject* pyomniORBproxyMap;	//  The proxy object class map
-
+PyObject* omniPy::pyCORBAmodule;	// The CORBA module
+PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
+PyObject* omniPy::pyCORBAnilObject;	//  The nil object
+PyObject* omniPy::pyCORBAAnyClass;	//  Any class
+PyObject* omniPy::pyomniORBmodule;	// The omniORB module
+PyObject* omniPy::pyomniORBproxyMap;	//  The proxy object class map
+PyObject* omniPy::pyomniORBtypeMap;     //  The repoId to descriptor mapping
+PyObject* omniPy::pyCreateTypeCode;	// Function to create a TypeCode object
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -48,15 +51,13 @@ PyObject* pyomniORBproxyMap;	//  The proxy object class map
 ////////////////////////////////////////////////////////////////////////////
 
 PyObject*
-createPyCorbaObject(const char* targetRepoId, const CORBA::Object_ptr obj)
+omniPy::createPyCorbaObject(const char* targetRepoId,
+			    const CORBA::Object_ptr obj)
 {
   if (CORBA::is_nil(obj)) {
-    cout << "Obj is nil." << endl;
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_INCREF(pyCORBAnilObject);
+    return pyCORBAnilObject;
   }
-  cout << "Obj is not nil." << endl;
-
   omniObject* oobj = obj->PR_getobj();
 
   if (!oobj->is_proxy()) {
@@ -79,13 +80,13 @@ createPyCorbaObject(const char* targetRepoId, const CORBA::Object_ptr obj)
   }
   if (!proxyClass) {
     // No target type, or stub code bug:
-    proxyClass      = PyDict_GetItemString(pyCORBAmoduleDict, "Object");
+    proxyClass      = PyObject_GetAttrString(pyCORBAmodule, "Object");
     fullTypeUnknown = 1;
   }
 
   assert(proxyClass); // Couldn't even find CORBA.Object!
 
-  PyObject* arglist    = Py_BuildValue("()");
+  PyObject* arglist    = PyTuple_New(0);
   PyObject* pyproxy    = PyEval_CallObject(proxyClass, arglist);
   Py_DECREF(arglist);
 
@@ -97,7 +98,7 @@ createPyCorbaObject(const char* targetRepoId, const CORBA::Object_ptr obj)
 			 "_NP_RepositoryId", idstr);
   }
 
-  setTwin(pyproxy, (CORBA::Object_ptr)obj);
+  omniPy::setTwin(pyproxy, (CORBA::Object_ptr)obj);
 
   cout << "Returning proxy..." << endl;
 
@@ -106,7 +107,7 @@ createPyCorbaObject(const char* targetRepoId, const CORBA::Object_ptr obj)
 
 
 void
-handleSystemException(const CORBA::SystemException& ex)
+omniPy::handleSystemException(const CORBA::SystemException& ex)
 {
   PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
 					ex.NP_RepositoryId());
@@ -152,26 +153,54 @@ extern "C" {
   static PyObject*
   omnipy_registerPyObjects(PyObject* self, PyObject* args)
   {
-    if (!PyArg_ParseTuple(args, "OO", &pyCORBAmodule, &pyomniORBmodule))
+    PyObject* temp;
+
+    if (!PyArg_ParseTuple(args, "O", &omniPy::pyomniORBmodule))
       return NULL;
 
-    if (!PyModule_Check(pyCORBAmodule)) {
-      PyErr_SetString(PyExc_TypeError,
-		      "argument 1: parameter must be a module");
-      return NULL;
-    }
-    if (!PyModule_Check(pyomniORBmodule)) {
-      PyErr_SetString(PyExc_TypeError,
-		      "argument 2: parameter must be a module");
-      return NULL;
-    }
-    pyCORBAmoduleDict = PyModule_GetDict(pyCORBAmodule);
-    pyCORBAsysExcMap  = PyDict_GetItemString(pyCORBAmoduleDict,
-					     "__sysExceptionMapping");
+    assert(PyModule_Check(omniPy::pyomniORBmodule));
 
-    pyomniORBmoduleDict = PyModule_GetDict(pyomniORBmodule);
-    pyomniORBproxyMap   = PyDict_GetItemString(pyomniORBmoduleDict,
-					       "proxyObjectMapping");
+    omniPy::pyCORBAmodule =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule, "CORBA");
+
+    assert(omniPy::pyCORBAmodule && PyModule_Check(omniPy::pyCORBAmodule));
+
+    omniPy::pyCORBAsysExcMap =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule, "sysExceptionMapping");
+
+    temp =
+      PyObject_GetAttrString(omniPy::pyCORBAmodule, "Object");
+
+    omniPy::pyCORBAnilObject =
+      PyObject_GetAttrString(temp, "_nil");
+
+    omniPy::pyCORBAAnyClass =
+      PyObject_GetAttrString(omniPy::pyCORBAmodule, "Any");
+
+    omniPy::pyomniORBproxyMap =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule, "proxyObjectMapping");
+
+    omniPy::pyomniORBtypeMap =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule, "typeMapping");
+
+    temp =
+      PyObject_GetAttrString(omniPy::pyomniORBmodule, "tcInternal");
+
+    omniPy::pyCreateTypeCode =
+      PyObject_GetAttrString(temp, "createTypeCode");
+
+    assert(omniPy::pyCORBAsysExcMap);
+    assert(PyDict_Check(omniPy::pyCORBAsysExcMap));
+    assert(omniPy::pyCORBAnilObject);
+    assert(PyInstance_Check(omniPy::pyCORBAnilObject));
+    assert(omniPy::pyCORBAAnyClass);
+    assert(PyClass_Check(omniPy::pyCORBAAnyClass));
+    assert(omniPy::pyomniORBproxyMap);
+    assert(PyDict_Check(omniPy::pyomniORBproxyMap));
+    assert(omniPy::pyomniORBtypeMap);
+    assert(PyDict_Check(omniPy::pyomniORBtypeMap));
+    assert(omniPy::pyCreateTypeCode);
+    assert(PyFunction_Check(omniPy::pyCreateTypeCode));
 
     cout << "Python objects registered." << endl;
 
@@ -239,7 +268,7 @@ extern "C" {
 
     delete [] argv;
 
-    setTwin(pyorb, orb);
+    omniPy::setTwin(pyorb, orb);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -269,7 +298,9 @@ extern "C" {
       return NULL;
     }
 
-    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)getTwin(pyorb);
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb);
+
+    assert(orb);
 
     argc = PyList_GET_SIZE(pyargv);
     argv = new char*[argc];
@@ -308,7 +339,7 @@ extern "C" {
 
     delete [] argv;
 
-    setTwin(pyboa, boa);
+    omniPy::setTwin(pyboa, boa);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -323,13 +354,13 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "Os", &pyorb, &s))
       return NULL;
 
-    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)getTwin(pyorb);
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb);
 
     CORBA::Object_ptr obj = orb->string_to_object(s);
 
     cout << "Made object." << (unsigned long)obj << endl;
 
-    return createPyCorbaObject(0, obj);
+    return omniPy::createPyCorbaObject(0, obj);
   }
 
 
@@ -384,13 +415,13 @@ extern "C" {
       return 0;
     }
 
-    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)getTwin(pyproxy);
+    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)omniPy::getTwin(pyproxy);
 
     CORBA::Boolean has_exc = (exc_d != Py_None);
 
-    Py_OmniProxyCallDesc call_desc(op, op_len + 1, has_exc,
-				   in_d, out_d, exc_d,
-				   op_args);
+    omniPy::Py_OmniProxyCallDesc call_desc(op, op_len + 1, has_exc,
+					   in_d, out_d, exc_d,
+					   op_args);
     try {
       OmniProxyCallWrapper::invoke(cxxproxy->PR_getobj(), call_desc);
       return call_desc.result();
@@ -411,12 +442,12 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "O", &pyproxy))
       return NULL;
 
-    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)getTwin(pyproxy);
+    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)omniPy::getTwin(pyproxy);
 
     CORBA::release(cxxproxy);
     cout << "Proxy released." << endl;
 
-    remTwin(pyproxy);
+    omniPy::remTwin(pyproxy);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -431,14 +462,14 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "Os", &pyproxy, &repoId))
       return NULL;
 
-    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)getTwin(pyproxy);
+    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)omniPy::getTwin(pyproxy);
 
     try {
       CORBA::Boolean isa = cxxproxy->_is_a(repoId);
       return PyInt_FromLong(isa);
     }
     catch (const CORBA::SystemException& ex) {
-      handleSystemException(ex);
+      omniPy::handleSystemException(ex);
     }
     return 0;
   }
@@ -451,14 +482,14 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "O", &pyproxy))
       return NULL;
 
-    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)getTwin(pyproxy);
+    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)omniPy::getTwin(pyproxy);
 
     try {
       CORBA::Boolean nex = cxxproxy->_non_existent();
       return PyInt_FromLong(nex);
     }
     catch (const CORBA::SystemException& ex) {
-      handleSystemException(ex);
+      omniPy::handleSystemException(ex);
     }
     return 0;
   }
@@ -472,15 +503,15 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "OO", &pyproxy1, &pyproxy2))
       return NULL;
 
-    CORBA::Object_ptr cxxproxy1 = (CORBA::Object_ptr)getTwin(pyproxy1);
-    CORBA::Object_ptr cxxproxy2 = (CORBA::Object_ptr)getTwin(pyproxy2);
+    CORBA::Object_ptr cxxproxy1 = (CORBA::Object_ptr)omniPy::getTwin(pyproxy1);
+    CORBA::Object_ptr cxxproxy2 = (CORBA::Object_ptr)omniPy::getTwin(pyproxy2);
 
     try {
       CORBA::Boolean ise = cxxproxy1->_is_equivalent(cxxproxy2);
       return PyInt_FromLong(ise);
     }
     catch (const CORBA::SystemException& ex) {
-      handleSystemException(ex);
+      omniPy::handleSystemException(ex);
     }
     return 0;
   }
@@ -494,7 +525,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "Oi", &pyproxy, &max))
       return NULL;
 
-    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)getTwin(pyproxy);
+    CORBA::Object_ptr cxxproxy = (CORBA::Object_ptr)omniPy::getTwin(pyproxy);
     CORBA::ULong      h        = cxxproxy->_hash(max);
 
     return PyInt_FromLong(h);
@@ -510,7 +541,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args, "Os", &pysource, &repoId))
       return NULL;
 
-    CORBA::Object_ptr cxxsource = (CORBA::Object_ptr)getTwin(pysource);
+    CORBA::Object_ptr cxxsource = (CORBA::Object_ptr)omniPy::getTwin(pysource);
 
     omniObject* oosource = cxxsource->PR_getobj();
 
@@ -521,7 +552,7 @@ extern "C" {
     CORBA::Object_ptr cxxdest =
       (CORBA::Object_ptr)(oodest->_widenFromTheMostDerivedIntf(0));
 
-    return createPyCorbaObject(repoId, cxxdest);
+    return omniPy::createPyCorbaObject(repoId, cxxdest);
   }
 
 
@@ -555,10 +586,11 @@ extern "C" {
 
   void init_omnipy()
   {
-    cout << "init_omnipy() called." << endl;
     PyObject *m  = Py_InitModule("_omnipy", omnipy_methods);
     PyObject *d = PyModule_GetDict(m);
-    PyDict_SetItemString(d, "omnipyTwinType", (PyObject*)&omnipyTwinType);
+    PyDict_SetItemString(d, "omnipyTwinType",
+			 (PyObject*)&omniPy::omnipyTwinType);
+
     cout << "_omnipy initialised." << endl;
   }
 }
