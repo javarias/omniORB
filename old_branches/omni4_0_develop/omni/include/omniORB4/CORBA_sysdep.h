@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.10  2001/06/15 10:23:40  sll
+ Added wchar size for HPUX.
+
  Revision 1.2.2.9  2001/06/08 17:12:08  dpg1
  Merge all the bug fixes from omni3_develop.
 
@@ -494,7 +497,7 @@
 #elif defined(__sunos__) && defined(__sparc__)
 # define _OMNIORB_HOST_BYTE_ORDER_ 0
 # define _HAS_SIGNAL 1
-# if __OSVERSION__ == 5
+# if __OSVERSION__ == 5 && (!defined(__GNUG__) || __GNUG__ < 3)
 #  define NEED_GETHOSTNAME_PROTOTYPE
 # endif
 #elif defined(__x86__)
