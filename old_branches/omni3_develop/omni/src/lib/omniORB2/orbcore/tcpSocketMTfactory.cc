@@ -29,6 +29,14 @@
 
 /*
   $Log$
+  Revision 1.22.6.17  2000/08/10 10:10:56  sll
+  For those platforms which cannot be unblocked from a recv() by a
+  shutdown(), now do poll() or select() for both incoming and outgoing
+  strands.  This is necessary especialy for win32 or else the server side
+  socket will not shutdown until the client side close the socket. This
+  wasn't done previously as it was thought that shutdown() does have an
+  effect on recv() if this is a passive socket. This turns out to be wrong.
+
   Revision 1.22.6.16  2000/08/08 15:22:17  sll
   In realConnect(), now checks the exception fd_set in the select() call for an
   error condition. This is necessary because win32 differs from other
@@ -319,6 +327,10 @@ extern "C" int gethostname(char *name, int namelen);
 #define send(a,b,c,d) tcpSocketVaxSend(a,b,c,d)
 #endif
 
+#ifdef __rtems__
+extern "C" 
+int select (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *tv);
+#endif
 
 #define PTRACE(prefix,message)  \
   omniORB::logs(15, "tcpSocketMTfactory " prefix ": " message)
