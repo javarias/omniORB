@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/03/02 12:10:49  dgrisby
+  setSelectable / Peek fixes.
+
   Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -361,6 +364,7 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 /////////////////////////////////////////////////////////////////////////
 sslConnection::~sslConnection() {
 
+  clearSelectable();
   pd_belong_to->removeSocket(this);
 
   if(pd_ssl != 0) {
