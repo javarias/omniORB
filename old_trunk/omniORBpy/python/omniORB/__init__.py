@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.19  2000/06/01 11:10:30  dme
+# add omniORB.WorkerThread create/delete hooks (e.g. for profiling)
+#
 # Revision 1.18  2000/04/06 09:31:43  dpg1
 # newModule() spots if we're trying to re-open the CORBA module, and if
 # so uses omniORB.CORBA.
@@ -248,6 +251,7 @@ runtime creates any "WorkerThread"s.
 
 # ORB:
 orb_lock = threading.Lock()
+orb_cond = threading.Condition(orb_lock)
 orb      = None
 
 # Maps for object reference classes and IDL-defined types:

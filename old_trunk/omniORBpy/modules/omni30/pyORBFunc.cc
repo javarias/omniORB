@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  2000/05/26 15:33:32  dpg1
+// Python thread states are now cached. Operation dispatch time is
+// roughly halved!
+//
 // Revision 1.5  2000/04/28 15:31:05  dpg1
 // Accidentally broke resolve_initial_references() for pseudo objects.
 //
@@ -52,6 +56,7 @@
 
 #include <omnipy.h>
 #include <common/pyThreadCache.h>
+#include <initialiser.h>
 
 extern "C" {
 
@@ -188,11 +193,8 @@ extern "C" {
     try {
       omniPy::InterpreterUnlocker _u;
       orb->shutdown(wait);
-      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
-
-    omnipyThreadCache::shutdown();
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -211,7 +213,6 @@ extern "C" {
     try {
       omniPy::InterpreterUnlocker _u;
       orb->destroy();
-      omnipyThreadCache::shutdown();
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
@@ -237,9 +238,24 @@ extern "C" {
   };
 }
 
+
+class omni_python_initialiser : public omniInitialiser {
+public:
+  void attach() { }
+  void detach() {
+    omnipyThreadCache::shutdown();
+    delete this;
+  }
+};
+
+
+
 void
 omniPy::initORBFunc(PyObject* d)
 {
   PyObject* m = Py_InitModule((char*)"_omnipy.orb_func", pyORB_methods);
   PyDict_SetItemString(d, (char*)"orb_func", m);
+
+  omni_python_initialiser* init = new omni_python_initialiser();
+  omniInitialiser::install(init);
 }
