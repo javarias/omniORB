@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  1999/11/25 11:21:36  dpg1
+# Proper support for server-side _is_a().
+#
 # Revision 1.10  1999/11/19 11:03:49  dpg1
 # Extremely important spelling correction in a comment. :-)
 #
@@ -95,7 +98,7 @@ import omniORB, _omnipy
 from omniORB import CORBA, PortableServer
 _0_CORBA = CORBA
 
-_omnipy.checkVersion(0,1, __file__)
+_omnipy.checkVersion(0,2, __file__)
 """
 
 file_end = """\
