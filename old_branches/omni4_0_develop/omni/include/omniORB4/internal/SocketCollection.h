@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/03/13 16:05:38  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.1.2.8  2002/02/26 14:06:44  dpg1
   Recent changes broke Windows.
 
@@ -82,6 +87,10 @@
 #       define USE_POLL
 #   endif
 #   define USE_FAKE_INTERRUPTABLE_RECV
+#endif
+
+#if defined(__freebsd__)
+#  define USE_POLL
 #endif
 
 #if defined(__WIN32__)
