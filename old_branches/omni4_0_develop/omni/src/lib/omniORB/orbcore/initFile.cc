@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.32.2.1  2000/07/17 10:35:54  sll
+  Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
   Revision 1.33  2000/07/13 15:25:57  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -133,15 +136,13 @@
 //
   */
 
-#include <omniORB3/CORBA.h>
-#include <omniORB3/Naming.hh>
+#include <omniORB4/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
 #endif
 
 #include <initFile.h>
-#include <omniORB3/omniObjRef.h>
 #include <initRefs.h>
 #include <gatekeeper.h>
 #include <initialiser.h>
@@ -497,7 +498,7 @@ int initFile::getnextentry(CORBA::String_var& entryname,
     }
   while (!isspace(fData[currpos]));
 
-  entryname = omni::allocString(currpos-startpos);
+  entryname = _CORBA_String_helper::alloc(currpos-startpos);
   strncpy(entryname,(fData+startpos),(currpos-startpos));
   ((char*)entryname)[currpos-startpos] = '\0';
 
@@ -528,7 +529,7 @@ int initFile::getnextentry(CORBA::String_var& entryname,
   if (startpos == currpos)
     parseerr();
 
-  data = omni::allocString(currpos - startpos);
+  data = _CORBA_String_helper::alloc(currpos - startpos);
   strncpy(data,(fData+startpos),(currpos-startpos));
   ((char*)data)[currpos-startpos] = '\0';
 
@@ -547,8 +548,8 @@ int initFile::getRegistryEntry(CORBA::String_var& entryname,
   DWORD dataType;
   DWORD init_ValLen = init_maxValLen+1;
   DWORD init_DataLen = init_maxDataLen+1;
-  entryname = omni::allocString(init_ValLen);
-  data      = omni::allocString(init_DataLen);
+  entryname = _CORBA_String_helper::alloc(init_ValLen);
+  data      = _CORBA_String_helper::alloc(init_DataLen);
 
   if (RegEnumValue(init_hkey,curr_index++,(LPTSTR) ((char*)entryname),
 		   &init_ValLen,NULL,
