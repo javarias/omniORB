@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.7  1997/12/09 20:42:25  sll
+ Updated sequence array templates.
+
  Revision 1.6  1997/08/21 22:21:56  sll
  New templates to support sequence of array.
 
@@ -77,7 +80,7 @@ public:
 		pd_len(s.pd_len),
 		pd_rel(1)
   {
-    if (!(pd_buf = allocbuf(s.pd_len))) {
+    if (!(pd_buf = allocbuf(s.pd_max))) {
       _CORBA_new_operator_return_null();
       // never reach here
     }
