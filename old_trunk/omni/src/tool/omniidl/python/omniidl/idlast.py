@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/11/15 15:49:23  dpg1
+# Documentation strings.
+#
 # Revision 1.8  1999/11/11 15:55:30  dpg1
 # Python back-end interface now supports valuetype declarations.
 # Back-ends still don't support them, though.
@@ -433,7 +436,7 @@ class CaseLabel (Decl):
 
 Functions:
 
-  default()   -- boolean: true is this is the default label.
+  default()   -- boolean: true if this is the default label.
   value()     -- label value. Either an integer or an Enumerator
                  object. If default() is true, returns a value used by
                  none of the other union labels.
@@ -938,6 +941,11 @@ strings. Raises DeclNotFound if the name is not recognised."""
         raise DeclNotFound(scopedName)
     
     return declMap[sname]
+
+
+def clear():
+    """Clear back-end structures ready for another run"""
+    declMap.clear()
 
 
 # Declarations of non-basic `built-in' types
