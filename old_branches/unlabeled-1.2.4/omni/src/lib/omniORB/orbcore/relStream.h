@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2  1999/03/11 16:25:55  djr
+ Updated copyright notice
+
  Revision 1.1  1997/12/09 18:43:16  sll
  Initial revision
 
@@ -70,7 +73,7 @@ public:
   void reserve_and_copy(Strand::sbuf b,CORBA::Boolean transmit=0,
 			CORBA::Boolean endMTU=0);
 
-  virtual void shutdown() = 0;
+  virtual void real_shutdown() = 0;
   virtual void ll_send(void* buf,size_t sz) = 0;
   virtual size_t ll_recv(void* buf,size_t sz) = 0;
 

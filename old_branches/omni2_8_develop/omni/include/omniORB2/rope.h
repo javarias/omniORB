@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.11  1999/08/30 16:55:43  sll
+  Replaced WrTestLock and heartbeat in WrLock with clicksDecrAndGet,
+  clicksGet and clicksSet.
+
   Revision 1.10  1999/07/02 19:17:33  sll
   Removed inlined virtual dtor. Some compilers generate a copy of the
   dtor per compilation unit.
@@ -321,7 +325,7 @@ public:
   // from those returned in previous calls. A client may use this number
   // to tag the messages sent via a strand.
 
-  virtual void shutdown() = 0;
+  void shutdown();
   // Concurrency Control:
   //    MUTEX = pd_rope->pd_lock
   // Pre-condition:
@@ -332,6 +336,18 @@ public:
   // Signal to any thread currently using this strand to give up because
   // this strand is being shut down.
   // Never returns an exception and never blocks
+
+  virtual void real_shutdown() = 0;
+  // Concurrency Control:
+  //      None
+  //
+  // This helper function is provided by the strand implementation to 
+  // change the state of the network connection to "shutdown". In other
+  // words, any future OS calls to send or receive via the connection
+  // would return an error.
+  // Notice that this function may be called by one thread while another
+  // is blocking on a receive or a send on the network connection.
+
 
   void incrRefCount(_CORBA_Boolean held_rope_mutex = 0);
   // Concurrency Control:
@@ -541,6 +557,9 @@ private:
   int		  pd_refcount;
   _CORBA_ULong    pd_seqNumber;
   int             pd_clicks;
+
+public:
+  Strand         *pd_ripper_next;
 
   // Make the default constructor private. This traps at compile time
   // any attempt to allocate an array of objects using the new operator.

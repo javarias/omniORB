@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4  1999/05/25 18:10:46  sll
+  Now CORBA::ORB::ObjectIdList and CORBA_InitialReference::ObjIdList
+  are different types.
+
   Revision 1.3  1999/03/11 16:25:51  djr
   Updated copyright notice
 
@@ -50,7 +54,7 @@
 class CORBA_InitialReferences_i;
 
 class omniInitialReferences {
- public:
+public:
   void set(const char* identifier,CORBA::Object_ptr obj);
   CORBA::Object_ptr get(const char* identifier);
   CORBA_InitialReferences::ObjIdList* list();
@@ -61,7 +65,13 @@ class omniInitialReferences {
   void initialise_bootstrap_agent(const char* host,CORBA::UShort port);
 
   static omniInitialReferences* singleton();
- private:
+
+  ~omniInitialReferences();
+
+protected:
+  omniInitialReferences();
+
+private:
 
   // pd_bootagent is the object reference to the initialisation agent
   // from which we can get initial object references for services such
@@ -88,7 +98,6 @@ class omniInitialReferences {
 
   _CORBA_Unbounded_Sequence< serviceRecord > pd_serviceList;
 
-  omniInitialReferences();
   omniInitialReferences(const omniInitialReferences&);
   omniInitialReferences& operator=(const omniInitialReferences&);
 };

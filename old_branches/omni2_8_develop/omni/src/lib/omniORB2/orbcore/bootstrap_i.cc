@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.9  1999/08/16 19:23:21  sll
+  Replace static variable dtor with initialiser object to enumerate the
+  list of initial object reference on shutdown.
+  This new scheme avoids the problem that dtor of static variables on
+  different compilation units may be called in different order.
+
   Revision 1.8  1999/05/25 17:24:39  sll
   CORBA::ORB::ObjectIdList and CORBA_InitialReferences::ObjIdList are
   now different types. Previously they are the same template type instance.
@@ -245,6 +251,10 @@ omniInitialReferences::singleton()
   return _singleton;
 }
 
+omniInitialReferences::~omniInitialReferences()
+{
+  if (pd_bootagentImpl) pd_bootagentImpl->_dispose();
+}
 
 void
 _omni_set_NameService(CORBA::Object_ptr ns)
@@ -264,23 +274,9 @@ public:
 
   void detach() {
 
-    if( !_singleton || omniORB::traceLevel < 15 )  return;
-
-    CORBA_InitialReferences::ObjIdList* list = _singleton->list();
-
-    omniORB::log << "omniORB: Initial references:\n";
-
-    for( CORBA::ULong i = 0; i < list->length(); i++ ) {
-      const char* name = (*list)[i];
-      CORBA::Object_var obj(_singleton->get(name));
-      CORBA::String_var sref(omni::objectToString(obj->PR_getobj()));
-      omniORB::log <<
-	"  Name  : " << name << "\n"
-	"  IR ID : " << obj->PR_getobj()->NP_IRRepositoryId() << "\n"
-	"  ObjRef: " << (char*)sref << "\n";
-    }
-
-    omniORB::log.flush();
+    if (!_singleton) return;
+    delete _singleton;
+    _singleton = 0;
   }
 };
 

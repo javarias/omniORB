@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13  1999/08/30 18:55:29  sll
+  Added ENABLE_CLIENT_IR_SUPPORT.
+
   Revision 1.12  1999/08/30 16:53:16  sll
   New option -BOAhelp.
 
@@ -281,7 +284,7 @@ BOA::impl_is_ready(CORBA::ImplementationDef_ptr p,CORBA::Boolean NonBlocking)
 	factory->startIncoming();
       }
     }
-    StrandScavenger::initInScavenger();
+    StrandScavenger::addRopeFactories(rootObjectManager->incomingRopeFactories());
   }
   if (!NonBlocking) {
     while (internalBlockingFlag > 0) {
@@ -316,7 +319,6 @@ BOA::impl_shutdown()
 	factory->stopIncoming();
       }
     }
-    StrandScavenger::killInScavenger();
     while (internalBlockingFlag) {
       internalCond.signal();
       internalBlockingFlag--;
@@ -344,7 +346,7 @@ BOA::destroy()
     }
   }
   if (internalBlockingFlag > 0) {
-    StrandScavenger::killInScavenger();
+    StrandScavenger::removeRopeFactories(rootObjectManager->incomingRopeFactories());
     while (internalBlockingFlag) {
       internalCond.signal();
       internalBlockingFlag--;

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.9  1999/08/16 19:26:56  sll
+ Added a per-compilation unit initialiser object.
+
  Revision 1.8  1999/08/14 16:38:53  sll
  Changed as locateObject no longer throws an exception when the object is
  not found.
@@ -63,6 +66,7 @@
 #endif
 
 #include <ropeFactory.h>
+#include <scavenger.h>
 #include <objectManager.h>
 #ifndef __atmos__
 #include <tcpSocket.h>
@@ -210,9 +214,12 @@ public:
     // Initialise a giopServerThreadWrapper singelton
     omniORB::giopServerThreadWrapper::setGiopServerThreadWrapper(
        new omniORB::giopServerThreadWrapper);
+
+    StrandScavenger::addRopeFactories(globalOutgoingRopeFactories);
   }
 
   void detach() {
+    StrandScavenger::removeRopeFactories(globalOutgoingRopeFactories);
   }
 };
 

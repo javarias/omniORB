@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5  1999/07/09 21:04:29  sll
+ Added private data member in tcpSocketMTincomingFactory.
+
  Revision 1.4  1999/03/11 16:25:57  djr
  Updated copyright notice
 
@@ -191,7 +194,7 @@ public:
   // Post-condition:
   //    Still hold <MUTEX> on exit
 
-  void shutdown();
+  void real_shutdown();
   void ll_send(void* buf,size_t sz);
   size_t ll_recv(void* buf,size_t sz);
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22  1999/09/01 12:57:26  djr
+  Added atomic logging class omniORB::logger, and methods logf() and logs().
+
   Revision 1.21  1999/08/30 16:56:19  sll
   New API members: omniORB::scanGranularity and omniORB::callTimeOutPeriod.
 
@@ -289,8 +292,6 @@ _CORBA_MODULE_BEG
 
 
   ////////////////////////////////////////////////////////////////////////
-  enum scanType { scanOutgoing, scanIncoming };                         //
-  //                                                                    //
   // The granularity at which the ORB scan for idle connections or	//
   // stuck remote calls can be changed by scanGranularity().            //
   // This value determines the minimum value that      	       	        //
@@ -300,14 +301,13 @@ _CORBA_MODULE_BEG
   // both scan for idle connections or stuck remote calls are disabled  //
   // as well.                                                           //
   //                                                                    //
-  _CORBA_MODULE_FN void scanGranularity(scanType direction,
-                                        CORBA::ULong sec);              //
+  _CORBA_MODULE_FN void scanGranularity(CORBA::ULong sec);              //
   // Note: This function is *non-thread safe*!!! The behaviour of       //
   //       concurrent calls to this function is undefined.              //
   //                                                                    //
   // CORBA::ULong scanGranularity()                                     //
   //   Returns the current timeout value                                //
-  _CORBA_MODULE_FN CORBA::ULong scanGranularity(scanType direction);    //
+  _CORBA_MODULE_FN CORBA::ULong scanGranularity();                      //
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3  1999/08/30 16:47:46  sll
+  New member functions.
+
   Revision 1.2  1999/03/11 16:25:56  djr
   Updated copyright notice
 
@@ -40,15 +43,13 @@
 #ifndef __SCAVENGER_H__
 #define __SCAVENGER_H__
 
+class ropeFactoryList;
+
 class StrandScavenger {
 public:
-  static void initInScavenger();
-  static void pokeInScavenger();
-  static void killInScavenger();
 
-  static void initOutScavenger();
-  static void pokeOutScavenger();
-  static void killOutScavenger();
+  static void addRopeFactories(ropeFactoryList* l);
+  static void removeRopeFactories(ropeFactoryList* l);
 
   static int clientCallTimeLimit();
   // This number determines how long the ORB is prepare to wait before
