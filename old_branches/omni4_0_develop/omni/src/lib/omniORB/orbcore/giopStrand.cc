@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/08/24 15:21:13  sll
+  Corrected a bug in the conversion from {in,out}ConScanPeriod to idleclicks.
+
   Revision 1.1.4.7  2001/08/21 11:02:15  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -281,6 +284,7 @@ giopStrand::deleteStrandAndConnection(CORBA::Boolean forced)
 	<< (isClient() ? " to " : " from ")
 	<< (const char*)peeraddr << "\n";
   }
+  pd_state = DYING;     // satisfy the invariant in the dtor.
   delete this;
 }
 
