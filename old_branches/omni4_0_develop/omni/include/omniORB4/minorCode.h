@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2002/11/22 18:11:58  dgrisby
+  Correct COMM_FAILURE minor code check.
+
   Revision 1.1.4.13  2002/02/26 14:08:34  dpg1
   Minor codes for omniORBpy.
 
@@ -192,6 +195,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_106 OMNIORBMinorCode(106)
 #define OMNIORBMinorCode_107 OMNIORBMinorCode(107)
 #define OMNIORBMinorCode_108 OMNIORBMinorCode(108)
+#define OMNIORBMinorCode_109 OMNIORBMinorCode(109)
 
 #define COMMA ,
 #define DeclareValue(name,value) name = value
@@ -274,7 +278,8 @@ code( BAD_PARAM_PythonValueOutOfRange	     , OMNIORBMinorCode_95 ) sep \
 code( BAD_PARAM_EmbeddedNullInPythonString   , OMNIORBMinorCode_96 ) sep \
 code( BAD_PARAM_StringIsTooLong              , OMNIORBMinorCode_100 ) sep \
 code( BAD_PARAM_SequenceIsTooLong            , OMNIORBMinorCode_101 ) sep \
-code( BAD_PARAM_WrongUnionMemberSelected     , OMNIORBMinorCode_107 )
+code( BAD_PARAM_WrongUnionMemberSelected     , OMNIORBMinorCode_107 ) sep \
+code( BAD_PARAM_InvalidFixedPointLimits      , OMNIORBMinorCode_109 )
 
 
 enum BAD_PARAM_minor {
