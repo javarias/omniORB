@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.18  2000/08/17 15:37:52  sll
+  Merged RTEMS port.
+
   Revision 1.22.6.17  2000/08/10 10:10:56  sll
   For those platforms which cannot be unblocked from a recv() by a
   shutdown(), now do poll() or select() for both incoming and outgoing
@@ -999,7 +1002,7 @@ tcpSocketStrand::ll_recv(void* buf, size_t sz)
     fds.fd = pd_socket;
     fds.events = POLLIN;
 
-    while (!(rx = poll(&fds,1,omniORB::scanGranularity()*1000) > 0)) {
+    while ((rx = poll(&fds,1,omniORB::scanGranularity()*1000)) <= 0) {
       if (rx == RC_SOCKET_ERROR && errno != EINTR) 
 	break;
     }
