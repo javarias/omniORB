@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.27  1999/05/25 17:00:31  sll
+  Added new variable INTERFACE_REPOSITORY in the config file.
+
   Revision 1.26  1999/03/11 16:25:53  djr
   Updated copyright notice
 
@@ -86,6 +89,7 @@
   */
 
 #include <omniORB2/CORBA.h>
+#include <omniORB2/Naming.hh>
 
 #ifdef HAS_pch
 #pragma hdrstop
