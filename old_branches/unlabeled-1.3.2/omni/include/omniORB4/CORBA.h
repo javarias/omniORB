@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.3.2.1  2000/08/04 17:10:23  dpg1
+ Long long support
+
  Revision 1.3  2000/07/13 15:26:06  dpg1
  Merge from omni3_develop for 3.0 release.
 
@@ -1788,9 +1791,13 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_Object;
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_string;
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_NamedValue;
+#ifdef HAS_LongLong
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_longlong;
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_ulonglong;
+#endif
+#ifdef HAS_LongDouble
   _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_longdouble;
+#endif
 
 
   //////////////////////////////////////////////////////////////////////
@@ -1851,7 +1858,7 @@ _CORBA_MODULE_BEG
     virtual void insert_ushort(UShort value) = 0;
     virtual void insert_long(Long value) = 0;
     virtual void insert_ulong(ULong value) = 0;
-#ifdef HAS_LongDouble
+#ifdef HAS_LongLong
     virtual void insert_longlong(LongLong value) = 0;
     virtual void insert_ulonglong(ULongLong value) = 0;
 #endif
