@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.18  2003/07/02 11:01:05  dgrisby
+  Race condition in POA destruction.
+
   Revision 1.16.2.17  2003/02/17 02:03:08  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -511,6 +514,8 @@ omniOrbBOA::destroy()
     entry->setDead();
     entry = next;
   }
+
+  omni::internalLock->unlock();
 
   // Wait for objects which have been detached to complete
   // their etherealisations.
