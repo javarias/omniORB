@@ -5,6 +5,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/07/29 14:20:44  dpg1
+// Oneway support. Exception handling modified.
+//
 // Revision 1.6  1999/07/19 16:49:32  dpg1
 // Recursive marshalling functions moved out of proxy call class into
 // omniPy module so the can be shared with the server-side.
@@ -89,7 +92,7 @@ omniPy::Py_OmniProxyCallDesc::userException(GIOP_C&     giop_client,
   PyEval_RestoreThread(tstate_);
   tstate_ = 0;
 
-  PyObject* d_o = PyDict_GetItemString(exc_d_, repoId);
+  PyObject* d_o = PyDict_GetItemString(exc_d_, (char*)repoId);
 
   if (d_o) { // class, repoId, exc name, name, descriptor, ...
 

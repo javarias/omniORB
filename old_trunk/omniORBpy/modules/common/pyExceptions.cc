@@ -3,6 +3,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1  1999/07/29 14:18:58  dpg1
+// Initial revision
+//
 
 #include <omnipy.h>
 
@@ -13,7 +16,7 @@ void
 omniPy::handleSystemException(const CORBA::SystemException& ex)
 {
   PyObject* excc = PyDict_GetItemString(pyCORBAsysExcMap,
-					ex.NP_RepositoryId());
+					(char*)ex.NP_RepositoryId());
 
   PyObject* exca = Py_BuildValue("(ii)", ex.minor(), ex.completed());
   PyObject* exci = PyEval_CallObject(excc, exca);
