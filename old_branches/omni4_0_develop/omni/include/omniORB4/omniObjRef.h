@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/05/10 15:08:37  dpg1
+  _compatibleServant() replaced with _localServantTarget().
+  createIdentity() now takes a target string.
+  djr's fix to deactivateObject().
+
   Revision 1.2.2.5  2001/04/18 17:50:43  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -290,8 +295,12 @@ protected:
   // in the public interface.
 
   omniObjRef(const char* intfRepoId, omniIOR* ior,
-	     omniIdentity* id, omniLocalIdentity* lid);
+	     omniIdentity* id, omniLocalIdentity* lid,
+	     _CORBA_Boolean static_repoId = 0);
   // Constructed with an initial ref count of 1.
+  // If static_repoId is true, assumes that the intfRepoId string
+  // will remain valid for the entire life time of the objref, meaning
+  // that there is no need to copy it.
 
   void _locateRequest();
   // Issues a GIOP LocateRequest.  Throws OBJECT_NOT_EXIST, or
@@ -402,6 +411,10 @@ private:
     unsigned system_exception_handler    : 1;
     // True if a per-object exception handler has been installed
     // for this reference.
+
+    unsigned static_repoId               : 1;
+    // True if pd_intfRepoId is static and should not be deleted when
+    // this objref is destroyed.
 
   } pd_flags;
   // Mutable.  Protected by <omni::internalLock>.
