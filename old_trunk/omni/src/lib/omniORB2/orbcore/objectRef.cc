@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.12  1997/12/10 11:39:19  sll
+  Updated life cycle runtime.
+
   Revision 1.11  1997/12/09 17:17:59  sll
   Updated to use the rope factory interfaces.
   Full support for late binding.
@@ -50,7 +53,6 @@
 #include <omniORB2/CORBA.h>
 #include <omniORB2/proxyFactory.h>
 #include <ropeFactory.h>
-#include <omniORB2/omniLC.h>
 
 // The points to note are:
 //
@@ -575,7 +577,7 @@ omniObject::globalInit()
     omniObject::localObjectTable[i] = 0;
 
   omniObject::wrappedObjectTable = (void **)
-    (new omniLC::_wrap_proxy *[omniORB::hash_table_size]);
+    (new void *[omniORB::hash_table_size]);
 
   for (i=0; i<omniORB::hash_table_size; i++)
     omniObject::wrappedObjectTable[i] = 0;
