@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16  1999/12/14 17:38:13  djs
+# Fixed anonymous sequences of sequences bug
+#
 # Revision 1.15  1999/12/14 11:53:57  djs
 # Support for CORBA::TypeCode and CORBA::Any
 #
@@ -696,7 +699,11 @@ def valueString(type, value, environment):
        type.kind() == idltype.tk_ulong     or \
        type.kind() == idltype.tk_ulonglong:
         #return str(repr(value))
-        return str(int(eval(str(value))))
+        s = str(value)
+        if s[-1] == 'L':
+            return s[0:-1]
+        return s
+        #return str(int(eval(str(value))))
     if type.kind() == idltype.tk_float     or \
        type.kind() == idltype.tk_double:
         return str(value)
