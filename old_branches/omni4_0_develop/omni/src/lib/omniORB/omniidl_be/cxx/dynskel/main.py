@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.9  2001/10/29 17:42:38  dpg1
+# Support forward-declared structs/unions, ORB::create_recursive_tc().
+#
 # Revision 1.14.2.8  2001/08/22 13:29:47  dpg1
 # Re-entrant Any marshalling.
 #
@@ -193,7 +196,8 @@ def initSymbols():
                   "_0RL_buildDesc_cTypeCode",
                   "_0RL_buildDesc_clonglong",
                   "_0RL_buildDesc_cunsigned_plonglong",
-                  "_0RL_buildDesc_cfixed"]:
+                  "_0RL_buildDesc_cfixed",
+                  "_0RL_buildDesc_clongdouble"]:
         defineSymbol(name)
 
 def defineSymbol(name):

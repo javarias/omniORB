@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.7  2001/11/13 15:23:52  dpg1
+# Bug in forward declared structs/unions.
+#
 # Revision 1.15.2.6  2001/10/29 17:42:42  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -146,7 +149,7 @@ name_map = {
     idltype.tk_ulonglong:   "unsigned_plonglong",
     idltype.tk_float:       "float",
     idltype.tk_double:      "double",
-    idltype.tk_longdouble:  "long_pdouble",
+    idltype.tk_longdouble:  "longdouble",
     idltype.tk_char:        "char",
     idltype.tk_wchar:       "wchar",
     idltype.tk_boolean:     "boolean",
