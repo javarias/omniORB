@@ -11,6 +11,11 @@
 
 /*
   $Log$
+ * Revision 1.2  1997/01/09  10:08:36  ewc
+ * Fixed minor bug where omniObjectKey was declared as class, but defined
+ * as struct.
+ * Added support for ATMos
+ *
   Revision 1.1  1996/10/15 08:57:18  sll
   Initial revision
 
@@ -127,9 +132,17 @@ public:
 				   const char *targetRepoId,
 				   IOP::TaggedProfileList *profiles,
 				   _CORBA_Boolean release);
-  // Returns an object pointer identified by <repoId> and <profiles>.
+  // Returns an object pointer identified by <mostDerivedRepoId> & <profiles>.
   // If release is TRUE, the returned object assumes resposibility of
   // the heap allocated <profiles>.
+  // <mostDerivedRepoId> is the interface repository ID recorded in the
+  // original IOR.
+  // <targetRepoId> is the interface repository ID of the desired interface.
+  // If <targetRepoId> is neither equal to <mostDerivedRepoId> nor the
+  // latter is a derived interface of the former, a CORBA::MARSHAL exception
+  // would be raised.
+  // If <targetRepoId> == 0, then the desired interface is the pseudo object
+  // CORBA::Object from which all interfaces derived.
   
   static void  orbIsReady();
   static size_t MaxMessageSize();
