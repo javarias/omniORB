@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  2000/03/03 14:29:15  djr
+ Improvement to BOA skeletons (less generated code).
+
  Revision 1.1.2.5  1999/10/21 11:04:59  djr
  Added _core_attr to declarations of _PD_repoId in interfaces.
 
@@ -833,7 +836,6 @@ _CORBA_MODULE_BEG
       return _downcast(e);
     }
 
-  protected:
     inline SystemException() {
       pd_minor = 0;
       pd_status = COMPLETED_NO;
@@ -853,6 +855,7 @@ _CORBA_MODULE_BEG
       return *this;
     }
 
+  protected:
     ULong             pd_minor;
     CompletionStatus  pd_status;
 
