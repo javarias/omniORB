@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/04/19 09:14:14  sll
+  Scoped where appropriate with the omni namespace.
+
   Revision 1.2.2.4  2000/10/09 16:26:28  sll
   Temporary disable IR support.
 
@@ -53,6 +56,9 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/callDescriptor.h>
 #include <dynamicLib.h>
+#include <omniORB4/linkHacks.h>
+
+OMNI_EXPORT_LINK_FORCE_SYMBOL(dynamicLib);
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -69,8 +75,6 @@ static omniDynamicLib dynamic_ops = {
   marshal_context,
   lookup_id_lcfn
 };
-
-char omniDynamicLib::link_in = '\0';
 
 // Static constructor to initialise omniDynamicLib::hook.
 struct omniDynamicLib_initialiser {
