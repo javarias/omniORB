@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.11  1998/05/20 18:24:06  sll
+  New option (-t) enable the generation of tie implementation template.
+
   Revision 1.10  1998/04/07 18:50:29  sll
   Use std::fstream instead of fstream.
   Stub code modified to accommodate the use of namespace to represent module.
@@ -250,7 +253,7 @@ o2be_root::produce_skel(std::fstream &skel)
   // Do not forget to update the version number in omniORB_x_y below.
   // The variable is defined in omniInternal.h.
   skel << "static const char* _0RL_library_version = "
-       << "omniORB_2_5" 
+       << "omniORB_2_6" 
        << ";\n\n" << std::endl;
 
   if (idl_global->indent() == NULL)
