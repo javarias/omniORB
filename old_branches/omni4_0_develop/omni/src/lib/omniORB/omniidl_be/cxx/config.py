@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.14.2.5  2001/11/08 16:33:51  dpg1
+# Local servant POA shortcut policy.
+#
 # Revision 1.14.2.4  2001/06/08 17:12:11  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -119,7 +122,7 @@ class ConfigurationState:
             'Shortcut':              0,
 
             # Are we in DEBUG mode?
-            'Debug':                 1
+            'Debug':                 0
                        
             }
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.3  2001/06/08 17:12:14  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.14.2.2  2000/10/12 15:37:49  sll
 # Updated from omni3_1_develop.
 #
@@ -157,16 +160,17 @@ def fatalError(explanation):
     
     lines = string.split(explanation, "\n")
     lines = [ "Fatal error in C++ backend", "" ] + lines
-    lines = lines + [ "Debug mode is currently off" ]
 
     for line in lines:
         sys.stderr.write("omniidl: " + line + "\n")
 
     sys.stderr.write("""\
 
-For more information (mailing list archives, bug reports etc) please visit
+For more information (mailing list archives, bug reports etc.) please visit
 the webpage:
-  http://www.uk.research.att.com/omniORB/omniORB.html
+
+  http://omniorb.sourceforge.net/
+
 """)
     sys.exit(1)
 
@@ -178,7 +182,7 @@ def unsupportedIDL():
 Unsupported IDL construct encountered in input.
 
 omniORB does not currently support:
-  IDL types longdouble, wchar, wstring, fixed, valuetype
+  IDL type valuetype
 """
     fatalError(e)
     
