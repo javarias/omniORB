@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.11  1999/03/11 16:25:54  djr
+  Updated copyright notice
+
   Revision 1.10  1999/01/07 16:08:40  djr
   get_char_array() and put_char_array() now take an alignment arguement.
   New function copy_from(MemBufferedStream& ...)
@@ -413,7 +416,7 @@ NetBufferedStream::RdLock() {
 void
 NetBufferedStream::RdUnlock() {
   if (pd_RdLock) {
-    giveback_received();
+    if (!strandIsDying()) giveback_received();
     Strand_Sync::RdUnlock();
     pd_RdLock = 0;
   }
@@ -433,7 +436,7 @@ NetBufferedStream::WrLock() {
 void
 NetBufferedStream::WrUnlock() {
   if (pd_WrLock) {
-    giveback_reserved();
+    if (!strandIsDying()) giveback_reserved();
     Strand_Sync::WrUnlock();
     pd_WrLock = 0;
   }
