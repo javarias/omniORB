@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  1999/09/29 11:38:29  dpg1
+// Comments removed.
+//
 // Revision 1.5  1999/09/29 09:53:23  dpg1
 // Workaround to Python's lack of concurrency control on its
 // PyInterpreterState.
@@ -69,9 +72,24 @@ public:
     // Acquire global interpreter lock
     PyEval_AcquireLock();
     oldstate_ = PyThreadState_Swap(newstate_);
+
+    // Create a dummy threading.Thread object, so the threading module
+    // is happy. *** This is very dependent on the implementation of
+    // the threading module.
+    dummy_thread_ = PyEval_CallObject(omniPy::pyDummyThreadClass,
+				      empty_tuple_);
+    assert(dummy_thread_);
   }
 
   ~lockWithNewThreadState() {
+    // Remove the dummy Thread object
+    PyObject* meth = PyObject_GetAttrString(dummy_thread_, "_Thread__delete");
+    assert(meth);
+    PyEval_CallObject(meth, empty_tuple_);
+    Py_DECREF(meth);
+    Py_DECREF(dummy_thread_);
+
+    // Return to the previous thread state
     PyThreadState_Swap(oldstate_);
 
     // We would like to release the interpreter lock here, before
@@ -91,9 +109,13 @@ public:
   }
 
 private:
-  PyThreadState* newstate_;
-  PyThreadState* oldstate_;
+  PyThreadState*   newstate_;
+  PyThreadState*   oldstate_;
+  PyObject*        dummy_thread_;
+  static PyObject* empty_tuple_;
 };
+
+PyObject* lockWithNewThreadState::empty_tuple_ = PyTuple_New(0);
 
 
 omniPy::

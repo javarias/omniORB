@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.9  1999/09/29 11:25:56  dpg1
+// Nil objects now map to None. They work too, which is more than can be
+// said for the old mapping...
+//
 // Revision 1.8  1999/09/29 09:05:03  dpg1
 // Now releases the Python interpreter lock before invoke's call to
 // _is_a().
@@ -200,7 +204,8 @@ _CORBA_MODULE_VAR PyObject* pyomniORBtypeMap;   //  Type map
 _CORBA_MODULE_VAR PyObject* pyomniORBwordMap;   //  Reserved word map
 _CORBA_MODULE_VAR PyObject* pyCreateTypeCode;	// Function to create a
 						//  TypeCode object
-
+_CORBA_MODULE_VAR PyObject* pyDummyThreadClass; // threading module dummy
+                                                //  thread class
 
 
 ////////////////////////////////////////////////////////////////////////////

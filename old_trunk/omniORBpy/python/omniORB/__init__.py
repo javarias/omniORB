@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.8  1999/09/27 09:06:37  dpg1
+# Friendly error message if there is no thread support.
+#
 # Revision 1.7  1999/09/24 09:22:01  dpg1
 # Added copyright notices.
 #
@@ -437,7 +440,7 @@ keywordMapping = {
     }
 
 
-# Register this module with omnipy:
+# Register this module and the threading module with omnipy:
 import omniORB, omniORB.PortableServer
-_omnipy.registerPyObjects(omniORB)
+_omnipy.registerPyObjects(omniORB, threading)
 del omniORB
