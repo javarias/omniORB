@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.2  2000/09/22 10:50:21  dpg1
+// Digital Unix uses strtoul, not strtoull
+//
 // Revision 1.3.2.1  2000/08/07 15:34:36  dpg1
 // Partial back-port of long long from omni3_1_develop.
 //
@@ -57,12 +60,12 @@ char* idl_strdup(const char* s)
     return 0;
 }
 
-_CORBA_WChar* idl_wstrdup(const _CORBA_WChar* s)
+IDL_WChar* idl_wstrdup(const IDL_WChar* s)
 {
   if (s) {
     int i, len;
     for (len=0; s[len]; len++);
-    _CORBA_WChar* ret = new _CORBA_WChar[len+1];
+    IDL_WChar* ret = new IDL_WChar[len+1];
     for (i=0; i<len; i++)
       ret[i] = s[i];
     ret[i] = 0;
@@ -72,25 +75,25 @@ _CORBA_WChar* idl_wstrdup(const _CORBA_WChar* s)
     return 0;
 }
 
-int idl_wstrlen(const _CORBA_WChar* s)
+int idl_wstrlen(const IDL_WChar* s)
 {
   int l;
   for (l=0; *s; ++s, ++l);
   return l;
 }
 
-_CORBA_WChar* idl_wstrcpy(_CORBA_WChar* a, const _CORBA_WChar* b)
+IDL_WChar* idl_wstrcpy(IDL_WChar* a, const IDL_WChar* b)
 {
-  _CORBA_WChar* r = a;
+  IDL_WChar* r = a;
   for (; *b; ++a, ++b) *a = *b;
   *a = 0;
   return r;
 }
 
 
-_CORBA_WChar* idl_wstrcat(_CORBA_WChar* a, const _CORBA_WChar* b)
+IDL_WChar* idl_wstrcat(IDL_WChar* a, const IDL_WChar* b)
 {
-  _CORBA_WChar* r = a;
+  IDL_WChar* r = a;
   for (; *a; ++a);
   for (; *b; ++a, ++b) *a = *b;
   *a = 0;

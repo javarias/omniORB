@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/11/02 17:07:25  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.1  1999/10/27 14:05:55  dpg1
 // *** empty log message ***
 //
@@ -57,18 +60,18 @@ public:
 
 
 protected:
-  Prefix(char* str, _CORBA_Boolean isfile);
+  Prefix(char* str, IDL_Boolean isfile);
   ~Prefix();
 
   // Get/set operations on this prefix node
   const char*    get();
   void           set(const char* setTo);
-  _CORBA_Boolean isfile();
+  IDL_Boolean    isfile();
 
 private:
   char*          str_;		// Prefix string
   Prefix*        parent_;	// Previous prefix
-  _CORBA_Boolean isfile_;	// True if prefix is at file scope
+  IDL_Boolean    isfile_;	// True if prefix is at file scope
 
   static Prefix* current_;
 };

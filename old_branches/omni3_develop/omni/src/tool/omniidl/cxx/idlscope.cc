@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.11.2.6  2000/09/19 09:14:26  dpg1
+// Scope::Entry::Kind renamed to Scope::Entry::EntryKind to avoid
+// problems with over-keen compilers
+//
 // Revision 1.11.2.5  2000/08/29 15:20:28  dpg1
 // New relativeScope() function. New -i flag to enter interactive loop
 // after parsing
@@ -95,7 +99,7 @@ Scope* Scope::current_ = 0;
 
 // ScopedName implementation
 ScopedName::
-ScopedName(const char* identifier, _CORBA_Boolean absolute) :
+ScopedName(const char* identifier, IDL_Boolean absolute) :
   absolute_(absolute)
 {
   Fragment* f = new Fragment(identifier);
@@ -114,7 +118,7 @@ ScopedName(const ScopedName* sn) :
 }
 
 ScopedName::
-ScopedName(const ScopedName::Fragment* frags, _CORBA_Boolean absolute) :
+ScopedName(const ScopedName::Fragment* frags, IDL_Boolean absolute) :
   scopeList_(0), last_(0), absolute_(absolute)
 {
   const Fragment *f;
@@ -171,7 +175,7 @@ toString() const
   return str;
 }
 
-_CORBA_Boolean
+IDL_Boolean
 ScopedName::
 equal(const ScopedName* sn) const
 {
@@ -250,7 +254,7 @@ EntryList::
 merge(Scope::EntryList* ml)
 {
   EntryList*     l;
-  _CORBA_Boolean add;
+  IDL_Boolean add;
 
   for (; ml; ml = ml->tail()) {
     add = 1;
@@ -268,7 +272,7 @@ merge(Scope::EntryList* ml)
 
 
 Scope::
-Scope(Scope* parent, Scope::Kind k, _CORBA_Boolean nestedUse,
+Scope(Scope* parent, Scope::Kind k, IDL_Boolean nestedUse,
       const char* file, int line)
 
   : parent_(parent), kind_(k), identifier_(0), scopedName_(0),
@@ -281,7 +285,7 @@ Scope(Scope* parent, Scope::Kind k, _CORBA_Boolean nestedUse,
 
 Scope::
 Scope(Scope* parent, const char* identifier, Scope::Kind k,
-      _CORBA_Boolean nestedUse,
+      IDL_Boolean nestedUse,
       const char* file, int line)
 
   : parent_(parent), kind_(k), nestedUse_(nestedUse),
@@ -641,7 +645,7 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
   ScopedName::Fragment* f = sn->scopeList();
   const char*           fid;
 
-  _CORBA_Boolean top_component = 1;
+  IDL_Boolean top_component = 1;
 
   while (f) {
     fid = f->identifier();
@@ -1251,7 +1255,7 @@ remEntry(Scope::Entry* re)
 }
 
 
-_CORBA_Boolean
+IDL_Boolean
 Scope::
 keywordClash(const char* identifier, const char* file, int line)
 {

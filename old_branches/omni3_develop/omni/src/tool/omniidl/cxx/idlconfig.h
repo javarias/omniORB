@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.2  2000/06/05 18:13:27  dpg1
+// Comments can be attached to subsequent declarations (with -K). Better
+// idea of most recent decl in operation declarations
+//
 // Revision 1.1.2.1  2000/03/06 15:03:48  dpg1
 // Minor bug fixes to omniidl. New -nf and -k flags.
 //
@@ -40,10 +44,10 @@
 
 class Config {
 public:
-  static _CORBA_Boolean quiet;           // Don't make any output
-  static _CORBA_Boolean forwardWarning;  // Warn about unresolved forwards
-  static _CORBA_Boolean keepComments;    // Keep comments from source
-  static _CORBA_Boolean commentsFirst;   // Comments come before declarations
+  static IDL_Boolean quiet;           // Don't make any output
+  static IDL_Boolean forwardWarning;  // Warn about unresolved forwards
+  static IDL_Boolean keepComments;    // Keep comments from source
+  static IDL_Boolean commentsFirst;   // Comments come before declarations
 };
 
 

@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.1  2000/03/06 15:03:48  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 // Revision 1.3  1999/11/02 17:07:27  dpg1
 // Changes to compile on Solaris.
 //
@@ -126,7 +129,7 @@ void IdlWarningCont(const char* file, int line, const char* fmt ...)
   }
 }
 
-_CORBA_Boolean
+IDL_Boolean
 IdlReportErrors()
 {
   if (!Config::quiet) {
@@ -147,8 +150,8 @@ IdlReportErrors()
       fprintf(stderr, ".\n");
   }
 
-  _CORBA_Boolean ret = (errorCount == 0);
-  errorCount         = 0;
-  warningCount       = 0;
+  IDL_Boolean ret = (errorCount == 0);
+  errorCount      = 0;
+  warningCount    = 0;
   return ret;
 }

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/17 17:16:59  dpg1
+// Changes to remove static initialisation of objects.
+//
 // Revision 1.2  1999/10/29 15:44:23  dpg1
 // DeclaredType() now takes extra DeclRepoId* argument.
 //
@@ -98,7 +101,7 @@ public:
   Kind        kind()         const { return kind_; }
   const char* kindAsString() const;
 
-  virtual _CORBA_Boolean shouldDelete() = 0;
+  virtual IDL_Boolean shouldDelete() = 0;
 
   virtual void accept(TypeVisitor& visitor) = 0;
 
@@ -110,7 +113,7 @@ public:
 
 private:
   Kind kind_;
-  static _CORBA_Boolean initialised_;
+  static IDL_Boolean initialised_;
 };
 
 
@@ -119,7 +122,7 @@ public:
   BaseType(Kind k) : IdlType(k) {}
   virtual ~BaseType() {}
 
-  _CORBA_Boolean shouldDelete() { return 0; }
+  IDL_Boolean shouldDelete() { return 0; }
 
   void accept(TypeVisitor& visitor) { visitor.visitBaseType(this); }
 
@@ -157,35 +160,35 @@ public:
 class StringType : public IdlType {
 public:
 
-  StringType(_CORBA_ULong bound) : IdlType(tk_string), bound_(bound) { }
+  StringType(IDL_ULong bound) : IdlType(tk_string), bound_(bound) { }
   virtual ~StringType() {}
 
-  _CORBA_ULong   bound()        { return bound_; }
-  _CORBA_Boolean shouldDelete() { return bound_ ? 1 : 0; }
+  IDL_ULong   bound()        { return bound_; }
+  IDL_Boolean shouldDelete() { return bound_ ? 1 : 0; }
 
   void accept(TypeVisitor& visitor) { visitor.visitStringType(this); }
 
   static StringType* unboundedStringType;
 
 private:
-  _CORBA_ULong bound_;
+  IDL_ULong bound_;
 };
 
 
 class WStringType : public IdlType {
 public:
-  WStringType(_CORBA_ULong bound) : IdlType(tk_wstring), bound_(bound) { }
+  WStringType(IDL_ULong bound) : IdlType(tk_wstring), bound_(bound) { }
   virtual ~WStringType() {}
 
-  _CORBA_ULong   bound()        { return bound_; }
-  _CORBA_Boolean shouldDelete() { return bound_ ? 1 : 0; }
+  IDL_ULong   bound()        { return bound_; }
+  IDL_Boolean shouldDelete() { return bound_ ? 1 : 0; }
 
   void accept(TypeVisitor& visitor) { visitor.visitWStringType(this); }
 
   static WStringType* unboundedWStringType;
 
 private:
-  _CORBA_ULong bound_;
+  IDL_ULong bound_;
 };
 
 //
@@ -199,20 +202,20 @@ private:
 // *** Element freeing
 class SequenceType : public IdlType {
 public:
-  SequenceType(IdlType* seqType, _CORBA_ULong bound) :
+  SequenceType(IdlType* seqType, IDL_ULong bound) :
     IdlType(tk_sequence), seqType_(seqType), bound_(bound) { }
 
   virtual ~SequenceType() {}
 
-  IdlType*       seqType()      { return seqType_; }
-  _CORBA_ULong   bound()        { return bound_; }
-  _CORBA_Boolean shouldDelete() { return 1; }
+  IdlType*    seqType()      { return seqType_; }
+  IDL_ULong   bound()        { return bound_; }
+  IDL_Boolean shouldDelete() { return 1; }
 
   void accept(TypeVisitor& visitor) { visitor.visitSequenceType(this); }
 
 private:
   IdlType*     seqType_;
-  _CORBA_ULong bound_;
+  IDL_ULong bound_;
 };
 
 //
@@ -221,20 +224,20 @@ private:
 
 class FixedType : public IdlType {
 public:
-  FixedType(_CORBA_UShort digits, _CORBA_Short scale) :
+  FixedType(IDL_UShort digits, IDL_Short scale) :
     IdlType(tk_fixed), digits_(digits), scale_(scale) { }
 
   virtual ~FixedType() {}
 
-  _CORBA_UShort  digits()       { return digits_; }
-  _CORBA_Short   scale()        { return scale_; }
-  _CORBA_Boolean shouldDelete() { return 1; }
+  IDL_UShort  digits()       { return digits_; }
+  IDL_Short   scale()        { return scale_; }
+  IDL_Boolean shouldDelete() { return 1; }
 
   void accept(TypeVisitor& visitor) { visitor.visitFixedType(this); }
 
 private:
-  _CORBA_UShort digits_;
-  _CORBA_Short  scale_;
+  IDL_UShort digits_;
+  IDL_Short  scale_;
 };
 
 
@@ -256,7 +259,7 @@ public:
   Decl*       decl()       { return decl_; }
   DeclRepoId* declRepoId() { return declRepoId_; }
 
-  _CORBA_Boolean shouldDelete() { return 0; }
+  IDL_Boolean shouldDelete() { return 0; }
   void accept(TypeVisitor& visitor) { visitor.visitDeclaredType(this); }
 
   static DeclaredType* corbaObjectType;
@@ -274,16 +277,16 @@ private:
 
 class TypeSpec {
 public:
-  TypeSpec(IdlType* type, _CORBA_Boolean constr)
+  TypeSpec(IdlType* type, IDL_Boolean constr)
     : type_(type), constr_(constr) {}
   ~TypeSpec() {}
 
-  IdlType*       type()   const { return type_; }
-  _CORBA_Boolean constr() const { return constr_; }
+  IdlType*    type()   const { return type_; }
+  IDL_Boolean constr() const { return constr_; }
 
 private:
-  IdlType*       type_;
-  _CORBA_Boolean constr_;
+  IdlType*    type_;
+  IDL_Boolean constr_;
 };
 
 

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:59  dpg1
+// *** empty log message ***
+//
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -67,7 +70,7 @@ int main(int argc, char** argv)
     f    = stdin;
   }
 
-  _CORBA_Boolean success = AST::process(f, name);
+  IDL_Boolean success = AST::process(f, name);
 
   fclose(f);
 

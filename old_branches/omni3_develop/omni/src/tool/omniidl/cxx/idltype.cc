@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.1  2000/03/06 10:40:29  dpg1
+// Typo in string constant.
+//
 // Revision 1.5  1999/11/17 17:16:59  dpg1
 // Changes to remove static initialisation of objects.
 //
@@ -110,7 +113,7 @@ scopedNameToType(const char* file, int line, const ScopedName* sn)
 }
 
 // Static type object pointers
-_CORBA_Boolean IdlType::initialised_             = 0;
+IDL_Boolean    IdlType::initialised_             = 0;
 BaseType*      BaseType::nullType                = 0;
 BaseType*      BaseType::voidType                = 0;
 BaseType*      BaseType::shortType               = 0;

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.5  2000/08/01 11:27:45  dpg1
+// Comments were incorrectly attached to struct members.
+//
 // Revision 1.9.2.4  2000/06/09 11:20:47  dpg1
 // Last fix put __omni_pragma line numbers off by one...
 //
@@ -86,9 +89,9 @@
 #define YYDEBUG 1
 
 // Globals from lexer
-extern int            yylineno;
-extern char*          currentFile;
-extern _CORBA_Boolean mainFile;
+extern int         yylineno;
+extern char*       currentFile;
+extern IDL_Boolean mainFile;
 
 void yyerror(char *s) {
 }
@@ -113,7 +116,7 @@ ValueAbs* valueabs_hack = 0;
 %union {
   char*                    id_val;
   int                      int_val;
-  _CORBA_ULong             ulong_val;
+  IDL_ULong                ulong_val;
   IdlIntLiteral            int_literal_val;
 #ifndef __VMS
   IdlFloatLiteral          float_literal_val;
@@ -122,9 +125,9 @@ ValueAbs* valueabs_hack = 0;
 #endif
   char                     char_val;
   char*                    string_val;
-  _CORBA_WChar             wchar_val;
-  _CORBA_WChar*            wstring_val;
-  _CORBA_Boolean           boolean_val;
+  IDL_WChar                wchar_val;
+  IDL_WChar*               wstring_val;
+  IDL_Boolean              boolean_val;
   int                      fixed_val; // ***
   IdlType*                 type_val;
   TypeSpec*                type_spec_val;
@@ -873,7 +876,7 @@ string_literal_plus:
 wide_string_literal_plus:
     WIDE_STRING_LITERAL { $$ = $1; }
   | wide_string_literal_plus WIDE_STRING_LITERAL {
-      $$ = new _CORBA_WChar [idl_wstrlen($1) + idl_wstrlen($2) + 1];
+      $$ = new IDL_WChar [idl_wstrlen($1) + idl_wstrlen($2) + 1];
       idl_wstrcpy($$, $1);
       idl_wstrcat($$, $2);
       delete [] $1;
