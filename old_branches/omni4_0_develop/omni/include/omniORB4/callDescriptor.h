@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.10  2001/08/17 17:01:16  sll
+ Removed assert existent flag in the call descriptor.
+
  Revision 1.2.2.9  2001/08/17 13:42:48  dpg1
  callDescriptor::userException() no longer has to throw an exception.
 
@@ -100,6 +103,7 @@ public:
       pd_n_user_excns(n_user_excns),
       pd_is_upcall(is_upcall),
       pd_first_address_used(0),
+      pd_current_address(0),
       pd_current(0),
       pd_current_next(0),
       pd_objref(0),
@@ -162,6 +166,14 @@ public:
     pd_first_address_used = a;
   }
 
+  inline const _OMNI_NS(giopAddress)* currentAddress() { 
+    return pd_current_address;
+  }
+
+  inline void currentAddress(const _OMNI_NS(giopAddress)* a) { 
+    pd_current_address = a;
+  }
+
   /////////////////////
   // Context support //
   /////////////////////
@@ -202,6 +214,7 @@ private:
   _CORBA_Boolean               pd_is_upcall;
 
   const _OMNI_NS(giopAddress)* pd_first_address_used;
+  const _OMNI_NS(giopAddress)* pd_current_address;
   // state holder for the giop transport in relation to this call. Not
   // manipulated by this class other than the access functions.
   // Initialised to 0 in ctor.
