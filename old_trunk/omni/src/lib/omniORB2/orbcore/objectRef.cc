@@ -29,6 +29,11 @@
  
 /*
   $Log$
+// Revision 1.9  1997/08/21  21:54:03  sll
+// - fixed bug in disposeObject.
+// - MarshalObjRef now always encode the repository ID of the most derived
+//   interface of the object reference.
+//
   Revision 1.8  1997/08/08 09:34:57  sll
   MarshalObjRef now always pass the repository ID of the most derived type
   in the IOR.
@@ -126,7 +131,8 @@ public:
   virtual ~AnonymousObject() {}
   
 protected:
-  virtual void *_widenFromTheMostDerivedIntf(const char *repoId);
+  virtual void *_widenFromTheMostDerivedIntf(const char *repoId,
+                                           CORBA::Boolean is_cxx_type_id);
 
 private:
   AnonymousObject();
@@ -135,9 +141,10 @@ private:
 };
 
 void *
-AnonymousObject::_widenFromTheMostDerivedIntf(const char *repoId)
+AnonymousObject::_widenFromTheMostDerivedIntf(const char *repoId,
+                                            CORBA::Boolean is_cxx_type_id)
 {
-  if (!repoId)
+  if (!is_cxx_type_id && !repoId)
     return (void *)((CORBA::Object_ptr)this);
   else
     return 0;
@@ -234,11 +241,11 @@ omni::objectRelease(omniObject *obj)
 	p = &((*p)->pd_next);
       }
       if (obj->pd_disposed) {
-      omniObject::objectTableLock.unlock();
+	omniObject::objectTableLock.unlock();
 	delete obj;   // call dtor if BOA->disposed() has been called.
       }
       else {
-      omniObject::objectTableLock.unlock();
+	omniObject::objectTableLock.unlock();
       }
     }
   }
@@ -250,8 +257,10 @@ omni::objectRelease(omniObject *obj)
 void
 omni::disposeObject(omniObject *obj)
 {
-  if (obj->is_proxy())
+  if (obj->is_proxy()) {
+    objectRelease(obj);
     return;
+  }
   omniObject::objectTableLock.lock();
   if (obj->getRefCount() <= 0) {
     omniObject::objectTableLock.unlock();
@@ -265,8 +274,8 @@ omni::disposeObject(omniObject *obj)
     omniObject **p = &omniObject::localObjectTable[omniORB::hash(obj->pd_objkey.native)];
     while (*p) {
       if (*p == obj) {
-      *p = obj->pd_next;
-      break;
+	*p = obj->pd_next;
+	break;
       }
       p = &((*p)->pd_next);
     }
@@ -452,7 +461,7 @@ omni::stringToObject(const char *str)
 }
 
 void *
-omniObject::_widenFromTheMostDerivedIntf(const char *repoId)
+omniObject::_widenFromTheMostDerivedIntf(const char *,CORBA::Boolean)
 {
   return 0;
 }
@@ -465,6 +474,10 @@ objectRef_init()
   unsigned int i;
   for (i=0; i<omniORB::hash_table_size; i++)
     omniObject::localObjectTable[i] = 0;
+
+  omniObject::wrappedObjectTable = new _wrap_proxy * [omniORB::hash_table_size];
+  for (i=0; i<omniORB::hash_table_size; i++)
+    omniObject::wrappedObjectTable[i] = 0;
 }
 
 
