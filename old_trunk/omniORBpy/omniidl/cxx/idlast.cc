@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.10  1999/11/22 11:07:46  dpg1
+// Correctly report error with interface which tries to inherit from
+// CORBA::Object.
+//
 // Revision 1.9  1999/11/17 17:17:00  dpg1
 // Changes to remove static initialisation of objects.
 //
@@ -263,9 +267,10 @@ InheritSpec(const ScopedName* sn, const char* file, int line)
       decl_      = se->decl();
       IdlType* t = se->idltype();
 
-      while (t && t->kind() == IdlType::tk_alias)
+      while (t && t->kind() == IdlType::tk_alias) {
+	if (((Declarator*)((DeclaredType*)t)->decl())->sizes()) break;
 	t = ((Declarator*)((DeclaredType*)t)->decl())->alias()->aliasType();
-
+      }
       if (!t) return;
 
       if (t->kind() == IdlType::tk_objref ||
@@ -569,9 +574,10 @@ Const(const char* file, int line, _CORBA_Boolean mainFile,
 
   IdlType* t = constType;
 
-  while (t && t->kind() == IdlType::tk_alias)
+  while (t && t->kind() == IdlType::tk_alias) {
+    if (((Declarator*)((DeclaredType*)t)->decl())->sizes()) break;
     t = ((Declarator*)((DeclaredType*)t)->decl())->alias()->aliasType();
-
+  }
   if (!t) { // Broken alias due to earlier error
     constKind_ = IdlType::tk_null;
     delete expr;
@@ -607,7 +613,8 @@ Const(const char* file, int line, _CORBA_Boolean mainFile,
     break;
 
   default:
-    assert(0);
+    IdlError(file, line, "Invalid type for constant: %s", t->kindAsString());
+    break;
   }
   delete expr;
 
@@ -1628,9 +1635,10 @@ ValueInheritSpec(ScopedName* sn, const char* file, int line)
       decl_      = se->decl();
       IdlType* t = se->idltype();
 
-      while (t && t->kind() == IdlType::tk_alias)
+      while (t && t->kind() == IdlType::tk_alias) {
+	if (((Declarator*)((DeclaredType*)t)->decl())->sizes()) break;
 	t = ((Declarator*)((DeclaredType*)t)->decl())->alias()->aliasType();
-
+      }
       if (!t) return;
 
       if (t->kind() == IdlType::tk_value) {
