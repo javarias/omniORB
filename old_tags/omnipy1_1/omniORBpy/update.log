@@ -1,0 +1,609 @@
+Mon Aug 21 11:08:38 BST 2000 dpg1
+=================================
+
+- Update bugfixes
+
+bugfixes.xml
+bugfixes.xsl
+
+
+Mon Aug 21 10:41:16 BST 2000 dpg1
+=================================
+
+- omniORBpy 1.1 release
+
+doc/tex/omniORBpy.tex
+external_merge/ReleaseNote
+external_merge/THIS_IS_OMNIORBPY_1_0  -- deleted
+external_merge/THIS_IS_OMNIORBPY_1_1  -- new
+external_merge/doc/omniORBpy.pdf
+external_merge/doc/omniORBpy.ps
+external_merge/doc/omniORBpy/index.html
+
+
+Mon Aug 21 10:09:31 BST 2000 dpg1
+=================================
+
+- Merge omniidl long long support from omniORB 3
+
+omniidl/cxx/CORBA_basetypes.h
+omniidl/cxx/CORBA_sysdep.h
+omniidl/cxx/dir.mk
+omniidl/cxx/idl.ll
+omniidl/cxx/idlast.cc
+omniidl/cxx/idlexpr.cc
+omniidl/cxx/idlpython.cc
+omniidl/cxx/idlutil.cc
+omniidl/cxx/idlutil.h
+omniidl/cxx/lex.yy.cc
+
+- Typo in omniidl.idltype
+
+omniidl/python/omniidl/idltype.py
+
+
+Fri Aug 18 12:37:50 BST 2000 dpg1
+=================================
+
+- New omniORB.traceLevel function
+
+modules/common/pyomniFunc.cc
+
+- Document new traceLevel function and omniORB.LOCATION_FORWARD; add
+  mysteriously missing omniORBpy.bib.
+
+doc/tex/omniORBpy.bib   -- new
+doc/tex/omniORBpy.tex
+external_merge/doc/omniORBpy.pdf
+external_merge/doc/omniORBpy.ps
+external_merge/doc/omniORBpy/index.html
+external_merge/doc/omniORBpy/omniORBpy002.html
+external_merge/doc/omniORBpy/omniORBpy003.html
+external_merge/doc/omniORBpy/omniORBpy005.html
+external_merge/doc/omniORBpy/omniORBpy006.html
+external_merge/doc/omniORBpy/omniORBpy007.html
+external_merge/doc/omniORBpy/omniORBpy009.html
+
+
+Thu Aug 17 09:41:58 BST 2000 dpg1
+=================================
+
+- Fix possible obscure assertion failure with unexpected user
+  exception containing a member named "minor".
+
+modules/common/pyExceptions.cc
+
+- Updates for long long were broken on platforms without it
+
+modules/common/pyMarshal.cc
+modules/common/pyTypeCode.cc
+
+- Support for omniORB.LOCATION_FORWARD exception
+
+modules/omni30/pyServant.cc
+python/omniORB/CORBA.py
+python/omniORB/__init__.py
+
+
+Mon Aug 14 17:08:04 BST 2000 dpg1
+=================================
+
+- Error message now says "Could not open..." rather than "Could not
+  find..." when Python imports fail.
+
+omniidl/cxx/idlpython.cc
+omniidl/python/scripts/omniidlrun.py
+
+- Missed out some explicit casts to (char*) for string constants.
+
+modules/common/pyomniFunc.cc
+modules/omni28/omnipy.cc
+modules/omni28/pyServant.cc
+
+
+Mon Aug  7 10:18:32 BST 2000 dpg1
+=================================
+
+- Long long support
+
+modules/dir.mk
+modules/common/pyMarshal.cc
+modules/common/pyTypeCode.cc
+omniidl_be/python.py
+python/omniORB/CORBA.py
+python/omniORB/tcInternal.py
+
+
+Tue Aug  1 12:21:35 BST 2000 dpg1
+=================================
+
+- Better comment handling for structs and unions
+
+omniidl/cxx/idl.yy
+omniidl/cxx/y.tab.cc
+
+
+Tue Aug  1 10:38:56 BST 2000 dpg1
+=================================
+
+- IDL compiler no longer complains about inheriting an operation into
+  an interface with the same name
+
+omniidl/cxx/idlscope.cc
+
+
+Wed Jul 26 17:01:36 BST 2000 dpg1
+=================================
+
+- Fix potential segfault in passing an invalid sequence/array of
+  unsigned long in a local call.
+
+modules/common/pyMarshal.cc
+
+
+Wed Jul 26 11:46:16 BST 2000 dpg1
+=================================
+
+- omniidl front-end incorrect error report when inheriting typedef to
+  forward declared interface
+
+omniidl/cxx/idlast.cc
+
+
+Wed Jul 19 18:21:28 BST 2000 dpg1
+=================================
+
+- omniidl complains if a name which differs only in case is found
+  during name look-up
+
+omniidl/cxx/idlscope.cc
+
+
+Tue Jul 18 15:58:27 BST 2000 dpg1
+=================================
+
+- Bug with inheritance from typedef
+
+bugfixes.xml           -- new
+bugfixes.xsl           -- new
+omniidl_be/python.py
+
+
+Fri Jul 14 13:57:50 BST 2000 dpg1
+=================================
+
+- Updates for 1.0 release
+
+external_merge/ReleaseNote
+external_merge/THIS_IS_OMNIORBPY_1_0       -- new
+external_merge/THIS_IS_OMNIORBPY_1_0_PRE3  -- deleted
+
+
+Wed Jul 12 15:29:04 BST 2000 dpg1
+=================================
+
+- Update manual with details about path configuration, IfR stubs,
+  change of corbaloc default port to 2809.
+
+src/lib/omniORBpy/doc/tex/omniORBpy.tex
+
+- New no_package option to omniidl backend
+
+src/lib/omniORBpy/omniidl_be/python.py
+
+- Support for Interface Repository stubs
+
+src/lib/omniORBpy/python/omniORB/__init__.py
+src/lib/omniORBpy/python/omniORB/dir.mk
+
+- Remove dodgy-looking blank line
+
+src/lib/omniORBpy/modules/dir.mk
+
+
+Wed Jul 12 14:21:46 BST 2000 sll
+================================
+
+- IRIX 6.5 has also been tested.
+
+modules/dir.mk
+
+Tue Jul 11 21:09:51 BST 2000 sll
+================================
+
+- Added support for HPUX 11.00. 
+- Also added untested support for IRIX 6.5
+
+modules/dir.mk
+
+
+Mon Jul 10 19:41:53 BST 2000 dpg1
+=================================
+
+- Remove partial IR stubs. Add TypeCodes for System Exceptions.
+
+examples/tests/tclient.py
+python/omniORB/CORBA.py
+
+
+Fri Jun 30 15:05:25 BST 2000 dpg1
+=================================
+
+- Minor fixes for FreeBSD
+
+modules/dir.mk
+omniidl/cxx/dir.mk
+
+
+Thu Jun 29 10:55:27 BST 2000 dpg1
+=================================
+
+- Remove -g compiler flag
+
+modules/dir.mk
+
+- New README file. Date changed in ReleaseNote.
+
+external_merge/README
+external_merge/ReleaseNote
+
+
+Wed Jun 28 13:46:42 BST 2000 dpg1
+=================================
+
+- Proper error messages for unsupported IDL constructs.
+
+omniidl_be/python.py
+
+
+Wed Jun 28 11:38:10 BST 2000 dpg1
+=================================
+
+- Incorrect comment removed
+
+python/omniORB/__init__.py
+
+- Internal release notes removed; external ones updated
+
+ReleaseNote                  -- deleted
+external_merge/ReleaseNote
+
+- Prerelease indication changed
+
+external_merge/THIS_IS_OMNIORBPY_1_0_PRE2  -- removed
+external_merge/THIS_IS_OMNIORBPY_1_0_PRE3  -- new
+
+
+Tue Jun 27 15:53:26 BST 2000 dpg1
+=================================
+
+- Under omniORB 2.8, omniidl is built before all other things, so it
+  can be used to build the Naming stubs.
+
+dir.mk
+
+- Examples modified to reflect documentation, and M__POA mapping
+  change.
+
+examples/echo/echo_clt.py
+examples/echo/echo_example.idl         -- deleted
+examples/echo/echo_example_clt.py      -- deleted
+examples/echo/echo_example_srv.py      -- deleted
+examples/echo/echo_srv.py
+examples/echo/example_echo.idl         -- new
+examples/echo/example_echo_clt.py      -- new
+examples/echo/example_echo_coloc.py    -- new
+examples/echo/example_echo_nsclt.py    -- new
+examples/echo/example_echo_nssrv.py    -- new
+examples/echo/example_echo_srv.py      -- new
+examples/poa/servantactivator.py
+examples/poa/servantlocator.py
+examples/tests/pserver.py
+examples/tests/tclient.py
+examples/tests/tserver.py
+examples/weather/wserver.py
+
+- Change from POA_M to M__POA mapping
+
+external_merge/python/CosNaming__POA/GNUmakefile   -- new
+external_merge/python/POA_CosNaming/GNUmakefile    -- removed
+python/CosNaming__POA/__init__.py                  -- new
+python/CosNaming__POA/dir.mk                       -- new
+python/POA_CosNaming/__init__.py                   -- removed
+python/POA_CosNaming/dir.mk                        -- removed
+python/omniORB/POA_PortableServer.py               -- removed
+python/omniORB/PortableServer__POA.py              -- new
+python/omniORB/dir.mk
+
+- Change from POA_M to M__POA mapping.
+- Global module only built if necessary.
+
+omniidl_be/python.py
+
+- CosNaming module is now generated rather than hand-coded
+
+python/Naming_idl.py  -- deleted
+python/dir.mk
+
+- Dummy CORBA, PortableServer, PortableServer__POA modules which
+  import the omniORB ones.
+
+python/CORBA.py                -- new
+python/PortableServer.py       -- new
+python/PortableServer__POA.py  -- new
+
+- Fix to _is_a(). CORBA.Object registered in the objref map.
+
+python/omniORB/CORBA.py
+
+- Expanded comment
+
+python/omniORB/__init__.py
+
+
+- Fix for Windows pathname brokenness
+
+modules/dir.mk
+
+- Change error message for version clash
+
+modules/omni28/omnipy.cc
+modules/omni30/omnipy.cc
+
+- New copyObjRefArgument() function
+
+modules/common/pyMarshal.cc
+modules/omni28/omnipy28.h
+modules/omni28/pyObjectRef.cc
+modules/omni30/omnipy30.h
+modules/omni30/pyObjectRef.cc
+
+
+- New omniORBpy manual
+
+doc/tex/omniORBpy.tex
+external_merge/doc/omniORBpy.pdf
+external_merge/doc/omniORBpy.ps
+external_merge/doc/omniORBpy/contents_motif.gif
+external_merge/doc/omniORBpy/index.html
+external_merge/doc/omniORBpy/next_motif.gif
+external_merge/doc/omniORBpy/omniORBpy001.html
+external_merge/doc/omniORBpy/omniORBpy002.html
+external_merge/doc/omniORBpy/omniORBpy003.html
+external_merge/doc/omniORBpy/omniORBpy004.html
+external_merge/doc/omniORBpy/omniORBpy005.html
+external_merge/doc/omniORBpy/omniORBpy006.html
+external_merge/doc/omniORBpy/omniORBpy007.html
+external_merge/doc/omniORBpy/omniORBpy008.html
+external_merge/doc/omniORBpy/omniORBpy009.html
+external_merge/doc/omniORBpy/previous_motif.gif
+
+
+
+Tue Jun 20 14:51:11 BST 2000 dpg1
+=================================
+
+- omniidl now keeps the C++ tree until after the back-ends have run.
+  This means that back-ends can be C++ extension modules.
+
+omniidl/cxx/idlpython.cc
+omniidl/python/omniidl/main.py
+
+
+Fri Jun 16 18:29:50 BST 2000 dpg1
+=================================
+
+- When creating an object reference with target type A, when the
+  object claims to be B, but A and B are unrelated, now creates a
+  reference of type A, where before it would be B.
+
+modules/omni28/pyObjectRef.cc
+modules/omni30/pyObjectRef.cc
+
+
+Mon Jun 12 16:35:27 BST 2000 dpg1
+=================================
+
+- Support for exception handler functions. Under omniORB 3, local
+  operation dispatch modified so exceptions handlers are run.
+
+modules/dir.mk
+modules/common/pyExceptions.cc
+modules/common/pyomniFunc.cc        -- new
+modules/omni28/omnipy.cc
+modules/omni28/omnipy28.h
+modules/omni30/omnipy.cc
+modules/omni30/omnipy30.h
+modules/omni30/pyCallDescriptor.cc
+modules/omni30/pyServant.cc
+python/omniORB/__init__.py
+
+
+Fri Jun  9 12:01:25 BST 2000 dpg1
+=================================
+
+- Off-by-one error in line number for __omni_pragma pragmas.
+
+omniidl/cxx/idl.ll
+omniidl/cxx/idl.yy
+omniidl/cxx/lex.yy.cc
+omniidl/cxx/y.tab.cc
+omniidl/cxx/y.tab.h
+
+
+Thu Jun  8 15:21:49 BST 2000 dpg1
+=================================
+
+- Comments and pragmas are now objects rather than plain strings, so
+  they can have file,line associated with them.
+
+omniidl/cxx/idl.ll
+omniidl/cxx/idl.yy
+omniidl/cxx/idlast.cc
+omniidl/cxx/idlast.h
+omniidl/cxx/idlpython.cc
+omniidl/cxx/lex.yy.cc
+omniidl/cxx/y.tab.cc
+omniidl/python/omniidl/idlast.py
+
+
+Tue Jun  6 16:17:00 BST 2000 dpg1
+=================================
+
+- Comments and pragmas attached to attribute declarators are now
+  attached to the Python Attribute object.
+
+omniidl/cxx/idlpython.cc
+
+
+Mon Jun  5 19:07:01 BST 2000 dpg1
+=================================
+
+- omniidl updates:
+
+  - support for __omni_pragma
+  - comments can be attached to subsequent declarations (with -K)
+  - better idea of most recent decl in operation declarations
+
+omniidl/cxx/idl.ll
+omniidl/cxx/idl.yy
+omniidl/cxx/idlast.cc
+omniidl/cxx/idlast.h
+omniidl/cxx/idlconfig.cc
+omniidl/cxx/idlconfig.h
+omniidl/cxx/idlpython.cc
+omniidl/cxx/lex.yy.cc
+omniidl/cxx/y.tab.cc
+omniidl/python/omniidl/main.py
+
+  - minor makefile fixes propogated from omniORB 3
+
+omniidl/cxx/dir.mk
+
+
+Fri Jun  2 15:24:13 BST 2000 dpg1
+=================================
+
+- orb.run() now properly exits when the ORB is shut down
+
+src/lib/omniORBpy/modules/common/pyThreadCache.cc
+src/lib/omniORBpy/modules/omni30/pyORBFunc.cc
+src/lib/omniORBpy/python/omniORB/CORBA.py
+src/lib/omniORBpy/python/omniORB/__init__.py
+
+
+Fri Jun  2 10:58:27 BST 2000 dpg1
+=================================
+
+- Thread cache now calls PyThreadState_Clear() when it is deleting a
+  thread state
+
+modules/common/pyThreadCache.cc
+
+
+Thu Jun  1 12:08:18 BST 2000 dme
+================================
+
+- add omniORB.WorkerThread create/delete hooks (e.g. for profiling)
+
+python/omniORB/__init__.py
+
+
+Tue May 30 09:55:04 BST 2000 dpg1
+=================================
+
+- Accidentally used a 3 element hash table in the thread state cache.
+
+modules/common/pyThreadCache.cc
+
+
+Fri May 26 16:31:14 BST 2000 dpg1
+=================================
+
+- Python thread states are now cached. Operation dispatch time is
+  roughly halved!
+
+modules/dir.mk
+modules/common/pyThreadCache.cc  -- new
+modules/common/pyThreadCache.h   -- new
+modules/omni28/omnipy.cc
+modules/omni28/pyORBFunc.cc
+modules/omni28/pyServant.cc
+modules/omni30/omnipy.cc
+modules/omni30/pyORBFunc.cc
+modules/omni30/pyPOAFunc.cc
+modules/omni30/pyServant.cc
+
+- Performance test now tests single long value, as well as
+  sequences/arrays.
+
+examples/tests/PerfTest.idl
+examples/tests/pclient.py
+examples/tests/pserver.py
+
+
+Thu May 25 17:05:55 BST 2000 dpg1
+=================================
+
+- Servant._default_POA now caches the root POA.
+
+python/omniORB/PortableServer.py
+
+
+Wed May 24 12:07:37 BST 2000 dpg1
+=================================
+
+- POA functions now properly release servant references when
+  exceptions are thrown.
+
+modules/omni30/pyPOAFunc.cc
+
+
+Wed May 24 11:34:31 BST 2000 dpg1
+=================================
+
+- _this() wasn't catching exceptions
+
+modules/omni30/pyPOAFunc.cc
+
+
+Tue May 16 11:41:52 BST 2000 dpg1
+=================================
+
+- TypeCode constants for basic types are now available with names
+  TC_foo as well as _tc_foo.
+
+python/omniORB/CORBA.py
+
+
+Thu May 11 12:55:49 BST 2000 dpg1
+=================================
+
+- Throw system exceptions with OMNIORB_THROW so they are reported with
+  ORB trace level 10.
+
+modules/common/pyExceptions.cc
+modules/common/pyMarshal.cc
+modules/common/pyTypeCode.cc
+modules/omni28/omnipy28.h
+modules/omni30/omnipy30.h
+modules/omni30/pyCallDescriptor.cc
+modules/omni30/pyObjectRef.cc
+modules/omni30/pyPOAFunc.cc
+modules/omni30/pyServant.cc
+
+
+Thu May  4 10:52:09 BST 2000 dpg1
+=================================
+
+- Created a long-overdue update log.
+- Added some test examples
+
+update.log
+examples/tests/PerfTest.idl
+examples/tests/TypeTest.idl
+examples/tests/TypeTestSK.cc
+examples/tests/pclient.py
+examples/tests/pserver.py
+examples/tests/tclient.py
+examples/tests/tserver.py
