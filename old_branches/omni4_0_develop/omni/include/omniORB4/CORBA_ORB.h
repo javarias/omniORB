@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:47  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -259,4 +262,5 @@ typedef char* ORBid;
 typedef String_var ORBid_var;
 
 _CORBA_MODULE_FN ORB_ptr ORB_init(int& argc, char** argv,
-				  const char* orb_identifier="");
+				  const char* orb_identifier="",
+				  const char* options[][2]=0);
