@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.2  2000/10/12 15:37:50  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.4  2000/07/13 15:26:00  dpg1
 # Merge from omni3_develop for 3.0 release.
 #
@@ -82,7 +85,7 @@ header_comment = """\
 
 header = """\
 #include "@basename@@hh@"
-#include <omniORB3/tcDescriptor.h>
+#include <omniORB4/tcDescriptor.h>
 
 static const char* @prefix@_library_version = @library@;
 """
