@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.9.6.1  1999/09/22 14:26:51  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.9  1999/05/25 17:06:14  sll
   Make sure all padding bytes are converted to 0s in the stringified IOR.
 
@@ -91,7 +94,7 @@ IOP::iorToEncapStr(const CORBA::Char* type_id,
     size_t bufsize = 8 + l;
     bufsize = profiles->_NP_alignedSize(bufsize);
     CORBA::Char dummy = 0;
-    for (int i=0; i < bufsize; i++) dummy >>= buf;
+    for (size_t i=0; i < bufsize; i++) dummy >>= buf;
     buf.rewind_inout_mkr();
   }
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.6.1  1999/09/22 14:26:24  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.4  1999/05/25 18:10:46  sll
   Now CORBA::ORB::ObjectIdList and CORBA_InitialReference::ObjIdList
   are different types.
@@ -71,11 +74,6 @@ public:
   // Returns true if a boostrap agent exists.
 
   static void initialise_bootstrap_agent(const char* host, CORBA::UShort port);
-
-private:
-  inline omniInitialReferences() {}
-  omniInitialReferences(const omniInitialReferences&);
-  omniInitialReferences& operator=(const omniInitialReferences&);
 };
 
 

@@ -28,7 +28,11 @@
 //      Implementation of type any
 
 
-/* $Log$
+/*
+ * $Log$
+ * Revision 1.18.6.1  1999/09/22 14:26:27  djr
+ * Major rewrite of orbcore to support POA.
+ *
  * Revision 1.18  1999/07/02 19:35:16  sll
  * Corrected typo in operator>>= for typecode.
  *
@@ -99,7 +103,7 @@
 // Revision 1.1  1998/01/27  15:43:47  ewc
 // Initial revision
 //
- */
+*/
 
 #include <anyP.h>
 #include <typecode.h>

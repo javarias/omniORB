@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.6.2  1999/09/24 10:29:34  djr
+  CORBA::Object::Object now requires an argument.
+
   Revision 1.2.6.1  1999/09/22 14:27:03  djr
   Major rewrite of orbcore to support POA.
 
@@ -116,7 +119,7 @@ CORBA::Policy::Policy(CORBA::PolicyType type)
 
 
 CORBA::Policy::Policy()
-  : Object(0), pd_type(0), pd_refCount(0)
+  : Object(0), pd_refCount(0), pd_type(0)
 {
 }
 
