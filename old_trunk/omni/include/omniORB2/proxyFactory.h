@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.6  1998/04/07 19:56:44  sll
+ Replace _OMNIORB2_NTDLL_ specification on class proxyObjectFactory with
+ _OMNIORB_NTDLL_IMPORT on static member variables.
+
  * Revision 1.5  1997/05/06  16:10:05  sll
  * Public release.
  *
@@ -36,6 +40,18 @@
 
 #ifndef __PROXYFACTORY_H__
 #define __PROXYFACTORY_H__
+
+
+#ifdef _LC_attr
+# error "A local CPP macro _LC_attr has already been defined."
+#else
+# ifdef _OMNIORB2_LIBRARY
+#  define _LC_attr
+# else
+#  define _LC_attr _OMNIORB_NTDLL_IMPORT
+# endif
+#endif
+
 
 class proxyObjectFactory_iterator;
 class proxyObjectFactory {
@@ -58,11 +74,12 @@ public:
   // a base interface.
 
   friend class proxyObjectFactory_iterator;
-  static _OMNIORB_NTDLL_IMPORT proxyObjectFactory* proxyStubs;
+  static _LC_attr proxyObjectFactory* proxyStubs;
 
 private:
   proxyObjectFactory *pd_next;
 };
+
 
 class proxyObjectFactory_iterator {
 public:
@@ -72,5 +89,9 @@ public:
 private:
   proxyObjectFactory *pd_f;
 };
+
+
+#undef _LC_attr
+
 
 #endif // __PROXYFACTORY_H__
