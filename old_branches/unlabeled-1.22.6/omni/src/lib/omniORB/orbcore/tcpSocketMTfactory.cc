@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.15  2000/08/07 10:34:19  sll
+  Fixed bug with Win32 tcp socket being left in non-blocking state.
+
   Revision 1.22.6.14  2000/07/03 15:38:20  dpg1
   Support for FreeBSD 4.0. FreeBSD 3.2 hopefully works too.
 
@@ -1249,10 +1252,12 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
     int rc;
     while (tremain) {
 
-      fd_set wrfds;
+      fd_set wrfds, exfds;
 # ifndef __CIAO__
       FD_ZERO(&wrfds);
+      FD_ZERO(&exfds);
       FD_SET(sock,&wrfds);
+      FD_SET(sock,&exfds);
 # endif
       struct timeval t;
       int tselect = omniORB::scanGranularity();
@@ -1260,7 +1265,7 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
       t.tv_sec = tselect;
       t.tv_usec = 0;
     again:
-      rc = select(sock+1,0,&wrfds,0,&t);
+      rc = select(sock+1,0,&wrfds,&exfds,&t);
 
       if (rc == 0) {
 	tremain -= tselect;
@@ -1269,7 +1274,7 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
 #   ifndef __WIN32__
 	if (errno == EINTR)
 	  continue;
-#   else
+#   else 
 	if (::WSAGetLastError() == WSAEINTR)
 	  continue;
 #   endif
@@ -1277,6 +1282,9 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
 	  break;
       }
       else {
+	if (FD_ISSET(sock,&exfds)) {
+	  rc = RC_SOCKET_ERROR;
+	}
 	break;
       }
       if (s->_strandIsDying()) {
