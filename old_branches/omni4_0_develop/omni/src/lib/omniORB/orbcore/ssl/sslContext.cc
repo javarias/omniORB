@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/09/13 15:36:01  sll
+  Provide hooks to openssl for thread safety.
+  Switched to select v2 or v3 methods but accept only v3 or tls v1 protocol.
+  Added extra method set_supported_versions.
+
   Revision 1.1.2.5  2001/09/13 15:22:12  sll
   Correct test macro for WIN32.
 
@@ -326,17 +331,17 @@ void sslContext_locking_callback(int mode, int type, const char *,int) {
 }
 
 /////////////////////////////////////////////////////////////////////////
+#ifndef __WIN32__
 extern "C"
 unsigned long sslContext_thread_id(void) {
-  omni_thread* t = omni_thread::self();
-  if (t) {
-    return t->id();
+  unsigned long id = pthread_self();
+  {
+    omniORB::logger log;
+    log << "thread_id " << id << "\n";
   }
-  else {
-    return (unsigned long) (-1);
-  }
+  return id;
 }
-
+#endif
 
 /////////////////////////////////////////////////////////////////////////
 void
@@ -344,7 +349,9 @@ sslContext::thread_setup() {
   pd_locks = new omni_mutex[CRYPTO_num_locks()];
   openssl_locks = pd_locks;
   CRYPTO_set_locking_callback(sslContext_locking_callback);
+#ifndef __WIN32__
   CRYPTO_set_id_callback(sslContext_thread_id);
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
