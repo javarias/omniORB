@@ -29,11 +29,19 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  2000/09/27 17:13:09  djs
+ Struct member renaming
+ Added command line options
+ Added CORBA::ValueBase (just to do reference counting)
+ General refactoring
+
  $Id$
 */
 
 #include <omniORB3/CORBA.h>
+#include <exceptiondefs.h>
 
+CORBA::ValueBase::ValueBase(const CORBA::ValueBase& v){ }
 
 CORBA::ValueBase *CORBA::ValueBase::_add_ref(){
   omni_mutex_lock lock(pd_state_lock);
