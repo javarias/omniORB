@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/12/01 17:04:21  djs
+# Added global config options for Typecodes and Anys, and forms of tie templates
+#
 # Revision 1.3  1999/11/12 17:17:45  djs
 # Creates output files rather than using stdout
 # Utility functions useful for skeleton generation added
@@ -40,6 +43,9 @@
 # Revision 1.1  1999/11/03 17:33:41  djs
 # Brought more of the old tmp_omniidl code into the new tree
 #
+
+from omniidl import idlvisitor
+import config
 
 #
 # Location where configuration data pertinent to the current run of the
@@ -118,12 +124,41 @@ def name_prefix():
     return "_0RL"
     
 # list of all files #included in the IDL
+includes = []
 def include_file_names():
     # EITHER modify the FE/BE interface to fetch this information from the
     # idl_global structure
     # OR rebuild it by traversing the AST in python
-    return []
+    return config.includes
 
 # completely emulate the old backend, bugs and all
 def EMULATE_BUGS():
     return 1
+
+
+
+
+# Traverses the AST compiling the list of files #included by the main
+# IDL file. Note that types constructed within other types must necessarily
+# be in the same IDL file
+class WalkTreeForIncludes(idlvisitor.AstVisitor):
+    def add(self, node):
+        file = node.file()
+        if not(file in config.includes):
+            config.includes = [file] + config.includes
+
+    def visitAST(self, node):
+        self.add(node)
+        for d in node.declarations(): d.accept(self)
+    def visitModule(self, node):
+        self.add(node)
+        for d in node.definitions(): d.accept(self)
+    def visitInterface(self, node): self.add(node)
+    def visitForward(self, node):   self.add(node)
+    def visitConst(self, node):     self.add(node)
+    def visitTypedef(self, node):   self.add(node)
+    def visitStruct(self, node):    self.add(node)
+    def visitException(self, node): self.add(node)
+    def visitUnion(self, node):     self.add(node)
+    def visitEnum(self, node):      self.add(node)
+    

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10  1999/12/09 20:41:24  djs
+# Now runs typecode and any generator
+#
 # Revision 1.9  1999/12/01 17:05:13  djs
 # Backend now supports command line arguments
 #
@@ -123,6 +126,10 @@ def run(tree, args):
         config.setBasename(match.group(2))
     else:
         raise "Unable to work out basename of input file"
+
+    # build the list of include files
+    walker = config.WalkTreeForIncludes()
+    tree.accept(walker)
 
     # set the default behaviour
     config.setTypecodeFlag(0)
