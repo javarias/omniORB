@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.17  2000/08/17 09:00:53  dpg1
+ GCC claims to support long long on all platforms.
+
  Revision 1.1.2.16  2000/08/10 10:17:53  sll
  Found the workaround for MSVC++ so that exceptions can be caught by base
  class. All the copy ctor from the most derived to the base classes must be
@@ -405,13 +408,6 @@
 // conflicts with the Status type defined in the CORBA namespace.
 // To remove this error, make sure that the offending header file is included
 // after omniORB2/CORBA.h.
-#endif
-
-#ifdef _T
-#error "Name conflict: _T is defined as a macro in a header file included before this."
-// FreeBSD's ctype.h, and maybe other files, define _T. omniORB uses
-// _T in various places as a class name. Fix this error by moving the
-// offending header after all omniORB includes.
 #endif
 
 
