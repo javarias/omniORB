@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.16  2001/07/31 16:04:07  sll
+ Added ORB::create_policy() and associated types and operators.
+
  Revision 1.2.2.15  2001/06/18 20:30:51  sll
  Only define 1 conversion operator from T_var to T* if the compiler is
  gcc. Previously, this is only done for gcc 2.7.2. It seems that gcc 3.0
@@ -3091,6 +3094,8 @@ extern void _omni_set_NameService(CORBA::Object_ptr);
 #include <omniORB4/poa.h>
 #include <omniORB4/fixed.h>
 #include <omniORB4/BiDirPolicy.h>
+
+#include <omniORB4/minorCode.h>
 
 #include <omniORB4/corbaidl_operators.hh>
 
