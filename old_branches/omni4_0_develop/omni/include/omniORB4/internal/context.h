@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  2001/11/06 15:41:36  dpg1
+ Reimplement Context. Remove CORBA::Status. Tidying up.
+
  Revision 1.1.2.1  2001/04/18 17:18:18  sll
  Big checkin with the brand new internal APIs.
  These files were relocated and scoped with the omni namespace.
@@ -85,6 +88,9 @@ public:
   // Decrease the reference count, and delete this context
   // if there are no more references or children.
   //  Must not hold <pd_lock>.
+
+  static void releaseDefault();
+  // Release the default context, if there is one. Called on ORB destruction.
 
 private:
   friend class CORBA::Context;

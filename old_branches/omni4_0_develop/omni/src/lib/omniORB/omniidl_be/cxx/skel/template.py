@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.21  2001/11/13 14:14:45  dpg1
+# Bug when no catch by base class.
+#
 # Revision 1.3.2.20  2001/11/12 13:46:07  dpg1
 # _unchecked_narrow, improved _narrow.
 #
@@ -314,6 +317,14 @@ static void
   @impl_fqname@* impl = (@impl_fqname@*) svnt->_ptrToInterface(@name@::_PD_repoId);
 @impl_call@
 }
+"""
+
+interface_callback_context = """\
+  CORBA::Context_var ctxt;
+  if (cd->is_upcall())
+    ctxt = CORBA::Context::_duplicate(tcd->ctxt);
+  else
+    ctxt = CORBA::Context::filterContext(tcd->ctxt, @cname@, @count@);
 """
 
 interface_callback_invoke = """\

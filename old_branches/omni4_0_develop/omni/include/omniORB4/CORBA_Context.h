@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/11/06 15:41:34  dpg1
+  Reimplement Context. Remove CORBA::Status. Tidying up.
+
   Revision 1.1.2.1  2001/08/17 13:39:44  dpg1
   Split CORBA.h into separate bits.
 
@@ -79,6 +82,12 @@ public:
   static void marshalContext(Context_ptr ctxt, const char*const* which,
 			     int whichlen, cdrStream& s);
   static Context_ptr unmarshalContext(cdrStream& s);
+
+  static Context_ptr filterContext(Context_ptr ctxt,
+				   const char*const* which,
+				   int whichlen);
+  // Filter a context according to the IDL declaration. Used for
+  // colocated calls.
 
   static inline _CORBA_Boolean PR_is_valid(Context_ptr p ) {
     return ((p) ? (p->pd_magic == PR_magic) : 1);

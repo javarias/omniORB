@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/11/06 15:41:36  dpg1
+  Reimplement Context. Remove CORBA::Status. Tidying up.
+
   Revision 1.2.2.6  2001/08/17 17:08:35  sll
   Use LinkHack mechanism to ensure dynamicLib is linked.
 
@@ -59,6 +62,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/callDescriptor.h>
 #include <dynamicLib.h>
+#include <context.h>
 #include <omniORB4/linkHacks.h>
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(dynamicLib);
@@ -97,6 +101,7 @@ static void
 deinit()
 {
   omniORB::logs(5, "Deinitialising omniDynamic library.");
+  ContextImpl::releaseDefault();
 }
 
 
