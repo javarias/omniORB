@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/12/18 17:27:39  sll
+  Updated to work under glibc-2.0.
+
   Revision 1.2  1997/12/12 18:44:11  sll
   Added call to gateKeeper.
 
@@ -313,7 +316,7 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
     // GNU C library uses socklen_t * instead of int* in getsockname().
     // This is suppose to be compatible with the upcoming POSIX standard.
     socklen_t l;
-#elif defined(__aix__)
+#elif defined(__aix__) || defined(__VMS)
     size_t l;
 # else
     int l;
@@ -771,7 +774,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
       // GNU C library uses socklen_t * instead of int* in accept ().
       // This is suppose to be compatible with the upcoming POSIX standard.
       socklen_t l;
-#elif defined(__aix__)
+#elif defined(__aix__) || defined(__VMS)
     size_t l;
 #else
     int l;
@@ -902,7 +905,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
     // GNU C library uses socklen_t * instead of int* in accept ().
     // This is suppose to be compatible with the upcoming POSIX standard.
     socklen_t l;
-#elif defined(__aix__)
+#elif defined(__aix__) || defined(__VMS)
     size_t l;
 #else
     int l;
