@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.20  1999/06/28 17:38:01  sll
+  Added packet dump routines in ll_send and ll_recv. Enabled at traceLevel 25.
+  Added openvms change.
+
   Revision 1.19  1999/06/26 18:10:52  sll
   Use WSAGetLastError() on win32 to get the errno correctly.
 
@@ -182,35 +186,55 @@ extern "C" int gethostname(char *name, int namelen);
 
 class tcpSocketRendezvouser : public omni_thread {
 public:
-  tcpSocketRendezvouser(tcpSocketIncomingRope *r) : omni_thread(r) {
-    start_undetached();
-  }
+  tcpSocketRendezvouser(tcpSocketIncomingRope *r,
+			tcpSocketMTincomingFactory *f) : 
+        omni_thread(r), pd_factory(f)
+    {
+      start_undetached();
+    }
   virtual ~tcpSocketRendezvouser() { }
   virtual void* run_undetached(void *arg);
 
 private:
+  tcpSocketMTincomingFactory* pd_factory;
   tcpSocketRendezvouser();
 };
 
 class tcpSocketWorker : public omni_thread {
 public:
-  tcpSocketWorker(tcpSocketStrand* s) : omni_thread(s), pd_sync(s,0,0) {
-    s->decrRefCount();
-    start();
+  tcpSocketWorker(tcpSocketStrand* s, tcpSocketMTincomingFactory* f) : 
+          omni_thread(s), pd_factory(f), pd_sync(s,0,0) 
+    {
+      s->decrRefCount();
+      start();
+    }
+  virtual ~tcpSocketWorker() { 
+    omni_mutex_lock sync(pd_factory->pd_shutdown_lock);
+    assert(pd_factory->pd_shutdown_nthreads != 0);
+    if (pd_factory->pd_shutdown_nthreads > 0) {
+      pd_factory->pd_shutdown_nthreads--;
+    }
+    else {
+      pd_factory->pd_shutdown_nthreads++;
+      pd_factory->pd_shutdown_cond.signal();
+    }
   }
-  virtual ~tcpSocketWorker() { }
   virtual void run(void *arg);
   static void _realRun(void* arg);
 
 private:
+  tcpSocketMTincomingFactory* pd_factory;
   Strand::Sync    pd_sync;
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-tcpSocketMTincomingFactory::tcpSocketMTincomingFactory() : pd_state(IDLE)
+tcpSocketMTincomingFactory::tcpSocketMTincomingFactory() 
+      : pd_state(IDLE), pd_shutdown_cond(&pd_shutdown_lock),
+        pd_shutdown_nthreads(0)
 {
   tcpSocketFactoryType::init();
+  
 }
  
 CORBA::Boolean
@@ -246,7 +270,7 @@ tcpSocketMTincomingFactory::instantiateIncoming(Endpoint* addr,
   r->incrRefCount(1);
 
   if (pd_state == ACTIVE) {
-    r->rendezvouser = new tcpSocketRendezvouser(r);
+    r->rendezvouser = new tcpSocketRendezvouser(r,this);
   }
 }
 
@@ -263,7 +287,7 @@ tcpSocketMTincomingFactory::startIncoming()
       while ((r = (tcpSocketIncomingRope*)next_rope())) {
 	if (r->pd_shutdown == tcpSocketIncomingRope::NO_THREAD) {
 	  r->pd_shutdown = tcpSocketIncomingRope::ACTIVE;
-	  r->rendezvouser = new tcpSocketRendezvouser(r);
+	  r->rendezvouser = new tcpSocketRendezvouser(r,this);
 	}
       }
     }
@@ -298,15 +322,50 @@ tcpSocketMTincomingFactory::stopIncoming()
 void
 tcpSocketMTincomingFactory::removeIncoming()
 {
-  Rope_iterator next_rope(&pd_anchor);
-  tcpSocketIncomingRope* r;
+  {
+    Rope_iterator next_rope(&pd_anchor);
+    tcpSocketIncomingRope* r;
 
-  switch (pd_state) {
-  case ACTIVE:
-  case IDLE:
+    switch (pd_state) {
+    case ACTIVE:
+      try {
+	while ((r = (tcpSocketIncomingRope*)next_rope())) {
+	  if (pd_state == ACTIVE) {
+	    r->cancelThreads();
+	  }
+	  if (r->pd_shutdown != tcpSocketIncomingRope::NO_THREAD) {
+	    // rendezvouser has not been shutdown properly
+	    continue;
+	  }
+	}
+      }
+      catch(...) {}
+    case IDLE:
+      pd_state = ZOMBIE;
+      break;
+    default:
+      return;
+    }
+  }
+  {
+    omni_mutex_lock sync(pd_shutdown_lock);
+    while (pd_shutdown_nthreads != 0) {
+      if (pd_shutdown_nthreads > 0) {
+	pd_shutdown_nthreads = -pd_shutdown_nthreads;
+      }
+      if (omniORB::traceLevel >= 20) {
+	omniORB::log << "tcpSocketMTincomingFactory::removeIncoming: blocks waiting for worker threads to exit\n";
+	omniORB::log.flush();
+      }
+      pd_shutdown_cond.wait();
+    }
+  }
+  {
+    Rope_iterator next_rope(&pd_anchor);
+    tcpSocketIncomingRope* r;
+
     try {
       while ((r = (tcpSocketIncomingRope*)next_rope())) {
-	r->cancelThreads();
 	if (r->pd_shutdown != tcpSocketIncomingRope::NO_THREAD) {
 	  // rendezvouser has not been shutdown properly
 	  continue;
@@ -317,12 +376,12 @@ tcpSocketMTincomingFactory::removeIncoming()
 	  r->decrRefCount(1);
 	}
       }
-      pd_state = ZOMBIE;
     }
     catch(...) {}
-    break;
-  default:
-    break;
+  }
+  if (omniORB::traceLevel >= 20) {
+    omniORB::log << "tcpSocketMTincomingFactory::removeIncoming: done\n";
+    omniORB::log.flush();
   }
 }
 
@@ -510,6 +569,7 @@ tcpSocketIncomingRope::cancelThreads()
       pd_shutdown = SHUTDOWN;
       pd_lock.unlock();
   }
+
   CutStrands();
   
   if (rendezvouser) {
@@ -1095,8 +1155,16 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 	omniORB::log.flush();
       }
 
+      omni_mutex_lock sync(pd_factory->pd_shutdown_lock);
+      if (pd_factory->pd_shutdown_nthreads >= 0) {
+	pd_factory->pd_shutdown_nthreads++;
+      }
+      else {
+	pd_factory->pd_shutdown_nthreads--;
+      }
+
       try {
-	newthr = new tcpSocketWorker(newSt);
+	newthr = new tcpSocketWorker(newSt,pd_factory);
       }
       catch(...) {
 	newthr = 0;
@@ -1109,6 +1177,17 @@ tcpSocketRendezvouser::run_undetached(void *arg)
 	// threads to strands; etc.
 	newSt->decrRefCount();
 	newSt->shutdown();
+
+	omni_mutex_lock sync(pd_factory->pd_shutdown_lock);
+	assert(pd_factory->pd_shutdown_nthreads != 0);
+	if (pd_factory->pd_shutdown_nthreads > 0) {
+	  pd_factory->pd_shutdown_nthreads--;
+	}
+	else {
+	  pd_factory->pd_shutdown_nthreads++;
+	  pd_factory->pd_shutdown_cond.signal();
+	}
+
       }
     }
     catch(const CORBA::COMM_FAILURE &) {
