@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.5  2003/07/29 14:52:10  dgrisby
+// Reuse Python thread state if possible. (Python 2.3.)
+//
 // Revision 1.1.2.4  2001/09/20 14:51:25  dpg1
 // Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
 //
@@ -153,6 +156,18 @@ addNewNode(long id, unsigned int hash)
 
     cn->workerThread = PyEval_CallObject(omniPy::pyWorkerThreadClass,
 					 omniPy::pyEmptyTuple);
+    if (!cn->workerThread) {
+      if (omniORB::trace(1)) {
+	{
+	  omniORB::logger l;
+	  l << "Exception trying to create worker thread.\n";
+	}
+	PyErr_Print();
+      }
+      else {
+	PyErr_Clear();
+      }
+    }
     PyThreadState_Swap(oldState);
     PyEval_ReleaseLock();
 
@@ -215,6 +230,7 @@ threadExit()
 	  Py_XDECREF(tmp);
 	  Py_DECREF(argtuple);
 	}
+
 	PyThreadState_Swap(oldState);
 	PyThreadState_Clear(cn->threadState);
 	PyThreadState_Delete(cn->threadState);
