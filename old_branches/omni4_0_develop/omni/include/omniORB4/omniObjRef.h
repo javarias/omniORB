@@ -29,6 +29,13 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:16:20  sll
+  Replaced data member pd_iopProfiles with pd_ior which contains decoded
+  members of the IOR.
+  Removed _getRopeAndKey(), _getTheKey() and _iopProfiles().
+  Added new functions _getIOR(), _marshal(), _unMarshal(), _toString,
+  _fromString(), _hash(), _is_equivalent().
+
   Revision 1.2.2.1  2000/07/17 10:35:35  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -250,19 +257,14 @@ public:
   // and shouldn't be modified. The returned object should be
   // released by calling its release() method. This
   // function is atomic and thread-safe.
-  // Mutual exclusion by holding omni::InternalLock.
   
   static void _marshal(omniObjRef*, cdrStream&);
   // Marshal this object reference to the cdrStream.
-  // Use omni::InternalLock for internal synchronisation.
-  // Must not hold omni::InternalLock when calling.
 
   static omniObjRef* _unMarshal(const char* repoId, cdrStream& s);
   // Unmarshal from the cdrStream an object reference. The
   // object reference is expected to implement the interface identified
   // by the repository ID <repoId>.
-  // Use omni::InternalLock for internal synchronisation.
-  // Must not hold omni::InternalLock when calling.
 
   static char* _toString(omniObjRef*);
   static omniObjRef* _fromString(const char*);
@@ -336,7 +338,7 @@ private:
 
   omniIOR* pd_ior;
   // The decoded IOR of this object reference.
-  // Mutable. Protected by <omni::internalLock>.
+  // Mutable. Protected by <omniIOR::lock>.
 
   omniIdentity* pd_id;
   // An encapsulation of the current implementation of this
