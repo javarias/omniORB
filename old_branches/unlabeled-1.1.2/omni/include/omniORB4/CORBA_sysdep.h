@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.12  2000/07/05 11:13:56  dpg1
+ Untested support for AIX with xlC 5.
+
  Revision 1.1.2.11  2000/06/30 14:12:07  dpg1
  Minor fixes for FreeBSD.
 
@@ -326,7 +329,7 @@
 #    define HAS_Std_Namespace
 #  endif
 
-#if defined(__hpux__)
+#elif defined(__hpux__)
 // Recent versions of HP aCC (A01.18 and A.03.13) have an identifying macro.
 // In the future, we should be able to remove the gcc test.
 // In case this is an older compiler aCC, test if this is gcc, if not assume 
