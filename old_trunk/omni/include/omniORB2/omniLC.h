@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+   Revision 1.3  1997/12/18 17:37:33  sll
+   Added virtual dtor for _lc_sk.
+
    Revision 1.2  1997/12/10 13:45:10  sll
    Cleanup to remove constructs that trigger the MSVC nested class bug.
 
@@ -43,10 +46,13 @@
 #ifndef _omniLC_h_
 #define _omniLC_h_
 
-
-#include <omnithread.h>
+#ifndef USE_stub_in_nt_dll
+#define USE_stub_in_nt_dll
 #include <omniORB2/omniLifeCycle.hh>
-
+#undef  USE_stub_in_nt_dll
+#else
+#include <omniORB2/omniLifeCycle.hh>
+#endif
 
 // Everything lives inside class omniLC:
 
