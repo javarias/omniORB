@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.23  1999/01/07 18:36:13  djr
+  Changes to support split of omniORB library in two.
+
   Revision 1.22  1998/10/08 13:07:24  sll
   OpenVMS needs string.h (POSIX or System V) instead of strings.h (BSD).
 
@@ -126,7 +129,7 @@ class omniObjectManager;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern const char* _LC_attr omniORB_2_7;
+extern _LC_attr const char* omniORB_2_8;
 
 
 #include <omniORB2/rope.h>
