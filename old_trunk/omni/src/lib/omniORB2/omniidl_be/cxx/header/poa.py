@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/13 14:16:30  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.10  2000/01/11 11:34:28  djs
 # Added support for fragment generation (-F) mode
 #
@@ -93,6 +96,7 @@ def POA_prefix():
 # Control arrives here
 #
 def visitAST(node):
+    self.__completedModules = {}
     for n in node.declarations():
         n.accept(self)
 
@@ -101,6 +105,11 @@ def visitModule(node):
     # multiple files
     if not(node.mainFile()):
         return
+
+    slash_scopedName = string.join(node.scopedName(), '/')
+    if self.__completedModules.has_key(slash_scopedName):
+        return
+    self.__completedModules[slash_scopedName] = 1
     
     name = tyutil.mapID(node.identifier())
 
@@ -113,13 +122,17 @@ _CORBA_MODULE_BEG
                    POA_prefix = POA_prefix())
         stream.inc_indent()
 
+    nested = self.__nested
+    self.__nested = 1
     for n in node.definitions():
-        nested = self.__nested
-        self.__nested = 1
-
         n.accept(self)
+    for c in node.continuations():
+        slash_scopedName = string.join(c.scopedName(), '/')
+        self.__completedModules[slash_scopedName] = 1
+        for n in c.definitions():
+            n.accept(self)
 
-        self.__nested = nested
+    self.__nested = nested
 
     if not(config.FragmentFlag()):
         stream.dec_indent()
