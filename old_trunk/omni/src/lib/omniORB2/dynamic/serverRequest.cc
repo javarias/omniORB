@@ -29,11 +29,15 @@
 
 /*
  $Log$
+ Revision 1.6  1999/06/18 20:59:12  sll
+ Allow system exception to be returned inside exception().
+
  Revision 1.5  1999/04/21 13:40:10  djr
  Use CORBA::Context::unmarshalContext() for unmarshalling context ...
 
 */
 
+#define ENABLE_CLIENT_IR_SUPPORT
 #include <dynamicImplementation.h>
 #include <pseudo.h>
 #include <context.h>
