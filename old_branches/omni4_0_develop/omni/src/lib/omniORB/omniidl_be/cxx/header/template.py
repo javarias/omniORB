@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.19  2001/11/12 13:46:07  dpg1
+# _unchecked_narrow, improved _narrow.
+#
 # Revision 1.5.2.18  2001/11/08 16:33:51  dpg1
 # Local servant POA shortcut policy.
 #
@@ -299,8 +302,8 @@ class @POA_name@ :
 public:
   virtual ~@POA_name@();
 
-  inline @scopedID@_ptr _this() {
-    return (@scopedID@_ptr) _do_this(@scopedID@::_PD_repoId);
+  inline ::@scopedID@_ptr _this() {
+    return (::@scopedID@_ptr) _do_this(::@scopedID@::_PD_repoId);
   }
 };
 """
@@ -496,6 +499,7 @@ typedef CORBA::TypeCode_var @name@_var;
 typedef_simple_any = """\
 typedef CORBA::Any @name@;
 typedef CORBA::Any_var @name@_var;
+typedef CORBA::Any_out @name@_out;
 """
 
 typedef_simple_fixed = """\
@@ -505,6 +509,7 @@ typedef @name@& @name@_out;
 
 typedef_simple_basic = """\
 typedef @base@ @derived@;
+typedef @base@_out @derived@_out;
 """
 
 typedef_simple_constructed = """\
