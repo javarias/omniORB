@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.4  1998/08/26 11:12:22  sll
+   Minor updates to remove warnings when compiled with standard C++ compilers.
+
    Revision 1.3  1998/08/25 18:52:39  sll
    Added sign-unsigned castings to keep gcc-2.7.2 and egcs happy.
 
@@ -302,12 +305,12 @@ dynAnyP::currentComponentFromBasetype(CORBA::TCKind k,Bval& v)
 #else
       case CORBA::tk_float: {
 	CORBA::Float tmp(v.fv);
-	tmp >>=3D pd_buf;
+	tmp >>= pd_buf;
       } 
       break;
       case CORBA::tk_double: {
 	CORBA::Double tmp(v.dv);
-	tmp >>=3D pd_buf;
+	tmp >>= pd_buf;
       } 
       break;
 #endif
@@ -415,14 +418,14 @@ dynAnyP::currentComponentToBasetype(CORBA::TCKind k,Bval& v)
 #else
       case CORBA::tk_float: {
 	CORBA::Float tmp;
-	tmp <<=3D pd_buf;
-	v.fv =3D tmp;
+	tmp <<= pd_buf;
+	v.fv = tmp;
       } 
       break;
       case CORBA::tk_double: {
 	CORBA::Double tmp;
-	tmp <<=3D pd_buf;
-	v.dv =3D tmp;
+	tmp <<= pd_buf;
+	v.dv = tmp;
       } 
       break;
 #endif
