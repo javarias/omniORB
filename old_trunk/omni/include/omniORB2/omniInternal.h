@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15  1997/12/15 15:26:32  sll
+  Added the missing dllimport/dllexport for WIN32.
+
   Revision 1.14  1997/12/12 19:59:19  sll
   Added version variable omniORB_x_y.
 
@@ -113,7 +116,6 @@ public:
 #endif
 
   static const _CORBA_Boolean myByteOrder;
-  static _CORBA_ULong         traceLevel;
 
   enum alignment_t { ALIGN_1 = 1, ALIGN_2 = 2, ALIGN_4 = 4, ALIGN_8 = 8 };
   static const alignment_t max_alignment;  // Maximum value of alignment_t
