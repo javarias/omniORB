@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/11/02 17:07:25  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.1  1999/10/27 14:05:56  dpg1
 // *** empty log message ***
 //
@@ -103,8 +106,11 @@ void
 Prefix::
 endScope()
 {
-  assert(current_);
-  delete current_;
+  if (current_->parent_)
+    delete current_;
+  else
+    IdlWarning(currentFile, yylineno,
+	       "Confused by pre-processor line directives");
 }
 
 void
@@ -116,12 +122,9 @@ endFile()
 	       "File ended inside a declaration. "
 	       "Repository identifiers may be incorrect");
   }
-  while (current_ && !current_->isfile())
+  if (current_->parent_)
     delete current_;
-
-  if (current_) delete current_;
-
-  if (!current_)
+  else
     IdlWarning(currentFile, yylineno,
 	       "Confused by pre-processor line directives");
 }
