@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.13  2001/06/13 20:10:04  sll
+ * Minor update to make the ORB compiles with MSVC++.
+ *
  * Revision 1.38.2.12  2001/06/08 17:12:10  dpg1
  * Merge all the bug fixes from omni3_develop.
  *
@@ -3978,6 +3981,9 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
 
     case CORBA::tk_string:
       return TypeCode_string::NP_unmarshalSimpleParams(s, otbl);
+
+    case CORBA::tk_wstring:
+      return TypeCode_wstring::NP_unmarshalSimpleParams(s, otbl);
 
     default:
       OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_NO);
