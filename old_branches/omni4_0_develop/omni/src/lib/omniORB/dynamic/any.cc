@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.19.2.13  2003/03/23 20:41:58  dgrisby
+ * Assigning an Any to itself would incorrectly deallocate it.
+ *
  * Revision 1.19.2.12  2001/10/17 16:44:02  dpg1
  * Update DynAny to CORBA 2.5 spec, const Any exception extraction.
  *
@@ -249,6 +252,7 @@ CORBA::Any::NP_marshalDataOnly(cdrStream& s) const
 void
 CORBA::Any::NP_unmarshalDataOnly(cdrStream& s)
 {
+  pdAnyP()->setTC_and_reset(pdAnyP()->getTC());
   pdAnyP()->copyFrom(s);
 }
 
