@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.5  1999/09/29 13:51:03  djr
+  Corrected tie implementation signatures.
+
   Revision 1.39.6.4  1999/09/29 13:12:03  djr
   Updated mapping of operation signatures for skeletons to use T_out types.
   Renamed all flags relating to backwards-compatiblity.
@@ -487,7 +490,7 @@ o2be_interface::produce_hdr(std::fstream& s)
   DEC_INDENT_LEVEL();
 
   s << o2be_template(map,
-   "  inline proxy() : CORBA::Object(0) {}  // nil\n"
+   "  inline proxy() : Object(0) {}  // nil\n"
    "  proxy(const char*, IOP::TaggedProfileList*, omniIdentity*, "
            "omniLocalIdentity*);\n\n"
 
