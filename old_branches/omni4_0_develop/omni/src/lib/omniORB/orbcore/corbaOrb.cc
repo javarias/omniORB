@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.42  2003/05/27 11:20:44  dgrisby
+  For some reason the config file was not looked at on Windows.
+
   Revision 1.33.2.41  2002/09/09 00:24:40  dgrisby
   Make sure various modules initialise. Needed by MacOSX.
 
@@ -633,7 +636,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
       omniORB::logger l;
       l << "Current configuration is as follows:\n";
       for (CORBA::ULong i = 0; i < currentSet->length(); i++)
-	l << "omniORB:   " << currentSet[i] << "\n";
+	l << "omniORB:   " << (const char*)currentSet[i] << "\n";
     }
   }
   catch (CORBA::INITIALIZE &ex) {
