@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18  1999/12/21 16:05:11  dpg1
+# New module= option.
+#
 # Revision 1.17  1999/12/17 11:39:52  dpg1
 # New arguments to put modules and stubs in a specified package.
 #
@@ -96,7 +99,7 @@ usage_string = """\
   -Wbpackage=p    Put both Python modules and stub files in package p
   -Wbmodules=p    Put Python modules in package p
   -Wbstubs=p      Put stub files in package p
-  -Wbmodule=m     Module to use for global IDL scope (default _GlobalIDL)"""
+  -Wbglobal=g     Module to use for global IDL scope (default _GlobalIDL)"""
 
 #""" Uncomment this line to get syntax highlighting on the output strings
 
