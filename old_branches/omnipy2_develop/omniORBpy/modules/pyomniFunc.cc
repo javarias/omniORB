@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.11  2002/11/27 00:18:25  dgrisby
+// Per thread / per objref timeouts.
+//
 // Revision 1.1.2.10  2002/08/16 19:27:36  dgrisby
 // Documentation update. Minor ORB updates to match docs.
 //
@@ -212,6 +215,7 @@ extern "C" {
   static void removeDummyOmniThread(void* vself) {
     if ((omni_thread*)vself == omni_thread::self()) {
       omniORB::logs(10, "Remove dummy omni thread.");
+      omniPy::InterpreterUnlocker _u;
       omni_thread::release_dummy();
     }
     else
