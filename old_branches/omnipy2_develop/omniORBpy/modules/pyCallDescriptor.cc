@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.5  2001/06/29 09:53:56  dpg1
+// Fix for clients using GIOP 1.0.
+//
 // Revision 1.1.2.4  2001/06/01 11:09:26  dpg1
 // Make use of new omni::ptrStrCmp() and omni::strCmp().
 //
@@ -101,8 +104,9 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 			      PyTuple_GET_ITEM(in_d_,i),
 			      PyTuple_GET_ITEM(args_,i));
     in_marshal_ = 0;
+
+    releaseInterpreterLock();
   }
-  releaseInterpreterLock();
 }
 
 
