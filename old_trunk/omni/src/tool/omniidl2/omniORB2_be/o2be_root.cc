@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.7  1997/12/12 20:02:33  sll
+  Generate reference to version variable omniORB_x_y in skel file.
+
   Revision 1.6  1997/12/10 11:35:56  sll
   Updated life cycle service stub.
 
@@ -52,7 +55,13 @@
 #include <stdio.h>
 #else
 #include <unistd.h>
+
+#if defined(__VMS) && __VMS_VER < 70000000
+#include <omniVms/unlink.hxx>
 #endif
+
+#endif
+
 
 o2be_root::o2be_root(UTL_ScopedName *n, UTL_StrList *p)
   : AST_Root(n,p),

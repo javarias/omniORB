@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.9  1997/12/23 19:26:58  sll
+  Fixed a number of bugs related to unions that have array members.
+
   Revision 1.8  1997/12/18 17:28:54  sll
   *** empty log message ***
 
@@ -993,6 +996,8 @@ o2be_union::produce_hdr(fstream &s)
 
 	    ntype =  o2be_operation::ast2ArgMapping(f->field_type(),
 				       o2be_operation::wResult,mapping);
+            if (ntype==o2be_operation::tFloat || ntype==o2be_operation::tDouble)
+              s << "#if !defined(__VMS) || __IEEE_FLOAT\n";
 	    switch (ntype)
 	      {
 	      case o2be_operation::tShort:
@@ -1045,6 +1050,8 @@ o2be_union::produce_hdr(fstream &s)
 	      default:
 		break;
 	      }
+            if (ntype==o2be_operation::tFloat || ntype==o2be_operation::tDouble)
+              s << "#endif\n";
 	  }
 	i.next();
       }
@@ -1064,6 +1071,8 @@ o2be_union::produce_hdr(fstream &s)
 
 	    ntype =  o2be_operation::ast2ArgMapping(f->field_type(),
 				       o2be_operation::wResult,mapping);
+            if (ntype==o2be_operation::tFloat || ntype==o2be_operation::tDouble)
+              s << "#if defined(__VMS) && !__IEEE_FLOAT\n";
 	    switch (ntype)
 	      {
 	      case o2be_operation::tString:
@@ -1082,6 +1091,11 @@ o2be_union::produce_hdr(fstream &s)
 			      << " pd_" << f->uqname() << ";\n";
 		  }
 		break;
+
+#ifdef __VMS
+              case o2be_operation::tFloat:
+              case o2be_operation::tDouble:
+#endif
 	      case o2be_operation::tStructVariable:
 	      case o2be_operation::tUnionFixed:
 	      case o2be_operation::tUnionVariable:
@@ -1145,6 +1159,8 @@ o2be_union::produce_hdr(fstream &s)
 	      default:
 		break;
 	      }
+            if (ntype==o2be_operation::tFloat || ntype==o2be_operation::tDouble)
+              s << "#endif\n";
 	  }
 	i.next();
       }

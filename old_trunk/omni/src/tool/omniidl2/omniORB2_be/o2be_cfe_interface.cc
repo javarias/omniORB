@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.8  1997/12/09 19:55:22  sll
+  *** empty log message ***
+
 // Revision 1.7  1997/09/20  16:37:24  dpg1
 // Added new -l flag for LifeCycle code generation.
 //
@@ -52,7 +55,7 @@
 #include <o2be.h>
 
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__VMS) && __VMS_VER < 60200000
 
 // NT doesn't have an implementation of getopt() - supply a getopt() for this program:
 
