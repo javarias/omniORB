@@ -32,6 +32,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.7  1999/10/11 16:52:51  dpg1
+// Fixed reference counting bug when receiving a reference to a local C++
+// object.
+//
 // Revision 1.6  1999/09/29 11:25:55  dpg1
 // Nil objects now map to None. They work too, which is more than can be
 // said for the old mapping...
@@ -97,9 +101,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 
   assert(objrefClass); // Couldn't even find CORBA.Object!
 
-  PyObject* arglist    = PyTuple_New(0);
-  PyObject* pyobjref   = PyEval_CallObject(objrefClass, arglist);
-  Py_DECREF(arglist);
+  PyObject* pyobjref = PyEval_CallObject(objrefClass, omniPy::pyEmptyTuple);
 
   assert(PyInstance_Check(pyobjref));
 

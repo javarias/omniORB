@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.12  1999/11/08 12:07:25  dpg1
+// Adding python1.5/ to #include path caused a conflict with thread.h on
+// Solaris.
+//
 // Revision 1.11  1999/11/08 11:43:35  dpg1
 // Changes for NT support.
 //
@@ -216,6 +220,7 @@ _CORBA_MODULE_VAR PyObject* pyCreateTypeCode;	// Function to create a
 						//  TypeCode object
 _CORBA_MODULE_VAR PyObject* pyDummyThreadClass; // threading module dummy
                                                 //  thread class
+_CORBA_MODULE_VAR PyObject* pyEmptyTuple;       // Zero element tuple
 
 
 ////////////////////////////////////////////////////////////////////////////
