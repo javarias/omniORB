@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/11/20 18:56:39  sll
+  Sequence templates were broken by the previous checkin. They are now fixed.
+
   Revision 1.1.2.4  2000/11/20 14:41:44  sll
   Simplified sequence template hierachy and added templates for sequence of
   wchar and sequence of array of wchar.
@@ -374,7 +377,7 @@ _CORBA_Unbounded_Sequence_Array<T,T_slice,Telm,dimension>::operator<<= (cdrStrea
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
+  if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -409,7 +412,7 @@ _CORBA_Bounded_Sequence_Array<T,T_slice,Telm,dimension,max>::operator<<= (cdrStr
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (l > max)) {
+  if (!s.checkInputOverrun(1,l) || (l > max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -442,7 +445,7 @@ _CORBA_Sequence_Array_Char<T,T_slice,dimension>::operator<<=(cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
+  if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -471,7 +474,7 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator<<=(cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
+  if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -496,7 +499,7 @@ _CORBA_Sequence_Array_Octet<T,T_slice,dimension>::operator<<=(cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
+  if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
@@ -525,7 +528,7 @@ _CORBA_Sequence_Array_WChar<T,T_slice,dimension>::operator<<=(cdrStream& s)
 {
   _CORBA_ULong l;
   l <<= s;
-  if (s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
+  if (!s.checkInputOverrun(1,l) || (pd_bounded && l > pd_max)) {
     _CORBA_marshal_error();
     // never reach here
   }
