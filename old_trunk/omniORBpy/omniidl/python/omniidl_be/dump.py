@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/11/02 17:07:23  dpg1
+# Changes to compile on Solaris.
+#
 # Revision 1.4  1999/11/01 20:19:55  dpg1
 # Support for union switch types declared inside the switch statement.
 #
@@ -299,6 +302,11 @@ enum @id@ {@enums@};""",
                
                oneway=oneway, rtype=rtype, id=node.identifier(),
                params=params, raises=raises)
+
+    def visitNative(self, node):
+        self.st.out("""\
+native @id@;""",
+                    id=node.identifier())
 
 
     def visitDeclarator(self, node):

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  1999/11/10 16:08:22  dpg1
+# Some types weren't registered properly.
+#
 # Revision 1.6  1999/11/04 11:46:12  dpg1
 # Now uses our own version of the GNU C preprocessor.
 #
@@ -1098,6 +1101,11 @@ class PythonVisitor:
                         ename   = ename,
                         repoId  = node.repoId(),
                         eitems  = eitems)
+
+    def visitNative(self, node):
+        if self.handleImported(node): return
+
+        print "Warning: ignoring declaration of native", node.identifier()
 
 
 def operationToDescriptors(op):
