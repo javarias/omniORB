@@ -30,6 +30,7 @@
 #  mips_irix_6.5_64          SGI Irix 6.5 - 64bit mode
 #  x86_ets                   Phar Lap Realtime ETS-kernel
 #  x86_sco5                  SCO OpenServer 5
+#  x86_uw7		     SCO UnixWare 7 (7.1.0)
 #  i386_freebsd_3.2          x86 FreeBSD 3.2, egcs 1.1.2
 
 #platform = sun4_sosV_5.5
@@ -58,6 +59,7 @@
 
 #platform = x86_ets
 #platform = x86_sco5
+#platform = x86_uw7
 #platform = i386_freebsd_3.2
 
 # On Win32 platforms, uncomment the following line to build all the binaries

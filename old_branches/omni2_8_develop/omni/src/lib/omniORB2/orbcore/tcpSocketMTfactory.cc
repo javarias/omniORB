@@ -29,6 +29,17 @@
 
 /*
   $Log$
+  Revision 1.22.2.1  1999/09/21 20:37:18  sll
+  -Simplified the scavenger code and the mechanism in which connections
+   are shutdown. Now only one scavenger thread scans both incoming
+   and outgoing connections. A separate thread do the actual shutdown.
+  -omniORB::scanGranularity() now takes only one argument as there is
+   only one scan period parameter instead of 2.
+  -Trace messages in various modules have been updated to use the logger
+   class.
+  -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                 -ORBscanIncomingPeriod.
+
   Revision 1.22  1999/08/30 16:54:24  sll
   Wait much less time in tcpSocketStrand::shutdown. Added trace message.
 
@@ -142,6 +153,11 @@
 #  else
 #    include <sys/socket.h>
 #  endif
+#endif
+
+#if defined (__uw7__)
+#ifdef shutdown
+#undef shutdown
 #endif
 
 #include <netinet/in.h>
@@ -492,7 +508,7 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
     // GNU C library uses socklen_t * instead of int* in getsockname().
     // This is suppose to be compatible with the upcoming POSIX standard.
     socklen_t l;
-#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__)
+#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
     size_t l;
 # else
     int l;
@@ -1108,7 +1124,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
       // GNU C library uses socklen_t * instead of int* in accept ().
       // This is suppose to be compatible with the upcoming POSIX standard.
       socklen_t l;
-#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__)
+#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
     size_t l;
 #else
     int l;
@@ -1269,7 +1285,7 @@ tcpSocketRendezvouser::run_undetached(void *arg)
     // GNU C library uses socklen_t * instead of int* in accept ().
     // This is suppose to be compatible with the upcoming POSIX standard.
     socklen_t l;
-#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__)
+#elif defined(__aix__) || defined(__VMS) || defined(__SINIX__) || defined(__uw7__)
     size_t l;
 #else
     int l;
