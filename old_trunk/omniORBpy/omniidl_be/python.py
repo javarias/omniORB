@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/11/12 15:53:48  dpg1
+# New functions omniORB.importIDL() and omniORB.importIDLString().
+#
 # Revision 1.8  1999/11/11 15:55:29  dpg1
 # Python back-end interface now supports valuetype declarations.
 # Back-ends still don't support them, though.
@@ -67,7 +70,7 @@ module_directory = ""
 
 cpp_args = ["-D__OMNIIDL_PYTHON__"]
 
-#""" Uncomment this line to get syntax highlighthing on the output strings
+#""" Uncomment this line to get syntax highlighting on the output strings
 
 # Output strings
 
