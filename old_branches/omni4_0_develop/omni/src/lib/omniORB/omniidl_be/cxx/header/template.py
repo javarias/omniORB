@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.20  2004/02/11 11:49:57  dgrisby
+# Generate _out types for simple typedefs.
+#
 # Revision 1.5.2.19  2001/11/12 13:46:07  dpg1
 # _unchecked_narrow, improved _narrow.
 #
@@ -390,6 +393,8 @@ private:
   _objref_@name@(const _objref_@name@&);
   _objref_@name@& operator = (const _objref_@name@&);
   // not implemented
+
+  friend class @name@;
 };
 """
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.25  2003/07/25 16:03:06  dgrisby
+# Initialise base classes in correct order.
+#
 # Revision 1.3.2.24  2003/06/19 16:22:21  dgrisby
 # Updates to facilitate Windows omniNotify port. Work around DLL issues
 # and a compiler bug.
@@ -247,6 +250,10 @@ interface_class = """\
 @name@_ptr
 @name@::_nil()
 {
+#ifdef OMNI_UNLOADABLE_STUBS
+  static @objref_name@ _the_nil_obj;
+  return &_the_nil_obj;
+#else
   static @objref_name@* _the_nil_ptr = 0;
   if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
@@ -257,6 +264,7 @@ interface_class = """\
     omni::nilRefLock().unlock();
   }
   return _the_nil_ptr;
+#endif
 }
 
 const char* @name@::_PD_repoId = "@repoID@";
