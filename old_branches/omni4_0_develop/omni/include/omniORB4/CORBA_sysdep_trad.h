@@ -30,6 +30,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/03/13 16:05:38  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.1.2.2  2002/01/31 10:16:33  dpg1
   Missing define in traditional sysdep.
 
@@ -374,6 +379,10 @@
 //
 // Default flag values if not already overridden above
 //
+
+#ifndef SIZEOF_BOOL
+#define SIZEOF_BOOL 1
+#endif
 
 #ifndef SIZEOF_LONG
 #define SIZEOF_LONG 4
