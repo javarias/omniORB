@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11  1999/12/16 16:11:21  djs
+# Now uses transitive closure of inherits relation where appropriate
+#
 # Revision 1.10  1999/12/14 11:53:22  djs
 # Support for CORBA::TypeCode and CORBA::Any
 # Exception member bugfix
@@ -97,7 +100,9 @@ def __init__(stream):
 
 def visitAST(node):
     for n in node.declarations():
-        n.accept(self)
+        # check what happens with reopened modules
+        if n.mainFile():
+            n.accept(self)
 
 def visitModule(node):
     name = tyutil.mapID(node.identifier())
