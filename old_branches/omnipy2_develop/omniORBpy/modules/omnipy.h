@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.13  2001/08/21 10:52:41  dpg1
+// Update to new ORB core APIs.
+//
 // Revision 1.2.4.12  2001/08/15 10:37:14  dpg1
 // Track ORB core object table changes.
 //
@@ -68,11 +71,14 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/callDescriptor.h>
+#include <omniORB4/minorCode.h>
 #include <exceptiondefs.h>
 #include <objectTable.h>
 #include <orbParameters.h>
 #include "omnipy_sysdep.h"
 
+
+OMNI_USING_NAMESPACE(omni)
 
 ////////////////////////////////////////////////////////////////////////////
 // Data structure to manage C++ twins of Python objects                   //
@@ -95,9 +101,9 @@ extern "C" {
 
 
 // Useful macro
-#define RAISE_PY_BAD_PARAM_IF(x) \
+#define RAISE_PY_BAD_PARAM_IF(x,minor) \
   if (x) { \
-    CORBA::BAD_PARAM _ex; \
+    CORBA::BAD_PARAM _ex(minor, CORBA::COMPLETED_NO); \
     return omniPy::handleSystemException(_ex); \
   }
 
@@ -354,7 +360,7 @@ public:
     else if (tk == 0xffffffff) { // Indirection
       validateTypeIndirect(d_o, a_o, compstatus);
     }
-    else OMNIORB_THROW(BAD_TYPECODE, 0, compstatus);
+    else OMNIORB_THROW(BAD_TYPECODE, BAD_TYPECODE_UnknownKind, compstatus);
   }
 
   // Marshal the given argument object a_o, which has the type
@@ -402,7 +408,9 @@ public:
     else if (tk == 0xffffffff) { // Indirection
       return unmarshalPyObjectIndirect(stream, d_o);
     }
-    else OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
+    else OMNIORB_THROW(BAD_TYPECODE,
+		       BAD_TYPECODE_UnknownKind,
+		       (CORBA::CompletionStatus)stream.completion());
     return 0;
   }
 
@@ -432,7 +440,7 @@ public:
     else if (tk == 0xffffffff) { // Indirection
       return copyArgumentIndirect(d_o, a_o, compstatus);
     }
-    else OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
+    else OMNIORB_THROW(BAD_TYPECODE, BAD_TYPECODE_UnknownKind, compstatus);
     return 0; // For dumb compilers
   }
 

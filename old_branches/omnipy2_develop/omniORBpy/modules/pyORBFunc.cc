@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.7  2001/09/20 14:51:25  dpg1
+// Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
+//
 // Revision 1.1.2.6  2001/08/01 10:12:36  dpg1
 // Main thread policy.
 //
@@ -110,7 +113,7 @@ extern "C" {
       }	
       objref = (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
     }
-    RAISE_PY_BAD_PARAM_IF(!objref);
+    RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
 
     CORBA::String_var str;
     try {

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.8  2001/06/15 10:59:26  dpg1
+// Apply fixes from omnipy1_develop.
+//
 // Revision 1.1.2.7  2001/06/01 11:09:26  dpg1
 // Make use of new omni::ptrStrCmp() and omni::strCmp().
 //
@@ -361,7 +364,7 @@ HandleLocationForward(PyObject* evalue)
   else {
     omniORB::logs(1, "Invalid object reference inside "
 		  "omniORB.LOCATION_FORWARD exception");
-    OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
   }
 }
 
@@ -419,7 +422,8 @@ Py_omniServant::_is_a(const char* logical_type_id)
 	    PyErr_Restore(etype, evalue, etraceback);
 	    PyErr_Print();
 	  }
-	  OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
+	  OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException,
+			CORBA::COMPLETED_MAYBE);
 	}
 
 	Py_DECREF(etype);
@@ -494,7 +498,8 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
 	<< op << "'.\n";
     }
     PyErr_Clear();
-    OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
 
   PyObject* args   = pycd->args();
@@ -526,7 +531,7 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -573,7 +578,8 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
 	<< op << "'.\n";
     }
     PyErr_Clear();
-    OMNIORB_THROW(NO_IMPLEMENT, 0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
 
   PyObject* in_d  = pycd->in_d_;
@@ -625,7 +631,8 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
 	  return;
 	}
 	else
-	  OMNIORB_THROW(BAD_PARAM,0,CORBA::COMPLETED_MAYBE);
+	  OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType,
+			CORBA::COMPLETED_MAYBE);
       }
       else if (out_l == 1) {
 	retval = copyArgument(PyTuple_GET_ITEM(out_d, 0),
@@ -671,7 +678,7 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      OMNIORB_THROW(UNKNOWN, 0, CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -727,8 +734,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
   method = PyObject_GetAttrString(pysa_, (char*)"incarnate");
   if (!method) {
     PyErr_Clear();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_MAYBE);
-    // *** Good choice of exn?
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_MAYBE);
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#N",
@@ -744,8 +751,10 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
     omniPy::Py_omniServant* servant = omniPy::getServantForPyObject(pyservant);
     Py_DECREF(pyservant);
 
-    if (servant) return servant;
-    else         OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+    if (servant)
+      return servant;
+    else
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
   }
   else {
     // An exception of some sort was thrown
@@ -767,7 +776,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -789,7 +798,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
       }
       else {
 	PyErr_Clear();
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType,
+		      CORBA::COMPLETED_NO);
       }
     }
 
@@ -824,7 +834,8 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   if (!pyos) {
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER, OBJ_ADAPTER_IncompatibleServant,
+		  CORBA::COMPLETED_NO);
   }
 
   method = PyObject_GetAttrString(pysa_, (char*)"etherealize");
@@ -832,7 +843,8 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
     PyErr_Clear();
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#NNii",
@@ -905,8 +917,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
   method = PyObject_GetAttrString(pysl_, (char*)"preinvoke");
   if (!method) {
     PyErr_Clear();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
-    // *** Good choice of exn?
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#Ns",
@@ -922,7 +934,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
   if (rettuple) {
     if (PyTuple_Size(rettuple) != 2) {
       Py_DECREF(rettuple);
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
     }
     pyservant = PyTuple_GET_ITEM(rettuple, 0);
     pycookie  = PyTuple_GET_ITEM(rettuple, 1);
@@ -937,7 +949,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
     }
     else {
       Py_DECREF(rettuple);
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
     }
   }
   else {
@@ -960,7 +972,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -982,7 +994,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
       }
       else {
 	PyErr_Clear();
-	OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType,
+		      CORBA::COMPLETED_NO);
       }
     }
     // Is it a LOCATION_FORWARD?
@@ -1016,7 +1029,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
   if (!pyos) {
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(OBJ_ADAPTER, OBJ_ADAPTER_IncompatibleServant,
+		  CORBA::COMPLETED_NO);
   }
 
   method = PyObject_GetAttrString(pysl_, (char*)"postinvoke");
@@ -1024,7 +1038,8 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
     PyErr_Clear();
     omniPy::InterpreterUnlocker _u;
     serv->_remove_ref();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
   PortableServer::POA::_duplicate(poa);
   argtuple = Py_BuildValue((char*)"s#NsNN",
@@ -1064,7 +1079,7 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
 	PyErr_Restore(etype, evalue, etraceback);
 	PyErr_Print();
       }
-      OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException ,CORBA::COMPLETED_MAYBE);
     }
     Py_DECREF(etype);
     Py_XDECREF(etraceback);
@@ -1122,8 +1137,8 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
   method = PyObject_GetAttrString(pyaa_, (char*)"unknown_adapter");
   if (!method) {
     PyErr_Clear();
-    OMNIORB_THROW(OBJ_ADAPTER, 0, CORBA::COMPLETED_NO);
-    // *** Good choice of exn?
+    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		  CORBA::COMPLETED_NO);
   }
   PortableServer::POA::_duplicate(parent);
   argtuple = Py_BuildValue((char*)"Ns",
@@ -1137,7 +1152,7 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
   if (pyresult) {
     if (!PyInt_Check(pyresult)) {
       Py_DECREF(pyresult);
-      OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_NO);
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO);
     }
     CORBA::Boolean result = PyInt_AS_LONG(pyresult);
     Py_DECREF(pyresult);

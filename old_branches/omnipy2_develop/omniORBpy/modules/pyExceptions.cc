@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/08/01 10:12:36  dpg1
+// Main thread policy.
+//
 // Revision 1.1.2.5  2001/05/29 17:10:14  dpg1
 // Support for in process identity.
 //
@@ -125,7 +128,9 @@ omniPy::produceSystemException(PyObject* eobj, PyObject* erepoId)
 
 #undef THROW_SYSTEM_EXCEPTION_IF_MATCH
 
-  Py_DECREF(erepoId); OMNIORB_THROW(UNKNOWN, 0, CORBA::COMPLETED_MAYBE);
+  Py_DECREF(erepoId); OMNIORB_THROW(UNKNOWN,
+				    UNKNOWN_SystemException,
+				    CORBA::COMPLETED_MAYBE);
 }
 
 

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.14  2001/09/20 14:51:24  dpg1
+// Allow ORB reinitialisation after destroy(). Clean up use of omni namespace.
+//
 // Revision 1.1.2.13  2001/08/21 10:52:40  dpg1
 // Update to new ORB core APIs.
 //
@@ -480,7 +483,7 @@ extern "C" {
       if (stream.checkInputOverrun(1, 1)) {
 	// More data in stream -- must have used the wrong TypeCode
 	Py_DECREF(r);
-	OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_NO);
+	OMNIORB_THROW(MARSHAL, MARSHAL_MessageTooLong, CORBA::COMPLETED_NO);
       }
       return r;
     }
@@ -612,12 +615,13 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"Os", &pyobjref, &repoId))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref));
+    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
+			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
-    RAISE_PY_BAD_PARAM_IF(!cxxobjref);
+    RAISE_PY_BAD_PARAM_IF(!cxxobjref, BAD_PARAM_WrongPythonType);
 
     try {
       omniPy::InterpreterUnlocker ul;
@@ -635,12 +639,13 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"O", &pyobjref))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref));
+    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
+			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
-    RAISE_PY_BAD_PARAM_IF(!cxxobjref);
+    RAISE_PY_BAD_PARAM_IF(!cxxobjref, BAD_PARAM_WrongPythonType);
 
     try {
       omniPy::InterpreterUnlocker ul;
@@ -660,13 +665,15 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
       return 0;
 
     RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref1) ||
-			  !PyInstance_Check(pyobjref2));
+			  !PyInstance_Check(pyobjref2),
+			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref1, cxxobjref2;
     cxxobjref1 = (CORBA::Object_ptr)omniPy::getTwin(pyobjref1, OBJREF_TWIN);
     cxxobjref2 = (CORBA::Object_ptr)omniPy::getTwin(pyobjref2, OBJREF_TWIN);
 
-    RAISE_PY_BAD_PARAM_IF(!cxxobjref1 || !cxxobjref2);
+    RAISE_PY_BAD_PARAM_IF(!cxxobjref1 || !cxxobjref2,
+			  BAD_PARAM_WrongPythonType);
 
     try {
       omniPy::InterpreterUnlocker ul;
@@ -685,12 +692,13 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"Oi", &pyobjref, &max))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref));
+    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
+			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
-    RAISE_PY_BAD_PARAM_IF(!cxxobjref);
+    RAISE_PY_BAD_PARAM_IF(!cxxobjref, BAD_PARAM_WrongPythonType);
 
     CORBA::ULong h = cxxobjref->_hash(max);
     return PyInt_FromLong(h);
@@ -706,12 +714,13 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"Os", &pysource, &repoId))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pysource));
+    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pysource),
+			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxsource =
       (CORBA::Object_ptr)omniPy::getTwin(pysource, OBJREF_TWIN);
 
-    RAISE_PY_BAD_PARAM_IF(!cxxsource);
+    RAISE_PY_BAD_PARAM_IF(!cxxsource, BAD_PARAM_WrongPythonType);
 
     CORBA::Boolean    isa;
     CORBA::Object_ptr cxxdest;
