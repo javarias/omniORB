@@ -19,15 +19,18 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/09 19:36:54  sll
+  Client side idle connection cleanup now works
+
   Revision 1.1.4.1  2001/04/18 18:10:49  sll
   Big checkin with the brand new internal APIs.
 
@@ -53,7 +56,7 @@ public:
   ~Scavenger() {}
 
   void execute();
-  
+
   static void notify();
 
   static void terminate();
@@ -176,7 +179,7 @@ giopStrand::acquireServer(giopServer* serv)
   //    *** the instance cannot be claimed by the calling thread
   //
   // This function also acquires the Read lock on the strand if the returned
-  // giopStream instance is not InputFullyBuffered. (If it is 
+  // giopStream instance is not InputFullyBuffered. (If it is
   // InputFullyBuffered, there is no need to read from the strand, hence
   // no need for a Read lock.
 
@@ -302,7 +305,7 @@ giopStrand::releaseServer(IOP_S* iop_s)
       p = p->next;
     }
 
-    if ( giopStreamList::is_empty(s->clients) && 
+    if ( giopStreamList::is_empty(s->clients) &&
 	 giopStreamList::is_empty(s->servers) &&
 	 giopStream::noLockWaiting(s)) {
       // get ride of the strand.
@@ -311,7 +314,7 @@ giopStrand::releaseServer(IOP_S* iop_s)
       // on the strand. Otherwise, the GIOP_C or GIOP_S lists would not
       // be empty.
       s->StrandList::remove();
-      s->Rope::Link::remove();
+      s->RopeLink::remove();
       if (s->connection) delete s->connection;
       delete s;
     }
@@ -342,9 +345,9 @@ StrandList giopStrand::active;
 StrandList giopStrand::active_timedout;
 StrandList giopStrand::passive;
 // Throughout the lifetime of a strand, it is a member of one and only one
-// of the lists: 
+// of the lists:
 //   active           - the ORB uses this connection in the role of a client
-//                      it is 'active' in the sense that the connection was 
+//                      it is 'active' in the sense that the connection was
 //                      initiated by this ORB
 //   active_timedout  - the connection was previously active and has been
 //                      idled for some time. It will be deleted soon.
@@ -367,13 +370,13 @@ Scavenger::removeIdle(StrandList& src,StrandList& dest)
   while (p != &src) {
     giopStrand* s = (giopStrand*)p;
     if ( ( !s->biDir )  &&
-	 ( giopStreamList::is_empty(s->clients) || 
+	 ( giopStreamList::is_empty(s->clients) ||
 	   ((GIOP_C*)s->clients.next)->state() == IOP_C::UnUsed ) )
       {
 	if (--(s->idlebeats) <= 0) {
 	  p = p->next;
 	  s->StrandList::remove();
-	  s->Rope::Link::remove();
+	  s->RopeLink::remove();
 	  s->StrandList::insert(dest);
 	  continue;
 	}
@@ -401,7 +404,7 @@ Scavenger::execute()
 
     if (omniORB::trace(30)) {
       omniORB::logger log;
-      log << "Scan for idle outgoing connections (" 
+      log << "Scan for idle outgoing connections ("
 	  << abs_sec << "," << abs_nsec << ")\n";
     }
 
@@ -549,7 +552,7 @@ OMNI_USING_NAMESPACE(omni)
 
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 omniORB::scanGranularity(CORBA::ULong sec)
 {
   giopStrand::scanPeriod = sec;
@@ -563,7 +566,7 @@ omniORB::scanGranularity()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction,
 				  CORBA::ULong sec)
 {
@@ -572,7 +575,7 @@ omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction,
     case omniORB::idleIncoming:
       if (sec && giopStrand::scanPeriod)
 	giopStrand::idleIncomingBeats = \
-	  ((sec >= giopStrand::scanPeriod) ? 
+	  ((sec >= giopStrand::scanPeriod) ?
 	   sec : giopStrand::scanPeriod) / giopStrand::scanPeriod;
       else
         giopStrand::idleIncomingBeats = INT_MAX;
@@ -580,7 +583,7 @@ omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction,
     case omniORB::idleOutgoing:
       if (sec && giopStrand::scanPeriod)
 	giopStrand::idleOutgoingBeats = \
-	  ((sec >= giopStrand::scanPeriod) ? 
+	  ((sec >= giopStrand::scanPeriod) ?
 	   sec : giopStrand::scanPeriod) / giopStrand::scanPeriod;
       else
         giopStrand::idleOutgoingBeats = INT_MAX;
@@ -589,23 +592,23 @@ omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CORBA::ULong 
+CORBA::ULong
 omniORB::idleConnectionScanPeriod(omniORB::idleConnType direction)
 {
   switch (direction)
     {
     case omniORB::idleIncoming:
-      return ((giopStrand::idleIncomingBeats != INT_MAX) ? 
+      return ((giopStrand::idleIncomingBeats != INT_MAX) ?
 	      (giopStrand::idleIncomingBeats * giopStrand::scanPeriod) : 0);
     case omniORB::idleOutgoing:
     default:  // stop MSVC complaining
-      return ((giopStrand::idleOutgoingBeats != INT_MAX) ? 
+      return ((giopStrand::idleOutgoingBeats != INT_MAX) ?
 	      (giopStrand::idleOutgoingBeats * giopStrand::scanPeriod) : 0);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 omniORB::callTimeOutPeriod(omniORB::callTimeOutType direction,
 			   CORBA::ULong sec, CORBA::ULong nanosec)
 {
@@ -623,7 +626,7 @@ omniORB::callTimeOutPeriod(omniORB::callTimeOutType direction,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CORBA::ULong 
+CORBA::ULong
 omniORB::callTimeOutPeriod(omniORB::callTimeOutType direction,
 			   CORBA::ULong* nanosec)
 {

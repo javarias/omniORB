@@ -19,15 +19,18 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 18:10:48  sll
+  Big checkin with the brand new internal APIs.
+
 
   */
 
@@ -61,7 +64,7 @@ IOP_C_Holder::~IOP_C_Holder() {
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 void
-Rope::Link::insert(Rope::Link& head)
+RopeLink::insert(RopeLink& head)
 {
   next = head.prev->next;
   head.prev->next = this;
@@ -71,7 +74,7 @@ Rope::Link::insert(Rope::Link& head)
 
 ////////////////////////////////////////////////////////////////////////////
 void
-Rope::Link::remove()
+RopeLink::remove()
 {
   prev->next = next;
   next->prev = prev;
@@ -79,7 +82,7 @@ Rope::Link::remove()
 
 ////////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-Rope::Link::is_empty(Rope::Link& head)
+RopeLink::is_empty(RopeLink& head)
 {
   return (head.next == &head);
 }

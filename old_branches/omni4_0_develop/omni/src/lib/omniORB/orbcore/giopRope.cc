@@ -19,15 +19,18 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/06/11 18:01:58  sll
+  Temporarily hardwared to choose ssl over tcp transport if the IOR has both.
+
   Revision 1.1.4.3  2001/05/31 16:18:13  dpg1
   inline string matching functions, re-ordered string matching in
   _ptrToInterface/_ptrToObjRef
@@ -56,10 +59,10 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 ///////////////////////////////////////////////////////////////////////
-Rope::Link giopRope::ropes;
+RopeLink giopRope::ropes;
 
 ////////////////////////////////////////////////////////////////////////
-giopRope::giopRope(const giopAddressList& addrlist) : 
+giopRope::giopRope(const giopAddressList& addrlist) :
   pd_refcount(0),
   pd_maxStrands(omniORB::maxTcpConnectionPerServer),
   pd_oneCallPerConnection(1),
@@ -77,7 +80,7 @@ giopRope::giopRope(const giopAddressList& addrlist) :
   // more preferable than the others. Some of the addresses in pd_addresses
   // may not be usable anyway. We then record the order of addresses to use
   // in pd_addresses_order.
- 
+
   // XXX Since we haven't got a configuration table yet, we use all the
   //     addresses and use them in the order as supplied.
   CORBA::ULong index;
@@ -99,7 +102,7 @@ giopRope::giopRope(const giopAddressList& addrlist) :
 
 
 ////////////////////////////////////////////////////////////////////////
-giopRope::giopRope(giopAddress* addr,int initialRefCount) : 
+giopRope::giopRope(giopAddress* addr,int initialRefCount) :
   pd_refcount(initialRefCount),
   pd_address_in_use(0),
   pd_maxStrands(omniORB::maxTcpConnectionPerServer),
@@ -147,7 +150,7 @@ giopRope::acquireClient(const omniIOR* ior,
   unsigned int nwrongver = 0;
   CORBA::ULong max = pd_maxStrands;  // snap the value now as it may
                                      // change by the application anytime.
-  Rope::Link* p = pd_strands.next;
+  RopeLink* p = pd_strands.next;
   for (; p != &pd_strands; p = p->next) {
     giopStrand* s = (giopStrand*)p;
     switch (s->state()) {
@@ -201,12 +204,12 @@ giopRope::acquireClient(const omniIOR* ior,
   // Reach here if we haven't got a strand to grab a GIOP_C.
   if ((nbusy + ndying) < max) {
     // Create a new strand.
-    // Notice that we can have up to 
+    // Notice that we can have up to
     //  pd_maxStrands * <no. of supported GIOP versions> strands created.
     //
     giopStrand* s = new giopStrand(pd_addresses[pd_addresses_order[pd_address_in_use]]);
     s->state(giopStrand::ACTIVE);
-    s->Rope::Link::insert(pd_strands);
+    s->RopeLink::insert(pd_strands);
     s->StrandList::insert(giopStrand::active);
     s->version = v;
     s->giopImpl = impl;
@@ -223,12 +226,12 @@ giopRope::acquireClient(const omniIOR* ior,
                             // serve this GIOP version
     int n = rand() % max;
     // Pick a random and non-dying strand
-    Rope::Link* p = pd_strands.next;
+    RopeLink* p = pd_strands.next;
     giopStrand* q = 0;
     giopStrand* s = 0;
     while (n >=0 && p != &pd_strands) {
       s = (giopStrand*)p;
-      if (s->state() == giopStrand::ACTIVE && 
+      if (s->state() == giopStrand::ACTIVE &&
 	  s->version.major == v.major &&
 	  s->version.minor == v.minor)
 	{
@@ -278,7 +281,7 @@ giopRope::releaseClient(IOP_C* iop_c) {
   //    GIOP_C. If this is also the last GIOP_C, we delete the strand as
   //    well. If the strand is used to support bidirectional GIOP, we
   //    also check to ensure that the GIOP_S list is empty.
-  //    
+  //
 
   giopStrand* s = &((giopStrand&)(*(giopStream*)giop_c));
   giop_c->giopStreamList::remove();
@@ -299,7 +302,7 @@ giopRope::releaseClient(IOP_C* iop_c) {
   if ( s->state()== giopStrand::DYING ) {
     remove = 1;
     avail = 0;
-    if ( giopStreamList::is_empty(s->clients) && 
+    if ( giopStreamList::is_empty(s->clients) &&
 	 giopStreamList::is_empty(s->servers) &&
 	 giopStream::noLockWaiting(s)) {
       // get ride of the strand.
@@ -308,7 +311,7 @@ giopRope::releaseClient(IOP_C* iop_c) {
       // on the strand. Otherwise, the GIOP_C or GIOP_S lists would not
       // be empty.
       s->StrandList::remove();
-      s->Rope::Link::remove();
+      s->RopeLink::remove();
       if (s->connection) delete s->connection;
       delete s;
       avail = 1;
@@ -325,7 +328,7 @@ giopRope::releaseClient(IOP_C* iop_c) {
     // reset the idle counter so that it will be retired at the right time.
     s->resetIdleCounter(giopStrand::idleOutgoingBeats);
   }
-    
+
   if (remove) {
     delete giop_c;
   }
@@ -345,12 +348,12 @@ giopRope::realIncrRefCount() {
 
   OMNIORB_ASSERT(pd_refcount >= 0);
 
-  if (pd_refcount == 0 && !Rope::Link::is_empty(pd_strands)) {
+  if (pd_refcount == 0 && !RopeLink::is_empty(pd_strands)) {
     // This Rope still has some strands in the giopStrand::active_timedout list
     // put there by decrRefCount() when the reference count goes to 0
     // previously. We move these stands back to the giopStrand::active list so
     // that they can be used straight away.
-    Rope::Link* p = pd_strands.next;
+    RopeLink* p = pd_strands.next;
     for (; p != &pd_strands; p = p->next) {
       giopStrand* g = (giopStrand*)p;
       if (g->state() != giopStrand::DYING) {
@@ -390,12 +393,12 @@ giopRope::decrRefCount() {
   // the giopStrand::active_timedout list. Eventually when all the strands are
   // retired by time out, this instance will also be deleted.
 
-  if (Rope::Link::is_empty(pd_strands) && !pd_nwaiting) {
-    Rope::Link::remove();
+  if (RopeLink::is_empty(pd_strands) && !pd_nwaiting) {
+    RopeLink::remove();
     delete this;
   }
   else {
-    Rope::Link* p = pd_strands.next;
+    RopeLink* p = pd_strands.next;
     for (; p != &pd_strands; p = p->next) {
       giopStrand* g = (giopStrand*)p;
       if (g->state() != giopStrand::DYING) {
@@ -451,7 +454,7 @@ giopRope::selectRope(const giopAddressList& addrlist,
   giopRope* gr;
 
   // Check if there already exists a rope that goes to the same addresses
-  Rope::Link* p = giopRope::ropes.next;
+  RopeLink* p = giopRope::ropes.next;
   while ( p != &giopRope::ropes ) {
     gr = (giopRope*)p;
     if (gr->match(addrlist)) {
@@ -459,12 +462,12 @@ giopRope::selectRope(const giopAddressList& addrlist,
       r = (Rope*)gr; loc = 0;
       return 1;
     }
-    else if (gr->pd_refcount == 0 && 
-	     Rope::Link::is_empty(gr->pd_strands) &&
+    else if (gr->pd_refcount == 0 &&
+	     RopeLink::is_empty(gr->pd_strands) &&
 	     !gr->pd_nwaiting) {
       // garbage rope, remove it
       p = p->next;
-      gr->Rope::Link::remove();
+      gr->RopeLink::remove();
       delete gr;
     }
     else {
@@ -475,7 +478,7 @@ giopRope::selectRope(const giopAddressList& addrlist,
   // Reach here because we cannot find an existing rope that matches,
   // must create a new one.
   gr = new giopRope(addrlist);
-  gr->Rope::Link::insert(giopRope::ropes);
+  gr->RopeLink::insert(giopRope::ropes);
   gr->realIncrRefCount();
   r = (Rope*)gr; loc = 0;
   return 1;

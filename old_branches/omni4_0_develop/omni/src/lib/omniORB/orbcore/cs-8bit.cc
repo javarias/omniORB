@@ -19,7 +19,7 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/04/18 18:18:09  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.6  2000/12/05 17:43:30  dpg1
   Check for input over-run in string and wstring unmarshalling.
 
@@ -57,8 +60,6 @@
 #include <codeSetUtil.h>
 
 OMNI_USING_NAMESPACE(omni)
-
-OMNI_NAMESPACE_BEGIN(omni)
 
 //
 // Native code set
@@ -175,7 +176,7 @@ omniCodeSet::TCS_C_8bit::marshalString(cdrStream& stream,
 
   _CORBA_Char          c;
   omniCodeSet::UniChar uc;
-  
+
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
@@ -325,4 +326,4 @@ const _CORBA_Char omniCodeSet::empty8BitTable[] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-OMNI_NAMESPACE_END(omni)
+

@@ -19,16 +19,19 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
 //	Wrapper for libc functions which are non-reentrant
-//	
+//
 
 /*
   $Log$
+  Revision 1.19.2.4  2001/06/08 17:12:21  dpg1
+  Merge all the bug fixes from omni3_develop.
+
   Revision 1.19.2.3  2001/04/18 18:18:07  sll
   Big checkin with the brand new internal APIs.
 
@@ -168,7 +171,7 @@ again:
   }
 # else
   // Use gethostbyname_r() on HPUX 10.20
-  //  int gethostbyname_r(const char *name, struct hostent *result, 
+  //  int gethostbyname_r(const char *name, struct hostent *result,
   //                       struct hostent_data *buffer);
   // -1 = Error, 0 is OK
   extern int h_errno;
@@ -181,7 +184,7 @@ again:
     return -1;
   }
 # endif
-  
+
 #else
 
   // Use non-reentrant gethostbyname()
@@ -197,7 +200,7 @@ again:
       return -1;
     }
 #else
-  if ((hp = ::gethostbyname(name)) == NULL) 
+  if ((hp = ::gethostbyname(name)) == NULL)
     {
 #if defined(__WIN32__) || defined(__vms) && __VMS_VER < 70000000
     rc = 0;
@@ -225,7 +228,7 @@ again:
   //        char    **h_addr_list;  /* list of addresses from name server */
   // };
   //
-  // 
+  //
 
   int total = 0;
   int naliases = 1;
@@ -311,12 +314,12 @@ int LibcWrapper::isipaddr(const char* hname)
   // Return: 0: not ip address,  1: is ip address
 
   int hlen = strlen(hname);
-  
+
   // Quick tests for invalidity:
 
   if (hlen < 7 || hlen > 15) return 0;
   if ((int) hname[0] < 48 || (int) hname[0] > 57) return 0;
-  
+
 
   // Full test:
 
@@ -325,10 +328,10 @@ int LibcWrapper::isipaddr(const char* hname)
   char* curr_pos = orig_pos;
 
   for(int count = 0; count <4; count++)
-    { 
+    {
       char* dot_pos;
-      
-      if (((dot_pos = strchr(curr_pos,'.')) == 0) && count < 3) 
+
+      if (((dot_pos = strchr(curr_pos,'.')) == 0) && count < 3)
 	{
 	  delete[] orig_pos;
 	  return 0;
@@ -336,7 +339,7 @@ int LibcWrapper::isipaddr(const char* hname)
       else if (count == 3) dot_pos = orig_pos+hlen;
 
       int ip_component_len = (dot_pos - curr_pos) / sizeof(char);
-      if (ip_component_len <1 || ip_component_len > 3) 
+      if (ip_component_len <1 || ip_component_len > 3)
 	{
 	  delete[] orig_pos;
 	  return 0;
@@ -348,7 +351,7 @@ int LibcWrapper::isipaddr(const char* hname)
 
       for(int str_iter=0; str_iter < ip_component_len; str_iter++)
 	{
-	  if ((int) ip_component[str_iter] < 48 || 
+	  if ((int) ip_component[str_iter] < 48 ||
 	                       (int) ip_component[str_iter] > 57)
 	    {
 	      delete[] ip_component;
@@ -361,7 +364,7 @@ int LibcWrapper::isipaddr(const char* hname)
       int ip_value = atoi(ip_component);
       delete[] ip_component;
 
-      if (ip_value < 0 || ip_value > 255) 
+      if (ip_value < 0 || ip_value > 255)
 	{
 	  delete[] orig_pos;
 	  return 0;
@@ -369,11 +372,13 @@ int LibcWrapper::isipaddr(const char* hname)
 
       curr_pos = dot_pos+1;
     }
-      
+
   delete[] orig_pos;
 
   return 1;
 }
+
+OMNI_NAMESPACE_END(omni)
 
 
 #ifdef _HAS_NOT_GOT_strcasecmp
@@ -403,4 +408,3 @@ strncasecmp(const char *s1, const char *s2, size_t n)
 }
 #endif
 
-OMNI_NAMESPACE_END(omni)
