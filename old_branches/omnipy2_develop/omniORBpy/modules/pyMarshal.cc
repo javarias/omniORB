@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.18  2004/04/20 15:52:29  dgrisby
+// Array validation ignored non-sequences.
+//
 // Revision 1.1.2.17  2003/08/29 13:31:42  dgrisby
 // Support Pythons with UCS-4 Unicode.
 //
@@ -802,7 +805,19 @@ validateTypeSequence(PyObject* d_o, PyObject* a_o,
 			    BAD_PARAM_PythonValueOutOfRange, compstatus);
 #endif
 	  }
-	  else if (!PyInt_Check(a_o))
+	  else if (PyInt_Check(t_o)) {
+	    long_val = PyInt_AS_LONG(t_o);
+#if SIZEOF_LONG > 4
+	    if (long_val < 0 || long_val > 0xffffffffL)
+	      OMNIORB_THROW(BAD_PARAM,
+			    BAD_PARAM_PythonValueOutOfRange, compstatus);
+#else
+	    if (long_val < 0)
+	      OMNIORB_THROW(BAD_PARAM,
+			    BAD_PARAM_PythonValueOutOfRange, compstatus);
+#endif
+	  }
+	  else
 	    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 	}
 	return;
@@ -1114,7 +1129,6 @@ validateTypeArray(PyObject* d_o, PyObject* a_o,
 	OMNIORB_THROW(BAD_PARAM, BAD_PARAM_PythonValueOutOfRange, compstatus);
 
       switch (etk) {
-
       case CORBA::tk_short:
 	for (i=0; i<len; i++) {
 	  t_o = PyTuple_GET_ITEM(a_o, i);
@@ -1189,7 +1203,19 @@ validateTypeArray(PyObject* d_o, PyObject* a_o,
 			    BAD_PARAM_PythonValueOutOfRange, compstatus);
 #endif
 	  }
-	  else if (!PyInt_Check(a_o))
+	  else if (PyInt_Check(t_o)) {
+	    long_val = PyInt_AS_LONG(t_o);
+#if SIZEOF_LONG > 4
+	    if (long_val < 0 || long_val > 0xffffffffL)
+	      OMNIORB_THROW(BAD_PARAM,
+			    BAD_PARAM_PythonValueOutOfRange, compstatus);
+#else
+	    if (long_val < 0)
+	      OMNIORB_THROW(BAD_PARAM,
+			    BAD_PARAM_PythonValueOutOfRange, compstatus);
+#endif
+	  }
+	  else
 	    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 	}
 	return;
