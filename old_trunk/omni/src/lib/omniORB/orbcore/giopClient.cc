@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.9  1998/04/07 19:34:11  sll
+  Replace cerr with omniORB::log.
+
   Revision 1.8  1997/12/09 17:37:15  sll
   Updated to use the new rope and strand interface.
   Now unmarshal context properly.
@@ -132,8 +135,9 @@ GIOP_C::InitialiseRequest(const void          *objkey,
   // Marshall the GIOP Message Header
   WrMessageSize(msgsize);
   put_char_array((CORBA::Char *)MessageHeader::Request,
-		 sizeof(MessageHeader::Request),1,!oneway);
-  
+		 sizeof(MessageHeader::Request),
+		 omni::ALIGN_1, 1, !oneway);
+
   operator>>= ((CORBA::ULong)bodysize,*this);
 
   // Marshall the Request Header
@@ -150,18 +154,17 @@ GIOP_C::InitialiseRequest(const void          *objkey,
   operator>>= (pd_response_expected,*this);
 
   operator>>= ((CORBA::ULong) objkeysize,*this);
-  put_char_array((CORBA::Char *) objkey,objkeysize);
+  put_char_array((CORBA::Char*) objkey, objkeysize);
 
   operator>>= ((CORBA::ULong) opnamesize,*this);
 
-  put_char_array((CORBA::Char *) opname,opnamesize);
+  put_char_array((CORBA::Char*) opname, opnamesize);
 
   CORBA::ULong a = omni::myPrincipalID.length();
   operator>>= (a,*this);
 
-  put_char_array((CORBA::Char *) omni::myPrincipalID.NP_data(),
+  put_char_array((CORBA::Char*) omni::myPrincipalID.NP_data(),
 		 omni::myPrincipalID.length());
-  return;
 }
 
 GIOP::ReplyStatusType 
@@ -186,7 +189,8 @@ GIOP_C::ReceiveReply()
   RdMessageSize(0,omni::myByteOrder);
 
   MessageHeader::HeaderType hdr;
-  get_char_array((CORBA::Char *)hdr,sizeof(MessageHeader::HeaderType),1);
+  get_char_array((CORBA::Char*) hdr, sizeof(MessageHeader::HeaderType),
+		 omni::ALIGN_1, 1);
 
   pd_state = GIOP_C::ReplyIsBeingProcessed;
 
@@ -259,7 +263,6 @@ GIOP_C::ReceiveReply()
     // Same treatment as wrong header
     setStrandIsDying();
     throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_MAYBE);
-    break;
   }
   return (GIOP::ReplyStatusType)rc;
 }
@@ -334,14 +337,15 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
   pd_request_id = newRequestID();
 
   WrMessageSize(msgsize);
-  put_char_array((CORBA::Char *)MessageHeader::LocateRequest,
-		 sizeof(MessageHeader::LocateRequest),1,1);
+  put_char_array((CORBA::Char*) MessageHeader::LocateRequest,
+		 sizeof(MessageHeader::LocateRequest),
+		 omni::ALIGN_1, 1, 1);
   operator>>= ((CORBA::ULong)bodysize,*this);
 
   operator>>= (pd_request_id,*this);
 
   operator>>= ((CORBA::ULong) objkeysize,*this);
-  put_char_array((CORBA::Char *) objkey,objkeysize);
+  put_char_array((CORBA::Char*) objkey, objkeysize);
 
   pd_state = GIOP_C::WaitingForReply;
   flush(1);
@@ -350,7 +354,8 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
     RdMessageSize(0,omni::myByteOrder);
 
     MessageHeader::HeaderType hdr;
-    get_char_array((CORBA::Char *)hdr,sizeof(MessageHeader::HeaderType),1);
+    get_char_array((CORBA::Char*)hdr, sizeof(MessageHeader::HeaderType),
+		   omni::ALIGN_1, 1);
 
     pd_state = GIOP_C::ReplyIsBeingProcessed;
 
@@ -407,7 +412,6 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
     // Same treatment as wrong header
     setStrandIsDying();
     throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_MAYBE);
-    break;
   }
   return (GIOP::LocateStatusType)rc;
 }
@@ -435,7 +439,7 @@ GIOP_C::UnMarshallSystemException()
 
   CORBA::Char repoid[omniORB_GIOP_Basetypes_SysExceptRepoID_maxIDLen];
 
-  get_char_array(repoid,len);
+  get_char_array(repoid, len);
   CORBA::ULong m;
   CORBA::ULong s;
   m <<= *this;
