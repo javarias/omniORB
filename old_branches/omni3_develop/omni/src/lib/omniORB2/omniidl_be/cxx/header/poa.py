@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.7  2000/06/26 16:23:59  djs
+# Better handling of #include'd files (via new commandline options)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.15.2.6  2000/06/05 13:03:57  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
 # Removed name clash when a sequence is called "pd_seq"
@@ -163,9 +167,9 @@ def visitModule(node):
     #  module?)
     if config.state['Splice Modules']:
         for c in node.continuations():
-            #self.__completedModules[node] = 1
             for n in c.definitions():
                 n.accept(self)
+            self.__completedModules[c] = 1
 
     self.__nested = nested
 
