@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15  1998/10/20 17:54:29  sll
+  On HPUX, allocate memory hostent_data the right way.
+
   Revision 1.14  1998/08/14 13:48:27  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -66,9 +69,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+#if defined(_HAS_NOT_GOT_strcasecmp) || defined(_HAS_NOT_GOT_strncasecmp)
+#include <ctype.h>  //  for toupper and tolower.
+#endif
+
 #include "libcWrapper.h"
 
-omni_mutex          LibcWrapper::non_reentrant;
+
+omni_mutex LibcWrapper::non_reentrant;
+
 
 int
 LibcWrapper::gethostbyname(const char *name,
@@ -252,7 +261,6 @@ again:
 }
 
 
-
 int LibcWrapper::isipaddr(const char* hname)
 {
   // Test if string contained hname is ipaddress
@@ -322,3 +330,31 @@ int LibcWrapper::isipaddr(const char* hname)
 
   return 1;
 }
+
+
+#ifdef _HAS_NOT_GOT_strcasecmp
+int
+strcasecmp(const char *s1, const char *s2)
+{
+  if( s1 == s2 )  return 0;
+
+  while( *s1 && tolower(*s1) == tolower(*s2) )
+    s1++, s2++;
+
+  return (int)*s1 - *s2;
+}
+#endif
+
+
+#ifdef _HAS_NOT_GOT_strncasecmp
+int
+strncasecmp(const char *s1, const char *s2, size_t n)
+{
+  if( s1 == s2 || !n )  return 0;
+
+  while( --n && *s1 && tolower(*s1) == tolower(*s2) )
+    s1++, s2++;
+
+  return (int)*s1 - *s2;
+}
+#endif
