@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.6  2001/05/31 16:18:13  dpg1
+ inline string matching functions, re-ordered string matching in
+ _ptrToInterface/_ptrToObjRef
+
  Revision 1.2.2.5  2001/04/18 18:18:07  sll
  Big checkin with the brand new internal APIs.
 
@@ -193,7 +197,7 @@ omniObjAdapter::initialise()
 	  if (omniORB::trace(0)) {
 	    omniORB::logger log;
 	    log << "Error: Unable to create an endpoint of this description: "
-		<< (const char*)(*i)
+		<< (const char*)(*i)->uri
 		<< "\n";
 	  }
 	  OMNIORB_THROW(INITIALIZE,0,CORBA::COMPLETED_NO);
