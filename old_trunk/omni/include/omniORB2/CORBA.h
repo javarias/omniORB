@@ -29,6 +29,11 @@
 
 /*
  $Log$
+ Revision 1.30  1999/01/11 16:39:51  djr
+ Added guard to prevent attempt to include corbaidl.hh from ir.hh. This
+ fails as it is in omniORB2/corbaidl.hh. It doesn't need to be included
+ from ir.hh, since it has already been included into CORBA.h.
+
  Revision 1.29  1999/01/07 18:14:11  djr
  Changes to support
   - New implementation of TypeCode and Any
@@ -1277,6 +1282,7 @@ _CORBA_MODULE_BEG
   typedef Request_ptr RequestRef;
   typedef _CORBA_PseudoObj_Var<Request> Request_var;
   typedef _CORBA_PseudoObj_Out<Request,Request_var> Request_out;
+  typedef _CORBA_PseudoObj_Member<Request,Request_var> Request_member;
 
   class Object_Helper {
   public:
@@ -2062,7 +2068,7 @@ _CORBA_MODULE_BEG
     Object_ptr string_to_object(const char*);
     char* object_to_string(DynAny_ptr);
 
-    typedef _CORBA_Pseudo_Unbounded_Sequence<Request_ptr> RequestSeq;
+    typedef _CORBA_Pseudo_Unbounded_Sequence<Request_member> RequestSeq;
 
     Status create_list(Long, NVList_out);
     Status create_operation_list(OperationDef_ptr, NVList_out);
@@ -2079,7 +2085,7 @@ _CORBA_MODULE_BEG
     Status send_multiple_requests_oneway(const RequestSeq&);
     Status send_multiple_requests_deferred(const RequestSeq&);
     Boolean poll_next_response();
-    Status get_next_response(Request_ptr&);
+    Status get_next_response(Request_out);
 
     typedef char* OAid;
 
