@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.6  2000/11/09 12:27:48  dpg1
+ Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
  Revision 1.2.2.5  2000/11/07 18:18:47  sll
  Added external guard in CORBA.h to ensure that any idl that include
  CosNaming.idl will compile as expected.
@@ -2721,7 +2724,6 @@ _CORBA_MODULE_BEG
 _CORBA_MODULE_END
 
 #include <omniORB4/boa.h>
-#include <omniORB4/codeSets.h>
 
 #undef _core_attr
 #undef _dyn_attr
