@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.13  2000/08/11 13:50:08  sll
+ Added external guard in CORBA.h to ensure that any idl that include
+ CosNaming.idl will compile as expected.
+
  Revision 1.1.2.12  2000/08/10 10:17:52  sll
  Found the workaround for MSVC++ so that exceptions can be caught by base
  class. All the copy ctor from the most derived to the base classes must be
@@ -1488,7 +1492,7 @@ _CORBA_MODULE_BEG
     ULong           _hash(ULong maximum);
 
     static _ptr_type        _duplicate(_ptr_type);
-    static inline _ptr_type _narrow(Object_ptr o) { return o; }
+    static inline _ptr_type _narrow(Object_ptr o) { return _duplicate(o); }
     static _ptr_type        _nil();
 
     //////////////////////
