@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.6  2001/08/01 10:12:36  dpg1
+// Main thread policy.
+//
 // Revision 1.1.2.5  2001/05/10 15:16:02  dpg1
 // Big update to support new omniORB 4 internals.
 //
@@ -50,7 +53,6 @@
 
 #include <omnipy.h>
 #include <pyThreadCache.h>
-#include <initialiser.h>
 #include <corbaOrb.h>
 #include <math.h>
 
@@ -290,6 +292,26 @@ extern "C" {
     return Py_None;
   }
 
+  static PyObject*
+  pyORB_releaseRef(PyObject* self, PyObject* args)
+  {
+    PyObject* pyorb;
+
+    if (!PyArg_ParseTuple(args, (char*)"O", &pyorb)) return NULL;
+
+    CORBA::ORB_ptr orb = (CORBA::ORB_ptr)omniPy::getTwin(pyorb, ORB_TWIN);
+    OMNIORB_ASSERT(orb);
+
+    try {
+      omniPy::InterpreterUnlocker _u;
+      CORBA::release(orb);
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////
   // Python method table                                                    //
@@ -307,20 +329,10 @@ extern "C" {
     {(char*)"run_timeout",      pyORB_run_timeout,               METH_VARARGS},
     {(char*)"shutdown",         pyORB_shutdown,                  METH_VARARGS},
     {(char*)"destroy",          pyORB_destroy,                   METH_VARARGS},
+    {(char*)"releaseRef",       pyORB_releaseRef,                METH_VARARGS},
     {NULL,NULL}
   };
 }
-
-
-class omni_python_initialiser : public _OMNI_NS(omniInitialiser) {
-public:
-  void attach() { }
-  void detach() {
-    omnipyThreadCache::shutdown();
-    delete this;
-  }
-};
-
 
 
 void
@@ -328,7 +340,4 @@ omniPy::initORBFunc(PyObject* d)
 {
   PyObject* m = Py_InitModule((char*)"_omnipy.orb_func", pyORB_methods);
   PyDict_SetItemString(d, (char*)"orb_func", m);
-
-  omni_python_initialiser* init = new omni_python_initialiser();
-  _OMNI_NS(omniInitialiser)::install(init);
 }

@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.9  2001/08/21 10:52:41  dpg1
+// Update to new ORB core APIs.
+//
 // Revision 1.1.2.8  2001/04/10 11:11:14  dpg1
 // TypeCode support and tests for Fixed point.
 //
@@ -58,6 +61,7 @@
 
 #include <omnipy.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 // Objects to map descriptors to typecode offsets and vice-versa:
 
@@ -173,8 +177,7 @@ r_marshalTypeCode(cdrStream&           stream,
   CORBA::Long tc_offset;
 
   // If this TypeCode has already been sent, use an indirection:
-  if (_OMNI_NS(orbParameters)::useTypeCodeIndirections &&
-      dom.lookup(d_o, tc_offset)) {
+  if (orbParameters::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
 
     CORBA::ULong tk_ind = 0xffffffff;
     tk_ind >>= stream;

@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.3  2001/08/01 10:12:36  dpg1
+# Main thread policy.
+#
 # Revision 1.7.4.2  2001/06/11 13:06:26  dpg1
 # Support for PortableServer::Current.
 #
@@ -63,8 +66,6 @@ import _omnipy
 import omniORB
 from omniORB import CORBA
 
-_rootPOA = None
-
 # native Servant
 class Servant:
     _NP_RepositoryId = ""
@@ -73,11 +74,10 @@ class Servant:
         return _omnipy.poa_func.servantThis(self)
 
     def _default_POA(self):
-        global _rootPOA
-        if _rootPOA: return _rootPOA
-        orb = CORBA.ORB_init()
-        _rootPOA = orb.resolve_initial_references("RootPOA")
-        return _rootPOA
+        if omniORB.rootPOA: return omniORB.rootPOA
+        assert(omniORB.orb)
+        omniORB.rootPOA = omniORB.orb.resolve_initial_references("RootPOA")
+        return omniORB.rootPOA
 
 _d_Servant = omniORB.tcInternal.tv_native
 

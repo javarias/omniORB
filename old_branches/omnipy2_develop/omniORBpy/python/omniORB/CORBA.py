@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.9  2001/08/21 12:48:27  dpg1
+# Meaningful exception minor code strings.
+#
 # Revision 1.28.2.8  2001/08/01 10:12:36  dpg1
 # Main thread policy.
 #
@@ -489,12 +492,9 @@ else:
     ORB_ID = "UnknownORB"
 
 def ORB_init(argv=[], orb_identifier = ORB_ID):
-    omniORB.orb_lock.acquire()
-    try:
-        if omniORB.orb is None:
-            omniORB.orb = ORB(argv, orb_identifier)
-    finally:
-        omniORB.orb_lock.release()
+    if _omnipy.need_ORB_init():
+        omniORB.orb = ORB(argv, orb_identifier)
+        omniORB.rootPOA = None
 
     return omniORB.orb
 
@@ -504,6 +504,10 @@ class ORB:
 
     def __init__(self, argv, orb_identifier):
         _omnipy.ORB_init(self, argv, orb_identifier)
+
+    def __del__(self):
+        if _omnipy is not None and _omnipy.orb_func is not None:
+            _omnipy.orb_func.releaseRef(self)
 
     def string_to_object(self, ior):
         return _omnipy.orb_func.string_to_object(self, ior)

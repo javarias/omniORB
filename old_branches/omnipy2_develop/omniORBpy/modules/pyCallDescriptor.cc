@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.7  2001/08/15 10:37:14  dpg1
+// Track ORB core object table changes.
+//
 // Revision 1.1.2.6  2001/06/29 15:11:12  dpg1
 // Fix for clients using GIOP 1.0.
 //
@@ -53,6 +56,8 @@
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <omniORB4/IOP_C.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 
 omniPy::Py_omniCallDescriptor::~Py_omniCallDescriptor()
@@ -148,7 +153,7 @@ omniPy::Py_omniCallDescriptor::unmarshalReturnedValues(cdrStream& stream)
 
 void
 omniPy::Py_omniCallDescriptor::userException(cdrStream& stream,
-					     _OMNI_NS(IOP_C)* iop_client,
+					     IOP_C* iop_client,
 					     const char* repoId)
 {
   reacquireInterpreterLock();

@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.6  2001/08/01 10:12:37  dpg1
+# Main thread policy.
+#
 # Revision 1.26.2.5  2001/06/15 10:59:27  dpg1
 # Apply fixes from omnipy1_develop.
 #
@@ -317,8 +320,8 @@ from _omnipy.omni_func import *
 # Private things
 
 # ORB:
-orb_lock = threading.Lock()
-orb      = None
+orb     = None
+rootPOA = None
 
 # Maps for object reference classes and IDL-defined types:
 map_lock = threading.Lock()
