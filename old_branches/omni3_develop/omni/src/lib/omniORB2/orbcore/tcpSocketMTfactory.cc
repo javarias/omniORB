@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.26  2002/05/15 17:34:44  dgrisby
+  Wrong TCP protocol define.
+
   Revision 1.22.6.25  2002/05/10 14:00:31  dgrisby
   Disable Nagle.
 
@@ -716,6 +719,11 @@ tcpSocketIncomingRope::tcpSocketIncomingRope(tcpSocketMTincomingFactory* f,
       int rc;
 
       if (LibcWrapper::gethostbyname(self,h,rc) < 0) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "Fatal error: cannot get the address of this host '"
+	    << self << "'\n";
+	}
 	throw omniORB::fatalException(__FILE__,__LINE__,
 				      "Cannot get the address of this host");
       }
