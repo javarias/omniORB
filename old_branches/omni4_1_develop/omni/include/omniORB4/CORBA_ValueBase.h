@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2005/01/06 16:39:23  dgrisby
+  DynValue and DynValueBox implementations; misc small fixes.
+
   Revision 1.1.2.3  2004/07/04 23:53:35  dgrisby
   More ValueType TypeCode and Any support.
 
@@ -181,8 +184,8 @@ private:
   // omniORB internal //
   //////////////////////
 
-  friend class _omni_ValueFactoryManager;
-
 public:
+  friend class ::_omni_ValueFactoryManager;
+
   virtual void* _ptrToFactory(const char* repoId);
 };
