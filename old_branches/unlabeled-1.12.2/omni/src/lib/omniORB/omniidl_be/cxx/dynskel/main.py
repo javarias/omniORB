@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.1  2000/02/14 18:34:56  dpg1
+# New omniidl merged in.
+#
 # Revision 1.12  2000/01/20 18:26:44  djs
 # Moved large C++ output strings into an external template file
 #
@@ -149,7 +152,6 @@ def visitInterface(node):
 def visitTypedef(node):
     if not(node.mainFile()) and not(self.__override):
         return
-
     bdesc.startingNode(node)
     
     aliasType = node.aliasType()
@@ -376,6 +378,25 @@ def visitUnion(node):
             stream.out(str(bdesc.array(caseType, declarator)))
         if tyutil.isObjRef(caseType):
             stream.out(str(bdesc.interface(caseType)))
+        if tyutil.isTypedef(caseType):
+            caseType_decl = caseType.decl()
+            if not(caseType_decl.mainFile()):
+                # have we seen this declarator before?
+                # really should do the check, but the #ifdefs save us
+                if not(bdesc.__seenDeclarators.has_key(caseType_decl)):
+                    bdesc.__seenDeclarators[caseType_decl] = 1
+                    alias = caseType_decl.alias()
+                    # FIXME: This bit is copied from above
+                    alias_dims = caseType_decl.sizes() +\
+                                 tyutil.typeDims(caseType)
+                    full_deref_caseType = tyutil.deref(caseType)
+                    # if its an array we need to generate that
+                    if alias_dims != []:
+                        stream.out(str(bdesc.array(alias.aliasType(),
+                                       caseType_decl)))
+                    elif tyutil.isSequence(full_deref_caseType):
+                        stream.out(str(bdesc.sequence(full_deref_caseType)))
+
         # FIXME: unify common code with bdesc/member#
         if tyutil.isStruct(caseType) or \
            tyutil.isUnion(caseType)  or \
