@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1  1997/12/09 18:43:11  sll
+  Initial revision
+
   */
 
 
@@ -67,8 +70,8 @@ protected:
 };
 
 
-static CORBA::ULong inScanPeriod  = 15;		// seconds
-static CORBA::ULong outScanPeriod = 10;         // seconds
+static CORBA::ULong inScanPeriod  = 30;		// seconds
+static CORBA::ULong outScanPeriod = 30;         // seconds
 static inScavenger_t* inScavenger   = 0;
 static outScavenger_t* outScavenger = 0;
 
