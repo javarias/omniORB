@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.7  2001/04/18 18:10:49  sll
+  Big checkin with the brand new internal APIs.
+
 
 */
 
@@ -156,11 +159,10 @@ giopServer::remove()
     return;
   }
 
-  giopEndpointList::iterator i, last;
+  giopEndpointList::iterator i;
   i    = pd_endpoints.begin();
-  last = pd_endpoints.end();
   
-  for (; i != last; i++) {
+  while (i != pd_endpoints.end()) {
     (*i)->shutdown();
     delete *i;
     pd_endpoints.erase(i);
@@ -173,11 +175,10 @@ giopServer::activate()
 {
   // Caller is holding pd_lock
 
-  giopEndpointList::iterator i, last;
+  giopEndpointList::iterator i;
   i    = pd_endpoints.begin();
-  last = pd_endpoints.end();
 
-  for (; i != last; i++) {
+  while (i != pd_endpoints.end()) {
     giopRendezvouser* task = new giopRendezvouser(*i,this);
 
     if (!orbAsyncInvoker->insert(task)) {
@@ -189,6 +190,7 @@ giopServer::activate()
       log << (*i)->address();
       log << "\n";
       delete task;
+      i++;
       continue;
     }
     pd_endpoints.erase(i);
