@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/03/14 12:21:49  dpg1
+  Undo accidental scavenger period change, remove invalid assertion.
+
   Revision 1.1.2.7  2002/03/13 16:05:38  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -231,7 +234,7 @@ SocketCollection::Select() {
 
     omni_thread::get_time(&pd_abs_sec,&pd_abs_nsec,
 			  scan_interval_sec,scan_interval_nsec);
-    timeout.tv_sec = scan_interval_sec;
+    timeout.tv_sec  = scan_interval_sec;
     timeout.tv_usec = scan_interval_nsec / 1000;
 
     omni_tracedmutex_lock sync(pd_fdset_lock);
@@ -370,9 +373,10 @@ SocketCollection::Peek(SocketHandle_t sock) {
   // select on the socket for half the time of scan_interval, if no request
   // arrives in this interval, we just let AcceptAndMonitor take care
   // of it.
-  timeout.tv_sec = scan_interval_sec / 2;
+  timeout.tv_sec  = scan_interval_sec / 2;
   timeout.tv_usec = scan_interval_nsec / 1000 / 2;
-  fd_set         rfds;
+  if (scan_interval_sec % 2) timeout.tv_usec += 500000;
+  fd_set rfds;
 
   do {
     FD_ZERO(&rfds);

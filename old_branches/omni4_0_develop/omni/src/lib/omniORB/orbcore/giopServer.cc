@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.22.2.19  2002/03/13 16:05:39  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.22.2.18  2002/02/13 16:02:39  dpg1
   Stability fixes thanks to Bastiaan Bakker, plus threading
   optimisations inspired by investigating Bastiaan's bug reports.
@@ -128,6 +133,15 @@ CORBA::ULong   orbParameters::maxServerThreadPoolSize        = 100;
 //   per connection when the threadPerConnectionPolicy is in effect
 //
 //   Valid values = (n >= 1) 
+
+CORBA::Boolean orbParameters::threadPoolWatchConnection      = 1;
+//   1 means that after dispatching an upcall in thread pool mode, the
+//   thread should watch the connection for a short time before
+//   returning to the pool. This leads to less thread switching for
+//   series of calls from a single client, but is less fair if there
+//   are concurrent clients.
+//
+//  Valid values = 0 or 1
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -906,8 +920,7 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
     }
   }
   else {
-    // This connection is managed with the thread-pool policy
-    // setSelectable if this is the only worker thread.
+    // This connection is managed with the thread-pool policy.
 
     OMNIORB_ASSERT(w->singleshot() == 1); // Never called by a dedicated thread
     CORBA::Boolean doselect;
@@ -935,28 +948,31 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
 	return 0;
       }
     }
-    // May be able to re-use this worker.
-    //
-    // We could call conn->setSelectable(1).
-    // Instead we call Peek(). This thread will be used for a short time to
-    // monitor the connection. If the connection is available for reading,
-    // the callback function peekCallBack is called. We can afford to
-    // call Peek() here because this thread is otherwise idle.
-    CORBA::Boolean readable = 0;
-    conn->Peek(peekCallBack,(void*)&readable);
-    if (readable) {
-      // There is data to be read. Tell the worker to go around again.
-      return 1;
+
+    if (orbParameters::threadPoolWatchConnection) {
+      // Call Peek(). This thread will be used for a short time to
+      // monitor the connection. If the connection is available for
+      // reading, the callback function peekCallBack is called. We can
+      // probably afford to call Peek() here because this thread is
+      // otherwise idle.
+
+      CORBA::Boolean readable = 0;
+      conn->Peek(peekCallBack,(void*)&readable);
+      if (readable) {
+	// There is data to be read. Tell the worker to go around again.
+	return 1;
+      }
     }
-    else {
-      // Worker is no longer needed.
+
+    // Worker is no longer needed.
+    {
       omni_tracedmutex_lock sync(pd_lock);
       w->remove();
       delete w;
       conn->pd_n_workers--;
       pd_n_temporary_workers--;
-      return 0;
     }
+    return 0;
   }
   // Never reach here
   OMNIORB_ASSERT(0);
@@ -1240,6 +1256,35 @@ public:
 
 static maxServerThreadPoolSizeHandler maxServerThreadPoolSizeHandler_;
 
+/////////////////////////////////////////////////////////////////////////////
+class threadPoolWatchConnectionHandler : public orbOptions::Handler {
+public:
+
+  threadPoolWatchConnectionHandler() : 
+    orbOptions::Handler("threadPoolWatchConnection",
+			"threadPoolWatchConnection = 0 or 1",
+			1,
+			"-ORBthreadPoolWatchConnection < 0 | 1 >") {}
+
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    orbParameters::threadPoolWatchConnection = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),orbParameters::threadPoolWatchConnection,
+			     result);
+  }
+};
+
+static threadPoolWatchConnectionHandler threadPoolWatchConnectionHandler_;
+
 
 /////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
@@ -1254,6 +1299,7 @@ public:
     orbOptions::singleton().registerHandler(threadPerConnectionLowerLimitHandler_);
     orbOptions::singleton().registerHandler(maxServerThreadPerConnectionHandler_);
     orbOptions::singleton().registerHandler(maxServerThreadPoolSizeHandler_);
+    orbOptions::singleton().registerHandler(threadPoolWatchConnectionHandler_);
   }
 
   void attach() {
