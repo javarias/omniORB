@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.8  2001/06/28 16:41:09  dpg1
+// Properly scope omniCodeSet for Unicode support.
+//
 // Revision 1.1.2.7  2001/05/14 12:47:21  dpg1
 // Fix memory leaks.
 //
@@ -4610,7 +4613,7 @@ PyUnlockingCdrStream::skipInput(_CORBA_ULong size)
 void
 omniPy::
 PyUnlockingCdrStream::copy_to(cdrStream& stream, int size,
-			      omni::alignment_t align=omni::ALIGN_1)
+			      omni::alignment_t align)
 {
   omniPy::InterpreterUnlocker _u;
   cdrStreamAdapter::copy_to(stream, size, align);
