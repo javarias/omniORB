@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2000/02/04 18:11:03  djr
+  Minor mods for IRIX (casting pointers to ulong instead of int).
+
   Revision 1.1.2.13  2000/01/27 10:55:46  djr
   Mods needed for powerpc_aix.  New macro OMNIORB_BASE_CTOR to provide
   fqname for base class constructor for some compilers.
@@ -432,6 +435,8 @@ omniOrbPOA::find_POA(const char* adapter_name, CORBA::Boolean activate_it)
   if( !activate_it || !pd_adapterActivator )  throw AdapterNonExistent();
 
   poa = attempt_to_activate_adapter(adapter_name);
+
+  if( !poa ) throw AdapterNonExistent();
 
   return poa;
 }
