@@ -25,6 +25,10 @@
 
 /*
   $Log$
+  Revision 1.17  1999/06/22 14:53:00  sll
+  Fixed core dump when a member of an exception is a typedef of an interface.
+  Cleanup any extraction operator signature and type casting.
+
   Revision 1.16  1999/06/18 20:46:24  sll
   Updated to support CORBA 2.3 mapping.
 
@@ -641,7 +645,7 @@ o2be_exception::produce_skel(std::fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << "return ("
 	    << fqname()
-	    << "*)_NP_is_a(e,\""
+	    << "*)_NP_is_a(e,\"Exception/UserException/"
 	    << _fqname()
 	    << "\");\n";
   DEC_INDENT_LEVEL();
@@ -652,7 +656,7 @@ o2be_exception::produce_skel(std::fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << "return (const "
 	    << fqname()
-	    << "*)_NP_is_a(e,\""
+	    << "*)_NP_is_a(e,\"Exception/UserException/"
 	    << _fqname()
 	    << "\");\n";
   DEC_INDENT_LEVEL();
@@ -671,7 +675,7 @@ o2be_exception::produce_skel(std::fstream &s)
 
   IND(s); s << "const char* " << fqname() << "::_NP_mostDerivedTypeId() const {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "return \"" << _fqname() << "\";\n";
+  IND(s); s << "return \"Exception/UserException/" << _fqname() << "\";\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   DEC_INDENT_LEVEL();
