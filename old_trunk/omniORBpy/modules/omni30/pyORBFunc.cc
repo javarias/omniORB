@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.2  2000/03/07 16:52:16  dpg1
+// Support for compilers which do not allow exceptions to be caught by
+// base class. (Like MSVC 5, surprise surprise.)
+//
 // Revision 1.1  2000/03/03 17:41:42  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -54,8 +58,8 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     if (!s || strlen(s) == 0) {
-      PyErr_SetString(PyExc_TypeError, "Invalid IOR");
-      return 0;
+      CORBA::MARSHAL ex;
+      return omniPy::handleSystemException(ex);
     }
     CORBA::Object_ptr objref;
 
