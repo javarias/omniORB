@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.18  2002/05/26 00:55:36  dgrisby
+// C++ API to convert object references to/from Python.
+//
 // Revision 1.2.4.17  2002/03/18 12:40:38  dpg1
 // Support overriding _non_existent.
 //
@@ -244,6 +247,10 @@ public:
   static
   void produceSystemException(PyObject* eobj, PyObject* erepoId);
 
+  // Ensure there is an omni_thread associated with the calling thread.
+  static
+  omni_thread* ensureOmniThread();
+  
 
   ////////////////////////////////////////////////////////////////////////////
   // Fixed point                                                            //
