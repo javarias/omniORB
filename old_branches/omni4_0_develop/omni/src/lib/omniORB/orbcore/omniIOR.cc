@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/04/18 18:18:07  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.4  2000/11/15 17:25:11  sll
   Added char, wchar codeset convertor support.
 
@@ -346,7 +349,7 @@ omniIOR::IORInfo::~IORInfo() {
     delete (*i);
     (*i) = 0;
   }
-  for (CORBA::ULong index; index < pd_extra_info.length(); index++) {
+  for (CORBA::ULong index=0; index < pd_extra_info.length(); index++) {
     delete pd_extra_info[index];
     pd_extra_info[index] = 0;
   }
