@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -100,15 +103,17 @@ public:
     CacheNode* cn;
     {
       omni_mutex_lock _l(*guard);
+      OMNIORB_ASSERT(table);
 
       cn = table[hash];
       while (cn && cn->id != id) cn = cn->next;
-      if (!cn) cn = addNewNode(id, hash);
-
-      cn->used = 1;
-      cn->active++;
+      if (cn) {
+	cn->used = 1;
+	cn->active++;
+	return cn;
+      }
     }
-    return cn;
+    return addNewNode(id, hash);
   }
 
   static inline void releaseNode(CacheNode* cn) {

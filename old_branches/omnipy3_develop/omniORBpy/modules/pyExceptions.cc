@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.3  2005/01/07 00:22:32  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.4.2  2003/05/20 17:10:23  dgrisby
 // Preliminary valuetype support.
 //
@@ -184,6 +187,7 @@ omniPy::handlePythonException()
   PyObject *etype, *evalue, *etraceback;
   PyObject *erepoId = 0;
   PyErr_Fetch(&etype, &evalue, &etraceback);
+  PyErr_NormalizeException(&etype, &evalue, &etraceback);
   OMNIORB_ASSERT(etype);
 
   if (evalue && PyInstance_Check(evalue))
