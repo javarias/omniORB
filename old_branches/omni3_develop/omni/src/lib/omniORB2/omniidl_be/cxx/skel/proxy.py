@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.1  2000/02/14 18:34:53  dpg1
+# New omniidl merged in.
+#
 # Revision 1.15  2000/01/19 17:05:16  djs
 # Modified to use an externally stored C++ output template.
 #
@@ -221,7 +224,7 @@ def argmapping(type):
                        type_name]
 
 
-def operation(operation, seed):
+def operation(operation):
     environment = self.__environment
     stream = self.__stream
     return_type = operation.returnType()
@@ -243,7 +246,7 @@ def operation(operation, seed):
         descriptor = mangler.operation_descriptor_name(operation)
         need_proxy = 0
     except KeyError:
-        mangler.generate_descriptor(seed, signature)
+        mangler.generate_descriptor(signature)
         descriptor = mangler.operation_descriptor_name(operation)
         need_proxy = 1
 
@@ -613,7 +616,7 @@ pd_result = new @type@;""", type = return_type_base)
         
 
         
-def attribute(attribute, seed):
+def attribute(attribute):
     assert isinstance(attribute, idlast.Attribute)
 
     environment = self.__environment
@@ -632,13 +635,13 @@ def attribute(attribute, seed):
         mangler.attribute_read_descriptor_name(attribute)
         need_read_proxy = 0
     except KeyError:
-        mangler.generate_descriptor(seed, read_signature)
+        mangler.generate_descriptor(read_signature)
     try:
         # check for a write proxy
         mangler.attribute_write_descriptor_name(attribute)
         need_write_proxy = 0
     except KeyError:
-        mangler.generate_descriptor(seed, write_signature)
+        mangler.generate_descriptor(write_signature)
         
     if not(need_read_proxy or need_write_proxy):
         return
