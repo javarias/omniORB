@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.4  2001/11/08 16:33:50  dpg1
+# Local servant POA shortcut policy.
+#
 # Revision 1.20.2.3  2001/06/08 17:12:11  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -198,7 +201,7 @@ def process_args(args):
         elif arg == "BOA":
             config.state['BOA Skeletons']     = 1
         elif arg == "old":
-            config.state['Old Signatures']    = 0
+            config.state['Old Signatures']    = 1
         elif arg == "old_prefix":
             config.state['Reserved Prefix']   = "_"
         elif arg == "keep_inc_path":

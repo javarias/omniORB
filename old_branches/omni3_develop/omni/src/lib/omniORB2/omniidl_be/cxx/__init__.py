@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.12  2001/04/25 17:07:21  dpg1
+# Properly handle files #included at non-file scope.
+#
 # Revision 1.18.2.11  2001/04/25 16:55:07  dpg1
 # Properly handle files #included at non-file scope.
 #
@@ -190,7 +193,7 @@ def process_args(args):
         elif arg == "BOA":
             config.state['BOA Skeletons']     = 1
         elif arg == "old":
-            config.state['Old Signatures']    = 0
+            config.state['Old Signatures']    = 1
         elif arg == "old_prefix":
             config.state['Reserved Prefix']   = "_"
         elif arg == "keep_inc_path":
