@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.15  1999/12/07 12:35:33  dpg1
+# id() function added.
+#
 # Revision 1.14  1999/11/25 14:12:34  dpg1
 # sleep()ing for maxint seconds wasn't a good idea, since some platforms
 # use milliseconds for their sleep system call.
@@ -582,6 +585,15 @@ class Object:
 
     def __del__(self):
         pass
+
+    def __getstate__(self):
+        return ORB_init().object_to_string(self)
+
+    def __setstate__(self, state):
+        o = ORB_init().string_to_object(state)
+        self.__dict__.update(o.__dict__)
+        def dummy(): pass # Why doesn't dummy want an argument? ***
+        o.__del__ = dummy
 
     def _get_interface(self):
         # ***
