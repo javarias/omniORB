@@ -29,6 +29,14 @@
 
 /*
   $Log$
+  Revision 1.10.4.1  1999/09/15 20:18:28  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.9  1999/05/26 11:54:13  sll
   Replaced WrTimedLock with WrTestLock.
   New implementation of Strand_iterator.
@@ -566,7 +574,8 @@ Rope_iterator::operator() ()
 	      Strand *p = rp->pd_head;
 	      while (p)
 		{
-		  if (!p->is_idle(1)) {
+		  Strand::Sync* q;
+		  if ((q = Strand::Sync::getSync(p)) && !q->is_unused()) {
 		    // This is wrong, nobody should be using this strand.
 		    throw omniORB::fatalException(__FILE__,__LINE__,
 						  "Rope_iterator::operator() () tries to delete a strand that is not idle.");
