@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.16  1999/01/18 13:54:51  djr
+ * Fixed bugs in implementation of unions.
+ *
  * Revision 1.15  1999/01/11 15:45:23  djr
  * New implementation.
  *
@@ -1345,10 +1348,10 @@ void
 TypeCode_sequence::NP_marshalComplexParams(MemBufferedStream &s,
 					   TypeCode_offsetTable* otbl) const
 {
-  pd_length >>= s;
   if (!pd_complete)
     throw CORBA::BAD_TYPECODE(0, CORBA::COMPLETED_NO);
   TypeCode_marshaller::marshal(ToTcBase(pd_content), s, otbl);
+  pd_length >>= s;
 }
 
 TypeCode_base*
@@ -1359,8 +1362,8 @@ TypeCode_sequence::NP_unmarshalComplexParams(MemBufferedStream &s,
 
   otbl->addEntry(otbl->currentOffset(), _ptr);
 
-  _ptr->pd_length <<= s;
   _ptr->pd_content = TypeCode_marshaller::unmarshal(s, otbl);
+  _ptr->pd_length <<= s;
   _ptr->pd_complete = 1;
 
   return _ptr;
