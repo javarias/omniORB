@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.3  2001/03/26 11:11:54  dpg1
+# Python clean-ups. Output routine optimised.
+#
 # Revision 1.1.4.2  2001/03/13 10:34:01  dpg1
 # Minor Python clean-ups
 #
@@ -211,7 +214,7 @@ class Stream:
 
         if lines > 1 and not line: # Newline at end of text
             self.do_indent = 1
-            return 0
+            return self.indent
 
         self.do_indent = 0
         return pos + len(line)
