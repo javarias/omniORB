@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.11  2000/06/26 16:24:00  djs
+# Better handling of #include'd files (via new commandline options)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.3.2.10  2000/06/19 18:19:50  djs
 # Implemented union discriminant setting function _d(_value) with checks for
 # illegal uses (setting to a label corresponding to a non-current member and
@@ -1070,19 +1074,19 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s);
 """
 
 any_sequence = """\
-extern void operator <<= (CORBA::Any& a, const @fqname@& s);
-inline void operator <<= (CORBA::Any& a, @fqname@* sp) {
-  a <<= *sp;
-  delete sp;
+extern void operator <<= (CORBA::Any& _a, const @fqname@& _s);
+inline void operator <<= (CORBA::Any& _a, @fqname@* _sp) {
+  _a <<= *_sp;
+  delete _sp;
 }
-extern _CORBA_Boolean operator >>= (const CORBA::Any& a, @fqname@*& sp);
-extern _CORBA_Boolean operator >>= (const CORBA::Any& a, const @fqname@*& sp);
+extern _CORBA_Boolean operator >>= (const CORBA::Any& _a, @fqname@*& _sp);
+extern _CORBA_Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& _sp);
 """
 
 any_exception = """\
 void operator<<=(CORBA::Any& _a, const @fqname@& _s);
 void operator<<=(CORBA::Any& _a, const @fqname@* _sp);
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@*& _sp);
+CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp);
 """
 
 enum_operators = """\

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.9  2000/06/30 09:33:05  djs
+# Removed more possible nameclashes with user supplied names.
+#
 # Revision 1.1.2.8  2000/06/27 16:15:10  sll
 # New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
 # _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
@@ -343,6 +346,7 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s) {
 #   @private_prefix@_buildDesc@decl_cname@
 # Generated symbols:
 #   NONE
+# (Note the non-copying operator is inlined in the .hh file)
 typedef_sequence_oper = """\
 void operator <<= (CORBA::Any& _a, const @fqname@& _s)
 {
@@ -518,6 +522,14 @@ void operator<<=(CORBA::Any& _a, const @fqname@& _s)
   tcDescriptor @private_prefix@_tcdesc;
   @private_prefix@_buildDesc_c@guard_name@(@private_prefix@_tcdesc, _s);
   _a.PR_packFrom(@private_prefix@_tc_@guard_name@, &@private_prefix@_tcdesc);
+}
+
+void operator<<=(CORBA::Any& _a, @fqname@* _sp)
+{
+  tcDescriptor @private_prefix@_tcdesc;
+  @private_prefix@_buildDesc_c@guard_name@(@private_prefix@_tcdesc, *_sp);
+  _a.PR_packFrom(@private_prefix@_tc_@guard_name@, &@private_prefix@_tcdesc);
+  delete _sp;
 }
 
 CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@*& _sp) {
