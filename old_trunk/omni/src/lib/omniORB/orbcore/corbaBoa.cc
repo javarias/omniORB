@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.12  1999/08/30 16:53:16  sll
+  New option -BOAhelp.
+
   Revision 1.11  1999/08/16 19:23:52  sll
   The ctor of ropeFactory_iterator now takes a pointer argument.
 
@@ -63,6 +66,7 @@
 //
  */
 
+#define ENABLE_CLIENT_IR_SUPPORT
 #include <omniORB2/CORBA.h>
 
 #ifdef HAS_pch
