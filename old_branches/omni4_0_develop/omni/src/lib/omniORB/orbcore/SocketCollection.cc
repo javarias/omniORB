@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.20  2004/04/19 09:29:40  dgrisby
+  Only close pipes if they were opened successfully.
+
   Revision 1.1.2.19  2004/04/08 10:02:20  dgrisby
   In thread pool mode, close connections that will not be selectable.
 
@@ -103,9 +106,11 @@
 #  include "iostream.h"
 #endif
 
-
-#define SELECTABLE_FD_LIMIT FD_SETSIZE
-
+#if defined(__WIN32__)
+#  define SELECTABLE_FD_LIMIT INVALID_SOCKET
+#else
+#  define SELECTABLE_FD_LIMIT FD_SETSIZE
+#endif
 
 OMNI_NAMESPACE_BEGIN(omni)
 
