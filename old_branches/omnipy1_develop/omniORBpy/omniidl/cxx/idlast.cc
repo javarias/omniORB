@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.21.2.2  2000/08/21 09:10:46  dpg1
+// Merge omniidl long long support from omniORB 3
+//
 // Revision 1.21.2.1  2000/07/26 11:02:59  dpg1
 // Incorrect error report when inheriting typedef to forward declared
 // interface
@@ -133,8 +136,14 @@ add(const char* commentText, const char* file, int line)
 {
   if (Config::keepComments) {
     if (Config::commentsFirst) {
-      if (saved_)
-	mostRecent_->next_ = new Comment(commentText, file, line);
+      if (saved_) {
+	// C++ says that the order of value evaluation is undefined.
+	// Comment's constructor sets mostRecent_, so the innocent-
+	// looking mostRecent_->next_ = new Comment... does the wrong
+	// thing with some compilers :-(
+	Comment* mr = mostRecent_;
+	mr->next_ = new Comment(commentText, file, line);
+      }
       else
 	saved_ = new Comment(commentText, file, line);
     }
