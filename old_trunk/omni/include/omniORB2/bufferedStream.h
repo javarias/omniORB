@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.19  1999/01/07 18:31:20  djr
+  MemBufferedStream modified so that interface and semantics more closely
+  match NetBufferedStream.
+  get_char_array() and put_char_array() now both take an alignment argument.
+  New methods copy_from(...) for efficient copying between streams.
+
   Revision 1.18  1998/08/19 16:06:05  sll
   MemBufferedStream::RdMessageByteOrder now returns true and false if
   the C++ bool type is used to represent CORBA::Boolean. MSVC++ is quite
@@ -608,11 +614,11 @@ public:
   }
 
   inline _CORBA_Char byteOrder() const {
-    return pd_byte_order;
+    return _CORBA_Char(pd_byte_order);
   }
 
   inline void byteOrder(_CORBA_Char b) {
-    pd_byte_order = b;
+    pd_byte_order = b ? 1 : 0;
   }
 
   inline _CORBA_Char RdMessageByteOrder() const {
