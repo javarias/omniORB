@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.3  1998/08/26 11:19:05  sll
+   Minor upates to remove warnings when compiled with standard C++ compilers.
+
   Revision 1.2  1998/08/25 19:01:35  sll
   Moved auto-variable declaration in set() to make it acceptable to old
   and new compilers.
@@ -48,12 +51,15 @@
 #include <tcpSocket.h>
 #include <bootstrap_i.h>
 
+
 static omni_mutex lock;
+
 
 omniInitialReferences::omniInitialReferences()
 {
   pd_bootagentImpl = 0;
 }
+
 
 void
 omniInitialReferences::set(const char* identifier, CORBA::Object_ptr obj)
@@ -76,15 +82,15 @@ omniInitialReferences::set(const char* identifier, CORBA::Object_ptr obj)
 CORBA::Object_ptr
 omniInitialReferences::get(const char* identifier)
 {
-  if (!identifier) return CORBA::Object::_nil();
+  if( !identifier )  return CORBA::Object::_nil();
 
   CORBA::Object_ptr result = CORBA::Object::_nil();
   CORBA::Boolean    update = 0;
   {
     omni_mutex_lock sync(lock);
 
-    for (CORBA::ULong index=0; index < pd_serviceList.length(); index++) {
-      if (strcmp((const char*)pd_serviceList[index].id,identifier) == 0) {
+    for( CORBA::ULong index = 0; index < pd_serviceList.length(); index++ ) {
+      if( !strcmp((const char*)pd_serviceList[index].id,identifier) ) {
 	result = CORBA::Object::_duplicate(pd_serviceList[index].ref);
 	break;
       }
@@ -96,26 +102,27 @@ omniInitialReferences::get(const char* identifier)
 	//     to us.
 	if (omniORB::traceLevel >= 10) {
 	  CORBA::String_var ior = omni::objectToString(pd_bootagent->PR_getobj());
-	  omniORB::log << "omniORB2 getting initial object reference for "
+	  omniORB::log << "omniORB: Getting initial object reference for "
 		       << identifier << " from '"
 		       << (const char*) ior << "'...";
 	  omniORB::log.flush();
 	}
 
 	result = pd_bootagent->get(identifier);
-	if (!CORBA::is_nil(result))
-	    update = 1;
+	if( !CORBA::is_nil(result) )
+	  update = 1;
 
 	if (omniORB::traceLevel >= 10) {
 	  omniORB::log << "Done CORBA::InitialReferences::get()."
-		       << ((CORBA::is_nil(result))?" return value is nil.\n"
+		       << ((CORBA::is_nil(result))?" Return value is nil.\n"
 			   : "\n");
 	  omniORB::log.flush();
 	}
       }
       catch(...) {
 	if (omniORB::traceLevel >= 10) {
-	  omniORB::log << "caught exception in CORBA::InitialReferences::get().\n";
+	  omniORB::log << "omniORB: Caught exception in"
+	    " CORBA::InitialReferences::get().\n";
 	  omniORB::log.flush();
 	}
       }
@@ -123,8 +130,10 @@ omniInitialReferences::get(const char* identifier)
   }
   if (update) 
     set(identifier,result);
+
   return result;
 }
+
 
 CORBA::ORB::ObjectIdList*
 omniInitialReferences::list()
@@ -144,6 +153,7 @@ omniInitialReferences::list()
   return result;
 }
 
+
 void
 omniInitialReferences::initialise_bootstrap_agentImpl()
 {
@@ -159,12 +169,14 @@ omniInitialReferences::initialise_bootstrap_agentImpl()
   }
 }
 
+
 CORBA_InitialReferences_i*
 omniInitialReferences::has_bootstrap_agentImpl()
 {
   omni_mutex_lock sync(lock);
   return pd_bootagentImpl;
 }
+
 
 void
 omniInitialReferences::initialise_bootstrap_agent(const char* host,
@@ -206,7 +218,9 @@ omniInitialReferences::initialise_bootstrap_agent(const char* host,
   }
 }
 
+
 static omniInitialReferences* _singleton;
+
 
 omniInitialReferences*
 omniInitialReferences::singleton()
@@ -217,8 +231,46 @@ omniInitialReferences::singleton()
   return _singleton;
 }
 
+
 void
 _omni_set_NameService(CORBA::Object_ptr ns)
 {
-  omniInitialReferences::singleton()->set((const char*)"NameService",ns);
+  omniInitialReferences::singleton()->set((const char*)"NameService", ns);
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+// This singleton lists the set of initial references held
+// by omniInitialReferences.
+
+class omniInitialRefLister {
+public: // some compilers get upset
+  ~omniInitialRefLister();
+  static omniInitialRefLister theInstance;
+};
+
+omniInitialRefLister omniInitialRefLister::theInstance;
+
+
+omniInitialRefLister::~omniInitialRefLister()
+{
+  if( !_singleton || omniORB::traceLevel < 15 )  return;
+
+  CORBA::ORB::ObjectIdList* list = _singleton->list();
+
+  omniORB::log << "omniORB: Initial references:\n";
+
+  for( CORBA::ULong i = 0; i < list->length(); i++ ) {
+    const char* name = (*list)[i];
+    CORBA::Object_var obj = _singleton->get(name);
+    CORBA::String_var sref = omni::objectToString(obj->PR_getobj());
+    omniORB::log <<
+      "  Name  : " << name << "\n"
+      "  IR ID : " << obj->PR_getobj()->NP_IRRepositoryId() << "\n"
+      "  ObjRef: " << sref << "\n";
+  }
+
+  omniORB::log.flush();
 }
