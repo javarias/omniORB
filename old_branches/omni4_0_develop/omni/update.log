@@ -1,7 +1,9 @@
-]Wed Apr 18 19:01:34 BST 2001 sll
+Wed Apr 18 19:01:34 BST 2001 sll
 ================================
 
 - Big checkin with the brand new internal APIs.
+
+src/lib/omniORB/orbcore/dir.mk
 
 src/lib/omniORB/orbcore/GIOP_C.cc               NEW
 src/lib/omniORB/orbcore/GIOP_S.cc               NEW
@@ -75,6 +77,32 @@ src/lib/omniORB/orbcore/gatekeepers/dummystub/gatekeeper.cc
 src/lib/omniORB/orbcore/gatekeepers/tcpwrapper/dir.mk
 src/lib/omniORB/orbcore/gatekeepers/tcpwrapper/gatekeeper.cc
 
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/anyP.cc
+src/lib/omniORB/dynamic/context.cc
+src/lib/omniORB/dynamic/contextList.cc
+src/lib/omniORB/dynamic/corbaidldynstub.cc
+src/lib/omniORB/dynamic/corbaidlstub.cc
+src/lib/omniORB/dynamic/deferredRequest.cc
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/dynAnyNil.cc
+src/lib/omniORB/dynamic/dynException.cc
+src/lib/omniORB/dynamic/dynamicImplementation.cc
+src/lib/omniORB/dynamic/dynamicLib.cc
+src/lib/omniORB/dynamic/environment.cc
+src/lib/omniORB/dynamic/exceptionList.cc
+src/lib/omniORB/dynamic/ir.cc
+src/lib/omniORB/dynamic/irdynstub.cc
+src/lib/omniORB/dynamic/irstub.cc
+src/lib/omniORB/dynamic/namedValue.cc
+src/lib/omniORB/dynamic/nvList.cc
+src/lib/omniORB/dynamic/orbMultiRequest.cc
+src/lib/omniORB/dynamic/pseudoBase.cc
+src/lib/omniORB/dynamic/request.cc
+src/lib/omniORB/dynamic/serverRequest.cc
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/unknownUserExn.cc
 
 
 Wed Apr 18 18:41:35 BST 2001 sll
