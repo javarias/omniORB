@@ -29,6 +29,9 @@
 
 /* 
   $Log$
+  Revision 1.1.2.2  2000/09/14 16:04:16  djs
+  Added module initialiser for AMI module
+
   $Id$
 */
 
@@ -76,14 +79,17 @@ void *AMI::Worker::run_undetached(void *arg){
 
   // First request of this thread can avoid the queue
   if (first_task){
+    omniAMICall_var task = first_task;
     process(first_task);
-    first_task = NULL;
+    //first_task = NULL;
   }
 
   while (1){
     AMITRACE("AMI::Worker", "dequeue");
+    //omniAMICall *call = queue->dequeue(timeout);
     omniAMICall *call = queue->dequeue(timeout);
-
+    omniAMICall_var store = call;
+    
     if (call){
       {
 	omni_mutex_lock lock(state_lock);
@@ -107,18 +113,28 @@ void *AMI::Worker::run_undetached(void *arg){
   }
   return NULL;
 }
-
 void AMI::Worker::process(omniAMICall *cd){
   AMITRACE("AMI::Worker", "processing request");
 
+  // ObjRefs target and handler are owned by the call descriptor
+  // so we don't need to worry about deallocating them.
   omniObjRef *target = cd->get_target();
+
+  // omniCallDescriptors are deallocated when the omniAMICall is
+  // deleted.
   omniCallDescriptor *request = cd->get_request_cd();
   
-  CORBA::Boolean success = 0;
   try{
-    // block making the synchronous request invocation
+    // block this thread to make the synchronous request invocation
     target->_invoke(*request, 1);
-    success = 1;
+    {
+      // received a non-exceptional reply from server
+      omniObjRef *handler = cd->get_handler();
+      omniCallDescriptor *reply = cd->get_reply_cd();
+      // FIXME: exceptions here?
+      handler->_invoke(*reply, 1);
+    }
+
   }catch(CORBA::UserException &e){
     reply_with_exception(*cd, e, 0);
     
@@ -126,19 +142,8 @@ void AMI::Worker::process(omniAMICall *cd){
     reply_with_exception(*cd, e, 1);      
   }
 
-  if (success){
-    // prepare to send the operation results to the replyhandler
-    omniObjRef *handler = cd->get_handler();
-    omniCallDescriptor *reply = cd->get_reply_cd();
-   
-    // FIXME: exceptions here?
-    handler->_invoke(*reply, 1);
-    // FIXME: release handler reference
-    // FIXME: delete call descriptor?
-  }
-
   // finished processing, delete storage
-  delete cd;
+  //delete cd;
   AMITRACE("AMI::Worker", "Request completed");
 }
 
