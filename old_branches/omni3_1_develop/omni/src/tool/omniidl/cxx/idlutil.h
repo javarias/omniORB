@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  2000/07/13 15:25:52  dpg1
+// Merge from omni3_develop for 3.0 release.
+//
 // Revision 1.3  1999/11/09 12:41:40  dpg1
 // strcasecmp changes for NT, AIX.
 //
@@ -69,6 +72,12 @@ _CORBA_WChar* idl_wstrcat(_CORBA_WChar* a, const _CORBA_WChar* b);
 #ifdef NO_STRCASECMP
 int strcasecmp(const char* s1, const char* s2);
 #endif
+
+
+// Versions of strtoul and strtod which work with the type sizes in use
+
+IdlIntLiteral   idl_strtoul(const char* text, int base);
+IdlFloatLiteral idl_strtod (const char* text);
 
 
 #endif // _idlutil_h_

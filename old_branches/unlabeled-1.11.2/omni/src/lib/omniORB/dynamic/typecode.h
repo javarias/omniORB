@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.11  2000/07/13 15:26:02  dpg1
+ * Merge from omni3_develop for 3.0 release.
+ *
  * Revision 1.8.6.5  2000/06/22 10:40:13  dpg1
  * exception.h renamed to exceptiondefs.h to avoid name clash on some
  * platforms.
@@ -833,7 +836,8 @@ public:
   // This type is used to store discriminator values for all types
   // of discriminator - so must be able to store values as large
   // as the largest discriminator type.
-  typedef CORBA::PR_unionDiscriminator Discriminator;
+  typedef CORBA::PR_unionDiscriminator       Discriminator;
+  typedef CORBA::PR_unionDiscriminatorSigned DiscriminatorSigned;
 
   TypeCode_union(const char* repoId, const char* name,
 		 TypeCode_base* discTC, const CORBA::UnionMemberSeq& members);

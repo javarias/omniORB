@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17  2000/07/13 15:26:00  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.14.2.7  2000/07/03 14:56:43  djs
 # Fixed bug generating typecodes for struct members which are anonymous
 # sequences.
@@ -292,6 +295,8 @@ def mkTypeCode(type, declarator = None, node = None):
         idltype.tk_octet:   "octet",
         idltype.tk_any:     "any",
         idltype.tk_TypeCode: "TypeCode",
+        idltype.tk_longlong: "longlong",
+        idltype.tk_ulonglong: "ulonglong"
         }
     if basic.has_key(type.kind()):
         return prefix + basic[type.kind()] + "_tc()"
