@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.13  1999/06/18 20:47:44  sll
+  Updated to use _dyn_attr.
+
   Revision 1.12  1999/03/11 16:26:08  djr
   Updated copyright notice
 
@@ -98,7 +101,7 @@ o2be_typedef::o2be_typedef(AST_Type *bt, UTL_ScopedName *n, UTL_StrList *p)
   switch (decl->node_type())
     {
     case AST_Decl::NT_interface:
-      if (strcmp(o2be_name::narrow_and_produce_uqname(decl),"Object") == 0) {
+      if (strcmp(o2be_name::narrow_and_produce_uqname(decl),"CORBA::Object") == 0) {
 	pd_fm_uqname = (char *)o2be_interface::narrow_from_decl(decl)->
 	                  fieldMemberType_uqname();
       }
@@ -331,7 +334,7 @@ o2be_typedef::fieldMemberType_fqname(AST_Decl* used_in)
   switch (decl->node_type())
     {
     case AST_Decl::NT_interface:
-      if (strcmp(o2be_name::narrow_and_produce_uqname(decl),"Object") == 0) {
+      if (strcmp(o2be_name::narrow_and_produce_uqname(decl),"CORBA::Object") == 0) {
 	result = (char *)o2be_interface::narrow_from_decl(decl)->
 	                             fieldMemberType_fqname(used_in);
       }
