@@ -3,7 +3,13 @@
 
 <page title="omniORB documentation" head="Documentation" id="docs">
 
-<h2>omniORB 3.0.x documentation</h2>
+<h2 align="center">omniORB documentation</h2>
+
+<table align="center">
+<tr>
+<td width="50%">
+
+<h3 align="center">omniORB 3.0.x</h3>
 
 <ul>
   <li>omniORB user's guide
@@ -58,7 +64,75 @@
   </li>
 </ul>
 
-<h2>omniORB for Python 1.x documentation</h2>
+</td>
+<td width="50%">
+
+<h3 align="center">omniORB 4.0.x</h3>
+
+<ul>
+  <li>omniORB user's guide
+    <ul>
+      <li>
+        <a href="omni40/omniORB/">html</a>,
+        <a href="omni40/omniORB.pdf">pdf</a>,
+        <a href="omni40/omniORB.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omni thread abstraction
+    <ul>
+      <li>
+	<a href="omni40/omnithread.html">html</a>,
+	<a href="omni40/omnithread.pdf">pdf</a>,
+	<a href="omni40/omnithread.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniNames
+    <ul>
+      <li>
+	<a href="omni40/omniNames.html">html</a>,
+	<a href="omni40/omniNames.pdf">pdf</a>,
+	<a href="omni40/omniNames.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniORB utilities
+    <ul>
+      <li>
+	<a href="omni40/utilities.html">html</a>,
+	<a href="omni40/utilities.pdf">pdf</a>,
+	<a href="omni40/utilities.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniidl for back-end authors
+    <ul>
+      <li>
+	<a href="omni40/omniidl.html">html</a>,
+	<a href="omni40/omniidl.pdf">pdf</a>,
+	<a href="omni40/omniidl.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+</ul>
+
+</td>
+</tr>
+</table>
+
+<h2 align="center">omniORB for Python documentation</h2>
+
+<table align="center">
+<tr>
+<td width="50%">
+
+<h3 align="center">omniORBpy 1.x</h3>
 
 <ul>
   <li>omniORBpy user's guide
@@ -71,5 +145,27 @@
     </ul>
   </li>
 </ul>
+
+</td>
+
+<td width="50%">
+
+<h3 align="center">omniORBpy 2.x</h3>
+
+<ul>
+  <li>omniORBpy user's guide
+    <ul>
+      <li>
+	<a href="omnipy2/omniORBpy/">html</a>,
+	<a href="omnipy2/omniORBpy.pdf">pdf</a>,
+	<a href="omnipy2/omniORBpy.ps">PostScript</a>.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</td>
+</tr>
+</table>
 
 </page>
