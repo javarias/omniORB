@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.16  2002/01/18 15:49:44  dpg1
+// Context support. New system exception construction. Fix None call problem.
+//
 // Revision 1.2.4.15  2001/10/18 15:48:39  dpg1
 // Track ORB core changes.
 //
@@ -619,6 +622,7 @@ public:
     virtual const char*             _mostDerivedRepoId();
     virtual CORBA::Boolean          _is_a(const char* logical_type_id);
     virtual PortableServer::POA_ptr _default_POA();
+    virtual CORBA::Boolean          _non_existent();
 
     inline PyObject* pyServant() { Py_INCREF(pyservant_); return pyservant_; }
 

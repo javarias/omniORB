@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.6  2002/03/11 15:40:05  dpg1
+# _get_interface support, exception minor codes.
+#
 # Revision 1.7.4.5  2002/01/18 15:49:45  dpg1
 # Context support. New system exception construction. Fix None call problem.
 #
@@ -93,6 +96,9 @@ class Servant:
             raise INTF_REPOS(omniORB.INTF_REPOS_NotAvailable, COMPLETED_NO)
         interf = ir.lookup_id(self._NP_RepositoryId)
         return interf._narrow(InterfaceDef)
+
+    def _non_existent(self):
+        return 0
 
 _d_Servant = omniORB.tcInternal.tv_native
 
