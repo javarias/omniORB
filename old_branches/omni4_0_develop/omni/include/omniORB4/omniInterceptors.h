@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2002/03/27 11:44:51  dpg1
+  Check in interceptors things left over from last week.
+
   Revision 1.1.2.4  2001/08/15 10:26:08  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -252,11 +255,12 @@ public:
     class info_T {
     public:
       omniIOR*            ior;
+      const char*         targetRepoId;
       omniIdentity*&      invoke_handle;
       CORBA::Boolean      held_internalLock;
 
-      info_T(omniIOR* i, omniIdentity*& id, CORBA::Boolean b) :
-	ior(i), invoke_handle(id), held_internalLock(b) {}
+      info_T(omniIOR* i, const char* t, omniIdentity*& id, CORBA::Boolean b) :
+	ior(i), targetRepoId(t), invoke_handle(id), held_internalLock(b) {}
     };
 
     typedef CORBA::Boolean (*interceptFunc)(info_T& info);

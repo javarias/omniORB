@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.26  2002/03/27 11:44:53  dpg1
+  Check in interceptors things left over from last week.
+
   Revision 1.2.2.25  2002/03/18 15:13:08  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -775,13 +778,15 @@ omni::createIdentity(omniIOR* ior, const char* target, CORBA::Boolean locked)
 
   // Try an interceptor
   omniIdentity* result = 0;
-  {
-    omniInterceptors::createIdentity_T::info_T info(ior, result, locked);
+
+  if (omniInterceptorP::createIdentity) {
+    omniInterceptors::createIdentity_T::info_T info(ior,target,result,locked);
     omniInterceptorP::visit(info);
-  }
-  if (result) {
-    holder._retn();
-    return result;
+
+    if (result) {
+      holder._retn();
+      return result;
+    }
   }
 
   // Decode the profiles
