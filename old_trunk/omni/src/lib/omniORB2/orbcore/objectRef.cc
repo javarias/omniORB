@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.18  1998/08/19 16:08:15  sll
+  using omniORB::operator== now applies to all platforms that uses C++
+  namespace.
+
   Revision 1.17  1998/08/15 14:31:41  sll
   Added using omniORB::operator== when the compiler supports namespace but
   no the Koenig Lookup rule.
@@ -360,7 +364,9 @@ omni::locateObject(omniObjectManager*,omniObjectKey &k)
   }
   omniObject::objectTableLock.unlock();
   throw CORBA::OBJECT_NOT_EXIST(0,CORBA::COMPLETED_NO);
+#ifdef NEED_DUMMY_RETURN
   return 0;  // MS VC++ 4.0 needs this.
+#endif
 }
 
 
