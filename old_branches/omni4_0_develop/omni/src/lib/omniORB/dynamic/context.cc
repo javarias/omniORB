@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.12.2.3  2000/10/06 16:40:53  sll
+ Changed to use cdrStream.
+
  Revision 1.12.2.2  2000/09/27 17:25:40  sll
  Changed include/omniORB3 to include/omniORB4.
 
@@ -604,11 +607,11 @@ CORBA::Context::marshalContext(CORBA::Context_ptr ctxt,
 
     CORBA::ULong len = strlen(which[j]) + 1;
     len >>= s;
-    s.put_char_array((CORBA::Char*) which[j], len);
+    s.put_octet_array((CORBA::Octet*) which[j], len);
 
     len = strlen(value) + 1;
     len >>= s;
-    s.put_char_array((CORBA::Char*) value, len);
+    s.put_octet_array((CORBA::Octet*) value, len);
 
   }
 }

@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+   Revision 1.11.2.3  2000/10/06 16:40:53  sll
+   Changed to use cdrStream.
+
    Revision 1.11.2.2  2000/09/27 17:25:41  sll
    Changed include/omniORB3 to include/omniORB4.
 
@@ -478,21 +481,21 @@ DynAnyImpl::copy()
 void
 DynAnyImpl::insert_boolean(CORBA::Boolean value)
 {
-  value >>= doWrite(CORBA::tk_boolean);
+  doWrite(CORBA::tk_boolean).marshalBoolean(value);
 }
 
 
 void
 DynAnyImpl::insert_octet(CORBA::Octet value)
 {
-  value >>= doWrite(CORBA::tk_octet);
+  doWrite(CORBA::tk_octet).marshalOctet(value);
 }
 
 
 void
 DynAnyImpl::insert_char(CORBA::Char value)
 {
-  value >>= doWrite(CORBA::tk_char);
+  doWrite(CORBA::tk_char).marshalChar(value);
 }
 
 
@@ -542,15 +545,9 @@ DynAnyImpl::insert_string(const char* value)
 {
   if( !value || tckind() != CORBA::tk_string )
     throw CORBA::DynAny::InvalidValue();
-
-  CORBA::ULong length = strlen(value) + 1;
   CORBA::ULong maxlen = actualTc()->NP_length();
-  if( maxlen && length - 1 > maxlen )
-    throw CORBA::DynAny::InvalidValue();
-
   cdrMemoryStream& buf = doWrite(CORBA::tk_string);
-  length >>= buf;
-  buf.put_char_array((const CORBA::Char*)value, length);
+  buf.marshalString(value,maxlen);
 }
 
 
@@ -586,27 +583,21 @@ DynAnyImpl::insert_any(const CORBA::Any& value)
 CORBA::Boolean
 DynAnyImpl::get_boolean()
 {
-  CORBA::Boolean value;
-  value <<= doRead(CORBA::tk_boolean);
-  return value;
+  return doRead(CORBA::tk_boolean).unmarshalBoolean();
 }
 
 
 CORBA::Octet
 DynAnyImpl::get_octet()
 {
-  CORBA::Octet value;
-  value <<= doRead(CORBA::tk_octet);
-  return value;
+  return doRead(CORBA::tk_octet).unmarshalOctet();
 }
 
 
 CORBA::Char
 DynAnyImpl::get_char()
 {
-  CORBA::Char value;
-  value <<= doRead(CORBA::tk_char);
-  return value;
+  return doRead(CORBA::tk_char).unmarshalChar();
 }
 
 
@@ -671,22 +662,7 @@ DynAnyImpl::get_string()
 
   CORBA::ULong length;
   CORBA::ULong maxlen = actualTc()->NP_length();
-  char* value;
-
-  length <<= buf;
-  if( maxlen && length - 1 > maxlen )  throw CORBA::DynAny::TypeMismatch();
-  if( length == 0 )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-	 "DynAnyImpl::get_string() - string has zero length "
-				  "(including terminator)");
-
-  value = CORBA::string_alloc(length - 1);
-  buf.get_char_array((CORBA::Char*)value, length);
-
-  if( value[length - 1] != '\0' )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-	 "DynAnyImpl::get_string() - string is not terminated");
-
+  char* value = buf.unmarshalString(maxlen);
   return value;
 }
 
@@ -971,21 +947,21 @@ DynAnyConstrBase::assign(CORBA::DynAny_ptr da)
 void
 DynAnyConstrBase::insert_boolean(CORBA::Boolean value)
 {
-  value >>= writeCurrent(CORBA::tk_boolean);
+  writeCurrent(CORBA::tk_boolean).marshalBoolean(value);
 }
 
 
 void
 DynAnyConstrBase::insert_octet(CORBA::Octet value)
 {
-  value >>= writeCurrent(CORBA::tk_octet);
+  writeCurrent(CORBA::tk_octet).marshalOctet(value);
 }
 
 
 void
 DynAnyConstrBase::insert_char(CORBA::Char value)
 {
-  value >>= writeCurrent(CORBA::tk_char);
+  writeCurrent(CORBA::tk_char).marshalChar(value);
 }
 
 
@@ -1035,8 +1011,6 @@ void
 DynAnyConstrBase::insert_string(const char* value)
 {
   if( !value )  throw CORBA::DynAny::InvalidValue();
-  CORBA::ULong length = strlen(value) + 1;
-
   if( pd_curr_index < 0 )  throw CORBA::DynAny::InvalidValue();
 
   TypeCode_base* tc = (TypeCode_base*) TypeCode_base::NP_expand(nthComponentTC(pd_curr_index));
@@ -1044,12 +1018,8 @@ DynAnyConstrBase::insert_string(const char* value)
     throw CORBA::DynAny::InvalidValue();
 
   CORBA::ULong maxlen = tc->NP_length();
-  if( maxlen && length - 1 > maxlen )
-    throw CORBA::DynAny::InvalidValue();
-
   cdrMemoryStream& buf = writeCurrent(CORBA::tk_string);
-  length >>= buf;
-  buf.put_char_array((const CORBA::Char*)value, length);
+  buf.marshalString(value,maxlen);
 }
 
 
@@ -1085,27 +1055,21 @@ DynAnyConstrBase::insert_any(const CORBA::Any& value)
 CORBA::Boolean
 DynAnyConstrBase::get_boolean()
 {
-  CORBA::Boolean value;
-  value <<= readCurrent(CORBA::tk_boolean);
-  return value;
+  return readCurrent(CORBA::tk_boolean).unmarshalBoolean();
 }
 
 
 CORBA::Octet
 DynAnyConstrBase::get_octet()
 {
-  CORBA::Octet value;
-  value <<= readCurrent(CORBA::tk_octet);
-  return value;
+  return readCurrent(CORBA::tk_octet).unmarshalOctet();
 }
 
 
 CORBA::Char
 DynAnyConstrBase::get_char()
 {
-  CORBA::Char value;
-  value <<= readCurrent(CORBA::tk_char);
-  return value;
+  return readCurrent(CORBA::tk_char).unmarshalChar();
 }
 
 
@@ -1170,25 +1134,7 @@ DynAnyConstrBase::get_string()
 
   TypeCode_base* tc = (TypeCode_base*)TypeCode_base::NP_expand(nthComponentTC(pd_curr_index));
   CORBA::ULong maxlen = tc->NP_length();
-
-  CORBA::ULong length;
-  length <<= buf;
-
-  if( maxlen && length - 1 > maxlen ) {
-    pd_read_index = -1;
-    throw CORBA::DynAny::TypeMismatch();
-  }
-  if( length == 0 )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-      "DynAnyConstrBase::get_string() - zero length string in buffer");
-
-  char* value = CORBA::string_alloc(length - 1);
-  buf.get_char_array((CORBA::Char*)value, length);
-
-  if( value[length - 1] != '\0' )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-      "DynAnyConstrBase::get_string() - string not terminated");
-
+  char* value = buf.unmarshalString(maxlen);
   return value;
 }
 
@@ -1687,7 +1633,7 @@ DynUnionImpl::copy()
 void
 DynUnionImpl::insert_boolean(CORBA::Boolean value)
 {
-  value >>= writeCurrent(CORBA::tk_boolean);
+  writeCurrent(CORBA::tk_boolean).marshalBoolean(value);
   discriminatorHasChanged();
 }
 
@@ -1695,7 +1641,7 @@ DynUnionImpl::insert_boolean(CORBA::Boolean value)
 void
 DynUnionImpl::insert_octet(CORBA::Octet value)
 {
-  value >>= writeCurrent(CORBA::tk_octet);
+  writeCurrent(CORBA::tk_octet).marshalOctet(value);
   discriminatorHasChanged();
 }
 
@@ -1703,7 +1649,7 @@ DynUnionImpl::insert_octet(CORBA::Octet value)
 void
 DynUnionImpl::insert_char(CORBA::Char value)
 {
-  value >>= writeCurrent(CORBA::tk_char);
+  writeCurrent(CORBA::tk_char).marshalChar(value);
   discriminatorHasChanged();
 }
 
@@ -1760,17 +1706,13 @@ void
 DynUnionImpl::insert_string(const char* value)
 {
   if( !value )  throw CORBA::DynAny::InvalidValue();
-  CORBA::ULong length = strlen(value) + 1;
 
   if( pd_curr_index != 1 || pd_member_kind != CORBA::tk_string )
     throw CORBA::DynAny::InvalidValue();
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
-  if( maxlen && length - 1 > maxlen )
-    throw CORBA::DynAny::InvalidValue();
 
   cdrMemoryStream& buf = writeCurrent(CORBA::tk_string);
-  length >>= buf;
-  buf.put_char_array((const CORBA::Char*)value, length);
+  buf.marshalString(value,maxlen);
   discriminatorHasChanged();
 }
 
@@ -1810,27 +1752,21 @@ DynUnionImpl::insert_any(const CORBA::Any& value)
 CORBA::Boolean
 DynUnionImpl::get_boolean()
 {
-  CORBA::Boolean value;
-  value <<= readCurrent(CORBA::tk_boolean);
-  return value;
+  return readCurrent(CORBA::tk_boolean).unmarshalBoolean();
 }
 
 
 CORBA::Octet
 DynUnionImpl::get_octet()
 {
-  CORBA::Octet value;
-  value <<= readCurrent(CORBA::tk_octet);
-  return value;
+  return readCurrent(CORBA::tk_octet).unmarshalOctet();
 }
 
 
 CORBA::Char
 DynUnionImpl::get_char()
 {
-  CORBA::Char value;
-  value <<= readCurrent(CORBA::tk_char);
-  return value;
+  return readCurrent(CORBA::tk_char).unmarshalChar();
 }
 
 
@@ -1894,24 +1830,7 @@ DynUnionImpl::get_string()
   cdrMemoryStream& buf = readCurrent(CORBA::tk_string);
 
   CORBA::ULong maxlen = pd_member->actualTc()->NP_length();
-
-  CORBA::ULong length;
-  length <<= buf;
-
-  if( maxlen && length - 1 > maxlen )
-    throw CORBA::DynAny::TypeMismatch();
-
-  if( length == 0 )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-      "DynUnionImpl::get_string() - zero length string in buffer");
-
-  char* value = CORBA::string_alloc(length - 1);
-  buf.get_char_array((CORBA::Char*)value, length);
-
-  if( value[length - 1] != '\0' )
-    throw omniORB::fatalException(__FILE__,__LINE__,
-      "DynAnyConstrBase::get_string() - string not terminated");
-
+  char* value = buf.unmarshalString(maxlen);
   return value;
 }
 
@@ -2255,7 +2174,7 @@ DynUnionDisc::copy()
 void
 DynUnionDisc::insert_boolean(CORBA::Boolean value)
 {
-  value >>= doWrite(CORBA::tk_boolean);
+  doWrite(CORBA::tk_boolean).marshalBoolean(value);
   if( pd_union )  pd_union->discriminatorHasChanged();
 }
 
@@ -2271,7 +2190,7 @@ DynUnionDisc::insert_octet(CORBA::Octet value)
 void
 DynUnionDisc::insert_char(CORBA::Char value)
 {
-  value >>= doWrite(CORBA::tk_char);
+  doWrite(CORBA::tk_char).marshalChar(value);
   if( pd_union )  pd_union->discriminatorHasChanged();
 }
 
