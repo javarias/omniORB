@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  2000/07/13 15:25:59  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.5.2.4  2000/06/26 16:24:16  djs
 # Refactoring of configuration state mechanism.
 #
@@ -61,16 +64,7 @@
 # Struct skeleton code added
 #
 
-# -----------------------------
-# Configuration data
-from omniidl_be.cxx import config
-
-# -----------------------------
-# Utility functions
-from omniidl_be.cxx import tyutil, util
-
-from omniidl_be.cxx.skel import main
-from omniidl_be.cxx.skel import poa
+from omniidl_be.cxx import config, output, ast, id
 from omniidl_be.cxx.skel import mangler
 
 def monolithic(stream, tree):
@@ -91,10 +85,12 @@ static const char* @prefix@_library_version = @library@;
                hh = config.state['HH Suffix'],
                prefix = config.state['Private Prefix'])
 
-    skel = main.__init__(stream)
+    import omniidl_be.cxx.skel.main
+    skel = omniidl_be.cxx.skel.main.__init__(stream)
     tree.accept(skel)
 
-    poa_skel = poa.__init__(stream)
+    import omniidl_be.cxx.skel.poa
+    poa_skel = omniidl_be.cxx.skel.poa.__init__(stream)
     tree.accept(poa_skel)
 
 def fragment(stream, tree):
@@ -105,11 +101,13 @@ def fragment(stream, tree):
 """,
                program = config.state['Program Name'],
                library = config.state['Library Version'])
-    
-    skel = main.__init__(stream)
+
+    import omniidl_be.cxx.skel.main
+    skel = omniidl_be.cxx.skel.main.__init__(stream)
     tree.accept(skel)
 
-    poa_skel = poa.__init__(stream)
+    import omniidl_be.cxx.skel.poa
+    poa_skel = omniidl_be.cxx.skel.poa.__init__(stream)
     tree.accept(poa_skel)
 
 
@@ -117,7 +115,7 @@ def run(tree):
     # create somewhere to put the output
     skel_filename = config.state['Basename'] +\
                     config.state['SK Suffix']
-    stream = util.Stream(open(skel_filename, "w"), 2)
+    stream = output.Stream(output.createFile(skel_filename), 2)
 
     # clear all state
     mangler.__init__()

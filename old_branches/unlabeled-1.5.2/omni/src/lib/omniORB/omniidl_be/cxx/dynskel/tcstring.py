@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  2000/07/13 15:26:00  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
 # Revision 1.2.2.3  2000/06/26 16:23:27  djs
 # Refactoring of configuration state mechanism.
 #
@@ -48,7 +51,7 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, id, types
+from omniidl_be.cxx import ast, cxx, output, util, id, types
 from omniidl_be.cxx.dynskel import template
 
 import tcstring

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.1  2000/08/04 17:10:28  dpg1
+# Long long support
+#
 # Revision 1.15  2000/07/13 15:26:00  dpg1
 # Merge from omni3_develop for 3.0 release.
 #
@@ -123,7 +126,7 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, id, types, config
+from omniidl_be.cxx import ast, cxx, output, util, id, types, config
 from omniidl_be.cxx.skel import mangler
 from omniidl_be.cxx.dynskel import template
 
@@ -291,7 +294,7 @@ def docast(type, decl, string):
     tail_dims_string = ""
     if dims != []:
         tail_dims = dims[1:]
-        tail_dims_string = tyutil.dimsToString(tail_dims)
+        tail_dims_string = cxx.dimsToString(tail_dims)
     
     d_type = type.deref()
     cast_to = d_type.base()
@@ -417,7 +420,7 @@ def visitSequenceType(type):
     if is_array:
         thing = docast(seqType, None, thing)
 
-    elementDesc = util.StringStream()
+    elementDesc = output.StringStream()
     prefix = config.state['Private Prefix']
     # djr and jnw's "Super-Hacky Optimisation"
     if isinstance(d_seqType.type(), idltype.Base)   and \
@@ -637,7 +640,7 @@ def visitMembers(node, stream, fqname, guard_name, prefix, static = ""):
                 visitArray(types.Type(memberType), d)
 
     # build the case expression
-    cases = util.StringStream()
+    cases = output.StringStream()
     index = 0
     for m in node.members():
         memberType = types.Type(m.memberType())
@@ -848,8 +851,7 @@ def visitUnion(node):
     discrim_cname = mangler.canonTypeName(switchType)
     discrim_type = deref_switchType.base()
 
-    allCaseValues = tyutil.allCases(node)
-    isExhaustive = tyutil.exhaustiveMatch(switchType, allCaseValues)
+    isExhaustive = ast.exhaustiveMatch(switchType,ast.allCaseLabelValues(node))
 
     prefix = config.state['Private Prefix']
 
@@ -878,7 +880,7 @@ def visitUnion(node):
 
     required_symbols = []
             
-    switch = util.StringStream()
+    switch = output.StringStream()
     if default_case:
         default_decl = default_case.declarator()
         default_type = types.Type(default_case.caseType())
@@ -938,12 +940,8 @@ switch( _u->_pd__d ) {""")
         for l in c.labels():
             if l.default():
                 continue
-            # FIXME: same problem occurs in header/defs and
-            # skel/main and dynskel/bdesc
-            if switchType.char() and l.value() == '\0':
-                label = "0000"
-            else:
-                label = switchType.literal(l.value())
+
+            label = switchType.literal(l.value())
             required_symbols.append(prefix + "_buildDesc" + type_cname)
             switch.out("""\
 case @label@:
