@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/12/14 11:53:56  djs
+# Support for CORBA::TypeCode and CORBA::Any
+#
 # Revision 1.8  1999/12/10 18:26:03  djs
 # Added a utility function to order exceptions based on their names
 #
@@ -269,8 +272,10 @@ CdrStreamHelper_unmarshalArray@suffix@(@where@,@typecast@, @num@);""",
                        where = from_where, typecast = typecast,
                        num = str(num_elements))
             return
+        if tyutil.isAny(deref_type):
+            pass
         # not sure how to handle other basic types
-        if isinstance(deref_type, idltype.Base):
+        elif isinstance(deref_type, idltype.Base):
             raise "Don't know how to marshall type: " + repr(deref_type) +\
               "(kind = " + str(deref_type.kind()) + ") array"
 
