@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.16  2004/04/30 15:58:33  dgrisby
+  Make ptr_arith_t unsigned.
+
   Revision 1.2.2.15  2003/02/17 02:03:07  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -290,7 +293,7 @@ _CORBA_MODULE_BEG
 
   _CORBA_MODULE_FN inline ptr_arith_t align_to(ptr_arith_t p,
 					       alignment_t align) {
-    return (p + ((int) align - 1)) & ~((int) align - 1);
+    return (p + ((ptr_arith_t) align - 1)) & ~((ptr_arith_t) align - 1);
   }
 
   _CORBA_MODULE_FN _CORBA_ULong hash(const _CORBA_Octet* key, int keysize);
