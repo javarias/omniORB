@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30  2000/07/13 15:25:54  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.22.6.14  2000/07/03 15:38:20  dpg1
   Support for FreeBSD 4.0. FreeBSD 3.2 hopefully works too.
 
@@ -1297,6 +1300,7 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
     return RC_INVALID_SOCKET;
   }
 # else
+  v = 0;
   if (ioctlsocket(sock,FIONBIO,&v) == RC_SOCKET_ERROR) {
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
