@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.7  1999/10/04 17:08:35  djr
+  Some more fixes/MSVC work-arounds.
+
   Revision 1.39.6.6  1999/10/04 15:51:52  djr
   Various fixes/MSVC work-arounds.
 
@@ -470,7 +473,7 @@ o2be_interface::produce_hdr(std::fstream& s)
   {
     o2be_iterator<o2be_operation, AST_Decl::NT_op> i(this);
     while( !i.is_done() ) {
-      IND(s); i.item()->produce_client_decl(s, module);
+      IND(s); i.item()->produce_client_decl(s, module, 1, 1);
       s << ";\n";
       i.next();
     }
@@ -569,7 +572,7 @@ o2be_interface::produce_hdr(std::fstream& s)
       if( idl_global->compile_flags() & IDL_BE_OLD_SKEL_SIGNATURES )
 	op->produce_decl(s, module);
       else
-	op->produce_client_decl(s, module);
+	op->produce_client_decl(s, module, 0, 1);
       s << " = 0;\n";
       i.next();
     }
@@ -1996,7 +1999,7 @@ internal_produce_tie_call_wrappers(o2be_interface* intf,
       if( idl_global->compile_flags() & IDL_BE_OLD_SKEL_SIGNATURES )
 	op->produce_decl(s, o2be_global::root());
       else
-	op->produce_client_decl(s, o2be_global::root());
+	op->produce_client_decl(s, o2be_global::root(), 0, 1);
       s << " { ";
       if( !op->return_is_void() )  s << "return ";
       s << "pd_obj->";

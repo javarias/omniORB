@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.27.6.1  1999/09/24 10:05:21  djr
+ Updated for omniORB3.
+
  Revision 1.27  1999/08/09 12:26:05  sll
  Removed pd_out_adptarg_name from o2be_array
 
@@ -838,6 +841,8 @@ public:
   // (Server side).
 
   void produce_client_decl(std::fstream& s, AST_Decl* used_in,
+			   idl_bool use_inout_adapter,
+			   idl_bool use_out_adapter,
 			   const char* prefix = 0,
 			   const char* alias_prefix = 0);
   // Produce the declaration of the mapping of this operation.
