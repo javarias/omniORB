@@ -27,10 +27,13 @@
 // Description:
 //    Master header file for omnipy internals, omniORB 2.8 version
 
-
 // $Id$
 
 // $Log$
+// Revision 1.19  2000/03/07 16:52:17  dpg1
+// Support for compilers which do not allow exceptions to be caught by
+// base class. (Like MSVC 5, surprise surprise.)
+//
 // Revision 1.18  2000/03/03 17:41:43  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -303,6 +306,15 @@ public:
   PyObject* unmarshalPyObject(MemBufferedStream& stream,
 			      PyObject*          d_o);
 
+  // Take a descriptor and an argument object, and return a "copy" of
+  // the argument. Immutable types need not be copied. If the argument
+  // does not match the descriptor, set Python's exception status to
+  // BAD_PARAM and return 0.
+  static
+  PyObject* copyArgument(PyObject*               d_o,
+			 PyObject*               a_o,
+			 CORBA::CompletionStatus compstatus);
+
 
   ////////////////////////////////////////////////////////////////////////////
   // TypeCode and Any support functions                                     //
@@ -472,31 +484,21 @@ public:
 				    const char*    op,
 				    CORBA::Boolean response);
 
-    inline PyObject* local_dispatch(const char* op, PyObject* args) {
-      PyObject* method = PyObject_GetAttrString(pyservant_, (char*)op);
-      if (method) {
-	PyObject* ret = PyEval_CallObject(method, args);
-	Py_DECREF(method);
-	return ret;
-      }
-      else {
-	PyObject* err =
-	  PyString_FromString("Local servant has no operation named ");
-
-	PyString_ConcatAndDel(&err, PyString_FromString(op));
-	PyErr_SetObject(PyExc_AttributeError, err);
-	Py_DECREF(err);
-	return 0;
-      }
-    }
+    PyObject* local_dispatch(const char* op,
+			     PyObject*   in_d,  int in_l,
+			     PyObject*   out_d, int out_l,
+			     PyObject*   exc_d,
+			     PyObject*   args);
 
     inline PyObject* pyServant() {
       Py_INCREF(pyservant_);
       return pyservant_;
     }
 
+    void deactivate(CORBA::BOA_ptr boa);
+
   private:
-    PyObject* pyservant_;		// Python servant object
+    PyObject* pyservant_;	// Python servant object
     PyObject* opdict_;		// Operation descriptor dictionary
     PyObject* pyskeleton_;	// Skeleton class object
 

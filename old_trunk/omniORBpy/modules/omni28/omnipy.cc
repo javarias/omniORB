@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.32  2000/03/07 16:52:17  dpg1
+// Support for compilers which do not allow exceptions to be caught by
+// base class. (Like MSVC 5, surprise surprise.)
+//
 // Revision 1.31  2000/03/06 18:45:34  dpg1
 // Additions to compile on Solaris.
 //
@@ -592,7 +596,11 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 	oobj->_widenFromTheMostDerivedIntf("Py_Servant", 1);
 
       OMNIORB_ASSERT(local);
-      return local->local_dispatch(op, op_args);
+      int out_l = (out_d == Py_None) ? -1 : PyTuple_GET_SIZE(out_d);
+      return local->local_dispatch(op,
+				   in_d,  PyTuple_GET_SIZE(in_d),
+				   out_d, out_l,
+				   exc_d, op_args);
     }
   }
 
@@ -608,7 +616,10 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
     if (cxxobjref) {
-      CORBA::release(cxxobjref);
+      {
+	omniPy::InterpreterUnlocker _u;
+	CORBA::release(cxxobjref);
+      }
       omniPy::remTwin(pyobjref, OBJREF_TWIN);
     }
     Py_INCREF(Py_None);

@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.11  2000/03/17 15:57:07  dpg1
+// Correct, and more consistent handling of invalid strings in
+// string_to_object().
+//
 // Revision 1.10  2000/03/03 17:41:42  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -168,12 +172,16 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 
   PyObject* pyobjref = PyEval_CallObject(objrefClass, omniPy::pyEmptyTuple);
 
-  OMNIORB_ASSERT(objref && PyInstance_Check(pyobjref));
+  if (!pyobjref) {
+    // Oh dear -- return the error to the program
+    return 0;
+  }
 
   if (fullTypeUnknown) {
     PyObject* idstr = PyString_FromString(actualRepoId);
     PyDict_SetItemString(((PyInstanceObject*)pyobjref)->in_dict,
 			 (char*)"_NP_RepositoryId", idstr);
+    Py_DECREF(idstr);
   }
   omniPy::setTwin(pyobjref, (CORBA::Object_ptr)objref, OBJREF_TWIN);
 

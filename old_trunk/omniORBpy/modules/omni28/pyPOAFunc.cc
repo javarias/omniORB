@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  2000/03/10 12:13:54  dpg1
+// servant_to_id() and servant_to_reference() correctly throw
+// ServantNotActive if necessary.
+//
 // Revision 1.3  2000/03/07 16:52:17  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -295,8 +299,8 @@ extern "C" {
 
     RAISE_PY_BAD_PARAM_IF(!serv);
 
-    CORBA::release(serv);
-    boa->dispose(serv);
+    serv->deactivate(boa);
+
     Py_INCREF(Py_None);
     return Py_None;
   }
@@ -500,10 +504,14 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"O", &pyPOA)) return 0;
 
     CORBA::BOA_ptr boa = (CORBA::BOA_ptr)omniPy::getTwin(pyPOA, BOA_TWIN);
-    OMNIORB_ASSERT(boa);
 
-    CORBA::release(boa);
-
+    if (boa) {
+      {
+	omniPy::InterpreterUnlocker _u;
+	CORBA::release(boa);
+      }
+      omniPy::remTwin(pyPOA, BOA_TWIN);
+    }
     Py_INCREF(Py_None);
     return Py_None;
   }

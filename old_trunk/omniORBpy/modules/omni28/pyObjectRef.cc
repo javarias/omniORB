@@ -32,6 +32,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.10  2000/03/03 17:41:43  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.9  1999/12/15 12:17:19  dpg1
 // Changes to compile with SunPro CC 5.0.
 //
@@ -152,12 +155,16 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 
   PyObject* pyobjref = PyEval_CallObject(objrefClass, omniPy::pyEmptyTuple);
 
-  OMNIORB_ASSERT(pyobjref && PyInstance_Check(pyobjref));
+  if (!pyobjref) {
+    // Oh dear -- return the error to the program
+    return 0;
+  }
 
   if (fullTypeUnknown) {
     PyObject* idstr = PyString_FromString(actualRepoId);
     PyDict_SetItemString(((PyInstanceObject*)pyobjref)->in_dict,
 			 (char*)"_NP_RepositoryId", idstr);
+    Py_DECREF(idstr);
   }
 
   omniPy::setTwin(pyobjref, (CORBA::Object_ptr)objref, OBJREF_TWIN);

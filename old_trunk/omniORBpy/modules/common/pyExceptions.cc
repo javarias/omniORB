@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  2000/03/03 17:41:43  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.5  2000/01/31 10:51:42  dpg1
 // Fix to exception throwing.
 //
@@ -66,7 +69,12 @@ omniPy::handleSystemException(const CORBA::SystemException& ex)
   PyObject* exca = Py_BuildValue((char*)"(ii)", ex.minor(), ex.completed());
   PyObject* exci = PyEval_CallObject(excc, exca);
   Py_DECREF(exca);
-  PyErr_SetObject(excc, exci);
+  if (exci) {
+    // If we couldn't create the exception object, there will be a
+    // suitable error set already
+    PyErr_SetObject(excc, exci);
+    Py_DECREF(exci); // *** Find out why I don't need to Py_DECREF(excc)
+  }
   return 0;
 }
 
