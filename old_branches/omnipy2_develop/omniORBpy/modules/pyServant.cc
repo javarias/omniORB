@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.13  2003/01/27 11:56:58  dgrisby
+// Correctly handle invalid returns from application code.
+//
 // Revision 1.1.2.12  2002/03/18 12:40:38  dpg1
 // Support overriding _non_existent.
 //
@@ -614,9 +617,9 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
       OMNIORB_ASSERT(PyDict_Check(exc_d));
 
       PyObject* edesc = PyDict_GetItem(exc_d, erepoId);
-      Py_DECREF(erepoId);
 
       if (edesc) {
+	Py_DECREF(erepoId);
 	PyUserException ex(edesc, evalue, CORBA::COMPLETED_MAYBE);
 	ex._raise();
       }
@@ -774,9 +777,9 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
       OMNIORB_ASSERT(PyDict_Check(exc_d));
 
       PyObject* edesc = PyDict_GetItem(exc_d, erepoId);
-      Py_DECREF(erepoId);
 
       if (edesc) {
+	Py_DECREF(erepoId);
 	PyUserException ex(edesc, evalue, CORBA::COMPLETED_MAYBE);
 	ex._raise();
       }
