@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/03/13 10:32:12  dpg1
+  Fixed point support.
+
 */
 
 #include <idlfixed.h>
@@ -131,8 +134,16 @@ IDL_Fixed::IDL_Fixed(const IDL_Octet* val, IDL_UShort digits,
   assert(digits <= OMNI_FIXED_DIGITS);
   assert(scale  <= digits);
 
-  memcpy(val_, val, digits);
-  memset(val_ + digits, 0, OMNI_FIXED_DIGITS - digits);
+  while (digits_ > 0 && scale_ > 0 && val[0] == 0) {
+    digits_--;
+    scale_--;
+    val++;
+  }
+
+  if (digits_ == 0) negative_ = 0;
+
+  memcpy(val_, val, digits_);
+  memset(val_ + digits_, 0, OMNI_FIXED_DIGITS - digits_);
 }
 
 
@@ -147,8 +158,15 @@ IDL_Fixed::truncate(IDL_UShort scale)
   if (scale >= scale_)
     return *this;
 
-  int cut = scale_ - scale;
-  return IDL_Fixed(val_ + cut, digits_ - cut, scale, negative_);
+  int cut      = scale_ - scale;
+  int newscale = scale;
+
+  while (val_[cut] == 0 && newscale > 0) {
+    ++cut;
+    --newscale;
+  }
+
+  return IDL_Fixed(val_ + cut, digits_ - cut, newscale, negative_);
 }
 
 
@@ -219,8 +237,8 @@ absCmp(const IDL_Fixed& a, const IDL_Fixed& b)
     if (c) return c;
     --ai; --bi;
   }
-  if (ai > 0) return  1;
-  if (bi > 0) return -1;
+  if (ai >= 0) return  1;
+  if (bi >= 0) return -1;
   return 0;
 }
 
@@ -335,7 +353,7 @@ realSub(const IDL_Fixed& a, const IDL_Fixed& b, IDL_Boolean negative)
     else carry = 0;
     work[wi++] = v;
   }
-  assert(bi = b.fixed_digits());
+  assert(bi == b.fixed_digits());
   assert(carry == 0);
 
   int digits = wi;
@@ -380,6 +398,7 @@ realMul(const IDL_Fixed& a, const IDL_Fixed& b, IDL_Boolean negative)
 
     for (bi=0; bi < b.fixed_digits(); ++bi) {
       bd = b.val()[bi];
+      if (bd == 0 && carry == 0) continue;
       wi       = ai + bi;
       v        = work[wi] + ad * bd + carry;
       carry    = v / 10;
@@ -549,7 +568,7 @@ realDiv(const IDL_Fixed& a, const IDL_Fixed& b, IDL_Boolean negative)
 
   // Skip an initial zero if we weren't expecting one
   if (unscale >= 0) {
-    while (work[wi] == 0) {
+    while (work[wi] == 0 && unscale > 0) {
       --wi; --unscale;
     }
   }
