@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.4  1999/10/18 11:27:37  djr
+ Centralised list of system exceptions.
+
  Revision 1.1.2.3  1999/10/04 17:08:30  djr
  Some more fixes/MSVC work-arounds.
 
@@ -43,7 +46,7 @@
 #define __OMNIORB_USEREXCEPTION_H__
 
 
-#define OMNIORB_DECLARE_USER_EXCEPTION(name)  \
+#define OMNIORB_DECLARE_USER_EXCEPTION(name, attr)  \
   \
 class name : public CORBA::UserException {  \
 public:  \
@@ -69,8 +72,8 @@ public:  \
   inline void operator<<=(NetBufferedStream&) {}  \
   inline void operator<<=(MemBufferedStream&) {}  \
   \
-  static _core_attr insertExceptionToAny    insertToAnyFn;  \
-  static _core_attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
+  static attr insertExceptionToAny    insertToAnyFn;  \
+  static attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
   \
   static const char* _PD_repoId; \
   \
@@ -83,7 +86,7 @@ private:  \
 };
 
 
-#define OMNIORB_DECLARE_USER_EXCEPTION_IN_CORBA(name)  \
+#define OMNIORB_DECLARE_USER_EXCEPTION_IN_CORBA(name, attr)  \
   \
 class name : public UserException {  \
 public:  \
@@ -109,8 +112,8 @@ public:  \
   inline void operator<<=(NetBufferedStream&) {}  \
   inline void operator<<=(MemBufferedStream&) {}  \
   \
-  static _core_attr insertExceptionToAny    insertToAnyFn;  \
-  static _core_attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
+  static attr insertExceptionToAny    insertToAnyFn;  \
+  static attr insertExceptionToAnyNCP insertToAnyFnNCP;  \
   \
   static const char* _PD_repoId; \
   \
