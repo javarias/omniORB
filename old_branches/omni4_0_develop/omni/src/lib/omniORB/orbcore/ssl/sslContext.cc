@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/12/19 12:23:02  dgrisby
+  Don't set SSL verify depth to 1.
+
   Revision 1.1.2.11  2002/12/19 11:49:33  dgrisby
   Vladimir Panov's SSL fixes.
 
@@ -133,6 +136,8 @@ sslContext::internal_initialise() {
   set_CA();
   set_DH();
   set_ephemeralRSA();
+  // Allow the user to overwrite the SSL verification types.
+  SSL_CTX_set_verify(pd_ctx,set_verify_mode(),NULL);
   thread_setup();
 }
 
@@ -328,6 +333,14 @@ sslContext::set_ephemeralRSA() {
   }
   RSA_free(rsa);
 }
+
+
+/////////////////////////////////////////////////////////////////////////
+int
+sslContext::set_verify_mode() {
+  return SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 static omni_tracedmutex *openssl_locks = 0;

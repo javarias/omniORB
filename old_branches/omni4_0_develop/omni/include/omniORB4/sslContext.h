@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2003/04/25 15:53:33  dgrisby
+  Work around OpenSSL crypt() clash.
+
   Revision 1.1.2.5  2002/09/05 14:29:01  dgrisby
   Link force mechanism wasn't working with gcc.
 
@@ -123,6 +126,10 @@ class sslContext {
   virtual void set_DH();
 
   virtual void set_ephemeralRSA();
+
+  virtual int set_verify_mode();
+  // Set the SSL verify mode.
+  // Defaults to return SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT.
 
   sslContext();
 
