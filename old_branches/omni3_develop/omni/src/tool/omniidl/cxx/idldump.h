@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:58  dpg1
+// *** empty log message ***
+//
 
 #ifndef _idldump_h_
 #define _idldump_h_
@@ -77,6 +80,8 @@ private:
   int indent_;
   void printIndent();
   void printScopedName(const ScopedName* sn);
+  void printString(const char* str);
+  void printChar(const char c);
 };
 
 
