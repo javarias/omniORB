@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.15  1998/05/20 18:23:37  sll
+ New option (-t) enable the generation of tie implementation template.
+
  Revision 1.14  1998/04/09 19:15:01  sll
  VarToken now emits _CORBA_GLOBAL_VAR instead of extern for globals.
 
@@ -60,8 +63,6 @@
 #define _O2BE_CLASSES_H_
 
 #include <string.h>
-
-#define USE_SEQUENCE_TEMPLATE_IN_PLACE 1
 
 class o2be_name : public virtual AST_Decl
 {
@@ -118,6 +119,10 @@ public:
   // in the inner scopes.
 
   virtual char *repositoryID() const;
+
+  // Invoke when a static variable needs to be declared or defined in the
+  // enclosing scope (qualfied by a macro depending on the enclosing entity):
+  virtual const char* variable_qualifier();
 
   void set_scopename(char *n) { pd_scopename = n; }
   void set_uqname(char *n)    { pd_uqname = n; }
@@ -242,14 +247,32 @@ public:
 
   void produce_typecode_skel(std::fstream &s);
 
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   void set_hdr_produced_in_field() { pd_hdr_produced_in_field = I_TRUE; }
   idl_bool get_hdr_produced_in_field() { return pd_hdr_produced_in_field; }
   void set_skel_produced_in_field() { pd_skel_produced_in_field = I_TRUE; }
   idl_bool get_skel_produced_in_field() { return pd_skel_produced_in_field; }
 
+  void set_binary_operators_hdr_produced_in_field() { 
+    pd_binary_operators_hdr_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_hdr_produced_in_field() { 
+    return pd_binary_operators_hdr_produced_in_field;
+  }
+  void set_binary_operators_skel_produced_in_field() { 
+    pd_binary_operators_skel_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_skel_produced_in_field() { 
+    return pd_binary_operators_skel_produced_in_field;
+  }
+
 private:
   idl_bool pd_hdr_produced_in_field;
   idl_bool pd_skel_produced_in_field;
+  idl_bool pd_binary_operators_hdr_produced_in_field;
+  idl_bool pd_binary_operators_skel_produced_in_field;
   o2be_enum();
 };
 
@@ -324,6 +347,10 @@ public:
   void produce_typedef_hdr (std::fstream &s, o2be_typedef *tdef);
 
   void produce_typecode_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   idl_bool check_recursive_seq();
 
   idl_bool isVariable() { return pd_isvar; }
@@ -335,11 +362,26 @@ public:
   void set_skel_produced_in_field() { pd_skel_produced_in_field = I_TRUE; }
   idl_bool get_skel_produced_in_field() { return pd_skel_produced_in_field; }
 
+  void set_binary_operators_hdr_produced_in_field() { 
+    pd_binary_operators_hdr_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_hdr_produced_in_field() { 
+    return pd_binary_operators_hdr_produced_in_field;
+  }
+  void set_binary_operators_skel_produced_in_field() { 
+    pd_binary_operators_skel_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_skel_produced_in_field() { 
+    return pd_binary_operators_skel_produced_in_field;
+  }
+
   const char *out_adptarg_name(AST_Decl* used_in) const;
 
 private:
   idl_bool pd_hdr_produced_in_field;
   idl_bool pd_skel_produced_in_field;
+  idl_bool pd_binary_operators_hdr_produced_in_field;
+  idl_bool pd_binary_operators_skel_produced_in_field;
   idl_bool pd_isvar;
   idl_bool pd_nodefault;
   char *pd_out_adptarg_name;
@@ -383,6 +425,10 @@ public:
   void produce_typedef_hdr (std::fstream &s, o2be_typedef *tdef);
 
   void produce_typecode_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   idl_bool check_recursive_seq();
 
   idl_bool isVariable() { return pd_isvar; }
@@ -392,11 +438,26 @@ public:
   void set_skel_produced_in_field() { pd_skel_produced_in_field = I_TRUE; }
   idl_bool get_skel_produced_in_field() { return pd_skel_produced_in_field; }
 
+  void set_binary_operators_hdr_produced_in_field() { 
+    pd_binary_operators_hdr_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_hdr_produced_in_field() { 
+    return pd_binary_operators_hdr_produced_in_field;
+  }
+  void set_binary_operators_skel_produced_in_field() { 
+    pd_binary_operators_skel_produced_in_field = I_TRUE;
+  }
+  idl_bool get_binary_operators_skel_produced_in_field() { 
+    return pd_binary_operators_skel_produced_in_field;
+  }
+
   const char *out_adptarg_name(AST_Decl* used_in) const;
 
 private:
   idl_bool pd_hdr_produced_in_field;
   idl_bool pd_skel_produced_in_field;
+  idl_bool pd_binary_operators_hdr_produced_in_field;
+  idl_bool pd_binary_operators_skel_produced_in_field;
   idl_bool pd_isvar;
   char *pd_out_adptarg_name;
 
@@ -419,6 +480,10 @@ public:
   void produce_skel(std::fstream &s);
 
   void produce_typecode_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   idl_bool check_recursive_seq();
 
   size_t repoIdConstLen() const { return pd_repoidsize; }
@@ -475,6 +540,9 @@ public:
 
   void produce_hdr (std::fstream &s, o2be_typedef *tdef);
   void produce_skel(std::fstream &s, o2be_typedef *tdef);
+
+  void produce_binary_operators_in_hdr(std::fstream &s, o2be_typedef *tdef);
+  void produce_binary_operators_in_skel(std::fstream &s, o2be_typedef *tdef);
 
   void produce_typecode_skel(std::fstream &s);
   void produce_typecode_member(std::fstream &s, idl_bool new_ptr);
@@ -534,7 +602,16 @@ public:
 
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   void produce_typedef_hdr (std::fstream &s, o2be_typedef *tdef);
+
+  void produce_typedef_binary_operators_in_hdr(std::fstream &s, 
+					       o2be_typedef *tdef);
+  void produce_typedef_binary_operators_in_skel(std::fstream &s,
+						o2be_typedef *tdef);
 
   void produce_typecode_skel(std::fstream &s);
   void produce_typecode_member(std::fstream &s, idl_bool new_ptr);
@@ -790,6 +867,9 @@ public:
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
 
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   void produce_typecode_skel(std::fstream &s);
   idl_bool check_recursive_seq();
 
@@ -820,6 +900,10 @@ public:
 
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   void produce_typedef_hdr (std::fstream &s, o2be_typedef *tdef);
   void produce_tie_templates(std::fstream &s);
 
@@ -939,6 +1023,10 @@ public:
 
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
+
+  void produce_binary_operators_in_hdr(std::fstream &s);
+  void produce_binary_operators_in_skel(std::fstream &s);
+
   void produce_tie_templates(std::fstream &s);
 
 private:
@@ -1179,23 +1267,5 @@ private:
   const char *pd_errmsg;
   o2be_fileio_error();
 };
-
-static inline char const* FriendToken(AST_Decl& decl) {
-  if (decl.defined_in()==idl_global->root())
-    return "";
-  else if (decl.defined_in()->scope_node_type()==AST_Decl::NT_module)
-    return "_CORBA_MODULE_OP";
-  else
-    return "friend";
-}
-
-static inline char const* VarToken(AST_Decl& decl) {
-  if (decl.defined_in()==idl_global->root())
-    return "_CORBA_GLOBAL_VAR";
-  else if (decl.defined_in()->scope_node_type()==AST_Decl::NT_module)
-    return "_CORBA_MODULE_VAR";
-  else
-    return "static _LC_attr";
-}
 
 #endif
