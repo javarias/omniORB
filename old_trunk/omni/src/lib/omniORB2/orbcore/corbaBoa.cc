@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.11  1999/08/16 19:23:52  sll
+  The ctor of ropeFactory_iterator now takes a pointer argument.
+
   Revision 1.10  1999/06/26 18:05:03  sll
   New option -BOAiiop_name_port.
 
@@ -636,6 +639,19 @@ parse_BOA_args(int &argc,char **argv,const char *orb_identifier)
 	move_args(argc,argv,idx,1);
 	continue;
       }
+
+      // -BOAhelp
+      if (strcmp(argv[idx],"-BOAhelp") == 0) {
+	omniORB::log << "Valid -BOA<options> are:\n"
+		     << "    -BOAid omniORB2_BOA\n"
+		     << "    -BOAiiop_port <port no.>[,<port no>]*\n"
+		     << "    -BOAiiop_name_port <hostname[:port no.]>\n"
+		     << "    -BOAno_bootstrap_agent\n";
+	omniORB::log.flush();
+	move_args(argc,argv,idx,1);
+	continue;
+      }
+      
 
       // Reach here only if the argument in this form: -BOAxxxxx
       // is not recognised.
