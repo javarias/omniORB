@@ -30,6 +30,14 @@
 
 /* 
  * $Log$
+ * Revision 1.33.6.11  2000/08/30 14:57:12  sll
+ * Fixed a bug in the unmarshal code of a typecode of kind tk_objref. The
+ * resulting typecode has its field pd_complete left as 0 which should
+ * actually be 1. This normally isn't a problem unless the typecode is a
+ * member of a sequence (or other complex structure) typecode and is used in
+ * an environment with typecode alias expansion (omniORB::tcAliasExpand) set
+ * to true.
+ *
  * Revision 1.33.6.10  2000/06/27 16:23:25  sll
  * Merged OpenVMS port.
  *
@@ -4503,12 +4511,12 @@ TypeCode_collector::markLoops(TypeCode_base* tc, CORBA::ULong depth)
 	tc->pd_loop_member = 1;
       else
 	tc->pd_loop_member = 0;
+
+      // Clear the mark
+      tc->pd_mark = 0;
     }
 
-  // Clear the mark
-  tc->pd_mark = 0;
-
-  // And return the least-deep accessible node
+  // Return the least-deep accessible node
   return tc->pd_internal_depth;
 }
 
