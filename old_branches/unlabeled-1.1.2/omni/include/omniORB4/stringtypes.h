@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.1  1999/09/24 09:51:54  djr
+ Moved from omniORB2 + some new files.
+
  Revision 1.4  1999/06/18 20:28:30  sll
  New Sequence string implementation. New string_member.
 
@@ -157,7 +160,8 @@ class _CORBA_String_member {
 public:
   typedef char* ptr_t;
 
-  inline _CORBA_String_member() : pd_data(0), pd_rel(1), _ptr(pd_data) {}
+  inline _CORBA_String_member()
+    : pd_data((char*) omni::empty_string), pd_rel(0), _ptr(pd_data) {}
 
   inline _CORBA_String_member(char*& p, _CORBA_Boolean rel) 
     : pd_data(0), pd_rel(rel), _ptr(p) {}
