@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3  2000/07/13 15:25:56  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.1.2.5  2000/06/22 10:40:16  dpg1
   exception.h renamed to exceptiondefs.h to avoid name clash on some
   platforms.
@@ -82,6 +85,9 @@ CORBA::Boolean           strictIIOP = 1;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0;
 unsigned int             maxTcpConnectionPerServer = 5;
+unsigned int             AMIMaxQueueSize = 0;
+unsigned int             AMIMaxWorkerThreads = 5;
+unsigned int             AMIWorkerTimeout = 30;
 CORBA::Boolean           diiThrowsSysExceptions = 0;
 CORBA::Boolean           abortOnInternalError = 0;
 _CORBA_ULong             objectTableSize = 0;
@@ -103,6 +109,9 @@ CORBA::String_var	 omniORB::serverName((const char*) "unknown");
 #endif
 CORBA::Boolean           omniORB::tcAliasExpand = 0;
 unsigned int             omniORB::maxTcpConnectionPerServer = 5;
+unsigned int             omniORB::AMIMaxQueueSize = 0;
+unsigned int             omniORB::AMIMaxWorkerThreads = 5;
+unsigned int             omniORB::AMIWorkerTimeout = 30;
 CORBA::Boolean           omniORB::diiThrowsSysExceptions = 0;
 CORBA::Boolean           omniORB::abortOnInternalError = 0;
 _CORBA_ULong             omniORB::objectTableSize = 0;
