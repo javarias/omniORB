@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.41  2002/09/09 00:24:40  dgrisby
+  Make sure various modules initialise. Needed by MacOSX.
+
   Revision 1.33.2.40  2002/09/08 21:58:54  dgrisby
   Support for MSVC 7. (Untested.)
 
@@ -512,11 +515,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     // Parse configuration file
     option_source = option_src_1;
 
-#if !defined(NTArchitecture)
     const char* config_fname = CONFIG_DEFAULT_LOCATION;
-#else
-    const char* config_fname = 0;
-#endif
     {
       const char* f = getenv(CONFIG_ENV);
       if (f) config_fname = f;
