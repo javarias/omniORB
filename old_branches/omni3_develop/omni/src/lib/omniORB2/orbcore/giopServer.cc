@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.8  2000/03/07 18:07:34  djr
+  Fixed user-exceptions when can't catch by base class.
+
   Revision 1.21.6.7  1999/10/27 17:32:11  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -123,7 +126,7 @@
 #include <objectAdapter.h>
 #include <omniORB3/omniServant.h>
 #include <localIdentity.h>
-#include <bootstrap_i.h>
+#include <initRefs.h>
 #include <exception.h>
 
 
