@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.1  2003/03/23 21:02:34  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.3.2.23  2002/01/16 11:31:58  dpg1
 # Race condition in use of registerNilCorbaObject/registerTrackedObject.
 # (Reported by Teemu Torma).
@@ -363,7 +366,10 @@ class @call_descriptor@
 {
 public:
   inline @call_descriptor@(@ctor_args@):
-     @base_ctor@ {}
+     @base_ctor@
+  {
+    @contains_values@
+  }
   
   @in_arguments_decl@
   @out_arguments_decl@  

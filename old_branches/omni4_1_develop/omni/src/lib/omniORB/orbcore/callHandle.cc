@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.2  2003/05/20 16:53:15  dgrisby
+ Valuetype marshalling support.
+
  Revision 1.1.4.1  2003/03/23 21:02:29  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -61,7 +64,6 @@
 #include <omniORB4/IOP_C.h>
 #include <poacurrentimpl.h>
 #include <invoker.h>
-#include <valueTracker.h>
 
 
 static void
@@ -184,11 +186,10 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
       cdrMemoryStream stream;
       pd_call_desc->initialiseCall(stream);
       pd_call_desc->marshalArguments(stream);
-      if (stream.valueTracker()) {
-	delete stream.valueTracker();
-	stream.valueTracker(0);
-      }
+      stream.clearValueTracker();
+
       desc.unmarshalArguments(stream);
+      stream.clearValueTracker();
 
       try {
 	PostInvoker postinvoker(pd_postinvoke_hook);
@@ -204,12 +205,16 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 	  mtt.wait();
 	}
 	stream.rewindPtrs();
+
 	desc.marshalReturnedValues(stream);
+	stream.clearValueTracker();
+
 	pd_call_desc->unmarshalReturnedValues(stream);
       }
 #ifdef HAS_Cplusplus_catch_exception_by_base
       catch (CORBA::UserException& ex) {
 	stream.rewindPtrs();
+	stream.clearValueTracker();
 	dealWithUserException(stream, pd_call_desc, ex);
       }
 #else
@@ -217,6 +222,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 	try {
 	  CORBA::UserException& ex = *((CORBA::UserException*)uex.ex());
 	  stream.rewindPtrs();
+	  stream.clearValueTracker();
 	  dealWithUserException(stream, pd_call_desc, ex);
 	}
 	catch (...) {
@@ -245,10 +251,7 @@ dealWithUserException(cdrMemoryStream& stream,
   }
 
   ex._NP_marshal(stream);
-  if (stream.valueTracker()) {
-    delete stream.valueTracker();
-    stream.valueTracker(0);
-  }
+  stream.clearValueTracker();
   desc->userException(stream, 0, repoId);
 }
 

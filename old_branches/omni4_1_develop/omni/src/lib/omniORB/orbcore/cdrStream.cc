@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2003/05/20 16:53:15  dgrisby
+  Valuetype marshalling support.
+
   Revision 1.1.4.1  2003/03/23 21:02:24  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -92,7 +95,6 @@
 #include <exceptiondefs.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
-#include <valueTracker.h>
 #include <stdio.h>
 
 OMNI_USING_NAMESPACE(omni)

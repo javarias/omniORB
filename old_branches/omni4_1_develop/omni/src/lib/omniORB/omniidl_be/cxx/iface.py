@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
 # Revision 1.1.6.1  2003/03/23 21:02:41  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -217,7 +220,7 @@ class _objref_Method(cxx.Method):
 
       # Special ugly case. If the IDL says something like (in foo::bar
       # bar), the parameter name may be the same as the relative type
-      # name. We mangly the parameter name if this happens.
+      # name. We mangle the parameter name if this happens.
 
       typeBase = pType.base(environment)
       ident    = id.mapID(p.identifier())

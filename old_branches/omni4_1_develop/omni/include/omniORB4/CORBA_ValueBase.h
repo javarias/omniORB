@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2003/09/26 16:12:53  dgrisby
+  Start of valuetype support.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -166,5 +169,12 @@ private:
   virtual ValueBase* create_for_unmarshal() = 0;
   ULong _pd_refCount;
 
+  //////////////////////
+  // omniORB internal //
+  //////////////////////
+
   friend class _omni_ValueFactoryManager;
+
+public:
+  virtual void* _ptrToFactory(const char* repoId);
 };

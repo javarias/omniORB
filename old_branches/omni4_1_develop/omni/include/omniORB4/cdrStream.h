@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2003/07/10 21:52:31  dgrisby
+  Value chunks should start after URL / repoids.
+
   Revision 1.1.4.2  2003/05/20 16:53:12  dgrisby
   Valuetype marshalling support.
 
@@ -145,7 +148,10 @@ class cdrStreamAdapter;
 class cdrValueChunkStream;
 
 OMNI_NAMESPACE_BEGIN(omni)
-  class ValueIndirectionTracker;
+  class ValueIndirectionTracker {
+  public:
+    virtual ~ValueIndirectionTracker();
+  };
 OMNI_NAMESPACE_END(omni)
 
 
@@ -683,6 +689,12 @@ public:
   }
   inline void valueTracker(_OMNI_NS(ValueIndirectionTracker)* v) {
     pd_valueTracker = v;
+  }
+  inline void clearValueTracker() {
+    if (pd_valueTracker) {
+      delete pd_valueTracker;
+      pd_valueTracker = 0;
+    }
   }
 
   inline void declareArrayLength(omni::alignment_t align,

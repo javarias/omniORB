@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.2  2003/10/23 11:25:55  dgrisby
+# More valuetype support.
+#
 # Revision 1.36.2.1  2003/03/23 21:02:38  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -1663,5 +1666,17 @@ def visitEnum(node):
     return
 
 def visitValue(node):
+    v = value.getValueType(node)
+    v.module_decls(stream, self)
+
+def visitValueAbs(node):
+    v = value.getValueType(node)
+    v.module_decls(stream, self)
+
+def visitValueForward(node):
+    v = value.getValueType(node)
+    v.module_decls(stream, self)
+
+def visitValueBox(node):
     v = value.getValueType(node)
     v.module_decls(stream, self)

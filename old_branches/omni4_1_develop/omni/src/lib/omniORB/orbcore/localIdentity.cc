@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:12  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.8  2001/09/03 16:52:05  sll
   New signature for locateRequest. Now accept a calldescriptor argument.
 
@@ -85,6 +88,7 @@
 #include <omniORB4/callHandle.h>
 #include <objectAdapter.h>
 #include <exceptiondefs.h>
+#include <orbParameters.h>
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -151,6 +155,18 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
     omniIdentity* id = omni::createInProcessIdentity(key(), keysize());
     call_desc.objref()->_setIdentity(id);
     id->dispatch(call_desc);
+    return;
+  }
+
+  if (call_desc.containsValues() && orbParameters::copyValuesInLocalCalls) {
+    // Must use a call handle to call via a memory stream.
+    if (omniORB::trace(25)) {
+      omniORB::logger l;
+      l << "Local call on " << this << " involves valuetypes; call via a "
+	<< "memory buffer.\n";
+    }
+    omniCallHandle call_handle(&call_desc, 0);
+    dispatch(call_handle);
     return;
   }
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
 # Revision 1.1.6.1  2003/03/23 21:02:42  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -468,7 +471,10 @@ class CallDescriptor:
                               "void marshalReturnedValues(cdrStream&);\n"
         data_members = []
         n = -1
+        containsValues = 0
         for argument in self.__arguments:
+            containsValues = (containsValues or
+                              idltype.containsValueType(argument.paramType()))
             n = n + 1
             holder_n = "arg_" + str(n)
             argtype = types.Type(argument.paramType())
@@ -497,6 +503,9 @@ class CallDescriptor:
                 data_members.append(holder + " " + holder_n + ";")
 
         if self.__has_return_value:
+            containsValues = (containsValues or
+                              idltype.containsValueType(self.__returntype))
+
             returntype = types.Type(self.__returntype)
             ((h_is_const,h_is_ptr),\
              (s_is_holder,s_is_var)) = _arg_info(returntype,3)
@@ -513,6 +522,11 @@ class CallDescriptor:
 
         if self.__contexts:
             data_members.append("CORBA::Context_var ctxt;");
+
+        if containsValues:
+            contains_values = "containsValues(1);"
+        else:
+            contains_values = ""
         
         # Write the proxy class definition
         stream.out(template.interface_proxy_class,
@@ -520,6 +534,7 @@ class CallDescriptor:
                    call_descriptor = self.__name,
                    ctor_args = string.join(ctor_args,","),
                    base_ctor = base_ctor,
+                   contains_values = contains_values,
                    in_arguments_decl = in_arguments_decl,
                    out_arguments_decl = out_arguments_decl,
                    user_exceptions_decl = user_exceptions_decl,

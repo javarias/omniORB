@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.4  2003/09/04 14:00:35  dgrisby
+# ValueType IDL updates.
+#
 # Revision 1.20.2.3  2003/07/10 21:54:47  dgrisby
 # Missed methods in ValueAbs.
 #
@@ -869,7 +872,8 @@ class Factory (Decl):
 Functions:
 
   identifier() -- string.
-  parameters() -- list of Parameter objects."""
+  parameters() -- list of Parameter objects.
+  raises()     -- list of Exception objects."""
 
     def __init__(self, file, line, mainFile, pragmas, comments,
                  identifier, parameters, raises):
@@ -882,9 +886,9 @@ Functions:
 
     def accept(self, visitor): visitor.visitFactory(self)
 
-    def identifier(): return self.__identifier
-    def parameters(): return self.__parameters
-    def raises(self): return self.__raises
+    def identifier(self): return self.__identifier
+    def parameters(self): return self.__parameters
+    def raises(self):     return self.__raises
 
 
 class ValueForward (Decl, DeclRepoId):

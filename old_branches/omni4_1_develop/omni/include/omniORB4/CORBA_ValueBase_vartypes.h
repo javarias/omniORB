@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2003/09/26 16:12:53  dgrisby
+  Start of valuetype support.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -213,7 +216,7 @@ public:
 	_pd_val->_remove_ref();
 
       _pd_val = p._pd_val;
-      _pd_val->_add_ref();
+      if (_pd_val) _pd_val->_add_ref();
     }
     else
       _pd_val = p._pd_val;
@@ -225,7 +228,7 @@ public:
       if (_pd_val)
 	_pd_val->_remove_ref();
 
-      p._pd_val->_add_ref();
+      if (p._pd_val) p._pd_val->_add_ref();
     }
     _pd_val = (T*) p;
     return *this;
@@ -236,7 +239,7 @@ public:
       if (_pd_val)
 	_pd_val->_remove_ref();
 
-      p._pd_val->_add_ref();
+      if (p._pd_val) p._pd_val->_add_ref();
     }
     _pd_val = (T*)p;
     return *this;
