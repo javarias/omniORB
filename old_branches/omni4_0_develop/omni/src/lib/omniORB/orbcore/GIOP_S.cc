@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2001/10/17 16:33:27  dpg1
+  New downcast mechanism for cdrStreams.
+
   Revision 1.1.4.14  2001/09/20 11:30:59  sll
   On the server, the final state of a GIOP_S is ReplyCompleted instead of
   Idle. This is necessary because the idle connection management code
@@ -566,7 +569,8 @@ GIOP_S::ReceiveRequest(omniCallDescriptor& desc) {
   // If so check if the servant's POA policy allows this.
   giopStrand& g = (giopStrand&)((giopStream&)(*this));
   if (g.biDir && g.isClient()) {
-    if (!pd_calldescriptor->poa()->acceptBiDirectional()) {
+    if (!(pd_calldescriptor->poa() &&
+	  pd_calldescriptor->poa()->acceptBiDirectional())) {
       OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_BiDirNotAllowed,
 		    CORBA::COMPLETED_NO);
     }
