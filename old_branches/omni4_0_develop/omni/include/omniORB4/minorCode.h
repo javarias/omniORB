@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/08/15 10:15:45  dpg1
+  New minor codes for POA and DSI errors.
+
   Revision 1.1.4.6  2001/08/03 17:49:33  sll
   New minor code and lookup table for translating a minor code to its memonic
   names.
@@ -130,6 +133,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_66 OMNIORBMinorCode(66)
 #define OMNIORBMinorCode_67 OMNIORBMinorCode(67)
 #define OMNIORBMinorCode_68 OMNIORBMinorCode(68)
+#define OMNIORBMinorCode_69 OMNIORBMinorCode(69)
 
 #define COMMA ,
 #define DeclareValue(name,value) name = value
@@ -226,6 +230,7 @@ code( MARSHAL_ServerRequestNVList             , OMGMinorCode(3) ) sep \
 code( MARSHAL_LocalObject                     , OMGMinorCode(4) ) sep \
 code( MARSHAL_InvalidVariableLenComponentSize , OMNIORBMinorCode_9 ) sep \
 code( MARSHAL_PassEndOfMessage                , OMNIORBMinorCode_10 ) sep \
+code( MARSHAL_MessageSizeExceedLimit          , OMNIORBMinorCode_69 ) sep \
 code( MARSHAL_MessageSizeExceedLimitOnClient  , OMNIORBMinorCode_11 ) sep \
 code( MARSHAL_MessageSizeExceedLimitOnServer  , OMNIORBMinorCode_12 ) sep \
 code( MARSHAL_SequenceIsTooLong               , OMNIORBMinorCode_18 ) sep \
