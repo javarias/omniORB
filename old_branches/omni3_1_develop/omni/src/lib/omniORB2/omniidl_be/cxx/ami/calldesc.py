@@ -29,6 +29,14 @@
 #
 # $Id$
 # $Log$
+# Revision 1.1.2.6  2000/09/28 18:29:21  djs
+# Bugfixes in Poller (wrt timout behaviour and is_ready function)
+# Removed traces of Private POA/ internal ReplyHandler servant for Poller
+# strategy
+# Fixed nameclash problem in Call Descriptor, Poller etc
+# Uses reference counting internally rather than calling delete()
+# General comment tidying
+#
 #
 import string
 
@@ -193,7 +201,7 @@ class _AMI_Call_Descriptor(iface.Class):
         
         common_ctor_args = ["CORBA::Boolean _own_sent",
                             target_t + "_ptr _target"]
-        common_ctor_ids  = ["_own_sent", "_pd_target"]
+        common_ctor_ids  = ["_own_sent", "_target"]
 
         # The common code is factored out into an init() fn
         common_ctor = output.StringStream()
