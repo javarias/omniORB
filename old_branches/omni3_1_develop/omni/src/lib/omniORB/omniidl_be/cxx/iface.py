@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.1  2000/08/21 11:34:34  djs
+# Lots of omniidl/C++ backend changes
+#
 
 # o Keep related code in one place
 # o Expose internals at a finer granularity than before (useful for
@@ -36,8 +39,8 @@
 import string
 
 from omniidl import idlast, idltype
-from omniidl_be.cxx import types, id, call, header, skel, ast, cxx, output, config
-from omniidl_be.cxx.skel import mangler
+from omniidl_be.cxx import types, id, call, header, skel, ast, cxx, output, config, descriptor
+
 
 # Interface is a wrapper around an IDL interface
 #  .callables():   get a list of Callable objects representing the operations
@@ -241,6 +244,7 @@ class _objref_I(Class):
       objref_name = i.name().prefix("_objref_")
 
       objref_str = objref_name.unambiguous(self._environment)
+
       if objref_name.needFlatName(self._environment):
         objref_str = objref_name.flatName()
 
@@ -265,7 +269,7 @@ class _objref_I(Class):
     stream.out(skel.template.interface_objref,
                name = self.interface().name().fullyQualify(),
                fq_objref_name = self.name().fullyQualify(),
-               objref_name = self.name().unambiguous(self._environment),
+               objref_name = self.name().simple(),
                inherits_str = inherits_str,
                _ptrToObjRef = _ptrToObjRef)
     
@@ -274,12 +278,13 @@ class _objref_I(Class):
       callable = self._callables[method]
         
       # Generate a proxy call descriptor if required
-      descriptor = call.proxy_call_descriptor(callable, stream)
+      call_descriptor = call.proxy_call_descriptor(callable, stream)
 
       # declare the operation context array thingy
       context = output.StringStream()
       if callable.contexts() != []:
-        context_descriptor = mangler.context_descriptor(callable.signature())
+        context_descriptor = descriptor.context_descriptor\
+                             (callable.signature())
         array = output.StringStream()
         for c in callable.contexts():
           array.out("\"" + c + "\",")
@@ -295,8 +300,8 @@ class _objref_I(Class):
       # ... and a local callback function
       node_name = self.interface().name()
       node = self.interface()._node
-      local_callback = call.local_callback_function(stream, node,
-                                                    node_name, callable)
+      local_callback = call.local_callback_function(stream, node_name,
+                                                    callable)
       
       return_string = ""
       if callable.returnType().kind() != idltype.tk_void:
@@ -324,7 +329,7 @@ class _objref_I(Class):
       # buffer to build the method body inside
       body = output.StringStream()
       body.out(skel.template.interface_operation,
-               call_descriptor = descriptor,
+               call_descriptor = call_descriptor,
                call_desc_args = string.join(call_desc_args, ", "),
                context = context,
                return_string = return_string)

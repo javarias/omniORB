@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.2  2000/08/21 11:34:37  djs
+# Lots of omniidl/C++ backend changes
+#
 # Revision 1.15.2.1  2000/08/07 17:48:13  dpg1
 # Merge from omni3_develop again.
 #
@@ -128,9 +131,9 @@ def fatalError(explanation):
         print "omniidl: fatalError occurred, in debug mode."
         for line in string.split(explanation, "\n"):
             print ">> " + line
-        print "Configuration state:"
-        print "-------------------------"
-        config.state.dump()
+        #print "Configuration state:"
+        #print "-------------------------"
+        #config.state.dump()
 
         if have_traceback:
             print "Stack:"
@@ -213,3 +216,15 @@ def fold(list, base, fn):
     rest = [first] + list[2:]
     return fold(rest, base, fn)
 
+## Assorted other functions ########################################
+##
+class Stack:
+    def __init__(self):
+        self.__list = []
+    def push(self, thing):
+        self.__list.append(thing)
+    def pop(self):
+        if self.__list == []: raise "Stack Empty"
+        thing = self.__list[-1]
+        self.__list = self.__list[0:-1]
+        return thing
