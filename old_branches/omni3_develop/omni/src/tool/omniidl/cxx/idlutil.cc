@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.1  2000/08/07 15:34:36  dpg1
+// Partial back-port of long long from omni3_1_develop.
+//
 // Revision 1.3  1999/11/04 17:16:54  dpg1
 // Changes for NT.
 //
@@ -112,7 +115,7 @@ int strcasecmp(const char* s1, const char* s2)
 
 #ifdef HAS_LongLong
 
-#  ifdef __WIN32__
+#  if defined(__WIN32__)
 
 IdlIntLiteral
 idl_strtoul(const char* text, int base)
@@ -132,6 +135,14 @@ idl_strtoul(const char* text, int base)
     abort();
   }
   return ull;
+}
+
+#  elif defined(__osf1__)
+
+IdlIntLiteral
+idl_strtoul(const char* text, int base)
+{
+  return strtoul(text, 0, base);
 }
 
 #  else
