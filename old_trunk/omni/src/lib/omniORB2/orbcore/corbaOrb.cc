@@ -29,6 +29,9 @@
 
 /*
   $Log$
+// Revision 1.27  1999/08/16  20:27:26  sll
+// *** empty log message ***
+//
 // Revision 1.26  1999/08/16  19:21:38  sll
 // Use per-compilation unit initialiser object to perform initialisation
 // and cleanup.
@@ -229,8 +232,8 @@ CORBA::ORB_init(int &argc,char **argv,const char *orb_identifier)
     omni_objectRef_initialiser_.attach();
     omni_initFile_initialiser_.attach();
     omni_bootstrap_i_initialiser_.attach();
-    omni_scavenger_initialiser_.attach();
     omni_corbaOrb_initialiser_.attach();
+    omni_scavenger_initialiser_.attach();
 
     omniORB::seed.hi = omniORB::seed.med = 0;
   }
@@ -368,8 +371,8 @@ ORB::NP_destroy()
   omni_mutex_lock sync(internalLock);
 
   // Call detach method of the initialisers in reverse order.
-  omni_corbaOrb_initialiser_.detach();
   omni_scavenger_initialiser_.detach();
+  omni_corbaOrb_initialiser_.detach();
   omni_bootstrap_i_initialiser_.detach();
   omni_initFile_initialiser_.detach();
   omni_objectRef_initialiser_.detach();
@@ -739,9 +742,131 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
 	continue;
       }
 
+      // -ORBclientCallTimeOutPeriod
+      if( strcmp(argv[idx],"-ORBclientCallTimeOutPeriod") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBclientCallTimeOutPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1], "%u", &v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBinConScanPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::callTimeOutPeriod(omniORB::clientSide, v);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBserverCallTimeOutPeriod
+      if( strcmp(argv[idx],"-ORBserverCallTimeOutPeriod") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBserverCallTimeOutPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1], "%u", &v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBserverCallTimeOutPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::callTimeOutPeriod(omniORB::serverSide, v);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBscanOutgoingPeriod
+      if( strcmp(argv[idx],"-ORBscanOutgoingPeriod") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBscanOutgoingPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1], "%u", &v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBscanOutgoingPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::scanGranularity(omniORB::scanOutgoing, v);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBscanIncomingPeriod
+      if( strcmp(argv[idx],"-ORBscanIncomingPeriod") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: missing"
+	      " -ORBscanIncomingPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	unsigned int v;
+	if( sscanf(argv[idx+1], "%u", &v) != 1 ) {
+	  if( omniORB::traceLevel > 0 ) {
+	    omniORB::log << "CORBA::ORB_init failed: invalid"
+	      " -ORBscanIncomingPeriod parameter.\n";
+	    omniORB::log.flush();
+	  }
+	  return 0;
+	}
+	omniORB::scanGranularity(omniORB::scanIncoming, v);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
       // -ORBlcdMode
       if( strcmp(argv[idx],"-ORBlcdMode") == 0 ) {
 	omniORB::enableLcdMode();
+	move_args(argc,argv,idx,1);
+	continue;
+      }
+
+      // -ORBhelp
+      if( strcmp(argv[idx],"-ORBhelp") == 0 ) {
+	omniORB::log << "Valid -ORB<options> are:\n"
+		     << "    -ORBid omniORB2\n"
+		     << "    -ORBtraceLevel <n>\n"
+		     << "    -ORBstrictIIOP <0|1>\n"
+		     << "    -ORBtcAliasExpand <0|1>\n"
+		     << "    -ORBgiopMaxMsgSize <n bytes>\n"
+		     << "    -ORBserverName <name>\n"
+		     << "    -ORBInitialHost <name>\n"
+		     << "    -ORBInitialPort <1-65535>\n"
+		     << "    -ORBdiiThrowsSysExceptions <0|1>\n"
+		     << "    -ORBabortOnInternalError <0|1>\n"
+		     << "    -ORBverifyObjectExistsAndType <0|1>\n"
+		     << "    -ORBinConScanPeriod <n seconds>\n"
+		     << "    -ORBoutConScanPeriod <n seconds>\n"
+		     << "    -ORBclientCallTimeOutPeriod <n seconds>\n"
+		     << "    -ORBserverCallTimeOutPeriod <n seconds>\n"
+		     << "    -ORBscanOutgoingPeriod <n seconds>\n"
+		     << "    -ORBscanIncomingPeriod <n seconds>\n"
+		     << "    -ORBlcdMode <0|1>\n";
+	omniORB::log.flush();
 	move_args(argc,argv,idx,1);
 	continue;
       }
