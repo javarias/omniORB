@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.24.2.2  2000/08/23 09:22:07  dpg1
+# Fix loading of IfR stubs with "import CORBA"
+#
 # Revision 1.24.2.1  2000/08/17 08:46:06  dpg1
 # Support for omniORB.LOCATION_FORWARD exception
 #
@@ -553,7 +556,7 @@ def coerceAny(v, fd, td):
 
     try:
         if fd == td:
-            return a._v
+            return v
 
         elif fd[0] == tcInternal.tv_objref:
             return _omnipy.narrow(v, td[1])
@@ -568,7 +571,7 @@ def coerceAny(v, fd, td):
             return apply(td[1], l)
 
         elif fd[0] == tcInternal.tv_union:
-            return td[1](v._d, coerceAny(v._v, fd[6][v._d], tf[6][v._d]))
+            return td[1](v._d, coerceAny(v._v, fd[6][v._d], td[6][v._d]))
 
         elif fd[0] == tcInternal.tv_enum:
             return td[3][v._v]
