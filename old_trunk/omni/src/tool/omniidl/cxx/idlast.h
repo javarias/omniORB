@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  1999/11/02 17:07:27  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.5  1999/11/01 20:19:56  dpg1
 // Support for union switch types declared inside the switch statement.
 //
@@ -87,7 +90,7 @@ class AST {
 public:
   AST();
   ~AST();
-  static AST*           tree() { return &tree_; }
+  static AST*           tree();
   static _CORBA_Boolean process(FILE* f, const char* name);
 
   Decl*       declarations()              { return declarations_; }
@@ -105,7 +108,7 @@ private:
 
   Decl*       declarations_;
   char*       file_;
-  static AST  tree_;
+  static AST* tree_;
   Pragma*     pragmas_;
   Pragma*     lastPragma_;
   friend int  yyparse();

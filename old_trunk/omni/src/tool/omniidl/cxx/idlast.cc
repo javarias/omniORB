@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8  1999/11/04 17:15:52  dpg1
+// Typo.
+//
 // Revision 1.7  1999/11/02 17:07:27  dpg1
 // Changes to compile on Solaris.
 //
@@ -64,8 +67,8 @@ extern FILE* yyin;
 extern char* currentFile;
 extern int   yylineno;
 
-AST   AST::tree_;
-Decl* Decl::mostRecent_;
+AST*  AST::tree_ = 0;
+Decl* Decl::mostRecent_ = 0;
 
 // Pragma
 void
@@ -99,17 +102,27 @@ addPragma(const char* pragmaText)
   lastPragma_ = p;
 }
 
+AST*
+AST::
+tree()
+{
+  if (!tree_) tree_ = new AST();
+  assert(tree_);
+  return tree_;
+}
+
 _CORBA_Boolean
 AST::
 process(FILE* f, const char* name)
 {
+  IdlType::init();
   Scope::init();
 
   yyin        = f;
   currentFile = idl_strdup(name);
   Prefix::newFile();
 
-  tree_.setFile(name);
+  tree()->setFile(name);
 
   int yr = yyparse();
   if (yr) IdlError(currentFile, yylineno, "Syntax error");

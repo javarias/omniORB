@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.6  1999/11/04 17:16:55  dpg1
+// Changes for NT.
+//
 // Revision 1.5  1999/11/03 17:24:05  dpg1
 // Added optional pragmas all over the place.
 //
@@ -924,9 +927,9 @@ complex_declarator:
     ;
 
 floating_pt_type:
-    FLOAT       { $$ = &BaseType::floatType; }
-  | DOUBLE      { $$ = &BaseType::doubleType; }
-  | LONG DOUBLE { $$ = &BaseType::longdoubleType; }
+    FLOAT       { $$ = BaseType::floatType; }
+  | DOUBLE      { $$ = BaseType::doubleType; }
+  | LONG DOUBLE { $$ = BaseType::longdoubleType; }
     ;
 
 integer_type:
@@ -941,15 +944,15 @@ signed_int:
     ;
 
 signed_short_int:
-    SHORT { $$ = &BaseType::shortType; }
+    SHORT { $$ = BaseType::shortType; }
     ;
 
 signed_long_int:
-    LONG { $$ = &BaseType::longType; }
+    LONG { $$ = BaseType::longType; }
     ;
 
 signed_long_long_int:
-    LONG LONG { $$ = &BaseType::longlongType; }
+    LONG LONG { $$ = BaseType::longlongType; }
     ;
 
 unsigned_int:
@@ -959,39 +962,39 @@ unsigned_int:
     ;
 
 unsigned_short_int:
-    UNSIGNED SHORT { $$ = &BaseType::ushortType; }
+    UNSIGNED SHORT { $$ = BaseType::ushortType; }
     ;
 
 unsigned_long_int:
-    UNSIGNED LONG { $$ = &BaseType::ulongType; }
+    UNSIGNED LONG { $$ = BaseType::ulongType; }
     ;
 
 unsigned_long_long_int:
-    UNSIGNED LONG LONG { $$ = &BaseType::ulonglongType; }
+    UNSIGNED LONG LONG { $$ = BaseType::ulonglongType; }
     ;
 
 char_type:
-    CHAR { $$ = &BaseType::charType; }
+    CHAR { $$ = BaseType::charType; }
     ;
 
 wide_char_type:
-    WCHAR { $$ = &BaseType::wcharType; }
+    WCHAR { $$ = BaseType::wcharType; }
     ;
 
 boolean_type:
-    BOOLEAN { $$ = &BaseType::booleanType; }
+    BOOLEAN { $$ = BaseType::booleanType; }
     ;
 
 octet_type:
-    OCTET { $$ = &BaseType::octetType; }
+    OCTET { $$ = BaseType::octetType; }
     ;
 
 any_type:
-    ANY { $$ = &BaseType::anyType; }
+    ANY { $$ = BaseType::anyType; }
     ;
 
 object_type:
-    OBJECT { $$ = &DeclaredType::corbaObjectType; }
+    OBJECT { $$ = DeclaredType::corbaObjectType; }
     ;
 
 struct_type:
@@ -1155,14 +1158,14 @@ sequence_type:
 string_type:
     STRING '<' positive_int_const '>' { $$ = new StringType($3); }
   | STRING {
-      $$ = &StringType::unboundedStringType;
+      $$ = StringType::unboundedStringType;
     }
     ;
 
 wide_string_type:
     WSTRING '<' positive_int_const '>' { $$ = new WStringType($3); }
   | WSTRING {
-      $$ = &WStringType::unboundedWStringType;
+      $$ = WStringType::unboundedWStringType;
     }
     ;
 
@@ -1261,7 +1264,7 @@ op_attribute:
 
 op_type_spec:
     param_type_spec { $$ = $1; }
-  | VOID            { $$ = &BaseType::voidType; }
+  | VOID            { $$ = BaseType::voidType; }
     ;
 
 parameter_dcls:
