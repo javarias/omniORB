@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  1999/11/29 19:26:59  djs
+# Code tidied and moved around. Some redundant code eliminated.
+#
 # Revision 1.7  1999/11/17 20:37:09  djs
 # General util functions
 #
@@ -68,9 +71,42 @@ from omniidl.be.cxx import skel
 
 from omniidl.be.cxx import config
 
-import re
+import re, sys
 
 cpp_args = ["-D__OMNIIDL_CXX__"]
+usage_string = """\
+  -Wba            Generate code for TypeCodes and Any
+  -Wbtp           Generate 'tie' implementation skeletons
+  -Wbtf           Generate flattened 'tie' implementation skeletons"""
+
+# -----------------------------
+# Process back end specific arguments
+
+def typecode_any():
+    config.setTypecodeFlag(1)
+
+def tie():
+    config.setTieFlag(1)
+
+def flat_tie():
+    config.setFlatTieFlag(1)
+
+arguments = {
+    "a":  typecode_any,
+    "tp": tie,
+    "tf": flat_tie
+    }
+
+def process_args(args):
+    for arg in args:
+        if arguments.has_key(arg):
+            arguments[arg]()
+        else:
+            print "Argument \"" + str(arg) + "\" is unknown to the " +\
+                  "C++ backend\n"
+            print "omniidl -bcxx -u for usage"
+            sys.exit(1)
+            
 
 def run(tree, args):
     """Entrypoint to the C++ backend"""
@@ -84,6 +120,12 @@ def run(tree, args):
     else:
         raise "Unable to work out basename of input file"
 
+    # set the default behaviour
+    config.setTypecodeFlag(0)
+    config.setTieFlag(0)
+    config.setFlatTieFlag(0)
+
+    process_args(args)
        
     header.run(tree)
     
