@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2001/08/17 17:02:22  sll
+  Removed static variables ncs_c, ncs_w, default_tcs_c, default_tcs_w.
+
   Revision 1.1.2.12  2001/07/31 16:32:02  sll
   Added virtual function is_giopStream to check if a cdrStream is a giopStream.
   That is, a poor man's substitute for dynamic_cast.
@@ -694,7 +697,12 @@ public:
   // big-endian (<littleendian> = FALSE(0)). Setup the cdrStream
   // accordingly.
 
-  cdrMemoryStream(const cdrMemoryStream&);
+  cdrMemoryStream(const cdrMemoryStream&, _CORBA_Boolean read_only = 0);
+  // Copy a stream. If the source stream is read-only, or <read_only>
+  // is true, the new stream uses the same underlying memory buffer as
+  // the source, and assumes the buffer stays valid for the lifetime
+  // of the new stream.
+
   cdrMemoryStream& operator=(const cdrMemoryStream&);
 
   cdrMemoryStream(void* databuffer);

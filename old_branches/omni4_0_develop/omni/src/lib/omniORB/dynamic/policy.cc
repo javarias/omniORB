@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.2  2001/08/17 15:00:47  dpg1
+  Fixes for pre-historic compilers.
+
   Revision 1.1.2.1  2001/07/31 16:04:06  sll
   Added ORB::create_policy() and associated types and operators.
 
@@ -111,7 +114,6 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
 //////////////////////////////////////////////////////////////////////
 ///////////////// CORBA::PolicyError user exception //////////////////
 //////////////////////////////////////////////////////////////////////
-
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the variables external linkage otherwise. Its a bug.
@@ -202,7 +204,7 @@ const CORBA::TypeCode_ptr CORBA::_tc_PolicyError = _0RL_tc_CORBA_mPolicyError;
 
 
  CORBA::Boolean
-_0RL_tcParser_getMemberDesc_CORBA_mPolicyError(tcStructDesc *_desc, CORBA::ULong _index, tcDescriptor &_newdesc){
+_0RL_tcParser_getMemberDesc_CORBA_mPolicyError(const tcStructDesc *_desc, CORBA::ULong _index, tcDescriptor &_newdesc){
   switch (_index) {
   case 0:
     _0RL_buildDesc_cshort(_newdesc, ((CORBA::PolicyError*)_desc->opq_struct)->reason);
@@ -214,7 +216,7 @@ _0RL_tcParser_getMemberDesc_CORBA_mPolicyError(tcStructDesc *_desc, CORBA::ULong
 }
  CORBA::ULong
 
-_0RL_tcParser_getMemberCount_CORBA_mPolicyError(tcStructDesc *_desc)
+_0RL_tcParser_getMemberCount_CORBA_mPolicyError(const tcStructDesc *_desc)
 {
   return 1;
 }

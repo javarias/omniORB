@@ -29,6 +29,11 @@
 
 /*
    $Log$
+   Revision 1.11.2.9  2001/06/15 10:23:21  sll
+   Changed the name of the internal create_dyn_any function to
+   internal_create_dyn_any. Compilers which do not support namespace are
+   confused by the original name.
+
    Revision 1.11.2.8  2001/06/13 20:10:04  sll
    Minor update to make the ORB compiles with MSVC++.
 
@@ -368,8 +373,7 @@ DynAnyImplBase::from_any(const CORBA::Any& value)
   CORBA::TypeCode_var value_tc = value.type();
   if( !value_tc->equivalent(tc()) )  throw CORBA::DynAny::Invalid();
 
-  cdrMemoryStream& buf = ((AnyP*)value.NP_pd())->getcdrMemoryStream();
-  buf.rewindInputPtr();
+  cdrMemoryStream buf(((AnyP*)value.NP_pd())->theMemoryStream(), 1);
 
   if( !copy_from(buf) )  throw CORBA::DynAny::Invalid();
 }
@@ -379,7 +383,7 @@ CORBA::Any*
 DynAnyImplBase::to_any()
 {
   CORBA::Any* a = new CORBA::Any(tc(), 0);
-  cdrMemoryStream& buf = ((AnyP*)a->NP_pd())->getcdrMemoryStream();
+  cdrMemoryStream& buf = ((AnyP*)a->NP_pd())->getWRableMemoryStream();
 
   // <buf> should already be rewound.
 
@@ -853,9 +857,9 @@ DynAnyImpl::NP_narrow()
 int
 DynAnyImpl::copy_to(cdrMemoryStream& mbs)
 {
-  tcParser tcp(pd_buf, tc());
+  cdrMemoryStream src(pd_buf, 1);
   try {
-    tcp.copyTo(mbs);
+    tcParser::copyStreamToMemStream_flush(tc(), src, mbs);
   }
   catch(CORBA::MARSHAL&) {
     return 0;
@@ -867,10 +871,10 @@ DynAnyImpl::copy_to(cdrMemoryStream& mbs)
 int
 DynAnyImpl::copy_from(cdrMemoryStream& mbs)
 {
-  tcParser tcp(pd_buf, tc());
+  cdrMemoryStream src(mbs, 1);
   try {
     setInvalid();
-    tcp.copyFrom(mbs);
+    tcParser::copyStreamToMemStream_flush(tc(), src, pd_buf);
     setValid();
   }
   catch(CORBA::MARSHAL&) {
@@ -1423,7 +1427,7 @@ DynAnyConstrBase::copy_to(cdrMemoryStream& mbs)
 {
   if( pd_n_in_buf != pd_first_in_comp )  return 0;
 
-  pd_buf.rewindInputPtr();
+  cdrMemoryStream src(pd_buf, 1);
   pd_read_index = -1;
 
   unsigned i;
@@ -1431,8 +1435,7 @@ DynAnyConstrBase::copy_to(cdrMemoryStream& mbs)
     // Copy the components in the buffer.
     for( i = 0; i < pd_n_in_buf; i++ ) {
       TypeCode_base* ctc = nthComponentTC(i);
-      tcParser tcp(pd_buf, ctc);
-      tcp.copyTo(mbs, 0);
+      tcParser::copyStreamToStream(ctc, src, mbs);
     }
   }
   catch(CORBA::MARSHAL&) {
@@ -1459,8 +1462,7 @@ DynAnyConstrBase::copy_from(cdrMemoryStream& mbs)
     // Copy components into the buffer.
     for( i = 0; i < pd_first_in_comp; i++ ) {
       TypeCode_base* ctc = nthComponentTC(i);
-      tcParser tcp(pd_buf, ctc);
-      tcp.copyFrom(mbs, 0);
+      tcParser::copyStreamToStream(ctc, mbs, pd_buf);
     }
   }
   catch(CORBA::MARSHAL&) {
@@ -1582,7 +1584,7 @@ DynAnyConstrBase::seekTo(unsigned n)
   for( unsigned i = 0; i < n; i++ ) {
     TypeCode_base* ctc = nthComponentTC(i);
     try {
-      tcParser::skip(pd_buf, ctc);
+      tcParser::skip(ctc, pd_buf);
     }
     catch(CORBA::MARSHAL&) {
       throw omniORB::fatalException(__FILE__,__LINE__,
@@ -1599,10 +1601,11 @@ DynAnyConstrBase::component_to_any(unsigned i, CORBA::Any& a)
   a.replace(nthComponentTC(i), 0);
 
   if( i < pd_n_in_buf ) {
-    tcParser* tcp = ((AnyP*)a.NP_pd())->getTC_parser();
+    AnyP* anyp = (AnyP*)a.NP_pd();
     if( pd_read_index != (int)i )  seekTo(i);
     try {
-      tcp->copyFrom(pd_buf);
+      tcParser::copyStreamToStream(anyp->getTC(), pd_buf,
+				   anyp->getWRableMemoryStream());
     }
     catch(CORBA::MARSHAL&) {
       throw omniORB::fatalException(__FILE__,__LINE__,
@@ -1612,8 +1615,7 @@ DynAnyConstrBase::component_to_any(unsigned i, CORBA::Any& a)
     return 1;
   }
   else if( i >= pd_first_in_comp ) {
-    cdrMemoryStream& buf = ((AnyP*)a.NP_pd())->getcdrMemoryStream();
-    buf.rewindPtrs();
+    cdrMemoryStream& buf = ((AnyP*)a.NP_pd())->getWRableMemoryStream();
     return pd_components[i]->copy_to(buf);
   }
   else
@@ -1628,9 +1630,10 @@ DynAnyConstrBase::component_from_any(unsigned i, const CORBA::Any& a)
   if( !tc->equivalent(nthComponentTC(i)) )  return 0;
 
   if( canAppendComponent(i) ) {
-    tcParser* tcp = ((AnyP*)a.NP_pd())->getTC_parser();
+    AnyP* anyp = (AnyP*)a.NP_pd();
     try {
-      tcp->copyTo(pd_buf);
+      cdrMemoryStream src(anyp->theMemoryStream(), 1);
+      tcParser::copyStreamToMemStream_flush(anyp->getTC(), src, pd_buf);
     }
     catch(CORBA::MARSHAL&) {
       // <pd_buf> may have been partly written to, so we can't
@@ -1646,8 +1649,7 @@ DynAnyConstrBase::component_from_any(unsigned i, const CORBA::Any& a)
 
   if( i < pd_first_in_comp )  createComponent(i);
 
-  cdrMemoryStream& buf = ((AnyP*)a.NP_pd())->getcdrMemoryStream();
-  buf.rewindInputPtr();
+  cdrMemoryStream buf(((AnyP*)a.NP_pd())->theMemoryStream(), 1);
   return pd_components[i]->copy_from(buf);
 }
 
