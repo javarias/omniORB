@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.2  2000/11/03 19:25:23  sll
+# A new class CallDescriptor. The class contains all the code to generate
+# the call descriptor for each operation. It also has functions to be called
+# by different parts of the stub that use the call descriptor.
+#
 # Revision 1.1.4.1  2000/10/12 15:37:46  sll
 # Updated from omni3_1_develop.
 #
@@ -290,7 +295,7 @@ class CallDescriptor:
                    impl_call = str(impl_call))
 
 
-    def out_objrefcall(self,stream,operation,args,localcall_fn):
+    def out_objrefcall(self,stream,operation,args,localcall_fn,environment):
         assert isinstance(stream, output.Stream)
 
         ctor_args = [ localcall_fn, "\"" + operation + "\"",
@@ -313,7 +318,8 @@ class CallDescriptor:
                     if argtype.array():
                         rvalue = "&" + rvalue + "[0]"
                     if h_is_ptr:
-                        rvalue = "&(" + argtype.base() + "&) "+ rvalue
+                        rvalue = "&(" + argtype.base(environment) + "&) " \
+                                 + rvalue
                     assign_args.append(arg_n + " = " + rvalue + ";")
                 else:
                     if s_is_var:
@@ -325,7 +331,8 @@ class CallDescriptor:
                 if argtype.array():
                     rvalue = "&" + rvalue + "[0]"
                 if h_is_ptr:
-                    rvalue = "&(" + argtype.base() + "&) "+ rvalue
+                    rvalue = "&(" + argtype.base(environment) + "&) " \
+                             + rvalue
                 assign_args.append(arg_n + " = " + rvalue + ";")
 
         if self.__has_return_value:
@@ -610,6 +617,10 @@ class CallDescriptor:
                                       "CORBA::TypeCode::_nil();")
                 elif d_type.objref():
                     nilobjref = string.replace(d_type.base(),"_ptr","::_nil()")
+                    if isinstance(d_type.type().decl(),idlast.Forward):
+                        nilobjref = string.replace(nilobjref,\
+                                                   "::_nil()",\
+                                                   "_Helper::_nil()")
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n" + \
                                       "*" + arg_n + " = " + \
                                       nilobjref + ";")
