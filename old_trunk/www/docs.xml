@@ -9,64 +9,6 @@
 <tr>
 <td width="50%">
 
-<h3 align="center">omniORB 3.0.x</h3>
-
-<ul>
-  <li>omniORB user's guide
-    <ul>
-      <li>
-        <a href="omni30/omniORB/">html</a>,
-        <a href="omni30/omniORB.pdf">pdf</a>,
-        <a href="omni30/omniORB.ps">PostScript</a>.
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omni thread abstraction
-    <ul>
-      <li>
-	<a href="omni30/omnithread.html">html</a>,
-	<a href="omni30/omnithread.pdf">pdf</a>,
-	<a href="omni30/omnithread.ps">PostScript</a>.
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniNames
-    <ul>
-      <li>
-	<a href="omni30/omniNames.html">html</a>,
-	<a href="omni30/omniNames.pdf">pdf</a>,
-	<a href="omni30/omniNames.ps">PostScript</a>.
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniORB utilities
-    <ul>
-      <li>
-	<a href="omni30/utilities.html">html</a>,
-	<a href="omni30/utilities.pdf">pdf</a>,
-	<a href="omni30/utilities.ps">PostScript</a>.
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniidl for back-end authors
-    <ul>
-      <li>
-	<a href="omni30/omniidl.html">html</a>,
-	<a href="omni30/omniidl.pdf">pdf</a>,
-	<a href="omni30/omniidl.ps">PostScript</a>.
-      </li>
-    </ul>
-    <br/>
-  </li>
-</ul>
-
-</td>
-<td width="50%">
-
 <h3 align="center">omniORB 4.0.x</h3>
 
 <ul>
@@ -123,6 +65,64 @@
 </ul>
 
 </td>
+<td width="50%">
+
+<h3 align="center">omniORB 3.0.x</h3>
+
+<ul>
+  <li>omniORB user's guide
+    <ul>
+      <li>
+        <a href="omni30/omniORB/">html</a>,
+        <a href="omni30/omniORB.pdf">pdf</a>,
+        <a href="omni30/omniORB.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omni thread abstraction
+    <ul>
+      <li>
+	<a href="omni30/omnithread.html">html</a>,
+	<a href="omni30/omnithread.pdf">pdf</a>,
+	<a href="omni30/omnithread.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniNames
+    <ul>
+      <li>
+	<a href="omni30/omniNames.html">html</a>,
+	<a href="omni30/omniNames.pdf">pdf</a>,
+	<a href="omni30/omniNames.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniORB utilities
+    <ul>
+      <li>
+	<a href="omni30/utilities.html">html</a>,
+	<a href="omni30/utilities.pdf">pdf</a>,
+	<a href="omni30/utilities.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniidl for back-end authors
+    <ul>
+      <li>
+	<a href="omni30/omniidl.html">html</a>,
+	<a href="omni30/omniidl.pdf">pdf</a>,
+	<a href="omni30/omniidl.ps">PostScript</a>.
+      </li>
+    </ul>
+    <br/>
+  </li>
+</ul>
+
+</td>
 </tr>
 </table>
 
@@ -130,24 +130,6 @@
 
 <table align="center">
 <tr>
-<td width="50%">
-
-<h3 align="center">omniORBpy 1.x</h3>
-
-<ul>
-  <li>omniORBpy user's guide
-    <ul>
-      <li>
-	<a href="omnipy1/omniORBpy/">html</a>,
-	<a href="omnipy1/omniORBpy.pdf">pdf</a>,
-	<a href="omnipy1/omniORBpy.ps">PostScript</a>.
-      </li>
-    </ul>
-  </li>
-</ul>
-
-</td>
-
 <td width="50%">
 
 <h3 align="center">omniORBpy 2.x</h3>
@@ -165,7 +147,46 @@
 </ul>
 
 </td>
+
+<td width="50%">
+
+<h3 align="center">omniORBpy 1.x</h3>
+
+<ul>
+  <li>omniORBpy user's guide
+    <ul>
+      <li>
+	<a href="omnipy1/omniORBpy/">html</a>,
+	<a href="omnipy1/omniORBpy.pdf">pdf</a>,
+	<a href="omnipy1/omniORBpy.ps">PostScript</a>.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</td>
 </tr>
+
+<tr>
+<td width="50%">
+
+<br/>
+<h3 align="center">OMG Documentation</h3>
+
+<ul>
+  <li>
+      <a href="http://cgi.omg.org/cgi-bin/doc?formal/02-11-05">
+       Python Language Mapping, v1.2</a>
+  </li> 
+  <li>
+      <a href="http://cgi.omg.org/cgi-bin/doc?formal/02-11-06">
+       Python Language Mapping, v1.2 IDL</a>
+  </li> 
+</ul>
+
+</td>
+</tr>
+
 </table>
 
 </page>
