@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.23  2004/09/13 09:44:16  dgrisby
+  Avoid theoretical (?) problem with socket limit on Windows.
+
   Revision 1.1.2.22  2004/08/31 14:59:09  dgrisby
   Don't bother calculating fd count on Windows because it ignores it.
 
@@ -421,6 +424,8 @@ SocketCollection::Select() {
     }
     fd++;
   }
+#else
+  fd = total;
 #endif
 
   int nready;
