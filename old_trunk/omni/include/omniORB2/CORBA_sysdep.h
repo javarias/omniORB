@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.26  1998/10/08 10:53:19  sll
+ Disable MSVC++ warnings C4768 and C4250.
+
  Revision 1.25  1998/09/23 15:25:51  sll
  Workaround for SUN C++ compiler Template.DB code regeneration bug.
 
@@ -224,7 +227,9 @@
 #define _OMNIORB_HOST_BYTE_ORDER_ 1
 #elif defined(__alpha__) && !defined(__VMS)
 #define _OMNIORB_HOST_BYTE_ORDER_ 1
+#if !defined(__WIN32__)
 #define _HAS_SIGNAL 1
+#endif
 #elif defined(__sunos__) && defined(__sparc__)
 #define _OMNIORB_HOST_BYTE_ORDER_ 0
 #define _HAS_SIGNAL 1
