@@ -27,7 +27,19 @@
 #   General utility functions designed for the C++ backend
 
 # $Id$
+# $Id$
 # $Log$
+# Revision 1.33  2000/07/13 15:26:01  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
+# Revision 1.30.2.9  2000/08/07 15:34:34  dpg1
+# Partial back-port of long long from omni3_1_develop.
+#
+# Revision 1.30.2.8  2000/07/17 09:36:16  djs
+# Added function to strip typedef chains from AST nodes
+# Fixed allInherits() function to handle inheriting from a typedef to an
+# interface
+#
 # Revision 1.30.2.7  2000/06/26 16:23:11  djs
 # Added new backend arguments.
 # Better error handling when encountering unsupported IDL (eg valuetypes)
@@ -503,7 +515,9 @@ typeSizeAlignMap = {
     idltype.tk_float:   (4, 4),
     idltype.tk_enum:    (4, 4),
     idltype.tk_double:  (8, 8),
-    idltype.tk_octet:   (1, 1)
+    idltype.tk_octet:   (1, 1),
+    idltype.tk_longlong:  (8, 8),
+    idltype.tk_ulonglong: (8, 8)
     }
 
 
@@ -724,6 +738,16 @@ def const_qualifier(insideModule, insideClass):
     else:
         return "_CORBA_MODULE_VAR"
 
+# Return the base AST node after following all the typedef chains
+def remove_ast_typedefs_(node, recurse):
+    if isinstance(node, idlast.Declarator):
+        typedef = node.alias()
+        return recurse(typedef.aliasType().decl(), recurse)
+    return node
+
+def remove_ast_typedefs(node, chain = remove_ast_typedefs_):
+    return chain(node, chain)
+
 
 def allInherits(interface):
     """tyutil.allInherits(idlast.Interface) -> idlast.Interface list
@@ -731,20 +755,23 @@ def allInherits(interface):
        heirarchy. Returns the _set_ (ie no duplicates) of ancestor
        interfaces"""
     assert isinstance(interface, idlast.Interface)
+
+    # It is possible to inherit from an interface through a chain of
+    # typedef nodes. These need to be removed...
+    
     # breadth first search
-    def bfs(current, bfs):
+    def bfs(current, bfs, remove_typedefs = remove_ast_typedefs):
         if current == []:
             return []
         
         # extend search one level deeper than current
         next = []
-        for c in current:
+        for c in map(remove_typedefs, current):
             next = next + c.inherits()
 
         return next + bfs(next, bfs)
 
-    start = interface.inherits()
-    
+    start = map(remove_ast_typedefs, interface.inherits())
     list = start + bfs(start, bfs)
 
     return util.setify(list)
