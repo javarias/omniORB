@@ -28,9 +28,11 @@
 
 
 /* $Log$
+// Revision 1.1  1998/01/27  15:49:07  ewc
+// Initial revision
+//
  */
 
-#include <iostream.h>
 #include <string.h>
 
 #include "tcParseEngine.h"
