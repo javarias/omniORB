@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.12  1998/01/21 12:30:32  sll
+  Corrected typo that only affects hpux.
+
 // Revision 1.11  1998/01/20  17:32:15  sll
 // Added support for OpenVMS.
 //
@@ -134,6 +137,9 @@ again:
 #if defined(__WIN32__) || defined(__vms) && __VMS_VER < 70000000
     rc = 0;
 #else
+#ifdef __osr5__
+    extern int h_errno;
+#endif
     rc = h_errno;
 #endif
 
