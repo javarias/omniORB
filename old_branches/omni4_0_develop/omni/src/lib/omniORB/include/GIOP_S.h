@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/07/13 15:17:38  sll
+  Ctor takes a giopWorker rather than a giopServer.
+
   Revision 1.1.4.3  2001/05/02 14:22:05  sll
   Cannot rely on the calldescriptor still being there when a user exception
   is raised.
@@ -83,7 +86,8 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
   void SendException(CORBA::Exception*);
   // override IOP_S
 
-  void notifyCommFailure(CORBA::ULong& minor,
+  void notifyCommFailure(CORBA::Boolean heldlock,
+			 CORBA::ULong& minor,
 			 CORBA::Boolean& retry);
   // override giopStream member
 

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2001/09/03 16:55:41  sll
+  Modified to match the new signature of the giopStream member functions that
+  previously accept explicit deadline parameters. The deadline is now
+  implicit in the giopStream.
+
   Revision 1.1.4.8  2001/08/17 17:12:37  sll
   Modularise ORB configuration parameters.
 
@@ -235,7 +240,7 @@ giopImpl11::inputReplyBegin(giopStream* g,
     {
       CORBA::ULong minor;
       CORBA::Boolean retry;
-      g->notifyCommFailure(minor,retry);
+      g->notifyCommFailure(0,minor,retry);
       g->pd_strand->state(giopStrand::DYING);
       giopStream::CommFailure::_raise(minor,
 				      (CORBA::CompletionStatus)g->completion(),
@@ -932,7 +937,7 @@ giopImpl11::inputTerminalProtocolError(giopStream* g) {
 
   CORBA::ULong minor;
   CORBA::Boolean retry;
-  g->notifyCommFailure(minor,retry);
+  g->notifyCommFailure(0,minor,retry);
   g->pd_strand->state(giopStrand::DYING);
   giopStream::CommFailure::_raise(minor,
 				  (CORBA::CompletionStatus)g->completion(),
@@ -1171,7 +1176,7 @@ giopImpl11::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
 
     CORBA::ULong minor;
     CORBA::Boolean retry;
-    giop_s.notifyCommFailure(minor,retry);
+    giop_s.notifyCommFailure(0,minor,retry);
     giopStream::CommFailure::_raise(minor,(CORBA::CompletionStatus)
 				    giop_s.completion(),
 				    retry,__FILE__,__LINE__);

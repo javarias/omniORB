@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/09/03 16:54:06  sll
+  In initialise(), set deadline from the parameters in calldescriptor.
+
   Revision 1.1.4.5  2001/09/03 13:28:09  sll
   In the calldescriptor, in addition to the first address, record the current
   address in use.
@@ -222,7 +225,8 @@ GIOP_C::UnMarshallSystemException()
 
 ////////////////////////////////////////////////////////////////////////
 void
-GIOP_C::notifyCommFailure(CORBA::ULong& minor,
+GIOP_C::notifyCommFailure(CORBA::Boolean heldlock,
+			  CORBA::ULong& minor,
 			  CORBA::Boolean& retry) {
 
   OMNIORB_ASSERT(pd_calldescriptor);
@@ -239,7 +243,7 @@ GIOP_C::notifyCommFailure(CORBA::ULong& minor,
     else {
       currentaddr = pd_calldescriptor->currentAddress();
     }
-    currentaddr = pd_rope->notifyCommFailure(currentaddr);
+    currentaddr = pd_rope->notifyCommFailure(currentaddr,heldlock);
     pd_calldescriptor->currentAddress(currentaddr);
     retry =  (currentaddr != firstaddr);
   }

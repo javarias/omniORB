@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2001/08/15 10:26:11  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.4.10  2001/08/03 17:41:17  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -583,7 +586,8 @@ GIOP_S::SendException(CORBA::Exception* ex) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-GIOP_S::notifyCommFailure(CORBA::ULong& minor,
+GIOP_S::notifyCommFailure(CORBA::Boolean,
+			  CORBA::ULong& minor,
 			  CORBA::Boolean& retry) {
   retry = 0;
 

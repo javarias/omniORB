@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/01 16:07:33  sll
+  All GIOP implementations should now work with fragmentation and abitrary
+  sizes non-copy transfer.
+
   Revision 1.1.4.1  2001/04/18 17:19:01  sll
   Big checkin with the brand new internal APIs.
 
@@ -56,7 +60,8 @@ class GIOP_C : public IOP_C, public giopStream, public giopStreamList {
 
   GIOP::LocateStatusType IssueLocateRequest();
 
-  void notifyCommFailure(CORBA::ULong& minor,
+  void notifyCommFailure(CORBA::Boolean heldlock,
+			 CORBA::ULong& minor,
 			 CORBA::Boolean& retry);
   // override giopStream member
 

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.16  2001/09/03 17:31:52  sll
+  Make sure that acquireClient honours the deadline set in the calldescriptor.
+
   Revision 1.1.4.15  2001/09/03 13:31:45  sll
   Removed debug trace.
 
@@ -492,21 +495,31 @@ giopRope::decrRefCount() {
 
 ////////////////////////////////////////////////////////////////////////
 const giopAddress*
-giopRope::notifyCommFailure(const giopAddress* addr) {
+giopRope::notifyCommFailure(const giopAddress* addr,
+			    CORBA::Boolean heldlock) {
 
-  ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
-
-  omni_tracedmutex_lock sync(*omniTransportLock);
+  if (heldlock) {
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,1);
+  }
+  else {
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
+    omniTransportLock->lock();
+  }
 
   const giopAddress* addr_in_use;
 
   addr_in_use = pd_addresses[pd_addresses_order[pd_address_in_use]];
-  if (addr != addr_in_use) return addr_in_use;
+  if (addr == addr_in_use) {
+    pd_address_in_use++;
+    if (pd_address_in_use >= pd_addresses_order.size())
+      pd_address_in_use = 0;
+    addr_in_use = pd_addresses[pd_addresses_order[pd_address_in_use]];
+  }
 
-  pd_address_in_use++;
-  if (pd_address_in_use >= pd_addresses_order.size())
-    pd_address_in_use = 0;
-  return pd_addresses[pd_addresses_order[pd_address_in_use]];
+  if (!heldlock) {
+    omniTransportLock->unlock();
+  }
+  return addr_in_use;
 }
 
 ////////////////////////////////////////////////////////////////////////
