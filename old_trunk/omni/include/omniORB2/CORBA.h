@@ -13,6 +13,9 @@
 
 /*
  $Log$
+ * Revision 1.8  1997/03/14  10:18:29  sll
+ * operator->() in T_var types is const. Fixed.
+ *
  * Revision 1.7  1997/03/09  14:42:50  sll
  * String_var and Object_var can now be passed directly as arguments
  * to operations that have string and Object as INOUT and OUT parameters.
@@ -49,7 +52,7 @@ class CORBA {
 
 public:
 
-#define Status void
+typedef void* Status;
 
 ////////////////////////////////////////////////////////////////////////
 //                   Primitive types                                  //
