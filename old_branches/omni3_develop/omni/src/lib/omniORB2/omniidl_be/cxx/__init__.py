@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.13  2002/02/20 13:33:46  dpg1
+# C++ back-end old signatures option did not work.
+#
 # Revision 1.18.2.12  2001/04/25 17:07:21  dpg1
 # Properly handle files #included at non-file scope.
 #
@@ -210,6 +213,8 @@ def process_args(args):
             config.state['SK Suffix']         = arg[2:]
         elif arg[:2] == "d=":
             config.state['DYNSK Suffix']      = arg[2:]
+        elif arg[:2] == "e=":
+            config.state['IMPL Suffix']       = arg[2:]
         elif arg == "inline":
             config.state['Inline Includes']   = 1
         else:
