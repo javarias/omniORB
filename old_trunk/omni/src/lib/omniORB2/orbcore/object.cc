@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.14  1998/08/14 13:49:38  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.13  1998/04/07 19:50:35  sll
   Replace cerr with omniORB::log.
 
@@ -36,6 +40,10 @@
   Temporary work-around for egcs compiler.
 
   $Log$
+  Revision 1.14  1998/08/14 13:49:38  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.13  1998/04/07 19:50:35  sll
   Replace cerr with omniORB::log.
 
@@ -410,8 +418,10 @@ omniObject::dispatch(GIOP_S &_s,const char *_op,
   else
     return 0;
 
+#ifdef NEED_DUMMY_RETURN
   // For MSVC++ 4.2:
   return 0;
+#endif
 }
 
 
