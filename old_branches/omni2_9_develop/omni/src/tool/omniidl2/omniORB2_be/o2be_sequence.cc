@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.29  1999/08/30 18:48:39  sll
+  *** empty log message ***
+
   Revision 1.28  1999/08/09 12:27:39  sll
   Updated how _out name is generated
 
@@ -802,19 +805,11 @@ o2be_sequence::produce_typedef_hdr(std::fstream& s, o2be_typedef* tdef)
 
       IND(s); s << (in_root ? "":"friend ")
 		<< "inline void operator >>= (" << e->unambiguous_name(tdef)
-		<< ", NetBufferedStream&);\n";
+		<< ", cdrStream&);\n";
 
       IND(s); s << (in_root ? "":"friend ")
 		<< "inline void operator <<= (" << e->unambiguous_name(tdef)
-		<< "&, NetBufferedStream&);\n";
-
-      IND(s); s << (in_root ? "":"friend ")
-		<< "inline void operator >>= (" << e->unambiguous_name(tdef)
-		<< ", MemBufferedStream&);\n";
-
-      IND(s); s << (in_root ? "":"friend ")
-		<< "inline void operator <<= (" << e->unambiguous_name(tdef)
-		<< "&, MemBufferedStream&);\n";
+		<< "&, cdrStream&);\n";
 
       s << "#endif\n";
     }

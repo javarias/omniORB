@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.22  1999/07/02 19:15:44  sll
+  Do not generate #include <orb.hh>.
+
   Revision 1.21  1999/06/18 20:48:00  sll
   Updated to replace _LC_attr with _dyn_attr and _core_attr.
 
@@ -115,7 +118,7 @@ const char* operators_fragment_suffix = "_operators";
 
 // Do not forget to update the version number in omniORB_x_y below.
 // The variable is defined in omniInternal.h.
-#define OMNIORB_LIBRARY_VERSION    "omniORB_2_8"
+#define OMNIORB_LIBRARY_VERSION    "omniORB_2_9"
 
 
 o2be_root::o2be_root(UTL_ScopedName *n, UTL_StrList *p)

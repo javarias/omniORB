@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.12  1999/05/26 10:42:12  sll
+  Now generate a typecode constant for anonymous bounded string defined in
+  operation signature.
+
   Revision 1.11  1999/03/11 16:26:08  djr
   Updated copyright notice
 
@@ -105,35 +109,17 @@ o2be_string::o2be_string(AST_Expression *v)
 o2be_string::o2be_string(AST_Expression *v, long wide)
 	 : AST_String(v, wide),
 	   AST_Decl(AST_Decl::NT_string,
-		    wide == 1
-		    ? new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
-					 NULL)
-		    : new UTL_ScopedName(new Identifier("wstring_t",
-                                                        1,
-                                                        0,
-                                                        I_FALSE),
-					 NULL),
+		    new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
+				       NULL),
 		    NULL),
 	   o2be_name(AST_Decl::NT_string,
-		    wide == 1
-		    ? new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
-					 NULL)
-		    : new UTL_ScopedName(new Identifier("wstring_t",
-                                                        1,
-                                                        0,
-                                                        I_FALSE),
-					 NULL),
+		    new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
+		     NULL),
 		    NULL),
 	   o2be_sequence_chain(AST_Decl::NT_string,
-		    wide == 1
-		    ? new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
-					 NULL)
-		    : new UTL_ScopedName(new Identifier("wstring_t",
-                                                        1,
-                                                        0,
-                                                        I_FALSE),
-					 NULL),
-		    NULL)
+		    new UTL_ScopedName(new Identifier("string",1,0,I_FALSE),
+				       NULL),
+			       NULL)
 {
   char *p = new char [strlen(local_name()->get_string())+1];
   strcpy(p,local_name()->get_string());

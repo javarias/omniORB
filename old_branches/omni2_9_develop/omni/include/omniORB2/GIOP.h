@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.3  1999/06/18 21:12:56  sll
+  Updated copyright notice.
+
   Revision 1.2  1997/05/06 16:06:27  sll
   Public release.
 
@@ -52,7 +55,8 @@ public:
     LocateRequest = 3,                       // by client
     LocateReply = 4,                         // by server
     CloseConnection = 5,                     // by server
-    MessageError = 6                         // by both
+    MessageError = 6,                        // by both
+    Fragment = 7                             // by both
   };
 
   struct Version {
@@ -68,6 +72,11 @@ public:
     _CORBA_ULong     message_size;
   };
 
+  typedef _CORBA_Short AddressingDisposition;
+  static _core_attr const AddressingDisposition KeyAddr;
+  static _core_attr const AddressingDisposition ProfileAddr;
+  static _core_attr const AddressingDisposition ReferenceAddr;
+
   class RequestHeader {
   public:
     IOP::ServiceContextList	service_context;
@@ -82,7 +91,9 @@ public:
     NO_EXCEPTION,
     USER_EXCEPTION,
     SYSTEM_EXCEPTION,
-    LOCATION_FORWARD
+    LOCATION_FORWARD,
+    LOCATION_FORWARD_PERM,   // GIOP 1.2
+    NEEDS_ADDRESSING_MODE    // GIOP 1.2 
   };
 
   class ReplyHeader {
@@ -105,7 +116,10 @@ public:
   enum LocateStatusType {
     UNKNOWN_OBJECT,
     OBJECT_HERE,
-    OBJECT_FORWARD
+    OBJECT_FORWARD,
+    OBJECT_FORWARD_PERM,      // GIOP 1.2
+    LOC_SYSTEM_EXCEPTION,     // GIOP 1.2
+    LOC_NEEDS_ADDRESSING_MODE // GIOP 1.2
   };
 
   struct LocateReplyHeader {

@@ -34,18 +34,7 @@
 //
 
 /*
- $Log$
- Revision 1.6  1999/06/26 18:09:45  sll
- Added check on the status of verifyObjectExistsAndType before calling
- assertObjectExistent.
-
- Revision 1.5  1999/05/20 18:36:03  sll
- Revert to non-context version. Support for context is now in
- an equivalent version in the dynamic library.
-
- Revision 1.4  1999/04/21 13:11:18  djr
- Added support for contexts.
-
+  $Log$
 */
 
 #include <omniORB2/CORBA.h>
@@ -61,43 +50,31 @@ OmniProxyCallWrapper::invoke(omniObject* o, OmniProxyCallDesc& call_desc)
 {
   CORBA::ULong retries = 0;
 
-#ifndef EGCS_WORKAROUND
-_again:
-#else
   while(1) {
-#endif
-    if (omniORB::verifyObjectExistsAndType)
-      o->assertObjectExistent();
-    omniRopeAndKey ropeAndKey;
-    CORBA::Boolean fwd = o->getRopeAndKey(ropeAndKey);
-    CORBA::Boolean reuse = 0;
+
+    if (call_desc.doAssertObjectExistence()) o->assertObjectExistent();
+
+    CORBA::Boolean fwd;
+    GIOPObjectInfo* invokeInfo = o->getInvokeInfo(fwd);
 
     try{
       // Get a GIOP driven strand
-      GIOP_C giop_client(ropeAndKey.rope());
-      reuse = giop_client.isReUsingExistingConnection();
+      GIOP_C giop_client(invokeInfo);
 
-      // Calculate the size of the message.
-      CORBA::ULong message_size =
-	GIOP_C::RequestHeaderSize(ropeAndKey.keysize(),
-				  call_desc.operation_len());
+      call_desc.initialise((cdrStream&)giop_client);
 
-      message_size = call_desc.alignedSize(message_size);
-
-      giop_client.InitialiseRequest(ropeAndKey.key(), ropeAndKey.keysize(),
-				    call_desc.operation(),
-				    call_desc.operation_len(),
-				    message_size, 0);
+      giop_client.InitialiseRequest(call_desc.operation(),
+				    call_desc.operation_len(),0,1);
 
       // Marshal the arguments to the operation.
-      call_desc.marshalArguments(giop_client);
+      call_desc.marshalArguments((cdrStream&)giop_client);
 
       // Wait for the reply.
-      switch(giop_client.ReceiveReply()){
+      GIOP::ReplyStatusType rc;
+      switch((rc = giop_client.ReceiveReply())){
       case GIOP::NO_EXCEPTION:
 	// Unmarshal the result and out/inout arguments.
-	call_desc.unmarshalReturnedValues(giop_client);
-
+	call_desc.unmarshalReturnedValues((cdrStream&)giop_client);
 	giop_client.RequestCompleted();
 	return;
 
@@ -110,10 +87,10 @@ _again:
 
 	  // Retrieve the Interface Repository ID of the exception.
 	  CORBA::ULong repoIdLen;
-	  repoIdLen <<= giop_client;
-	  CORBA::String_var repoId(CORBA::string_alloc(repoIdLen - 1));
-	  giop_client.get_char_array((CORBA::Char*)(char*)repoId,
-				     repoIdLen);
+	  cdrStream& s = giop_client;
+	  repoIdLen <<= s;
+	  CORBA::String_var repoId = CORBA::string_alloc(repoIdLen - 1);
+	  s.get_char_array((CORBA::Char*)(const char*)repoId,repoIdLen);
 
 	  call_desc.userException(giop_client, repoId);
 	  // Never get here - this must throw either a user exception
@@ -127,8 +104,10 @@ _again:
 				      " returned by GIOP_C::ReceiveReply()");
 
       case GIOP::LOCATION_FORWARD:
+      case GIOP::LOCATION_FORWARD_PERM:
 	{
-	  CORBA::Object_var obj(CORBA::Object::unmarshalObjRef(giop_client));
+	  CORBA::Object_var obj =
+	    CORBA::Object::unmarshalObjRef((cdrStream&)giop_client);
 	  giop_client.RequestCompleted();
 	  if( CORBA::is_nil(obj) ){
 	    if( omniORB::traceLevel > 10 ){
@@ -138,15 +117,20 @@ _again:
 	    }
 	    throw CORBA::COMM_FAILURE(0, CORBA::COMPLETED_NO);
 	  }
-	  omniRopeAndKey _r;
-	  obj->PR_getobj()->getRopeAndKey(_r);
-	  o->setRopeAndKey(_r);
+	  GIOPObjectInfo* newinfo = obj->PR_getobj()->getInvokeInfo(fwd);
+	  o->setInvokeInfo(newinfo,
+			   (rc == GIOP::LOCATION_FORWARD_PERM) ? 0 : 1);
 	}
       if( omniORB::traceLevel > 10 ){
 	omniORB::log << "GIOP::LOCATION_FORWARD: retry request.\n";
 	omniORB::log.flush();
       }
       break;
+
+      case GIOP::NEEDS_ADDRESSING_MODE:
+	giop_client.RequestCompleted();
+	throw CORBA::TRANSIENT(0,CORBA::COMPLETED_NO);
+	break; // redundent.
 
       default:
 	throw omniORB::fatalException(__FILE__,__LINE__,
@@ -155,8 +139,8 @@ _again:
       }
     }
     catch(const CORBA::COMM_FAILURE& ex){
-      if( reuse || fwd ){
-	if( fwd )  o->resetRopeAndKey();
+      if( fwd ){
+	o->resetInvokeInfo();
 	CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
 	if( !_omni_callTransientExceptionHandler(o, retries++, ex2) )
 	  throw ex2;
@@ -171,7 +155,7 @@ _again:
     }
     catch(const CORBA::OBJECT_NOT_EXIST& ex){
       if( fwd ){
-	o->resetRopeAndKey();
+	o->resetInvokeInfo();
 	CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
 	if( !_omni_callTransientExceptionHandler(o, retries++, ex2) )
 	  throw ex2;
@@ -184,12 +168,7 @@ _again:
       if( !_omni_callSystemExceptionHandler(o, retries++, ex) )
 	throw;
     }
-
-#ifndef EGCS_WORKAROUND
-    goto _again;
-#else
   }
-#endif
 }
 
 
@@ -198,36 +177,25 @@ OmniProxyCallWrapper::one_way(omniObject* o, OmniOWProxyCallDesc& call_desc)
 {
   CORBA::ULong retries = 0;
 
-#ifndef EGCS_WORKAROUND
-_again:
-#else
-  while(1) {
-#endif
-    if (omniORB::verifyObjectExistsAndType)
-      o->assertObjectExistent();
-    omniRopeAndKey ropeAndKey;
-    CORBA::Boolean fwd = o->getRopeAndKey(ropeAndKey);
-    CORBA::Boolean reuse = 0;
+  while (1) {
+
+    if (call_desc.doAssertObjectExistence()) o->assertObjectExistent();
+
+    CORBA::Boolean fwd; 
+    GIOPObjectInfo* invokeInfo = o->getInvokeInfo(fwd);
 
     try{
       // Get a GIOP driven strand
-      GIOP_C giop_client(ropeAndKey.rope());
-      reuse = giop_client.isReUsingExistingConnection();
+      GIOP_C giop_client(invokeInfo);
 
-      // Calculate the size of the message.
-      CORBA::ULong message_size =
-	GIOP_C::RequestHeaderSize(ropeAndKey.keysize(),
-				  call_desc.operation_len());
+      call_desc.initialise((cdrStream&)giop_client);
 
-      message_size = call_desc.alignedSize(message_size);
-
-      giop_client.InitialiseRequest(ropeAndKey.key(), ropeAndKey.keysize(),
-				    call_desc.operation(),
+      giop_client.InitialiseRequest(call_desc.operation(),
 				    call_desc.operation_len(),
-				    message_size, 1);
+				    1,0);
 
       // Marshal the arguments to the operation.
-      call_desc.marshalArguments(giop_client);
+      call_desc.marshalArguments((cdrStream&)giop_client);
 
       // Wait for the reply.
       switch(giop_client.ReceiveReply()){
@@ -238,6 +206,8 @@ _again:
       case GIOP::USER_EXCEPTION:
       case GIOP::SYSTEM_EXCEPTION:
       case GIOP::LOCATION_FORWARD:
+      case GIOP::LOCATION_FORWARD_PERM:
+      case GIOP::NEEDS_ADDRESSING_MODE:
 	giop_client.RequestCompleted(1);
 	throw omniORB::fatalException(__FILE__,__LINE__,
 				      "GIOP_C::ReceiveReply() returned"
@@ -250,8 +220,8 @@ _again:
       }
     }
     catch(const CORBA::COMM_FAILURE& ex){
-      if( reuse || fwd ){
-	if( fwd )  o->resetRopeAndKey();
+      if( fwd ){
+	o->resetInvokeInfo();
 	CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
 	if( !_omni_callTransientExceptionHandler(o, retries++, ex2) )
 	  throw ex2;
@@ -269,33 +239,28 @@ _again:
 	throw;
     }
 
-#ifndef EGCS_WORKAROUND
-    goto _again;
-#else
   }
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// OmniProxyCallDesc /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-CORBA::ULong
-OmniProxyCallDesc::alignedSize(CORBA::ULong size_in)
+void
+OmniProxyCallDesc::initialise(cdrStream&)
 {
-  return size_in;
+  // no-op
 }
 
-
 void
-OmniProxyCallDesc::marshalArguments(GIOP_C&)
+OmniProxyCallDesc::marshalArguments(cdrStream&)
 {
   // no-op
 }
 
 
 void
-OmniProxyCallDesc::unmarshalReturnedValues(GIOP_C&)
+OmniProxyCallDesc::unmarshalReturnedValues(cdrStream&)
 {
   // no-op
 }
@@ -313,15 +278,14 @@ OmniProxyCallDesc::userException(GIOP_C&, const char* repoId)
 ///////////////////////// OmniOWProxyCallDesc ////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-CORBA::ULong
-OmniOWProxyCallDesc::alignedSize(CORBA::ULong size_in)
+void
+OmniOWProxyCallDesc::initialise(cdrStream&)
 {
-  return size_in;
+  // no-op
 }
 
-
 void
-OmniOWProxyCallDesc::marshalArguments(GIOP_C&)
+OmniOWProxyCallDesc::marshalArguments(cdrStream&)
 {
   // no-op
 }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29  1999/09/01 13:17:11  djr
+  Update to use new logging support.
+
   Revision 1.28  1999/08/30 16:53:04  sll
   Added new options -ORBclientCallTimeOutPeriod, -ORBserverCallTimeOutPeriod
   -ORBscanOutgoingPeriod, -ORBscanIncomingPeriod and -ORBhelp.
@@ -189,6 +192,7 @@ extern "C" int sigaction(int, const struct sigaction *, struct sigaction *);
 //          Per module initialisers.
 //
 extern omniInitialiser& omni_corbaOrb_initialiser_;
+extern omniInitialiser& omni_giopStreamImpl_initialiser_;
 extern omniInitialiser& omni_ropeFactory_initialiser_;
 extern omniInitialiser& omni_objectRef_initialiser_;
 extern omniInitialiser& omni_initFile_initialiser_;
@@ -228,11 +232,11 @@ CORBA::ORB_init(int &argc,char **argv,const char *orb_identifier)
   }
 
   try {
-
     // Call attach method of each initialiser object.
     // The order of these calls must take into account of the dependency
     // amount the modules.
     omni_ropeFactory_initialiser_.attach();
+    omni_giopStreamImpl_initialiser_.attach();
     omni_objectRef_initialiser_.attach();
     omni_initFile_initialiser_.attach();
     omni_bootstrap_i_initialiser_.attach();
@@ -380,6 +384,7 @@ ORB::NP_destroy()
   omni_bootstrap_i_initialiser_.detach();
   omni_initFile_initialiser_.detach();
   omni_objectRef_initialiser_.detach();
+  omni_giopStreamImpl_initialiser_.detach();
   omni_ropeFactory_initialiser_.detach();
 
   delete orb;

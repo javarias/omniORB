@@ -26,6 +26,10 @@
 // Description:
 //
 
+/*
+  $Log$
+*/
+
 #ifndef __REQUEST_H__
 #define __REQUEST_H__
 
@@ -84,9 +88,8 @@ public:
   }
 
 private:
-  CORBA::ULong calculateArgDataSize(CORBA::ULong msize);
-  void marshalArgs(GIOP_C& giop_client);
-  void unmarshalArgs(GIOP_C& giop_client);
+  void marshalArgs(cdrStream& giop_client);
+  void unmarshalArgs(cdrStream& giop_client);
 
   enum State {
     RS_READY,

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.9  1999/08/16 19:26:56  sll
+ Added a per-compilation unit initialiser object.
+
  Revision 1.8  1999/08/14 16:38:53  sll
  Changed as locateObject no longer throws an exception when the object is
  not found.
@@ -76,11 +79,10 @@ ropeFactoryType* ropeFactoryTypeList = 0;
 ropeFactoryList* globalOutgoingRopeFactories;
 
 omniObject*
-ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
-			       CORBA::Octet *&objkey,
-			       size_t &keysize,
-			       Rope_var& rope)
+ropeFactory::iopProfilesToRope(GIOPObjectInfo* objectInfo)
 {
+  const IOP::TaggedProfileList* profiles = objectInfo->iopProfiles();
+
   ropeFactoryType* factorytype = ropeFactoryTypeList;
 
   while (factorytype) {
@@ -88,11 +90,9 @@ ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
     for (i=0; i < profiles->length(); i++) {
       if (factorytype->is_IOPprofileId((*profiles)[i].tag)) {
 	Endpoint_var addr;
-	Endpoint* addrp;
-	(void) factorytype->decodeIOPprofile((*profiles)[i],addrp,objkey,
-					     keysize);
-	addr = addrp;
-
+	(void) factorytype->decodeIOPprofile((*profiles)[i],
+					     addr.out(),
+					     objectInfo);
 	{
 	// Determine if this is a local object
 	// In future, we have to partially decode the object key to
@@ -105,12 +105,12 @@ ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
 	    ropeFactory_iterator iter(manager->incomingRopeFactories());
 	    incomingRopeFactory* factory;
 	    while ((factory = (incomingRopeFactory*) iter())) {
-	      if (rope = factory->findIncoming((Endpoint*)addr)) {
+	      objectInfo->rope_ = factory->findIncoming((Endpoint*)addr);
+	      if (objectInfo->rope()) {
 		// The endpoint is actually one of those exported by this 
 		// address space.
-		rope = 0;
 		omniObject* result = omni::locateObject(manager,
-						  *((omniObjectKey*)objkey));
+					 *((omniObjectKey*)objectInfo->key()));
 		if (result) { // Got it
 		  return result;
 		}
@@ -124,7 +124,6 @@ ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
 	  else {
 	    // root object manager has not been initialised, this object
 	    // cannot be a local object. Treat this as a foreign object
-	    rope = 0;
 	  }
 	}
 	{
@@ -132,7 +131,8 @@ ropeFactory::iopProfilesToRope(const IOP::TaggedProfileList *profiles,
 	  ropeFactory_iterator iter(globalOutgoingRopeFactories);
 	  outgoingRopeFactory* factory;
 	  while ((factory = (outgoingRopeFactory*) iter())) {
-	    if (rope = factory->findOrCreateOutgoing((Endpoint*)addr)) {
+	    objectInfo->rope_ = factory->findOrCreateOutgoing((Endpoint*)addr);
+	    if (objectInfo->rope()) {
 	      // Got it
 	      return 0;
 	    }

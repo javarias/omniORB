@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.7  1999/08/30 19:02:39  sll
+ Added ENABLE_CLIENT_IR_SUPPORT.
+
  Revision 1.6  1999/06/18 20:59:12  sll
  Allow system exception to be returned inside exception().
 
@@ -77,9 +80,11 @@ ServerRequestImpl::ctx()
     throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
   }
 
-  if( pd_giopS->RdMessageUnRead() >= 4 ) {
+  cdrStream& s = *pd_giopS;
+
+  if(s.checkInputOverrun(1,4,omni::ALIGN_1)) {
     pd_state = SR_ERROR;
-    pd_context = CORBA::Context::unmarshalContext(*pd_giopS);
+    pd_context = CORBA::Context::unmarshalContext(s);
     pd_state = SR_GOT_PARAMS;
   } else
     pd_context = new ContextImpl("", CORBA::Context::_nil());
@@ -108,7 +113,7 @@ ServerRequestImpl::params(CORBA::NVList_ptr parameters)
     for( CORBA::ULong i = 0; i < num_args; i++){
       CORBA::NamedValue_ptr arg = pd_params->item(i);
       if( arg->flags() & CORBA::ARG_IN || arg->flags() & CORBA::ARG_INOUT )
-	arg->value()->NP_unmarshalDataOnly(*pd_giopS);
+	arg->value()->NP_unmarshalDataOnly((cdrStream&)*pd_giopS);
     }
   }
 

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5  1999/07/09 21:04:29  sll
+ Added private data member in tcpSocketMTincomingFactory.
+
  Revision 1.4  1999/03/11 16:25:57  djr
  Updated copyright notice
 
@@ -89,8 +92,7 @@ public:
   CORBA::Boolean decodeIOPprofile(const IOP::TaggedProfile& profile,
 					  // return values:
 					  Endpoint*&     addr,
-					  CORBA::Octet*& objkey,
-					  size_t&        objkeysize) const;
+				          GIOPObjectInfo* objectInfo) const;
   void encodeIOPprofile(const Endpoint* addr,
 			const CORBA::Octet* objkey,
 			const size_t objkeysize,
@@ -164,8 +166,7 @@ public:
   static const unsigned int buffer_size;
 
   tcpSocketStrand(tcpSocketOutgoingRope *r,
-		  tcpSocketEndpoint *remote,
-		  _CORBA_Boolean heapAllocated = 0);
+		  tcpSocketEndpoint *remote);
   // Concurrency Control:
   //    MUTEX = r->pd_lock
   // Pre-condition:
@@ -174,8 +175,7 @@ public:
   //    Still hold <MUTEX> on exit, even if an exception is raised
 
   tcpSocketStrand(tcpSocketIncomingRope *r,
-		  tcpSocketHandle_t sock,
-		  _CORBA_Boolean heapAllocated = 0);
+		  tcpSocketHandle_t sock);
   // Concurrency Control:
   //    MUTEX = r->pd_lock
   // Pre-condition:

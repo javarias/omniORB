@@ -199,7 +199,7 @@ o2be_attribute::produce_read_proxy_call_desc(std::fstream& s,
   IND(s); s << "  OmniProxyCallDesc(_op, _op_len)  {}\n\n";
 
   // Declaration of methods to implement the call.
-  IND(s); s << "virtual void unmarshalReturnedValues(GIOP_C&);\n";
+  IND(s); s << "virtual void unmarshalReturnedValues(cdrStream&);\n";
 
   // Result accessor.
   IND(s); s << "inline ";
@@ -219,7 +219,7 @@ o2be_attribute::produce_read_proxy_call_desc(std::fstream& s,
 
 
   IND(s); s << "void " << class_name
-	      << "::unmarshalReturnedValues(GIOP_C& giop_client)\n";
+	      << "::unmarshalReturnedValues(cdrStream& giop_client)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
 
@@ -275,8 +275,7 @@ o2be_attribute::produce_write_proxy_call_desc(std::fstream& s,
   IND(s); s << "  _value(arg)  {}\n\n";
 
   // Declaration of methods to implement the call.
-  IND(s); s << "virtual CORBA::ULong alignedSize(CORBA::ULong size_in);\n";
-  IND(s); s << "virtual void marshalArguments(GIOP_C&);\n";
+  IND(s); s << "virtual void marshalArguments(cdrStream&);\n";
 
   s << "\n";
   DEC_INDENT_LEVEL();
@@ -289,26 +288,12 @@ o2be_attribute::produce_write_proxy_call_desc(std::fstream& s,
   DEC_INDENT_LEVEL();
   IND(s); s << "};\n\n";
 
-
-  IND(s); s << "CORBA::ULong " << class_name
-	    << "::alignedSize(CORBA::ULong msgsize)\n";
-  IND(s); s << "{\n";
-  INC_INDENT_LEVEL();
   o2be_operation::argMapping mapping;
   o2be_operation::argType ntype =
     o2be_operation::ast2ArgMapping(field_type(), o2be_operation::wIN, mapping);
 
-  o2be_operation::produceSizeCalculation(s, field_type(),
-					 o2be_global::root(),
-					 "giop_client", "msgsize",
-					 "_value", ntype, mapping);
-  IND(s); s << "return msgsize;\n";
-  DEC_INDENT_LEVEL();
-  IND(s); s << "}\n\n";
-
-
   IND(s); s << "void " << class_name
-	    << "::marshalArguments(GIOP_C& giop_client)\n";
+	    << "::marshalArguments(cdrStream& giop_client)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   o2be_operation::produceMarshalCode(s, field_type(),
@@ -367,7 +352,7 @@ o2be_attribute::produce_proxy_wr_skel(std::fstream& s,
 void
 o2be_attribute::produce_server_rd_skel(std::fstream& s,o2be_interface &defined_in)
 {
-  IND(s); s << "_0RL_s.RequestReceived();\n";
+  IND(s); s << "_giop_s.RequestReceived();\n";
 
   {
     o2be_operation::argMapping mapping;
@@ -390,42 +375,7 @@ o2be_attribute::produce_server_rd_skel(std::fstream& s,o2be_interface &defined_i
     s << " _0RL_result = " << uqname() << "();\n";
   }
 
-  // calculate reply message size
-  IND(s); s << "size_t _0RL_msgsize = (size_t) GIOP_S::ReplyHeaderSize();\n";
-  {
-    o2be_operation::argMapping mapping;
-    o2be_operation::argType ntype = o2be_operation::ast2ArgMapping(field_type(),o2be_operation::wResult,mapping);
-    if ((ntype == o2be_operation::tObjref ||
-	 ntype == o2be_operation::tString ||
-	 ntype == o2be_operation::tTypeCode ||
-	 mapping.is_pointer) && !mapping.is_arrayslice)
-      {
-	// These are declared as <type>_var variable 
-	if (ntype == o2be_operation::tString) {
-	  o2be_operation::produceSizeCalculation(s,field_type(),
-						 (AST_Decl*)&defined_in,
-						 "_0RL_s","_0RL_msgsize",
-						 "_0RL_result",ntype,mapping);
-	}
-	else {
-	  // use operator->() to get to the pointer
-	  o2be_operation::produceSizeCalculation(s,field_type(),
-						 (AST_Decl*)&defined_in,
-						 "_0RL_s","_0RL_msgsize",
-						 "(_0RL_result.operator->())",
-						 ntype,mapping);
-	}
-      }
-    else
-      {
-	o2be_operation::produceSizeCalculation(s,field_type(),
-					       (AST_Decl*)&defined_in,
-					       "_0RL_s","_0RL_msgsize",
-					       "_0RL_result",ntype,mapping);
-      }
-  }
-
-  IND(s); s << "_0RL_s.InitialiseReply(GIOP::NO_EXCEPTION,(CORBA::ULong)_0RL_msgsize);\n";
+  IND(s); s << "_giop_s.InitialiseReply(GIOP::NO_EXCEPTION);\n";
 
   // marshall results
   {
@@ -462,7 +412,7 @@ o2be_attribute::produce_server_rd_skel(std::fstream& s,o2be_interface &defined_i
       }
   }
 
-  IND(s); s << "_0RL_s.ReplyCompleted();\n";
+  IND(s); s << "_giop_s.ReplyCompleted();\n";
   IND(s); s << "return 1;\n";
   return;
 }
@@ -501,15 +451,13 @@ o2be_attribute::produce_server_wr_skel(std::fstream& s,o2be_interface &defined_i
 					 ntype,mapping);
   }
 
-  IND(s); s << "_0RL_s.RequestReceived();\n";
+  IND(s); s << "_giop_s.RequestReceived();\n";
 
   IND(s); s << uqname() << "(_value);\n";
 
-  IND(s); s << "size_t _0RL_msgsize = (size_t) GIOP_S::ReplyHeaderSize();\n";
+  IND(s); s << "_giop_s.InitialiseReply(GIOP::NO_EXCEPTION);\n";
 
-  IND(s); s << "_0RL_s.InitialiseReply(GIOP::NO_EXCEPTION,(CORBA::ULong)_0RL_msgsize);\n";
-
-  IND(s); s << "_0RL_s.ReplyCompleted();\n";
+  IND(s); s << "_giop_s.ReplyCompleted();\n";
   IND(s); s << "return 1;\n";
   return;
 }

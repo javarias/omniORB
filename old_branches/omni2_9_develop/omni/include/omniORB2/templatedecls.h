@@ -26,6 +26,10 @@
 // Description:
 //	*** PROPRIETORY INTERFACE ***
 
+/*
+  $Log$
+*/
+
 #ifndef __TEMPLATEDECLS_H__
 #define __TEMPLATEDECLS_H__
 
@@ -455,25 +459,11 @@ public:
 
   inline T_ptr operator->() const { return _ptr; }
 
-  inline size_t NP_alignedSize(size_t initialoffset) const {
-    return T_Helper::NP_alignedSize(_ptr,initialoffset);
-  }
-
-  inline void operator>>= (NetBufferedStream& s) const {
+  inline void operator>>= (cdrStream& s) const {
     T_Helper::marshalObjRef(_ptr,s);
   }
 
-  inline void operator<<= (NetBufferedStream& s) {
-    T_ptr _result = T_Helper::unmarshalObjRef(s);
-    T_Helper::release(_ptr);
-    _ptr = _result;
-  }
-
-  inline void operator>>= (MemBufferedStream& s) const {
-    T_Helper::marshalObjRef(_ptr,s);
-  }
-
-  inline void operator<<= (MemBufferedStream& s) {
+  inline void operator<<= (cdrStream& s) {
     T_ptr _result = T_Helper::unmarshalObjRef(s);
     T_Helper::release(_ptr);
     _ptr = _result;

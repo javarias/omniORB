@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4  1999/05/25 18:10:46  sll
+  Now CORBA::ORB::ObjectIdList and CORBA_InitialReference::ObjIdList
+  are different types.
+
   Revision 1.3  1999/03/11 16:25:51  djr
   Updated copyright notice
 
@@ -79,11 +83,8 @@ class omniInitialReferences {
     CORBA::Object_member ref;
 
     // The following marshalling functions are not implemented.
-    size_t NP_alignedSize(size_t initialoffset) const;
-    void operator>>= (NetBufferedStream &s) const;
-    void operator<<= (NetBufferedStream &s);
-    void operator>>= (MemBufferedStream &s) const;
-    void operator<<= (MemBufferedStream &s);
+    void operator>>= (cdrStream &s) const;
+    void operator<<= (cdrStream &s);
   };
 
   _CORBA_Unbounded_Sequence< serviceRecord > pd_serviceList;

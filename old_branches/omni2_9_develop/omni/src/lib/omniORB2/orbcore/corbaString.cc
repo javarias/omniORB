@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.14  1999/06/18 20:52:29  sll
+  Updated with new sequence string implementation.
+
   Revision 1.13  1999/04/21 11:17:43  djr
   Strings now defined outside CORBA scope, and typedefed. New sequence types.
 
@@ -120,7 +123,7 @@ CORBA::string_dup(const char* p)
 //////////////////////////////////////////////////////////////////////
 
 void
-_CORBA_String_member::operator >>= (NetBufferedStream& s) const
+_CORBA_String_member::operator >>= (cdrStream& s) const
 {
   if( _ptr ) {
     CORBA::ULong _len = strlen((char*)_ptr) + 1;
@@ -138,7 +141,7 @@ _CORBA_String_member::operator >>= (NetBufferedStream& s) const
 
 
 void
-_CORBA_String_member::operator <<= (NetBufferedStream& s)
+_CORBA_String_member::operator <<= (cdrStream& s)
 {
   if( _ptr ) {
     FREE_BYTES(_ptr);
@@ -148,6 +151,9 @@ _CORBA_String_member::operator <<= (NetBufferedStream& s)
   CORBA::ULong len;
   len <<= s;
   if( !len && omniORB::traceLevel > 1 )  _CORBA_null_string_ptr(1);
+
+  if (!s.checkInputOverrun(1,len))
+    throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
 
   CORBA::ULong nbytes = len ? len : 1;
   char* p = ALLOC_BYTES(nbytes);
@@ -170,91 +176,20 @@ _CORBA_String_member::operator <<= (NetBufferedStream& s)
 }
 
 
-void
-_CORBA_String_member::operator >>= (MemBufferedStream& s) const
-{
-  if( _ptr ) {
-    CORBA::ULong _len = strlen((char*)_ptr) + 1;
-    _len >>= s;
-    s.put_char_array((CORBA::Char*)_ptr, _len);
-  }
-  else {
-    if (omniORB::traceLevel > 1) {
-      _CORBA_null_string_ptr(0);
-    }
-    CORBA::ULong(1) >>= s;
-    CORBA::Char('\0') >>= s;
-  }
-}
-
-
-void
-_CORBA_String_member::operator <<= (MemBufferedStream& s)
-{
-  if( _ptr ) {
-    FREE_BYTES(_ptr);
-    _ptr = 0;
-  }
-
-  CORBA::ULong len;
-  len <<= s;
-  if( !len && omniORB::traceLevel > 1 )  _CORBA_null_string_ptr(1);
-
-  char* p = ALLOC_BYTES(len);
-  if( !p )  throw CORBA::NO_MEMORY(0, CORBA::COMPLETED_MAYBE);
-
-  s.get_char_array((CORBA::Char*)p, len);
-  if( p[len - 1] != '\0' ) {
-    FREE_BYTES(p);
-    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-  }
-
-  _ptr = p;
-}
-
-
-size_t
-_CORBA_String_member::NP_alignedSize(size_t initialoffset) const
-{
-  size_t alignedsize = omni::align_to(initialoffset,omni::ALIGN_4);
-  if (!_ptr) {
-    alignedsize += 4 + 1;
-  }
-  else {
-    alignedsize += 5 + strlen((char*)_ptr);
-  }
-  return alignedsize;
-}
-
 //////////////////////////////////////////////////////////////////////
 ////////////////// _CORBA_Unbounded_Sequence__String /////////////////
 //////////////////////////////////////////////////////////////////////
 
-size_t
-_CORBA_Sequence__String::NP_alignedSize(size_t size) const
+void
+_CORBA_Sequence__String::operator >>= (cdrStream& s) const
 {
-  size = omni::align_to(size, omni::ALIGN_4) + 4;
+  pd_len >>= s;
 
-  for( _CORBA_ULong i = 0; i < pd_len; i++ ) {
-    size = omni::align_to(size, omni::ALIGN_4);
-    if( pd_data[i] )  size += strlen(pd_data[i]) + 5;
-    else                  size += 5;
-  }
-
-  return size;
-}
-
-template<class buf_t>
-inline void marshal_ss(char** buf,
-		       _CORBA_ULong pd_len, buf_t& s)
-{
-  _CORBA_ULong(pd_len) >>= s;
-
-  for( _CORBA_ULong i = 0; i < pd_len; i++ ) {
-    char* p = buf[i];
+  for( CORBA::ULong i = 0; i < pd_len; i++ ) {
+    char* p = pd_data[i];
 
     if( p ) {
-      _CORBA_ULong len = strlen(p) + 1;
+      CORBA::ULong len = strlen(p) + 1;
       len >>= s;
       s.put_char_array((CORBA::Char*) p, len);
     }
@@ -266,35 +201,29 @@ inline void marshal_ss(char** buf,
   }
 }
 
-
 void
-_CORBA_Sequence__String::operator >>= (NetBufferedStream& s) const
+_CORBA_Sequence__String::operator <<= (cdrStream& s)
 {
-  marshal_ss(pd_data, pd_len, s);
-}
+  _CORBA_ULong slen;
+  slen <<= s;
 
+  if (!s.checkInputOverrun(1,slen) || (pd_bounded && slen > pd_max)) {
+    throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+  }
 
-void
-_CORBA_Sequence__String::operator >>= (MemBufferedStream& s) const
-{
-  marshal_ss(pd_data, pd_len, s);
-}
+  length(slen);
 
-
-template<class buf_t>
-inline void unmarshal_ss(char** buf,
-			 _CORBA_ULong slen, 
-			 _CORBA_Boolean rel,
-			 buf_t& s)
-{
   for( _CORBA_ULong i = 0; i < slen; i++ ) {
-    char*& p = (char*&) buf[i];
+    char*& p = (char*&) pd_data[i];
 
-    if( p && rel) { FREE_BYTES(p); p = 0; }
+    if( p && pd_rel) { FREE_BYTES(p); p = 0; }
 
     _CORBA_ULong len;
     len <<= s;
     if( !len && omniORB::traceLevel > 1 )  _CORBA_null_string_ptr(1);
+
+    if (!s.checkInputOverrun(1,len))
+      throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
 
     _CORBA_ULong nbytes = len ? len : 1;
     char* ps = ALLOC_BYTES(nbytes);
@@ -314,34 +243,6 @@ inline void unmarshal_ss(char** buf,
 
     p = ps;
   }
-}
-
-
-void
-_CORBA_Sequence__String::operator <<= (NetBufferedStream& s)
-{
-  _CORBA_ULong slen;
-  slen <<= s;
-  if (slen > s.RdMessageUnRead() || (pd_bounded && slen > pd_max)) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  length(slen);
-  unmarshal_ss(pd_data, slen, pd_rel, s);
-}
-
-
-void
-_CORBA_Sequence__String::operator <<= (MemBufferedStream& s)
-{
-  _CORBA_ULong slen;
-  slen <<= s;
-  if (s.unRead() < slen || (pd_bounded && slen > pd_max)) {
-    _CORBA_marshal_error();
-    // never reach here
-  }
-  length(slen);
-  unmarshal_ss(pd_data, slen, pd_rel, s);
 }
 
 //////////////////////////////////////////////////////////////////////
