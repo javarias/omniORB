@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.15  1998/08/19 15:55:12  sll
+  Added a separate pass to generate binary operators <<= and the like.
+
   Revision 1.14  1998/08/13 22:39:34  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -138,7 +141,13 @@ o2be_root::produce()
     stubfname[baselen] = '\0';
 
     produce_hdr(pd_hdr);
+    if (idl_global->err_count() > 0) {
+      throw o2be_fe_error("Error detected when the header file is generated");
+    }
     produce_skel(pd_skel);
+    if (idl_global->err_count() > 0) {
+      throw o2be_fe_error("Error detected when the skeleton file is generated");
+    }
     pd_hdr.close();
     pd_skel.close();
     return;
