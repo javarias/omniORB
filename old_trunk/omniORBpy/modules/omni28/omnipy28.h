@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.14  1999/11/25 11:21:37  dpg1
+// Proper support for server-side _is_a().
+//
 // Revision 1.13  1999/11/16 17:32:36  dpg1
 // Changes for AIX.
 //
@@ -507,6 +510,21 @@ protected:
 };
 
 
+////////////////////////////////////////////////////////////////////////////
+// InterpreterUnlocker releases the Python interpreter lock               //
+////////////////////////////////////////////////////////////////////////////
+
+class InterpreterUnlocker {
+public:
+  InterpreterUnlocker() {
+    tstate_ = PyEval_SaveThread();
+  }
+  ~InterpreterUnlocker() {
+    PyEval_RestoreThread(tstate_);
+  }
+private:
+  PyThreadState* tstate_;
+};
 
 
 _CORBA_MODULE_END

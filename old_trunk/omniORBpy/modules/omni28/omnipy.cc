@@ -33,6 +33,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.24  1999/11/25 11:49:32  dpg1
+// Minor version number bumped since server-side _is_a() required an
+// incompatible change.
+//
 // Revision 1.23  1999/11/16 17:32:36  dpg1
 // Changes for AIX.
 //
@@ -785,6 +789,7 @@ extern "C" {
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
     try {
+      omniPy::InterpreterUnlocker ul;
       CORBA::Boolean isa = cxxobjref->_is_a(repoId);
       return PyInt_FromLong(isa);
     }
@@ -806,6 +811,7 @@ extern "C" {
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
     try {
+      omniPy::InterpreterUnlocker ul;
       CORBA::Boolean nex = cxxobjref->_non_existent();
       return PyInt_FromLong(nex);
     }
@@ -830,6 +836,7 @@ extern "C" {
     cxxobjref2 = (CORBA::Object_ptr)omniPy::getTwin(pyobjref2, OBJREF_TWIN);
 
     try {
+      omniPy::InterpreterUnlocker ul;
       CORBA::Boolean ise = cxxobjref1->_is_equivalent(cxxobjref2);
       return PyInt_FromLong(ise);
     }
@@ -871,6 +878,7 @@ extern "C" {
 
     CORBA::Boolean isa;
     try {
+      omniPy::InterpreterUnlocker ul;
       isa = cxxsource->_is_a(repoId);
     }
     catch (const CORBA::SystemException& ex) {
