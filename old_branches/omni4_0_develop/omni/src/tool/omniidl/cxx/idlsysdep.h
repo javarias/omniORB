@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4.2.5  2002/02/01 11:22:06  dpg1
+// strcasecmp/stricmp redefinition on Windows.
+//
 // Revision 1.4.2.4  2002/01/15 16:38:14  dpg1
 // On the road to autoconf. Dependencies refactored, configure.ac
 // written. No makefiles yet.
@@ -60,7 +63,12 @@
 
 // As usual, Windows manages to be different...
 #ifdef __WIN32__
+// declspec is a define in windef.h under MINGW
+#ifdef __MINGW32__
+#  define DLL_EXPORT __attribute__((dllexport))
+#else
 #  define DLL_EXPORT _declspec(dllexport)
+#endif
 #else
 #  define DLL_EXPORT
 #  include <strings.h>

@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.24  2003/05/09 13:29:59  dgrisby
+ No inline friends in VC.NET 2003.
+
  Revision 1.2.2.23  2003/03/02 17:10:40  dgrisby
  AIX patches integrated in main tree.
 
@@ -240,6 +243,14 @@
 #    define _OMNIORB_NTDLL_IMPORT
 #  else
 #    define _OMNIORB_NTDLL_IMPORT  __declspec(dllimport)
+#  endif
+
+#elif defined(__MINGW32__)
+
+#  ifdef _WINSTATIC
+#    define _OMNIORB_NTDLL_IMPORT
+#  else
+#    define _OMNIORB_NTDLL_IMPORT  __attribute__((dllimport))
 #  endif
 
 #else
