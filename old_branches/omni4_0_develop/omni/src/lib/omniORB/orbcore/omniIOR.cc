@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/15 10:26:13  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.2.7  2001/06/11 17:53:22  sll
    The omniIOR ctor used by genior and corbaloc now has the option to
    select whether to call interceptors and what set of interceptors to call.
@@ -266,21 +269,10 @@ omniIOR::newIIOPtaggedComponent(IOP::MultipleComponentProfile& p)
 {
   CORBA::ULong len = p.length() + 1;
 
-  if (p.maximum() < len) {
-    // Instead of letting the sequence to increase its buffer space,
-    // we do it ourselves here to avoid frequent reallocation.
-    CORBA::ULong newmax = p.maximum() + 8;
-    IOP::TaggedComponent* newbuf = IOP::MultipleComponentProfile::allocbuf(newmax);
-    IOP::TaggedComponent* oldbuf = p.get_buffer();
-    for (CORBA::ULong i = 0; i < p.length(); i++) {
-      newbuf[i].tag = oldbuf[i].tag;
-      newbuf[i].component_data.replace(oldbuf[i].component_data.maximum(),
-				       oldbuf[i].component_data.length(),
-				       oldbuf[i].component_data.get_buffer(oldbuf[i].component_data.release()),
-				       1);
-    }
-    p.replace(newmax,len - 1,newbuf,1);
-  }
+  // Increase the buffer length in steps, to avoid frequent reallocation.
+  if (p.maximum() < len)
+    p.length(p.maximum() + 8);
+
   p.length(len);
 
   return p[len-1];
