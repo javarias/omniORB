@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.1.2.11  2002/01/16 11:31:59  dpg1
   Race condition in use of registerNilCorbaObject/registerTrackedObject.
   (Reported by Teemu Torma).
@@ -400,10 +403,10 @@ BiDirServerRope::acquireClient(const omniIOR* ior,
 
   OMNIORB_ASSERT(s->state() == giopStrand::ACTIVE);
 
-  // We do not check what GIOP version(s) the strand has been used for previously.
-  // If ever we have 2 calls using 2 different versions (and both are 1.2 or 
-  // above), we allow this to happen. Contrast this with the algorithm in
-  // giopRope::acquireClient.
+  // We do not check what GIOP version(s) the strand has been used for
+  // previously.  If ever we have 2 calls using 2 different versions
+  // (and both are 1.2 or above), we allow this to happen. Contrast
+  // this with the algorithm in giopRope::acquireClient.
 
   GIOP_C* g;
   if (!giopStreamList::is_empty(s->clients)) {

@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.20  2002/03/18 15:13:08  dpg1
+  Fix bug with old-style ORBInitRef in config file; look for
+  -ORBtraceLevel arg before anything else; update Windows registry
+  key. Correct error message.
+
   Revision 1.1.4.19  2001/09/19 17:26:49  dpg1
   Full clean-up after orb->destroy().
 
@@ -596,7 +601,15 @@ giopRope::selectRope(const giopAddressList& addrlist,
     gr = new giopRope(addrlist,prefer_list);
   }
   else {
-    gr = new BiDirClientRope(addrlist,prefer_list);
+    if (omniObjAdapter::isInitialised()) {
+      gr = new BiDirClientRope(addrlist,prefer_list);
+    }
+    else {
+      omniORB::logs(10, "Client policies specify a bidirectional connection, "
+		    "but no object adapters have been initialised. Using a "
+		    "non-bidirectional connection.");
+      gr = new giopRope(addrlist,prefer_list);
+    }
   }
   gr->RopeLink::insert(giopRope::ropes);
   gr->realIncrRefCount();
@@ -628,7 +641,7 @@ giopRope::filterAndSortAddressList(const giopAddressList& addrlist,
 				   CORBA::Boolean& use_bidir)
 {
   // We consult the clientTransportRules to decide which address is more
-  // preferable than others. The rules may forbide the use of some of the
+  // preferable than others. The rules may forbid the use of some of the
   // addresses and these will be filtered out. We then record the order
   // of the remaining addresses in order_list.
   // If any of the non-exlusion clientTransportRules have the "bidir"
