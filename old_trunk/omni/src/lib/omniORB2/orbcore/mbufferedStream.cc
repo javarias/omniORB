@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5  1998/01/27 15:34:47  ewc
+  Added support for TypeCode and type any
+
 // Revision 1.4  1997/05/06  15:24:09  sll
 // Public release.
 //
@@ -281,5 +284,7 @@ MemBufferedStream::skip(CORBA::ULong size,omni::alignment_t align)
 void *
 MemBufferedStream::overrun_error() {
   throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+#ifdef NEED_DUMMY_RETURN
   return 0;
+#endif
 }
