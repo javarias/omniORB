@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.3  2005/01/24 17:28:58  dgrisby
+// Unbelievably unlikely race condition in thread cache / Python worker
+// thread creation. Of course it happened anyway.
+//
 // Revision 1.1.2.2  2003/07/29 14:52:10  dgrisby
 // Reuse Python thread state if possible. (Python 2.3.)
 //
@@ -108,6 +112,12 @@ public:
       if (cn) {
 	cn->used = 1;
 	cn->active++;
+#if PY_VERSION_HEX >= 0x02030000
+	if (cn->reused_state) {
+	  cn->threadState = PyGILState_GetThisThreadState();
+	  OMNIORB_ASSERT(cn->threadState);
+	}
+#endif
 	return cn;
       }
     }
