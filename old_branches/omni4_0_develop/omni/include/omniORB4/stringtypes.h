@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.14  2003/11/06 10:17:35  dgrisby
+ Remove calls to strlen in operator[]. Why were they ever considered a
+ good idea?
+
  Revision 1.2.2.13  2003/05/22 13:41:40  dgrisby
  HPUX patches.
 
@@ -644,9 +648,9 @@ public:
   }
 
 #if SIZEOF_PTR == SIZEOF_LONG
-  typedef long ptr_arith_t;
+  typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
-  typedef int ptr_arith_t;
+  typedef unsigned int ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif

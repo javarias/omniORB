@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.8  2003/01/16 12:47:08  dgrisby
+ Const cast macro. Thanks Matej Kenda.
+
  Revision 1.1.2.7  2003/01/14 11:48:15  dgrisby
  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -1898,9 +1901,9 @@ public:
   }
 
 #if SIZEOF_PTR == SIZEOF_LONG
-  typedef long ptr_arith_t;
+  typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
-  typedef int ptr_arith_t;
+  typedef unsigned int ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif
