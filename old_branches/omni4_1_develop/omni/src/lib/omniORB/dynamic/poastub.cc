@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:47  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2001/08/29 13:41:02  dpg1
   jnw's fix for compilers with variable sizeof(enum)
 
@@ -45,7 +48,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-static const char* _0RL_library_version = omniORB_4_0;
+static const char* _0RL_library_version = omniORB_4_1;
 
 static const char* _0RL_enumMember_PortableServer_mThreadPolicyValue[] = { "ORB_CTRL_MODEL", "SINGLE_THREAD_MODEL", "MAIN_THREAD_MODEL" };
 static CORBA::TypeCode_ptr _0RL_tc_PortableServer_mThreadPolicyValue = CORBA::TypeCode::PR_enum_tc("IDL:PortableServer/ThreadPolicyValue" PS_VERSION, "ThreadPolicyValue", _0RL_enumMember_PortableServer_mThreadPolicyValue, 3);

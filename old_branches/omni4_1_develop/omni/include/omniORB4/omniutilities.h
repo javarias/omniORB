@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:04:06  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.2  2002/11/21 14:24:59  dgrisby
   More unique guard name (thanks Daniel Bell).
 
@@ -52,12 +55,12 @@ inline OutputIterator omnicopy(InputIterator first, InputIterator last,
 
 
 //: A vector template.
-//  This is similar to the STL vector type, but not as good!
-// In particular objects of type T are constructed when they
-// are allocated - not when they are first inserted. However
-// this makes little difference for primitive types (eg.
-// poiters). The interface mimics that of STL vector so that
-// transition to STL will be simple.
+//  This is similar to the STL vector type, but not as good!  In
+// particular objects of type T are constructed when they are
+// allocated - not when they are first inserted. However this makes
+// little difference for primitive types (eg.  pointers). The
+// interface mimics that of STL vector so that transition to STL will
+// be simple.
 
 template <class T>
 class omnivector {

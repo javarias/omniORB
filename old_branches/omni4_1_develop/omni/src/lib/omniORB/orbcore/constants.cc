@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.2  2003/05/20 16:53:16  dgrisby
+  Valuetype marshalling support.
+
   Revision 1.17.2.1  2003/03/23 21:02:24  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -111,7 +114,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 // See the description of this variable in omniInternal.h
-const char* omniORB_4_0 = "omniORB version 4.0.x";
+const char* omniORB_4_1 = "omniORB version 4.1.x";
 
 const CORBA::ULong omniORB_TAG_ORB_TYPE = 0x41545400; // ATT\x00
 

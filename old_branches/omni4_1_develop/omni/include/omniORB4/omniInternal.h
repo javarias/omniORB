@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.1  2003/03/23 21:04:14  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.15  2003/02/17 02:03:07  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -203,6 +206,7 @@
 #include <omniORB4/CORBA_basetypes.h>
 #include <omniORB4/seqTemplatedecls.h>
 #include <omniORB4/templatedecls.h>
+#include <omniORB4/valueTemplatedecls.h>
 #include <omniORB4/stringtypes.h>
 #include <omniORB4/wstringtypes.h>
 #ifndef __IOP_hh_EXTERNAL_GUARD__
@@ -237,7 +241,7 @@ class omniObjAdapter;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern _core_attr const char* omniORB_4_0;
+extern _core_attr const char* omniORB_4_1;
 extern _core_attr const _CORBA_ULong omniORB_TAG_ORB_TYPE; // ATT\x00
 
 class Strand;

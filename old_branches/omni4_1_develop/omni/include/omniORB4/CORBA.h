@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.1  2003/03/23 21:04:26  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.2.2.22  2002/01/09 11:35:20  dpg1
  Remove separate omniAsyncInvoker library to save library overhead.
 
@@ -311,6 +314,8 @@
 
 // Forward declarations.
 class omniOrbBoaServant;
+class _omni_ValueFactoryManager;
+struct _omni_ValueIds;
 
 _CORBA_MODULE CORBA
 
@@ -380,6 +385,8 @@ _CORBA_MODULE_BEG
 # include "CORBA_TypeCode.h"
 # include "CORBA_Request.h"
 # include "CORBA_ServerRequest.h"
+# include "CORBA_ValueBase.h"
+# include "CORBA_ValueBase_vartypes.h"
 # include "CORBA_UnknownUserException.h"
 # include "CORBA_Policy.h"
 # include "CORBA_Current.h"

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:51  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.3  2001/10/17 16:44:02  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -68,3 +71,4 @@ const CORBA::ULong CORBA::NVList::PR_magic          = 0x4E564C54U; // NVLT
 const CORBA::ULong CORBA::Request::PR_magic         = 0x52455154U; // REQT
 const CORBA::ULong CORBA::TypeCode::PR_magic        = 0x54594F4CU; // TCOL
 const CORBA::ULong DynamicAny::DynAny::PR_magic     = 0x44594E54U; // DYNT
+const CORBA::ULong CORBA::ValueBase::_PR_magic      = 0x56414C42U; // VALB
