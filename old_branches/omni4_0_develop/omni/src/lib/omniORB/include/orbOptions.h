@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/08/21 11:02:12  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.1.2.3  2001/08/20 10:46:48  sll
   New orb configuration parsing now works with NT registry.
 
@@ -194,7 +198,7 @@ class orbOptions {
   ////////////////////////////////////////////////////////////////////////
   void importFromFile(const char* filename) throw (Unknown,BadParam);
 
-#if defined(NTArchitecture)
+#if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
   ////////////////////////////////////////////////////////////////////////
   void importFromRegistry() throw (Unknown,BadParam);
 #endif
