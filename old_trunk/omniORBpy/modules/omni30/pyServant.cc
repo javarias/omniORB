@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.17  2000/03/24 17:10:51  dpg1
+// Work-around for conflict between VC++ and xlC bugs.
+//
 // Revision 1.16  2000/03/24 16:48:57  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -825,7 +828,10 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
-  pyos->_remove_ref();
+  {
+    omniPy::InterpreterUnlocker _u;
+    pyos->_remove_ref();
+  }
 
   if (result)
     Py_DECREF(result);
@@ -997,7 +1003,10 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
-  pyos->_remove_ref();
+  {
+    omniPy::InterpreterUnlocker _u;
+    pyos->_remove_ref();
+  }
 
   if (result)
     Py_DECREF(result);

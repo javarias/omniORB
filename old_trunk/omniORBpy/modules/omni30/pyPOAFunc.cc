@@ -29,6 +29,11 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  2000/03/24 16:48:57  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.3  2000/03/07 16:52:16  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -465,16 +470,20 @@ extern "C" {
 
     try {
       PortableServer::Servant servant;
+      omniPy::Py_omniServant* pyos;
+      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->get_servant();
-      }
-      omniPy::Py_omniServant* pyos =
-	(omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos =
+	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
 
+	if (pyos) {
+	  pyservant = pyos->pyServant();
+	  pyos->_remove_ref();
+	}
+      }
       if (pyos) {
-	PyObject* pyservant = pyos->pyServant();
-	pyos->_remove_ref();
 	return pyservant;
       }
       else {
@@ -511,8 +520,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	poa->set_servant(pyos);
+	pyos->_remove_ref();
       }
-      pyos->_remove_ref();
       Py_INCREF(Py_None);
       return Py_None;
     }
@@ -541,8 +550,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	oid = poa->activate_object(pyos);
+	pyos->_remove_ref();
       }
-      pyos->_remove_ref();
       PyObject* pyoid = PyString_FromStringAndSize((const char*)oid->NP_data(),
 						   oid->length());
       return pyoid;
@@ -580,8 +589,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	poa->activate_object_with_id(oid, pyos);
+	pyos->_remove_ref();
       }
-      pyos->_remove_ref();
       Py_INCREF(Py_None);
       return Py_None;
     }
@@ -706,8 +715,8 @@ extern "C" {
       {
 	omniPy::InterpreterUnlocker _u;
 	oid = poa->servant_to_id(pyos);
+	pyos->_remove_ref();
       }
-      pyos->_remove_ref();
       PyObject* pyoid = PyString_FromStringAndSize((const char*)oid->NP_data(),
 						   oid->length());
       return pyoid;
@@ -746,8 +755,10 @@ extern "C" {
 
       PyObject* result =
 	omniPy::createPyCorbaObjRef(pyos->_mostDerivedRepoId(), lobjref);
-
-      pyos->_remove_ref();
+      {
+	omniPy::InterpreterUnlocker _u;
+	pyos->_remove_ref();
+      }
       return result;
     }
     catch (PortableServer::POA::ServantNotActive& ex) {
@@ -779,16 +790,20 @@ extern "C" {
 
     try {
       PortableServer::Servant servant;
+      omniPy::Py_omniServant* pyos;
+      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->reference_to_servant(objref);
-      }
-      omniPy::Py_omniServant* pyos =
-	(omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos =
+	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
 
+	if (pyos) {
+	  PyObject* pyservant = pyos->pyServant();
+	  pyos->_remove_ref();
+	}
+      }
       if (pyos) {
-	PyObject* pyservant = pyos->pyServant();
-	pyos->_remove_ref();
 	return pyservant;
       }
       else {
@@ -863,16 +878,20 @@ extern "C" {
     try {
       PortableServer::ObjectId oid(oidlen, oidlen, (CORBA::Octet*)oidstr, 0);
       PortableServer::Servant servant;
+      omniPy::Py_omniServant* pyos;
+      PyObject*               pyservant;
       {
 	omniPy::InterpreterUnlocker _u;
 	servant = poa->id_to_servant(oid);
-      }
-      omniPy::Py_omniServant* pyos =
-	(omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
+	pyos =
+	  (omniPy::Py_omniServant*)servant->_ptrToInterface("Py_omniServant");
 
+	if (pyos) {
+	  pyservant = pyos->pyServant();
+	  pyos->_remove_ref();
+	}
+      }
       if (pyos) {
-	PyObject* pyservant = pyos->pyServant();
-	pyos->_remove_ref();
 	return pyservant;
       }
       else {
@@ -957,7 +976,10 @@ extern "C" {
 
     RAISE_PY_BAD_PARAM_IF(!pyos);
     PyObject* result = pyos->py_this();
-    pyos->_remove_ref();
+    {
+      omniPy::InterpreterUnlocker _u;
+      pyos->_remove_ref();
+    }
     return result;
   }
 
