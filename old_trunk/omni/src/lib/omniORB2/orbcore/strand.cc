@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.8  1999/03/11 16:25:56  djr
+  Updated copyright notice
+
   Revision 1.7  1999/01/25 18:00:53  sll
   Fixed a bug in Sync::WrTimedLock and Sync::WrUnlock(Strand* s).
   Previously, WrTimedLock does not increment the reference count of the
@@ -138,6 +141,18 @@ Strand::is_idle(CORBA::Boolean held_rope_mutex)
   if (!held_rope_mutex)
     pd_rope->pd_lock.unlock();
   return idle;
+}
+
+CORBA::Boolean
+Strand::is_unused(CORBA::Boolean held_rope_mutex)
+{
+  CORBA::Boolean unused;
+  if (!held_rope_mutex)
+    pd_rope->pd_lock.lock();
+  unused = ((pd_head == 0)? 1: 0);
+  if (!held_rope_mutex)
+    pd_rope->pd_lock.unlock();
+  return unused;
 }
 
 Strand::
@@ -313,47 +328,6 @@ Sync::WrLock(CORBA::Boolean held_rope_mutex,
 
 }
 
-CORBA::Boolean
-Strand::
-Sync::WrTimedLock(Strand* s,
-		  CORBA::Boolean& heartbeat,
-		  unsigned long secs,
-		  unsigned long nanosecs)
-{
-  CORBA::Boolean notimeout;
-  // Note: the caller must have got the mutex s->pd_rope->pd_lock 
-
-  s->incrRefCount(1);
-
-  while (s->pd_wr_nwaiting < 0) {
-    s->pd_wr_nwaiting--;
-    notimeout = s->pd_wrcond.timedwait(secs,nanosecs);
-    if (s->pd_wr_nwaiting >= 0)
-      s->pd_wr_nwaiting--;
-    else
-      s->pd_wr_nwaiting++;
-    if (!notimeout && s->pd_wr_nwaiting < 0) {
-      // give up;
-
-      s->decrRefCount(1);
-
-      return 0;
-    }
-  }
-  s->pd_wr_nwaiting = -s->pd_wr_nwaiting - 1;
-  
-  CORBA::Boolean hb = s->pd_heartbeat;
-  s->pd_heartbeat = heartbeat;
-  heartbeat = hb;
-  return 1;
-
-  // XXX The caller must release the write lock using 
-  //     Strand::Sync::WrUnlock(Strand* s) *ONLY*!!!
-  //     Otherwise the strand reference count would be messed up.
-  //     Fix me in future.
-}
-
-
 void
 Strand::
 Sync::WrUnlock(CORBA::Boolean held_rope_mutex)
@@ -372,29 +346,19 @@ Sync::WrUnlock(CORBA::Boolean held_rope_mutex)
   return;
 }
 
-void
+
+CORBA::Boolean
 Strand::
-Sync::WrUnlock(Strand* s)
+Sync::WrTestLock(Strand* s,CORBA::Boolean& heartbeat)
 {
-  // XXX The caller must have acquired the write lock previously
-  //     with Strand::Sync::WrTimedLock. Otherwise, the strand
-  //     reference count would be messed up.
-  //     Fix me in future.
+  if (s->pd_wr_nwaiting < 0)
+    return 0;
 
-  // Note: the caller must have got the mutex s->pd_rope->pd_lock
-  assert(s->pd_wr_nwaiting < 0);
-  s->pd_wr_nwaiting = -s->pd_wr_nwaiting - 1;
-  if (s->pd_wr_nwaiting > 0)
-    s->pd_wrcond.signal();
-
-  s->decrRefCount(1);
-  // The strand may be idle and is dying, it should be deleted but
-  // it is just to dangerous to do it here. Let the strand iterator
-  // clean it up later.
-
-  return;
+  CORBA::Boolean hb = s->pd_heartbeat;
+  s->pd_heartbeat = heartbeat;
+  heartbeat = hb;
+  return 1;
 }
-
 
 void
 Strand::
@@ -461,12 +425,6 @@ Rope::CutStrands(CORBA::Boolean held_rope_mutex)
   while ((p = next())) {
     p->shutdown();
     omni_thread::yield();
-    if (p->is_idle(1)) {
-      if (p->pd_heapAllocated)
-	delete p;
-      else
-	p->~Strand();
-    }
   }
   return;
 }
@@ -481,7 +439,7 @@ Rope::getStrand(CORBA::Boolean& secondHand)
     while ((p = next())) {
       if (!p->_strandIsDying()) {
 	n++;
-	if (p->is_idle(1)) {
+	if (p->is_unused(1)) {
 	  secondHand = 1;
 	  break;
 	}
@@ -568,15 +526,20 @@ Strand_iterator::Strand_iterator(const Rope *r,
 {
   if (!held_rope_mutex)
     ((Rope *)r)->pd_lock.lock();
-  pd_s = r->pd_head;
   pd_rope = r;
   pd_leave_mutex = held_rope_mutex;
+  pd_initialised = 0;
+  pd_s = 0;
   return;
 }
 
 
 Strand_iterator::~Strand_iterator()
 {
+  if (pd_s) {
+    pd_s->decrRefCount(1);
+    pd_s = 0;                // Be paranoid
+  }
   if (!pd_leave_mutex)
     ((Rope *)pd_rope)->pd_lock.unlock();
   return;
@@ -585,24 +548,27 @@ Strand_iterator::~Strand_iterator()
 Strand *
 Strand_iterator::operator() ()
 {
-  Strand *p;
-  while (1) {
-    p = pd_s;
-    if (p) {
-      pd_s = pd_s->pd_next;
-      if (p->is_idle(1) && p->_strandIsDying()) {
-	if (p->pd_heapAllocated)
-	  delete p;
-	else
-	  p->~Strand();
-	continue;
-      }
-    }
-    break;
+  if (pd_s) {
+    pd_s->decrRefCount(1);
+    pd_s = pd_s->pd_next;
   }
-  return p;
+  else if (!pd_initialised) {
+    pd_s = pd_rope->pd_head;
+    pd_initialised = 1;
+  }
+  while (pd_s && pd_s->is_idle(1) && pd_s->_strandIsDying()) {
+    Strand *p=pd_s;
+    pd_s = pd_s->pd_next;
+    if (p->pd_heapAllocated)
+      delete p;
+    else
+      p->~Strand();
+  }
+  if (pd_s) {
+    pd_s->incrRefCount(1);
+  }
+  return pd_s;
 }
-
 
 Rope_iterator::Rope_iterator(const Anchor *a)
 {
