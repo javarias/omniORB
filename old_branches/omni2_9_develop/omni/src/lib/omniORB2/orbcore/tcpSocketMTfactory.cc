@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.22.4.3  1999/10/02 18:21:31  sll
+  Added support to decode optional tagged components in the IIOP profile.
+  Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+  remote objects inside a firewall.
+  Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
   Revision 1.22.4.2  1999/09/25 17:00:23  sll
   Merged changes from omni2_8_develop branch.
 
@@ -230,8 +236,8 @@ extern "C" int gethostname(char *name, int namelen);
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("omniORB: ");\
-	log << "tcpSocketMTfactory " ## prefix ## ": " ## message ## "\n";\
+     omniORB::logger log;\
+	log << " tcpSocketMTfactory " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 
@@ -855,7 +861,18 @@ tcpSocketStrand::~tcpSocketStrand()
 static omni_mutex dumplock;
 static void dumpbuf(unsigned char* buf, size_t sz)
 {
+  const size_t dumplimit = 128;
   omni_mutex_lock sync(dumplock);
+
+  if (!omniORB::trace(40) && sz > dumplimit) {
+    fprintf(stderr,"%d bytes out of %d\n",
+	    dumplimit, sz);
+    sz = dumplimit;
+  }
+  else {
+    fprintf(stderr,"%d bytes\n", sz);
+  }
+
   // Dumping buffer
   unsigned int i, k, j = 0;
   for (i=0; i < ((sz < 16) ? sz : 16); i+=2, j+=2)
@@ -881,7 +898,7 @@ static void dumpbuf(unsigned char* buf, size_t sz)
 size_t
 tcpSocketStrand::ll_recv(void* buf, size_t sz)
 {
-  assert (sz < tcpSocketStrand::buffer_size);
+  assert (sz <= tcpSocketStrand::buffer_size);
 
   if (pd_delay_connect) {
     // We have not connect to the remote host yet. Do the connect now.
