@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/11/26 14:50:43  dgrisby
+  Implement missing interceptors.
+
   Revision 1.1.2.7  2002/09/10 23:17:10  dgrisby
   Thread interceptors.
 
@@ -231,9 +234,9 @@ public:
     class info_T {
     public:
       GIOP_S&                  giop_s;
-      CORBA::Exception*        exception;
+      const CORBA::Exception*  exception;
 
-      info_T(GIOP_S& s, CORBA::Exception* e) :
+      info_T(GIOP_S& s, const CORBA::Exception* e) :
 	giop_s(s), exception(e) {}
     private:
       info_T();

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.23  2002/11/26 14:51:49  dgrisby
+  Implement missing interceptors.
+
   Revision 1.1.4.22  2002/07/04 15:14:40  dgrisby
   Correct usage of MessageErrors, fix log messages.
 
@@ -640,13 +643,6 @@ GIOP_S::SendException(CORBA::Exception* ex) {
   OMNIORB_ASSERT(pd_state == WaitingForReply);
 
   if (!response_expected()) throw terminateProcessing();
-
-  pd_service_contexts.length(0);
-
-  if (omniInterceptorP::serverSendReply) {
-    omniInterceptors::serverSendException_T::info_T info(*this, ex);
-    omniInterceptorP::visit(info);
-  }
 
   int idsize;
   const char* repoid = ex->_NP_repoId(&idsize);

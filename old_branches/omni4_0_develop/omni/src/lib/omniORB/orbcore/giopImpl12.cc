@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2002/11/26 14:51:52  dgrisby
+  Implement missing interceptors.
+
   Revision 1.1.4.16  2002/07/04 15:14:41  dgrisby
   Correct usage of MessageErrors, fix log messages.
 
@@ -1536,23 +1539,32 @@ giopImpl12::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
 
   hdr[7] = (char) GIOP::Reply;
 
-  if (giop_s.service_contexts().length() > 0) {
+  giop_s.service_contexts().length(0);
 
-    // Compute and initialise the message size field. Only necessary
-    // if there are service contexts, since we know a message without
-    // service contexts will fit in a single buffer.
+  if (omniInterceptorP::serverSendReply) {
+    omniInterceptors::serverSendException_T::info_T info(giop_s, &ex);
+    omniInterceptorP::visit(info);
 
-    cdrCountingStream cs(g->TCS_C(),g->TCS_W(),12);
-    operator>>= ((CORBA::ULong)0,cs);
-    operator>>= ((CORBA::ULong)0,cs);
-    giop_s.service_contexts() >>= cs;
-    CORBA::ULong(repoid_size) >>= cs;
-    cs.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
-    ex.minor() >>= cs;
-    operator>>= ((CORBA::ULong)0,cs);
+    if (giop_s.service_contexts().length() > 0) {
 
-    outputSetFragmentSize(g,cs.total()-12);
-    *((CORBA::ULong*)(hdr + 8)) = cs.total() - 12;
+      // Compute and initialise the message size field. Only necessary
+      // if there are service contexts, since we know a message without
+      // service contexts will fit in a single buffer.
+
+      cdrCountingStream cs(g->TCS_C(),g->TCS_W(),12);
+      operator>>= ((CORBA::ULong)0,cs);
+      operator>>= ((CORBA::ULong)0,cs);
+      giop_s.service_contexts() >>= cs;
+      cs.alignOutput(omni::ALIGN_8);
+
+      CORBA::ULong(repoid_size) >>= cs;
+      cs.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
+      ex.minor() >>= cs;
+      operator>>= ((CORBA::ULong)0,cs);
+
+      outputSetFragmentSize(g,cs.total()-12);
+      *((CORBA::ULong*)(hdr + 8)) = cs.total() - 12;
+    }
   }
 
   // request id
@@ -1564,6 +1576,9 @@ giopImpl12::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
 
   // service contexts
   giop_s.service_contexts() >>= s;
+
+  // End of reply header
+  s.alignOutput(omni::ALIGN_8);
 
   // RepoId
   CORBA::ULong(repoid_size) >>= s;
@@ -1595,6 +1610,13 @@ giopImpl12::sendUserException(giopStream* g,const CORBA::UserException& ex) {
                      g->pd_currentOutputBuffer->start;
 
   hdr[7] = (char)GIOP::Reply;
+
+  giop_s.service_contexts().length(0);
+
+  if (omniInterceptorP::serverSendReply) {
+    omniInterceptors::serverSendException_T::info_T info(giop_s, &ex);
+    omniInterceptorP::visit(info);
+  }
 
   // user exception value
 
