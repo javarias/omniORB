@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.2  1999/09/22 12:10:01  sll
+  Merged port to SCO Unixware 7.
+
   Revision 1.22.2.1  1999/09/21 20:37:18  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -158,6 +161,7 @@
 #if defined (__uw7__)
 #ifdef shutdown
 #undef shutdown
+#endif
 #endif
 
 #include <netinet/in.h>
