@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.20  1999/08/18 15:10:40  dpg1
+  Now _really_ works correctly if the application defined loader returns
+  a nil object reference.
+
   Revision 1.19  1999/08/17 14:49:20  sll
   Fixed bug introduced by the previous change. Now works correctly if the
   application defined loader returns a nil object reference.
@@ -87,6 +91,7 @@
 #pragma hdrstop
 #endif
 
+#include <scavenger.h>
 #include <ropeFactory.h>
 #include <objectManager.h>
 #include <bootstrap_i.h>
@@ -329,6 +334,8 @@ GIOP_S::dispatcher(Strand *s)
   gs.get_char_array((CORBA::Char *)hdr, sizeof(MessageHeader::HeaderType),
 		    omni::ALIGN_1, 1);
 
+  gs.clicksSet(StrandScavenger::serverCallTimeLimit());
+
   switch (hdr[7])
     {
     case GIOP::Request:
@@ -427,6 +434,9 @@ GIOP_S::dispatcher(Strand *s)
 	throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);
       }
     }
+
+  gs.clicksSet(StrandScavenger::inIdleTimeLimit());
+
   return;
 }
 
