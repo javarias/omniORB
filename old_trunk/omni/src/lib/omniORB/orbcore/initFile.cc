@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.15  1997/12/12 18:42:50  sll
+  New configuration option GATEKEEPER_ALLOWFILE and GATEKEEPER_DENYFILE.
+
   Revision 1.14  1997/12/09 18:21:46  sll
   Fixed memory leaks.
 
@@ -238,7 +241,7 @@ void initFile::initialize()
 		 << " found in configuration." << endl;
 #else
 	    kprintf("Configuration error:  ");
-	    kprintf("Unknown field (%s) found in configuration file.\n",entryname);
+	    kprintf("Unknown field (%s) found in configuration file.\n",(const char*)entryname);
 #endif
 	  }
 	 throw CORBA::INITIALIZE(0,CORBA::COMPLETED_NO);
