@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.18  2002/11/26 16:54:35  dgrisby
+  Fix exception interception.
+
   Revision 1.1.4.17  2002/11/26 14:51:52  dgrisby
   Implement missing interceptors.
 
@@ -305,6 +308,11 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     case GIOP::Request:
     case GIOP::LocateRequest:
       {
+	if (g->pd_strand->isClient() && !g->pd_strand->biDir) {
+	  omniTransportLock->unlock();
+	  inputTerminalProtocolError(g);
+	  // never reach here
+	}
 	// Make sure this request id has not been seen before
 	GIOP_S* unused = 0;
 	giopStreamList* gp = g->pd_strand->servers.next;
