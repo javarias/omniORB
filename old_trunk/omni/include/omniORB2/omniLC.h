@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+ * Revision 1.4  1998/04/07  20:00:18  sll
+ * Added test for CPP macro USE_stub_in_nt_dll.
+ *
    Revision 1.3  1997/12/18 17:37:33  sll
    Added virtual dtor for _lc_sk.
 
@@ -157,7 +160,13 @@ public:
 
   protected:
     void _set_linfo(omniLifeCycleInfo_ptr li) {
-      _linfo = omniLifeCycleInfo::_duplicate(li);
+      if (CORBA::is_nil(_linfo)) {
+	_linfo = omniLifeCycleInfo::_duplicate(li);
+      }
+      else {
+	// _set_linfo called after a call to _this() or called twice
+	assert(0);
+      }
     };
     omniLifeCycleInfo_ptr _get_linfo() {
       return _linfo;
@@ -167,6 +176,9 @@ public:
     virtual void _move(CORBA::Object_ptr to) = 0;
     virtual void _remove() = 0;
 
+    _lc_sk() {
+      _linfo = omniLifeCycleInfo::_nil();
+    }
     virtual ~_lc_sk() {}
   };
 
