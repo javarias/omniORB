@@ -28,10 +28,13 @@
 //	*** PROPRIETARY INTERFACE ***
 //
 
-#include <iostream.h>
-
 // $Id$
 // $Log$
+// Revision 1.1.2.1  2000/04/27 10:37:12  dpg1
+// Interoperable Naming Service
+//
+// All URI related function definitions.
+//
 
 #ifndef _omniURI_h_
 #define _omniURI_h_

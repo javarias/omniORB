@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/08/30 10:14:39  dpg1
+  BOA constructor with object key failed to set the key in the servant.
+
   Revision 1.1.2.2  2000/03/03 14:29:16  djr
   Improvement to BOA skeletons (less generated code).
 
@@ -38,8 +41,6 @@
 
 #ifndef __OMNIORB_BOA_H__
 #define __OMNIORB_BOA_H__
-
-#include <iostream.h>
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// omniOrbBoaServant /////////////////////////

@@ -27,10 +27,11 @@
 //	*** PROPRIETARY INTERFACE ***
 //	
 
-#include <iostream.h>
-
 /*
   $Log$
+  Revision 1.1.2.5  2000/06/30 14:12:07  dpg1
+  Minor fixes for FreeBSD.
+
   Revision 1.1.2.4  2000/06/27 16:15:11  sll
   New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
   _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
