@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.8  2002/02/25 15:33:50  dpg1
+// Expose omniORB logger to Python.
+//
 // Revision 1.1.2.7  2001/09/24 10:48:28  dpg1
 // Meaningful minor codes.
 //
@@ -374,6 +377,31 @@ extern "C" {
     return 0;
   }
 
+  static char traceInvocations_doc [] =
+  "traceInvocations(int) -> None\n"
+  "traceInvocations()    -> int\n"
+  "\n"
+  "Set or get the omniORB invocaton tracing flag.\n";
+
+  static PyObject* pyomni_traceInvocations(PyObject* self, PyObject* args)
+  {
+    if (PyTuple_GET_SIZE(args) == 0) {
+      return PyInt_FromLong(omniORB::traceInvocations);
+    }
+    else if (PyTuple_GET_SIZE(args) == 1) {
+      PyObject* pytl = PyTuple_GET_ITEM(args, 0);
+
+      if (PyInt_Check(pytl)) {
+	omniORB::traceInvocations = PyInt_AS_LONG(pytl);
+	Py_INCREF(Py_None);
+	return Py_None;
+      }
+    }
+    PyErr_SetString(PyExc_TypeError,
+		    (char*)"Operation requires a single integer argument");
+    return 0;
+  }
+
 
   static char log_doc [] =
   "log(level, string)\n"
@@ -529,6 +557,10 @@ extern "C" {
     {(char*)"traceLevel",
      pyomni_traceLevel,
      METH_VARARGS, traceLevel_doc},
+
+    {(char*)"traceInvocations",
+     pyomni_traceInvocations,
+     METH_VARARGS, traceInvocations_doc},
 
     {(char*)"log",
      pyomni_log,
