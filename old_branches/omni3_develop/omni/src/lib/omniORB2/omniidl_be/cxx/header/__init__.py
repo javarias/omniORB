@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.7  2000/06/26 16:23:57  djs
+# Better handling of #include'd files (via new commandline options)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.12.2.6  2000/06/05 13:03:54  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
 # Removed name clash when a sequence is called "pd_seq"
@@ -108,7 +112,7 @@ from omniidl_be.cxx import util, id
 
 # -----------------------------
 # System functions
-import re, sys, os.path
+import string, re, sys, os.path
 
 
 def header(stream, filename):
@@ -168,7 +172,17 @@ def monolithic(stream, tree):
     guard = id.Name([config.state['Basename']]).guard()
 
     header(stream, guard)
-    
+
+    # Add in any direct C++ from toplevel pragma if present
+    cxx_direct_includes = []
+    directive = "hh"
+    for pragma in tree.pragmas():
+        # ignore all pragmas but those in the main file
+        if pragma.file() != tree.file(): continue
+        
+        if pragma.text()[0:len(directive)] == directive:
+            cxx_direct_includes.append(pragma.text()[len(directive)+1:])
+            
     includes = util.StringStream()
     # produce #includes for all files included by the IDL
     for include in config.includes:
@@ -243,6 +257,7 @@ def monolithic(stream, tree):
     # other stuff
     stream.out(template.main,
                includes = str(includes),
+               cxx_direct_include = string.join(cxx_direct_includes,"\n"),
                forward_declarations = forward_dec,
                string_tcParser_declarations = string_tcparser,
                defs = main_defs,
