@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/05/07 00:46:26  dgrisby
+  Different define for TCP protocol number.
+
   Revision 1.1.2.8  2002/05/07 00:28:32  dgrisby
   Turn off Nagle's algorithm. Fixes odd Linux loopback behaviour.
 
@@ -68,7 +71,6 @@
 #include <ssl/sslConnection.h>
 #include <ssl/sslAddress.h>
 #include <openssl/err.h>
-#include <netinet/tcp.h>
 #include <omniORB4/linkHacks.h>
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(sslAddress);

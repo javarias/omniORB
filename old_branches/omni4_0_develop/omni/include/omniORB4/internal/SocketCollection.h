@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2002/04/28 20:43:25  dgrisby
+  Windows, FreeBSD, ETS fixes.
+
   Revision 1.1.2.9  2002/03/13 16:05:38  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -141,6 +144,7 @@ OMNI_NAMESPACE_END(omni)
 #  include <sys/time.h>
 #  include <sys/socket.h>
 #  include <netinet/in.h>
+#  include <netinet/tcp.h>
 #  include <arpa/inet.h>
 #  include <unistd.h>
 #  include <sys/types.h>
