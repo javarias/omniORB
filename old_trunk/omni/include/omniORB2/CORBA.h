@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.40  1999/06/25 13:54:17  sll
+ Removed Any::operator>>=(Object_ptr&) const.
+
  Revision 1.39  1999/06/22 15:04:29  sll
  Put back pre CORBA-2.3 operator>>=(Any&a) in Any_var.
 
@@ -367,7 +370,9 @@ _CORBA_MODULE_BEG
     Boolean operator>>=(TypeCode_ptr& tc) const;
 
     Boolean operator>>=(const char*& s) const;
+#ifndef _NO_ANY_STRING_EXTRACTION_
     Boolean operator>>=(char*& s) const; // deprecated
+#endif
 
     struct to_boolean {
       to_boolean(Boolean& b) : ref(b) {}
@@ -403,7 +408,9 @@ _CORBA_MODULE_BEG
 
     Boolean operator>>=(to_octet o) const;
 
+#ifndef _NO_ANY_STRING_EXTRACTION_
     Boolean operator>>=(to_string s) const;
+#endif
 
     Boolean operator>>=(to_object o) const;
 
@@ -605,9 +612,11 @@ _CORBA_MODULE_BEG
       return (*pd_data >>= s);
     }
 
+#ifndef _NO_ANY_STRING_EXTRACTION_
     inline Boolean operator>>=(char*& s) const {
       return (*pd_data >>= s);
     }
+#endif
 
     inline Boolean operator>>=(Any::to_boolean b) const {
       return (*pd_data >>= b);
@@ -621,9 +630,11 @@ _CORBA_MODULE_BEG
       return (*pd_data >>= o);
     }
 
+#ifndef _NO_ANY_STRING_EXTRACTION_
     inline Boolean operator>>=(Any::to_string s) const {
       return (*pd_data >>= s);
     }
+#endif
 
     inline Boolean operator>>=(Any::to_object o) const {
       return (*pd_data >>= o);
