@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.8  2001/03/13 10:32:12  dpg1
+// Fixed point support.
+//
 // Revision 1.17.2.7  2001/01/08 12:35:26  dpg1
 // Incorrect exception handling when omniidl is an executable.
 //
@@ -1179,7 +1182,9 @@ visitValue(Value* v)
 
   for (l=0, vinh = v->inherits(); vinh; vinh = vinh->next(), ++l) {
     d = vinh->decl();
-    if (d->kind() == Decl::D_VALUEABS)
+    if (d->kind() == Decl::D_VALUE)
+      pyobj = findPyDecl(((Value*)d)->scopedName());
+    else if (d->kind() == Decl::D_VALUEABS)
       pyobj = findPyDecl(((ValueAbs*)d)->scopedName());
     else if (d->kind() == Decl::D_DECLARATOR)
       pyobj = findPyDecl(((Declarator*)d)->scopedName());
