@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  1999/09/30 11:49:27  djr
+  Implemented catching user-exceptions in GIOP_S for all compilers.
+
   Revision 1.1.2.4  1999/09/27 11:01:09  djr
   Modifications to logging.
 
@@ -658,6 +661,22 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE_VAR int poaHoldRequestTimeout;                          //
   //                                                                    //
   ////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
+  // threadPoolSize                                                     //
+  _CORBA_MODULE_VAR unsigned int threadPoolSize;                        //
+  //                                                                    //
+  ////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
+  enum ConcurrencyModel { PerConnection,
+			  QueueBased,
+			  LeaderFollower };
+  // concurrency model                                                  //
+  _CORBA_MODULE_VAR ConcurrencyModel concurrencyModel;                  //
+  //                                                                    //
+  ////////////////////////////////////////////////////////////////////////
+
 
   ////////////////////////////////////////////////////////////////////////
   // class LOCATION_FORWARD                                             //
