@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.18  1999/08/14 16:38:17  sll
+  Added support for python binding.
+  Changed locate object code as locateObject no longer throws an exception.
+
   Revision 1.17  1999/06/26 18:06:16  sll
   In InitialiseReply, if the GIOP request has response expected set to false,
   raise terminateProcessing exception. Previous a fatalException is raised.
@@ -608,7 +612,8 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 	  ReplyCompleted();
 	}
       }
-      else {
+
+      if (!obj) {
 	RequestReceived(1);
 	if (!pd_response_expected) {
 	  // This is a one way invocation, we choose to return a MessageError
