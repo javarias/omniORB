@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.14.6.2  2000/04/27 10:40:52  dpg1
+  Interoperable Naming Service
+
+  Add IIOP default port.
+
   Revision 1.14.6.1  1999/09/22 14:26:43  djr
   Major rewrite of orbcore to support POA.
 
@@ -80,12 +85,12 @@
 const char* omniORB_3_0 = "omniORB version 3.0.x";
 
 
-const IOP::ProfileId       IOP::TAG_INTERNET_IOP = 0;
+const IOP::ProfileId       IOP::TAG_INTERNET_IOP        = 0;
 const IOP::ProfileId       IOP::TAG_MULTIPLE_COMPONENTS = 1;
-const IOP::ServiceID       IOP::TransactionService = 0;
-const CORBA::Char          IIOP::current_major = 1;
-const CORBA::Char          IIOP::current_minor = 0;
-const CORBA::UShort        IIOP::DEFAULT_PORT = 2089;
+const IOP::ServiceID       IOP::TransactionService      = 0;
+const CORBA::Char          IIOP::current_major          = 1;
+const CORBA::Char          IIOP::current_minor          = 0;
+const CORBA::UShort        IIOP::DEFAULT_CORBALOC_PORT  = 2089;
 
 
 const GIOP_Basetypes::MessageHeader::HeaderType

@@ -30,6 +30,11 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.1  2000/04/27 10:52:29  dpg1
+// Interoperable Naming Service
+//
+// Implementation of URI functions.
+//
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -458,11 +463,11 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
       port_ = l;
     }
     else {
-      port_ = IIOP::DEFAULT_PORT;
+      port_ = IIOP::DEFAULT_CORBALOC_PORT;
     }
   }
   else {
-    port_ = IIOP::DEFAULT_PORT;
+    port_ = IIOP::DEFAULT_CORBALOC_PORT;
   }
 }
 
