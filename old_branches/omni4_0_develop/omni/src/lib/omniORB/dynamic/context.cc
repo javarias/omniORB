@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.12.2.4  2000/11/03 19:07:31  sll
+ Use new marshalling functions for byte, octet and char. Use get_octet_array
+ instead of get_char_array.
+
  Revision 1.12.2.3  2000/10/06 16:40:53  sll
  Changed to use cdrStream.
 
@@ -605,14 +609,8 @@ CORBA::Context::marshalContext(CORBA::Context_ptr ctxt,
     const char* value = c->lookup_single(which[j]);
     if( !value )  continue;
 
-    CORBA::ULong len = strlen(which[j]) + 1;
-    len >>= s;
-    s.put_octet_array((CORBA::Octet*) which[j], len);
-
-    len = strlen(value) + 1;
-    len >>= s;
-    s.put_octet_array((CORBA::Octet*) value, len);
-
+    s.marshalRawString(which[j]);
+    s.marshalRawString(value);
   }
 }
 
@@ -629,12 +627,9 @@ CORBA::Context::unmarshalContext(cdrStream& s)
   try {
     for( CORBA::ULong i = 0; i < nentries; i++ ) {
 
-      CORBA::String_member name, value;
-      name <<= s;
-      value <<= s;
-
-      c->insert_single_consume(name._retn(), value._retn());
-
+      char* name  = s.unmarshalRawString();
+      char* value = s.unmarshalRawString();
+      c->insert_single_consume(name, value);
     }
   }
   catch(...) {

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.6  2000/11/20 14:42:23  sll
+  Do not insert codeset component if the IOR is GIOP 1.0.
+
   Revision 1.10.2.5  2000/11/15 17:24:45  sll
   Added service context marshalling operators.
   Added hooks to add TAG_CODE_SETS componment to an IOR.
@@ -234,12 +237,7 @@ IIOP::encodeProfile(const IIOP::ProfileBody& body,IOP::TaggedProfile& profile)
     s.marshalOctet(omni::myByteOrder);
     s.marshalOctet(body.version.major);
     s.marshalOctet(body.version.minor);
-    {
-      CORBA::ULong hlen = strlen(body.address.host) + 1;
-      hlen >>= s;
-      s.put_octet_array((const CORBA::Octet*)
-			(const char*)body.address.host,hlen);
-    }
+    s.marshalRawString(body.address.host);
     body.address.port >>= s;
     body.object_key >>= s;
 
@@ -259,12 +257,7 @@ IIOP::encodeProfile(const IIOP::ProfileBody& body,IOP::TaggedProfile& profile)
     cdrEncapsulationStream s(bufsize,1);
     s.marshalOctet(body.version.major);
     s.marshalOctet(body.version.minor);
-    {
-      CORBA::ULong hlen = strlen(body.address.host) + 1;
-      hlen >>= s;
-      s.put_octet_array((const CORBA::Octet*)
-			(const char*)body.address.host,hlen);
-    }
+    s.marshalRawString(body.address.host);
     body.address.port >>= s;
     body.object_key >>= s;
 
@@ -301,20 +294,7 @@ IIOP::decodeProfile(const IOP::TaggedProfile& profile,
   if (body.version.major != 1) 
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
 
-  {
-    // Don't use unmarshalString() to unmarshal the host address because
-    // the profile is always encoded in ISO-8859-1 irrespective of the
-    // TCS or NCS setting.
-    CORBA::ULong idlen; 
-    idlen <<= s;
-    if (!s.checkInputOverrun(1,idlen))
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-    body.address.host = CORBA::string_alloc(idlen);
-    s.get_octet_array((CORBA::Octet*)((const char*)body.address.host), idlen);
-    if( ((char*)body.address.host)[idlen - 1] != '\0' )
-      throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
-  }
-
+  body.address.host = s.unmarshalRawString();
   body.address.port <<= s;
   body.object_key <<= s;
   
