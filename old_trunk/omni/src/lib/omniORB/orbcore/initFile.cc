@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.30  1999/09/01 13:13:55  sll
+  Fixed #ifdef macro so that the code compiles for ETS kernel.
+
   Revision 1.29  1999/08/16 19:24:08  sll
   Added a per-compilation unit initialiser.
 
@@ -268,18 +271,9 @@ void initFile::initialize()
 	      omniObject* objptr = omni::stringToObject(data);
 	      NameService = (CORBA::Object_ptr) 
 		                objptr->_widenFromTheMostDerivedIntf(0);
-	      
 	    }
 	  catch(const CORBA::MARSHAL&)
 	    {
-	      invref(entryname);
-	    }
-
-	  if((NameService->PR_getobj()->_widenFromTheMostDerivedIntf(
-				  CosNaming_NamingContext_IntfRepoID)) == 0)
-	    {
-	      // The object reference supplied is not for the NamingService
-	      
 	      invref(entryname);
 	    }
 	  omniInitialReferences::singleton()->set("NameService",NameService);
@@ -294,24 +288,11 @@ void initFile::initialize()
 	      omniObject* objptr = omni::stringToObject(data);
 	      InterfaceRepository = (CORBA::Object_ptr)
 		objptr->_widenFromTheMostDerivedIntf(0);
-	      
 	    }
 	  catch(const CORBA::MARSHAL&)
 	    {
 	      invref(entryname);
 	    }
-#if 0
-	  // Doing this test would make the orbcore dependent on the
-	  // dynamic library.
-	  if((InterfaceRepository->PR_getobj()->_widenFromTheMostDerivedIntf(
-				     CORBA_Repository_IntfRepoID)) == 0)
-	    {
-	      // The object reference supplied is not for the interface 
-	      // repository
-	      
-	      invref(entryname);
-	    }    
-#endif
 	  omniInitialReferences::singleton()->set("InterfaceRepository",
 						  InterfaceRepository);
 	}
