@@ -807,6 +807,10 @@ char *yytext;
 
 // $Id$
 // $Log$
+// Revision 1.12  2000/04/26 09:55:47  dpg1
+// cccp escapes characters like \ in line directives, so
+// parseLineDirective() needs to use escapedStringToString().
+//
 // Revision 1.7.2.2  2000/03/06 15:03:49  dpg1
 // Minor bug fixes to omniidl. New -nf and -k flags.
 //
@@ -2835,7 +2839,8 @@ void parseLineDirective(char* s) {
       }
     }
     delete [] currentFile;
-    currentFile = escapedStringToString(file); // cccp escapes things like \
+    // cccp escapes \ characters, so use the normal string parser
+    currentFile = escapedStringToString(file);
     delete [] file;
     if (mainFile)
       AST::tree()->setFile(file);
