@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.8.6.2  1999/10/14 16:22:04  djr
+ * Implemented logging when system exceptions are thrown.
+ *
  * Revision 1.8.6.1  1999/09/22 14:26:39  djr
  * Major rewrite of orbcore to support POA.
  *
@@ -61,6 +64,7 @@
 #define __TYPECODE_H__
 
 #include <omniutilities.h>
+#include <exception.h>
 
 
 ///////////////////////////

@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.33.6.2  1999/10/14 16:22:01  djr
+ * Implemented logging when system exceptions are thrown.
+ *
  * Revision 1.33.6.1  1999/09/22 14:26:37  djr
  * Major rewrite of orbcore to support POA.
  *
@@ -158,7 +161,6 @@
 
 #include <typecode.h>
 #include <tcParser.h>
-#include <exception.h>
 
 
 // CORBA::TypeCode - core class function implementation
@@ -757,9 +759,7 @@ TypeCode_base::NP_alignedSimpleParamSize(size_t initialoffset,
 					 TypeCode_offsetTable* otbl) const
 {
   OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
-#ifdef NEED_DUMMY_RETURN
   return 0;
-#endif
 }
 
 size_t
@@ -767,9 +767,7 @@ TypeCode_base::NP_alignedComplexParamSize(size_t initialoffset,
 					  TypeCode_offsetTable* otbl) const
 {
   OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
-#ifdef NEED_DUMMY_RETURN
   return 0;
-#endif
 }
 
 void

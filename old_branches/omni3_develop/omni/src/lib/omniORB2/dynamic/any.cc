@@ -30,6 +30,9 @@
 
 /*
  * $Log$
+ * Revision 1.18.6.3  1999/10/14 16:21:54  djr
+ * Implemented logging when system exceptions are thrown.
+ *
  * Revision 1.18.6.2  1999/09/27 08:48:31  djr
  * Minor corrections to get rid of warnings.
  *
@@ -116,7 +119,6 @@
 
 #include <anyP.h>
 #include <typecode.h>
-#include <exception.h>
 
 
 ////////////////////////////////////////////////////////////////////////
