@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2001/09/04 14:40:30  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.16  2001/09/03 17:31:52  sll
   Make sure that acquireClient honours the deadline set in the calldescriptor.
 
@@ -407,7 +411,8 @@ giopRope::releaseClient(IOP_C* iop_c) {
     giop_c->giopStreamList::insert(s->clients);
     // The strand is definitely idle from this point onwards, we
     // reset the idle counter so that it will be retired at the right time.
-    if (s->isClient()) s->resetIdleCounter(giopStrand::idleOutgoingBeats);
+    if ( s->isClient() && !s->biDir ) 
+      s->startIdleCounter();
   }
 
   if (remove) {
