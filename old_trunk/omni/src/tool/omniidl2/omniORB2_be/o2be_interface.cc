@@ -10,6 +10,10 @@
 
 /*
   $Log$
+// Revision 1.7  1997/04/23  14:32:36  sll
+// - Changed implementation skeleton stub to use atmoic get and set
+//   functions to obtain an object's rope and key.
+//
 // Revision 1.6  1997/03/10  16:36:30  sll
 // - Added omniORB2 specific functions in the  _sk_<interface> class. They
 //   are: _this, _obj_is_ready, _dispose, _boa, _key. These functions
@@ -861,7 +865,7 @@ o2be_interface::produce_skel(fstream &s)
 	  {
 	    IND(s); s << ((notfirst)?"else ":"")
 		      << "if (strcmp(_op,\""
-		      <<  o2be_operation::narrow_from_decl(d)->uqname()
+		      << d->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
 	    INC_INDENT_LEVEL();
@@ -875,7 +879,7 @@ o2be_interface::produce_skel(fstream &s)
 	    o2be_attribute *a = o2be_attribute::narrow_from_decl(d);
 	    IND(s); s << ((notfirst)?"else ":"")
 		      << "if (strcmp(_op,\""
-		      << "_get_" << a->uqname()
+		      << "_get_" << a->local_name()->get_string()
 		      << "\") == 0)\n";
 	    IND(s); s << "{\n";
 	    INC_INDENT_LEVEL();
@@ -885,7 +889,7 @@ o2be_interface::produce_skel(fstream &s)
 	    if (!a->readonly())
 	      {
 		IND(s); s << "else if (strcmp(_op,\""
-			  << "_set_" << a->uqname()
+			  << "_set_" << a->local_name()->get_string()
 			  << "\") == 0)\n";
 		IND(s); s << "{\n";
 		INC_INDENT_LEVEL();
