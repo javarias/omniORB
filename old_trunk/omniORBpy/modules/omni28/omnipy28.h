@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.21  2000/05/11 11:58:25  dpg1
+// Throw system exceptions with OMNIORB_THROW.
+//
 // Revision 1.20  2000/03/24 16:48:58  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -225,6 +228,7 @@ public:
   static void initORBFunc       (PyObject* d);
   static void initPOAFunc       (PyObject* d);
   static void initPOAManagerFunc(PyObject* d);
+  static void initomniFunc      (PyObject* d);
 
 
   ////////////////////////////////////////////////////////////////////////////
@@ -236,6 +240,10 @@ public:
   //   return handleSystemException(ex).
   static
   PyObject* handleSystemException(const CORBA::SystemException& ex);
+
+  // Create a new Python object for the given system exception
+  static
+  PyObject* createPySystemException(const CORBA::SystemException& ex);
 
   // Throw a C++ system exception equivalent to the given Python exception
   static

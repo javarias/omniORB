@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.23  2000/05/26 15:33:32  dpg1
+// Python thread states are now cached. Operation dispatch time is
+// roughly halved!
+//
 // Revision 1.22  2000/05/11 11:58:25  dpg1
 // Throw system exceptions with OMNIORB_THROW.
 //
@@ -520,8 +524,7 @@ Py_omniServant::local_dispatch(const char* op,
 	<< op << "'.\n";
     }
     PyErr_Clear();
-    CORBA::NO_IMPLEMENT ex;
-    return omniPy::handleSystemException(ex);
+    OMNIORB_THROW(NO_IMPLEMENT, 0,CORBA::COMPLETED_NO);
   }
 
   // Copy args which would otherwise have reference semantics
@@ -557,8 +560,7 @@ Py_omniServant::local_dispatch(const char* op,
 	}
 	else {
 	  Py_DECREF(result);
-	  CORBA::BAD_PARAM ex(0,CORBA::COMPLETED_MAYBE);
-	  return omniPy::handleSystemException(ex);
+	  OMNIORB_THROW(BAD_PARAM, 0,CORBA::COMPLETED_MAYBE);
 	}
       }
       else if (out_l == 1) {
@@ -608,8 +610,7 @@ Py_omniServant::local_dispatch(const char* op,
 	  PyErr_Restore(etype, evalue, etraceback);
 	  PyErr_Print();
 	}
-	CORBA::UNKNOWN ex(0,CORBA::COMPLETED_MAYBE);
-	return omniPy::handleSystemException(ex);
+	OMNIORB_THROW(UNKNOWN, 0,CORBA::COMPLETED_MAYBE);
       }
 
       Py_DECREF(etype);
@@ -627,40 +628,21 @@ Py_omniServant::local_dispatch(const char* op,
 	  Py_DECREF(erepoId);
 	  Py_DECREF(evalue);
 
-	  if (cevalue) {
-	    PyErr_SetObject(PyTuple_GET_ITEM(edesc, 1), cevalue);
-	    Py_DECREF(cevalue);
-	  }
-	  else{
-	    CORBA::MARSHAL ex(0,CORBA::COMPLETED_MAYBE);
-	    omniPy::handleSystemException(ex);
-	  }
+	  if (!cevalue)
+	    OMNIORB_THROW(MARSHAL, 0,CORBA::COMPLETED_MAYBE);
+
+	  PyErr_SetObject(PyTuple_GET_ITEM(edesc, 1), cevalue);
+	  Py_DECREF(cevalue);
 	  return 0;
 	}
       }
       // System exception?
-      PyObject* excc = PyDict_GetItem(pyCORBAsysExcMap, erepoId);
-      if (excc) {
-	PyObject *pyminor, *pycompl;
-	pyminor = PyObject_GetAttrString(evalue, (char*)"minor");
-	pycompl = PyObject_GetAttrString(evalue, (char*)"completed");
-	OMNIORB_ASSERT(pyminor && PyInt_Check(pyminor));
-	OMNIORB_ASSERT(pycompl && PyInstance_Check(pycompl));
-	PyObject* exca = Py_BuildValue((char*)"(NN)", pyminor, pycompl);
-	PyObject* exci = PyEval_CallObject(excc, exca);
-	Py_DECREF(exca);
-	Py_DECREF(erepoId);
-	Py_DECREF(evalue);
-	if (exci) {
-	  PyErr_SetObject(excc, exci);
-	  Py_DECREF(exci);
-	}
-	return 0;
-      }
+      if (PyDict_GetItem(pyCORBAsysExcMap, erepoId))
+	produceSystemException(evalue, erepoId);
+
       Py_DECREF(erepoId);
       Py_DECREF(evalue);
-      CORBA::UNKNOWN ex(0, CORBA::COMPLETED_MAYBE);
-      return omniPy::handleSystemException(ex);
+      OMNIORB_THROW(UNKNOWN, 0, CORBA::COMPLETED_MAYBE);
     }
   }
   else {
@@ -669,6 +651,8 @@ Py_omniServant::local_dispatch(const char* op,
     Py_DECREF(method);
     return 0;
   }
+  OMNIORB_ASSERT(0); // Never reach here
+  return 0;
 }
 
 

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.16  2000/05/11 11:58:25  dpg1
+// Throw system exceptions with OMNIORB_THROW.
+//
 // Revision 1.15  2000/04/25 13:36:17  dpg1
 // If an object is deactivated while invocations on it are happening, the
 // deletion is performed by a callback at the end of the invoke(). The
@@ -153,6 +156,19 @@ omniPy::Py_omniCallDescriptor::userException(GIOP_C&     giop_client,
 }
 
 
+class reacquireLockInScope {
+public:
+  inline reacquireLockInScope(omniPy::Py_omniCallDescriptor* pycd)
+    : pycd_(pycd) { pycd->reacquireInterpreterLock(); }
+
+  inline ~reacquireLockInScope() {
+    pycd_->releaseInterpreterLock();
+  }
+private:
+  omniPy::Py_omniCallDescriptor* pycd_;
+};
+
+
 void
 omniPy::Py_localCallBackFunction(omniCallDescriptor* cd, omniServant* svnt)
 {
@@ -160,11 +176,13 @@ omniPy::Py_localCallBackFunction(omniCallDescriptor* cd, omniServant* svnt)
   Py_omniServant*        pyos =
     (Py_omniServant*)svnt->_ptrToInterface("Py_omniServant");
 
-  pycd->reacquireInterpreterLock();
-
-  pycd->result_ = pyos->local_dispatch(pycd->op(),
-				       pycd->in_d_,  pycd->in_l_,
-				       pycd->out_d_, pycd->out_l_,
-				       pycd->exc_d_, pycd->args_);
-  pycd->releaseInterpreterLock();
+  {
+    // local_dispatch() can throw CORBA system exceptions, hence the
+    // helper class
+    reacquireLockInScope _l(pycd);
+    pycd->result_ = pyos->local_dispatch(pycd->op(),
+					 pycd->in_d_,  pycd->in_l_,
+					 pycd->out_d_, pycd->out_l_,
+					 pycd->exc_d_, pycd->args_);
+  }
 }

@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.35  2000/05/26 15:33:31  dpg1
+// Python thread states are now cached. Operation dispatch time is
+// roughly halved!
+//
 // Revision 1.34  2000/04/27 11:04:35  dpg1
 // Catch exceptions thrown by ORB_init().
 //
@@ -816,5 +820,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     omniPy::initORBFunc(d);
     omniPy::initPOAFunc(d);
     omniPy::initPOAManagerFunc(d);
+    omniPy::initomniFunc(d);
   }
 }
