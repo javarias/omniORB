@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/03/03 14:29:16  djr
+  Improvement to BOA skeletons (less generated code).
+
   Revision 1.1.2.1  1999/09/24 09:51:42  djr
   Moved from omniORB2 + some new files.
 
@@ -36,6 +39,7 @@
 #ifndef __OMNIORB_BOA_H__
 #define __OMNIORB_BOA_H__
 
+#include <iostream.h>
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// omniOrbBoaServant /////////////////////////
@@ -71,7 +75,7 @@ private:
   virtual omniObjRef* _do_get_interface();
   // Overrides omniServant.
 
-
+protected:
   omniOrbBoaKey pd_key;
   // This is used only for construction/initialisation.
   // When the object is activated, the key in the id is

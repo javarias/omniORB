@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.8  2000/07/24 16:32:19  djs
+# Fixed typo in previous BOA skeleton bugfix.
+# Suppressed compiler warning (from gcc -Wall) when encountering a call with
+# no arguments and no return value.
+#
 # Revision 1.1.2.7  2000/07/24 10:17:34  djs
 # Added missing BOA skeleton constructor
 #
@@ -333,7 +338,7 @@ if( !strcmp(id, @inherited_name@::_PD_repoId) )
 """
 
 interface_sk = """\
-@sk_fqname@::@sk_name@(const omniOrbBoaKey& k): omniOrbBoaServant(k) {}
+@sk_fqname@::@sk_name@(const omniOrbBoaKey& k) { pd_key = k; }
 
 @sk_fqname@::~@sk_name@() {}
 """
