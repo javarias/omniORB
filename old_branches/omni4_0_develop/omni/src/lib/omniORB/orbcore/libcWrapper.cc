@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.14  2003/08/06 20:43:03  dgrisby
+  Reentrant gethostbyname for Linux and Irix.
+
   Revision 1.19.2.13  2003/08/06 20:34:00  dgrisby
   More vxWorks patches.
 
@@ -297,7 +300,7 @@ again:
   delete [] buffer;
   return ret;
 
-#elif defined(__linux__) && __OSVERSION__ >= 2
+#elif defined(__linux__) && __OSVERSION__ >= 2 && !defined(__cygwin__)
 
   // Use gethostbyname_r() on Linux 
 
