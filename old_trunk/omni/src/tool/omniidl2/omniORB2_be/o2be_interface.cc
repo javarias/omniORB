@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.27  1999/02/09 09:40:35  djr
+  produce_decls_at_global_scope_in_hdr() now propagates properly
+  through (nested) interfaces to structure and union types.
+
   Revision 1.26  1999/01/07 09:47:04  djr
   Changes to support new TypeCode/Any implementation, which is now
   placed in a new file ...DynSK.cc (by default).
@@ -2707,6 +2711,10 @@ o2be_interface::produce_decls_at_global_scope_in_hdr(std::fstream& s)
       break;
     case AST_Decl::NT_struct:
       o2be_structure::narrow_from_decl(d)
+	->produce_decls_at_global_scope_in_hdr(s);
+      break;
+    case AST_Decl::NT_except:
+      o2be_exception::narrow_from_decl(d)
 	->produce_decls_at_global_scope_in_hdr(s);
       break;
     case AST_Decl::NT_interface:

@@ -26,6 +26,10 @@
 
 /* 
    $Log$
+   Revision 1.12  1999/02/09 09:44:59  djr
+   Fixed bug where a union helper class was not being declared before
+   being declared as a friend.
+
    Revision 1.11  1999/01/07 09:45:58  djr
    Changes for new output file ...DynSK.cc
 
@@ -276,6 +280,10 @@ o2be_module::produce_decls_at_global_scope_in_hdr(std::fstream& s)
 	break;
       case AST_Decl::NT_struct:
 	o2be_structure::narrow_from_decl(decl)
+	  ->produce_decls_at_global_scope_in_hdr(s);
+	break;
+      case AST_Decl::NT_except:
+	o2be_exception::narrow_from_decl(decl)
 	  ->produce_decls_at_global_scope_in_hdr(s);
 	break;
       case AST_Decl::NT_interface:
