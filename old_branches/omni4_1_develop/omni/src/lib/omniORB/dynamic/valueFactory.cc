@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2005/01/06 16:39:25  dgrisby
+  DynValue and DynValueBox implementations; misc small fixes.
+
   Revision 1.1.2.4  2004/04/02 13:26:23  dgrisby
   Start refactoring TypeCode to support value TypeCodes, start of
   abstract interfaces support.
@@ -309,11 +312,11 @@ create_for_unmarshal(const char* id, CORBA::ULong hashval)
       OMNIORB_THROW(UNKNOWN, UNKNOWN_UserException, CORBA::COMPLETED_NO);
     }
     f->_remove_ref();
+    return r;
   }
   else {
     return 0;
   }
-  return r;
 }
 
 //

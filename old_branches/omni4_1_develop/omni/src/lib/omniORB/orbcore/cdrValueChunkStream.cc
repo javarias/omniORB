@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.4  2004/10/13 17:58:25  dgrisby
+// Abstract interfaces support; values support interfaces; value bug fixes.
+//
 // Revision 1.1.2.3  2003/11/06 11:56:57  dgrisby
 // Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 //
@@ -570,7 +573,7 @@ fetchInputData(omni::alignment_t align,size_t required)
 	p1 = (omni::ptr_arith_t)pd_inb_mkr;
 	p2 = (omni::ptr_arith_t)pd_inb_end;
 
-	if ((CORBA::Long)pd_remaining > (p2 - p1)) {
+	if ((omni::ptr_arith_t)pd_remaining > (p2 - p1)) {
 	  pd_remaining = pd_remaining - (p2 - p1);
 	}
 	else {
@@ -651,7 +654,7 @@ skipToNestedValue(_CORBA_Long level)
 	p1 = (omni::ptr_arith_t)pd_inb_mkr;
 	p2 = (omni::ptr_arith_t)pd_inb_end;
 
-	if ((CORBA::Long)pd_remaining > (p2 - p1)) {
+	if ((omni::ptr_arith_t)pd_remaining > (p2 - p1)) {
 	  pd_remaining = pd_remaining - (p2 - p1);
 	}
 	else {
@@ -728,7 +731,7 @@ startInputChunk()
   omni::ptr_arith_t start = (omni::ptr_arith_t)pd_inb_mkr;
   omni::ptr_arith_t end   = (omni::ptr_arith_t)pd_inb_end;
 
-  if (len > (end - start)) {
+  if ((omni::ptr_arith_t)len > (end - start)) {
     pd_remaining = len - (end - start);
   }
   else {
