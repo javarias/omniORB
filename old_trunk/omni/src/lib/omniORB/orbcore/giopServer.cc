@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.16  1999/03/11 16:25:53  djr
+  Updated copyright notice
+
   Revision 1.15  1999/01/07 15:52:41  djr
   Changes needed due to changes to interface of Net/MemBufferedStream.
 
@@ -219,7 +222,10 @@ void
 GIOP_S::InitialiseReply(const GIOP::ReplyStatusType status,
 		       const size_t  msgsize)
 {
-  if (pd_state != GIOP_S::WaitingForReply && !pd_response_expected)
+  if (!pd_response_expected)
+    throw terminateProcessing();
+
+  if (pd_state != GIOP_S::WaitingForReply)
     throw omniORB::fatalException(__FILE__,__LINE__,
       "GIOP_S::InitialiseReply() entered with the wrong state.");
 
@@ -724,6 +730,11 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
   catch (const CORBA::WRONG_TRANSACTION &ex) {
     if (obj) omni::objectRelease(obj); obj = 0;
     CHECK_AND_MAYBE_MARSHALL_SYSTEM_EXCEPTION (WRONG_TRANSACTION,ex);
+  }
+  catch (const terminateProcessing &) {
+    if (pd_state == GIOP_S::WaitingForReply) {
+      pd_state = GIOP_S::Idle;
+    }
   }
   catch (...) {
     if (obj) omni::objectRelease(obj); obj = 0;
