@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/01 10:08:20  dpg1
+  Main thread policy.
+
   Revision 1.1.4.1  2001/04/18 17:18:59  sll
   Big checkin with the brand new internal APIs.
 
@@ -39,8 +42,6 @@
 
 #ifndef __INVOKER_H__
 #define __INVOKER_H__
-
-#include <omniAsyncInvoker.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 

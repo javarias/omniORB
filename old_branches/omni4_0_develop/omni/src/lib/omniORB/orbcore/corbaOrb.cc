@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.32  2001/11/13 14:11:45  dpg1
+  Tweaks for CORBA 2.5 compliance.
+
   Revision 1.33.2.31  2001/11/06 15:41:38  dpg1
   Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -577,7 +580,6 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     omni_ObjRef_initialiser_.attach();
     omni_initRefs_initialiser_.attach();
     omni_hooked_initialiser_.attach();
-    omniAsyncInvoker::traceLevel = omniORB::traceLevel;
 
     if (orbParameters::lcdMode) {
       enableLcdMode();
