@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/09/04 14:38:51  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.6  2001/09/03 16:54:06  sll
   In initialise(), set deadline from the parameters in calldescriptor.
 
@@ -85,6 +89,7 @@ GIOP_C::initialise(const omniIOR* i,
 		   int ksz,
 		   omniCallDescriptor* calldesc) {
   giopStream::reset();
+  pd_strand->stopIdleCounter();
   state(IOP_C::Idle);
   ior(i);
   calldescriptor(calldesc);
