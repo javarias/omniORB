@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.16  2001/11/12 13:47:09  dpg1
+  Minor fixes.
+
   Revision 1.1.4.15  2001/10/17 16:33:27  dpg1
   New downcast mechanism for cdrStreams.
 
@@ -187,13 +190,14 @@ GIOP_S::dispatcher() {
       if (!pd_strand->stopIdleCounter()) {
 	// This strand has been expired by the scavenger. Don't
 	// process this call.
-	omniORB::logger log;
-	log << "dispatcher cannot stop idle counter.\n";
+	if (omniORB::trace(1)) {
+	  omniORB::logger l;
+	  l << "dispatcher cannot stop idle counter.\n";
+	}
 	pd_strand->state(giopStrand::DYING);
 	return 0;
       }
     }
-
 
     if (pd_requestType == GIOP::Request) {
       return handleRequest();
