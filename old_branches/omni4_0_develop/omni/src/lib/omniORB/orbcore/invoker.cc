@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2002/02/13 16:02:40  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
   Revision 1.1.2.1  2002/01/09 11:35:23  dpg1
   Remove separate omniAsyncInvoker library to save library overhead.
 
@@ -86,12 +90,11 @@ public:
 
     delete pd_cond;
     pd_pool->pd_lock->lock();
-    if (pd_pool->pd_totalthreads == 0) {
-      pd_pool->pd_lock->unlock();
+
+    if (--pd_pool->pd_totalthreads == 0)
       pd_pool->pd_cond->signal();
-    }
-    else
-      pd_pool->pd_lock->unlock();
+
+    pd_pool->pd_lock->unlock();
   }
 
   void run(void*) {
@@ -159,7 +162,6 @@ public:
       }
     }
 
-    pd_pool->pd_totalthreads--;
     pd_pool->pd_nthreads--;
     pd_pool->pd_lock->unlock();
   }
