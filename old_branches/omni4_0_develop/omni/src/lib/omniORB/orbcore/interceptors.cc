@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/09/27 17:30:30  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -122,6 +125,13 @@ void omniInterceptors::interceptor::visit(argt argn) { \
 
 INTERCEPTOR_IMPLEMENTATION_1ARG(encodeIOR_T,omniIOR*,ior)
 INTERCEPTOR_IMPLEMENTATION_1ARG(decodeIOR_T,omniIOR*,ior)
+INTERCEPTOR_IMPLEMENTATION_1ARG(clientSendRequest_T,clientSendRequest_T::info_T&,info)
+INTERCEPTOR_IMPLEMENTATION_1ARG(clientReceiveReply_T,clientReceiveReply_T::info_T&,info)
+INTERCEPTOR_IMPLEMENTATION_1ARG(clientReceiveException_T,clientReceiveException_T::info_T&,info)
+INTERCEPTOR_IMPLEMENTATION_1ARG(serverReceiveRequest_T,serverReceiveRequest_T::info_T&,info)
+INTERCEPTOR_IMPLEMENTATION_1ARG(serverSendReply_T,serverSendReply_T::info_T&,info)
+INTERCEPTOR_IMPLEMENTATION_1ARG(serverSendException_T,serverSendException_T::info_T&,info)
+
 
 
 #undef INTERCEPTOR_IMPLEMENTATION
