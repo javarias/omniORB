@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.15  2001/09/19 17:26:49  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.22.2.14  2001/09/10 17:47:57  sll
   startIdleCounter in csInsert.
 
@@ -130,6 +133,7 @@ giopServer::giopServer() : pd_state(IDLE), pd_nconnections(0),
 ////////////////////////////////////////////////////////////////////////////
 giopServer::~giopServer()
 {
+  singleton() = 0;
   delete [] pd_connectionState;
 }
 
@@ -1002,7 +1006,7 @@ giopServer::Link::is_empty(giopServer::Link& head)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-giopServer*
+giopServer*&
 giopServer::singleton() {
   static giopServer* singleton_ = 0;
   if (!singleton_) {

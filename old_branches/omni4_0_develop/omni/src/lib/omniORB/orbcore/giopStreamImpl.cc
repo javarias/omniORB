@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/21 11:02:16  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.1.4.2  2001/08/17 17:12:38  sll
   Modularise ORB configuration parameters.
 
@@ -485,6 +489,8 @@ public:
   }
 
   void attach() {
+    OMNIORB_ASSERT(implHead == 0);
+    OMNIORB_ASSERT(implMax  == 0);
     omni_giopImpl10_initialiser_.attach();
     if (orbParameters::maxGIOPVersion.minor >= 1)
       omni_giopImpl11_initialiser_.attach();
@@ -506,6 +512,8 @@ public:
       omni_giopImpl11_initialiser_.detach();
     if (orbParameters::maxGIOPVersion.minor >= 2)
       omni_giopImpl12_initialiser_.detach();
+    implHead = 0;
+    implMax  = 0;
   }
 };
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/08/17 15:00:47  dpg1
+  Fixes for pre-historic compilers.
+
   Revision 1.1.4.4  2001/07/31 16:28:01  sll
   Added GIOP BiDir support.
 
@@ -64,7 +67,7 @@ class giopStrand;
 class giopServer : public orbServer {
 public:
 
-  static giopServer* singleton();
+  static giopServer*& singleton();
   ~giopServer();
 
   const char* instantiate(const char* endpoint_uri,

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.22  2001/09/19 17:26:50  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.2.2.21  2001/08/21 11:02:16  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -1329,8 +1332,6 @@ public:
   }
 
   void attach() {
-    OMNIORB_ASSERT(!objectTable);  OMNIORB_ASSERT(!omni::internalLock);
-
     if (!omni::internalLock)   omni::internalLock   = new omni_tracedmutex;
     if (!omni::poRcLock)       omni::poRcLock       = new omni_tracedmutex;
     if (!omni::objref_rc_lock) omni::objref_rc_lock = new omni_tracedmutex;
@@ -1446,6 +1447,9 @@ void _omniFinalCleanup::cleanup()
       << (tracked == 1 ? "" : "s" )
       << ".\n";
   }
+
+  // Remove list of proxyObjectFactories
+  proxyObjectFactory::shutdown();
 
   // Delete mutexes
   delete &omni::nilRefLock();
