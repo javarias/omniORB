@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.6  1998/08/14 13:52:23  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.5  1998/04/07 19:37:39  sll
   Replace cerr with omniORB::log.
 
@@ -312,6 +316,9 @@ Sync::WrTimedLock(Strand* s,
 {
   CORBA::Boolean notimeout;
   // Note: the caller must have got the mutex s->pd_rope->pd_lock 
+
+  s->incrRefCount(1);
+
   while (s->pd_wr_nwaiting < 0) {
     s->pd_wr_nwaiting--;
     notimeout = s->pd_wrcond.timedwait(secs,nanosecs);
@@ -321,6 +328,9 @@ Sync::WrTimedLock(Strand* s,
       s->pd_wr_nwaiting++;
     if (!notimeout && s->pd_wr_nwaiting < 0) {
       // give up;
+
+      s->decrRefCount(1);
+
       return 0;
     }
   }
@@ -330,6 +340,11 @@ Sync::WrTimedLock(Strand* s,
   s->pd_heartbeat = heartbeat;
   heartbeat = hb;
   return 1;
+
+  // XXX The caller must release the write lock using 
+  //     Strand::Sync::WrUnlock(Strand* s) *ONLY*!!!
+  //     Otherwise the strand reference count would be messed up.
+  //     Fix me in future.
 }
 
 
@@ -355,11 +370,22 @@ void
 Strand::
 Sync::WrUnlock(Strand* s)
 {
+  // XXX The caller must have acquired the write lock previously
+  //     with Strand::Sync::WrTimedLock. Otherwise, the strand
+  //     reference count would be messed up.
+  //     Fix me in future.
+
   // Note: the caller must have got the mutex s->pd_rope->pd_lock
   assert(s->pd_wr_nwaiting < 0);
   s->pd_wr_nwaiting = -s->pd_wr_nwaiting - 1;
   if (s->pd_wr_nwaiting > 0)
     s->pd_wrcond.signal();
+
+  s->decrRefCount(1);
+  // The strand may be idle and is dying, it should be deleted but
+  // it is just to dangerous to do it here. Let the strand iterator
+  // clean it up later.
+
   return;
 }
 
