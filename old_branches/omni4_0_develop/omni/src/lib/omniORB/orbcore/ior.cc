@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.24  2003/07/26 22:52:22  dgrisby
+  Avoid spurious gcc warnings when sizeof pointer > sizeof int.
+
   Revision 1.10.2.23  2003/02/03 16:53:14  dgrisby
   Force type in constructor argument to help confused compilers.
 
@@ -803,10 +806,8 @@ omniIOR::unmarshal_TAG_OMNIORB_UNIX_TRANS(const IOP::TaggedComponent& c ,
   // Check if we are on the same host and hence can use unix socket.
   char self[64];
   if (gethostname(&self[0],64) == RC_SOCKET_ERROR) {
-    if (omniORB::trace(1)) {
-      omniORB::logger log;
-      log << "Cannot get the name of this host\n";
-    }
+    self[0] = '\0';
+    omniORB::logs(1, "Cannot get the name of this host.");
   }
   if (strcmp(self,host) != 0) return;
 
@@ -1086,10 +1087,8 @@ omniIOR::add_TAG_OMNIORB_UNIX_TRANS(const char* filename) {
 
   char self[64];
   if (gethostname(&self[0],64) == RC_SOCKET_ERROR) {
-    if (omniORB::trace(1)) {
-      omniORB::logger log;
-      log << "Cannot get the name of this host\n";
-    }
+    omniORB::logs(1, "Cannot get the name of this host.");
+    self[0] = '\0';
   }
 
   if (strlen(my_address.host) == 0) {

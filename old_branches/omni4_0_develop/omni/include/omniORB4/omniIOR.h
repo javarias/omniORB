@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2003/01/14 11:48:15  dgrisby
+  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+
   Revision 1.1.2.12  2002/09/08 21:12:38  dgrisby
   Properly handle IORs with no usable profiles.
 
@@ -212,7 +215,8 @@ public:
   omniIOR(const char* repoId,
 	  const _CORBA_Unbounded_Sequence_Octet& key,
 	  const IIOP::Address* addrs, _CORBA_ULong naddrs,
-	  GIOP::Version ver, interceptorOption call_interceptors);
+	  GIOP::Version ver, interceptorOption call_interceptors,
+          const IOP::MultipleComponentProfile* tagged_components = 0);
 
   ~omniIOR();
 

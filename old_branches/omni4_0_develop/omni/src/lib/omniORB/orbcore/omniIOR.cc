@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2003/02/03 16:53:14  dgrisby
+  Force type in constructor argument to help confused compilers.
+
   Revision 1.1.2.13  2002/09/08 21:12:39  dgrisby
   Properly handle IORs with no usable profiles.
 
@@ -157,7 +160,8 @@ omniIOR::omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize) :
 omniIOR::omniIOR(const char* repoId, 
 		 const _CORBA_Unbounded_Sequence_Octet& key,
 		 const IIOP::Address* addrs, CORBA::ULong naddrs,
-		 GIOP::Version ver, interceptorOption callInterceptors) :
+		 GIOP::Version ver, interceptorOption callInterceptors,
+                 const IOP::MultipleComponentProfile* tagged_components) :
   pd_iopProfiles(0),
   pd_addr_selected_profile_index(-1),
   pd_addr_mode(GIOP::KeyAddr), 
@@ -187,6 +191,14 @@ omniIOR::omniIOR(const char* repoId,
 
   pd_iopProfiles = new IOP::TaggedProfileList();
 
+  IOP::MultipleComponentProfile& cs = iiop.components;
+
+  if (tagged_components) {
+    for (CORBA::ULong i = 0; i < tagged_components->length(); ++i) {
+      IOP::TaggedComponent& c = omniIOR::newIIOPtaggedComponent(cs);
+      c = (*tagged_components)[i];
+    }
+  }
   if (callInterceptors != NoInterceptor) {
     _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,
 				(callInterceptors == DefaultInterceptors));
