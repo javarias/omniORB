@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.22  1999/06/28 13:24:51  dpg1
+  LifeCycle code updated for proxyCallWrapper support.
+
   Revision 1.21  1999/05/26 10:44:37  sll
   Added connection code to generate typecode constant for anonymous bounded
   string defined used in attributed.
@@ -364,12 +367,6 @@ o2be_attribute::produce_proxy_wr_skel(std::fstream& s,
 void
 o2be_attribute::produce_server_rd_skel(std::fstream& s,o2be_interface &defined_in)
 {
-  IND(s); s << "if (!_0RL_response_expected) {\n";
-  INC_INDENT_LEVEL();
-  IND(s); s << "throw CORBA::BAD_OPERATION(0,CORBA::COMPLETED_NO);\n";
-  DEC_INDENT_LEVEL();
-  IND(s); s << "}\n";
-
   IND(s); s << "_0RL_s.RequestReceived();\n";
 
   {
