@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.8  2001/09/19 17:26:48  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.17.2.7  2001/08/03 17:41:19  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -165,7 +168,7 @@ cdrStream::unmarshalRawString() {
   _CORBA_ULong len; len <<= *this;
 
   if (!checkInputOverrun(1, len))
-    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong,
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		  (CORBA::CompletionStatus)completion());
 
   char* s = _CORBA_String_helper::alloc(len - 1);
@@ -221,10 +224,13 @@ _CORBA_Sequence_String::operator <<= (cdrStream& s)
   _CORBA_ULong slen;
   slen <<= s;
 
-  if (!s.checkInputOverrun(1,slen) || (pd_bounded && slen > pd_max)) {
+  if (!s.checkInputOverrun(1,slen))
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+		  (CORBA::CompletionStatus)s.completion());
+
+  if (pd_bounded && slen > pd_max)
     OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong,
 		  (CORBA::CompletionStatus)s.completion());
-  }
 
   if (!pd_rel && slen <= pd_max) {
     // obtain ownership of the array and its elements (note that this isn't

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/03 17:41:19  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.1.2.7  2001/04/18 18:18:09  sll
   Big checkin with the brand new internal APIs.
 
@@ -72,8 +76,7 @@ omniCodeSet::NCS_W_16bit::marshalWChar(cdrStream& stream,
 				       omniCodeSet::TCS_W* tcs,
 				       _CORBA_WChar wc)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
-			  (CORBA::CompletionStatus)stream.completion());
+  OMNIORB_CHECK_TCS_W_FOR_MARSHAL(tcs, stream);
 
   if (tcs->fastMarshalWChar(stream, this, wc)) return;
 
@@ -98,8 +101,7 @@ omniCodeSet::NCS_W_16bit::marshalWString(cdrStream&          stream,
 					 _CORBA_ULong        len,
 					 const _CORBA_WChar* ws)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
-			  (CORBA::CompletionStatus)stream.completion());
+  OMNIORB_CHECK_TCS_W_FOR_MARSHAL(tcs, stream);
 
   if (tcs->fastMarshalWString(stream, this, bound, len, ws)) return;
 
@@ -132,8 +134,7 @@ _CORBA_WChar
 omniCodeSet::NCS_W_16bit::unmarshalWChar(cdrStream& stream,
 					 omniCodeSet::TCS_W* tcs)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
-			  (CORBA::CompletionStatus)stream.completion());
+  OMNIORB_CHECK_TCS_W_FOR_UNMARSHAL(tcs, stream);
 
   _CORBA_WChar wc;
   if (tcs->fastUnmarshalWChar(stream, this, wc)) return wc;
@@ -154,8 +155,7 @@ omniCodeSet::NCS_W_16bit::unmarshalWString(cdrStream& stream,
 					   _CORBA_ULong bound,
 					   _CORBA_WChar*& ws)
 {
-  if (!tcs) OMNIORB_THROW(BAD_PARAM,BAD_PARAM_WCharTCSNotKnown,
-			  (CORBA::CompletionStatus)stream.completion());
+  OMNIORB_CHECK_TCS_W_FOR_UNMARSHAL(tcs, stream);
 
   _CORBA_ULong len;
   if (tcs->fastUnmarshalWString(stream, this, bound, len, ws)) return len;
@@ -305,9 +305,8 @@ omniCodeSet::TCS_W_16bit::unmarshalWString(cdrStream& stream,
 		  
 
   if (!stream.checkInputOverrun(1, mlen))
-    OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		  (CORBA::CompletionStatus)stream.completion());
-
 
   us = omniCodeSetUtil::allocU(len + 1);
   omniCodeSetUtil::HolderU uh(us);
@@ -461,7 +460,7 @@ omniCodeSet::TCS_W_16bit::fastUnmarshalWString(cdrStream&          stream,
 		    (CORBA::CompletionStatus)stream.completion());
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, MARSHAL_WStringIsTooLong, 
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		    (CORBA::CompletionStatus)stream.completion());
 
     ws = omniCodeSetUtil::allocW(len + 1);

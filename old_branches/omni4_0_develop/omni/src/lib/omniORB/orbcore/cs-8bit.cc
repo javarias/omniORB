@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/08/24 10:10:44  dpg1
+  Fix braindead bound check bug in string unmarshalling.
+
   Revision 1.1.2.10  2001/08/17 17:12:35  sll
   Modularise ORB configuration parameters.
 
@@ -266,7 +269,7 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
 		  (CORBA::CompletionStatus)stream.completion());
 
   if (!stream.checkInputOverrun(1, mlen))
-    OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		  (CORBA::CompletionStatus)stream.completion());
 
   us = omniCodeSetUtil::allocU(mlen);
@@ -368,7 +371,7 @@ omniCodeSet::TCS_C_8bit::fastUnmarshalString(cdrStream&          stream,
 		    (CORBA::CompletionStatus)stream.completion());
 
     if (!stream.checkInputOverrun(1, mlen))
-      OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		    (CORBA::CompletionStatus)stream.completion());
 
     s = omniCodeSetUtil::allocC(mlen);

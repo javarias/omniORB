@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/03 17:41:19  sll
+  System exception minor code overhaul. When a system exeception is raised,
+  a meaning minor code is provided.
+
   Revision 1.1.2.4  2000/11/17 19:11:16  dpg1
   Rename _CORBA_Sequence__WString to _CORBA_Sequence_WString.
 
@@ -53,7 +57,8 @@
 
 // Empty string constant. Can't use L"", since _CORBA_WChar may not be
 // the same as wchar_t.
-const _CORBA_WChar*const _CORBA_WString_helper::empty_wstring = {0};
+static const _CORBA_WChar ews[] = {0};
+const _CORBA_WChar*const _CORBA_WString_helper::empty_wstring = ews;
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -124,10 +129,13 @@ _CORBA_Sequence_WString::operator <<= (cdrStream& s)
   _CORBA_ULong slen;
   slen <<= s;
 
-  if (!s.checkInputOverrun(1,slen) || (pd_bounded && slen > pd_max)) {
+  if (!s.checkInputOverrun(1,slen))
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+		  (CORBA::CompletionStatus)s.completion());
+
+  if (pd_bounded && slen > pd_max)
     OMNIORB_THROW(MARSHAL,MARSHAL_SequenceIsTooLong,
 		  (CORBA::CompletionStatus)s.completion());
-  }
 
   if (!pd_rel && slen <= pd_max) {
     // obtain ownership of the array and its elements (note that this isn't
