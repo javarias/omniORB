@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.13  2000/03/28 11:03:37  dpg1
+// Failed to copy IOP profiles if release_profiles was false.
+//
 // Revision 1.12  2000/03/24 16:48:57  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -82,6 +85,7 @@
 #include <localIdentity.h>
 #include <remoteIdentity.h>
 #include <objectAdapter.h>
+#include <omniORB3/omniURI.h>
 
 
 #if defined(HAS_Cplusplus_Namespace)
@@ -258,7 +262,7 @@ omniPy::createObjRef(const char*             mostDerivedRepoId,
 
   if (omniORB::trace(10)) {
     omniORB::logger l;
-    l << "Creating ref to remote: " << id << "\n"
+    l << "Creating Python ref to remote: " << id << "\n"
       " target id      : " << targetRepoId << "\n"
       " most derived id: " << mostDerivedRepoId << "\n";
   }
@@ -424,30 +428,24 @@ omniPy::makeLocalObjRef(const char* targetRepoId, CORBA::Object_ptr objref)
 }
 
 
-int
-omniPy::stringToObject(omniObjRef*& objref, const char* sior)
+CORBA::Object_ptr
+omniPy::stringToObject(const char* uri)
 {
-  char* repoId;
-  IOP::TaggedProfileList* profiles;
+  CORBA::Object_ptr cxxobj;
 
-  IOP::EncapStrToIor((const CORBA::Char*) sior,
-		     (CORBA::Char*&) repoId,
-		     profiles);
+  cxxobj = omniURI::stringToObject(uri);
 
-  if( *repoId == '\0' && profiles->length() == 0 ) {
-    // nil object reference
-    delete[] repoId;
-    delete profiles;
-    objref = 0;
-    return 1;
+  if (cxxobj->_NP_is_pseudo()) {
+    return cxxobj;
   }
-
-  objref = omniPy::createObjRef(repoId, CORBA::Object::_PD_repoId,
-				profiles, 1, 0);
-  delete[] repoId;
-  return objref ? 1 : 0;
+  omniObjRef* cxxobjref = cxxobj->_PR_getobj();
+  omniObjRef* objref    = omniPy::createObjRef(cxxobjref->_mostDerivedRepoId(),
+					       CORBA::Object::_PD_repoId,
+					       cxxobjref->_iopProfiles(),
+					       0, 0);
+  CORBA::release(cxxobj);
+  return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
-
 
 
 CORBA::Object_ptr
