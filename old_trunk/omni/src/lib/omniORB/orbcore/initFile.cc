@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.2  1997/01/21  15:05:43  ewc
+// Minor change: Moved #defines to header files.
+//
   */
 
 
@@ -54,7 +57,7 @@ char* tmp_fname;
 
 if ((tmp_fname = getenv("OMNIORB_CONFIG")) == NULL)
   {
-    config_fname = "/etc/omniORB.cfg";
+    config_fname = strdup("/etc/omniORB.cfg");
   }
 else
   {
@@ -78,10 +81,11 @@ if ((iFile = fopen(config_fname,"r")) == NULL)
     // may not be used - fail only when a call that requires
     // the information is made.
 
-    delete[] config_fname;
+    free(config_fname);
     return;
   }
 
+free(config_fname);
 
 fsize = 0;
 fseek(iFile,0L,SEEK_END);
