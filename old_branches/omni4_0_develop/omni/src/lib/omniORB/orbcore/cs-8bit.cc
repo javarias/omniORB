@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/11/22 14:37:59  dpg1
+  Code set marshalling functions now take a string length argument.
+
   Revision 1.1.2.4  2000/11/16 12:33:44  dpg1
   Minor fixes to permit use of UShort as WChar.
 
@@ -199,6 +202,9 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
   if (bound && mlen >= bound)
     OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
 
+  if (!stream.checkInputOverrun(1, mlen))
+    OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
+
   us = omniCodeSetUtil::allocU(mlen);
   omniCodeSetUtil::HolderU uh(us);
 
@@ -276,6 +282,9 @@ omniCodeSet::TCS_C_8bit::fastUnmarshalString(cdrStream&          stream,
 
     if (bound && mlen >= bound)
       OMNIORB_THROW(BAD_PARAM, 0, CORBA::COMPLETED_MAYBE);
+
+    if (!stream.checkInputOverrun(1, mlen))
+      OMNIORB_THROW(MARSHAL, 0, CORBA::COMPLETED_MAYBE);
 
     s = omniCodeSetUtil::allocC(mlen);
     omniCodeSetUtil::HolderC h(s);
