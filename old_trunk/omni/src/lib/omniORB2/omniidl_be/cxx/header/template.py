@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  2000/01/19 11:23:29  djs
+# Moved most C++ code to template file
+#
 # Revision 1.1  2000/01/18 18:05:53  djs
 # Extracted most C++ from header/defs and put in a template file.
 # General refactoring.
@@ -277,8 +280,8 @@ public:
 
   @virtual_operations@
   @virtual_attributes@
-
-protected:
+  
+public:  // Really protected, workaround for xlC
   virtual _CORBA_Boolean _dispatch(GIOP_S&);
 
 private:

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26  2000/01/19 17:05:15  djs
+# Modified to use an externally stored C++ output template.
+#
 # Revision 1.25  2000/01/19 11:21:52  djs
 # *** empty log message ***
 #
@@ -216,10 +219,23 @@ def visitInterface(node):
         inherits_objref_scopedName =  tyutil.scope(inherits_scopedName) + \
                                      ["_objref_" + \
                                       tyutil.name(inherits_scopedName)]
-        inherits_objref_name = environment.nameToString(environment.relName(
-            inherits_objref_scopedName))
-        inherits_str = inherits_str + inherits_objref_name +\
-                       "(mdri, p, id, lid),\n"
+        inherits_objref_relName = environment.relName(inherits_objref_scopedName)
+        inherits_objref_name = environment.nameToString(inherits_objref_relName)
+
+        this_inherits_str = inherits_objref_name + "(mdri, p, id, lid),\n"
+        
+        # powerpc-aix workaround
+        inherits_scope_prefix = tyutil.scope(inherits_objref_scopedName)
+        if inherits_scope_prefix != []:
+            inherits_scope_prefix = string.join(inherits_scope_prefix, "::") + "::"
+            this_inherits_str = "OMNIORB_BASE_CTOR(" + inherits_scope_prefix + ")" + \
+                                this_inherits_str
+        
+        inherits_str = inherits_str + this_inherits_str
+        
+
+
+        
 
     # generate the _objref_ methods
     stream.out(template.interface_objref,
