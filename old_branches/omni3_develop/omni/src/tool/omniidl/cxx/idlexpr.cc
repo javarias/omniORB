@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  2000/02/04 12:17:09  dpg1
+// Support for VMS.
+//
 // Revision 1.3  1999/11/02 17:07:26  dpg1
 // Changes to compile on Solaris.
 //
@@ -185,8 +188,18 @@ _CORBA_Fixed FixedExpr::evalAsFixed() {
 
 // Float
 _CORBA_Float FloatExpr::evalAsFloat() {
+
+#ifndef _MSC_VER
+  // Use direct initialisation except for MS Visual C++, which allegedly
+  // does not work properly with types involving built-in types. To
+  // play it safe, use copy initialisation instead.
+  _CORBA_Float    f(value_);
+  IdlFloatLiteral g(f);
+#else
   _CORBA_Float    f = value_;
   IdlFloatLiteral g = f;
+#endif
+
   if (f != g)
     IdlWarning(file(), line(), "Loss of precision converting literal "
 	       "floating point value to float");
