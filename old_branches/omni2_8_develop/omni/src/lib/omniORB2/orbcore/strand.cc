@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.2  1999/09/27 13:31:43  djr
+  Updated logging to always issue omniORB: prefix.
+
   Revision 1.10.2.1  1999/09/21 20:37:17  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming
@@ -85,6 +88,7 @@
 
 #include <scavenger.h>
 #include <ropeFactory.h>
+#include <stdlib.h>
 
 
 #define LOGMESSAGE(level,prefix,message)  \
@@ -493,8 +497,16 @@ Rope::getStrand(CORBA::Boolean& secondHand)
       secondHand = 0;
     }
     else {
-      Strand_iterator next(this,1);
-      p = next();
+      { // Choose a strand at random to block on.
+	unsigned i = (rand() - n) / (RAND_MAX / n);
+	Strand_iterator next(this,1);
+	while( (p = next()) && (p->_strandIsDying() || i--) )  ;
+      }
+      if( !p ) {
+	// This shouldn't be necassary, but I'm paranoid.
+	Strand_iterator next(this,1);
+	p = next();
+      }
       secondHand = 1;
     }
   }
@@ -584,10 +596,6 @@ Strand_iterator::Strand_iterator(const Rope *r,
 
 Strand_iterator::~Strand_iterator()
 {
-  if (pd_s) {
-    pd_s->decrRefCount(1);
-    pd_s = 0;                // Be paranoid
-  }
   if (!pd_leave_mutex)
     ((Rope *)pd_rope)->pd_lock.unlock();
   return;
@@ -597,7 +605,6 @@ Strand *
 Strand_iterator::operator() ()
 {
   if (pd_s) {
-    pd_s->decrRefCount(1);
     pd_s = pd_s->pd_next;
   }
   else if (!pd_initialised) {
@@ -611,9 +618,6 @@ Strand_iterator::operator() ()
       delete p;
     else
       p->~Strand();
-  }
-  if (pd_s) {
-    pd_s->incrRefCount(1);
   }
   return pd_s;
 }
