@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/02/13 17:40:52  dpg1
+  Tweak to avoid destruction race in invoker.
+
   Revision 1.1.2.2  2002/02/13 16:02:40  dpg1
   Stability fixes thanks to Bastiaan Bakker, plus threading
   optimisations inspired by investigating Bastiaan's bug reports.
@@ -156,7 +159,7 @@ public:
 	pd_pool->pd_nthreads++;
       }
 
-      if (pd_pool->pd_nthreads >= pd_pool->pd_maxthreads) {
+      if (pd_pool->pd_nthreads > pd_pool->pd_maxthreads) {
 	// No need to keep this thread
 	break;
       }
@@ -242,7 +245,7 @@ omniAsyncInvoker::insert(omniTask* t) {
 	    // Cannot start a new thread.
 	    pd_nthreads--;
 	    pd_totalthreads--;
-	    omniORB::logs(10, "Exception trying to start new thread.");
+	    omniORB::logs(5, "Exception trying to start new thread.");
 	    t->enq(pd_anytime_tq);
 	  }
 	}
@@ -272,7 +275,7 @@ omniAsyncInvoker::insert(omniTask* t) {
 	catch(...) {
 	  // Cannot start a new thread.
 	  pd_totalthreads--;
-	  omniORB::logs(10, "Exception trying to start new thread.");
+	  omniORB::logs(5, "Exception trying to start new thread.");
 	  return 0;
 	}
       }
