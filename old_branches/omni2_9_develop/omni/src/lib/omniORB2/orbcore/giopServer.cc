@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.4.4  1999/11/05 17:36:36  sll
+  Updated  GIOP_S_null_marshaller::dataSize() to return 0.
+
   Revision 1.21.4.3  1999/11/04 20:20:19  sll
   GIOP engines can now do callback to the higher layer to calculate total
   message size if necessary.
@@ -147,7 +150,7 @@ MarshallSystemException(GIOP_S *s,
 GIOP_S::GIOP_S(Strand *s)
 {
   pd_state = GIOP_S::Idle;
-  pd_cdrStream = giopStream::acquire(s);
+  pd_cdrStream = giopStream::acquireServer(s);
 }
 
 
