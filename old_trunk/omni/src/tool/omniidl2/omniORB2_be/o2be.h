@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.25  1999/06/03 17:11:36  sll
+ Make out_adptarg_name non-const in o2be_struct and o2be_union.
+
  Revision 1.24  1999/06/02 16:43:42  sll
  Added support for -F flag.
 
@@ -1091,7 +1094,8 @@ public:
   const char* server_uqname() const { return pd_server_uqname; }
   const char* server_fqname() const { return pd_server_fqname; }
   const char* fieldMemberType_uqname() const { return pd_fieldmem_uqname; }
-  const char* fieldMemberType_fqname(AST_Decl* used_in) const;
+  const char* fieldMemberType_fqname(AST_Decl* used_in);
+  const char* seqMemberType_fqname(AST_Decl* used_in);
   // Looks at the scope-name relation between this node and the one it is
   // used in. Generate the fieldmember type that used the unambiguous name
   // of this node in the scope where this template name is used.
@@ -1115,8 +1119,8 @@ public:
 
   const char* IRrepoId() const { return pd_IRrepoId; }
   size_t IRrepoIdSize() const { return pd_IRrepoIdSize; }
-  const char* inout_adptarg_name(AST_Decl* used_in) const;
-  const char* out_adptarg_name(AST_Decl* used_in) const;
+  const char* inout_adptarg_name(AST_Decl* used_in);
+  const char* out_adptarg_name(AST_Decl* used_in);
 
   const char* unambiguous_objref_name(AST_Decl* used_in,
 				      idl_bool use_fqname=I_FALSE) const;
@@ -1150,6 +1154,7 @@ private:
   char* pd_server_fqname;
   char* pd_fieldmem_uqname;
   char* pd_fieldmem_fqname;
+  char* pd_seqmem_fqname;
   char* pd_nil_uqname;
   char* pd_nil_fqname;
 
