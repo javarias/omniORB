@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.21  2002/08/16 16:00:50  dgrisby
+  Bugs accessing uninitialised String_vars with [].
+
   Revision 1.10.2.20  2002/03/18 12:38:26  dpg1
   Lower trace(0) to trace(1), propagate fatalException.
 
@@ -414,14 +417,15 @@ IIOP::unmarshalMultiComponentProfile(const IOP::TaggedProfile& profile,
 			   profile.profile_data.length(),
 			   1);
 
-  CORBA::ULong total;
-  total <<= s;
-  if (total) {
-    if (!s.checkInputOverrun(1,total))
+  CORBA::ULong newitems;
+  newitems <<= s;
+  if (newitems) {
+    if (!s.checkInputOverrun(1,newitems))
       OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
 
-    body.length(total);
-    for (CORBA::ULong index = 0; index<total; index++) {
+    CORBA::ULong oldlen = body.length();
+    body.length(oldlen + newitems);
+    for (CORBA::ULong index = oldlen; index < oldlen+newitems; index++) {
       body[index] <<= s;
     }
   }
