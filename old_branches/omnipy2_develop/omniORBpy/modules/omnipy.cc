@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.21  2003/05/28 10:13:00  dgrisby
+// Preliminary interceptor support. General clean-up.
+//
 // Revision 1.1.2.20  2003/03/12 11:17:02  dgrisby
 // Registration of external pseudo object creation functions.
 //
@@ -378,7 +381,6 @@ extern "C" {
     OMNIORB_ASSERT(omniPy::pyCreateTypeCode);
     OMNIORB_ASSERT(PyFunction_Check(omniPy::pyCreateTypeCode));
     OMNIORB_ASSERT(omniPy::pyWorkerThreadClass);
-    OMNIORB_ASSERT(PyClass_Check(omniPy::pyWorkerThreadClass));
     OMNIORB_ASSERT(omniPy::pyWorkerThreadDel);
     OMNIORB_ASSERT(PyMethod_Check(omniPy::pyWorkerThreadDel));
     OMNIORB_ASSERT(omniPy::pyEmptyTuple);
