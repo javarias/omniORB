@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.9  2000/08/07 15:34:34  dpg1
+# Partial back-port of long long from omni3_1_develop.
+#
 # Revision 1.30.2.8  2000/07/17 09:36:16  djs
 # Added function to strip typedef chains from AST nodes
 # Fixed allInherits() function to handle inheriting from a typedef to an
@@ -760,6 +763,8 @@ def allInherits(interface):
         # extend search one level deeper than current
         next = []
         for c in map(remove_typedefs, current):
+            if isinstance(c, idlast.Forward):
+                c = c.fullDecl()
             next = next + c.inherits()
 
         return next + bfs(next, bfs)
