@@ -30,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:26:41  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #include <omniORB3/CORBA.h>
@@ -82,6 +85,3 @@ omniAnonObjRef_pof::is_a(const char* repoId) const
 
   return 0;
 }
-
-
-static const omniAnonObjRef_pof _theomniAnonObjRef_pof;
