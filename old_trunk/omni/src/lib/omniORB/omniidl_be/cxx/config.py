@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  1999/11/03 17:33:41  djs
+# Brought more of the old tmp_omniidl code into the new tree
+#
 
 #
 # Location where configuration data pertinent to the current run of the
@@ -83,5 +86,6 @@ def include_file_names():
     # OR rebuild it by traversing the AST in python
     return []
 
-def FULL_EMULATION():
+# completely emulate the old backend, bugs and all
+def EMULATE_BUGS():
     return 1

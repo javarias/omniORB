@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/04 19:05:02  djs
+# Finished moving code from tmp_omniidl. Regression tests ok.
+#
 # Revision 1.2  1999/11/03 17:35:07  djs
 # Brought more of the old tmp_omniidl code into the new tree
 #
@@ -36,6 +39,9 @@
 #
 
 """General utility functions used by the C++ backend"""
+
+from omniidl import idlutil, idltype
+from omniidl.be.cxx import config
 
 import re, string
 
@@ -197,3 +203,4 @@ def intersect(a, b):
         if x in b:
             result.append(x)
     return result
+
