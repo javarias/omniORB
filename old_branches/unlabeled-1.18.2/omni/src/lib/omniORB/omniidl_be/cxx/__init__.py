@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18  2000/01/13 11:45:47  djs
+# Added option to customise C++ reserved word name escaping
+#
 # Revision 1.17  2000/01/13 10:52:04  djs
 # Rewritten argument handling
 # Added options to specify the header and stubs file prefix, mirroring omniidl3
@@ -95,12 +98,12 @@
 
 # -----------------------------
 # Output generation functions
-from omniidl.be.cxx import header
-from omniidl.be.cxx import skel
-from omniidl.be.cxx import dynskel
+from omniidl_be.cxx import header
+from omniidl_be.cxx import skel
+from omniidl_be.cxx import dynskel
 
-from omniidl.be.cxx import env
-from omniidl.be.cxx import config
+from omniidl_be.cxx import env
+from omniidl_be.cxx import config
 
 import re, sys
 

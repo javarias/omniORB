@@ -29,13 +29,18 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/12 17:19:52  djs
+# IDL generator generates more things (esp interfaces)
+# Regression tester covers SK.cc and DynSK.cc
+# Quick hack to compare performance of the new system with the old
+#
 # Revision 1.1  1999/11/10 20:20:10  djs
 # Tools used for comparing the new compiler with the old one
 #
 
 import re
 
-from omniidl.be.cxx import util
+from omniidl_be.cxx import util
 
 allPossibilities = 0
 

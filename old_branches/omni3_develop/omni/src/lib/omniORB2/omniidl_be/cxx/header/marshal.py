@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  2000/01/19 11:23:28  djs
+# Moved most C++ code to template file
+#
 # Revision 1.3  2000/01/07 20:31:28  djs
 # Regression tests in CVSROOT/testsuite now pass for
 #   * no backend arguments
@@ -48,8 +51,8 @@
   for the C++ backend"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, config, name
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx.header import template
 
 import marshal
 

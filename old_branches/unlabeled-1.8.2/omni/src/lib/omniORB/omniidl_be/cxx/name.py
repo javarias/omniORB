@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8  2000/01/19 09:36:07  djs
+# *** empty log message ***
+#
 # Revision 1.7  2000/01/11 12:02:34  djs
 # More tidying up
 #
@@ -61,7 +64,7 @@
 
 from omniidl import idltype, idlutil
 
-from omniidl.be.cxx import tyutil, config
+from omniidl_be.cxx import tyutil, config
 
 
 def prefixName(scopedName, prefix, env = None):

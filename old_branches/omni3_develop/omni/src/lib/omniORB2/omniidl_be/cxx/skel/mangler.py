@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/13 17:02:05  djs
+# Added support for operation contexts.
+#
 # Revision 1.12  2000/01/13 15:56:44  djs
 # Factored out private identifier prefix rather than hard coding it all through
 # the code.
@@ -83,7 +86,7 @@
 import re, string
 
 from omniidl import idlast, idltype
-from omniidl.be.cxx import util, tyutil, skutil, config
+from omniidl_be.cxx import util, tyutil, skutil, config
 
 import mangler
 self = mangler

@@ -1,3 +1,3 @@
 TOP=../../../../..
-CURRENT=src/tool/omniidl/python/omniidl_be
+CURRENT=src/tool/omniidl/python/scripts
 include $(TOP)/config/config.mk

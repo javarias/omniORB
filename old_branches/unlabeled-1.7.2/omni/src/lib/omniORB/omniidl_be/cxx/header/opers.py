@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7  2000/01/19 11:23:28  djs
+# Moved most C++ code to template file
+#
 # Revision 1.6  2000/01/17 17:03:14  djs
 # Support for constructed types in typedefs and unions
 #
@@ -57,8 +60,8 @@
 # similar to o2be_root::produce_hdr_operators in the old C++ BE
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, config, name
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx.header import template
 
 import opers
 

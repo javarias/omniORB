@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  2000/01/20 18:26:44  djs
+# Moved large C++ output strings into an external template file
+#
 # Revision 1.1  2000/01/17 17:06:30  djs
 # Added tcParser #ifdefs for bounded strings
 #
@@ -35,8 +38,8 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, config, name
-from omniidl.be.cxx.dynskel import template
+from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx.dynskel import template
 
 import tcstring
 

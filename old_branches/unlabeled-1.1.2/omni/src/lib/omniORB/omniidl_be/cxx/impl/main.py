@@ -28,14 +28,17 @@
 
 # $Id$
 # $Log$
+# Revision 1.1  2000/02/13 15:54:14  djs
+# Beginnings of code to generate example interface implementations
+#
 
 """Produce example interface implementations"""
 
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, name, env, config
-from omniidl.be.cxx.impl import template
+from omniidl_be.cxx import tyutil, util, name, env, config
+from omniidl_be.cxx.impl import template
 
 import main
 

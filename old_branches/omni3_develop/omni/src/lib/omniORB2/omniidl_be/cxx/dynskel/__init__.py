@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/20 18:26:43  djs
+# Moved large C++ output strings into an external template file
+#
 # Revision 1.5  2000/01/17 17:06:30  djs
 # Added tcParser #ifdefs for bounded strings
 #
@@ -54,29 +57,29 @@
 
 # -----------------------------
 # Configuration data
-from omniidl.be.cxx import config
+from omniidl_be.cxx import config
 
 # -----------------------------
 # Utility functions
-from omniidl.be.cxx import tyutil, util
+from omniidl_be.cxx import tyutil, util
 
-#import omniidl.be.cxx.dynskel.tcstring
-import omniidl.be.cxx.dynskel.typecode
-import omniidl.be.cxx.dynskel.main
-import omniidl.be.cxx.dynskel.template
+#import omniidl_be.cxx.dynskel.tcstring
+import omniidl_be.cxx.dynskel.typecode
+import omniidl_be.cxx.dynskel.main
+import omniidl_be.cxx.dynskel.template
 
 def monolithic(stream, tree):
     stream.out(template.header,
                Config = config)
 
     # This is the bit shared with the header file?
-    tcstring = omniidl.be.cxx.dynskel.tcstring.__init__(stream)
+    tcstring = omniidl_be.cxx.dynskel.tcstring.__init__(stream)
     #tree.accept(tcstring)
 
-    Typecode = omniidl.be.cxx.dynskel.typecode.__init__(stream)
+    Typecode = omniidl_be.cxx.dynskel.typecode.__init__(stream)
     tree.accept(Typecode)
 
-    Main = omniidl.be.cxx.dynskel.main.__init__(stream)
+    Main = omniidl_be.cxx.dynskel.main.__init__(stream)
     tree.accept(Main)
 
 def run(tree):

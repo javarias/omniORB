@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/01/17 16:58:52  djs
+# Marshalling code: exceptions (BAD_PARAM, MARSHAL) and bounded strings
+#
 # Revision 1.14  2000/01/11 12:02:34  djs
 # More tidying up
 #
@@ -82,7 +85,7 @@ import string
 
 from omniidl import idlutil, idltype, idlast
 
-from omniidl.be.cxx import util, tyutil
+from omniidl_be.cxx import util, tyutil
 
 # From http://www-i3.informatik.rwth-aachen.de/funny/babbage.html:
 #

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/01/20 18:26:13  djs
+# Tie template output order problem
+#
 # Revision 1.14  2000/01/20 12:46:40  djs
 # Renamed a function to avoid a name clash with a module.
 #
@@ -81,9 +84,9 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, name, env, config, util
-from omniidl.be.cxx.header import tie
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, name, env, config, util
+from omniidl_be.cxx.header import tie
+from omniidl_be.cxx.header import template
 
 import poa
 

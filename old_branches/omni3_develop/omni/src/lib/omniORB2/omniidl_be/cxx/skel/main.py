@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.27  2000/02/01 09:26:49  djs
+# Tracking fixes in old compiler: powerpc-aix scoped identifier workarounds
+#
 # Revision 1.26  2000/01/19 17:05:15  djs
 # Modified to use an externally stored C++ output template.
 #
@@ -119,9 +122,9 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, name, env, config, skutil
-from omniidl.be.cxx.skel import mangler, dispatch, proxy
-from omniidl.be.cxx.skel import template
+from omniidl_be.cxx import tyutil, util, name, env, config, skutil
+from omniidl_be.cxx.skel import mangler, dispatch, proxy
+from omniidl_be.cxx.skel import template
 
 import main
 self = main

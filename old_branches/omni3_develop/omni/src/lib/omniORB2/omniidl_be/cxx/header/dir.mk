@@ -1,4 +1,4 @@
-PYLIBDIR = $(EXPORT_TREE)/lib/python/omniidl/be/cxx/header
+PYLIBDIR = $(EXPORT_TREE)/lib/python/omniidl_be/cxx/header
 
 export::
 	@$(MakeSubdirs)

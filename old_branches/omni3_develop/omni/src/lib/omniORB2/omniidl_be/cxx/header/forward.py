@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/19 11:23:28  djs
+# Moved most C++ code to template file
+#
 # Revision 1.5  2000/01/17 17:02:14  djs
 # Constructed types in typedef fix
 #
@@ -52,8 +55,8 @@
 """Produce ancillary forward declarations for the header file"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, config, name
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx.header import template
 
 import forward
 

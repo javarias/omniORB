@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31  2000/01/19 11:23:27  djs
+# Moved most C++ code to template file
+#
 # Revision 1.30  2000/01/18 18:05:52  djs
 # Extracted most C++ from header/defs and put in a template file.
 # General refactoring.
@@ -139,8 +142,8 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, name, env, config
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, util, name, env, config
+from omniidl_be.cxx.header import template
 
 import defs
 

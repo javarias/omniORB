@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/20 18:26:44  djs
+# Moved large C++ output strings into an external template file
+#
 # Revision 1.11  2000/01/17 17:07:47  djs
 # Better handling of recursive types.
 #
@@ -90,9 +93,9 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, name, config
-from omniidl.be.cxx.skel import mangler
-from omniidl.be.cxx.dynskel import template
+from omniidl_be.cxx import tyutil, util, name, config
+from omniidl_be.cxx.skel import mangler
+from omniidl_be.cxx.dynskel import template
 
 import bdesc
 

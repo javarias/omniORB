@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/20 18:26:13  djs
+# Tie template output order problem
+#
 # Revision 1.11  2000/01/19 11:23:27  djs
 # Moved most C++ code to template file
 #
@@ -61,23 +64,23 @@
 
 # -----------------------------
 # Configuration data
-from omniidl.be.cxx import config
+from omniidl_be.cxx import config
 
 # -----------------------------
 # Output generation functions
-import omniidl.be.cxx.header.defs
-import omniidl.be.cxx.header.opers
-import omniidl.be.cxx.header.poa
-import omniidl.be.cxx.header.tie
-import omniidl.be.cxx.header.forward
-import omniidl.be.cxx.header.marshal
-import omniidl.be.cxx.header.tcstring
+import omniidl_be.cxx.header.defs
+import omniidl_be.cxx.header.opers
+import omniidl_be.cxx.header.poa
+import omniidl_be.cxx.header.tie
+import omniidl_be.cxx.header.forward
+import omniidl_be.cxx.header.marshal
+import omniidl_be.cxx.header.tcstring
 
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx.header import template
 
 # -----------------------------
 # Utility functions
-from omniidl.be.cxx import tyutil, util
+from omniidl_be.cxx import tyutil, util
 
 # -----------------------------
 # System functions
@@ -99,14 +102,14 @@ def defs_fragment(stream, tree):
     header(stream, filename)
 
     # generate the header definitions
-    forward = omniidl.be.cxx.header.forward.__init__(stream)
+    forward = omniidl_be.cxx.header.forward.__init__(stream)
     tree.accept(forward)
     
     # generate the bounded string tcParser stuff
-    tcstring = omniidl.be.cxx.header.tcstring.__init__(stream)
+    tcstring = omniidl_be.cxx.header.tcstring.__init__(stream)
     tree.accept(tcstring)
 
-    defs = omniidl.be.cxx.header.defs.__init__(stream)
+    defs = omniidl_be.cxx.header.defs.__init__(stream)
     tree.accept(defs)
 
     footer(stream)
@@ -117,10 +120,10 @@ def opers_fragment(stream, tree):
     header(stream, filename)
 
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
-    opers = omniidl.be.cxx.header.opers.__init__(stream)
+    opers = omniidl_be.cxx.header.opers.__init__(stream)
     tree.accept(opers)
 
-    marshal = omniidl.be.cxx.header.marshal.__init__(stream)
+    marshal = omniidl_be.cxx.header.marshal.__init__(stream)
     tree.accept(marshal)
 
     footer(stream)
@@ -130,7 +133,7 @@ def poa_fragment(stream, tree):
     filename = config.basename() + config.poa_fragment_suffix()
     header(stream, filename)
     
-    poa = omniidl.be.cxx.header.poa.__init__(stream)
+    poa = omniidl_be.cxx.header.poa.__init__(stream)
     tree.accept(poa)
 
     footer(stream)
@@ -173,34 +176,34 @@ def monolithic(stream, tree):
 
     forward_dec = util.StringStream()
     # generate the header definitions
-    forward = omniidl.be.cxx.header.forward.__init__(forward_dec)
+    forward = omniidl_be.cxx.header.forward.__init__(forward_dec)
     tree.accept(forward)
 
     string_tcparser = util.StringStream()
     # generate the bounded string tcParser stuff
-    tcstring = omniidl.be.cxx.header.tcstring.__init__(string_tcparser)
+    tcstring = omniidl_be.cxx.header.tcstring.__init__(string_tcparser)
     tree.accept(tcstring)
 
     main_defs = util.StringStream()
-    defs = omniidl.be.cxx.header.defs.__init__(main_defs)
+    defs = omniidl_be.cxx.header.defs.__init__(main_defs)
     tree.accept(defs)
 
     main_poa = util.StringStream()
     main_tie = util.StringStream()
     
-    poa = omniidl.be.cxx.header.poa.__init__(main_poa)
+    poa = omniidl_be.cxx.header.poa.__init__(main_poa)
     tree.accept(poa)
     if config.FlatTieFlag():
-        tie = omniidl.be.cxx.header.tie.__init__(main_tie)
+        tie = omniidl_be.cxx.header.tie.__init__(main_tie)
         tree.accept(tie)
 
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
     main_opers = util.StringStream()
-    opers = omniidl.be.cxx.header.opers.__init__(main_opers)
+    opers = omniidl_be.cxx.header.opers.__init__(main_opers)
     tree.accept(opers)
 
     main_marshal = util.StringStream()
-    marshal = omniidl.be.cxx.header.marshal.__init__(main_marshal)
+    marshal = omniidl_be.cxx.header.marshal.__init__(main_marshal)
     tree.accept(marshal)
 
     # other stuff

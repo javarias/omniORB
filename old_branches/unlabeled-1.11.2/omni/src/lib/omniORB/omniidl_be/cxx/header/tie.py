@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11  2000/01/20 12:46:40  djs
+# Renamed a function to avoid a name clash with a module.
+#
 # Revision 1.10  2000/01/19 11:23:29  djs
 # Moved most C++ code to template file
 #
@@ -69,8 +72,8 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, name, env, config, util
-from omniidl.be.cxx.header import template
+from omniidl_be.cxx import tyutil, name, env, config, util
+from omniidl_be.cxx.header import template
 
 import tie
 

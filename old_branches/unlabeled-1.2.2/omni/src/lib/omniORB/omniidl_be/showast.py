@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/03 12:06:19  djs
+# Type utility functions now work with the new AST representation
+#
 # Revision 1.1  1999/11/03 11:09:33  djs
 # General module renaming
 #
@@ -37,7 +40,7 @@
 """Dumps the AST tree"""
 
 from omniidl import idlast, idltype, idlutil, output
-from omniidl.be.cxx import tyutil
+from omniidl_be.cxx import tyutil
 
 import sys, string
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/01/19 17:05:16  djs
+# Modified to use an externally stored C++ output template.
+#
 # Revision 1.14  2000/01/11 12:02:46  djs
 # More tidying up
 #
@@ -84,8 +87,8 @@
 import string
 
 from omniidl import idlutil, idltype, idlast
-from omniidl.be.cxx import util, tyutil, skutil, name
-from omniidl.be.cxx.skel import mangler, template
+from omniidl_be.cxx import util, tyutil, skutil, name
+from omniidl_be.cxx.skel import mangler, template
 
 
 import proxy

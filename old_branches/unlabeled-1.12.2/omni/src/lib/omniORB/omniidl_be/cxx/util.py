@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/20 18:25:53  djs
+# Got rid of some superfluous whitespace
+#
 # Revision 1.11  2000/01/17 16:59:53  djs
 # Some whitespace stripping in StringStream
 #
@@ -73,7 +76,7 @@
 """General utility functions used by the C++ backend"""
 
 from omniidl import idlutil, idltype
-from omniidl.be.cxx import config
+from omniidl_be.cxx import config
 
 import re, string
 

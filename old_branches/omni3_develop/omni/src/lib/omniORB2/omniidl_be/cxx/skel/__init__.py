@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  2000/01/13 15:56:43  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.4  2000/01/13 14:16:34  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -43,15 +47,15 @@
 
 # -----------------------------
 # Configuration data
-from omniidl.be.cxx import config
+from omniidl_be.cxx import config
 
 # -----------------------------
 # Utility functions
-from omniidl.be.cxx import tyutil, util
+from omniidl_be.cxx import tyutil, util
 
-from omniidl.be.cxx.skel import main
-from omniidl.be.cxx.skel import poa
-from omniidl.be.cxx.skel import mangler
+from omniidl_be.cxx.skel import main
+from omniidl_be.cxx.skel import poa
+from omniidl_be.cxx.skel import mangler
 
 def monolithic(stream, tree):
     """Creates one large skeleton with all code inside"""

@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15  2000/02/14 12:49:57  dpg1
+# Python version check. New -p option.
+#
 # Revision 1.14  2000/02/04 12:17:05  dpg1
 # Support for VMS.
 #
@@ -78,14 +81,14 @@
 import sys
 
 if sys.version[:5] != "1.5.2":
-    sys.stdout.write("\n\n")
-    sys.stdout.write("omniidl: WARNING!!\n\n")
-    sys.stdout.write("omniidl: Python version 1.5.2 is required.\n")
-    sys.stdout.write("omniidl: " + sys.executable + " is version " + \
+    sys.stderr.write("\n\n")
+    sys.stderr.write("omniidl: WARNING!!\n\n")
+    sys.stderr.write("omniidl: Python version 1.5.2 is required.\n")
+    sys.stderr.write("omniidl: " + sys.executable + " is version " + \
                      sys.version + "\n")
-    sys.stdout.write("omniidl: Execution is likely to fail.\n")
-    sys.stdout.write("\n\n\n")
-    sys.stdout.flush()
+    sys.stderr.write("omniidl: Execution is likely to fail.\n")
+    sys.stderr.write("\n\n\n")
+    sys.stderr.flush()
 
 import _omniidl
 import getopt, os, os.path, string
@@ -231,7 +234,7 @@ def my_import(name):
 
 def be_import(name):
     try:
-        return my_import("omniidl.be." + name)
+        return my_import("omniidl_be." + name)
     except ImportError:
         return my_import(name)
 
@@ -269,6 +272,14 @@ def main(argv=None):
                                  ": Maybe you need to use the -p option?\n")
             sys.exit(1)
 
+        if verbose:
+            if hasattr(be, "__file__"):
+                sys.stderr.write(cmdname + ": `" + backend + \
+                                 "' imported from `" + be.__file__ + "'\n")
+            else:
+                sys.stderr.write(cmdname + ": `" + backend + \
+                                 "' imported from unknown file\n")
+
         bemodules.append(be)
         if hasattr(be, "cpp_args"):
             preprocessor_args.extend(be.cpp_args)
@@ -280,7 +291,7 @@ def main(argv=None):
     if print_usage:
         sys.exit(0)
 
-    if len(backends) == 0 and not quiet:
+    if len(backends) == 0 and not (quiet or dump_only):
         sys.stderr.write(cmdname + ": Warning: No back-ends specified; " \
                          "checking IDL for validity\n")
 

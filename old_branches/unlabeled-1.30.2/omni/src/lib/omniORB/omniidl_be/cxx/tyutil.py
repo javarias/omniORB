@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30  2000/01/19 11:21:35  djs
+# *** empty log message ***
+#
 # Revision 1.29  2000/01/18 13:05:57  djs
 # Nice new memberType function
 #
@@ -196,7 +199,7 @@
 #
 from omniidl import idlutil, idltype, idlast
 
-from omniidl.be.cxx import util, config
+from omniidl_be.cxx import util, config
 
 import string, re
 

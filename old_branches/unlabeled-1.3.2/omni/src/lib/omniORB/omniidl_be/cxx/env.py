@@ -30,6 +30,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  2000/01/17 16:58:22  djs
+# Support for typedefs with constructed types
+# Support for unions with types constructed inside the switch()
+# Support for module reopening
+#
 # Revision 1.2  2000/01/13 14:16:20  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -43,7 +48,7 @@
    cache rather than redo the calculation"""
 
 from omniidl import idlast, idlvisitor
-from omniidl.be.cxx import tyutil, name
+from omniidl_be.cxx import tyutil, name
 
 import env
 

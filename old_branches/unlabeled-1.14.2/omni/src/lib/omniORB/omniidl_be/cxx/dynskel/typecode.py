@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14  2000/01/20 18:26:45  djs
+# Moved large C++ output strings into an external template file
+#
 # Revision 1.13  2000/01/19 09:35:48  djs
 # *** empty log message ***
 #
@@ -81,8 +84,8 @@
 import string, re
 
 from omniidl import idlast, idltype, idlutil
-from omniidl.be.cxx import tyutil, util, config, name
-from omniidl.be.cxx.dynskel import tcstring, template
+from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx.dynskel import tcstring, template
 
 import typecode
 
