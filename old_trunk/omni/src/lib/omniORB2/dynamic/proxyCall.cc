@@ -35,6 +35,9 @@
 
 /*
  $Log$
+ Revision 1.4  1999/04/21 13:11:18  djr
+ Added support for contexts.
+
 */
 
 #include <omniORB2/CORBA.h>
@@ -46,7 +49,8 @@
 //////////////////////////////////////////////////////////////////////
 
 void
-OmniProxyCallWrapper::invoke(omniObject* o, OmniProxyCallDesc& call_desc)
+OmniProxyCallWrapper::invoke(omniObject* o, 
+			     OmniProxyCallDescWithContext& call_desc)
 {
   CORBA::ULong retries = 0;
 
@@ -192,7 +196,8 @@ _again:
 
 
 void
-OmniProxyCallWrapper::one_way(omniObject* o, OmniOWProxyCallDesc& call_desc)
+OmniProxyCallWrapper::one_way(omniObject* o,
+			      OmniOWProxyCallDescWithContext& call_desc)
 {
   CORBA::ULong retries = 0;
 
@@ -283,52 +288,3 @@ _again:
 #endif
 }
 
-//////////////////////////////////////////////////////////////////////
-////////////////////////// OmniProxyCallDesc /////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-CORBA::ULong
-OmniProxyCallDesc::alignedSize(CORBA::ULong size_in)
-{
-  return size_in;
-}
-
-
-void
-OmniProxyCallDesc::marshalArguments(GIOP_C&)
-{
-  // no-op
-}
-
-
-void
-OmniProxyCallDesc::unmarshalReturnedValues(GIOP_C&)
-{
-  // no-op
-}
-
-
-void
-OmniProxyCallDesc::userException(GIOP_C&, const char* repoId)
-{
-  // Shouldn't really ever be called - but it doesn't matter
-  // if it is.
-  throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
-}
-
-//////////////////////////////////////////////////////////////////////
-///////////////////////// OmniOWProxyCallDesc ////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-CORBA::ULong
-OmniOWProxyCallDesc::alignedSize(CORBA::ULong size_in)
-{
-  return size_in;
-}
-
-
-void
-OmniOWProxyCallDesc::marshalArguments(GIOP_C&)
-{
-  // no-op
-}
