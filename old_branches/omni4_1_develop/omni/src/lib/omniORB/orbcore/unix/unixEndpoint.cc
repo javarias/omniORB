@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:59  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:57  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -94,7 +97,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
 unixEndpoint::unixEndpoint(const char* filename) :
-  pd_socket(RC_INVALID_SOCKET),
+  SocketHolder(RC_INVALID_SOCKET),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
   pd_callback_cookie(0) {
 
@@ -166,6 +169,8 @@ unixEndpoint::Bind() {
 
   pd_address_string = unixConnection::unToString(pd_filename);
 
+  // Add the socket to our SocketCollection.
+  addSocket(this);
 
   return 1;
 }
@@ -194,6 +199,7 @@ unixEndpoint::Poke() {
 void
 unixEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
+  removeSocket(this);
   decrRefCount();
   omniORB::logs(20, "Unix endpoint shut down.");
 }
@@ -207,7 +213,7 @@ unixEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 
   pd_callback_func = func;
   pd_callback_cookie = cookie;
-  setSelectable(pd_socket,1,0,0);
+  setSelectable(1,0,0);
 
   while (1) {
     pd_new_conn_socket = RC_INVALID_SOCKET;
@@ -221,9 +227,9 @@ unixEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-unixEndpoint::notifyReadable(SocketHandle_t fd) {
+unixEndpoint::notifyReadable(SocketHolder* sh) {
 
-  if (fd == pd_socket) {
+  if (sh == (SocketHolder*)this) {
     // New connection
     SocketHandle_t sock;
 again:
@@ -249,15 +255,12 @@ again:
     else {
       pd_new_conn_socket = sock;
     }
-    setSelectable(pd_socket,1,0,1);
+    setSelectable(1,0,1);
     return 1;
   }
   else {
     // Existing connection
-    SocketLink* conn = findSocket(fd,1);
-    if (conn) {
-      pd_callback_func(pd_callback_cookie,(unixConnection*)conn);
-    }
+    pd_callback_func(pd_callback_cookie,(unixConnection*)sh);
     return 1;
   }
 }

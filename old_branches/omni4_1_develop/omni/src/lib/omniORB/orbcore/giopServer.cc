@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.2  2005/01/06 23:10:27  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.25.2.1  2003/03/23 21:02:15  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -996,9 +999,7 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
       // probably afford to call Peek() here because this thread is
       // otherwise idle.
 
-      CORBA::Boolean readable = 0;
-      conn->Peek(peekCallBack,(void*)&readable);
-      if (readable) {
+      if (conn->Peek()) {
 	// There is data to be read. Tell the worker to go around again.
 	return 1;
       }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:56  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -59,7 +62,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 class tcpConnection;
 
-class tcpEndpoint : public giopEndpoint, public SocketCollection {
+class tcpEndpoint : public giopEndpoint,
+		    public SocketCollection,
+		    public SocketHolder {
 public:
 
   tcpEndpoint(const IIOP::Address& address);
@@ -76,12 +81,11 @@ public:
   ~tcpEndpoint();
 
 protected:
-  CORBA::Boolean notifyReadable(SocketHandle_t);
+  CORBA::Boolean notifyReadable(SocketHolder*);
   // implement SocketCollection::notifyReadable
   
 
 private:
-  SocketHandle_t       pd_socket;
   IIOP::Address        pd_address;
   CORBA::String_var    pd_address_string;
 
@@ -119,7 +123,7 @@ public:
   friend class tcpActiveConnection;
 
 protected:
-  CORBA::Boolean notifyReadable(SocketHandle_t);
+  CORBA::Boolean notifyReadable(SocketHolder*);
   // implement SocketCollection::notifyReadable
 
   void addMonitor(SocketHandle_t);

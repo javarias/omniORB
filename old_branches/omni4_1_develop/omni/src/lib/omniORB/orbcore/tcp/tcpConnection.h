@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:55  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -66,7 +69,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 class tcpEndpoint;
 
-class tcpConnection : public giopConnection, public SocketLink {
+class tcpConnection : public giopConnection, public SocketHolder {
 public:
 
   int Send(void* buf, size_t sz,
@@ -89,7 +92,7 @@ public:
 
   CORBA::Boolean isSelectable();
 
-  void Peek(notifyReadable_t func,void* cookie);
+  CORBA::Boolean Peek();
 
   SocketHandle_t handle() const { return pd_socket; }
 
@@ -103,7 +106,6 @@ public:
   friend class tcpEndpoint;
 
 private:
-  SocketCollection* pd_belong_to;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;
 };

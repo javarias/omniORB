@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.6  2002/09/09 22:11:51  dgrisby
   SSL transport cleanup even if certificates are wrong.
 
@@ -60,7 +63,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 class sslConnection;
 
-class sslEndpoint : public giopEndpoint, public SocketCollection {
+class sslEndpoint : public giopEndpoint,
+		    public SocketCollection,
+		    public SocketHolder {
 public:
 
   sslEndpoint(const IIOP::Address& address, sslContext* ctx);
@@ -75,11 +80,10 @@ public:
   ~sslEndpoint();
 
 protected:
-  CORBA::Boolean notifyReadable(SocketHandle_t);
+  CORBA::Boolean notifyReadable(SocketHolder*);
   // implement SocketCollection::notifyReadable
 
  private:
-  SocketHandle_t     pd_socket;
   IIOP::Address      pd_address;
   CORBA::String_var  pd_address_string;
   sslContext*        pd_ctx;
@@ -118,7 +122,7 @@ public:
   friend class sslActiveConnection;
 
 protected:
-  CORBA::Boolean notifyReadable(SocketHandle_t);
+  CORBA::Boolean notifyReadable(SocketHolder*);
   // implement SocketCollection::notifyReadable
 
   void addMonitor(SocketHandle_t);

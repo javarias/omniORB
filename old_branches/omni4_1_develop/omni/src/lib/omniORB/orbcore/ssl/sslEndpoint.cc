@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:53  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -115,7 +118,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
 sslEndpoint::sslEndpoint(const IIOP::Address& address, sslContext* ctx) : 
-  pd_socket(RC_INVALID_SOCKET), pd_address(address), pd_ctx(ctx),
+  SocketHolder(RC_INVALID_SOCKET), pd_address(address), pd_ctx(ctx),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
   pd_callback_cookie(0), pd_go(1) {
 
@@ -125,7 +128,7 @@ sslEndpoint::sslEndpoint(const IIOP::Address& address, sslContext* ctx) :
 
 /////////////////////////////////////////////////////////////////////////
 sslEndpoint::sslEndpoint(const char* address, sslContext* ctx) : 
-  pd_socket(RC_INVALID_SOCKET), pd_ctx(ctx),
+  SocketHolder(RC_INVALID_SOCKET), pd_ctx(ctx),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
   pd_callback_cookie(0), pd_go(1) {
 
@@ -310,6 +313,9 @@ sslEndpoint::Bind() {
   sprintf((char*)pd_address_string,format,
 	  (const char*)pd_address.host,(int)pd_address.port);
 
+  // Add the socket to our SocketCollection.
+  addSocket(this);
+
   return 1;
 }
 
@@ -340,6 +346,7 @@ sslEndpoint::Poke() {
 void
 sslEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
+  removeSocket(this);
   decrRefCount();
   omniORB::logs(20, "SSL endpoint shut down.");
 }
@@ -353,7 +360,7 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 
   pd_callback_func = func;
   pd_callback_cookie = cookie;
-  setSelectable(pd_socket,1,0,0);
+  setSelectable(1,0,0);
 
   while (pd_go) {
     pd_new_conn_socket = RC_INVALID_SOCKET;
@@ -405,9 +412,9 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-sslEndpoint::notifyReadable(SocketHandle_t fd) {
+sslEndpoint::notifyReadable(SocketHolder* sh) {
 
-  if (fd == pd_socket) {
+  if (sh == (SocketHolder*)this) {
     // New connection
     SocketHandle_t sock;
 again:
@@ -443,15 +450,12 @@ again:
 #endif
       pd_new_conn_socket = sock;
     }
-    setSelectable(pd_socket,1,0,1);
+    setSelectable(1,0,1);
     return 1;
   }
   else {
     // Existing connection
-    SocketLink* conn = findSocket(fd,1);
-    if (conn) {
-      pd_callback_func(pd_callback_cookie,(sslConnection*)conn);
-    }
+    pd_callback_func(pd_callback_cookie,(sslConnection*)sh);
     return 1;
   }
 }

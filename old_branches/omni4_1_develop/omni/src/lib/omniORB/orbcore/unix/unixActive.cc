@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2002/08/21 06:23:16  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -83,12 +86,9 @@ unixActiveCollection::Monitor(giopConnection::notifyReadable_t func,
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-unixActiveCollection::notifyReadable(SocketHandle_t fd) {
+unixActiveCollection::notifyReadable(SocketHolder* conn) {
 
-  SocketLink* conn = findSocket(fd,1);
-  if (conn) {
-    pd_callback_func(pd_callback_cookie,(unixConnection*)conn);
-  }
+  pd_callback_func(pd_callback_cookie,(unixConnection*)conn);
   return 1;
 }
 

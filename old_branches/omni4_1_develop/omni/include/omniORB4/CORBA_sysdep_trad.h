@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:08:09  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:04:21  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -465,6 +468,7 @@
 #  undef HAVE_STRNCASECMP
 #  undef HAVE_UNAME
 #  undef HAVE_GETHOSTNAME
+#  undef HAVE_POLL
 
 #ifdef __MINGW32__
 #  define HAVE_STRCASECMP
