@@ -27,6 +27,9 @@
 
 /*
  $Log$
+ Revision 1.14  1998/04/09 19:15:01  sll
+ VarToken now emits _CORBA_GLOBAL_VAR instead of extern for globals.
+
  Revision 1.13  1998/04/08 19:36:41  sll
  *** empty log message ***
 
@@ -818,6 +821,7 @@ public:
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
   void produce_typedef_hdr (std::fstream &s, o2be_typedef *tdef);
+  void produce_tie_templates(std::fstream &s);
 
   const char *objref_uqname() const { return pd_objref_uqname; }
   const char *objref_fqname() const { return pd_objref_fqname; }
@@ -935,6 +939,7 @@ public:
 
   void produce_hdr(std::fstream &s);
   void produce_skel(std::fstream &s);
+  void produce_tie_templates(std::fstream &s);
 
 private:
   o2be_module();

@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.12  1998/04/08 16:08:57  sll
+  *** empty log message ***
+
   Revision 1.11  1998/04/07 18:41:11  sll
   Use std::cerr instead of cerr.
   Added compiler flag -m.
@@ -217,6 +220,7 @@ usage()
   std::cerr << GTDEVEL(" -l\t\t\tgenerates code required by LifeCycle service\n");
   std::cerr << GTDEVEL(" -m\t\t\tallow modules to be reopened\n");
   std::cerr << GTDEVEL(" -s suffix   Specify non-default suffix for the generated stub file(s)\n");
+  std::cerr << GTDEVEL(" -t\t\t\tgenerate 'tie' implementation skeleton\n");
   std::cerr << GTDEVEL(" -u\t\t\tprints usage message and exits\n");
 
   std::cerr << GTDEVEL(" -v\t\t\ttraces compilation stages\n");
@@ -254,7 +258,7 @@ BE_parse_args(int argc, char **argv)
 
   DRV_cpp_init();
   idl_global->set_prog_name(argv[0]);
-  while ((c = getopt(argc,argv,"D:EI:U:Vuvwh:s:lam")) != EOF)
+  while ((c = getopt(argc,argv,"D:EI:U:Vuvwh:s:lamt")) != EOF)
     {
       switch (c) 
 	{
@@ -307,6 +311,11 @@ BE_parse_args(int argc, char **argv)
 	case 'm':
 	  idl_global->set_compile_flags(idl_global->compile_flags() |
 					IDL_CF_REOPENMODULE);
+	  break;
+
+	case 't':
+	  idl_global->set_compile_flags(idl_global->compile_flags() |
+					IDL_BE_GENERATE_TIE);
 	  break;
 
 	case '?':

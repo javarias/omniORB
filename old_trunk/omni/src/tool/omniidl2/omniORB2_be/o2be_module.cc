@@ -26,6 +26,9 @@
 
 /* 
    $Log$
+   Revision 1.7  1998/04/09 19:15:21  sll
+   Added extra newlines to make the stub more readable.
+
    Revision 1.6  1998/04/07 18:48:29  sll
    Stub code modified to accommodate the use of namespace to represent module.
    Use std::fstream instead of fstream.
@@ -169,6 +172,36 @@ o2be_module::produce_skel(std::fstream &s)
     }
   return;
 }
+
+void
+o2be_module::produce_tie_templates(std::fstream &s)
+{
+  if (!(in_main_file()))
+    return;
+
+  UTL_ScopeActiveIterator  i(this,UTL_Scope::IK_decls);
+  AST_Decl                 *decl;
+
+  while (!(i.is_done()))
+    {
+      decl = i.item();
+      if ((decl->in_main_file()))
+	{
+	  switch(decl->node_type()) {
+	  case AST_Decl::NT_module:
+	    o2be_module::narrow_from_decl(decl)->produce_tie_templates(s); 
+	    break;
+	  case AST_Decl::NT_interface:
+	    o2be_interface::narrow_from_decl(decl)->produce_tie_templates(s);
+	    break;
+	  default:
+	    break;
+	  }
+	}
+      i.next();
+    }
+}
+
 
 // Narrowing
 IMPL_NARROW_METHODS1(o2be_module, AST_Module)

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.10  1998/04/07 18:50:29  sll
+  Use std::fstream instead of fstream.
+  Stub code modified to accommodate the use of namespace to represent module.
+
 // Revision 1.9  1998/01/27  16:52:59  ewc
 // Incremented version to 2.5
 //
@@ -225,6 +229,11 @@ o2be_root::produce_hdr(std::fstream &hdr)
   o2be_sequence::produce_hdr_for_predefined_types(hdr);
 
   o2be_module::produce_hdr(hdr);
+
+  if (idl_global->compile_flags() & IDL_BE_GENERATE_TIE) {
+    o2be_module::produce_tie_templates(hdr);
+  }
+
 
   hdr << "\n#undef _LC_attr\n\n";
 
