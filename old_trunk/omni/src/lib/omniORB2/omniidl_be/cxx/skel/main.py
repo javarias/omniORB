@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.21  2000/01/13 15:56:43  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.20  2000/01/13 14:16:34  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -341,9 +345,27 @@ void*
             # optypes[0] is return [1] is in [2] is out [3] is inout
             parameter_argmapping.append(optypes[parameter.direction() + 1])
 
+        # deal with possible "context"s
+        if operation.contexts() != []:
+            # pinch the unique name first (!)
+            context_descriptor = mangler.generate_unique_name(mangler.CTX_DESC_PREFIX)
+            stream.out("""\
+static const char*const @context_descriptor@[] = {
+  """, context_descriptor = context_descriptor)
+            for context in operation.contexts():
+                stream.out("""\
+  "@context@",""", context = context)
+            stream.out("""\
+  0
+};""")
+            
+
         # static call back function
         local_call_descriptor = mangler.generate_unique_name(mangler.LCALL_DESC_PREFIX)
         impl_args = map(lambda x: "tcd->arg_" + str(x), range(0, len(parameters)))
+
+        if operation.contexts() != []:
+            impl_args.append("cd->context_info()->context")
 
         result_string = ""
         if has_return_value:
@@ -383,11 +405,21 @@ static void
         if has_return_value:
             return_string = "return _call_desc.result();"
 
+        context = util.StringStream()
+        if operation.contexts() != []:
+            objref_args.append("CORBA::Context_ptr _ctxt")
+            context.out("""\
+  omniCallDescriptor::ContextInfo _ctxt_info(_ctxt, @context_descriptor@, @n@);
+  _call_desc.set_context_info(&_ctxt_info);""",
+                        context_descriptor = context_descriptor,
+                        n = str(len(operation.contexts())))
+
+
         stream.out("""\
 @result_type@ @objref_fqname@::@operation_name@(@arguments@)
 {
   @call_descriptor@ _call_desc(@call_desc_args@);
-  
+  @context@
   _invoke(_call_desc);
   @return_string@
 }
@@ -400,6 +432,7 @@ static void
                    arguments = string.join(objref_args, ", "),
                    call_descriptor = descriptor,
                    call_desc_args = string.join(call_desc_args, ", "),
+                   context = str(context),
                    return_string = return_string)
                    
     # ------------------------------------

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.26  2000/01/13 15:56:38  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.25  2000/01/13 14:16:29  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -303,6 +307,11 @@ public:
                 params.append(tuple[0] + " " + argname)
                 virtual_params.append(tuple[1] + " " + argname)
 
+            # deal with possible "context"
+            if c.contexts() != []:
+                params.append("CORBA::Context_ptr _ctxt")
+                virtual_params.append("CORBA::Context_ptr _ctxt")
+                
             return_type = argumentTypeToString(c.returnType())[0]
             opname = tyutil.mapID(c.identifier())
             arguments = string.join(params, ", ")

@@ -30,6 +30,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  2000/01/13 15:56:44  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.11  2000/01/13 14:16:35  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -89,6 +93,7 @@ self = mangler
 
 CALL_DESC_PREFIX            = config.privatePrefix() + "_cd_"
 LCALL_DESC_PREFIX           = config.privatePrefix() + "_lcfn_"
+CTX_DESC_PREFIX             = config.privatePrefix() + "_ctx_"
 STD_PROXY_CALL_DESC_PREFIX  = "omniStdCallDesc::"
 
 # -------------------------

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.13  2000/01/13 15:56:43  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.12  2000/01/11 12:02:45  djs
 # More tidying up
 #
@@ -408,11 +412,21 @@ giop_s.set_user_exceptions(_user_exns, @n@);""",
         catch.out("""\
 #endif""")
 
+    # handle "context"s
+    get_context = util.StringStream()
+    if operation.contexts() != []:
+        get_context.out("""\
+  CORBA::Context_var _ctxt;
+  _ctxt = CORBA::Context::unmarshalContext(giop_s);
+""")
+        argument_list.append("_ctxt")
+
     # main block of code goes here
     stream.out("""\
   if( !strcmp(giop_s.operation(), \"@idl_operation_name@\") ) {
     @exception_decls@
     @get_arguments@
+    @get_context@
     giop_s.RequestReceived();
     @decl_result@
     @try_@
@@ -433,6 +447,7 @@ giop_s.set_user_exceptions(_user_exns, @n@);""",
                idl_operation_name = idl_operation_name,
                exception_decls = str(exceptions),
                get_arguments = str(get_arguments),
+               get_context = str(get_context),
                decl_result = str(decl_result),
                try_ = str(try_),
                argument_list = string.join(argument_list, ", "),
