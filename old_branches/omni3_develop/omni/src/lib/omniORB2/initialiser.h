@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/24 15:01:32  djr
+  Added module initialisers, and sll's new scavenger implementation.
+
 */
 
 #ifndef __INITIALISER_H__
@@ -41,6 +44,11 @@ class omniInitialiser {
 public:
   virtual void attach() = 0;
   virtual void detach() = 0;
+
+  static void install(omniInitialiser* init);
+  // Hook to allow modules to add initialisers dynamically. These
+  // initialisers are run after all statically declared ones. Not
+  // thread safe.
 };
 
 
