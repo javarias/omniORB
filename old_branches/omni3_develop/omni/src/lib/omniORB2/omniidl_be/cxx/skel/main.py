@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.27.2.13  2001/01/29 10:52:45  djs
+# In order to fix interface inheritance name ambiguity problem the
+# call-base-class-by-typedef (rather than direct) MSVC workaround was
+# extended. A lot of the time a base class A::B::C is now referred to by a
+# typedef _A_B_C instead of with the scoped name.
+# Hopefully the OMNI_BASE_CTOR macro is nolonger needed.
+#
 # Revision 1.27.2.12  2000/07/24 16:32:18  djs
 # Fixed typo in previous BOA skeleton bugfix.
 # Suppressed compiler warning (from gcc -Wall) when encountering a call with
@@ -250,6 +257,15 @@ def visitInterface(node):
     def flatName(name):
         return "_" + string.join(name.fullName(), "_")
 
+    # In the AST, an interface node can list typedef and forward decl nodes
+    # in its inherits() list. Make a list of the real interfaces we
+    # are inheriting from.
+    interface_inherits = map(tyutil.remove_ast_typedefs_and_forwards,
+                             node.inherits())
+    
+
+    # Note that this loops over all the inherited interfaces, after removing
+    # any typedef chains and forwards.
     for i in tyutil.allInherits(node):
         # Make sure we only generate one set of typedefs max, otherwise the
         # compiler will rightly complain about the redefinition
@@ -310,7 +326,7 @@ def visitInterface(node):
 if( !strcmp(id, " + inherits_fqname + "::_PD_repoId) )\n\
   return (" + inherits_fqname + "_ptr) this;\n"
 
-    for i in node.inherits():
+    for i in interface_inherits:
         inherits_name = id.Name(i.scopedName())
         inherits_objref_name = inherits_name.prefix("_objref_")
 
@@ -585,11 +601,12 @@ _call_desc.set_context_info(&_ctxt_info);""",
         return
     
     # dispatch operations and attributes inherited from base classes
-    def inherited_dispatch(stream = stream, node = node,
+    def inherited_dispatch(stream = stream,
+                           interface_inherits = interface_inherits,
                            environment = environment,
                            needFlatName = needFlatName,
                            flatName = flatName):
-        for i in node.inherits():
+        for i in interface_inherits:
             inherited_name = id.Name(i.scopedName()).prefix("_impl_")
             impl_inherits = inherited_name.simple()
             # The MSVC workaround might be needed here again
