@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.22  2000/01/11 11:34:27  djs
+# Added support for fragment generation (-F) mode
+#
 # Revision 1.21  2000/01/10 16:13:13  djs
 # Removed a chunk of redundant code.
 #
@@ -597,6 +600,7 @@ typedef @base@_forany @derived@_forany;
                     stream.out("""\
 static @derived@_slice* @derived@_alloc() { return @base@_alloc(); }
 static @derived@_slice* @derived@_dup(const @derived@_slice* p) { return @base@_dup(p); }
+static void @derived@_copy( @derived@_slice* _to, const @derived@_slice* _from ) { @base@_copy(_to, _from); }
 static void @derived@_free( @derived@_slice* p) { @base@_free(p); }
 """,
                                base = basicReferencedTypeID,
@@ -605,6 +609,7 @@ static void @derived@_free( @derived@_slice* p) { @base@_free(p); }
                     stream.out("""\
 extern @derived@_slice* @derived@_alloc();
 extern @derived@_slice* @derived@_dup(const @derived@_slice* p);
+extern void @derived@_copy( @derived@_slice* _to, const @derived@_slice* _from );
 extern void @derived@_free( @derived@_slice* p);
 """,
                                base = basicReferencedTypeID,
@@ -966,6 +971,7 @@ typedef @type@ @name@_slice@taildims@;""",
 extern @name@_slice* @name@_alloc();
 extern @name@_slice* @name@_dup(const @name@_slice* _s);
 extern void @name@_free(@name@_slice* _s);
+extern void @name@_copy(@name@_slice* _to, const @name@_slice* _from);
 """, name = derivedName)
             else:
                 stream.out("""
@@ -983,26 +989,27 @@ static inline @name@_slice* @name@_dup(const @name@_slice* _s) {
                            firstdim = repr(all_dims[0]),
                            taildims = taildims)
                 stream.inc_indent()
-                index = 0
-                subscript = ""
-                for dimension in all_dims:
-                    stream.out("""\
-     for (unsigned int _i@index@ =0;_i@index@ < @dimension@;_i@index@++) {""",
-                               index = repr(index),
-                               dimension = repr(dimension))
-                    stream.inc_indent()
-                    subscript = subscript + "[_i" + repr(index)+"]"
-                    index = index + 1
+                index = util.start_loop(stream, all_dims, iter_type = "unsigned int")
+                
                 stream.out("""\
-       _data@subscript@ = _s@subscript@;""", subscript = subscript)
-                for dimension in all_dims:
-                    stream.dec_indent()
-                    stream.out("""\
-     }""")
+       _data@subscript@ = _s@subscript@;""", subscript = index)
+                util.finish_loop(stream, all_dims)
                 stream.dec_indent()
                 stream.out("""\
    }
    return _data;
+}
+
+static inline void @name@_copy(@name@_slice* _to, const @name@_slice* _from){
+  """, name = derivedName)
+                stream.inc_indent()
+                index = util.start_loop(stream, all_dims, iter_type = "unsigned int")
+                stream.out("""\
+  _to@index@ = _from@index@;""", index = index)
+                util.finish_loop(stream, all_dims)
+                stream.dec_indent()
+                stream.out("""\
+
 }
 
 static inline void @name@_free(@name@_slice* _s) {

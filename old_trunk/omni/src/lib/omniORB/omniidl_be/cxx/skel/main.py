@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17  2000/01/11 12:02:45  djs
+# More tidying up
+#
 # Revision 1.16  2000/01/10 18:42:22  djs
 # Removed redundant code, tidied up.
 #
@@ -683,6 +686,18 @@ def visitTypedef(node):
   return _data;
 }
 
+void @fq_derived@_copy(@fq_derived@_slice* _to, const @fq_derived@_slice* _from) {
+  """, fq_derived = fq_derived)
+            
+            index = util.start_loop(stream, full_dims, iter_type = "unsigned int")
+            stream.out("""\
+  _to@index@ = _from@index@;""", index = index)
+            util.finish_loop(stream, full_dims)
+
+            stream.out("""\
+
+}
+
 void @fq_derived@_free(@fq_derived@_slice* _s) {
   delete [] _s;
 }""", fq_derived = fq_derived)
@@ -698,6 +713,10 @@ extern @fq_derived@_slice* @fq_derived@_alloc() {
 
 extern @fq_derived@_slice* @fq_derived@_dup(const @fq_derived@_slice* p) {
   return @fq_aliased@_dup(p);
+}
+
+extern void @fq_derived@_copy( @fq_derived@_slice* _to, const @fq_derived@_slice* _from){
+  @fq_aliased@_copy(_to, _from);
 }
 
 extern void @fq_derived@_free( @fq_derived@_slice* p) {
