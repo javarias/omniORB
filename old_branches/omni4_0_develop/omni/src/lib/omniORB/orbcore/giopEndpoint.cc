@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/07/13 15:13:32  sll
+  giopConnection is now reference counted.
+
   Revision 1.1.2.2  2001/06/13 20:13:15  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -46,7 +49,10 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 ////////////////////////////////////////////////////////////////////////
-static giopTransportImpl* implHead = 0;
+static giopTransportImpl*& implHead() {
+  static giopTransportImpl* head_ = 0;
+  return head_;
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -88,7 +94,7 @@ matchType(const char* uri,const char*& param,CORBA::Boolean allowShortHand) {
     }
   }
 
-  giopTransportImpl* impl = implHead;
+  giopTransportImpl* impl = implHead();
 
   while (impl) {
     int len = strlen(impl->type);
@@ -156,7 +162,7 @@ giopEndpoint::addToIOR(const char* endpoint) {
 
 ////////////////////////////////////////////////////////////////////////
 giopTransportImpl::giopTransportImpl(const char* t) : type(t), next(0) {
-  giopTransportImpl** pp = &implHead;
+  giopTransportImpl** pp = &implHead();
   while (*pp) pp = &((*pp)->next);
   *pp = this;
 }
