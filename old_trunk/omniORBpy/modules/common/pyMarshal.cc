@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.9  1999/09/29 11:38:59  dpg1
+// Oops -- fix to Nil object references was broken.
+//
 // Revision 1.8  1999/09/29 11:25:55  dpg1
 // Nil objects now map to None. They work too, which is more than can be
 // said for the old mapping...
@@ -1450,6 +1453,8 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
       else {
 	assert(PyString_Check(t_o));
 	targetRepoId = PyString_AS_STRING(t_o);
+	if (targetRepoId[0] == '\0') // Empty string => CORBA.Object
+	  targetRepoId = 0;
       }
 
       CORBA::Object_ptr obj = omniPy::UnMarshalObjRef(targetRepoId,
@@ -1872,6 +1877,8 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
       else {
 	assert(PyString_Check(t_o));
 	targetRepoId = PyString_AS_STRING(t_o);
+	if (targetRepoId[0] == '\0') // Empty string => CORBA.Object
+	  targetRepoId = 0;
       }
 
       CORBA::Object_ptr obj = omniPy::UnMarshalObjRef(targetRepoId,
