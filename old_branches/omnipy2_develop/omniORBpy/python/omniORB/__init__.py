@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.22  2004/03/24 22:13:05  dgrisby
+# Support reinitialising when the Python interpreter isn't finalized.
+#
 # Revision 1.26.2.21  2004/02/16 09:55:09  dgrisby
 # Support reinitialising of Python interpreter.
 #
@@ -780,15 +783,16 @@ class WorkerThread(threading.Thread):
     hooks = []
 
     def __init__(self):
-        _thr_init(self, name="omniORB")
+        id = _thr_id()
+        _thr_init(self, name="omniORB-%d" % id)
         self._Thread__started = 1
-        self.id = _thr_id()
+        self.id = id
         _thr_acq()
-        if _thr_act.has_key(self.id):
+        if _thr_act.has_key(id):
             self.add = 0
         else:
             self.add = 1
-            _thr_act[self.id] = self
+            _thr_act[id] = self
         _thr_rel()
         if self.add:
             for hook in self.hooks:
@@ -799,8 +803,10 @@ class WorkerThread(threading.Thread):
             for hook in self.hooks:
                 hook(WTHREAD_DELETED, self)
             _thr_acq()
-            del _thr_act[self.id]
-            _thr_rel()
+            try:
+                del _thr_act[self.id]
+            finally:
+                _thr_rel()
 
     def _set_daemon(self): return 1
     def join(self):        assert 0, "cannot join an omniORB WorkerThread"
