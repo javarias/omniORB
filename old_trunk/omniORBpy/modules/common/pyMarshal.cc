@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.20  2000/03/28 11:54:24  dpg1
+// Refcounting bug in Any unmarshalling.
+//
 // Revision 1.19  2000/03/24 16:48:58  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -2597,6 +2600,10 @@ omniPy::unmarshalPyObject(NetBufferedStream& stream,
 
   case CORBA::tk_null:
   case CORBA::tk_void:
+    {
+      Py_INCREF(Py_None);
+      r_o = Py_None;
+    }
     break;
 
   case CORBA::tk_short:
@@ -3173,6 +3180,10 @@ omniPy::unmarshalPyObject(MemBufferedStream& stream,
 
   case CORBA::tk_null:
   case CORBA::tk_void:
+    {
+      Py_INCREF(Py_None);
+      r_o = Py_None;
+    }
     break;
 
   case CORBA::tk_short:
@@ -3761,10 +3772,8 @@ omniPy::copyArgument(PyObject*               d_o,
   case CORBA::tk_null:
   case CORBA::tk_void:
     {
-      if (a_o == Py_None) {
-	Py_INCREF(a_o); return a_o;
-      }
-      else return setPyBadParam(compstatus);
+      Py_INCREF(Py_None);
+      return Py_None;
     }
     break;
 
