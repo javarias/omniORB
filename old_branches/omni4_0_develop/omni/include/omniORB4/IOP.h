@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2000/11/15 17:00:55  sll
+  Added marshalling operators for ServiceContext.
+
   Revision 1.2.2.4  2000/11/03 18:58:46  sll
   Unbounded sequence of octet got a new type name.
 
@@ -74,10 +77,9 @@
 #ifndef __OMNIORB_IOP_H__
 #define __OMNIORB_IOP_H__
 
-class omniIOR;
-
 class IOP {
 public:
+  
   typedef _CORBA_ULong ProfileId;
   static _core_attr const   ProfileId    TAG_INTERNET_IOP;
   static _core_attr const   ProfileId    TAG_MULTIPLE_COMPONENTS;
@@ -205,6 +207,9 @@ public:
   static _core_attr const ComponentId TAG_DCE_NO_PIPES;
   static _core_attr const ComponentId TAG_DCE_SEC_MECH;
   static _core_attr const ComponentId TAG_INET_SEC_TRANS;
+  static _core_attr const ComponentId TAG_GROUP; // FT SPEC
+  static _core_attr const ComponentId TAG_PRIMARY; // FT SPEC
+  static _core_attr const ComponentId TAG_HEARTBEAT_ENABLED; // FT SPEC
 
 
   static const char* ComponentIDtoName(ComponentId);
@@ -303,6 +308,8 @@ public:
     MultipleComponentProfile_out operator=( const _T_var&);
   };
 
+
+  typedef _CORBA_Unbounded_Sequence<MultipleComponentProfile> MultipleComponentProfileList;
 
   typedef _CORBA_ULong ServiceID;
 
@@ -405,6 +412,8 @@ public:
   static _core_attr const ServiceID UnknownExceptionInfo;
   static _core_attr const ServiceID RTCorbaPriority;
   static _core_attr const ServiceID RTCorbaPriorityRange;
+  static _core_attr const ServiceID GROUP_VERSION; // FT SPEC
+  static _core_attr const ServiceID REQUEST;       // FT SPEC
 
   static const char* ServiceIDtoName(ServiceID);
   // omniORB private function.
@@ -412,6 +421,5 @@ public:
   // is not recongised.
 
 };
-
 
 #endif // __OMNIORB_IOP_H__
