@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.33  1999/06/02 16:44:32  sll
+  If module name is CORBA, use omniObjectKey instead of omniORB::objectKey.
+
   Revision 1.32  1999/05/26 10:43:35  sll
   Added connection calls to allow the generation of typecode constant for
   bounded string defined in the operation or attribute signature.
@@ -475,7 +478,10 @@ o2be_interface::produce_hdr(std::fstream &s)
 	    << uqname()
 	    << ","
 	    << uqname() << "_Helper"
-	    << "> "<<uqname()<<"_var;\n\n";
+	    << "> "<<uqname()<<"_var;\n";
+  IND(s); s << "typedef " << out_adptarg_name(this)  << " "
+	    << uqname()
+	    <<"_out;\n\n";
   s << "#endif\n";
   s << "#define " << IRrepoId() << " \"" << repositoryID() << "\"\n\n";
 
@@ -1415,7 +1421,10 @@ o2be_interface_fwd::produce_hdr(std::fstream &s)
 	    << intf->uqname()
 	    << ","
 	    << uqname() << "_Helper"
-	    << "> "<< intf->uqname()<<"_var;\n\n";
+	    << "> "<< intf->uqname()<<"_var;\n";
+  IND(s); s << "typedef "
+	    << intf->out_adptarg_name(intf) << " "
+	    << intf->uqname()<<"_out;\n\n";
     s << "#endif\n";
   return;
 }
@@ -2981,6 +2990,8 @@ o2be_interface::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
   }
   IND(s); s << "typedef " << unambiguous_name(tdef) 
 	    << "_var " << tdef->uqname() << "_var;\n";
+  IND(s); s << "typedef " << unambiguous_name(tdef) 
+	    << "_out " << tdef->uqname() << "_out;\n";
 }
 
 //////////////////////////////////////////////////////////////////////
