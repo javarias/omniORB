@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.4.4  2001/04/19 09:30:12  sll
+#  Big checkin with the brand new internal APIs.
+# Scoped where appropriate with the omni namespace.
+#
 # Revision 1.1.4.3  2000/11/07 18:27:31  sll
 # out_objrefcall now generates the correct unambiguous type name in its castings.
 #
@@ -659,7 +663,7 @@ class CallDescriptor:
                       "if ( strcmp(repoId, @repoID_str@) == 0 ) {\n" + \
                       "  @exname@ _ex;\n" + \
                       "  _ex <<= s;\n" + \
-                      "  giop_client.RequestCompleted();\n" + \
+                      "  iop_client.RequestCompleted();\n" + \
                       "  throw _ex;\n" + \
                       "}\n",
                       repoID_str = repoID_str, exname = exname)

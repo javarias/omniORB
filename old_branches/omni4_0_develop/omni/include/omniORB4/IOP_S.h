@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/04/18 17:26:29  sll
+  Big checkin with the brand new internal APIs.
+
  */
 
 #ifndef __IOP_S_H__
@@ -135,6 +138,15 @@ public:
   virtual void SendReply() = 0;
 
   virtual void SendException(CORBA::Exception* value) = 0;
+
+private:
+  IOP_S(const IOP_S&);
+  IOP_S& operator=(const IOP_S&);
+
+  operator cdrStream& ();
+  // This is to make sure that we do not have any code that blindly cast
+  // a reference to this object to a cdrStream&. All code should use
+  // getStream() instead.
 };
 
 OMNI_NAMESPACE_END(omni)
