@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.10  1999/02/01 15:40:44  djr
+  Initialise strings allocated with string_alloc() to zero length.
+  Inline uses of string_alloc() and string_free().
+
   Revision 1.10  1999/02/01 14:42:36  djr
   Initialise allocated strings to zero length.
   Corrected several cases where a string is duplicated - the buffer allocated
@@ -60,7 +64,7 @@
 #include <omniORB2/CORBA.h>
 
 
-#define ALLOC_BYTES(len)  (new char[(int)(len)])
+#define ALLOC_BYTES(len)  new char[(int)(len)]
 #define FREE_BYTES(p)     delete[] (p)
 
 
