@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.23  2001/06/01 13:56:57  sll
+ Long long define for HPUX.
+ External CPP define guard for IR.h
+
  Revision 1.1.2.22  2001/05/23 10:54:43  dpg1
  Long long defines for SGI.
 
@@ -307,8 +311,10 @@
 #  if __SUNPRO_CC < 0x420
 #    define NEED_DUMMY_RETURN
 #  elif __SUNPRO_CC >= 0x500
-#    define HAS_Cplusplus_Namespace
-#    define HAS_Std_Namespace
+#    if __SUNPRO_CC_COMPAT >= 5
+#      define HAS_Cplusplus_Namespace
+#      define HAS_Std_Namespace
+#    endif
 #  endif
 
 #  define HAS_LongLong
