@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 19:55:28  sll
+  *** empty log message ***
+
 // Revision 1.5  1997/05/06  14:07:43  sll
 // Public release.
 //
@@ -63,6 +66,12 @@ o2be_string::o2be_string(AST_Expression *v)
   set__fqname(p);
   set_scopename("");
   set__scopename("");
+
+  set_tcname("");
+  set_fqtcname("");
+  set__fqtcname("");
+
+  set_recursive_seq(I_FALSE);
 }
 
 o2be_string::o2be_string(AST_Expression *v, long wide)
@@ -109,6 +118,10 @@ o2be_string::o2be_string(AST_Expression *v, long wide)
   set__fqname(p);
   set_scopename("");
   set__scopename("");
+
+  set_tcname("");
+  set_fqtcname("");
+  set__fqtcname("");
 }
 
 const char *
