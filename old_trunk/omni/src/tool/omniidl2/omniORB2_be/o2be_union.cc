@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.8  1997/12/18 17:28:54  sll
+  *** empty log message ***
+
   Revision 1.7  1997/12/09 19:55:11  sll
   *** empty log message ***
 
@@ -473,6 +476,28 @@ o2be_union::produce_hdr(fstream &s)
 		ntype != o2be_operation::tAny)
 	      {
 		has_fix_member = I_TRUE;
+		if (ntype == o2be_operation::tArrayFixed) 
+		  {
+		    // Array of fixed size union is a special case, the data
+		    // member cannot be put into the anonymous union.
+		    // Trap it here.
+		    AST_Decl* dd = f->field_type();
+		    // Skip all typedef to get to the array node
+		    while (dd->node_type() == AST_Decl::NT_typedef) {
+		      dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		    }
+		    // Get the element type
+		    dd = o2be_array::narrow_from_decl(dd)->getElementType();
+		    // Skip all typedef to get to the real element node
+		    while (dd->node_type() == AST_Decl::NT_typedef) {
+		      dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		    }
+		    if (dd->node_type() == AST_Decl::NT_union) {
+		      // The element is a union. Do not define the data member
+		      // in the anonymous union.
+		      has_fix_member = I_FALSE;
+		    }
+		  }
 	      }
 
 	    switch (ntype)
@@ -693,9 +718,9 @@ o2be_union::produce_hdr(fstream &s)
 		      s << ";\n";
 		      IND(s); s << "pd__default = 1;\n";
 		    }
-		  IND(s); s << "pd_" << f->uqname() << " = "
-			    << o2be_interface::narrow_from_decl(decl)->unambiguous_name(this)
-			    << "::_duplicate(_value);\n";
+		  IND(s); s << o2be_interface::narrow_from_decl(decl)->unambiguous_name(this)
+			    << "_Helper::duplicate(_value);\n";
+		  IND(s); s << "pd_" << f->uqname() << " = _value;\n";
 		  DEC_INDENT_LEVEL();
 		  IND(s); s << "}\n";
 		  IND(s); s << "void " << f->uqname() << "(const " 
@@ -835,7 +860,7 @@ o2be_union::produce_hdr(fstream &s)
 		    {
 		      IND(s); s << "void "
 				<< f->uqname() << " (const "
-				<< "_" << f->uqname() << " _value) {\n";
+				<< "_0RL_" << f->uqname() << " _value) {\n";
 		    }
 		  else
 		    {
@@ -985,6 +1010,27 @@ o2be_union::produce_hdr(fstream &s)
 			  << " pd_" << f->uqname() << ";\n";
 		break;
 	      case o2be_operation::tArrayFixed:
+		  {
+		    // Array of fixed size union is a special case, the data
+		    // member cannot be put into the anonymous union.
+		    // Trap it here.
+		    AST_Decl* dd = f->field_type();
+		    // Skip all typedef to get to the array node
+		    while (dd->node_type() == AST_Decl::NT_typedef) {
+		      dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		    }
+		    // Get the element type
+		    dd = o2be_array::narrow_from_decl(dd)->getElementType();
+		    // Skip all typedef to get to the real element node
+		    while (dd->node_type() == AST_Decl::NT_typedef) {
+		      dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		    }
+		    if (dd->node_type() == AST_Decl::NT_union) {
+		      // The element is a union. Do not define the data member
+		      // here.
+		      break;
+		    }
+		  }
 		if (f->field_type()->node_type() == AST_Decl::NT_array)
 		  {
 		    IND(s);
@@ -1060,6 +1106,30 @@ o2be_union::produce_hdr(fstream &s)
 			  << " pd_" << f->uqname() << ";\n";
 #endif
 		break;
+	      case o2be_operation::tArrayFixed:
+		// Array of fixed size union is a special case, the data
+		// member cannot be put into the anonymous union.
+		// Trap it here.
+		{
+		  AST_Decl* dd = f->field_type();
+		  // Skip all typedef to get to the array node
+		  while (dd->node_type() == AST_Decl::NT_typedef) {
+		    dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		  }
+		  // Get the element type
+		  dd = o2be_array::narrow_from_decl(dd)->getElementType();
+		  // Skip all typedef to get to the real element node
+		  while (dd->node_type() == AST_Decl::NT_typedef) {
+		    dd = o2be_typedef::narrow_from_decl(dd)->base_type();
+		  }
+		  if (dd->node_type() != AST_Decl::NT_union) {
+		    // The element is not a union. 
+		    // Do not define data member here as it has been defined
+		    // in the anonymous union above.
+		    break;
+		  }
+		  // falls through to tArrayVariable.
+		}
 	      case o2be_operation::tArrayVariable:
 		if (f->field_type()->node_type() == AST_Decl::NT_array)
 		  {
