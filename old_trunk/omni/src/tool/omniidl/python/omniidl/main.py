@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  1999/11/23 16:59:22  dpg1
+# New command line option -C to send output to a different directory.
+#
 # Revision 1.8  1999/11/23 09:52:11  dpg1
 # Dumb bug where maps weren't cleared between runs.
 #
@@ -68,7 +71,7 @@ def version():
 cmdname = os.path.basename(sys.argv[0])
 
 def usage():
-    print "\nUsage:", cmdname, " [flags] -b<back_end> file1 file2 ..."
+    print "\nUsage:", cmdname, "[flags] -b<back_end> file1 file2 ..."
     print """
 The supported flags are:
 
@@ -85,8 +88,7 @@ The supported flags are:
   -d              Dump the parsed IDL then exit
   -V              Print version info then exit
   -u              Print this usage message and exit
-  -v              Trace compilation stages
-"""
+  -v              Trace compilation stages"""
 
 preprocessor_args = []
 preprocessor_only = 0
@@ -107,14 +109,15 @@ dump_only         = 0
 cd_to             = None
 verbose           = 0
 quiet             = 0
+print_usage       = 0
 
 def parseArgs(args):
     global preprocessor_args, preprocessor_only, preprocessor_cmd
     global no_preprocessor, backend, backend_args, dump_only, cd_to
-    global verbose, quiet
+    global verbose, quiet, print_usage
 
     try:
-        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:C:dVuvq")
+        opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:C:dVuhvq")
     except getopt.error, e:
         sys.stderr.write("Error in arguments: " + e + "\n")
         sys.stderr.write("Use " + cmdname + " -u for usage\n")
@@ -176,9 +179,8 @@ def parseArgs(args):
             version()
             sys.exit(0)
 
-        elif o == "-u":
-            usage()
-            sys.exit(0)
+        elif o == "-u" or o == "-h":
+            print_usage = 1
 
         elif o == "-v":
             verbose = verbose + 1
@@ -192,13 +194,16 @@ def parseArgs(args):
 def main(argv=None):
     global preprocessor_args, preprocessor_only, preprocessor_cmd
     global no_preprocessor, backend, backend_args, dump_only, cd_to
-    global verbose, quiet
+    global verbose, quiet, print_usage
 
     if argv is None: argv = sys.argv
 
     files = parseArgs(argv[1:])
 
-    if len(files) == 0:
+    if print_usage:
+        usage()
+
+    elif len(files) == 0:
         if not quiet:
             sys.stderr.write(cmdname + ": No files specified\n")
         sys.exit(1)
@@ -226,6 +231,13 @@ def main(argv=None):
         bemodules.append(be)
         if hasattr(be, "cpp_args"):
             preprocessor_args.extend(be.cpp_args)
+
+        if print_usage and hasattr(be, "usage_string"):
+            print "\nArguments specific to back-end `" + backend + "':\n"
+            print be.usage_string
+
+    if print_usage:
+        sys.exit(0)
 
     for file in files:
         if file != "-" and not os.path.isfile(file):
