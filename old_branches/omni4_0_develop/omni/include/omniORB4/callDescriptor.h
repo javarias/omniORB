@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.3  2000/10/06 16:47:26  sll
+ Removed inline marshal function from the client and server marshaller.
+
  Revision 1.2.2.2  2000/09/27 17:18:35  sll
  Updated to use the new cdrStream abstraction.
  Added new member unmarshalArguments(), marshalReturnedValues() and modified
@@ -75,7 +78,9 @@ public:
       pd_n_user_excns(n_user_excns),
       pd_is_upcall(is_upcall) {}
 
-#if defined(__GNUG__) && defined(Suppress_Spurious_gcc_Warnings)
+#if defined(__GNUG__)
+  // gcc is rather anal and insists on a class with virtual functions must
+  // have a virtual dtor.
   virtual ~omniCallDescriptor() {}
 #endif
 
