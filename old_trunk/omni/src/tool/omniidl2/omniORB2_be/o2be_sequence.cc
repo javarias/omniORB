@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.10  1998/01/27  16:48:28  ewc
+// Added support for type Any and TypeCode
+//
   Revision 1.9  1997/12/23 19:28:29  sll
   Now generate correct template argument for sequence<array of sequence>.
 
@@ -923,7 +926,12 @@ o2be_sequence::check_recursive_seq()
     if (o2be_structure::narrow_from_decl(decl) == defined_in())
       return I_TRUE;
   }	    
-  
+  else if (decl->node_type() == AST_Decl::NT_union) {
+    // Catch recursive union
+    if (o2be_union::narrow_from_decl(decl) == defined_in())
+      return I_TRUE;
+  }	    
+
   return o2be_name::narrow_and_check_recursive_seq(decl);
 }
 
