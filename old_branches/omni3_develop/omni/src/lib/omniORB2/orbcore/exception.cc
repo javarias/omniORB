@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.9.6.1  1999/09/22 14:26:48  djr
+  Major rewrite of orbcore to support POA.
+
   Revision 1.9  1999/06/18 20:53:10  sll
   New function _CORBA_bad_param_freebuf().
 
@@ -274,7 +277,7 @@ _omni_callSystemExceptionHandler(omniObjRef* obj,
 }
 
 
-//?? This should really be extensible ...
+// This should really be extensible ...
 static int exHandlersTableSize = 103;
 
 

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/09/24 17:11:13  djr
+  New option -ORBtraceInvocations and omniORB::traceInvocations.
+
   Revision 1.1.2.1  1999/09/22 14:26:58  djr
   Major rewrite of orbcore to support POA.
 
@@ -120,7 +123,7 @@ omniORB::fatalException::fatalException(const char* file, int line,
 					const char* errmsg)
   : pd_file(file), pd_line(line), pd_errmsg(errmsg)
 {
-  if( abortOnInternalError )  /*??*abort();*/ *(volatile int*)0;
+  if( abortOnInternalError )  abort();
 }
 
 //////////////////////////////////////////////////////////////////////
