@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18.2.2  2000/02/18 23:01:19  djs
+# Updated example implementation code generating module
+#
 # Revision 1.18.2.1  2000/02/14 18:34:57  dpg1
 # New omniidl merged in.
 #
@@ -106,7 +109,8 @@ from omniidl_be.cxx import skel
 from omniidl_be.cxx import dynskel
 from omniidl_be.cxx import impl
 
-from omniidl_be.cxx import env
+from omniidl_be.cxx import id
+
 from omniidl_be.cxx import config
 
 import re, sys
@@ -190,7 +194,6 @@ def process_args(args):
 def run(tree, args):
     """Entrypoint to the C++ backend"""
 
-
     filename = tree.file()
     regex = re.compile(r"(.*/|)(.+)\.idl")
     match = regex.search(filename)
@@ -203,9 +206,9 @@ def run(tree, args):
     walker = config.WalkTreeForIncludes()
     tree.accept(walker)
 
-    # build the cache of environments
-    environments = env.WalkTree()
+    environments = id.WalkTree()
     tree.accept(environments)
+    
 
     # set the default behaviour
     config.setTypecodeFlag(0)

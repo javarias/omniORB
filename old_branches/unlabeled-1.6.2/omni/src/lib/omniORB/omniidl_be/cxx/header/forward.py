@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.1  2000/02/14 18:34:55  dpg1
+# New omniidl merged in.
+#
 # Revision 1.6  2000/01/19 11:23:28  djs
 # Moved most C++ code to template file
 #
@@ -55,7 +58,7 @@
 """Produce ancillary forward declarations for the header file"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx import tyutil, util, config, id
 from omniidl_be.cxx.header import template
 
 import forward
@@ -95,10 +98,10 @@ def visitUnion(node):
     
     # Typecode and Any
     if config.TypecodeFlag():
-        env = name.Environment()
-        scopedName = node.scopedName()
-        fqname = env.nameToString(scopedName)
-        guard_name = tyutil.guardName(scopedName)
+        name = id.Name(node.scopedName())
+        fqname = name.fullyQualify()
+        guard_name = name.guard()
+
         stream.out(template.tcParser_unionHelper,
                    fqname = fqname, guard_name = guard_name,
                    private_prefix = config.privatePrefix())

@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.1  2000/02/14 18:34:57  dpg1
+# New omniidl merged in.
+#
 # Revision 1.3  2000/01/17 16:58:22  djs
 # Support for typedefs with constructed types
 # Support for unions with types constructed inside the switch()
@@ -46,6 +49,8 @@
 """Prebuilds naming environments for each AST node by walking the tree
    and caching them. Subsequent passes over the tree can then lookup the
    cache rather than redo the calculation"""
+
+assert(0)
 
 from omniidl import idlast, idlvisitor
 from omniidl_be.cxx import tyutil, name

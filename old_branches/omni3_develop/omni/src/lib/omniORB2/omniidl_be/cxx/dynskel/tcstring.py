@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2.2.1  2000/02/14 18:34:56  dpg1
+# New omniidl merged in.
+#
 # Revision 1.2  2000/01/20 18:26:44  djs
 # Moved large C++ output strings into an external template file
 #
@@ -38,7 +41,7 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, util, config, name
+from omniidl_be.cxx import tyutil, util, config, id, types
 from omniidl_be.cxx.dynskel import template
 
 import tcstring
@@ -84,19 +87,19 @@ def visitStringType(type):
                n = str(type.bound()))    
 
 def visitAttribute(node):
-    attrType = node.attrType()
-    if tyutil.isString(attrType):
-        attrType.accept(self)
+    attrType = types.Type(node.attrType())
+    if attrType.string():
+        attrType.type().accept(self)
 
 def visitOperation(node):
-    returnType = node.returnType()
-    if tyutil.isString(returnType):
-        returnType.accept(self)
+    returnType = types.Type(node.returnType())
+    if returnType.string():
+        returnType.type().accept(self)
 
     for p in node.parameters():
-        paramType = p.paramType()
-        if tyutil.isString(paramType):
-            paramType.accept(self)
+        paramType = types.Type(p.paramType())
+        if paramType.string():
+            paramType.type().accept(self)
             
 def visitInterface(node):
     if not(node.mainFile()):

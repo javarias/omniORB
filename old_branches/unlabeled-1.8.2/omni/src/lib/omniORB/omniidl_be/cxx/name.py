@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.2  2000/03/09 15:21:40  djs
+# Better handling of internal compiler exceptions (eg attempts to use
+# wide string types)
+#
 # Revision 1.8.2.1  2000/02/14 18:34:57  dpg1
 # New omniidl merged in.
 #
@@ -64,6 +68,8 @@
 #
 
 """Functions relating to naming and environments etc"""
+
+assert(0)
 
 from omniidl import idltype, idlutil
 

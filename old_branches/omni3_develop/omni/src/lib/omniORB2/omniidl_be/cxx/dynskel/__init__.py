@@ -28,6 +28,13 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.3  2000/03/24 22:30:17  djs
+# Major code restructuring:
+#   Control flow is more recursive and obvious
+#   Properly distinguishes between forward declarations and externs
+#   Only outputs definitions once
+#   Lots of assertions to check all is well
+#
 # Revision 1.6.2.2  2000/02/16 18:34:49  djs
 # Fixed problem generating fragments in DynSK.cc file
 #
@@ -83,7 +90,6 @@ def generate(stream, tree):
 
     # This is the bit shared with the header file?
     tcstring = omniidl_be.cxx.dynskel.tcstring.__init__(stream)
-    #tree.accept(tcstring)
 
     Typecode = omniidl_be.cxx.dynskel.typecode.__init__(stream)
     tree.accept(Typecode)

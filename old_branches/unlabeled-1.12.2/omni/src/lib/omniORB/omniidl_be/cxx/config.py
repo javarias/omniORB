@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.3  2000/03/13 15:27:05  djs
+# Turned off emulating old, broken behaviour.
+#
 # Revision 1.12.2.2  2000/03/09 15:21:42  djs
 # Better handling of internal compiler exceptions (eg attempts to use
 # wide string types)
@@ -197,11 +200,13 @@ def dynskelsuffix():
 def defs_fragment_suffix():
     return self._defs_fragment
 
-# suffix to be added to basename to get the filename of the operators fragment file
+# suffix to be added to basename to get the filename of the operators
+# fragment file
 def opers_fragment_suffix():
     return self._opers_fragment
 
-# suffix to be added to basename to get the filename of the operators fragment file
+# suffix to be added to basename to get the filename of the operators
+# fragment file
 def poa_fragment_suffix():
     return self._poa_fragment
 

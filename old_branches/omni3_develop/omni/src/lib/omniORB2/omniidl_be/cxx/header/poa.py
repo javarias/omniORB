@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.2  2000/04/05 10:57:39  djs
+# Minor source tidying (removing commented out blocks)
+#
 # Revision 1.15.2.1  2000/02/14 18:34:54  dpg1
 # New omniidl merged in.
 #
@@ -87,7 +90,7 @@
 import string
 
 from omniidl import idlast, idltype, idlutil
-from omniidl_be.cxx import tyutil, name, env, config, util
+from omniidl_be.cxx import tyutil, id,  config, util
 from omniidl_be.cxx.header import tie
 from omniidl_be.cxx.header import template
 
@@ -124,7 +127,7 @@ def visitModule(node):
         return
     self.__completedModules[node] = 1
     
-    name = tyutil.mapID(node.identifier())
+    name = id.mapID(node.identifier())
 
     if not(config.FragmentFlag()):
         stream.out(template.POA_module_begin,
@@ -151,14 +154,13 @@ def visitModule(node):
 def visitInterface(node):
     if not(node.mainFile()):
         return
-    
-    iname = tyutil.mapID(node.identifier())
-    environment = env.lookup(node)
-    scope = tyutil.scope(node.scopedName())
 
-    scopedName = scope + [iname]
-    scopedID = idlutil.ccolonName(scopedName)
-    impl_scopedID = name.prefixName(scopedName, "_impl_")
+    iname = id.mapID(node.identifier())
+    environment = id.lookup(node)
+    scopedName = id.Name(node.scopedName())
+    impl_scopedName = scopedName.prefix("_impl_")
+    scopedID = scopedName.fullyQualify()
+    impl_scopedID = impl_scopedName.fullyQualify()
 
     POA_name = POA_prefix() + iname
 
