@@ -29,8 +29,13 @@
 
 
 # $Id$
-
 # $Log$
+# Revision 1.24.2.4  2001/06/12 10:56:02  dpg1
+# Scoping bug in stub code.
+#
+# Revision 1.24.2.3  2001/04/10 16:33:41  dpg1
+# Minor bugs in Any coercion.
+#
 # Revision 1.24.2.2  2000/08/23 09:22:07  dpg1
 # Fix loading of IfR stubs with "import CORBA"
 #
@@ -373,6 +378,11 @@ def newModule(mname):
 
     return mod
 
+# Function to create a new empty class as a scope place-holder
+def newEmptyClass():
+    class __dummy: pass
+    return __dummy
+
 
 # Classes to support IDL type mapping
 
@@ -556,7 +566,7 @@ def coerceAny(v, fd, td):
 
     try:
         if fd == td:
-            return a._v
+            return v
 
         elif fd[0] == tcInternal.tv_objref:
             return _omnipy.narrow(v, td[1])
@@ -571,7 +581,7 @@ def coerceAny(v, fd, td):
             return apply(td[1], l)
 
         elif fd[0] == tcInternal.tv_union:
-            return td[1](v._d, coerceAny(v._v, fd[6][v._d], tf[6][v._d]))
+            return td[1](v._d, coerceAny(v._v, fd[6][v._d], td[6][v._d]))
 
         elif fd[0] == tcInternal.tv_enum:
             return td[3][v._v]

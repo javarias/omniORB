@@ -28,8 +28,13 @@
 //    TypeCode support
 
 // $Id$
-
 // $Log$
+// Revision 1.11.2.6  2001/04/09 11:50:00  dpg1
+// Forgot to add known enums to offset desctriptor map.
+//
+// Revision 1.11.2.5  2001/03/12 10:20:56  dpg1
+// Suppress annoying compiler warnings about uninitialised variables.
+//
 // Revision 1.11.2.4  2001/01/18 11:52:06  dpg1
 // Silly bug with marshalling TypeCode for CORBA::Object.
 //
@@ -100,18 +105,16 @@ public:
   }
 
   inline void add(PyObject* desc, CORBA::Long offset) {
-    PyObject *desc_o = omniPy::newTwin(desc);
-
-    PyObject* oo = PyInt_FromLong(offset + base_);
+    PyObject* desc_o = omniPy::newTwin(desc);
+    PyObject* oo     = PyInt_FromLong(offset + base_);
     PyDict_SetItem(dict_, desc_o, oo);
     Py_DECREF(desc_o);
     Py_DECREF(oo);
   }
 
   inline CORBA::Boolean lookup(PyObject* desc, CORBA::Long& offset) {
-    PyObject *desc_o = omniPy::newTwin(desc);
-
-    PyObject* oo = PyDict_GetItem(dict_, desc_o);
+    PyObject* desc_o = omniPy::newTwin(desc);
+    PyObject* oo     = PyDict_GetItem(dict_, desc_o);
     Py_DECREF(desc_o);
     if (oo) {
       offset = PyInt_AS_LONG(oo) - base_;
@@ -356,6 +359,8 @@ r_alignedSizeTypeCode(CORBA::ULong msgsize, PyObject* d_o,
 #endif
 	default:
 	  OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
+	  // Prevent spurious compiler warnings:
+	  dsize = 1; dalign = omni::ALIGN_1;
 	}
 
 	// Default used, count
@@ -1338,7 +1343,7 @@ r_marshalTypeCode(MemBufferedStream&   stream,
 PyObject*
 r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 {
-  PyObject* d_o; // Descriptor object to build
+  PyObject* d_o = 0; // Descriptor object to build
   PyObject* t_o;
 
   //  cout << "unmarshal typecode... " << flush;
@@ -1636,6 +1641,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 	// Static knowledge of the enum
 	Py_INCREF(d_o);
 	Py_DECREF(repoId);
+	odm.add(d_o, tc_offset);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
@@ -1881,7 +1887,7 @@ r_unmarshalTypeCode(NetBufferedStream& stream, OffsetDescriptorMap& odm)
 PyObject*
 r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 {
-  PyObject* d_o; // Descriptor object to build
+  PyObject* d_o = 0; // Descriptor object to build
   PyObject* t_o;
 
   //  cout << "unmarshal typecode... " << flush;
@@ -2179,6 +2185,7 @@ r_unmarshalTypeCode(MemBufferedStream& stream, OffsetDescriptorMap& odm)
 	// Static knowledge of the enum
 	Py_INCREF(d_o);
 	Py_DECREF(repoId);
+	odm.add(d_o, tc_offset);
 	//?? Is is worth checking the TypeCodes for equivalence?
       }
       else {
