@@ -30,6 +30,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.33  2000/03/24 16:48:58  dpg1
+// Local calls now have proper pass-by-value semantics.
+// Lots of little stability improvements.
+// Memory leaks fixed.
+//
 // Revision 1.32  2000/03/07 16:52:17  dpg1
 // Support for compilers which do not allow exceptions to be caught by
 // base class. (Like MSVC 5, surprise surprise.)
@@ -403,7 +408,12 @@ extern "C" {
 
     int orig_argc = argc;
 
-    CORBA::ORB_ptr orb = CORBA::ORB_init(argc, argv, orbid);
+    CORBA::ORB_ptr orb;
+    try {
+      orb = CORBA::ORB_init(argc, argv, orbid);
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     omniPy::orb = orb;
 
     // This is extremely horrid -- modify the Python list in place to

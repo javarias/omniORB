@@ -30,6 +30,12 @@
 // $Id$
 
 // $Log$
+// Revision 1.33  2000/04/25 13:36:17  dpg1
+// If an object is deactivated while invocations on it are happening, the
+// deletion is performed by a callback at the end of the invoke(). The
+// Python interpreter lock was being held at this time, causing a
+// deadlock.
+//
 // Revision 1.32  2000/03/24 16:48:57  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -403,7 +409,12 @@ extern "C" {
 
     int orig_argc = argc;
 
-    CORBA::ORB_ptr orb = CORBA::ORB_init(argc, argv, orbid);
+    CORBA::ORB_ptr orb;
+    try {
+      orb = CORBA::ORB_init(argc, argv, orbid);
+    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     omniPy::orb = orb;
 
     // This is extremely horrid -- modify the Python list in place to
