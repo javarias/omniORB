@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.17  2002/01/18 15:49:44  dpg1
+// Context support. New system exception construction. Fix None call problem.
+//
 // Revision 1.1.2.16  2001/12/10 18:10:37  dpg1
 // Segfault with narrow on pseudo object.
 //
@@ -85,7 +88,7 @@
 #define DLL_EXPORT
 #endif
 
-#include <omniORB4/pydistdate.hh>
+#include "pydistdate.hh"
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <initialiser.h>
