@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.19  2002/02/18 11:59:12  dpg1
+ Full autoconf support.
+
  Revision 1.2.2.18  2002/01/15 16:38:09  dpg1
  On the road to autoconf. Dependencies refactored, configure.ac
  written. No makefiles yet.
@@ -193,6 +196,15 @@
 // Disable warnings about a member function in a derived class overriding
 // a member function in the base class.
 #  pragma warning(disable: 4250)
+
+#elif defined(__DMC__)
+#  define NEED_DUMMY_RETURN
+
+#  ifdef _WINSTATIC
+#    define _OMNIORB_NTDLL_IMPORT
+#  else
+#    define _OMNIORB_NTDLL_IMPORT  __declspec(dllimport)
+#  endif
 
 #else
 

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.12  2002/10/14 20:07:11  dgrisby
+  Per objref / per thread timeouts.
+
   Revision 1.2.2.11  2001/09/12 19:42:36  sll
   Added back function to report max. GIOP message size.
 
@@ -164,3 +167,11 @@ CORBA::ULong
 omniORB::giopMaxMsgSize() {
   return orbParameters::giopMaxMsgSize;
 }
+
+
+#if defined(__DMC__) && defined(_WINDLL)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+{
+  return TRUE;
+}
+#endif

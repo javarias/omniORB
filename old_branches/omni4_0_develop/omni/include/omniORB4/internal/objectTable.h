@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/08/22 13:31:31  dpg1
+  Christof's fixes for gcc 3.0.1.
+
   Revision 1.1.2.1  2001/08/15 10:26:09  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -67,6 +70,8 @@ public:
 
     ALL_STATES    = 15
   };
+
+  static void* thisClassCompare(omniIdentity*, void*);
 
   ~omniObjTableEntry();
 
@@ -174,8 +179,6 @@ public:
   // List of objrefs with references to this id.
   //  Must hold <omni::internalLock>
 
-
-  static void* thisClassCompare(omniIdentity*, void*);
 
   static inline omniObjTableEntry* downcast(omniIdentity* id)
   {

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.28  2002/09/08 21:12:39  dgrisby
+  Properly handle IORs with no usable profiles.
+
   Revision 1.2.2.27  2002/08/16 16:03:31  dgrisby
   Interceptor tweaks.
 
@@ -258,7 +261,9 @@ CORBA::Boolean orbParameters::abortOnInternalError = 0;
 ////////////////////////////////////////////////////////////////////////////
 
 #if defined(HAS_Cplusplus_Namespace)
+#  ifndef __DMC__
 using omniORB::operator==;
+#  endif
 #endif
 
 

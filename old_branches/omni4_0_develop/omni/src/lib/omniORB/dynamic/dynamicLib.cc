@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.8  2001/11/27 14:35:08  dpg1
+  Context, DII fixes.
+
   Revision 1.2.2.7  2001/11/06 15:41:36  dpg1
   Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -114,3 +117,11 @@ lookup_id_lcfn(omniCallDescriptor* cd, omniServant* svnt)
 }
 
 OMNI_NAMESPACE_END(omni)
+
+
+#if defined(__DMC__) && defined(_WINDLL)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+{
+  return TRUE;
+}
+#endif
