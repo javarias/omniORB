@@ -29,6 +29,9 @@
 
 /*
   $Log$
+ * Revision 1.9  1998/02/25  20:34:59  sll
+ * New omniORB::loader class for adding dynamic object loader.
+ *
  * Revision 1.8  1998/01/27  16:07:58  ewc
  * Added -ORBtcAliasExpand flag
  *
@@ -355,7 +358,7 @@ public:
   class loader {                                                        //
   public:                                                               //
     typedef CORBA::Object_ptr (*mapKeyToObject_t) (                     //
-                                       const omniORB::objectKey& key);  //
+                                       const objectKey& key);           //
                                                                         // 
     static void set(mapKeyToObject_t NewKeyToObject);                   //
   };
