@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2002/10/14 20:06:41  dgrisby
+  Per objref / per thread timeouts.
+
   Revision 1.1.2.3  2002/03/18 16:50:17  dpg1
   New threadPoolWatchConnection parameter.
 
@@ -431,10 +434,14 @@ _CORBA_MODULE_VAR _core_attr CORBA::UShort unixTransportPermission;
 //  Valid values = unix permission mode bits in octal radix (e.g. 0755)
 
 _CORBA_MODULE_VAR _core_attr CORBA::Boolean supportBootstrapAgent;
-//Applies to the server side. 1 means enable the support for Sun's
-//bootstrap agent protocol.  This enables interoperability between omniORB
-//servers and Sun's javaIDL clients. When this option is enabled, an
-//omniORB server will response to a bootstrap agent request.
+//  Applies to the server side. 1 means enable the support for Sun's
+//  bootstrap agent protocol.  This enables interoperability between omniORB
+//  servers and Sun's javaIDL clients. When this option is enabled, an
+//  omniORB server will response to a bootstrap agent request.
+
+_CORBA_MODULE_VAR _core_attr _CORBA_Unbounded_Sequence_Octet persistentId;
+//  Persistent identifier used to detect object references that should
+//  be considered to be in this process.
 
 _CORBA_MODULE_END
 

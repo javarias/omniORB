@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2003/11/20 13:39:59  dgrisby
+  corbaloc handler for Unix sockets. Uses omniunix scheme name.
+
   Revision 1.1.2.13  2003/01/14 11:48:15  dgrisby
   Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -300,7 +303,12 @@ public:
   static char* dump_TAG_OMNIORB_UNIX_TRANS(const IOP::TaggedComponent&);
   static void  add_TAG_OMNIORB_UNIX_TRANS(const char* filename);
 
-  ///
+  ////
+  static void  unmarshal_TAG_OMNIORB_PERSISTENT_ID(const IOP::TaggedComponent&,
+						   omniIOR&);
+  static char* dump_TAG_OMNIORB_PERSISTENT_ID(const IOP::TaggedComponent&);
+
+  ////
   static void  add_IIOP_ADDRESS(const IIOP::Address&);
   // Add this address to the IIOP profile.
 
