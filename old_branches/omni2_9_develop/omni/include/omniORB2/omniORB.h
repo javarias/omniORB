@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.22.4.3  1999/10/02 18:21:24  sll
+  Added support to decode optional tagged components in the IIOP profile.
+  Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+  remote objects inside a firewall.
+  Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
   Revision 1.22.4.2  1999/09/25 17:00:11  sll
   Merged changes from omni2_8_develop branch.
 
@@ -671,7 +677,7 @@ _CORBA_MODULE_BEG
   class gateway {                                                       //
   public:                                                               //
     typedef omniObject* (*mapTargetAddressToObject_t) (                 //
-                           const giopStream::requestInfo&);             //
+                           const GIOP::IORAddressingInfo&);             //
                                                                         //
     static void set(mapTargetAddressToObject_t);                        //
   };                                                                    //
@@ -796,6 +802,8 @@ _CORBA_MODULE_BEG
   }
   // Writes log message with prefix, and appends '\n'.
 
+
+ _CORBA_MODULE_VAR _core_attr GIOP::AddressingDisposition giopTargetAddressMode;
 
 #ifndef HAS_Cplusplus_Namespace
   friend class omni;

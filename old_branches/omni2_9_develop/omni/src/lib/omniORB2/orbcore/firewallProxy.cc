@@ -26,7 +26,13 @@
 // Description:
 //	
 
-/* $Log$ */
+/* $Log$
+/* Revision 1.1.2.1  1999/10/02 18:21:27  sll
+/* Added support to decode optional tagged components in the IIOP profile.
+/* Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+/* remote objects inside a firewall.
+/* Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+/* */
 
 #include <omniORB2/CORBA.h>
 #include <omniORB2/proxyCall.h>
@@ -166,6 +172,17 @@ firewallProxyRopeFactory::findOrCreateOutgoing(Endpoint* addr,
       }
       return 0;
     }
+
+#if 1 // For testing only
+    if (omniORB::giopTargetAddressMode == GIOP::ReferenceAddr) {
+      CORBA::Boolean fwd;
+      GIOPObjectInfo_var pg = proxy->getInvokeInfo(fwd);
+      Rope* nr = pg->rope();
+      nr->incrRefCount();
+      g->rope_ = nr;
+      return nr;
+    }
+#endif
 
     // Create a local redirect object to do the negotiation with
     // the GIOP proxy when the application invokes on this target.
