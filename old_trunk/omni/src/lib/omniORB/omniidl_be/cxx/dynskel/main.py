@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.9  2000/01/13 15:56:35  djs
+# Factored out private identifier prefix rather than hard coding it all through
+# the code.
+#
 # Revision 1.8  2000/01/13 14:16:24  djs
 # Properly clears state between processing separate IDL input files
 #
@@ -110,8 +114,7 @@ def visitInterface(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
 
     for n in node.declarations():
         n.accept(self)
@@ -201,20 +204,22 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _s) {
 """, guard_name = guard_name, fqname = fqname, objref_member = objref_member,
                tc_name = tc_name, private_prefix = config.privatePrefix())
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
 
 
 def visitTypedef(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
     
     aliasType = node.aliasType()
     deref_aliasType = tyutil.deref(aliasType)
     type_dims = tyutil.typeDims(aliasType)
     env = name.Environment()
+
+    if node.constrType():
+        aliasType.decl().accept(self)
 
     alias_cname = mangler.canonTypeName(aliasType)
     alias_tyname = env.principalID(aliasType)
@@ -381,15 +386,14 @@ CORBA::Boolean operator >>= (const CORBA::Any& a, const @fqname@*& s_out)
                        private_prefix = config.privatePrefix(),
                        guard_name = guard_name)
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
 
 
 def visitEnum(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -420,15 +424,14 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@& _s)
                private_prefix = config.privatePrefix(),
                fqname = fqname)
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
 
    
 def visitStruct(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
 
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -493,22 +496,23 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
                private_prefix = config.privatePrefix(),
                num_members = str(num_members))    
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
+
     
 def visitUnion(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
     env = name.Environment()
     fqname = env.nameToString(scopedName)
     switchType = node.switchType()
+    deref_switchType = tyutil.deref(switchType)
     discrim_cname = mangler.canonTypeName(switchType)
-    discrim_type = env.principalID(switchType)
+    discrim_type = env.principalID(deref_switchType)
 
     allCaseValues = tyutil.allCaseValues(node)
     isExhaustive = tyutil.exhaustiveMatch(switchType, allCaseValues)
@@ -519,6 +523,14 @@ def visitUnion(node):
             if l.default():
                 default_case = c
                 break
+
+    # constructed types
+    if node.constrType():
+        node.switchType().decl().accept(self)
+    for n in node.cases():
+        if n.constrType():
+            n.caseType().decl().accept(self)
+            
     switch = util.StringStream()
     if default_case:
         default_decl = default_case.declarator()
@@ -723,7 +735,7 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
 """, fqname = fqname, guard_name = guard_name,
                private_prefix = config.privatePrefix())
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
 
 
 def visitForward(node):
@@ -741,8 +753,7 @@ def visitException(node):
     if not(node.mainFile()) and not(self.__override):
         return
 
-    lastNode = bdesc.__currentNode
-    bdesc.__currentNode = node
+    bdesc.startingNode(node)
     
     scopedName = node.scopedName()
     guard_name = tyutil.guardName(scopedName)
@@ -825,4 +836,7 @@ static @private_prefix@_insertToAny_Singleton__c@guard_name@ @private_prefix@_in
     
 
 
-    bdesc.__currentNode = lastNode
+    bdesc.finishingNode()
+
+
+
