@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/22 13:31:31  dpg1
+  Christof's fixes for gcc 3.0.1.
+
   Revision 1.1.4.2  2001/08/15 10:26:10  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -89,7 +92,7 @@ public:
   // This function is thread-safe.  Does not increment
   // the reference count of the rope.
 
-  virtual void locateRequest();
+  virtual void locateRequest(omniCallDescriptor&);
   // If this returns normally, then the object exists.
   // Throws OBJECT_NOT_EXIST, or omniORB::LOCATION_FORWARD
   // otherwise.

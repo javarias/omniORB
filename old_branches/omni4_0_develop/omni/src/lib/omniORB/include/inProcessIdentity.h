@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  2001/08/22 13:31:31  dpg1
+ Christof's fixes for gcc 3.0.1.
+
  Revision 1.1.2.2  2001/08/15 10:26:09  dpg1
  New object table behaviour, correct POA semantics.
 
@@ -76,7 +79,7 @@ public:
   virtual omniIdentity::equivalent_fn get_real_is_equivalent() const;
   // Overrides omniIdentity.
 
-  virtual void locateRequest();
+  virtual void locateRequest(omniCallDescriptor&);
   // If this returns normally, then the object exists.
   // Throws OBJECT_NOT_EXIST, or omniORB::LOCATION_FORWARD
   // otherwise.

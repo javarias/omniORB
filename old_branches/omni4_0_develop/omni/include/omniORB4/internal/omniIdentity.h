@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/08/15 10:26:09  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.1.4.2  2001/06/13 20:11:37  sll
   Minor update to make the ORB compiles with MSVC++.
 
@@ -86,7 +89,7 @@ public:
   // default zero objref.
   //  Must hold <omni::internalLock>.
 
-  virtual void locateRequest() = 0;
+  virtual void locateRequest(omniCallDescriptor&) = 0;
   // If this returns normally, then the object exists.
   // Throws OBJECT_NOT_EXIST, or omniORB::LOCATION_FORWARD
   // otherwise.

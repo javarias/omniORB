@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/08/15 10:26:12  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.2.2.6  2001/08/03 17:41:22  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -215,7 +218,7 @@ omniLocalIdentity::loseRef(omniObjRef*)
 }
 
 void
-omniLocalIdentity::locateRequest() {
+omniLocalIdentity::locateRequest(omniCallDescriptor&) {
   // Its a local object, and we know its here.
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   omni::internalLock->unlock();

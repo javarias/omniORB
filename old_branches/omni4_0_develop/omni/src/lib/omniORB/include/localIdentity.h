@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/08/22 13:31:31  dpg1
+  Christof's fixes for gcc 3.0.1.
+
   Revision 1.1.4.4  2001/08/15 10:26:09  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -111,7 +114,7 @@ public:
   virtual void dispatch(omniCallDescriptor&);
   virtual void gainRef(omniObjRef* obj = 0);
   virtual void loseRef(omniObjRef* obj = 0);
-  virtual void locateRequest();
+  virtual void locateRequest(omniCallDescriptor&);
 protected:
   virtual omniIdentity::equivalent_fn get_real_is_equivalent() const;
   // Override omniIdentity.

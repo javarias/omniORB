@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  2001/08/15 10:26:12  dpg1
+ New object table behaviour, correct POA semantics.
+
  Revision 1.1.2.2  2001/08/03 17:41:21  sll
  System exception minor code overhaul. When a system exeception is raised,
  a meaning minor code is provided.
@@ -202,7 +205,7 @@ omniInProcessIdentity::loseRef(omniObjRef*)
 
 
 void
-omniInProcessIdentity::locateRequest() {
+omniInProcessIdentity::locateRequest(omniCallDescriptor&) {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   CORBA::ULong hash = omni::hash(key(), keysize());
