@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.11  2001/09/19 17:26:47  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.16.2.10  2001/08/17 17:14:09  sll
   Relocated old omniORB API implementation to this file.
 
@@ -258,6 +261,7 @@ omniOrbBOA::~omniOrbBOA()
 
 omniOrbBOA::omniOrbBOA(int nil)
   : OMNIORB_BASE_CTOR(CORBA::)BOA(nil),
+    omniObjAdapter(nil),
     pd_state(IDLE),
     pd_refCount(1),
     pd_activeObjList(0),
@@ -486,6 +490,7 @@ omniOrbBOA::destroy()
   // their etherealisations.
   wait_for_detached_objects();
 
+  adapterDestroyed();
   CORBA::release(boa);
 }
 

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.5  2001/08/17 17:10:28  sll
+ Removed option noBootStrapAgent.
+
  Revision 1.1.4.4  2001/08/15 10:26:09  dpg1
  New object table behaviour, correct POA semantics.
 
@@ -165,7 +168,7 @@ public:
     --pd_nReqInThis;
     --pd_nReqActive;
     if( !pd_nReqActive && pd_signalOnZeroInvocations )
-      pd_signal.broadcast();
+      pd_signal->broadcast();
   }
   // This is called by the localIdentity when the request
   // leaves the adapter.
@@ -176,7 +179,7 @@ public:
     --pd_nReqInThis;
     int do_signal = !pd_nReqInThis && pd_signalOnZeroInvocations;
     if( !loexit )  omni::internalLock->unlock();
-    if( do_signal )  pd_signal.broadcast();
+    if( do_signal )  pd_signal->broadcast();
   }
 
   inline void detached_object() {
@@ -235,8 +238,10 @@ public:
 
 
 protected:
-  omniObjAdapter();
+  omniObjAdapter(int nil=0);
 
+  void adapterDestroyed();
+  // Called by derived adapter classes when the adapter has been destroyed.
 
   int                  pd_nReqInThis;
   // The number of requests active in this adapter.
@@ -254,7 +259,7 @@ protected:
   // when done.
   //  Protected by <omni::internalLock>.
 
-  omni_tracedcondition pd_signal;
+  omni_tracedcondition* pd_signal;
   // Uses <omni::internalLock> as mutex.
   //  Used to signal changes to:
   //     pd_nReqInThis,
