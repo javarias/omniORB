@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/08/17 17:12:36  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.1.2.10  2001/08/03 17:41:20  sll
   System exception minor code overhaul. When a system exeception is raised,
   a meaning minor code is provided.
@@ -524,7 +527,7 @@ TCS_C_UTF_8::unmarshalString(cdrStream& stream,
     }
   }
 
-  if (bound && len >= bound)
+  if (bound && len-1 > bound)
     OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
 		  (CORBA::CompletionStatus)stream.completion());
 
@@ -662,7 +665,7 @@ TCS_C_UTF_8::fastMarshalString(cdrStream&          stream,
     b.insert(0); // Null terminator
     _CORBA_ULong mlen = b.length();
 
-    if (bound && mlen >= bound)
+    if (bound && mlen-1 > bound)
       OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
 		    (CORBA::CompletionStatus)stream.completion());
 
@@ -713,7 +716,7 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
       }
     }
 
-    if (bound && mlen >= bound)
+    if (bound && mlen-1 > bound)
       OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
 		    (CORBA::CompletionStatus)stream.completion());
 
@@ -757,7 +760,7 @@ TCS_C_UTF_8::fastUnmarshalString(cdrStream&          stream,
       }
     }
 
-    if (bound && mlen >= bound)
+    if (bound && mlen-1 > bound)
       OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
 		    (CORBA::CompletionStatus)stream.completion());
 
