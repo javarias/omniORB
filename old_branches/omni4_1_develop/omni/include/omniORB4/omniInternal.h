@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.3  2004/07/04 23:53:35  dgrisby
+  More ValueType TypeCode and Any support.
+
   Revision 1.5.2.2  2003/09/26 16:12:53  dgrisby
   Start of valuetype support.
 
@@ -449,6 +452,7 @@ _CORBA_MODULE_END
 #include <omniORB4/codeSets.h>
 #include <omniORB4/cdrStream.h>
 #include <omniORB4/seqTemplatedefns.h>
+#include <omniORB4/valueTemplatedefns.h>
 #include <omniORB4/omniObjRef.h>
 #include <omniORB4/omniIOR.h>
 #include <omniORB4/proxyFactory.h>
