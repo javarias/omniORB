@@ -11,6 +11,9 @@
  
 /*
   $Log$
+// Revision 1.2  1997/03/10  11:50:33  sll
+// Minor changes to accomodate the creation of a public API for omniORB2.
+//
   Revision 1.1  1997/01/08 17:26:01  sll
   Initial revision
 
@@ -334,5 +337,6 @@ IOP::TaggedProfile::operator<<= (MemBufferedStream &s) {
 // again.
 
 template class _CORBA_Sequence<IOP::TaggedProfile>;
+template class _CORBA_Unbounded_Sequence<IOP::TaggedProfile>;
 
 #endif
