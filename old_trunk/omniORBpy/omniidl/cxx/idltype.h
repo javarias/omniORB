@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:54  dpg1
+// *** empty log message ***
+//
 
 #ifndef _idltype_h_
 #define _idltype_h_
@@ -235,14 +238,17 @@ private:
 //
 
 class Decl;
+class DeclRepoId;
 
 class DeclaredType : public IdlType {
 public:
-  DeclaredType(Kind k, Decl* decl) : IdlType(k), decl_(decl) {}
+  DeclaredType(Kind k, Decl* decl, DeclRepoId* declRepoId)
+    : IdlType(k), decl_(decl), declRepoId_(declRepoId) {}
 
   virtual ~DeclaredType() {}
 
-  Decl* decl() { return decl_; }
+  Decl*       decl()       { return decl_; }
+  DeclRepoId* declRepoId() { return declRepoId_; }
 
   _CORBA_Boolean shouldDelete() { return 0; }
   void accept(TypeVisitor& visitor) { visitor.visitDeclaredType(this); }
@@ -250,7 +256,8 @@ public:
   static DeclaredType corbaObjectType;
 
 private:
-  Decl* decl_;
+  Decl*       decl_;
+  DeclRepoId* declRepoId_;
 };
 
 

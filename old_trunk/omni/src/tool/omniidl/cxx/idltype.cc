@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:54  dpg1
+// *** empty log message ***
+//
 
 #include <idltype.h>
 #include <idlerr.h>
@@ -114,4 +117,4 @@ BaseType     BaseType::longdoubleType(IdlType::tk_longdouble);
 BaseType     BaseType::wcharType(IdlType::tk_wchar);
 StringType   StringType::unboundedStringType(0);
 WStringType  WStringType::unboundedWStringType(0);
-DeclaredType DeclaredType::corbaObjectType(IdlType::tk_objref, 0);
+DeclaredType DeclaredType::corbaObjectType(IdlType::tk_objref, 0, 0);
