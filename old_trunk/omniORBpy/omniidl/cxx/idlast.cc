@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.13  2000/01/05 11:21:08  dpg1
+// Removed warning about signed/unsigned comparison.
+// * can only be the last character of a context key.
+//
 // Revision 1.12  1999/12/28 18:15:45  dpg1
 // Bounds of string constants now checked.
 //
@@ -1420,7 +1424,8 @@ Native(const char* file, int line, _CORBA_Boolean mainFile,
   : Decl(D_NATIVE, file, line, mainFile),
     DeclRepoId(identifier)
 {
-  Scope::current()->addDecl(identifier, 0, this, 0, file, line);
+  DeclaredType* type = new DeclaredType(IdlType::tk_native, this, this);
+  Scope::current()->addDecl(identifier, 0, this, type, file, line);
 }
 
 Native::

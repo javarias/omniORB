@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8  1999/11/17 18:07:23  dpg1
+// Tiny change to enum printing.
+//
 // Revision 1.7  1999/11/17 18:05:16  dpg1
 // Tiny change to enum printing.
 //
@@ -616,6 +619,7 @@ visitDeclaredType(DeclaredType* t)
   DTCASE(tk_union,  Union,      D_UNION)
   DTCASE(tk_enum,   Enum,       D_ENUM)
   DTCASE(tk_alias,  Declarator, D_DECLARATOR)
+  DTCASE(tk_native, Native,     D_NATIVE)
   default:
     printf("%s", t->kindAsString());
   }
