@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/09/03 17:32:05  sll
+  Make sure that acquireClient honours the deadline set in the calldescriptor.
+
   Revision 1.1.2.6  2001/08/29 17:52:03  sll
   Consult serverTransportRule to decide whether to accept the switch to
   bidirectional on the server side.
@@ -609,6 +612,7 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info) {
 
 	if (!strand.biDir) {
 	  strand.biDir = 1;
+	  strand.stopIdleCounter();
 	  if (!strand.server->notifySwitchToBiDirectional(strand.connection))
 	    return 1;
 	}
