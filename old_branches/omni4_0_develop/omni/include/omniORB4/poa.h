@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.13  2003/07/26 22:52:22  dgrisby
+  Avoid spurious gcc warnings when sizeof pointer > sizeof int.
+
   Revision 1.2.2.12  2001/11/13 14:11:44  dpg1
   Tweaks for CORBA 2.5 compliance.
 
@@ -679,7 +682,7 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
 
   protected:
     inline ServantBase() {}
-    inline ServantBase(const ServantBase&) {}
+    inline ServantBase(const ServantBase& os) : omniServant(os) {}
     inline ServantBase& operator = (const ServantBase&) { return *this; }
 
     void* _do_this(const char* repoId);
@@ -703,7 +706,7 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
 
   protected:
     inline RefCountServantBase() : pd_refCount(1) {}
-    inline RefCountServantBase(const RefCountServantBase&) : pd_refCount(1) {}
+    inline RefCountServantBase(const RefCountServantBase& os) : ServantBase(os), pd_refCount(1) {}
     inline RefCountServantBase& operator = (const RefCountServantBase&)
       { return *this; }
 
