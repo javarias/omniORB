@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.9.4.1  1999/10/02 18:24:32  sll
+  Reformatted trace messages.
+
   Revision 1.9  1999/06/18 20:53:10  sll
   New function _CORBA_bad_param_freebuf().
 
@@ -112,8 +115,8 @@ omniExHandlers::TableLock;
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("omniORB: ");\
-	log << prefix ## ": " ## message ## "\n";\
+     omniORB::logger log;\
+	log << " " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 

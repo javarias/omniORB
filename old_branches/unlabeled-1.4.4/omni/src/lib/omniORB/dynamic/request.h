@@ -28,6 +28,14 @@
 
 /*
   $Log$
+  Revision 1.4.4.1  1999/09/15 20:18:22  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
 */
 
 #ifndef __REQUEST_H__
@@ -90,6 +98,18 @@ public:
 private:
   void marshalArgs(cdrStream& giop_client);
   void unmarshalArgs(cdrStream& giop_client);
+
+  class argumentsMarshaller : public giopMarshaller {
+  public:
+    argumentsMarshaller(giopStream&, RequestImpl&);
+    void marshalData();
+    size_t dataSize(size_t);
+  private:
+    giopStream&  pd_s;
+    RequestImpl& pd_i;
+  };
+
+  friend class argumentsMarshaller;
 
   enum State {
     RS_READY,

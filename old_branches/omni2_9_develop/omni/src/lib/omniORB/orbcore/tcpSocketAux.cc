@@ -26,7 +26,13 @@
 // Description:
 //	
 
-/* $Log$ */
+/* $Log$
+/* Revision 1.1.2.1  1999/10/02 18:21:31  sll
+/* Added support to decode optional tagged components in the IIOP profile.
+/* Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+/* remote objects inside a firewall.
+/* Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+/* */
 
 #include <omniORB2/CORBA.h>
 #include <ropeFactory.h>
@@ -36,8 +42,8 @@
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("omniORB: ");\
-	log << prefix ## ": " ## message ## "\n";\
+     omniORB::logger log;\
+	log << " " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 

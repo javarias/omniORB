@@ -28,6 +28,14 @@
 
 /*
  $Log$
+ Revision 1.4.4.1  1999/09/15 20:18:14  sll
+ Updated to use the new cdrStream abstraction.
+ Marshalling operators for NetBufferedStream and MemBufferedStream are now
+ replaced with just one version for cdrStream.
+ Derived class giopStream implements the cdrStream abstraction over a
+ network connection whereas the cdrMemoryStream implements the abstraction
+ with in memory buffer.
+
  Revision 1.4  1999/06/18 21:17:05  sll
  Updated copyright notice.
 
@@ -178,6 +186,60 @@ _CORBA_MODULE_BEG
   typedef OmniOWProxyCallDesc ow_void_call;
   typedef OmniProxyCallDescWithContext void_call_w_context;
   typedef OmniOWProxyCallDescWithContext ow_void_call_w_context;
+
+_CORBA_MODULE_END
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+class OmniUpCallDesc {
+public:
+  typedef void (*UpCallFn)(OmniUpCallDesc&, void*);
+
+  inline OmniUpCallDesc(UpCallFn upfn, 
+			void*    handle,
+			_CORBA_Boolean has_exceptions = 0,
+			_CORBA_Boolean oneway = 0)
+    : pd_upCall(upfn), pd_opaque(handle),
+      pd_has_user_exceptions(has_exceptions),
+      pd_is_oneway(oneway) {}
+
+  virtual void unmarshalArguments(cdrStream&);
+  virtual void marshalReturnedValues(cdrStream&);
+  virtual _CORBA_Boolean marshalUserException(cdrStream&);
+
+  void setUserException(CORBA::UserException& ex) { pd_ex = &ex; }
+  const CORBA::UserException* getUserException() const { return pd_ex; }
+
+  inline _CORBA_Boolean has_user_exceptions() const { 
+    return pd_has_user_exceptions;
+  }
+
+  inline _CORBA_Boolean is_oneway() const { return pd_is_oneway; }
+
+  inline void doUpCall() { pd_upCall(*this,pd_opaque); }
+
+private:
+  UpCallFn       pd_upCall;
+  void*          pd_opaque;
+  _CORBA_Boolean pd_has_user_exceptions;
+  _CORBA_Boolean pd_is_oneway;
+  const CORBA::UserException* pd_ex;
+
+  OmniUpCallDesc();
+  OmniUpCallDesc(const OmniUpCallDesc&);
+  OmniUpCallDesc& operator= (const OmniUpCallDesc&);
+};
+
+
+
+_CORBA_MODULE OmniUpCallWrapper
+_CORBA_MODULE_BEG
+
+  _CORBA_MODULE_FN void upcall(GIOP_S&, OmniUpCallDesc&);
+
+  typedef OmniUpCallDesc void_call;
+  typedef OmniUpCallDesc ow_void_call;
 
 _CORBA_MODULE_END
 

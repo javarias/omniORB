@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.4.4  1999/10/02 18:31:00  sll
+  Reformatted trace messages.
+
   Revision 1.10.4.3  1999/09/25 17:00:22  sll
   Merged changes from omni2_8_develop branch.
 
@@ -105,8 +108,8 @@
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("omniORB: strand " ## prefix ## ": ");\
-	log << message ## "\n";\
+     omniORB::logger log;\
+	log << " strand " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 

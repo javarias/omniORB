@@ -29,11 +29,16 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/15 20:37:28  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB2/CORBA.h>
 #include <giopObjectInfo.h>
 #include <giopStreamImpl.h>
+
+#define PARANOID
 
 // giop_1_0_Impl implements the giopStreamImpl interface for GIOP revision 1.0
 // See also the description in giopStreamImpl.h and giopStream.h
@@ -62,6 +67,15 @@ static const char closeConnectionHeader[8] = {
 
 static const char messageErrorHeader[8] = {
    'G','I','O','P',1,0,_OMNIORB_HOST_BYTE_ORDER_,GIOP::MessageError };
+
+#define LOGMESSAGE(level,prefix,message) do {\
+   if (omniORB::trace(level)) {\
+     omniORB::logger log;\
+	log << " giop 1.0 " ## prefix ## ": " message ## "\n";\
+   }\
+} while (0)
+
+#define PTRACE(prefix,message) LOGMESSAGE(25,prefix,message)
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -276,9 +290,15 @@ private:
 
     g->pd_output_msgsent_size = 0;
 
-    g->pd_marshaller = marshalhdr;
+    g->pd_output_header_marshaller = marshalhdr;
 
-    g->pd_marshaller->marshalData();
+    g->pd_output_header_marshaller->marshalData();
+
+    if (!g->pd_output_msgfrag_size) {
+      g->pd_output_hdr_end = g->pd_outb_mkr;
+    }
+
+    g->pd_output_header_marshaller = 0;
   }
 
   //////////////////////////////////////////////////////////////////
@@ -314,7 +334,21 @@ public:
       g->pd_output_msgsent_size -= 12; // subtract the header
 
       // Call the  marshaller object to work out the size of the message. 
-      g->pd_output_msgfrag_size  = g->pd_marshaller->dataSize(12);
+      PTRACE("getReserveSpace","buffer overflow, calculate body size");
+
+      if (g->pd_output_header_marshaller) {
+	g->pd_output_msgfrag_size  = g->pd_output_header_marshaller->dataSize(12);
+      }
+      else {
+	g->pd_output_msgfrag_size = ((omni::ptr_arith_t)g->pd_output_hdr_end -
+				     (omni::ptr_arith_t)g->pd_outb_begin);
+      }
+
+      if (g->pd_output_body_marshaller)
+	g->pd_output_msgfrag_size = g->pd_output_body_marshaller->
+	                                dataSize(g->pd_output_msgfrag_size);
+      g->pd_output_msgfrag_size -= 12;
+
       outputMessageSize(g); 
     }
     else {
@@ -339,6 +373,7 @@ public:
 					  align);
     omni::ptr_arith_t p2 = p1 + reqsize;
     if( (void*)p2 > g->pd_outb_end ) {
+      PTRACE("getReserveSpace","MARSHAL exception(reserve space fail)");
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
     }
   }
@@ -347,6 +382,8 @@ public:
   void copyOutputData(giopStream* g,void* buf, size_t size,
 		      omni::alignment_t alignment)
   {
+    assert(((omni::ptr_arith_t) g->pd_outb_end - (omni::ptr_arith_t) g->pd_outb_begin) <= g->pd_strand->max_reserve_buffer_size());
+
     int align = giopStreamImpl::address_alignment(g->pd_outb_mkr);
     size_t padding = omni::align_to((omni::ptr_arith_t)align, 
 				    alignment) - align;
@@ -368,7 +405,19 @@ public:
       g->pd_output_msgsent_size -= 12;
 
       // Call the marshaller object to work out the size of the message.
-      g->pd_output_msgfrag_size = g->pd_marshaller->dataSize(12);
+      PTRACE("copyOutputData","calculate body size");
+
+      if (g->pd_output_header_marshaller) {
+	g->pd_output_msgfrag_size  = g->pd_output_header_marshaller->dataSize(12);
+      }
+      else {
+	g->pd_output_msgfrag_size = ((omni::ptr_arith_t)g->pd_output_hdr_end -
+				     (omni::ptr_arith_t)g->pd_outb_begin);
+      }
+      if (g->pd_output_body_marshaller)
+	g->pd_output_msgfrag_size = g->pd_output_body_marshaller->
+	                               dataSize(g->pd_output_msgfrag_size);
+      g->pd_output_msgfrag_size -= 12;
       outputMessageSize(g);
     }
 
@@ -378,8 +427,10 @@ public:
     if (outputRemaining(g) >= (padding + size)) {
       g->pd_output_msgsent_size += (padding + size);
     }
-    else
+    else {
+      PTRACE("copyOutputData","MARSHAL exception(not enough space)");
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
+    }
 
     Strand* s = g->pd_strand;
     Strand::sbuf b;
@@ -496,6 +547,7 @@ public:
 	g->pd_input_msgfrag_to_come -= b.size;
       }
       else {
+	PTRACE("getInputData","MARSHAL exception(no more data from this message)");
 	throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
       }
     } while (0);
@@ -540,6 +592,7 @@ public:
 				     (omni::ptr_arith_t)g->pd_inb_begin);
 
     if (size > g->pd_input_msgfrag_to_come) {
+      PTRACE("skipInputData","MessageError(request size too large)");
       g->SendMsgErrorMessage();
       setTerminalError(g);
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
@@ -581,6 +634,7 @@ public:
 
 	  if (padding > g->pd_input_msgfrag_to_come) {
 	    // Protocol violation
+
 	    g->SendMsgErrorMessage();
 	    setTerminalError(g);
 	    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
@@ -599,6 +653,7 @@ public:
 
 	  if (reqsize % (int)alignment) {
 	    // Protocol violation. The data should be integral multiple 
+	    PTRACE("copyInputData","MessageError(protocol violation. Data is not integral multiple of requested element size)");
 	    g->SendMsgErrorMessage();
 	    setTerminalError(g);
 	    throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
@@ -616,6 +671,8 @@ public:
 	bp += reqsize;
       }
       else {
+	// This is already the last fragment.
+	PTRACE("copyInputData","MARSHAL exception(reached end of message)");
 	throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
       }
     }

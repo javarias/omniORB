@@ -27,6 +27,10 @@
 //	
 
 /* $Log$
+/* Revision 1.1.2.2  1999/10/05 20:36:32  sll
+/* Added option -ORBgiopTargetAddressMode <0|1|2> to control the
+/* TargetAddress mode used when invoking on a remote object using GIOP 1.2
+/*
 /* Revision 1.1.2.1  1999/10/02 18:21:27  sll
 /* Added support to decode optional tagged components in the IIOP profile.
 /* Added support to negogiate with a firewall proxy- GIOPProxy to invoke
@@ -46,8 +50,8 @@
 
 #define LOGMESSAGE(level,prefix,message) do {\
    if (omniORB::trace(level)) {\
-     omniORB::logger log("omniORB: ");\
-	log << "firewallProxy " ## prefix ## ": " ## message ## "\n";\
+     omniORB::logger log;\
+	log << " firewallProxy " ## prefix ## ": " ## message ## "\n";\
    }\
 } while (0)
 
@@ -74,6 +78,27 @@ public:
     return result;
   }
 
+
+  class returnValueMarshaller : public giopMarshaller {
+  public:
+    returnValueMarshaller(giopStream& s,CORBA::Object_var& v) : 
+      pd_s(s), pd_v(v) {}
+
+    void marshalData() {
+      CORBA::Object::marshalObjRef(pd_v, (cdrStream&)pd_s);
+    }
+
+    size_t dataSize(size_t initialoffset) {
+      cdrCountingStream s(initialoffset);
+      CORBA::Object::marshalObjRef(pd_v, s);      
+      return s.total();
+    }
+
+  private:
+    giopStream&     pd_s;
+    CORBA::Object_var& pd_v;
+  };
+
   CORBA::Boolean dispatch(GIOP_S &giop_s, const char *,
 			  CORBA::Boolean response_expected) {
 
@@ -90,8 +115,9 @@ public:
 
     PTRACE("Redirect","Got target from GIOP Proxy");
 
-    giop_s.InitialiseReply(GIOP::LOCATION_FORWARD);
-    CORBA::Object::marshalObjRef(newDestination, s);
+    returnValueMarshaller m((giopStream&)giop_s,newDestination);
+
+    giop_s.InitialiseReply(GIOP::LOCATION_FORWARD,m);
     giop_s.ReplyCompleted(); 
 
     return 1;

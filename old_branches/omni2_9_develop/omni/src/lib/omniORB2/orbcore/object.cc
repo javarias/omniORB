@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.18.4.3  1999/10/05 20:35:35  sll
+  Added support to GIOP 1.2 to recognise all TargetAddress mode.
+  Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
+
   Revision 1.18.4.2  1999/10/02 18:21:28  sll
   Added support to decode optional tagged components in the IIOP profile.
   Added support to negogiate with a firewall proxy- GIOPProxy to invoke
@@ -66,6 +70,10 @@
   Temporary work-around for egcs compiler.
 
   $Log$
+  Revision 1.18.4.3  1999/10/05 20:35:35  sll
+  Added support to GIOP 1.2 to recognise all TargetAddress mode.
+  Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
+
   Revision 1.18.4.2  1999/10/02 18:21:28  sll
   Added support to decode optional tagged components in the IIOP profile.
   Added support to negogiate with a firewall proxy- GIOPProxy to invoke
@@ -225,6 +233,73 @@ omniObject::~omniObject()
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+class OmniORB_is_a_UpCallDesc : public OmniUpCallDesc
+{
+public:
+  inline OmniORB_is_a_UpCallDesc(OmniUpCallDesc::UpCallFn _upcallFn, 
+				 void* _handle) :
+    OmniUpCallDesc(_upcallFn,_handle, 0, 0)  {}
+
+  void unmarshalArguments(cdrStream& giop_s) {
+    CORBA::String_member _0RL_str_tmp;
+    _0RL_str_tmp <<= giop_s;
+    arg_0 = _0RL_str_tmp._ptr;
+    _0RL_str_tmp._ptr = 0;
+  }
+  void marshalReturnedValues(cdrStream& giop_s) {
+    pd_result >>= giop_s;
+  }
+  CORBA::String_var arg_0;
+  CORBA::Boolean pd_result;
+};
+
+static void OmniORB_is_a_UpCall (OmniUpCallDesc& desc, void* h) {
+  omniObject* obj = (omniObject*) h;
+  OmniORB_is_a_UpCallDesc& d = (OmniORB_is_a_UpCallDesc&)desc;
+  d.pd_result = obj->_real_is_a(d.arg_0);
+}
+
+//////////////////////////////////////////////////////////////////////
+class OmniORB_non_existent_UpCallDesc : public OmniUpCallDesc
+{
+public:
+  inline OmniORB_non_existent_UpCallDesc(OmniUpCallDesc::UpCallFn _upcallFn,
+					 void* _handle) :
+    OmniUpCallDesc(_upcallFn,_handle, 0, 0)  {}
+
+  void marshalReturnedValues(cdrStream& giop_s) { pd_result >>= giop_s; }
+  CORBA::Boolean pd_result;
+};
+
+static void OmniORB_non_existent_UpCall (OmniUpCallDesc& desc, void*) {
+  OmniORB_non_existent_UpCallDesc& d = (OmniORB_non_existent_UpCallDesc&)desc;
+  d.pd_result = 0;
+}
+
+//////////////////////////////////////////////////////////////////////
+class OmniORB_interface_UpCallDesc : public OmniUpCallDesc
+{
+public:
+  inline OmniORB_interface_UpCallDesc(OmniUpCallDesc::UpCallFn _upcallFn,
+				      void* _handle) :
+    OmniUpCallDesc(_upcallFn,_handle, 0, 0)  {}
+
+  void marshalReturnedValues(cdrStream& giop_s) {
+    CORBA::Object_Helper::marshalObjRef((pd_result.operator->()),giop_s);
+  }
+  CORBA::Object_var pd_result;
+};
+
+static void OmniORB_interface_UpCall (OmniUpCallDesc& desc, void* h) {
+  omniObject* obj = (omniObject*) h;
+  OmniORB_interface_UpCallDesc& d = (OmniORB_interface_UpCallDesc&)desc;
+  d.pd_result = internal_get_interface(obj->NP_IRRepositoryId());
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 CORBA::Boolean
 omniObject::dispatch(GIOP_S &_s,const char *_op,
 		     CORBA::Boolean _response_expected)
@@ -240,48 +315,25 @@ omniObject::dispatch(GIOP_S &_s,const char *_op,
 
   if (strcmp(_op,"_is_a") == 0)
     {
-      if (!_response_expected) {
-	throw CORBA::BAD_OPERATION(0,CORBA::COMPLETED_NO);
-      }
-      CORBA::String_var id;
-      {
-	CORBA::ULong _len;
-	_len <<= s;
-	if (!_len || !s.checkInputOverrun(1,_len))
-	  throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);
-	id = CORBA::string_alloc(_len-1);
-	if (!((const char *)id))
-	  throw CORBA::NO_MEMORY(0,CORBA::COMPLETED_NO);
-	s.get_char_array((CORBA::Char *)((const char *)id),_len);
-      }
-      _s.RequestReceived();
-      CORBA::Boolean _result;
-      _result = _real_is_a(id);
-      _s.InitialiseReply(GIOP::NO_EXCEPTION);
-      _result >>= s;
-      _s.ReplyCompleted();
+      OmniORB_is_a_UpCallDesc _call_desc(OmniORB_is_a_UpCall,(void*)this);
+
+      OmniUpCallWrapper::upcall(_s,_call_desc);
       return 1;
     }
   else if (strcmp(_op,"_non_existent") == 0) 
     {
-      if (!_response_expected) {
-	throw CORBA::BAD_OPERATION(0,CORBA::COMPLETED_NO);
-      }
-      _s.RequestReceived();
-      CORBA::Boolean _result = 0;
-      _s.InitialiseReply(GIOP::NO_EXCEPTION);
-      _result >>= s;
-      _s.ReplyCompleted();
+      OmniORB_non_existent_UpCallDesc _call_desc(OmniORB_non_existent_UpCall,
+						 (void*)this);
+
+      OmniUpCallWrapper::upcall(_s,_call_desc);
       return 1;
     }
   else if (strcmp(_op,"_interface") == 0)
     {
-      _s.RequestReceived();
-      CORBA::Object_ptr result;
-      result = internal_get_interface(NP_IRRepositoryId());
-      _s.InitialiseReply(GIOP::NO_EXCEPTION);
-      CORBA::Object::marshalObjRef(result, s);
-      _s.ReplyCompleted();
+      OmniORB_interface_UpCallDesc _call_desc(OmniORB_interface_UpCall,
+					      (void*)this);
+
+      OmniUpCallWrapper::upcall(_s,_call_desc);
       return 1;
     }
   else if (strcmp(_op,"_implementation") == 0)

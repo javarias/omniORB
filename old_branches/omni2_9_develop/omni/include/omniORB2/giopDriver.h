@@ -29,6 +29,14 @@
 
 /*
   $Log$
+  Revision 1.11.4.1  1999/09/15 20:18:14  sll
+  Updated to use the new cdrStream abstraction.
+  Marshalling operators for NetBufferedStream and MemBufferedStream are now
+  replaced with just one version for cdrStream.
+  Derived class giopStream implements the cdrStream abstraction over a
+  network connection whereas the cdrMemoryStream implements the abstraction
+  with in memory buffer.
+
   Revision 1.11  1999/06/26 17:55:19  sll
   Added new exception return type terminateProcessing.
 
@@ -204,7 +212,8 @@ public:
   void InitialiseRequest(const char      *opname,
 			 size_t           opnamesize,
 			 _CORBA_Boolean   oneway,
-			 _CORBA_Boolean   response_expected);
+			 _CORBA_Boolean   response_expected,
+			 giopMarshaller&  marshaller);
   // Initialise a Request message.
   // Note: <msgsize> is the size of the whole message including the
   //       GIOP message header and the Request message header.
@@ -337,7 +346,7 @@ public:
 
   void RequestReceived(_CORBA_Boolean skip=0);
 
-  void InitialiseReply(GIOP::ReplyStatusType status);
+  void InitialiseReply(GIOP::ReplyStatusType status,giopMarshaller& m);
   // Initialise a Reply message
 
   void ReplyCompleted();

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/15 20:37:28  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB2/CORBA.h>
@@ -266,7 +269,7 @@ private:
 
     g->pd_output_msgsent_size = 0;
 
-    g->pd_marshaller = marshalhdr;
+    g->pd_output_header_marshaller = marshalhdr;
 
     if (marshalhdr) marshalhdr->marshalData();
 
@@ -285,7 +288,7 @@ private:
       newFragment(g,fragmentHeader);
     }
 
-    g->pd_marshaller = 0;
+    g->pd_output_header_marshaller = 0;
   }
 
 public:
@@ -304,10 +307,10 @@ public:
 
       g->pd_output_msgsent_size -= 12; // subtract the header
 
-      if (g->pd_marshaller) {
+      if (g->pd_output_header_marshaller) {
 	// We are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	g->pd_output_msgfrag_size  = g->pd_marshaller->dataSize(12);
+	g->pd_output_msgfrag_size  = g->pd_output_header_marshaller->dataSize(12);
       }
       endFragment(g,g->pd_output_msgfrag_size,0);
     }
@@ -372,10 +375,10 @@ public:
 	(omni::ptr_arith_t)g->pd_outb_begin - 12
 	+ padding + size;
 
-      if (g->pd_marshaller) {
+      if (g->pd_output_header_marshaller) {
 	// Now we are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	g->pd_output_msgfrag_size = fragsz = g->pd_marshaller->dataSize(12);
+	g->pd_output_msgfrag_size = fragsz = g->pd_output_header_marshaller->dataSize(12);
       }
 
       endFragment(g,fragsz,0);
