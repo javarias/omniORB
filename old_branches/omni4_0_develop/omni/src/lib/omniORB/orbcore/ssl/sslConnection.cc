@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/09/07 11:27:15  sll
+  Residual changes needed for the changeover to use orbParameters.
+
   Revision 1.1.2.8  2001/08/24 15:56:44  sll
   Fixed code which made the wrong assumption about the semantics of
   do { ...; continue; } while(0)
@@ -313,19 +316,22 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_myaddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
-  pd_myaddress = tcpConnection::ip4ToString(
+  else {
+    pd_myaddress = tcpConnection::ip4ToString(
 			     (CORBA::ULong)addr.sin_addr.s_addr,
 			     (CORBA::UShort)addr.sin_port,"giop:ssl:");
-  
+  }
+
   l = sizeof(struct sockaddr_in);
   if (getpeername(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_peeraddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
-  pd_peeraddress = tcpConnection::ip4ToString(
+  else {
+    pd_peeraddress = tcpConnection::ip4ToString(
 			       (CORBA::ULong)addr.sin_addr.s_addr,
 			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
-
+  }
   belong_to->addSocket(this);
 }
 

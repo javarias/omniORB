@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2001/08/24 15:56:44  sll
+  Fixed code which made the wrong assumption about the semantics of
+  do { ...; continue; } while(0)
+
   Revision 1.1.2.7  2001/08/23 16:47:01  sll
   Fixed missing cleanup in the switch to use orbParameters to store all
    configuration parameters.
@@ -295,17 +299,20 @@ tcpConnection::tcpConnection(SocketHandle_t sock,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_myaddress = (const char*)"giop:tcp:255.255.255.255:65535";
   }
-  pd_myaddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
-			     (CORBA::UShort)addr.sin_port,"giop:tcp:");
+  else {
+    pd_myaddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
+			       (CORBA::UShort)addr.sin_port,"giop:tcp:");
+  }
 
   l = sizeof(struct sockaddr_in);
   if (getpeername(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_peeraddress = (const char*)"giop:tcp:255.255.255.255:65535";
   }
-  pd_peeraddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
-			       (CORBA::UShort)addr.sin_port,"giop:tcp:");
-
+  else {
+    pd_peeraddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
+				 (CORBA::UShort)addr.sin_port,"giop:tcp:");
+  }
   belong_to->addSocket(this);
 }
 
