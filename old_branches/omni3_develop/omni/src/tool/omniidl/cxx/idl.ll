@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.1  2000/02/16 16:30:54  dpg1
+// #pragma ID was misspelled #pragma id. Oops.
+//
 // Revision 1.7  2000/02/04 12:17:10  dpg1
 // Support for VMS.
 //
@@ -326,16 +329,17 @@ L{STR} {
   return FIXED_PT_LITERAL;
 }
 
-"//".*\n { /* Comment */ }
+"//".*\n { Comment::add(yytext); }
 
 "/*" {
+  Comment::add(yytext);
   BEGIN(comment);
 }
 
-<comment>[^*\n]       {}
-<comment>"*"+[^*/\n]* {}
-<comment>\n           {}
-<comment>"*"+"/"      {BEGIN(INITIAL);}
+<comment>[^*\n]*      { Comment::append(yytext); }
+<comment>"*"+[^*/\n]* { Comment::append(yytext); }
+<comment>\n           { Comment::append(yytext); }
+<comment>"*"+"/"      { Comment::append(yytext); BEGIN(INITIAL); }
 
 ^{SPACE}*#{SPACE}*pragma{SPACE}*prefix{SPACE}* {
   BEGIN(known_pragma);

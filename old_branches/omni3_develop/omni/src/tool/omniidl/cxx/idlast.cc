@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.14  2000/02/03 14:50:07  dpg1
+// Native declarations can now be used as types.
+//
 // Revision 1.13  2000/01/05 11:21:08  dpg1
 // Removed warning about signed/unsigned comparison.
 // * can only be the last character of a context key.
@@ -75,6 +78,7 @@
 #include <idlrepoId.h>
 #include <idlvalidate.h>
 #include <idlerr.h>
+#include <idlconfig.h>
 
 #include <string.h>
 #include <ctype.h>
@@ -84,8 +88,9 @@ extern FILE* yyin;
 extern char* currentFile;
 extern int   yylineno;
 
-AST*  AST::tree_ = 0;
-Decl* Decl::mostRecent_ = 0;
+AST*     AST::tree_           = 0;
+Decl*    Decl::mostRecent_    = 0;
+Comment* Comment::mostRecent_ = 0;
 
 // Pragma
 void
@@ -98,13 +103,42 @@ add(const char* pragmaText)
     AST::tree()->addPragma(pragmaText);
 }
 
+// Comment
+
+void
+Comment::
+add(const char* commentText)
+{
+  if (Decl::mostRecent())
+    Decl::mostRecent()->addComment(commentText);
+  else
+    AST::tree()->addComment(commentText);
+}
+
+void
+Comment::
+append(const char* commentText)
+{
+  assert(mostRecent_);
+  char* newText = new char[(strlen(mostRecent_->commentText_) +
+			    strlen(commentText) + 1)];
+  strcpy(newText, mostRecent_->commentText_);
+  strcat(newText, commentText);
+  delete [] mostRecent_->commentText_;
+  mostRecent_->commentText_ = newText;
+}
+
+
 // AST
-AST::AST() : declarations_(0), file_(0), pragmas_(0), lastPragma_(0) {}
+AST::AST() : declarations_(0), file_(0),
+	     pragmas_(0), lastPragma_(0),
+	     comments_(0), lastComment_(0) {}
 
 AST::~AST() {
   if (declarations_) delete declarations_;
   if (file_)         delete [] file_;
   if (pragmas_)      delete pragmas_;
+  if (comments_)     delete comments_;
 }
 
 void
@@ -118,6 +152,21 @@ addPragma(const char* pragmaText)
     pragmas_ = p;
   lastPragma_ = p;
 }
+
+void
+AST::
+addComment(const char* commentText)
+{
+  if (Config::keepComments) {
+    Comment* p = new Comment(commentText);
+    if (comments_)
+      lastComment_->next_ = p;
+    else
+      comments_ = p;
+    lastComment_ = p;
+  }
+}
+
 
 AST*
 AST::
@@ -151,9 +200,13 @@ void
 AST::
 clear()
 {
-  if (declarations_) delete declarations_;
+  if (tree_) {
+    delete tree_;
+    tree_ = 0;
+  }
   Scope::clear();
-  declarations_ = 0;
+  Decl::clear();
+  Comment::clear();
 }
 
 void
@@ -186,7 +239,9 @@ Decl(Kind kind, const char* file, int line, _CORBA_Boolean mainFile)
 
   : kind_(kind), file_(idl_strdup(file)), line_(line),
     mainFile_(mainFile), inScope_(Scope::current()),
-    pragmas_(0), lastPragma_(0), next_(0)
+    pragmas_(0), lastPragma_(0),
+    comments_(0), lastComment_(0),
+    next_(0)
 {
   last_       = this;
   mostRecent_ = this;
@@ -195,8 +250,10 @@ Decl(Kind kind, const char* file, int line, _CORBA_Boolean mainFile)
 Decl::
 ~Decl()
 {
-  if (file_) delete [] file_;
-  if (next_) delete next_;
+  if (file_)     delete [] file_;
+  if (pragmas_)  delete pragmas_;
+  if (comments_) delete comments_;
+  if (next_)     delete next_;
 }
 
 Decl*
@@ -229,6 +286,21 @@ addPragma(const char* pragmaText)
   lastPragma_ = p;
 }
 
+void
+Decl::
+addComment(const char* commentText)
+{
+  if (Config::keepComments) {
+    Comment* p = new Comment(commentText);
+    if (comments_)
+      lastComment_->next_ = p;
+    else
+      comments_ = p;
+    lastComment_ = p;
+  }
+}
+
+
 
 // Module
 Module::
@@ -243,7 +315,6 @@ Module(const char* file, int line, _CORBA_Boolean mainFile,
   Scope::current()->addModule(identifier, s, this, file, line);
   Scope::startScope(s);
   Prefix::newScope(identifier);
-  //  cout << "Module " << identifier << " created" << endl;
 }
 
 Module::
@@ -259,7 +330,6 @@ finishConstruction(Decl* defs)
   definitions_ = defs;
   Prefix::endScope();
   Scope::endScope();
-  //  cout << "\nModule " << identifier() << " finished." << endl;
 }
 
 
@@ -335,19 +405,21 @@ append(InheritSpec* is, const char* file, int line)
 {
   InheritSpec *i, *last;
 
-  for (i=this; i; i = i->next_) {
-    last = i;
-    if (is->interface() == i->interface()) {
-      char* ssn = is->interface()->scopedName()->toString();
-      IdlError(file, line,
-	       "Cannot specify `%s' as a direct base interface "
-	       "more than once", ssn);
-      delete [] ssn;
-      delete is;
-      return;
+  if (is->interface()) {
+    for (i=this; i; i = i->next_) {
+      last = i;
+      if (is->interface() == i->interface()) {
+	char* ssn = is->interface()->scopedName()->toString();
+	IdlError(file, line,
+		 "Cannot specify `%s' as a direct base interface "
+		 "more than once", ssn);
+	delete [] ssn;
+	delete is;
+	return;
+      }
     }
+    last->next_ = is;
   }
-  last->next_ = is;
 }
 
 Interface::
@@ -425,7 +497,6 @@ Interface(const char* file, int line, _CORBA_Boolean mainFile,
   Scope::current()->addDecl(identifier, scope_, this, thisType_, file, line);
   Scope::startScope(scope_);
   Prefix::newScope(identifier);
-  //  cout << "Interface created" << endl;
 }
 
 Interface::
@@ -540,7 +611,6 @@ Forward(const char* file, int line, _CORBA_Boolean mainFile,
 
     Scope::current()->addDecl(identifier, 0, this, thisType_, file, line);
   }
-  //  cout << "Forward created" << endl;
 }
 
 Forward::

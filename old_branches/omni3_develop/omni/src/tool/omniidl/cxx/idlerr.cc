@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/02 17:07:27  dpg1
+// Changes to compile on Solaris.
+//
 // Revision 1.2  1999/10/29 15:43:44  dpg1
 // Error counts now reset when Report...() is called.
 //
@@ -38,6 +41,7 @@
 
 #include <idlerr.h>
 #include <idlutil.h>
+#include <idlconfig.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,25 +55,28 @@ void
 IdlError(const char* file, int line, const char* fmt ...)
 {
   errorCount++;
-  fprintf(stderr, "%s:%d: ", file, line);
 
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-  fprintf(stderr, "\n");
+  if (!Config::quiet) {
+    fprintf(stderr, "%s:%d: ", file, line);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fprintf(stderr, "\n");
+  }
 }
 
 void
 IdlErrorCont(const char* file, int line, const char* fmt ...)
 {
-  fprintf(stderr, "%s:%d:  ", file, line);
-
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-  fprintf(stderr, "\n");
+  if (!Config::quiet) {
+    fprintf(stderr, "%s:%d:  ", file, line);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fprintf(stderr, "\n");
+  }
 }
 
 void
@@ -96,45 +103,50 @@ IdlSyntaxError(const char* file, int line, const char* mesg)
 void IdlWarning(const char* file, int line, const char* fmt ...)
 {
   warningCount++;
-  fprintf(stderr, "%s:%d: Warning: ", file, line);
 
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-  fprintf(stderr, "\n");
+  if (!Config::quiet) {
+    fprintf(stderr, "%s:%d: Warning: ", file, line);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fprintf(stderr, "\n");
+  }
 }
 
 void IdlWarningCont(const char* file, int line, const char* fmt ...)
 {
-  fprintf(stderr, "%s:%d: Warning:  ", file, line);
-
-  va_list args;
-  va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
-  va_end(args);
-  fprintf(stderr, "\n");
+  if (!Config::quiet) {
+    fprintf(stderr, "%s:%d: Warning:  ", file, line);
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+    fprintf(stderr, "\n");
+  }
 }
 
 _CORBA_Boolean
 IdlReportErrors()
 {
-  if (errorCount > 0 || warningCount > 0)
-    fprintf(stderr, "omniidl: ");
+  if (!Config::quiet) {
+    if (errorCount > 0 || warningCount > 0)
+      fprintf(stderr, "omniidl: ");
 
-  if (errorCount > 0)
-    fprintf(stderr, "%d error%s", errorCount, errorCount == 1 ? "" : "s");
+    if (errorCount > 0)
+      fprintf(stderr, "%d error%s", errorCount, errorCount == 1 ? "" : "s");
 
-  if (errorCount > 0 && warningCount > 0)
-    fprintf(stderr, " and ");
+    if (errorCount > 0 && warningCount > 0)
+      fprintf(stderr, " and ");
 
-  if (warningCount > 0)
-    fprintf(stderr, "%d warning%s", warningCount,
-	    warningCount == 1 ? "" : "s");
+    if (warningCount > 0)
+      fprintf(stderr, "%d warning%s", warningCount,
+	      warningCount == 1 ? "" : "s");
 
-  if (errorCount > 0 || warningCount > 0)
-    fprintf(stderr, ".\n");
-  
+    if (errorCount > 0 || warningCount > 0)
+      fprintf(stderr, ".\n");
+  }
+
   _CORBA_Boolean ret = (errorCount == 0);
   errorCount         = 0;
   warningCount       = 0;
