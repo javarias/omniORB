@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.20  1998/08/11 11:44:42  sll
+ Added #include <stdlib.h> for pre 7.x VMS platform.
+
  Revision 1.19  1998/04/18 10:06:25  sll
  Added section for Borland C++. (Not actually working yet.)
 
@@ -100,6 +103,7 @@
 #     endif
 #     define HAS_Cplusplus_Namespace
 #     define HAS_Std_Namespace
+#     define HAS_pch
 #  endif
 
 #elif defined(__SUNPRO_CC) 
