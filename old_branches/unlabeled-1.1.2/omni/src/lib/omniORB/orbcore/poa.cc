@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  1999/10/14 16:22:14  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.5  1999/09/30 11:52:32  djr
   Implemented use of AdapterActivators in POAs.
 
@@ -59,7 +62,6 @@
 #include <poamanager.h>
 #include <exception.h>
 #include <ropeFactory.h>
-#include <exception.h>
 
 #include <ctype.h>
 #include <stdio.h>
