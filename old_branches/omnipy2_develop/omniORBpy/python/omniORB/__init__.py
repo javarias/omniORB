@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.14  2002/11/27 00:18:25  dgrisby
+# Per thread / per objref timeouts.
+#
 # Revision 1.26.2.13  2002/09/21 23:27:11  dgrisby
 # New omniORB.any helper module.
 #
@@ -789,6 +792,7 @@ BAD_CONTEXT_StartingScopeNotFound  = omniORBminorCode(76)
 BAD_PARAM_WrongPythonType          = omniORBminorCode(88)
 BAD_PARAM_PythonValueOutOfRange    = omniORBminorCode(95)
 BAD_PARAM_WrongUnionMemberSelected = omniORBminorCode(107)
+BAD_PARAM_InvalidFixedPointLimits  = omniORBminorCode(109)
 BAD_TYPECODE_InvalidIndirection    = omniORBminorCode(108)
 INTF_REPOS_NotAvailable            = omniORBminorCode(39)
 NO_IMPLEMENT_Unsupported           = omniORBminorCode(36)
