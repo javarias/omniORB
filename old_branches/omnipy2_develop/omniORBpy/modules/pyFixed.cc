@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.6  2003/03/14 15:29:22  dgrisby
+// Remove const char* -> char* warnings.
+//
 // Revision 1.1.2.5  2003/03/02 19:12:56  dgrisby
 // Remove unnecessary #include.
 //
@@ -72,7 +75,7 @@ omniPy::newFixedObject(const CORBA::Fixed& f)
   omnipyFixedObject* pyf = PyMem_NEW(omnipyFixedObject, 1);
   pyf->ob_type  = &omnipyFixed_Type;
   pyf->ob_fixed = new CORBA::Fixed(f);
-  _Py_NewReference(pyf);
+  _Py_NewReference((PyObject*)pyf);
   return (PyObject*)pyf;
 }
 
