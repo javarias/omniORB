@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/04/25 23:13:30  dgrisby
+  Minor tweak to codeset setting interceptors for GIOP 1.0.
+
   Revision 1.1.2.11  2001/11/14 17:13:43  dpg1
   Long double support.
 
@@ -547,7 +550,7 @@ setCodeSetServiceContext(omniInterceptors::clientSendRequest_T::info_T& info) {
 
     if (omniORB::trace(25)) {
       omniORB::logger log;
-      log << " send codeset service context: ( "
+      log << " send codeset service context: ("
 	  << tcs_c->name() << "," << ((tcs_w) ? tcs_w->name() : "none")
 	  << ")\n";
     }
@@ -609,7 +612,7 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 
       if (omniORB::trace(25)) {
 	omniORB::logger log;
-	log << " recieve codeset service context and set TCS to ( "
+	log << " recieve codeset service context and set TCS to ("
 	    << ((tcs_c) ? tcs_c->name() : "none") << "," 
 	    << ((tcs_w) ? tcs_w->name() : "none") << ")\n";
       }
