@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.3  2003/07/10 22:13:25  dgrisby
+# Abstract interface support.
+#
 # Revision 1.30.2.2  2003/05/20 17:10:25  dgrisby
 # Preliminary valuetype support.
 #
@@ -403,7 +406,9 @@ def findTypeCode(repoId):
     return typeCodeMapping.get(repoId)
 
 def registerValueFactory(repoId, factory):
+    old = valueFactoryMapping.get(repoId)
     valueFactoryMapping[repoId] = factory
+    return old
 
 def unregisterValueFactory(repoId):
     del valueFactoryMapping[repoId]
