@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.26  2004/10/17 21:48:38  dgrisby
+  Support CancelRequest better.
+
   Revision 1.1.4.25  2003/07/16 14:22:38  dgrisby
   Speed up oneway handling a little. More tracing for split messages.
 
@@ -214,7 +217,6 @@ GIOP_S::dispatcher() {
     impl()->inputMessageBegin(this,impl()->unmarshalWildCardRequestHeader);
 
     {
-      ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
       omni_tracedmutex_lock sync(*omniTransportLock);
       pd_state = RequestHeaderIsBeingProcessed;
       if (!pd_strand->stopIdleCounter()) {
@@ -619,6 +621,14 @@ GIOP_S::SkipRequestBody() {
   OMNIORB_ASSERT(pd_state == RequestIsBeingProcessed);
 
   pd_state = WaitingForReply;
+
+  CORBA::Boolean data_in_buffer = 0;
+  if (pd_rdlocked) {
+    giopStrand& s = (giopStrand&) *this;
+    data_in_buffer = ((s.head) ? 1 : 0);
+  }
+  pd_worker->server()->notifyWkPreUpCall(pd_worker,data_in_buffer);
+
   impl()->inputMessageEnd(this,1);
 }
 
