@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.33  1999/08/20 11:39:10  djr
+  Removed debug output (left in by mistake!).
+
   Revision 1.32  1999/08/09 12:27:15  sll
   Removed trace message.
 
@@ -264,22 +267,20 @@ o2be_operation::produce_decl(std::fstream &s, const char* prefix,
 void
 o2be_operation::produce_invoke(std::fstream &s)
 {
-  s << uqname() << "(";
+  s << uqname() << '(';
 
   UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+  int first = 1;
 
   while( !i.is_done() ) {
-    o2be_argument *a = o2be_argument::narrow_from_decl(i.item());
-    s << a->uqname();
+    o2be_argument* a = o2be_argument::narrow_from_decl(i.item());
+    s << (first ? "":", ") << a->uqname();
+    first = 0;
     i.next();
-    s << ((!i.is_done()) ? ", " : (context()?",":""));
   }
 
-  if (context()) {
-    s << "ctxt";
-  }
-
-  s << ")";
+  if( context() )   s << (first ? "ctxt" : ", ctxt");
+  s << ')';
 }
 
 
