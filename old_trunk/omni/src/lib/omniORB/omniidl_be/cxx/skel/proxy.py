@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5  1999/12/01 16:59:27  djs
+# Generates code to handle user exceptions being thrown.
+#
 # Revision 1.4  1999/11/29 19:27:05  djs
 # Code tidied and moved around. Some redundant code eliminated.
 #
@@ -127,6 +130,7 @@ def argmapping(type):
     is_variable = tyutil.isVariableType(deref_type)
 
     type_name = environment.principalID(type, fully_scope = 1)
+    deref_type_name = environment.principalID(deref_type, fully_scope = 1)
 
     if is_array:
         #if tyutil.isObjRef(deref_type) or \
@@ -143,10 +147,10 @@ def argmapping(type):
                                type_name + "_slice*"]
 
     if tyutil.isObjRef(deref_type):
-        return [type_name + "_ptr",
-                type_name + "_ptr&",
-                type_name + "_ptr&",
-                type_name + "_ptr"]
+        return [deref_type_name + "_ptr",
+                deref_type_name + "_ptr&",
+                deref_type_name + "_ptr&",
+                deref_type_name + "_ptr"]
 
     if tyutil.isString(deref_type):
         return ["const char*",
@@ -175,8 +179,6 @@ def argmapping(type):
                        type_name + "&",
                        type_name + "&",
                        type_name]
-
-
 
 
 def operation(operation, seed):
@@ -339,6 +341,8 @@ def operation(operation, seed):
             is_inout = direction == 2
             assert is_out or is_inout
 
+            deref_dims_type = tyutil.derefKeepDims(type)
+
             if tyutil.isObjRef(deref_type) and not(is_array):
                 helper_name = temp_type_name + "_Helper"
                 temp_type_name = temp_type_name + "_ptr"
@@ -351,12 +355,24 @@ def operation(operation, seed):
                 unmarshal_block.out("""\
 @temp_type_name@ @temp@;""", temp_type_name = temp_type_name,
                                     temp = temp)
+
+            # This bit is almost certainly wrong. It seems that when an
+            # argument is a typedef to an array type, the non-derefed
+            # type is used in the typedec but a dereferenced slice is used
+            # elsewhere. Why?
+            if is_array:
+                temp_type_name = environment.principalID(deref_dims_type,
+                                                         fully_scope = 1) +\
+                                                         "_slice*"
+                
             if dereference:
                 deref_name = "*" + temp
             elif is_array and not(isinstance(deref_type, idltype.Base)):
                 deref_name = "((" + temp_type_name + ") " + temp + ")"
             else:
                 deref_name = temp
+
+                
             skutil.unmarshall(unmarshal_block, environment, type, None,
                               deref_name, can_throw_marshall = 1,
                               from_where = "giop_client",
@@ -384,8 +400,16 @@ CORBA::string_free(@name@);
         # identical to having a similarly named out argument?
         if has_return_value:
             name = "pd_result"
-            return_type_base = environment.principalID(return_type,
-                                                       fully_scope = 1)
+            deref_dims_return_type = tyutil.derefKeepDims(return_type)
+            # Something strange is happening here.
+            # Need to investigate the array mapping further at a later stage
+            # hopefully to remove this oddity
+            if return_is_array:
+                return_type_base = environment.principalID(deref_dims_return_type,
+                                                           fully_scope = 1)
+            else:
+                return_type_base = environment.principalID(return_type,
+                                                           fully_scope = 1)
             return_is_variable = tyutil.isVariableType(return_type)
             # we need to allocate storage if the return is an
             # array
@@ -420,7 +444,10 @@ pd_result = new @type@;""", type = return_type_base)
             temp_name = "tmp_" + str(n)
             param_type = parameter.paramType()
             deref_param_type = tyutil.deref(param_type)
+            deref_dims_param_type = tyutil.derefKeepDims(param_type)
             param_type_name = environment.principalID(param_type,
+                                                      fully_scope = 1)
+            deref_dims_name = environment.principalID(deref_dims_param_type,
                                                       fully_scope = 1)
             dims = tyutil.typeDims(param_type)
             is_array = dims != []
@@ -441,7 +468,7 @@ pd_result = new @type@;""", type = return_type_base)
                     via_tmp = 1
                     # the temporary variable is an array slice
                     temp_type_name = param_type_name + "_slice*"
-                    temp_init_value = param_type_name + "_alloc()"
+                    temp_init_value = deref_dims_name + "_alloc()"
                 else:
                     via_tmp = 0
             elif is_variable:
