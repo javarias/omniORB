@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/06/13 20:08:13  sll
+  Minor update to make the ORB compiles with MSVC++.
+
   Revision 1.1.2.2  2001/05/01 16:03:16  sll
   Silly typo in a switch statement causes random failure due to corrupted
   link list.
@@ -135,6 +138,7 @@ public:
     }
 
     pd_pool->pd_totalthreads--;
+    pd_pool->pd_nthreads--;
     if (pd_pool->pd_totalthreads == 0) {
       pd_pool->pd_cond->signal();
     }
@@ -211,12 +215,14 @@ omniAsyncInvoker::insert(omniTask* t) {
       else {
 	if (pd_nthreads < pd_maxthreads) {
 	  try {
-	    omniAsyncWorker* w = new omniAsyncWorker(this,0);
 	    pd_nthreads++;
 	    pd_totalthreads++;
+	    omniAsyncWorker* w = new omniAsyncWorker(this,0);
 	  }
 	  catch (...) {
 	    // Cannot start a new thread.
+	    pd_nthreads--;
+	    pd_totalthreads--;
 	  }
 	}
 	t->enq(pd_anytime_tq);
@@ -235,11 +241,12 @@ omniAsyncInvoker::insert(omniTask* t) {
       }
       else {
 	try {
-	  omniAsyncWorker* w = new omniAsyncWorker(this,t);
 	  pd_totalthreads++;
+	  omniAsyncWorker* w = new omniAsyncWorker(this,t);
 	}
 	catch(...) {
 	  // Cannot start a new thread.
+	  pd_totalthreads--;
 	  return 0;
 	}
       }
@@ -260,7 +267,7 @@ omniAsyncInvoker::cancel(omniTask* t) {
 
   omni_mutex_lock sync(*pd_lock);
 
- 	omniTaskLink* l;
+  omniTaskLink* l;
 
   for (l = pd_anytime_tq.next; l != &pd_anytime_tq; l =l->next) {
     if ((omniTask*)l == t) {
