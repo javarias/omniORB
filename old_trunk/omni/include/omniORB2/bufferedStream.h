@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/01/23 14:59:27  sll
+  Now included template marshalling code for sequence template.
+
  * Revision 1.2  1997/01/08  19:10:53  ewc
  * Added typedef to work around VC++ 4.2 nested class bug
  *
@@ -162,7 +165,7 @@ public:
   }
 
   friend inline void operator>>= (const _CORBA_Double a,NetBufferedStream &s) {
-    MARSHAL(s,_CORBA_Double,omniORB::ALIGN_4,a);
+    MARSHAL(s,_CORBA_Double,omniORB::ALIGN_8,a);
   }
 
   friend inline void operator<<= (_CORBA_Double &a,NetBufferedStream &s) {
@@ -417,7 +420,7 @@ public:
   }
 
   friend inline void operator>>= (const _CORBA_Double a,MemBufferedStream &s) {
-    MARSHAL(s,_CORBA_Double,omniORB::ALIGN_4,a);
+    MARSHAL(s,_CORBA_Double,omniORB::ALIGN_8,a);
   }
 
   friend inline void operator<<= (_CORBA_Double &a,MemBufferedStream &s) {
