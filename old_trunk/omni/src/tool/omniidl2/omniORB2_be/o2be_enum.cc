@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.11  1999/03/11 16:26:08  djr
+  Updated copyright notice
+
   Revision 1.10  1999/01/07 09:47:52  djr
   Changes to support new TypeCode/Any implementation, which is now
   placed in a new file ...DynSK.cc (by default).
@@ -74,11 +77,6 @@ o2be_enum::o2be_enum(UTL_ScopedName *n, UTL_StrList *p)
 	 o2be_name(AST_Decl::NT_enum,n,p),
 	 o2be_sequence_chain(AST_Decl::NT_enum,n,p)
 {
-  pd_hdr_produced_in_field = I_FALSE;
-  pd_skel_produced_in_field = I_FALSE;
-  pd_binary_operators_hdr_produced_in_field = I_FALSE;
-  pd_binary_operators_skel_produced_in_field = I_FALSE;
-  pd_have_produced_typecode_skel = I_FALSE;
 }
 
 
