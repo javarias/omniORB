@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2001/06/20 18:35:16  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
   Revision 1.1.2.3  2001/06/13 20:13:49  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -144,7 +149,10 @@ tcpAddress::Connect(unsigned long deadline_secs,
 
 #else
 
-  if (tcpConnection::setnonblocking(sock) == RC_INVALID_SOCKET) return 0;
+  if (tcpConnection::setnonblocking(sock) == RC_INVALID_SOCKET) {
+    CLOSESOCKET(sock);
+    return 0;
+  }
 
   if (::connect(sock,(struct sockaddr *)&raddr,
 		sizeof(struct sockaddr_in)) == RC_SOCKET_ERROR) {
@@ -221,7 +229,10 @@ tcpAddress::Connect(unsigned long deadline_secs,
 
   } while (0);
 
-  if (tcpConnection::setblocking(sock) == RC_INVALID_SOCKET) return 0;
+  if (tcpConnection::setblocking(sock) == RC_INVALID_SOCKET) {
+    CLOSESOCKET(sock);
+    return 0;
+  }
 
   return new tcpConnection(sock);
 #endif
