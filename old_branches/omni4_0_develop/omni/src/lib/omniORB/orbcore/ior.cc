@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.16  2001/08/17 17:12:39  sll
+  Modularise ORB configuration parameters.
+
   Revision 1.10.2.15  2001/08/06 15:49:17  sll
   Added IOP component TAG_OMNIORB_UNIX_TRANS for omniORB specific local
   transport using the unix domain socket.
@@ -274,11 +277,9 @@ IIOP::encodeProfile(const IIOP::ProfileBody& body,IOP::TaggedProfile& profile)
 
     if (body.version.minor > 0) {
       CORBA::ULong total = body.components.length();
-      if (total) {
-	total >>= s;
-	for (CORBA::ULong index=0; index < total; index++) {
-	  body.components[index] >>= s;
-	}
+      total >>= s;
+      for (CORBA::ULong index=0; index < total; index++) {
+	body.components[index] >>= s;
       }
     }
     bufsize = s.total();
