@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.6  1997/12/09 20:39:38  sll
+  Removed profileToEncapStream and EncapStreamToProfile.
+
   Revision 1.5  1997/08/21 22:21:19  sll
   ProfileBody now has a dtor to deallocate the storage for the host field.
 
@@ -42,7 +45,7 @@
 #ifndef __IIOP_H__
 #define __IIOP_H__
 
-class _OMNIORB2_NTDLL_ IIOP {
+class IIOP {
 
   public:
  
@@ -52,8 +55,8 @@ class _OMNIORB2_NTDLL_ IIOP {
   };
  
   // Current IIOP Protocol version
-  static const _CORBA_Char current_major;
-  static const _CORBA_Char current_minor;
+  static _OMNIORB_NTDLL_IMPORT const _CORBA_Char current_major;
+  static _OMNIORB_NTDLL_IMPORT const _CORBA_Char current_minor;
  
   struct ProfileBody {
     Version                 iiop_version;
