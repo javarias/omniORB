@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/09/09 22:11:51  dgrisby
+  SSL transport cleanup even if certificates are wrong.
+
   Revision 1.1.2.8  2002/08/23 14:18:38  dgrisby
   Avoid init exceptioni when SSL linked but not configured.
 
@@ -56,10 +59,10 @@
 
 */
 
+#include <omniORB4/CORBA.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <objectAdapter.h>
 #include <omniORB4/sslContext.h>

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2004/02/11 15:44:54  dgrisby
+  Hook to set SSL verify mode. Thanks Matthew Wood.
+
   Revision 1.1.2.12  2002/12/19 12:23:02  dgrisby
   Don't set SSL verify depth to 1.
 
@@ -72,6 +75,8 @@
 
 */
 
+#include <omniORB4/CORBA.h>
+
 #include <stdlib.h>
 #ifndef __WIN32__
 #include <unistd.h>
@@ -79,7 +84,6 @@
 #include <process.h>
 #endif
 #include <sys/stat.h>
-#include <omniORB4/CORBA.h>
 #include <omniORB4/minorCode.h>
 #include <omniORB4/sslContext.h>
 #include <exceptiondefs.h>
