@@ -10,6 +10,11 @@
 
 /*
   $Log$
+  Revision 1.4  1997/01/24 19:42:16  sll
+  New member function check_opname_clash().
+  The class definition of the stub code <X>_proxyObjectFactory() is moved
+  from the SK file to the header file.
+
   Revision 1.3  1997/01/23 17:08:29  sll
   Changed <X>_proxyObjectFactory() class to include a new static member
   function that returns a nil object of X.
@@ -228,6 +233,9 @@ o2be_interface::produce_hdr(fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << "public:\n";
   IND(s); s << "static " << objref_uqname() << " _nil();\n";
+  IND(s); s << "static CORBA::Boolean is_nil(" << objref_uqname() << " p);\n";
+  IND(s); s << "static void release(" << objref_uqname() << " p);\n";
+  IND(s); s << "static void duplicate(" << objref_uqname() << " p);\n";
   IND(s); s << "static size_t NP_alignedSize("
 	    << objref_uqname() << " obj,size_t initialoffset);\n";
   IND(s); s << "static void marshalObjRef("
@@ -623,6 +631,9 @@ o2be_interface_fwd::produce_hdr(fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << "public:\n";
   IND(s); s << "static " << intf->objref_uqname() << " _nil();\n";
+  IND(s); s << "static CORBA::Boolean is_nil(" << intf->objref_uqname() << " p);\n";
+  IND(s); s << "static void release(" << intf->objref_uqname() << " p);\n";
+  IND(s); s << "static void duplicate(" << intf->objref_uqname() << " p);\n";
   IND(s); s << "static size_t NP_alignedSize("
 	    << intf->objref_uqname() << " obj,size_t initialoffset);\n";
   IND(s); s << "static void marshalObjRef("
@@ -904,6 +915,27 @@ o2be_interface::produce_skel(fstream &s)
   IND(s); s << fqname() << "_Helper::_nil() {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "return " << fqname() << "::_nil();\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n\n";
+
+  IND(s); s << "CORBA::Boolean\n";
+  IND(s); s << fqname() << "_Helper::is_nil(" << objref_fqname() << " p) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return CORBA::is_nil(p);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n\n";
+
+  IND(s); s << "void\n";
+  IND(s); s << fqname() << "_Helper::release(" << objref_fqname() << " p) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::release(p);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n\n";
+
+  IND(s); s << "void\n";
+  IND(s); s << fqname() << "_Helper::duplicate("<< objref_fqname() << " p) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "CORBA::Object::_duplicate(p);\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n\n";
 
