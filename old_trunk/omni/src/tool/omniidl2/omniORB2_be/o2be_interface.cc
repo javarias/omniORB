@@ -10,6 +10,9 @@
 
 /*
   $Log$
+  Revision 1.5  1997/01/30 20:29:01  sll
+  Added is_nil, release and duplicate to _Helper class.
+
   Revision 1.4  1997/01/24 19:42:16  sll
   New member function check_opname_clash().
   The class definition of the stub code <X>_proxyObjectFactory() is moved
@@ -44,6 +47,8 @@
 #define PROXY_OBJ_FACTORY_POSTFIX "_proxyObjectFactory"
 #define IRREPOID_POSTFIX          "_IntfRepoID"
 #define FIELD_MEMBER_TEMPLATE     "_CORBA_ObjRef_Member"
+#define ADPT_INOUT_CLASS_TEMPLATE "_CORBA_ObjRef_INOUT_arg"
+#define ADPT_OUT_CLASS_TEMPLATE   "_CORBA_ObjRef_OUT_arg"
 
 o2be_interface::o2be_interface(UTL_ScopedName *n, AST_Interface **ih, long nih,
 			       UTL_StrList *p)
@@ -67,6 +72,8 @@ o2be_interface::o2be_interface(UTL_ScopedName *n, AST_Interface **ih, long nih,
       pd_objref_fqname = "CORBA::Object_ptr";
       pd_fieldmem_uqname = "Object_member";
       pd_fieldmem_fqname = "CORBA::Object_member";
+      pd_inout_adptarg_name = "CORBA::Object_INOUT_arg";
+      pd_out_adptarg_name = "CORBA::Object_OUT_arg";
       return;
     }
 
@@ -156,6 +163,37 @@ o2be_interface::o2be_interface(UTL_ScopedName *n, AST_Interface **ih, long nih,
   strcpy(pd_IRrepoId,_fqname());
   strcat(pd_IRrepoId,IRREPOID_POSTFIX);
 
+  pd_inout_adptarg_name = new char[strlen(ADPT_INOUT_CLASS_TEMPLATE)+
+				   strlen("<,, >")+
+                                   strlen(fqname())+
+				   strlen(fqname())+strlen("_var")+
+				   strlen(pd_fieldmem_fqname)+1];
+  strcpy(pd_inout_adptarg_name,ADPT_INOUT_CLASS_TEMPLATE);
+  strcat(pd_inout_adptarg_name,"<");
+  strcat(pd_inout_adptarg_name,fqname());
+  strcat(pd_inout_adptarg_name,",");
+  strcat(pd_inout_adptarg_name,fqname());
+  strcat(pd_inout_adptarg_name,"_var,");
+  strcat(pd_inout_adptarg_name,pd_fieldmem_fqname);
+  strcat(pd_inout_adptarg_name," >");
+
+  pd_out_adptarg_name = new char[strlen(ADPT_OUT_CLASS_TEMPLATE)+
+				   strlen("<,,, >")+
+                                   strlen(fqname())+
+				   strlen(fqname())+strlen("_var")+
+				   strlen(pd_fieldmem_fqname)+
+				   strlen(fqname())+strlen("_Helper")+1];
+  strcpy(pd_out_adptarg_name,ADPT_OUT_CLASS_TEMPLATE);
+  strcat(pd_out_adptarg_name,"<");
+  strcat(pd_out_adptarg_name,fqname());
+  strcat(pd_out_adptarg_name,",");
+  strcat(pd_out_adptarg_name,fqname());
+  strcat(pd_out_adptarg_name,"_var,");
+  strcat(pd_out_adptarg_name,pd_fieldmem_fqname);
+  strcat(pd_out_adptarg_name,",");
+  strcat(pd_out_adptarg_name,fqname());
+  strcat(pd_out_adptarg_name,"_Helper");
+  strcat(pd_out_adptarg_name," >");
 }
 
 o2be_interface_fwd::o2be_interface_fwd(UTL_ScopedName *n, UTL_StrList *p)
@@ -250,6 +288,11 @@ o2be_interface::produce_hdr(fstream &s)
 	    << " unmarshalObjRef(MemBufferedStream &s);\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "};\n";
+  IND(s); s << "typedef _CORBA_ObjRef_Var<"
+	    << uqname()
+	    << ","
+	    << uqname() << "_Helper"
+	    << "> "<<uqname()<<"_var;\n\n";
   s << "#endif\n";
   s << "#define " << IRrepoId() << " \"" << repositoryID() << "\"\n\n";
 
@@ -314,9 +357,21 @@ o2be_interface::produce_hdr(fstream &s)
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
-	    IND(s); s << "virtual ";
-	    o2be_operation::narrow_from_decl(d)->produce_decl(s);
-	    s << " = 0;\n";
+	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
+
+	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg())
+	      {
+		IND(s); s << "virtual ";
+		op->produce_decl(s,0,"___");
+		s << " = 0;\n";
+		op->produce_mapping_with_indirection(s,"___");
+	      }
+	    else
+	      {
+		IND(s); s << "virtual ";
+		op->produce_decl(s);
+		s << " = 0;\n";
+	      }
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
 	  {
@@ -404,7 +459,7 @@ o2be_interface::produce_hdr(fstream &s)
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   IND(s); s << "virtual ~" << uqname() << "() {}\n";
-  IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId) throw ();\n";
+  IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId);\n";
   s << "\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "private:\n\n";
@@ -414,12 +469,6 @@ o2be_interface::produce_hdr(fstream &s)
   DEC_INDENT_LEVEL();
   IND(s); s << "};\n\n";
 
-  IND(s); s << "typedef _CORBA_ObjRef_Var<"
-	    << uqname()
-	    << ","
-	    << uqname() << "_Helper"
-	    << "> "<<uqname()<<"_var;\n\n";
-  
   IND(s); s << "class " << server_uqname() << " : ";
   {
     AST_Interface **intftable = inherits();
@@ -434,8 +483,14 @@ o2be_interface::produce_hdr(fstream &s)
   IND(s); s << "public:\n\n";
   INC_INDENT_LEVEL();
   IND(s); s << server_uqname() << "() {}\n";
+  IND(s); s << server_uqname() << "(const omniORB::objectKey& k) { NP_objkey(k); }\n";
   IND(s); s << "virtual ~" << server_uqname() << "() {}\n";
-  IND(s); s << "virtual CORBA::Object_ptr _this() { return (CORBA::Object_ptr) this; }\n";
+  IND(s); s << objref_uqname() << " _this() { return "
+	    << uqname() << "::_duplicate(this); }\n";
+  IND(s); s << "void _obj_is_ready(CORBA::BOA_ptr boa) { boa->obj_is_ready(this); }\n";
+  IND(s); s << "CORBA::BOA_ptr _boa() { return CORBA::BOA::getBOA(); }\n";
+  IND(s); s << "void _dispose() { _boa()->dispose(this); }\n";
+  IND(s); s << "omniORB::objectKey _key() { return (*(omniORB::objectKey*)objkey()); }\n";
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
     while (!i.is_done())
@@ -443,9 +498,25 @@ o2be_interface::produce_hdr(fstream &s)
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
+	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
 	    IND(s); s << "virtual ";
-	    o2be_operation::narrow_from_decl(d)->produce_decl(s);
+	    op->produce_decl(s);
 	    s << " = 0;\n";
+	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg())
+	      {
+		IND(s); s << "virtual ";
+		op->produce_decl(s,0,"___");
+		s << " {\n";
+		INC_INDENT_LEVEL();
+		IND(s);
+		if (!op->return_is_void()) {
+		  s << "return ";
+		}
+		op->produce_invoke(s);
+		s << ";\n";
+		DEC_INDENT_LEVEL();
+		IND(s); s << "}\n";
+	      }
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
 	  {
@@ -466,6 +537,14 @@ o2be_interface::produce_hdr(fstream &s)
   IND(s); s << "virtual CORBA::Boolean dispatch(GIOP_S &s,const char *op,CORBA::Boolean response);\n";
   DEC_INDENT_LEVEL();
   s << "\n";
+  IND(s); s << "protected:\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return " << uqname() << "::_widenFromTheMostDerivedIntf(repoId);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";	
+  DEC_INDENT_LEVEL();
   IND(s); s << "private:\n";
   INC_INDENT_LEVEL();
   IND(s); s << server_uqname() << " (const " << server_uqname() << "&);\n";
@@ -490,7 +569,7 @@ o2be_interface::produce_hdr(fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << "omniObject(" << IRrepoId() << ",r,key,keysize,profiles,release) {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "omniORB::objectIsReady(this);\n";
+  IND(s); s << "omni::objectIsReady(this);\n";
   DEC_INDENT_LEVEL();
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
@@ -502,8 +581,17 @@ o2be_interface::produce_hdr(fstream &s)
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
+	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
 	    IND(s); s << "virtual ";
-	    o2be_operation::narrow_from_decl(d)->produce_decl(s);
+	    if (op->has_variable_out_arg() ||
+		op->has_pointer_inout_arg())
+	      {
+		op->produce_decl(s,0,"___");
+	      }
+	    else
+	      {
+		op->produce_decl(s);
+	      }
 	    s << ";\n";
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
@@ -527,6 +615,11 @@ o2be_interface::produce_hdr(fstream &s)
   IND(s); s << "protected:\n\n";
   INC_INDENT_LEVEL();
   IND(s); s << proxy_uqname() << " () {}\n\n";
+  IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return " << uqname() << "::_widenFromTheMostDerivedIntf(repoId);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";	
   DEC_INDENT_LEVEL();
   IND(s); s << "private:\n\n";
   INC_INDENT_LEVEL();
@@ -564,7 +657,13 @@ o2be_interface::produce_hdr(fstream &s)
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
-	    o2be_operation::narrow_from_decl(d)->produce_nil_skel(s);
+	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
+	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg()) {
+	      op->produce_nil_skel(s,"___");
+	    }
+	    else {
+	      op->produce_nil_skel(s);
+	    }
 	    s << "\n";
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
@@ -581,6 +680,14 @@ o2be_interface::produce_hdr(fstream &s)
 	i.next();
       }
   }
+  DEC_INDENT_LEVEL();
+  IND(s); s << "protected:\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId) {\n";
+  INC_INDENT_LEVEL();
+  IND(s); s << "return " << uqname() << "::_widenFromTheMostDerivedIntf(repoId);\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";	
   DEC_INDENT_LEVEL();
   IND(s); s << "};\n\n";
 
@@ -648,7 +755,12 @@ o2be_interface_fwd::produce_hdr(fstream &s)
 	    << " unmarshalObjRef(MemBufferedStream &s);\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "};\n";
-  s << "#endif\n";
+  IND(s); s << "typedef _CORBA_ObjRef_Var<"
+	    << intf->uqname()
+	    << ","
+	    << uqname() << "_Helper"
+	    << "> "<< intf->uqname()<<"_var;\n\n";
+    s << "#endif\n";
   return;
 }
 
@@ -690,7 +802,7 @@ o2be_interface::produce_skel(fstream &s)
 	i.next();
       }
   }
-
+  
   // proxy member functions
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
@@ -699,7 +811,13 @@ o2be_interface::produce_skel(fstream &s)
 	AST_Decl *d = i.item();
 	if (d->node_type() == AST_Decl::NT_op)
 	  {
-	    o2be_operation::narrow_from_decl(d)->produce_proxy_skel(s,*this);
+	    o2be_operation* op = o2be_operation::narrow_from_decl(d);
+	    if (op->has_variable_out_arg() || op->has_pointer_inout_arg()) {
+	      op->produce_proxy_skel(s,*this,"___");
+	    }
+	    else {
+	      op->produce_proxy_skel(s,*this);
+	    }
 	    s << "\n";
 	  }
 	else if (d->node_type() == AST_Decl::NT_attr)
@@ -837,7 +955,7 @@ o2be_interface::produce_skel(fstream &s)
 
   // _widenFromTheMostDerivedIntf
   IND(s); s << "void *\n";
-  IND(s); s << fqname() << "::_widenFromTheMostDerivedIntf(const char *repoId) throw()\n";
+  IND(s); s << fqname() << "::_widenFromTheMostDerivedIntf(const char *repoId)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   IND(s); s << "if (!repoId)\n";
