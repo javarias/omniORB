@@ -67,6 +67,38 @@
             <tr>
               <td>Summary:</td>
               <td>
+                <b>Deferred DII requests fail on Windows</b>
+            (bug number 5)
+            <a name='bug5'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Tue May 27 12:15:31 BST 2003</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Emmanuel Taurel</td>
+            </tr>
+            <tr valign='top'>
+              <td>Description:</td>
+              <td>
+  The ORB invoker object was not exported from the core DLL, so use of
+  it from the dynamic DLL failed.
+  </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
                 <b>Crash in registry reading code</b>
             (bug number 4)
             <a name='bug4'></a>
