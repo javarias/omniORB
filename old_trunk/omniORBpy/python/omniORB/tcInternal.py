@@ -3,6 +3,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.3  1999/07/29 14:17:18  dpg1
+# TypeCode creation interface.
+#
 # Revision 1.2  1999/07/19 15:48:40  dpg1
 # All sorts of fixes.
 #
@@ -73,7 +76,7 @@ tv__indirect          = 0xffffffff
 
 # Create a TypeCode given a class or a repoId
 
-def typecode(t):
+def typeCodeFromClassOrRepoId(t):
     if type(t) is types.ClassType:
         try:
             t = t._NP_RepositoryId
@@ -199,8 +202,6 @@ def createTypeCode(d, parent=None):
     else:
         k = d
 
-#    print "createTypeCode():", d
-    
     if   k == tv_null:      return TypeCode_empty(d)
     elif k == tv_void:      return TypeCode_empty(d)
     elif k == tv_short:     return TypeCode_empty(d)
@@ -261,10 +262,54 @@ def createTypeCode(d, parent=None):
     raise CORBA.INTERNAL
 
 
+# TypeCode base interface
+
+class TypeCode_base (CORBA.TypeCode):
+    def __init__(self):
+        self._d = 0
+        self._k = CORBA.tk_null
+
+    def equal(self, tc):
+        try:
+            if self._d == tc._d: return CORBA.TRUE
+            else:                return CORBA.FALSE
+        except AttributeError:
+            raise CORBA.BAD_PARAM()
+
+    def equivalent(self, tc):
+        return self.equal(tc)
+
+    def get_compact_typecode(self):
+        return self
+
+    def kind(self):
+        return self._k
+    
+    # Operations which are only available for some kinds:
+    def id(self):                       raise CORBA.TypeCode.BadKind
+    def name(self):                     raise CORBA.TypeCode.BadKind
+    def member_count(self):             raise CORBA.TypeCode.BadKind
+    def member_name(self, index):       raise CORBA.TypeCode.BadKind
+    def member_type(self, index):       raise CORBA.TypeCode.BadKind
+    def member_label(self, index):      raise CORBA.TypeCode.BadKind
+
+    def discriminator_type(self):       raise CORBA.TypeCode.BadKind
+    def default_index(self):            raise CORBA.TypeCode.BadKind
+    def length(self):                   raise CORBA.TypeCode.BadKind
+    def content_type(self):             raise CORBA.TypeCode.BadKind
+
+    # Things for types we don't support:
+    def fixed_digits(self):             raise CORBA.TypeCode.BadKind
+    def fixed_scale(self):              raise CORBA.TypeCode.BadKind
+    def member_visibility(self, index): raise CORBA.TypeCode.BadKind
+    def type_modifier(self):            raise CORBA.TypeCode.BadKind
+    def concrete_base_type(self):       raise CORBA.TypeCode.BadKind
+
+
 # Class for short, long, ushort, ulong, float, double, boolean, char,
 # octet, any, TypeCode, Principal:
 
-class TypeCode_empty (CORBA.TypeCode):
+class TypeCode_empty (TypeCode_base):
     def __init__(self, desc):
         if type(desc) is not types.IntType: raise CORBA.INTERNAL
         if desc != tv_null       and \
@@ -287,7 +332,7 @@ class TypeCode_empty (CORBA.TypeCode):
 
 
 # string:
-class TypeCode_string (CORBA.TypeCode):
+class TypeCode_string (TypeCode_base):
     def __init__(self, desc):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_string:
@@ -300,7 +345,7 @@ class TypeCode_string (CORBA.TypeCode):
 
 
 # objref:
-class TypeCode_objref (CORBA.TypeCode):
+class TypeCode_objref (TypeCode_base):
     def __init__(self, desc):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_objref:
@@ -312,13 +357,13 @@ class TypeCode_objref (CORBA.TypeCode):
         if self._d[1] is not None:
             return self._d[1]
         else:
-            return "IDL:omg.org/CORBA/Object:1.0"
+            return ""
         
     def name(self): return self._d[2]
 
 
 # struct:
-class TypeCode_struct (CORBA.TypeCode):
+class TypeCode_struct (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_struct:
@@ -332,8 +377,7 @@ class TypeCode_struct (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_struct(getCompactDescriptor(self._d))
@@ -355,7 +399,7 @@ class TypeCode_struct (CORBA.TypeCode):
             return createTypeCode(self._d[off], self._p)
     
 # union:
-class TypeCode_union (CORBA.TypeCode):
+class TypeCode_union (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_union:
@@ -369,8 +413,7 @@ class TypeCode_union (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_union(getCompactDescriptor(self._d))
@@ -402,7 +445,7 @@ class TypeCode_union (CORBA.TypeCode):
         return -1
 
 # enum:
-class TypeCode_enum (CORBA.TypeCode):
+class TypeCode_enum (TypeCode_base):
     def __init__(self, desc):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_enum:
@@ -411,8 +454,7 @@ class TypeCode_enum (CORBA.TypeCode):
         self._k = CORBA.tk_enum
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_enum(getCompactDescriptor(self._d))
@@ -426,7 +468,7 @@ class TypeCode_enum (CORBA.TypeCode):
         return self._d[3][index]._n
 
 # sequence:
-class TypeCode_sequence (CORBA.TypeCode):
+class TypeCode_sequence (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_sequence:
@@ -440,8 +482,7 @@ class TypeCode_sequence (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_sequence(getCompactDescriptor(self._d))
@@ -454,7 +495,7 @@ class TypeCode_sequence (CORBA.TypeCode):
             return createTypeCode(self._d[1], self._p)
 
 # array:
-class TypeCode_array (CORBA.TypeCode):
+class TypeCode_array (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_array:
@@ -468,8 +509,7 @@ class TypeCode_array (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_sequence(getCompactDescriptor(self._d))
@@ -478,7 +518,7 @@ class TypeCode_array (CORBA.TypeCode):
     def content_type(self): return createTypeCode(self._d[1])
 
 # alias:
-class TypeCode_alias (CORBA.TypeCode):
+class TypeCode_alias (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_alias:
@@ -492,8 +532,7 @@ class TypeCode_alias (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_alias(getCompactDescriptor(self._d))
@@ -503,7 +542,7 @@ class TypeCode_alias (CORBA.TypeCode):
     def content_type(self): return createTypeCode(self._d[3])
 
 # except:
-class TypeCode_except (CORBA.TypeCode):
+class TypeCode_except (TypeCode_base):
     def __init__(self, desc, parent):
         if type(desc) is not types.TupleType or \
            desc[0] != tv_except:
@@ -517,8 +556,7 @@ class TypeCode_except (CORBA.TypeCode):
             removeIndirections(self._d)
 
     def equivalent(self, tc):
-        # ***
-        pass
+        return equivalentDescriptors(self._d, tc._d)
 
     def get_compact_typecode(self):
         return TypeCode_except(getCompactDescriptor(self._d))
@@ -538,6 +576,132 @@ class TypeCode_except (CORBA.TypeCode):
             return createTypeCode(self._d[off], self)
         else:
             return createTypeCode(self._d[off], self._p)
+
+
+# Functions to test descriptor equivalent
+def equivalentDescriptors(a, b, seen={}):
+
+    try:
+
+        if seen.has_key(id(a)): return 1
+        if a == b:              return 1
+
+        # If they don't trivially match, they must be tuples:
+        if type(a) is not types.TupleType or type(b) is not types.TupleType:
+            return 0
+
+        while a[0] == tv_alias:
+            a = a[3]
+
+        while b[0] == tv_alias:
+            b = b[3]
+
+        # Must be same kind
+        if a[0] != b[0]:
+            return 0
+
+        seen[id(a)] = 1
+
+        if a[0] == tv_struct:
+            # id
+            if a[2] != "" and b[2] != "":
+                if a[2] == b[2]:
+                    return 1
+                else:
+                    return 0
+
+            # members:
+            for i in range(4, len(a), 2):
+            
+                # Member type
+                if not equivalentDescriptors(a[i+1], b[i+1], seen):
+                    return 0
+            return 1
+
+        elif a[0] == tv_union:
+            # id
+            if a[2] != "" and b[2] != "":
+                if a[2] == b[2]:
+                    return 1
+                else:
+                    return 0
+
+            # discriminant type
+            if not equivalentDescriptors(a[4], b[4], seen):
+                return 0
+
+            # default index
+            if a[5] != b[5]:
+                return 0
+
+            # Members
+            if len(a[6]) != len(b[6]):
+                return 0
+
+            for i in range(len(a[6])):
+                # Member label
+                if a[6][i][0] != b[6][i][0]:
+                    return 0
+
+                # Member descriptor
+                if not equivalentDescriptors(a[6][i][2], b[6][i][2], seen):
+                    return 0
+
+            return 1
+
+        elif a[0] == tv_enum:
+            # id
+            if a[1] != "" and b[1] != "":
+                if a[1] == b[1]:
+                    return 1
+                else:
+                    return 0
+
+            # Members
+            if len(a[3]) != len(b[3]):
+                return 0
+
+            return 1
+
+        elif a[0] == tv_sequence:
+            # Bound
+            if a[2] != b[2]:
+                return 0
+
+            # Type
+            return equivalentDescriptors(a[1], b[1], seen)
+
+        elif a[0] == tv_array:
+            # Length
+            if a[2] != b[2]:
+                return 0
+
+            # Type
+            return equivalentDescriptors(a[1], b[1], seen)
+
+        elif a[0] == tv_except:
+            # id
+            if a[2] != "" and b[2] != "":
+                if a[2] == b[2]:
+                    return 1
+                else:
+                    return 0
+
+                # members:
+                for i in range(4, len(self._d), 2):
+
+                    # Member type
+                    if not equivalentDescriptors(a[i+1], b[i+1], seen):
+                        return 0
+            return 1
+
+        elif a[0] == tv__indirect:
+            return equivalentDescriptors(a[1][0], b[1][0], seen)
+
+        return 0
+
+    except AttributeError:
+        raise CORBA.BAD_PARAM()
 
 
 # Functions to compact descriptors:
