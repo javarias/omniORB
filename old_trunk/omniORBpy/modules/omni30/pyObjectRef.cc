@@ -32,6 +32,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.6  1999/09/29 11:25:55  dpg1
+// Nil objects now map to None. They work too, which is more than can be
+// said for the old mapping...
+//
 // Revision 1.5  1999/09/24 09:22:03  dpg1
 // Added copyright notices.
 //
@@ -181,6 +185,7 @@ omniPy::createObjRef(const char* mostDerivedRepoId,
     // local loop-back interface, and make a proxy to it.
     rope = localobj->_objectManager()->defaultLoopBack();
     rope->incrRefCount();
+    omni::objectRelease(localobj);
     localobj = 0;
   }
   else {
