@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.15  1999/06/22 14:56:09  sll
+  Correct type casting in any extraction operator
+
   Revision 1.14  1999/06/18 20:45:49  sll
   Updated to support CORBA 2.3 mapping.
 
@@ -826,11 +829,12 @@ o2be_structure::produce_binary_operators_in_dynskel(std::fstream &s)
 void
 o2be_structure::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
 {
-  IND(s); s << "typedef " << unambiguous_name(tdef)
+  char* tname = o2be_name::narrow_and_produce_unambiguous_name(tdef->base_type(),tdef);
+  IND(s); s << "typedef " << tname
 	    << " " << tdef->uqname() << ";\n";
-  IND(s); s << "typedef " << unambiguous_name(tdef)
+  IND(s); s << "typedef " << tname
 	    << "_var " << tdef->uqname() << "_var;\n";
-  IND(s); s << "typedef " << unambiguous_name(tdef)
+  IND(s); s << "typedef " << tname
 	    << "_out " << tdef->uqname() << "_out;\n";
 }
 
