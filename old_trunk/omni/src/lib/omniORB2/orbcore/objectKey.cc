@@ -12,6 +12,9 @@
  
 /*
   $Log$
+// Revision 1.1  1997/03/10  14:30:54  sll
+// Initial revision
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -23,6 +26,7 @@
 #elif defined(NTArchitecture)
 #include <sys/types.h>
 #include <sys/timeb.h>
+#include <process.h>
 #endif
 
 #ifdef __atmos__
@@ -65,13 +69,11 @@ omniORB::generateNewKey(omniORB::objectKey& k)
       omniORB::seed.lo = 0;
 #else
       // Unique number on NT
-      // Use time() to obtain the current time. Use _ftaime() to obtain
-      // a finer resolution value to initialise 'med' in the seed.
+      // Use _ftime() to obtain the current system time. 
       struct _timeb v;
       _ftime(&v);
-      omniORB::seed.hi = time(0);
-      omniORB::seed.med = v.millitm;
-      // XXX if the process id is available, add this to med.
+      omniORB::seed.hi = v.time;
+      omniORB::seed.med = v.millitm + _getpid();
       omniORB::seed.lo = 0;
 #endif
       // 
