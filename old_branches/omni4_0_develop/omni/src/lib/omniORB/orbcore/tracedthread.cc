@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2002/03/14 15:12:33  dpg1
+  More logging for tracedmutexes/conditions.
+
   Revision 1.2.2.6  2001/12/03 18:47:39  dpg1
   Detect use after deletion in traced mutex and condition.
 
@@ -86,8 +89,8 @@
 #ifdef OMNIORB_ENABLE_LOCK_TRACES
 
 static const char* bug_msg =
-  " This is a bug in omniORB. Please submit a report (with stack\n"
-  " trace if possible) to <omniorb@uk.research.att.com>.\n";
+  " This is probably a bug in omniORB. Please submit a report\n"
+  " (with stack trace if possible) to <omniorb@omniorb.org>.\n";
 
 
 omni_tracedmutex::omni_tracedmutex()
