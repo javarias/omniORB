@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.6  2000/06/08 14:58:19  dpg1
+// Line numbers for #pragmas and // comments were off by one
+//
 // Revision 1.7.2.5  2000/06/08 14:36:19  dpg1
 // Comments and pragmas are now objects rather than plain strings, so
 // they can have file,line associated with them.
@@ -358,7 +361,7 @@ L{STR} {
 
 "__omni_pragma"{WS}+ {
   BEGIN(omni_pragma);
-  return PRAGMA;
+  return OMNI_PRAGMA;
 }
 
 <omni_pragma>{WS}+"__omni_endpragma" {
