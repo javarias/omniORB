@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.1  2003/05/20 16:53:16  dgrisby
+// Valuetype marshalling support.
+//
 
 
 #include <omniORB4/CORBA.h>
@@ -60,7 +63,7 @@ cdrValueChunkStream::initialiseInput()
   OMNIORB_ASSERT(pd_nestLevel == 0);
   pd_reader    = 1;
   pd_nestLevel = 1;
-  startInputChunk();
+  pd_inHeader  = 1;
 }
 
 
@@ -169,7 +172,7 @@ cdrValueChunkStream::maybeStartNewChunk(omni::alignment_t align, size_t size)
 
 
 void
-cdrValueChunkStream::startOutputValue(_CORBA_Long valueTag)
+cdrValueChunkStream::startOutputValueHeader(_CORBA_Long valueTag)
 {
   OMNIORB_ASSERT(valueTag >= 0x7fffff00); // Valid tag range
   OMNIORB_ASSERT(valueTag &  0x00000008); // Chunked encoding flag
@@ -177,20 +180,33 @@ cdrValueChunkStream::startOutputValue(_CORBA_Long valueTag)
   if (pd_inChunk)
     endOutputChunk();
 
-  ++pd_nestLevel;
+  omniORB::logs(25, "Start output value header.");
+
+  pd_inHeader = 1;
 
   // Marshal value tag for new value. Since we're currently outside a
   // chunk, marshal straight into the actual stream, to prevent our
   // virtual functions running if the buffer is full.
   valueTag >>= pd_actual;
   copyStateFromActual();
-  
+}
+
+void
+cdrValueChunkStream::startOutputValueBody()
+{
+  OMNIORB_ASSERT(pd_inHeader);
+
+  pd_inHeader = 0;
+  ++pd_nestLevel;
+
   if (omniORB::trace(25)) {
     omniORB::logger l;
-    l << "Start writing chunked value. Nest level = " << pd_nestLevel << "\n";
+    l << "Start writing chunked value body. Nest level = "
+      << pd_nestLevel << "\n";
   }
   pd_outb_end = pd_outb_mkr;
 }
+
 
 void
 cdrValueChunkStream::endOutputValue()
@@ -235,6 +251,16 @@ cdrValueChunkStream::endOutputValue()
 }
 
 
+void
+cdrValueChunkStream::
+startInputValueBody()
+{
+  OMNIORB_ASSERT(pd_inHeader);
+  pd_inHeader = 0;
+  startInputChunk();
+}
+
+
 _CORBA_Boolean
 cdrValueChunkStream::
 reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
@@ -244,6 +270,7 @@ reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
   if (pd_remaining) {
     // Some pre-reserved octets to go before finishing a chunk
     OMNIORB_ASSERT(!pd_inChunk);
+    OMNIORB_ASSERT(!pd_inHeader);
 
     p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
     p2 = p1 + required;
@@ -265,6 +292,16 @@ reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
       pd_outb_end  = (void*)p2;
       pd_remaining = 0;
     }
+    return 1;
+  }
+
+  if (pd_inHeader) {
+    OMNIORB_ASSERT(!pd_inChunk);
+    copyStateToActual();
+    if (!pd_actual.reserveOutputSpaceForPrimitiveType(align, required))
+      OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
+		    (CORBA::CompletionStatus)completion());
+    copyStateFromActual();
     return 1;
   }
 
@@ -307,6 +344,7 @@ maybeReserveOutputSpace(omni::alignment_t align, size_t required)
   if (pd_remaining) {
     // Some pre-reserved octets to go before finishing a chunk
     OMNIORB_ASSERT(!pd_inChunk);
+    OMNIORB_ASSERT(!pd_inHeader);
 
     p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
     p2 = p1 + required;
@@ -329,6 +367,14 @@ maybeReserveOutputSpace(omni::alignment_t align, size_t required)
       pd_remaining = 0;
     }
     return 1;
+  }
+
+  if (pd_inHeader) {
+    OMNIORB_ASSERT(!pd_inChunk);
+    copyStateToActual();
+    CORBA::Boolean r = pd_actual.maybeReserveOutputSpace(align, required);
+    copyStateFromActual();
+    return r;
   }
 
   if (!pd_inChunk) {
@@ -380,6 +426,7 @@ put_octet_array(const _CORBA_Octet* b, int size, omni::alignment_t align)
 
   if (pd_remaining) {
     OMNIORB_ASSERT(!pd_inChunk);
+    OMNIORB_ASSERT(!pd_inHeader);
 
     p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
     p2 = p1 + size;
@@ -400,6 +447,14 @@ put_octet_array(const _CORBA_Octet* b, int size, omni::alignment_t align)
       copyStateFromActual();
       pd_outb_end = pd_outb_mkr;
     }
+    return;
+  }
+
+  if (pd_inHeader) {
+    OMNIORB_ASSERT(!pd_inChunk);
+    copyStateToActual();
+    pd_actual.put_octet_array(b, size, align);
+    copyStateFromActual();
     return;
   }
 
@@ -440,6 +495,8 @@ void
 cdrValueChunkStream::
 chunkStreamDeclareArrayLength(omni::alignment_t align, size_t size)
 {
+  OMNIORB_ASSERT(!pd_inHeader);
+
   if (!pd_inChunk) {
     // Start a new chunk
     OMNIORB_ASSERT(pd_nestLevel);
@@ -486,6 +543,14 @@ fetchInputData(omni::alignment_t align,size_t required)
     p2 = p1 + required;
     if (p2 <= (omni::ptr_arith_t)pd_inb_end)
       return;
+
+    if (pd_inHeader) {
+      OMNIORB_ASSERT(!pd_inChunk);
+      copyStateToActual();
+      pd_actual.fetchInputData(align, required);
+      copyStateFromActual();
+      return;
+    }
 
     if (pd_inChunk) {
       if (pd_remaining) {
@@ -543,7 +608,8 @@ fetchInputData(omni::alignment_t align,size_t required)
 	  OMNIORB_ASSERT(p2 <= (omni::ptr_arith_t)pd_inb_end);
 	  pd_inb_end = (void*)p2;
 
-	  pd_inChunk = 0;
+	  pd_inChunk  = 0;
+	  pd_inHeader = 1;
 	  pd_nestLevel++;
 	  return;
 	}
@@ -561,6 +627,8 @@ cdrValueChunkStream::
 skipToNestedValue(_CORBA_Long level)
 {
   omni::ptr_arith_t p1, p2;
+
+  OMNIORB_ASSERT(!pd_inHeader);
 
   while (1) {
     if (pd_nestLevel < level) {
@@ -610,7 +678,8 @@ skipToNestedValue(_CORBA_Long level)
 	  OMNIORB_ASSERT(p2 <= (omni::ptr_arith_t)pd_inb_end);
 	  pd_inb_end = (void*)p2;
 
-	  pd_inChunk = 0;
+	  pd_inChunk  = 0;
+	  pd_inHeader = 1;
 	  pd_nestLevel++;
 	  return 1;
 	}
@@ -628,9 +697,6 @@ void
 cdrValueChunkStream::
 startInputChunk()
 {
-  // *** HERE: peek chunk length and treat as zero length chunk if in
-  // *** range of value tag
-
   CORBA::Long len = peekChunkTag();
 
   if (len <= 0)
@@ -728,6 +794,14 @@ get_octet_array(_CORBA_Octet* b,int size, omni::alignment_t align)
     return;
   }
 
+  if (pd_inHeader) {
+    OMNIORB_ASSERT(!pd_inChunk);
+    copyStateToActual();
+    pd_actual.get_octet_array(b, size, align);
+    copyStateFromActual();
+    return;
+  }
+
   // Copy as much as possible out of the buffer
   CORBA::Long inbuf = (omni::ptr_arith_t)pd_inb_end - p1;
   if (inbuf) {
@@ -803,6 +877,14 @@ skipInput(_CORBA_ULong size)
   p2 = p1 + size;
   if (p2 <= (omni::ptr_arith_t)pd_inb_end) {
     pd_inb_mkr = (void*)p2;
+    return;
+  }
+
+  if (pd_inHeader) {
+    OMNIORB_ASSERT(!pd_inChunk);
+    copyStateToActual();
+    pd_actual.skipInput(size);
+    copyStateFromActual();
     return;
   }
 
