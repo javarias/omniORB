@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2000/03/03 14:29:17  djr
+  Improvement to BOA skeletons (less generated code).
+
   Revision 1.1.2.5  1999/09/30 11:49:27  djr
   Implemented catching user-exceptions in GIOP_S for all compilers.
 
@@ -829,15 +832,20 @@ private:
     // CORBA::UserException down.  It is needed because
     // gcc 2.7 cannot catch exceptions by base class.
 
-    inline StubUserException(CORBA::UserException* e) : pd_e(e) {}
-    inline ~StubUserException() { delete pd_e; }
+    inline StubUserException(CORBA::Exception* e) : pd_e(e) {}
 
-    inline CORBA::UserException& ex() { return *pd_e; }
+    // inline StubUserException(const StubUserException& e);
+    // inline ~StubUserException() {}
+    // The defaults will do.
+
+
+    inline CORBA::Exception* ex() { return pd_e; }
 
   private:
     StubUserException();
-    StubUserException(const StubUserException&);
     StubUserException& operator=(const StubUserException&);
+
+    CORBA::Exception* pd_e;
   };
 #endif
 

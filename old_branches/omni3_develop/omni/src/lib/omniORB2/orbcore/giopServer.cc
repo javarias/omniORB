@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.7  1999/10/27 17:32:11  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.21.6.6  1999/10/18 11:27:39  djr
   Centralised list of system exceptions.
 
@@ -612,7 +615,8 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 #undef CATCH_AND_MAYBE_MARSHAL
 
   catch(omniORB::StubUserException& ex) {
-    MaybeMarshalUserException(&ex.ex());
+    MaybeMarshalUserException(ex.ex());
+    delete ex.ex();  // ?? Possible memory leak?
   }
 
 #else
