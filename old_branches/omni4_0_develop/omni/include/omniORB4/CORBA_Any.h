@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/10/17 16:43:59  dpg1
+  Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
   Revision 1.1.2.1  2001/08/17 13:39:44  dpg1
   Split CORBA.h into separate bits.
 
@@ -215,7 +218,7 @@ public:
     UShort scale;
   };
   struct to_object {
-    to_object(Object_out obj) : ref(obj) { }
+    to_object(Object_out obj) : ref(obj._data) { }
     Object_ptr& ref;
   };
 

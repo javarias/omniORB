@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/08/24 16:46:36  sll
+  Use WSAIoctl SIO_ADDRESS_LIST_QUERY to get the address of the
+  IP address of all network interfaces.
+
   Revision 1.1.2.5  2001/08/23 16:02:58  sll
   Implement getInterfaceAddress().
 
@@ -298,11 +302,11 @@ void win32_get_ifinfo(omnivector<const char*>& ifaddrs) {
                   NULL,NULL) == SOCKET_ERROR ) {
 
       if ( WSAGetLastError() != WSAEFAULT || lastlen != 0 ) {
-				if ( omniORB::trace(1) ) {
-					omniORB::logger log;
-					log << "Warning: WSAIoctl SIO_ADDRESS_LIST_QUERY failed. Unable to obtain the list of all interface addresses.\n";
-					return;
-			  }
+	if ( omniORB::trace(1) ) {
+	  omniORB::logger log;
+	  log << "Warning: WSAIoctl SIO_ADDRESS_LIST_QUERY failed. Unable to obtain the list of all interface addresses.\n";
+	  return;
+	}
       }
     }
     else {
