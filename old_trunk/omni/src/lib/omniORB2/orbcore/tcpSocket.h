@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1  1997/12/09 18:43:15  sll
+ Initial revision
+
 */
 
 #ifndef __TCPSOCKET_H__
@@ -184,6 +187,7 @@ public:
 private:
   tcpSocketHandle_t pd_socket;
   CORBA::Boolean    pd_send_giop_closeConnection;
+  tcpSocketEndpoint* pd_delay_connect;
 };
 
 
