@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.7  1997/12/09 18:29:46  sll
+  Merged in code from orb.cc
+  Updated to use the new rope factory interface.
+  Old code to deal with server side thread management removed.
+
 // Revision 1.6  1997/05/06  15:11:03  sll
 // Public release.
 //
@@ -55,6 +60,7 @@
 // Globals defined in class omniORB
 CORBA::ULong                    omniORB::traceLevel = 1;
 CORBA::Boolean                  omniORB::strictIIOP = 0;
+CORBA::String_var		omniORB::serverName = (const char *) "unknown";
 _CORBA_Unbounded_Sequence_Octet omni::myPrincipalID;
 
 static const char*       myORBId          = "omniORB2";
@@ -354,6 +360,9 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
       return 0;
     }
 
+  // XXX Should we trim this to a leafname?
+  omniORB::serverName = (const char *)(argv[0]);
+
   int idx = 1;
   while (argc > idx) 
     {
@@ -460,6 +469,19 @@ parse_ORB_args(int &argc,char **argv,const char *orb_identifier)
 	continue;
       }
 
+      // -ORBserverName
+      if (strcmp(argv[idx],"-ORBserverName") == 0) {
+	if((idx+1) >= argc) {
+	  if (omniORB::traceLevel > 0) {
+	    cerr << "CORBA::ORB_init failed: missing -ORBserverName parameter."
+		 << endl;
+	  }
+	  return 0;
+	}
+	omniORB::serverName = CORBA::string_dup(argv[idx+1]);
+	move_args(argc,argv,idx,2);
+	continue;
+      }
       
       // Reach here only if the argument in this form: -ORBxxxxx
       // is not recognised.
