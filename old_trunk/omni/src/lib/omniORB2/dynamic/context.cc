@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.7  1999/06/22 14:59:03  sll
+ set_one_value now correctly use the any extraction operator for string.
+ It takes into account of the configuration variable copyStringInAnyExtraction.
+
  Revision 1.6  1999/05/25 17:39:35  sll
  Added check for invalid arguments using magic number.
 
@@ -132,7 +136,7 @@ ContextImpl::set_one_value(const char* prop_name, const CORBA::Any& value)
     throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
 
   insert_single_consume(name._retn(), 
-			((omniORB::copyStringInAnyExtraction)?
+			((omniORB::omniORB_27_CompatibleAnyExtraction)?
                                 (char*)strval:CORBA::string_dup(strval)));
   RETURN_CORBA_STATUS;
 }
