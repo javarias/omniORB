@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.7  2001/04/18 18:18:06  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.6  2000/11/09 12:27:57  dpg1
   Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -625,30 +628,34 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
     return result;
   }
 
-  // Decode just the first TAG_INTERNET_IOP profile and any
-  // IOP::TAG_MULTIPLE_COMPONENTS
-
   const IOP::TaggedProfileList& profiles = ior->iopProfiles();
-  CORBA::ULong total = profiles.length();
-  CORBA::ULong index;
-  for (index = 0; index < total; index++) {
-    if ( profiles[index].tag == IOP::TAG_INTERNET_IOP ) break;
-  }
-  if (index == total) {
-    return 0;
-  }
 
-  IIOP::ProfileBody iiop;
-  IIOP::unmarshalProfile(profiles[index],iiop);
-  ior->addr_selected_profile_index(index);
+  if (ior->addr_selected_profile_index() < 0) {
 
-  for (index = 0; index < total; index++) {
-    if ( profiles[index].tag == IOP::TAG_MULTIPLE_COMPONENTS ) {
-      IIOP::unmarshalMultiComponentProfile(profiles[index],iiop.components);
+    // Pick the first TAG_INTERNET_IOP profile
+
+    CORBA::ULong total = profiles.length();
+    CORBA::ULong index;
+    for (index = 0; index < total; index++) {
+      if ( profiles[index].tag == IOP::TAG_INTERNET_IOP ) break;
     }
+    if (index == total) {
+      return 0;
+    }
+    ior->addr_selected_profile_index(index);
   }
 
-  ior->decodeIOPprofile(iiop);
+  omniIOR::IORInfo* info = ior->getIORInfo();
+  // getIORInfo() has the side effect of decoding the selected
+  // TAG_INTERNET_IOP profile and any IOP::TAG_MULTIPLE_COMPONENTS
+  // if that has not been done already.
+  //
+  // We use this function to trigger the decoding, instead of say
+  // calling omniIOR::decodeIOPprofile() first, because createIdentity
+  // may be called with the same ior more than once. It is highly
+  // undesirable if the IOP profile is decoded in each of these calls.
+  // Not only is this inefficent but doing so would create a thread safety
+  // nightmare.
 
   CORBA::Boolean is_local = 0;
   Rope* rope;
@@ -658,16 +665,19 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
     return 0;
   }
 
+  _CORBA_Unbounded_Sequence_Octet object_key;
+
+  IIOP::unmarshalObjectKey(profiles[ior->addr_selected_profile_index()],
+			   object_key);
+
   if (is_local) {
 
-    const CORBA::Octet* key = iiop.object_key.get_buffer();
-    int keysize = iiop.object_key.length();
-    CORBA::ULong hashv = hash(key,keysize);
-
+    CORBA::ULong hashv = hash(object_key.get_buffer(),object_key.length());
     omni_optional_lock sync(*internalLock,locked,locked);
     // If the identity does not exist in the local object table, this will
     // insert a dummy entry
-    local_id = locateIdentity(key, keysize, hashv, 1);
+    local_id = locateIdentity(object_key.get_buffer(),object_key.length(),
+			      hashv, 1);
     if (local_id->servant()) {
       return local_id;
     }
@@ -679,8 +689,8 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
   else {
     holder._retn();
     result = new omniRemoteIdentity(ior,
-				    iiop.object_key.get_buffer(),
-				    iiop.object_key.length(),
+				    object_key.get_buffer(),
+				    object_key.length(),
 				    rope);
     return result;
   }
