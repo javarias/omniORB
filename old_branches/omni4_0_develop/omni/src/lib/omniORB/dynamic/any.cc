@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.19.2.12  2001/10/17 16:44:02  dpg1
+ * Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+ *
  * Revision 1.19.2.11  2001/09/24 10:41:08  dpg1
  * Minor codes for Dynamic library and omniORBpy.
  *
@@ -291,10 +294,12 @@ CORBA::Any::PR_setCachedData(void* data, void (*destructor)(void*))
 CORBA::Any&
 CORBA::Any::operator=(const CORBA::Any& a)
 {
-  // Delete the old internal AnyP and create a new one,
-  // based on the Any passed to us
-  delete pdAnyP();
-  pd_ptr = new AnyP(pdAnyP2(&a));
+  if (&a != this) {
+    // Delete the old internal AnyP and create a new one,
+    // based on the Any passed to us
+    delete pdAnyP();
+    pd_ptr = new AnyP(pdAnyP2(&a));
+  }
   return *this;
 }
 
