@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.9  1997/12/09 17:13:52  sll
+  Added support for system exception handlers.
+  Updated to use the rope factory interfaces.
+  New member _realNarrow(), _real_is_a() to support late binding.
+
   Revision 1.8  1997/08/21 21:59:12  sll
   ~omniObject() now delete pd_iopprofile.
 
@@ -250,7 +255,7 @@ omniObject::resetRopeAndKey()
 	// via the network loopback.
 	// We override this and change it to return a network
 	// loopback.
-	_rope = _localobj->manager()->defaultLoopBack();
+	_rope = _localobj->_objectManager()->defaultLoopBack();
 	_rope->incrRefCount();
 	CORBA::Octet* k;
 	CORBA::ULong ks;
