@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.13  2003/08/31 20:27:27  dgrisby
+// Couple of memory leaks in TypeCode unmarshalling.
+//
 // Revision 1.1.2.12  2003/05/28 10:13:01  dgrisby
 // Preliminary interceptor support. General clean-up.
 //
@@ -720,6 +723,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	  t_o = omniPy::unmarshalRawPyString(encap);
 
 	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_INCREF(word);
 	    Py_DECREF(t_o);
 	    t_o = word;
 	  }
@@ -837,6 +841,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	  t_o = omniPy::unmarshalRawPyString(encap);
 
 	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_INCREF(word);
 	    Py_DECREF(t_o);
 	    t_o = word;
 	  }
@@ -1052,6 +1057,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	  t_o = omniPy::unmarshalRawPyString(encap);
 
 	  if ((word = PyDict_GetItem(omniPy::pyomniORBwordMap, t_o))) {
+	    Py_INCREF(word);
 	    Py_DECREF(t_o);
 	    t_o = word;
 	  }
