@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.10  2001/04/19 11:16:39  sll
+  Missing -ORBhelp listing for -ORBmaxGIOPVersion
+
   Revision 1.33.2.9  2001/04/18 18:18:09  sll
   Big checkin with the brand new internal APIs.
 
@@ -554,6 +557,24 @@ omniOrbORB::destroy()
 
     if( !pd_shutdown )  do_shutdown(1);
 
+    // Call detach method of the initialisers in reverse order.
+    omni_hooked_initialiser_.detach();
+    omni_giopStrand_initialiser_.detach();
+    omni_initRefs_initialiser_.detach();
+    omni_initFile_initialiser_.detach();
+    omni_codeSet_initialiser_.detach();
+    omni_omniTransport_initialiser_.detach();
+    omni_cdrStream_initialiser_.detach();
+    omni_ior_initialiser_.detach();
+    omni_omniIOR_initialiser_.detach();
+    omni_giopStreamImpl_initialiser_.detach();
+    omni_interceptor_initialiser_.detach();
+    omni_corbaOrb_initialiser_.detach();
+    omni_omniInternal_initialiser_.detach();
+    omni_uri_initialiser_.detach();
+
+    proxyObjectFactory::shutdown();
+
     pd_destroyed = 1;
     orb = the_orb;
     the_orb = 0;
@@ -633,24 +654,6 @@ omniOrbORB::actual_shutdown()
 
   // Shutdown incoming connections.
   omniObjAdapter::shutdown();
-
-  // Call detach method of the initialisers in reverse order.
-  omni_hooked_initialiser_.detach();
-  omni_giopStrand_initialiser_.detach();
-  omni_initRefs_initialiser_.detach();
-  omni_initFile_initialiser_.detach();
-  omni_codeSet_initialiser_.detach();
-  omni_omniTransport_initialiser_.detach();
-  omni_cdrStream_initialiser_.detach();
-  omni_ior_initialiser_.detach();
-  omni_omniIOR_initialiser_.detach();
-  omni_giopStreamImpl_initialiser_.detach();
-  omni_interceptor_initialiser_.detach();
-  omni_corbaOrb_initialiser_.detach();
-  omni_omniInternal_initialiser_.detach();
-  omni_uri_initialiser_.detach();
-
-  proxyObjectFactory::shutdown();
 
   omniORB::logs(10, "ORB shutdown is complete.");
 
