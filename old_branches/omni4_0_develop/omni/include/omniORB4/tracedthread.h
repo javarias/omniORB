@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2001/08/17 13:49:08  dpg1
+  Optional logging for traced mutexes and condition variables.
+
   Revision 1.2.2.1  2000/07/17 10:35:38  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -94,6 +97,7 @@ private:
   omni_condition pd_cond;    // so can wait for mutex to unlock
   omni_thread*   pd_holder;  // the thread holding pd_m, or 0
   int            pd_n_conds; // number of dependent condition vars
+  int            pd_deleted; // set true on deletion, may catch later use
   const char*    pd_logname; // if non-zero, name to use for logging
 };
 
@@ -123,6 +127,7 @@ private:
   omni_tracedmutex& pd_mutex;
   omni_condition    pd_cond;
   int               pd_n_waiters;
+  int               pd_deleted;
   const char*       pd_logname;
 };
 
