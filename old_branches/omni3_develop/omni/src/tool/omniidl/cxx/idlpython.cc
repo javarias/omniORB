@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.10  2000/08/07 15:34:36  dpg1
+// Partial back-port of long long from omni3_1_develop.
+//
 // Revision 1.15.2.9  2000/06/27 16:23:25  sll
 // Merged OpenVMS port.
 //
@@ -1399,7 +1402,7 @@ main(int argc, char** argv)
 "except ImportError:\n"
 "    sys.stderr.write('\\n\\n')\n"
 "    sys.stderr.write('omniidl: ERROR!\\n\\n')\n"
-"    sys.stderr.write('omniidl: Could not find Python files for IDL compiler\\n')\n"
+"    sys.stderr.write('omniidl: Could not open Python files for IDL compiler\\n')\n"
 "    sys.stderr.write('omniidl: Please put them in directory ' + \\\n"
 "                     (pylibdir or binarchdir) + '\\n')\n"
 "    sys.stderr.write('omniidl: (or set the PYTHONPATH environment variable)\\n')\n"

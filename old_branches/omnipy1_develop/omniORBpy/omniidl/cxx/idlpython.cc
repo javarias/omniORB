@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.23  2000/06/20 13:55:58  dpg1
+// omniidl now keeps the C++ tree until after the back-ends have run.
+// This means that back-ends can be C++ extension modules.
+//
 // Revision 1.22  2000/06/08 14:36:18  dpg1
 // Comments and pragmas are now objects rather than plain strings, so
 // they can have file,line associated with them.
@@ -1365,7 +1369,7 @@ main(int argc, char** argv)
 "except ImportError:\n"
 "    sys.stderr.write('\\n\\n')\n"
 "    sys.stderr.write('omniidl: ERROR!\\n\\n')\n"
-"    sys.stderr.write('omniidl: Could not find Python files for IDL compiler\\n')\n"
+"    sys.stderr.write('omniidl: Could not open Python files for IDL compiler\\n')\n"
 "    sys.stderr.write('omniidl: Please put them in directory ' + \\\n"
 "                     (pylibdir or binarchdir) + '\\n')\n"
 "    sys.stderr.write('omniidl: (or set the PYTHONPATH environment variable)\\n')\n"
