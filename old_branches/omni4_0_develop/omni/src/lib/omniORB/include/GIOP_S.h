@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/01 16:07:32  sll
+  All GIOP implementations should now work with fragmentation and abitrary
+  sizes non-copy transfer.
+
   Revision 1.1.4.1  2001/04/18 17:19:01  sll
   Big checkin with the brand new internal APIs.
 
@@ -178,6 +182,8 @@ private:
   IOP_S::State             pd_state;
   giopServer*              pd_server;
   omniCallDescriptor*      pd_calldescriptor;
+  const char* const*       pd_user_excns;
+  int                      pd_n_user_excns;
   GIOP::MsgType            pd_requestType;
 
   omniObjKey               pd_key;
