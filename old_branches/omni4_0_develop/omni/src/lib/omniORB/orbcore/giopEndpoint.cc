@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2002/09/08 21:58:55  dgrisby
+  Support for MSVC 7. (Untested.)
+
   Revision 1.1.2.12  2002/03/11 12:21:07  dpg1
   ETS things.
 
@@ -284,7 +287,14 @@ giopTransportImpl::initialise() {
 ////////////////////////////////////////////////////////////////////////////
 //             Configuration options                                      //
 ////////////////////////////////////////////////////////////////////////////
-CORBA::String_var orbParameters::unixTransportDirectory((const char*)"/tmp/omni-%u");
+#ifdef __HP_aCC
+CORBA::String_var orbParameters::unixTransportDirectory =
+                                                (const char*)"/tmp/omni-%u";
+#else
+CORBA::String_var orbParameters::unixTransportDirectory(
+		                                (const char*)"/tmp/omni-%u");
+#endif
+
 //  Applies to the server side. Determine the directory in which
 //  the unix domain socket is to be created.
 //

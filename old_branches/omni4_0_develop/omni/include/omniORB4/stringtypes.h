@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.12  2003/01/16 12:47:08  dgrisby
+ Const cast macro. Thanks Matej Kenda.
+
  Revision 1.2.2.11  2003/01/14 11:48:15  dgrisby
  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -391,7 +394,7 @@ public:
       if (s.pd_data && s.pd_data != _CORBA_String_helper::empty_string)
 	pd_data = _CORBA_String_helper::dup(s.pd_data);
       else {
-	pd_data = OMNI_CONST_CAST(char*, s.pd_data);
+	pd_data = OMNI_CONST_CAST(char*, (const char*)s.pd_data);
       }
     }
     return *this;
