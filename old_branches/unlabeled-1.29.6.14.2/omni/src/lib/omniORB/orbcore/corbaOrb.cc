@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.14  2000/02/04 18:11:01  djr
+  Minor mods for IRIX (casting pointers to ulong instead of int).
+
   Revision 1.29.6.13  2000/01/27 10:55:45  djr
   Mods needed for powerpc_aix.  New macro OMNIORB_BASE_CTOR to provide
   fqname for base class constructor for some compilers.
@@ -1004,6 +1007,45 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	continue;
       }
 
+      // -ORBthreadPoolSize
+      if( strcmp(argv[idx],"-ORBthreadPoolSize") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  omniORB::logs(2, "CORBA::ORB_init failed: in value"
+			" -ORBthreadPoolSize parameter.");
+	  return 0;
+	}
+	if( sscanf(argv[idx+1],"%d", &omniORB::threadPoolSize) != 1
+	    || omniORB::traceLevel < 0 ) {
+	  omniORB::logf("CORBA::ORB_init failed: invalid -ORBthreadPoolSize"
+			" parameter.");
+	  return 0;
+	}
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
+      // -ORBconcurrencyModel
+      if( strcmp(argv[idx],"-ORBconcurrencyModel") == 0 ) {
+	if( idx + 1 >= argc ) {
+	  omniORB::logs(2, "CORBA::ORB_init failed: in value"
+			" -ORBconcurrencyModel parameter.");
+	  return 0;
+	}
+	if( strcmp(argv[idx+1], "tpc") == 0 ) {
+	  omniORB::concurrencyModel = omniORB::PerConnection;
+	}else if( strcmp(argv[idx+1], "q") == 0 ) {
+	  omniORB::concurrencyModel = omniORB::QueueBased;
+	}else if( strcmp(argv[idx+1], "lf") == 0 ) {
+	  omniORB::concurrencyModel = omniORB::LeaderFollower;
+	}else{
+	  omniORB::logf("CORBA::ORB_init failed: invalid -ORBconcurrencyModel"
+			" parameter.");
+	  return 0;
+	}
+	move_args(argc,argv,idx,2);
+	continue;
+      }
+
       // -ORBhelp
       if( strcmp(argv[idx],"-ORBhelp") == 0 ) {
 	omniORB::logger l;
@@ -1026,6 +1068,8 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	  "    -ORBclientCallTimeOutPeriod <n seconds>\n"
 	  "    -ORBserverCallTimeOutPeriod <n seconds>\n"
 	  "    -ORBscanGranularity <n seconds>\n"
+          "    -ORBthreadPoolSize <n threads>\n"
+	  "    -ORBconcurrencyModel {tpc, q, lf}\n"
 	  "    -ORBlcdMode\n"
 	  "    -ORBpoa_iiop_port <port no.>\n"
 	  "    -ORBpoa_iiop_name_port <hostname[:port no.]>\n";
