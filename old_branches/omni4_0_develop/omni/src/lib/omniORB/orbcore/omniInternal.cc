@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.23  2001/09/20 13:26:14  dpg1
+  Allow ORB_init() after orb->destroy().
+
   Revision 1.2.2.22  2001/09/19 17:26:50  dpg1
   Full clean-up after orb->destroy().
 
@@ -1416,10 +1419,20 @@ OMNI_NAMESPACE_END(omni)
 //            Final clean-up                                               //
 /////////////////////////////////////////////////////////////////////////////
 
-int _omniFinalCleanup::count = 0;
+static int& count() {
+  static int the_count = 0;
+  return the_count;
+}
 
-void _omniFinalCleanup::cleanup()
+_omniFinalCleanup::_omniFinalCleanup() {
+  ++count();
+}
+
+_omniFinalCleanup::~_omniFinalCleanup()
 {
+  if (--count() != 0)
+    return;
+
   if (!omniOrbORB::all_destroyed()) {
     omniORB::logs(15, "ORB not destroyed; no final clean-up.");
     return;
