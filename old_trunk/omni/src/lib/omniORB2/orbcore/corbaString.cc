@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:26:01  sll
+  Initial revision
+
  */
 
 #include <omniORB2/CORBA.h>
@@ -18,7 +21,7 @@
 char *
 CORBA::string_alloc(CORBA::ULong len)
 {
-  return new char[(int)len];
+  return new char[(int)len+1];
 }
 
 void
