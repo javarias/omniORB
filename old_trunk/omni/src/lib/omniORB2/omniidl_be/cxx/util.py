@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/03 17:35:07  djs
+# Brought more of the old tmp_omniidl code into the new tree
+#
 # Revision 1.1  1999/11/03 11:09:50  djs
 # General module renaming
 #
@@ -169,3 +172,28 @@ class StringStream(Stream):
 
     def __add__(self, other):
         return self.__buffer + str(other)
+
+
+# ------------------------------------------------------------------
+# Set manipulation functions
+
+def union(a, b):
+    result = a[:]
+    for x in b:
+        if not(x in result):
+            result.append(x)
+    return result
+
+def minus(a, b):
+    result = []
+    for x in a:
+        if not(x in b):
+            result.append(x)
+    return result
+
+def intersect(a, b):
+    result = []
+    for x in a:
+        if x in b:
+            result.append(x)
+    return result
