@@ -11,6 +11,11 @@
 
 /*
   $Log$
+// Revision 1.6  1997/02/17  18:11:33  ewc
+// IDL Compiler now adds a dummy return after some exceptions - this
+//  stops some C++ compilers from complaining (e.g. MSVC++ 4.2) about
+// some control paths not returning values.
+//
   Revision 1.5  1997/01/28 18:36:24  sll
   Fixed the bugs in the proxy and the server skeleton code which only
   affects oneway operation.
@@ -59,6 +64,7 @@ o2be_operation::o2be_operation(AST_Type *rt, AST_Operation::Flags fl,
 void
 o2be_operation::produce_decl(fstream &s,
 			     const char *prefix,
+			     const char *alias_prefix,
 			     idl_bool out_var_default /* ignored */)
 {
   if (context())
@@ -100,6 +106,7 @@ o2be_operation::produce_decl(fstream &s,
   s << " ";
   if (prefix)
     s << prefix << "::";
+  s << ((alias_prefix)? alias_prefix : "");
   s << uqname() << " ( ";
 
   // argument list
@@ -169,11 +176,12 @@ o2be_operation::produce_invoke(fstream &s)
 }
 
 void
-o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in)
+o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &defined_in,
+				   const char* alias_prefix)
 {
   idl_bool hasVariableLenOutArgs = I_FALSE;
 
-  IND(s); produce_decl(s,defined_in.proxy_fqname(),I_FALSE);
+  IND(s); produce_decl(s,defined_in.proxy_fqname(),alias_prefix,I_FALSE);
   s << "\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
@@ -823,10 +831,18 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
   IND(s);
   if (!return_is_void()) {
     s << "_result = ";
+    if (has_variable_out_arg() || has_pointer_inout_arg()) {
+      // Use the indirection function in the base class
+      s << defined_in.fqname() << "::";
+    }
     produce_invoke(s);
     s << ";\n";
   }
   else {
+    if (has_variable_out_arg() || has_pointer_inout_arg()) {
+      // Use the indirection function in the base class
+      s << defined_in.fqname() << "::";
+    }
     produce_invoke(s);
     s << ";\n";
   }
@@ -1039,9 +1055,9 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &defined_in)
 }
 
 void
-o2be_operation::produce_nil_skel(fstream &s)
+o2be_operation::produce_nil_skel(fstream &s,const char* alias_prefix)
 {
-  IND(s); produce_decl(s);
+  IND(s); produce_decl(s,0,alias_prefix);
   s << "{\n";
   INC_INDENT_LEVEL();
   IND(s); s << "throw CORBA::BAD_OPERATION(0,CORBA::COMPLETED_NO);\n";
@@ -1115,6 +1131,294 @@ o2be_operation::produce_nil_skel(fstream &s)
 }
 
 
+void
+o2be_operation::produce_mapping_with_indirection(fstream& s,
+						 const char* alias_prefix)
+{
+  if (!has_variable_out_arg() && !has_pointer_inout_arg())
+    return;
+
+  unsigned int indent_pos = 0;
+
+  IND(s); 
+  // return type
+  if (!return_is_void())
+    {
+      argMapping mapping;
+      argType    ntype;
+      const char* str;
+
+      ntype = ast2ArgMapping(return_type(),wResult,mapping);	
+
+      if (ntype == tObjref) {
+	AST_Decl *decl = return_type();
+	while (decl->node_type() == AST_Decl::NT_typedef) {
+	  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	}
+	str = o2be_interface::narrow_from_decl(decl)->objref_fqname();
+	s << str;
+	indent_pos += strlen(str);
+      }
+      else if (ntype == tString) {
+	s << "char *";
+	indent_pos += 6;
+      }
+      else {
+	str = o2be_name::narrow_and_produce_fqname(return_type());
+	s << str;
+	indent_pos += strlen(str);
+      }
+      if (mapping.is_arrayslice) {
+	s << "_slice";
+	indent_pos += 6;
+	
+      }
+      s << " ";
+      indent_pos += 1;
+      if (mapping.is_pointer) {
+	s << "*";
+	indent_pos += 1;
+      }
+      if (mapping.is_reference) {
+	s << "&";
+	indent_pos += 1;
+      }
+    }
+  else
+    {
+      s << "void";
+      indent_pos += 4;
+    }
+  // function namees
+  s << " " << uqname() << " ( ";
+  indent_pos += strlen(alias_prefix) + strlen(uqname()) + 4;
+
+  // argument list
+  {
+    UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+    while (!i.is_done())
+      {
+	argMapping mapping;
+	argType    ntype;
+	idl_bool   outvar;
+	idl_bool   inoutptr;
+
+	outvar = I_FALSE;
+	inoutptr = I_FALSE;
+	o2be_argument *a = o2be_argument::narrow_from_decl(i.item());
+	switch(a->direction())
+	  {
+	  case AST_Argument::dir_IN:
+	    ntype = ast2ArgMapping(a->field_type(),wIN,mapping);
+	    break;
+	  case AST_Argument::dir_INOUT:
+	    ntype = ast2ArgMapping(a->field_type(),wINOUT,mapping);
+	    switch(ntype) {
+	    case tObjref:
+	    case tString:
+	      inoutptr = I_TRUE;
+	      break;
+	    default:
+	      break;
+	    }
+	    break;
+	  case AST_Argument::dir_OUT:
+	    ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
+	    switch(ntype) {
+	    case tObjref:
+	    case tStructVariable:
+	    case tUnionVariable:
+	    case tString:
+	    case tSequence:
+	    case tArrayVariable:
+	    case tAny:
+	      outvar = I_TRUE;
+	      break;
+	    default:
+	      break;
+	    }
+	    break;
+	  }
+
+	if (!outvar && !inoutptr)
+	  {
+	    s << ((mapping.is_const) ? "const ":"");
+	    if (ntype == tObjref) {
+	      AST_Decl *decl = a->field_type();
+	      while (decl->node_type() == AST_Decl::NT_typedef) {
+		decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+	      }
+	      s << o2be_interface::narrow_from_decl(decl)->objref_fqname();
+	    }
+	    else if (ntype == tString) {
+	      s << "char *";
+	    }
+	    else {
+	      s << o2be_name::narrow_and_produce_fqname(a->field_type());
+	    }
+	    s << ((mapping.is_arrayslice) ? "_slice":"")
+	      << " "
+	      << ((mapping.is_pointer)    ? "*":"")
+	      << ((mapping.is_reference)  ? "&":"");
+	    s << " " << a->uqname();
+	  }
+	else
+	  {
+	    switch (ntype) {
+	    case tObjref:
+	      {
+		AST_Decl *decl = a->field_type();
+		while (decl->node_type() == AST_Decl::NT_typedef) {
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		}
+		o2be_interface* intf = o2be_interface::narrow_from_decl(decl);
+		if (a->direction() == AST_Argument::dir_INOUT) {
+		  s << intf->inout_adptarg_name() << " ";
+		}
+		else {
+		  s << intf->out_adptarg_name() << " ";
+		}
+		break;
+	      }
+	    case tString:
+	      {
+		if (a->direction() == AST_Argument::dir_INOUT) {
+		  s << "CORBA::String_INOUT_arg ";
+		}
+		else {
+		  s << "CORBA::String_OUT_arg ";
+		}
+		break;
+	      }
+	    case tAny:
+	      {
+		if (a->direction() == AST_Argument::dir_OUT) {
+		  s << "CORBA::Any_OUT_arg ";
+		}
+		break;
+	      }
+	    case tStructVariable:
+	      {
+		AST_Decl *decl = a->field_type();
+		while (decl->node_type() == AST_Decl::NT_typedef) {
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		}
+		o2be_structure* p = o2be_structure::narrow_from_decl(decl);
+		if (a->direction() == AST_Argument::dir_OUT) {
+		  s << p->out_adptarg_name() << " ";
+		}
+		break;
+	      }
+	    case tUnionVariable:
+	      {
+		AST_Decl *decl = a->field_type();
+		while (decl->node_type() == AST_Decl::NT_typedef) {
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		}
+		o2be_union* p = o2be_union::narrow_from_decl(decl);
+		if (a->direction() == AST_Argument::dir_OUT) {
+		  s << p->out_adptarg_name() << " ";
+		}
+		break;
+	      }
+	    case tSequence:
+	      {
+		AST_Decl *decl = a->field_type();
+		if (decl->node_type() != AST_Decl::NT_typedef) {
+		  throw o2be_internal_error(__FILE__,__LINE__,
+					    "Typedef expected");
+		}
+		o2be_typedef* tp = o2be_typedef::narrow_from_decl(decl);
+		while (decl->node_type() == AST_Decl::NT_typedef) {
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		}
+		o2be_sequence* p = o2be_sequence::narrow_from_decl(decl);
+		if (a->direction() == AST_Argument::dir_OUT) {
+		  s << p->out_adptarg_name(tp) << " ";
+		}
+		break;
+	      }
+	    case tArrayVariable:
+	      {
+		AST_Decl *decl = a->field_type();
+		if (decl->node_type() != AST_Decl::NT_typedef) {
+		  throw o2be_internal_error(__FILE__,__LINE__,
+					    "Typedef expected");
+		}
+		o2be_typedef* tp = o2be_typedef::narrow_from_decl(decl);
+		while (decl->node_type() == AST_Decl::NT_typedef) {
+		  decl = o2be_typedef::narrow_from_decl(decl)->base_type();
+		}
+		o2be_array* p = o2be_array::narrow_from_decl(decl);
+		if (a->direction() == AST_Argument::dir_OUT) {
+		  s << p->out_adptarg_name(tp) << " ";
+		}
+		break;
+	      }
+	    default:
+	      break;
+	    }
+	    s << " " << a->uqname();
+	  }
+	i.next();
+	if (!i.is_done()) {
+	  s << ",\n";
+	  IND(s);
+	  for (unsigned int i=0; i < indent_pos; i++) 
+	    s << " ";
+	}
+      }
+  }
+
+  s << " )\n";
+  IND(s); s << "{\n";
+  INC_INDENT_LEVEL();
+  IND(s);
+  if (!return_is_void()) {
+    s << "return ";
+  }
+  s << alias_prefix;
+  s << uqname() << " ( ";
+  {
+    UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+    while (!i.is_done())
+      {
+	argType ntype;
+	argMapping mapping;
+	o2be_argument *a = o2be_argument::narrow_from_decl(i.item());
+	s << a->uqname();
+	if (a->direction() == AST_Argument::dir_INOUT) {
+	  ntype = ast2ArgMapping(a->field_type(),wINOUT,mapping);
+	  if (ntype == tObjref || ntype == tString) {
+	    s << "._data";
+	  }
+	}
+	else if (a->direction() == AST_Argument::dir_OUT) {
+	  ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
+	  switch(ntype) {
+	  case tObjref:
+	  case tStructVariable:
+	  case tUnionVariable:
+	  case tString:
+	  case tSequence:
+	  case tArrayVariable:
+	  case tAny:
+	    s << "._data";
+	  default:
+	    break;
+	  }
+	}
+	i.next();
+	s << ((!i.is_done()) ? ", " :"");
+      }
+  }
+  s << " )";
+
+  s << ";\n";
+  DEC_INDENT_LEVEL();
+  IND(s); s << "}\n";
+}
+
 idl_bool
 o2be_operation::return_is_void()
 {
@@ -1134,6 +1438,74 @@ o2be_operation::no_user_exception()
     return I_TRUE;
   else
     return I_FALSE;
+}
+
+idl_bool
+o2be_operation::has_variable_out_arg()
+{
+  idl_bool hasvar = I_FALSE;
+  UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+  while (!i.is_done())
+    {
+      argMapping mapping;
+      argType    ntype;
+      o2be_argument *a = o2be_argument::narrow_from_decl(i.item());
+      switch(a->direction())
+	{
+	case AST_Argument::dir_OUT:
+	  ntype = ast2ArgMapping(a->field_type(),wOUT,mapping);
+	  switch (ntype) {
+	  case tObjref:
+	  case tStructVariable:
+	  case tUnionVariable:
+	  case tString:
+	  case tSequence:
+	  case tArrayVariable:
+	  case tAny:
+	    hasvar = I_TRUE;
+	    break;
+	  default:
+	    break;
+	  }
+	  break;
+	default:
+	  break;
+	}
+      i.next();
+    }
+  return hasvar;
+}
+
+
+idl_bool
+o2be_operation::has_pointer_inout_arg()
+{
+  idl_bool hasptr = I_FALSE;
+  UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
+  while (!i.is_done())
+    {
+      argMapping mapping;
+      argType    ntype;
+      o2be_argument *a = o2be_argument::narrow_from_decl(i.item());
+      switch(a->direction())
+	{
+	case AST_Argument::dir_INOUT:
+	  ntype = ast2ArgMapping(a->field_type(),wINOUT,mapping);
+	  switch (ntype) {
+	  case tObjref:
+	  case tString:
+	    hasptr = I_TRUE;
+	    break;
+	  default:
+	    break;
+	  }
+	  break;
+	default:
+	  break;
+	}
+      i.next();
+    }
+  return hasptr;
 }
 
 IMPL_NARROW_METHODS1(o2be_operation, AST_Operation)
@@ -1642,7 +2014,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 	      }
 
 
-	      IND(s); s << "if (!((char*&)" 
+	      IND(s); s << "if (!(char*)(" 
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -1764,7 +2136,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
       {      
 	IND(s); s << "{\n";
 	INC_INDENT_LEVEL();
-	IND(s); s << "CORBA::ULong _len = strlen((char *)"<< argname <<")+1;\n";
+	IND(s); s << "CORBA::ULong _len = strlen((const char *)"<< argname <<")+1;\n";
 	if (o2be_string::narrow_from_decl(decl)->max_length()) {
 	  IND(s); s << "if (_len > " 
 		    << o2be_string::narrow_from_decl(decl)->max_length()
@@ -1775,7 +2147,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	  IND(s); s << "}\n";
 	}
 	IND(s); s << "_len >>= " << netstream << ";\n";
-	IND(s); s << netstream << ".put_char_array((CORBA::Char *)((char*) " 
+	IND(s); s << netstream << ".put_char_array((const CORBA::Char *)((const char*) " 
 		  << argname << "),_len);\n";
 	DEC_INDENT_LEVEL();
 	IND(s); s << "}\n";
@@ -1901,7 +2273,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	    }
 	  case tString:
 	    {
-	      IND(s); s << "CORBA::ULong _len = strlen((char *)" << argname;
+	      IND(s); s << "CORBA::ULong _len = strlen((const char *)" << argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
 		{
@@ -1925,7 +2297,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 	      }
 
 	      IND(s); s << "_len >>= " << netstream << ";\n";
-	      IND(s); s << netstream << ".put_char_array((CORBA::Char *)((char*)"
+	      IND(s); s << netstream << ".put_char_array((const CORBA::Char *)((const char*)"
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -2013,8 +2385,8 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 
     case tShort:
     case tUShort:
-      IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		<< ",omniORB::ALIGN_2);\n";
+      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		<< ",omni::ALIGN_2);\n";
       IND(s); s << sizevar << " += 2;\n";
       break;
 
@@ -2022,14 +2394,14 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
     case tULong:
     case tEnum:
     case tFloat:
-      IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		<< ",omniORB::ALIGN_4);\n";
+      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		<< ",omni::ALIGN_4);\n";
       IND(s); s << sizevar << " += 4;\n";
       break;
 
     case tDouble:
-      IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		<< ",omniORB::ALIGN_8);\n";
+      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		<< ",omni::ALIGN_8);\n";
       IND(s); s << sizevar << " += 8;\n";
       break;
 
@@ -2047,9 +2419,9 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
       break;
 
     case tString:
-      IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		<< ",omniORB::ALIGN_4);\n";
-      IND(s); s << sizevar << " += 4 + strlen((char *)" 
+      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		<< ",omni::ALIGN_4);\n";
+      IND(s); s << sizevar << " += 4 + strlen((const char *)" 
 		<< argname << ") + 1;\n";  
       break;
 
@@ -2089,8 +2461,8 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 
 	  case tShort:
 	  case tUShort:
-	    IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		      << ",omniORB::ALIGN_2);\n";
+	    IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		      << ",omni::ALIGN_2);\n";
 	    IND(s); s << sizevar << " += "
 		      << o2be_array::narrow_from_decl(decl)->getNumOfElements()
 		      << "*2;\n";
@@ -2100,16 +2472,16 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	  case tULong:
 	  case tEnum:
 	  case tFloat:
-	    IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		      << ",omniORB::ALIGN_4);\n";
+	    IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		      << ",omni::ALIGN_4);\n";
 	    IND(s); s << sizevar << " += "
 		      << o2be_array::narrow_from_decl(decl)->getNumOfElements()
 		      << "*4;\n";
 	    break;
 
 	  case tDouble:
-	    IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-		      << ",omniORB::ALIGN_8);\n";
+	    IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+		      << ",omni::ALIGN_8);\n";
 	    IND(s); s << sizevar << " += "
 		      << o2be_array::narrow_from_decl(decl)->getNumOfElements()
 		      << "*8;\n";
@@ -2203,9 +2575,9 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 	    }
 	  case tString:
 	    {
-	      IND(s); s << sizevar << " = omniORB::align_to(" << sizevar 
-			<< ",omniORB::ALIGN_4);\n";
-	      IND(s); s << sizevar << " += 4 + strlen((char *)"
+	      IND(s); s << sizevar << " = omni::align_to(" << sizevar 
+			<< ",omni::ALIGN_4);\n";
+	      IND(s); s << sizevar << " += 4 + strlen((const char *)"
 			<< argname;
 	      ndim = 0;
 	      while (ndim < o2be_array::narrow_from_decl(decl)->getNumOfDims())
@@ -2293,8 +2665,8 @@ o2be_operation::produceConstStringSizeCalculation(fstream &s,
 				  const char *sizevar,
 				  size_t len)
 {
-  IND(s); s << sizevar << " = omniORB::align_to("
-	    << sizevar << ",omniORB::ALIGN_4);\n";
+  IND(s); s << sizevar << " = omni::align_to("
+	    << sizevar << ",omni::ALIGN_4);\n";
   IND(s); s << sizevar << " += " << (4+len) << ";\n";
 }
 
