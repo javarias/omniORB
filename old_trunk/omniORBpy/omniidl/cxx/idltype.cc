@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/10/29 15:44:14  dpg1
+// DeclaredType() now takes extra DeclRepoId* argument.
+//
 // Revision 1.1  1999/10/27 14:05:54  dpg1
 // *** empty log message ***
 //
@@ -88,7 +91,7 @@ scopedNameToType(const char* file, int line, const ScopedName* sn)
       IdlType *t = se->idltype();
       if (t) return t;
     }
-    const char* ssn = sn->toString();
+    char* ssn = sn->toString();
     IdlError(file, line, "`%s' is not a type", ssn);
     IdlErrorCont(se->file(), se->line(), "(`%s' declared here)", ssn);
     delete [] ssn;

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  1999/11/02 10:01:46  dpg1
+# Minor fixes.
+#
 # Revision 1.5  1999/11/01 20:19:55  dpg1
 # Support for union switch types declared inside the switch statement.
 #
@@ -48,13 +51,15 @@ import idlutil
 import idlvisitor
 
 class AST:
-    def __init__(self, file, declarations):
+    def __init__(self, file, declarations, pragmas):
         self.__file         = file
         self.__declarations = declarations
+        self.__pragmas      = pragmas
         #print "AST init:", declarations
 
     def file(self):            return self.__file
     def declarations(self):    return self.__declarations
+    def pragmas(self):         return self.__pragmas
     def accept(self, visitor): visitor.visitAST(self)
 
 

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/10/29 10:01:50  dpg1
+// Global scope initialisation changed.
+//
 // Revision 1.1  1999/10/27 14:05:55  dpg1
 // *** empty log message ***
 //
@@ -59,7 +62,7 @@ public:
     Fragment* next_;
 
   private:
-    const char* identifier_;
+    char* identifier_;
 
     friend class ScopedName;
   };
@@ -258,13 +261,13 @@ public:
   private:
     const Scope*      container_;
     Kind              kind_;
-    const char*       identifier_;
+    char*             identifier_;
     ScopedName*       scopedName_;
     Scope*            scope_;
     Decl*             decl_;
     IdlType*          idltype_;
     Entry*            inh_from_;
-    const char*       file_;
+    char*             file_;
     int               line_;
     Entry*            next_;
     
@@ -297,7 +300,7 @@ public:
 private:
   Scope*            parent_;
   Kind              kind_;
-  const char*       identifier_;
+  char*             identifier_;
   ScopedName*       scopedName_;
   _CORBA_Boolean    nestedUse_;
   Entry*            entries_;

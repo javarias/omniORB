@@ -28,12 +28,17 @@
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/10/27 14:05:56  dpg1
+// *** empty log message ***
+//
 
 #ifndef _idlmath_h_
 #define _idlmath_h_
 
 #include <math.h>
 #include <idlutil.h>
+
+#if defined(__linux__)
 
 inline _CORBA_Boolean IdlFPOverflow(_CORBA_Float f) {
   return isinff(f) || isnanf(f);
@@ -45,6 +50,39 @@ inline _CORBA_Boolean IdlFPOverflow(_CORBA_Double f) {
 inline _CORBA_Boolean IdlFPOverflow(_CORBA_LongDouble f) {
   return isinfl(f) || isnanl(f);
 }
+#endif
+
+#elif defined(__sunos__)
+
+#include <nan.h>
+
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_Float f) {
+  double d = f;
+  return IsNANorINF(d);
+}
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_Double f) {
+  return IsNANorINF(f);
+}
+#ifdef HAS_LongDouble
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_LongDouble f) {
+  return 0;
+}
+#endif
+
+#else // No FP overflow detection
+
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_Float f) {
+  return 0;
+}
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_Double f) {
+  return 0;
+}
+#ifdef HAS_LongDouble
+inline _CORBA_Boolean IdlFPOverflow(_CORBA_LongDouble f) {
+  return 0;
+}
+#endif
+
 #endif
 
 #endif // _idlmath_h_

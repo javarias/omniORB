@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/01 20:19:56  dpg1
+// Support for union switch types declared inside the switch statement.
+//
 // Revision 1.3  1999/10/29 15:43:15  dpg1
 // Code to detect recursive structs and unions.
 //
@@ -49,7 +52,6 @@ DumpVisitor::
 DumpVisitor()
   : indent_(0)
 {
-  printf("\nDumping...\n");
 }
 
 DumpVisitor::
@@ -69,7 +71,7 @@ void
 DumpVisitor::
 printScopedName(const ScopedName* sn)
 {
-  const char* ssn = sn->toString();
+  char* ssn = sn->toString();
   printf("%s", ssn);
   delete [] ssn;
 }
@@ -112,7 +114,7 @@ visitInterface(Interface* i)
 
   if (i->inherits()) {
     printf(": ");
-    const char* ssn;
+    char* ssn;
     for (InheritSpec* is = i->inherits(); is; is = is->next()) {
       ssn = is->interface()->scopedName()->toString();
       printf("%s%s ", ssn, is->next() ? "," : "");
@@ -343,7 +345,7 @@ void
 DumpVisitor::
 visitEnumerator(Enumerator* e)
 {
-  const char* ssn = e->scopedName()->toString();
+  char* ssn = e->scopedName()->toString();
   printf("%s", ssn);
   delete [] ssn;
 }
@@ -406,7 +408,7 @@ visitOperation(Operation* o)
 
   if (o->raises()) {
     printf(" raises (");
-    const char* ssn;
+    char* ssn;
     for (RaisesSpec* r = o->raises(); r; r = r->next()) {
       ssn = r->exception()->scopedName()->toString();
       printf("%s", ssn);

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/01 20:19:57  dpg1
+// Support for union switch types declared inside the switch statement.
+//
 // Revision 1.2  1999/10/29 15:41:31  dpg1
 // DeclaredType() now takes extra DeclRepoId* argument.
 //
@@ -51,7 +54,7 @@
 
 // Globals from lexer
 extern int            yylineno;
-extern const char*    currentFile;
+extern char*          currentFile;
 extern _CORBA_Boolean mainFile;
 
 void yyerror(char *s) {
@@ -1388,7 +1391,7 @@ pragma_version:
 
 unknown_pragma:
     PRAGMA unknown_pragma_body_plus END_PRAGMA {
-      Decl::mostRecent()->addPragma($2);
+      Pragma::add($2);
     }
     ;
 

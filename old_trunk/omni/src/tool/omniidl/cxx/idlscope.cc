@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5  1999/11/02 12:10:51  dpg1
+// Small bug in addUse()
+//
 // Revision 1.4  1999/11/02 10:35:03  dpg1
 // add...() functions now carry on regardless after a keyword clash, to
 // prevent later errors.
@@ -170,11 +173,11 @@ Entry(const Scope* container, Kind k, const char* identifier,
     scope_(scope), decl_(decl), idltype_(idltype), inh_from_(inh_from),
     file_(idl_strdup(file)), line_(line), next_(0)
 {
-  const ScopedName* ssn = container->scopedName();
+  const ScopedName* sn = container->scopedName();
 
   if (identifier) {
-    if (ssn) {
-      scopedName_ = new ScopedName(ssn);
+    if (sn) {
+      scopedName_ = new ScopedName(sn);
       scopedName_->append(identifier);
     }
     else
@@ -182,14 +185,6 @@ Entry(const Scope* container, Kind k, const char* identifier,
   }
   else
     scopedName_ = 0;
-
-  const char* sn;
-  if (scopedName_)
-    sn = scopedName_->toString();
-  else
-    sn = idl_strdup("no scoped name");
-
-  delete [] sn;
 }
 
 Scope::
@@ -265,9 +260,6 @@ Scope(Scope* parent, const char* identifier, Scope::Kind k,
   entries_ = new Entry(this, Entry::E_PARENT, identifier, 0, 0, 0, 0,
 		       file, line);
   last_    = entries_;
-
-  const char* sns = scopedName_->toString();
-  delete [] sns;
 }
 
 Scope::
@@ -604,12 +596,12 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
 
 	if (el->tail()) {
 	  // Error -- ambiguous
-	  const char* ssn = sn->toString();
+	  char* ssn = sn->toString();
 	  IdlError(file, line, "Ambiguous name `%s':", ssn);
 	  delete [] ssn;
 
 	  for (; el; el = el->tail()) {
-	    const char* ssn=el->head()->container()->scopedName()->toString();
+	    char* ssn=el->head()->container()->scopedName()->toString();
 	    IdlErrorCont(el->head()->file(), el->head()->line(),
 			 "(`%s' defined in `%s')", f->identifier(), ssn);
 	    delete [] ssn;
@@ -623,7 +615,7 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
     top_component = 0;
 
     if (!e) {
-      const char* ssn = sn->toString();
+      char* ssn = sn->toString();
       IdlError(file, line, "Error in look-up of `%s': `%s' not found",
 	       ssn, f->identifier());
       delete [] ssn;
@@ -635,7 +627,7 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
       s = e->scope();
 
       if (!s) {
-	const char* ssn = sn->toString();
+	char* ssn = sn->toString();
 	IdlError(file, line,
 		 "Error in look-up of `%s': `%s' does not form a scope",
 		 ssn, e->identifier());
@@ -672,7 +664,7 @@ addUse(const ScopedName* sn, const char* file, int line)
 
   if (clash) {
     if (strcmp(id, clash->identifier())) {
-      const char* ssn = sn->toString();
+      char* ssn = sn->toString();
       IdlError(file, line, "Use of `%s' clashes with identifier `%s'",
 	       ssn, clash->identifier());
       IdlErrorCont(clash->file(), clash->line(), "(`%s' declared here)",
@@ -693,7 +685,7 @@ addUse(const ScopedName* sn, const char* file, int line)
 void
 Scope::
 addModule(const char* identifier, Scope* scope, Decl* decl,
-	const char* file, int line)
+	  const char* file, int line)
 {
   if (*identifier == '_')
     ++identifier;
@@ -800,7 +792,7 @@ addDecl(const char* identifier, Scope* scope, Decl* decl, IdlType* idltype,
 		 "Declaration of %s `%s' clashes with inherited %s `%s'",
 		 decl->kindAsString(), identifier,
 		 clash->decl()->kindAsString(), clash->identifier());
-	const char* inhfrom =
+	char* inhfrom =
 	  clash->inh_from()->container()->scopedName()->toString();
 	IdlErrorCont(clash->inh_from()->file(), clash->inh_from()->line(),
 		     "(`%s' declared in %s here)",
@@ -895,7 +887,7 @@ addCallable(const char* identifier, Scope* scope, Decl* decl,
 		 "Declaration of %s `%s' clashes with inherited %s `%s'",
 		 decl->kindAsString(), identifier,
 		 clash->decl()->kindAsString(), clash->identifier());
-	const char* inhfrom =
+	char* inhfrom =
 	  clash->inh_from()->container()->scopedName()->toString();
 	IdlErrorCont(clash->inh_from()->file(), clash->inh_from()->line(),
 		     "(`%s' declared in %s here)",
@@ -965,7 +957,7 @@ addInherited(const char* id, Scope* scope, Decl* decl,
 	  IdlError(file, line, "In definition of `%s': clash between "
 		   "inherited identifiers `%s' and `%s'",
 		   identifier(), id, clash->identifier());
-	  const char* inhfrom =
+	  char* inhfrom =
 	    inh_from->container()->scopedName()->toString();
 	  IdlErrorCont(inh_from->file(), inh_from->line(),
 		       "(%s `%s' declared in %s here)",
@@ -1046,7 +1038,7 @@ addInstance(const char* identifier, Decl* decl, IdlType* idltype,
 		 "Instance identifier `%s' clashes with inherited %s `%s'",
 		 identifier, clash->decl()->kindAsString(),
 		 clash->identifier());
-	const char* inhfrom =
+	char* inhfrom =
 	  clash->inh_from()->container()->scopedName()->toString();
 	IdlErrorCont(clash->inh_from()->file(), clash->inh_from()->line(),
 		     "(`%s' declared in %s here)",

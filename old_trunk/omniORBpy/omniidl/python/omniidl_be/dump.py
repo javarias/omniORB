@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.4  1999/11/01 20:19:55  dpg1
+# Support for union switch types declared inside the switch statement.
+#
 # Revision 1.3  1999/11/01 16:39:49  dpg1
 # Cosmetic change.
 #
@@ -359,8 +362,6 @@ enum @id@ {@enums@};""",
 
 
 def run(tree, args):
-    print "\n\n\n\nRunning...\n\n\n"
-
     st = output.Stream(sys.stdout, 2)
     dv = DumpVisitor(st)
     tree.accept(dv)

@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  1999/10/29 15:43:44  dpg1
+// Error counts now reset when Report...() is called.
+//
 // Revision 1.1  1999/10/27 14:05:58  dpg1
 // *** empty log message ***
 //
@@ -39,6 +42,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 
 int errorCount    = 0;
 int warningCount  = 0;
@@ -71,9 +75,9 @@ IdlErrorCont(const char* file, int line, const char* fmt ...)
 void
 IdlSyntaxError(const char* file, int line, const char* mesg)
 {
-  static const char* lastFile = idl_strdup("");
-  static int         lastLine = 0;
-  static const char* lastMesg = idl_strdup("");
+  static char* lastFile = idl_strdup("");
+  static int   lastLine = 0;
+  static char* lastMesg = idl_strdup("");
 
   if (line != lastLine || strcmp(file, lastFile) || strcmp(mesg, lastMesg)) {
     lastLine = line;
