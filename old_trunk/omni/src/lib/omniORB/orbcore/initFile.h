@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.7  1998/08/11 17:58:10  sll
+  Do not use registry if the platform is Phar Lap ETS Kernel.
+
   Revision 1.6  1997/12/09 18:23:18  sll
   Updated interface to avoid memory leaks.
 
@@ -57,7 +60,6 @@ public:
   void initialize();
 
 private:
-  CORBA::Object_var _NameService;
 
   char* fData;
   long fsize;
@@ -88,10 +90,6 @@ private:
 		       CORBA::String_var& data);
 #endif
 
-public:
-  CORBA::Object_ptr NameService() { 
-    return CORBA::Object::_duplicate(_NameService); 
-  }
 };
 
 
