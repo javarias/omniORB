@@ -3,6 +3,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.4  1999/09/13 14:52:27  dpg1
+# TypeCode equivalence.
+#
 # Revision 1.3  1999/07/29 14:17:18  dpg1
 # TypeCode creation interface.
 #
@@ -882,4 +885,5 @@ def r_insertIndirections(d, seen, ind):
             r_insertIndirections(d[i+1], seen, ind)
 
     elif k == tv__indirect:
-        ind.append(d[1])
+        if type(d[1][0]) == types.StringType:
+            ind.append(d[1])
