@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3.2.1  2000/07/17 10:36:02  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.4  2000/07/13 15:25:53  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -73,7 +76,7 @@ int main(int argc, char** argv)
     f    = stdin;
   }
 
-  _CORBA_Boolean success = AST::process(f, name);
+  IDL_Boolean success = AST::process(f, name);
 
   fclose(f);
 

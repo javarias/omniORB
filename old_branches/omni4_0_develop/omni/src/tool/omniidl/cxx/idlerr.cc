@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.1  2000/07/17 10:36:03  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.6  2000/07/13 15:25:53  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -132,7 +135,7 @@ void IdlWarningCont(const char* file, int line, const char* fmt ...)
   }
 }
 
-_CORBA_Boolean
+IDL_Boolean
 IdlReportErrors()
 {
   if (!Config::quiet) {
@@ -153,8 +156,8 @@ IdlReportErrors()
       fprintf(stderr, ".\n");
   }
 
-  _CORBA_Boolean ret = (errorCount == 0);
-  errorCount         = 0;
-  warningCount       = 0;
+  IDL_Boolean ret = (errorCount == 0);
+  errorCount      = 0;
+  warningCount    = 0;
   return ret;
 }

@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.1  2000/07/17 10:36:03  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.3  2000/07/13 15:25:53  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -47,10 +50,10 @@
 
 class Config {
 public:
-  static _CORBA_Boolean quiet;           // Don't make any output
-  static _CORBA_Boolean forwardWarning;  // Warn about unresolved forwards
-  static _CORBA_Boolean keepComments;    // Keep comments from source
-  static _CORBA_Boolean commentsFirst;   // Comments come before declarations
+  static IDL_Boolean quiet;           // Don't make any output
+  static IDL_Boolean forwardWarning;  // Warn about unresolved forwards
+  static IDL_Boolean keepComments;    // Keep comments from source
+  static IDL_Boolean commentsFirst;   // Comments come before declarations
 };
 
 

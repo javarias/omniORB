@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4.2.1  2000/07/17 10:36:03  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.5  2000/07/13 15:25:53  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -57,6 +60,6 @@ void IdlSyntaxError(const char* file, int line, const char* mesg);
 void IdlWarning(const char* file, int line, const char* fmt ...);
 void IdlWarningCont(const char* file, int line, const char* fmt ...);
 
-_CORBA_Boolean IdlReportErrors();
+IDL_Boolean IdlReportErrors();
 
 #endif // _idlerr_h_

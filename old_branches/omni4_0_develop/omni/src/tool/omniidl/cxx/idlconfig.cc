@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.1  2000/07/17 10:36:02  sll
+// Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+//
 // Revision 1.3  2000/07/13 15:25:53  dpg1
 // Merge from omni3_develop for 3.0 release.
 //
@@ -42,7 +45,7 @@
 #include <idlconfig.h>
 
 
-_CORBA_Boolean Config::quiet          = 0;
-_CORBA_Boolean Config::forwardWarning = 1;
-_CORBA_Boolean Config::keepComments   = 0;
-_CORBA_Boolean Config::commentsFirst  = 0;
+IDL_Boolean Config::quiet          = 0;
+IDL_Boolean Config::forwardWarning = 1;
+IDL_Boolean Config::keepComments   = 0;
+IDL_Boolean Config::commentsFirst  = 0;
