@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2003/07/25 16:04:57  dgrisby
+  vxWorks patches.
+
   Revision 1.1.2.17  2003/06/18 10:42:30  dgrisby
   AIX interface lookup fix.
 
@@ -98,13 +101,13 @@
 #include <orbParameters.h>
 
 #if defined(UnixArchitecture)
-#include <sys/ioctl.h>
-#include <net/if.h>
+#  include <sys/ioctl.h>
+#  include <net/if.h>
 #endif
 
 #if defined(NTArchitecture)
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <libcWrapper.h>
+#  include <ws2tcpip.h>
 #endif
 
 #include <omniORB4/linkHacks.h>

@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2003/07/25 16:00:51  dgrisby
+  Avoid linker warnings on Windows.
+
   Revision 1.1.4.8  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -80,6 +83,7 @@
 #define __LIBCWRAPPER_H__
 
 #if defined(__WIN32__)
+#  define FD_SETSIZE 2048
 #  include <winsock2.h>
 #else
 #  include <netdb.h>
