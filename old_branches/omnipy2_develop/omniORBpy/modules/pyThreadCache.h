@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2000/10/13 13:55:27  dpg1
+// Initial support for omniORB 4.
+//
 
 #if defined(__VMS)
 #include <pythread.h>
@@ -54,6 +57,7 @@ public:
 
     CORBA::Boolean used;
     CORBA::Boolean can_scavenge;
+    CORBA::Boolean reused_state;
     int            active;
 
     CacheNode*     next;
