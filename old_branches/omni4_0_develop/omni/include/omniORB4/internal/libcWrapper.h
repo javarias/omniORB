@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2002/02/25 11:17:12  dpg1
+  Use tracedmutexes everywhere.
+
   Revision 1.1.4.4  2002/02/11 17:09:48  dpg1
   Fix Windows brokenness caused by autoconf stuff.
 
@@ -70,8 +73,14 @@
 #define _HAS_NETDB_
 
 
-#if !defined(__WIN32__)
-#include <netdb.h>
+#if defined(__WIN32__)
+#  if !defined(__ETS_KERNEL__)
+#    include <winsock2.h>
+#  else
+#    include <winsock.h>
+#  endif
+#else
+#  include <netdb.h>
 #endif
 
 OMNI_NAMESPACE_BEGIN(omni)
