@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.6  1999/03/11 16:25:55  djr
+  Updated copyright notice
+
   Revision 1.5  1999/02/11 17:54:19  djr
   Added class OutScavengerThreadKiller which kills the out scavenger
   when global destructors are called.
@@ -308,8 +311,7 @@ scanForIdle(Anchor* anchor,char* thread_name)
 	  // Set the heartbeat boolean to 1 and get back its value
 	  // prior to this update.
 	  CORBA::Boolean heartbeat = 1;
-	  omni_thread::get_time(&abs_sec,&abs_nsec);
-	  if (Strand::Sync::WrTimedLock(s,heartbeat,abs_sec,abs_nsec))
+	  if (Strand::Sync::WrTestLock(s,heartbeat))
 	    {
 	      if (heartbeat) 
 		{
@@ -323,7 +325,6 @@ scanForIdle(Anchor* anchor,char* thread_name)
 		  }
 		  s->shutdown();
 		}
-	      Strand::Sync::WrUnlock(s);
 	    }
 	}
     }
