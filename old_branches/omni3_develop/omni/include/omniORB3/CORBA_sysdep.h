@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.7  2000/02/23 12:57:15  dpg1
+ Some support for NextStep x86.
+
  Revision 1.1.2.6  2000/02/04 14:48:09  djr
  Added a couple of feature test macros.
 
@@ -256,6 +259,9 @@
 #endif
 #define _HAS_NOT_GOT_strcasecmp
 #define _HAS_NOT_GOT_strncasecmp
+// No current version of MSVC++ can catch exceptions by base class
+#undef HAS_Cplusplus_catch_exception_by_base
+
 
 #elif defined(__BCPLUSPLUS__)
 #define HAS_Cplusplus_Namespace
