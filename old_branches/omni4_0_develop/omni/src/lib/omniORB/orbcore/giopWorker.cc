@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/06/20 18:35:17  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
   Revision 1.1.4.1  2001/04/18 18:10:48  sll
   Big checkin with the brand new internal APIs.
 
@@ -47,7 +52,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 giopWorker::giopWorker(giopStrand* r, giopServer* s, CORBA::Boolean h) :
-    omniTask(omniTask::ImmediateDispatch),
+    omniTask(((h)?omniTask::AnyTime:omniTask::ImmediateDispatch)),
     pd_strand(r),
     pd_server(s),
     pd_singleshot(h) {}
@@ -62,22 +67,31 @@ giopWorker::execute() {
   CORBA::Boolean exit_on_error;
 
   if (!pd_strand->gatekeeper_checked && !gateKeeper::checkConnect(pd_strand)) {
-      exit_on_error = 1;
-      goto error;
+      pd_server->notifyWkDone(this,1);
+      return;
   }
   else {
     pd_strand->gatekeeper_checked = 1;
   }
 
+  CORBA::Boolean done = pd_singleshot;
+
   do {
 
-    GIOP_S_Holder iop_s(pd_strand,pd_server);
-    exit_on_error = !iop_s->dispatcher();
+    GIOP_S_Holder iops_holder(pd_strand,this);
 
-  } while(!(pd_singleshot || exit_on_error));
+    GIOP_S* iop_s = iops_holder.operator->();
+    if (iop_s) {
+      exit_on_error = !iop_s->dispatcher();
+    }
+    else {
+      exit_on_error = 1;
+    }
 
- error:
-  pd_server->notifyWkDone(this,exit_on_error);
+    pd_server->notifyWkDone(this,exit_on_error);
+
+  } while(!(done || exit_on_error));
+
 }
 
 void
