@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.14  2000/07/03 15:38:20  dpg1
+  Support for FreeBSD 4.0. FreeBSD 3.2 hopefully works too.
+
   Revision 1.22.6.13  2000/06/27 15:18:15  sll
   On some platforms, e.g. HPUX 11 and Windows NT, shutdown() does not unblock
   a thread in recv() when the socket is of the active type, i.e.  a connect()
@@ -1294,6 +1297,7 @@ realConnect(tcpSocketEndpoint* r,tcpSocketStrand* s)
     return RC_INVALID_SOCKET;
   }
 # else
+  v = 0;
   if (ioctlsocket(sock,FIONBIO,&v) == RC_SOCKET_ERROR) {
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
