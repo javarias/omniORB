@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.10  1999/11/17 17:23:54  dpg1
+// Minor bug when scoped name look-up encounters an identifier which does
+// not form a scope.
+//
 // Revision 1.9  1999/11/17 17:17:00  dpg1
 // Changes to remove static initialisation of objects.
 //
@@ -519,6 +523,8 @@ findWithInheritance(const char* identifier) const
   }
   // Not found locally -- try inherited scopes
   for (InheritSpec* is = inherited_; is; is = is->next()) {
+    if (!is->scope()) continue; // Skip broken entries from earlier errors
+
     in_el = is->scope()->findWithInheritance(identifier);
 
     if (el)
@@ -527,6 +533,8 @@ findWithInheritance(const char* identifier) const
       el = in_el;
   }
   for (ValueInheritSpec* vis = valueInherited_; vis; vis = vis->next()) {
+    if (!vis->scope()) continue; // Skip broken entries from earlier errors
+
     in_el = vis->scope()->findWithInheritance(identifier);
 
     if (el)
@@ -562,6 +570,8 @@ iFindWithInheritance(const char* identifier) const
   }
   // Not found locally -- try inherited scopes
   for (InheritSpec* is = inherited_; is; is = is->next()) {
+    if (!is->scope()) continue; // Skip broken entries from earlier errors
+
     in_el = is->scope()->iFindWithInheritance(identifier);
 
     if (el)
@@ -570,6 +580,8 @@ iFindWithInheritance(const char* identifier) const
       el = in_el;
   }
   for (ValueInheritSpec* vis = valueInherited_; vis; vis = vis->next()) {
+    if (!vis->scope()) continue; // Skip broken entries from earlier errors
+
     in_el = vis->scope()->iFindWithInheritance(identifier);
 
     if (el)
