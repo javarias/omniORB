@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:26:01  sll
+  Initial revision
+
  */
 
 #include <omniORB2/CORBA.h>
@@ -31,7 +34,7 @@ void
 CORBA::
 BOA::dispose(CORBA::Object_ptr p)
 {
-  omniORB::disposeObject(p->PR_getobj());
+  omni::disposeObject(p->PR_getobj());
   return;
 }
 
@@ -40,15 +43,21 @@ CORBA::
 BOA::obj_is_ready(Object_ptr op, ImplementationDef_ptr ip /* ignored */)
 {
   omniObject *obj = op->PR_getobj();
-  omniORB::objectIsReady(obj);
+  omni::objectIsReady(obj);
   return;
 }
 
 void
 CORBA::
-BOA::impl_is_ready(CORBA::ImplementationDef_ptr p)
+BOA::impl_is_ready(CORBA::ImplementationDef_ptr p,CORBA::Boolean NonBlocking)
 {
-  omniORB::orbIsReady();
+  omni::orbIsReady();
+  if (!NonBlocking) {
+    omni_mutex m;
+    omni_condition c(&m);
+    m.lock();
+    c.wait();	// block here forever
+  }
   return;
 }
 
