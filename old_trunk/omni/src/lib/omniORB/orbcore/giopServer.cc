@@ -11,6 +11,10 @@
  
 /*
   $Log$
+// Revision 1.2  1997/01/13  14:55:47  sll
+// If the request message size in the header is too large, throw a COMM_FAILURE
+// instead of omniORB::fatalException.
+//
   Revision 1.1  1997/01/08 17:26:01  sll
   Initial revision
 
@@ -416,17 +420,22 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
       }
   }
   catch (CORBA::INV_OBJREF &ex) {
-    RequestReceived(1);
-    if (!pd_response_expected) {
-      // This is a one way invocation, we choose to return a MessageError
-      // Message instead of returning a Reply with System Exception
-      // message because the other-end says do not send me a reply!
-      SendMsgErrorMessage();
-      ReplyCompleted();
+    if (!obj) {
+      RequestReceived(1);
+      if (!pd_response_expected) {
+	// This is a one way invocation, we choose to return a MessageError
+	// Message instead of returning a Reply with System Exception
+	// message because the other-end says do not send me a reply!
+	SendMsgErrorMessage();
+	ReplyCompleted();
+      }
+      else {
+	MarshallSystemException(this,SysExceptRepoID::INV_OBJREF,ex);
+      }
     }
     else {
-      MarshallSystemException(this,SysExceptRepoID::INV_OBJREF,ex);
-    }
+      CHECK_AND_MAYBE_MARSHALL_SYSTEM_EXCEPTION (INV_OBJREF,ex);
+    }      
   }
   catch (CORBA::UNKNOWN &ex) {
     CHECK_AND_MAYBE_MARSHALL_SYSTEM_EXCEPTION (UNKNOWN,ex);
