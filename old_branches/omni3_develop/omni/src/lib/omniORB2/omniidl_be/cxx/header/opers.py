@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.3  2000/04/26 18:22:30  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+#
 # Revision 1.7.2.2  2000/03/20 11:50:20  djs
 # Removed excess buffering- output templates have code attached which is
 # lazily evaluated when required.
@@ -101,7 +105,7 @@ def visitStruct(node):
         n.accept(self)
 
     # TypeCode and Any
-    if config.TypecodeFlag():
+    if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
 
         stream.out(template.any_struct,
@@ -121,7 +125,7 @@ def visitUnion(node):
             n.caseType().decl().accept(self)
     
     # TypeCode and Any
-    if config.TypecodeFlag():
+    if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
     
         stream.out(template.any_union,
@@ -149,11 +153,11 @@ def visitEnum(node):
 
     stream.out(template.enum_operators,
                name = cxx_fqname,
-               private_prefix = config.privatePrefix(),
+               private_prefix = config.state['Private Prefix'],
                cases = cases)
 
     # Typecode and Any
-    if config.TypecodeFlag():
+    if config.state['Typecode']:
         stream.out(template.any_enum,
                    name = cxx_fqname)
 
@@ -168,7 +172,7 @@ def visitInterface(node):
 
 
     # Typecode and Any
-    if config.TypecodeFlag():
+    if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
     
         stream.out(template.any_interface,
@@ -185,7 +189,7 @@ def visitTypedef(node):
         aliasType.type().decl().accept(self)
 
     # don't need to do anything unless generating TypeCodes and Any
-    if not(config.TypecodeFlag()):
+    if not(config.state['Typecode']):
         return
     
     for d in node.declarators():
@@ -221,7 +225,7 @@ def visitException(node):
             m.memberType().decl().accept(self)
     
     # don't need to do anything unless generating TypeCodes and Any
-    if not(config.TypecodeFlag()):
+    if not(config.state['Typecode']):
         return
 
     fqname = id.Name(node.scopedName()).fullyQualify()

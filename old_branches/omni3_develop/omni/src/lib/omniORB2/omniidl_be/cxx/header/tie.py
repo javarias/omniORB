@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11.2.6  2000/06/12 13:22:14  djs
+# Stopped generation of BOA ties #include'd from other files
+#
 # Revision 1.11.2.5  2000/06/05 13:03:58  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
 # Removed name clash when a sequence is called "pd_seq"
@@ -256,7 +259,7 @@ class FlatTieTemplates(idlvisitor.AstVisitor):
         if not(node.mainFile()): return
         
         self.generate_POA_tie(node)
-        if config.BOAFlag():
+        if config.state['BOA Skeletons']:
             self.generate_BOA_tie(node)
 
     def generate_BOA_tie(self, node):
