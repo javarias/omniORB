@@ -28,6 +28,12 @@
 #
 # $Id$
 # $Log$
+# Revision 1.11.2.5  2000/06/05 13:03:58  djs
+# Removed union member name clash (x & pd_x, pd__default, pd__d)
+# Removed name clash when a sequence is called "pd_seq"
+# Nested union within union fix
+# Actually generates BOA non-flattened tie templates
+#
 # Revision 1.11.2.4  2000/05/31 18:02:58  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)
@@ -209,6 +215,7 @@ class BOATieTemplates(idlvisitor.AstVisitor):
         for d in node.declarations(): d.accept(self)
 
     def visitModule(self, node):
+        if not(node.mainFile()): return
 
         name = id.Name(node.scopedName())
         
