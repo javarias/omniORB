@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/07/26 16:37:22  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.2  2001/06/13 20:13:50  sll
   Minor updates to make the ORB compiles with MSVC++.
 
@@ -42,11 +45,17 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <objectAdapter.h>
+#include <SocketCollection.h>
 #include <tcp/tcpConnection.h>
 #include <tcp/tcpAddress.h>
 #include <tcp/tcpEndpoint.h>
 #include <tcp/tcpTransportImpl.h>
 #include <omniORB4/linkHacks.h>
+
+OMNI_FORCE_LINK(tcpAddress);
+OMNI_FORCE_LINK(tcpConnection);
+OMNI_FORCE_LINK(tcpEndpoint);
+OMNI_FORCE_LINK(tcpActive);
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpTransportImpl);
 
@@ -101,9 +110,8 @@ tcpTransportImpl::isValid(const char* param) {
 }
 
 /////////////////////////////////////////////////////////////////////////
-static
 CORBA::Boolean
-parseAddress(const char* param, IIOP::Address& address) {
+tcpTransportImpl::parseAddress(const char* param, IIOP::Address& address) {
 
   const char* p = strchr(param,':');
   if (!p || param == p || *p == '\0') return 0;

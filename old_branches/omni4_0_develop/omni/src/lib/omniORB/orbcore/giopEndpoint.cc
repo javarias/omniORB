@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/07/26 16:37:21  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.4  2001/07/25 14:22:02  dpg1
   Same old static initialiser problem, this time with transports.
 
@@ -49,6 +52,7 @@
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/linkHacks.h>
 #include <initialiser.h>
+#include <stdio.h>
 
 //
 // Make sure built-in transports are always linked
@@ -134,6 +138,34 @@ giopAddress::str2Address(const char* address) {
 }
 
 ////////////////////////////////////////////////////////////////////////
+giopAddress*
+giopAddress::fromTcpAddress(const IIOP::Address& addr) {
+  const char* format = "giop:tcp:%s:%d";
+
+  CORBA::ULong len = strlen(addr.host);
+  if (len == 0) return 0;
+  len += strlen(format) + 6;
+  CORBA::String_var addrstr;
+  addrstr = CORBA::string_alloc(len);
+  sprintf(addrstr,format,(const char*)addr.host,addr.port);
+  return giopAddress::str2Address(addrstr);
+}
+
+////////////////////////////////////////////////////////////////////////
+giopAddress*
+giopAddress::fromSslAddress(const IIOP::Address& addr) {
+  const char* format = "giop:ssl:%s:%d";
+
+  CORBA::ULong len = strlen(addr.host);
+  if (len == 0) return 0;
+  len += strlen(format) + 6;
+  CORBA::String_var addrstr;
+  addrstr = CORBA::string_alloc(len);
+  sprintf(addrstr,format,(const char*)addr.host,addr.port);
+  return giopAddress::str2Address(addrstr);
+}
+
+////////////////////////////////////////////////////////////////////////
 giopEndpoint*
 giopEndpoint::str2Endpoint(const char* endpoint) {
 
@@ -203,6 +235,5 @@ giopConnection::decrRefCount(CORBA::Boolean forced) {
     delete this;
   return rc;
 }
-
 
 OMNI_NAMESPACE_END(omni)

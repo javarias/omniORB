@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2001/07/26 16:37:21  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.5  2001/07/13 15:35:57  sll
   Enter a mapping from a socket to a giopConnection in the endpoint's hash
   table.
@@ -56,9 +59,10 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/sslContext.h>
+#include <SocketCollection.h>
 #include <ssl/sslConnection.h>
 #include <ssl/sslEndpoint.h>
-#include <tcp/tcpEndpoint.h>
+#include <tcp/tcpConnection.h>
 #include <stdio.h>
 #include <omniORB4/linkHacks.h>
 
@@ -85,7 +89,7 @@ sslConnection::Send(void* buf, size_t sz,
     struct timeval t;
 
     if (deadline_secs || deadline_nanosecs) {
-      tcpConnection::setTimeOut(deadline_secs,deadline_nanosecs,t);
+      SocketSetTimeOut(deadline_secs,deadline_nanosecs,t);
       if (t.tv_sec == 0 && t.tv_usec == 0) {
 	// Already timeout.
 	return 0;
@@ -175,7 +179,7 @@ sslConnection::Recv(void* buf, size_t sz,
     struct timeval t;
 
     if (deadline_secs || deadline_nanosecs) {
-      tcpConnection::setTimeOut(deadline_secs,deadline_nanosecs,t);
+      SocketSetTimeOut(deadline_secs,deadline_nanosecs,t);
       if (t.tv_sec == 0 && t.tv_usec == 0) {
 	// Already timeout.
 	return 0;
@@ -285,9 +289,9 @@ sslConnection::peeraddress() {
 }
 
 /////////////////////////////////////////////////////////////////////////
-sslConnection::sslConnection(tcpSocketHandle_t sock,::SSL* ssl, 
-			     sslEndpoint* endpoint) : 
-  pd_socket(sock), pd_endpoint(endpoint), pd_ssl(ssl) {
+sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl, 
+			     SocketCollection* belong_to) : 
+  SocketLink(sock), pd_ssl(ssl), pd_belong_to(belong_to) {
 
   struct sockaddr_in addr;
   SOCKNAME_SIZE_T l;
@@ -310,21 +314,13 @@ sslConnection::sslConnection(tcpSocketHandle_t sock,::SSL* ssl,
 			       (CORBA::ULong)addr.sin_addr.s_addr,
 			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
 
-  if (endpoint) {
-    omni_tracedmutex_lock sync(endpoint->pd_fdset_lock);
-    sslConnection** head = &(endpoint->pd_hash_table[sock%tcpEndpoint::hashsize]);
-    pd_next = *head;
-    *head = this;
-  }
-
-  if (endpoint && omniORB::trace(5)) {
-    omniORB::logger l;
-    l << "connect from " << pd_peeraddress << "\n";
-  }
+  belong_to->addSocket(this);
 }
 
 /////////////////////////////////////////////////////////////////////////
 sslConnection::~sslConnection() {
+
+  pd_belong_to->removeSocket(pd_socket);
 
   if(pd_ssl != 0) {
     if (SSL_get_shutdown(pd_ssl) == 0) {
@@ -336,23 +332,39 @@ sslConnection::~sslConnection() {
   }
 
   CLOSESOCKET(pd_socket);
+}
 
-  if (pd_endpoint) {
-    omni_tracedmutex_lock sync(pd_endpoint->pd_fdset_lock);
-    sslConnection** head = &(pd_endpoint->pd_hash_table[pd_socket % 
-						       tcpEndpoint::hashsize]);
-    while (*head) {
-      if (*head == this) {
-	*head = pd_next;
-	break;
-      }
-      head = &((*head)->pd_next);
-    }
+/////////////////////////////////////////////////////////////////////////
+void
+sslConnection::setSelectable(CORBA::Boolean now,
+			     CORBA::Boolean data_in_buffer) {
+
+  if (SSL_pending(ssl_handle())) data_in_buffer = 1;
+
+  pd_belong_to->setSelectable(pd_socket,now,data_in_buffer);
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+void
+sslConnection::clearSelectable() {
+
+  pd_belong_to->clearSelectable(pd_socket);
+}
+
+/////////////////////////////////////////////////////////////////////////
+void
+sslConnection::Peek(giopConnection::notifyReadable_t func, void* cookie) {
+
+  if (SSL_pending(ssl_handle())) {
+    func(cookie,this);
+    return;
   }
-  if (omniORB::trace(20)) {
-    omniORB::logger log;
-    log << "close connection to peer " << peeraddress() << "\n";
+
+  if (pd_belong_to->Peek(pd_socket)) {
+    func(cookie,this);
   }
 }
+
 
 OMNI_NAMESPACE_END(omni)

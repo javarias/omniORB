@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/07/26 16:37:21  dpg1
+  Make sure static initialisers always run.
+
   Revision 1.1.2.2  2001/06/18 20:27:56  sll
   Use strchr instead of index() for maximal portability.
 
@@ -59,6 +62,7 @@ OMNI_FORCE_LINK(sslAddress);
 OMNI_FORCE_LINK(sslConnection);
 OMNI_FORCE_LINK(sslContext);
 OMNI_FORCE_LINK(sslEndpoint);
+OMNI_FORCE_LINK(sslActive);
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(omnisslTP);
 
