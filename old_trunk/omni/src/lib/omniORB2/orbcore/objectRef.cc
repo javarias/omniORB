@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.13  1997/12/10 13:23:41  sll
+  Removed dependency on omniLC.h.
+
   Revision 1.12  1997/12/10 11:39:19  sll
   Updated life cycle runtime.
 
@@ -757,7 +760,7 @@ CORBA::UnMarshalObjRef(const char *repoId,
       break;
 
     default:
-      if (idlen > s.unRead()) {
+      if (s.overrun(idlen)) {
 	throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
       }
       id = new CORBA::Char[idlen];
