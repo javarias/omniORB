@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2003/07/25 16:04:57  dgrisby
+  vxWorks patches.
+
   Revision 1.1.2.12  2003/04/15 10:40:47  dgrisby
   Timeouts ignored in some cases when scan granularity set to zero.
 
@@ -342,6 +345,9 @@ tcpConnection::tcpConnection(SocketHandle_t sock,
     pd_peeraddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
 				 (CORBA::UShort)addr.sin_port,"giop:tcp:");
   }
+
+  SocketSetCloseOnExec(sock);
+
   belong_to->addSocket(this);
 }
 

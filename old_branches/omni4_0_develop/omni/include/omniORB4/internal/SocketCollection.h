@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.16  2003/02/17 01:45:50  dgrisby
+  Pipe to kick select thread (on Unix).
+
   Revision 1.1.2.15  2002/10/04 11:11:45  dgrisby
   Transport fixes: ENOTSOCK for Windows, SOMAXCONN in listen().
 
@@ -246,6 +249,7 @@ extern int SocketSetnonblocking(SocketHandle_t sock);
 
 extern int SocketSetblocking(SocketHandle_t sock);
 
+extern int SocketSetCloseOnExec(SocketHandle_t sock);
 
 class SocketLink {
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2002/04/16 12:44:27  dpg1
+  Fix SSL accept bug, clean up logging.
+
   Revision 1.1.2.8  2002/03/13 16:05:40  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -128,6 +131,8 @@ unixEndpoint::Bind() {
   }
 
   unlink(pd_filename);
+
+  SocketSetCloseOnExec(pd_socket);
 
   struct sockaddr_un addr;
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2003/04/15 10:40:47  dgrisby
+  Timeouts ignored in some cases when scan granularity set to zero.
+
   Revision 1.1.2.11  2001/12/03 13:39:55  dpg1
   Explicit socket shutdown flag for Windows.
 
@@ -349,6 +352,8 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 			       (CORBA::ULong)addr.sin_addr.s_addr,
 			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
   }
+  SocketSetCloseOnExec(sock);
+
   belong_to->addSocket(this);
 }
 

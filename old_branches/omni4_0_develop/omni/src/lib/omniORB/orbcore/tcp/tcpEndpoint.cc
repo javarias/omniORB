@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.21  2003/07/25 16:04:57  dgrisby
+  vxWorks patches.
+
   Revision 1.1.2.20  2003/05/04 11:22:14  dgrisby
   Set the poked flag in the right place.
 
@@ -183,6 +186,8 @@ tcpEndpoint::Bind() {
       return 0;
     }
   }
+
+  SocketSetCloseOnExec(pd_socket);
 
   const char* host;
   if ((char*)pd_address.host && strlen(pd_address.host) != 0) {

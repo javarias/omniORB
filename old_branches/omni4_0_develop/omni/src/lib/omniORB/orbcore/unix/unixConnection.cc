@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2003/04/15 10:40:47  dgrisby
+  Timeouts ignored in some cases when scan granularity set to zero.
+
   Revision 1.1.2.6  2002/03/21 10:59:13  dpg1
   HPUX fixes.
 
@@ -266,6 +269,8 @@ unixConnection::unixConnection(SocketHandle_t sock,
     pd_myaddress = unToString(filename);
     pd_peeraddress = unToString(filename_1);
   }
+
+  SocketSetCloseOnExec(sock);
 
   belong_to->addSocket(this);
 }
