@@ -11,6 +11,9 @@
 
 /*
   $Log$
+// Revision 1.6  1997/03/10  14:22:18  sll
+// Minor changes to filter out error messages depending on the trace level.
+//
 // Revision 1.5  1997/03/04  10:31:15  ewc
 // Added support for obtaining initial object references from Windows NT/'95
 // registry
@@ -169,7 +172,7 @@ void initFile::initialize()
 
 	  try
 	    {
-	      objptr = omniORB::stringToObject(data);
+	      objptr = omni::stringToObject(data);
 	    }
 	  catch(CORBA::MARSHAL& ex)
 	    {
