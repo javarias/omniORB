@@ -30,6 +30,13 @@
 // $Id$
 
 // $Log$
+// Revision 1.25.2.4  2001/02/14 15:22:20  dpg1
+// Fix bug using repoId strings after deletion.
+//
+// Revision 1.25.2.3  2000/11/29 17:11:18  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
 // Revision 1.25.2.2  2000/09/21 11:05:49  dpg1
 // Fix race condition with Py_omniServant deletion.
 //
@@ -278,7 +285,9 @@ public:
   // Object reference functions                                             //
   ////////////////////////////////////////////////////////////////////////////
 
-  // Create the Python object relating to a CORBA object reference:
+  // Create the Python object relating to a CORBA object reference
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* createPyCorbaObjRef(const char* targetRepoId,
 				const CORBA::Object_ptr objref);
@@ -289,6 +298,8 @@ public:
 
   // Functions which mirror omni::createObjRef(). These versions don't
   // look for C++ proxy factories, and spot local Python servants.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   omniObjRef* createObjRef(const char*             mostDerivedRepoId,
 			   const char*             targetRepoId,
@@ -309,27 +320,32 @@ public:
   // When a POA creates a reference to a Python servant, it does not
   // have a proxy object factory for it, so it creates an
   // omniAnonObjRef. This function converts one of them into a
-  // Py_omniObjRef with a reference to the local servant. It
-  // decrements the refcount of the original objref.
+  // Py_omniObjRef with a reference to the local servant.
+  //
+  // Caller must NOT hold the Python interpreter lock.
   static
   CORBA::Object_ptr makeLocalObjRef(const char* targetRepoId,
-				    CORBA::Object_ptr objref);
+				    const CORBA::Object_ptr objref);
 
   // Copy a Python object reference in an argument or return value.
   // Compares the type of the objref with the target type, and creates
   // a new objref of the target type if they are not compatible. Sets
   // Python exception status to BAD_PARAM and returns 0 if the Python
   // object is not an object reference.
+  //
+  // Caller must hold the Python interpreter lock.
   static
   PyObject* copyObjRefArgument(PyObject*               pytargetRepoId,
 			       PyObject*               pyobjref,
 			       CORBA::CompletionStatus compstatus);
 
-  // Mirror of omniURI::stringToObject()
+  // Mirror of omniURI::stringToObject(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr stringToObject(const char* uri);
 
-  // Mirrors of CORBA::UnMarshalObjRef()
+  // Mirrors of CORBA::UnMarshalObjRef(). Caller must hold the Python
+  // interpreter lock.
   static
   CORBA::Object_ptr UnMarshalObjRef(const char* repoId, NetBufferedStream& s);
 

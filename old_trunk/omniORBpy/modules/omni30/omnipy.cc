@@ -30,6 +30,12 @@
 // $Id$
 
 // $Log$
+// Revision 1.37.2.1  2000/11/02 17:45:42  dpg1
+// Unnecessary extra call to _is_a() after narrow()
+//
+// Revision 1.37  2000/06/27 15:12:22  dpg1
+// Change error message for version clash
+//
 // Revision 1.36  2000/06/12 15:36:08  dpg1
 // Support for exception handler functions. Under omniORB 3, local
 // operation dispatch modified so exceptions handlers are run.
@@ -742,7 +748,7 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
       omniObjRef* oodest = omniPy::createObjRef(oosource->_mostDerivedRepoId(),
 						repoId,
 						oosource->_iopProfiles(),
-						0, 0);
+						0, 1);
       CORBA::Object_ptr cxxdest =
 	(CORBA::Object_ptr)(oodest->_ptrToObjRef(CORBA::Object::_PD_repoId));
 

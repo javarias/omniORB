@@ -31,9 +31,6 @@
 // Revision 1.23.2.6  2000/09/06 11:40:23  dpg1
 // Support for Python 1.6 and 2.0b1.
 //
-// Revision 1.23.2.2  2000/08/21 09:10:47  dpg1
-// Merge omniidl long long support from omniORB 3
-//
 // Revision 1.23.2.5  2000/08/30 18:12:45  dpg1
 // Register operation declarations so they can be found with findDecl().
 //

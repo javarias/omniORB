@@ -838,9 +838,6 @@ char *yytext;
 // Revision 1.18.2.2  2000/08/29 10:20:24  dpg1
 // Operations and attributes now have repository ids.
 //
-// Revision 1.18.2.1  2000/08/21 09:10:48  dpg1
-// Merge omniidl long long support from omniORB 3
-//
 // Revision 1.7.2.8  2000/08/07 15:34:35  dpg1
 // Partial back-port of long long from omni3_1_develop.
 //

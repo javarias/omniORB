@@ -29,8 +29,20 @@
 //    objects, rather than C++ objects
 
 // $Id$
-
 // $Log$
+// Revision 1.17.2.3  2001/02/14 15:22:20  dpg1
+// Fix bug using repoId strings after deletion.
+//
+// Revision 1.17.2.2  2000/11/29 17:11:18  dpg1
+// Fix deadlock when trying to lock omniORB internal lock while holding
+// the Python interpreter lock.
+//
+// Revision 1.17.2.1  2000/11/21 10:59:58  dpg1
+// Segfault when string_to_object returns a nil objref.
+//
+// Revision 1.17  2000/06/27 15:13:12  dpg1
+// New copyObjRefArgument() function
+//
 // Revision 1.16  2000/06/16 17:33:18  dpg1
 // When creating an object reference with target type A, when the object
 // claims to be B, but A and B are unrelated, now creates a reference of
@@ -447,7 +459,8 @@ omniPy::createObjRef(const char*             mostDerivedRepoId,
 
 
 CORBA::Object_ptr
-omniPy::makeLocalObjRef(const char* targetRepoId, CORBA::Object_ptr objref)
+omniPy::makeLocalObjRef(const char* targetRepoId,
+			const CORBA::Object_ptr objref)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
@@ -464,7 +477,6 @@ omniPy::makeLocalObjRef(const char* targetRepoId, CORBA::Object_ptr objref)
 				    ooref->_iopProfiles(), 0,
 				    key.return_key(), 1);
   }
-  CORBA::release(objref);
   return (CORBA::Object_ptr)newooref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
 
@@ -534,10 +546,14 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
 
   if (targetRepoId[0] == '\0') targetRepoId = CORBA::Object::_PD_repoId;
 
-  omniObjRef* newooref     = omniPy::createObjRef(actualRepoId,
-						  targetRepoId,
-						  ooref->_iopProfiles(), 0,
-						  0, 0);
+  omniObjRef* newooref;
+  {
+    omniPy::InterpreterUnlocker _u;
+    newooref = omniPy::createObjRef(actualRepoId,
+				    targetRepoId,
+				    ooref->_iopProfiles(), 0,
+				    0, 0);
+  }
   return createPyCorbaObjRef(targetRepoId,
 			     (CORBA::Object_ptr)newooref->
 			             _ptrToObjRef(CORBA::Object::_PD_repoId));
@@ -551,14 +567,18 @@ omniPy::stringToObject(const char* uri)
 
   cxxobj = omniURI::stringToObject(uri);
 
-  if (cxxobj->_NP_is_pseudo()) {
+  if (CORBA::is_nil(cxxobj) || cxxobj->_NP_is_pseudo()) {
     return cxxobj;
   }
   omniObjRef* cxxobjref = cxxobj->_PR_getobj();
-  omniObjRef* objref    = omniPy::createObjRef(cxxobjref->_mostDerivedRepoId(),
-					       CORBA::Object::_PD_repoId,
-					       cxxobjref->_iopProfiles(),
-					       0, 0);
+  omniObjRef* objref;
+  {
+    omniPy::InterpreterUnlocker _u;
+    objref = omniPy::createObjRef(cxxobjref->_mostDerivedRepoId(),
+				  CORBA::Object::_PD_repoId,
+				  cxxobjref->_iopProfiles(),
+				  0, 0);
+  }
   CORBA::release(cxxobj);
   return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
 }
@@ -567,6 +587,7 @@ omniPy::stringToObject(const char* uri)
 CORBA::Object_ptr
 omniPy::UnMarshalObjRef(const char* repoId, NetBufferedStream& s)
 {
+  omniPy::InterpreterUnlocker _u;
   OMNIORB_ASSERT(repoId);
 
   CORBA::ULong idlen;
@@ -634,7 +655,7 @@ omniPy::UnMarshalObjRef(const char* repoId, NetBufferedStream& s)
       delete [] id;
       id = 0;
 
-      if (!objref) OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
+      if (!objref) OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_MAYBE);
       return 
 	(CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
     }
@@ -650,6 +671,7 @@ omniPy::UnMarshalObjRef(const char* repoId, NetBufferedStream& s)
 CORBA::Object_ptr
 omniPy::UnMarshalObjRef(const char* repoId, MemBufferedStream& s)
 {
+  omniPy::InterpreterUnlocker _u;
   OMNIORB_ASSERT(repoId);
 
   CORBA::ULong idlen;

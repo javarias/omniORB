@@ -29,6 +29,7 @@
 
 
 # $Id$
+
 # $Log$
 # Revision 1.24.2.2  2000/08/23 09:22:07  dpg1
 # Fix loading of IfR stubs with "import CORBA"
