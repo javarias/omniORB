@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.3.2.1  2000/08/07 15:34:35  dpg1
+ Partial back-port of long long from omni3_1_develop.
+
  Revision 1.3  2000/02/04 12:17:10  dpg1
  Support for VMS.
 
@@ -191,14 +194,12 @@
 #     define HAS_Cplusplus_Bool
 #  endif
 
-#if defined(__x86__)
+// GCC claims to support long long on all platforms
 #  define HAS_LongLong
-#  define HAS_LongDouble
 #  define _CORBA_LONGLONG_DECL   long long
 #  define _CORBA_ULONGLONG_DECL  unsigned long long
 #  define _CORBA_LONGDOUBLE_DECL long double 
 #  define _CORBA_LONGLONG_CONST(x) (x##LL)
-#endif
 
 #elif defined(__DECCXX)
 // DEC C++ compiler
