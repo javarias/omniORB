@@ -23,6 +23,9 @@
 
 #include <stdlib.h>
 
+#ifndef __WIN32__
+#include <unistd.h>
+#endif
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS
@@ -801,6 +804,9 @@ char *yytext;
 
 // $Id$
 // $Log$
+// Revision 1.1  1999/11/05 09:43:01  dpg1
+// Changes for NT.
+//
 // Revision 1.3  1999/11/02 17:07:28  dpg1
 // Changes to compile on Solaris.
 //
