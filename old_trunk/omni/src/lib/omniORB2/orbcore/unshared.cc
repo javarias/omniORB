@@ -32,9 +32,13 @@
 
 /*
   $Log$
+  Revision 1.5  1997/05/06 15:32:58  sll
+  Public release.
+
  */
 
 #include <omniORB2/CORBA.h>
+#include <initFile.h>
 #include "libcWrapper.h"
 #if defined(UnixArchitecture)
 #include "tcpSocket_UNIX.h"

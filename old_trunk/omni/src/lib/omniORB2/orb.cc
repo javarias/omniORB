@@ -29,12 +29,16 @@
  
 /*
   $Log$
+  Revision 1.10  1997/08/21 21:57:28  sll
+  tcpsock_rendezvouser does fall over when accept call fails.
+
 // Revision 1.9  1997/05/06  15:27:14  sll
 // Public release.
 //
   */
 
 #include <omniORB2/CORBA.h>
+#include <initFile.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream.h>
