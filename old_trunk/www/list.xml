@@ -6,6 +6,9 @@
 <p>
 There is a lively omniORB mailing list, where you can ask questions
 about using omniORB, report bugs, and discuss CORBA usage in general.
+To prevent spam, you must be a member of the list to post to it.
+Please do not try to post to the list if you have not subscribed,
+since it creates work for the list administrator.
 </p>
 
 <p>
@@ -27,6 +30,14 @@ href="http://www.omniorb-support.com/swish-e/search/omniorb-list">this
 page</a>. Alternatively, you may find a <a
 href="http://www.google.com/advanced_search?hl=en&amp;as_sitesearch=omniorb-support.com">Google
 site specific search</a> more effective.
+</p>
+
+<p>
+If you are interested in the development of omniORB itself, rather
+than just using it, you may want to subscribe to the <a
+href="http://www.omniorb-support.com/mailman/listinfo/omniorb-dev/">omniORB-dev</a>
+mailing list, or read the <a
+href="http://www.omniorb-support.com/pipermail/omniorb-dev/">archives</a>.
 </p>
 
 </page>
