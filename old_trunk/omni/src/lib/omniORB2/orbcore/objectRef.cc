@@ -29,6 +29,13 @@
  
 /*
   $Log$
+  Revision 1.20  1999/01/07 16:31:43  djr
+  Fixed memory leak in CORBA::UnMarshalObjRef().
+  New singleton ProxyObjectTableCleaner, which releases proxy objects
+  from the table when the program finishes. This allows programs such
+  as purify to detect the leak. Also a message is logged if the
+  traceLevel >= 15.
+
   Revision 1.19  1998/08/26 11:14:42  sll
   Minor updates to remove warnings when compiled with standard C++ compilers.
 
@@ -898,7 +905,7 @@ ProxyObjectTableCleaner::~ProxyObjectTableCleaner()
 	  "omniORB: WARNING - Proxy object not released.\n"
 	  "  IR ID   : " << repoId << "\n"
 	  "  RefCount: " << (*p)->getRefCount() << "\n"
-	  "  ObjRef  : " << obj_ref << "\n";
+	  "  ObjRef  : " << (char*)obj_ref << "\n";
 	omniORB::log.flush();
       }
       omniObject** next = &((*p)->pd_next);
