@@ -30,6 +30,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.19  2003/11/19 14:23:42  dgrisby
+# Make COS directory a Python package; add it to sys.path if it's not
+# already there.
+#
 # Revision 1.26.2.18  2003/11/10 16:50:29  dgrisby
 # Last checking broke hashability.
 #
@@ -474,7 +478,16 @@ class EnumItem:
         return self._n
 
     def __cmp__(self, other):
-        return cmp(self._v, other._v)
+        try:
+            if isinstance(other, EnumItem):
+                if other._parent_id == self._parent_id:
+                    return cmp(self._v, other._v)
+                else:
+                    return cmp(self._parent_id, other._parent_id)
+            else:
+                return cmp(id(self), id(other))
+        except:
+            return cmp(id(self), id(other))
 
     def __hash__(self):
         return id(self)
