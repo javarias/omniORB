@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.8  2001/05/29 17:03:50  dpg1
+# In process identity.
+#
 # Revision 1.5.2.7  2001/04/19 09:30:12  sll
 #  Big checkin with the brand new internal APIs.
 # Scoped where appropriate with the omni namespace.
@@ -619,7 +622,7 @@ public:
   @subscript_operator@
 
   inline T* operator -> () { return _pd_seq; }
-#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
+#if defined(__GNUG__)
   inline operator T& () const { return *_pd_seq; }
 #else
   inline operator const T& () const { return *_pd_seq; }

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.14  2001/06/08 17:12:07  dpg1
+ Merge all the bug fixes from omni3_develop.
+
  Revision 1.2.2.13  2001/04/18 17:50:45  sll
  Big checkin with the brand new internal APIs.
  Scoped where appropriate with the omni namespace.
@@ -680,7 +683,8 @@ _CORBA_MODULE_BEG
 
     inline Any* operator->() const { return (Any*)pd_data; }
 
-#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
+    //#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
+#if defined(__GNUG__)
     inline operator Any& () const { return (Any&) *pd_data; }
 #else
     inline operator const Any& () const { return *pd_data; }
