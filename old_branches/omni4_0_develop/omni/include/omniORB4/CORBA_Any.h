@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/01/09 11:37:46  dpg1
+  Platform, constness fixes.
+
   Revision 1.1.2.2  2001/10/17 16:43:59  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -117,7 +120,11 @@ public:
   };
   struct from_string {
     from_string(const char* s, ULong b, Boolean nocopy = 0)
+#ifdef HAS_Cplusplus_const_cast
+      : val(const_cast<char*>(s)), bound(b), nc(nocopy) { }
+#else
       : val((char*)s), bound(b), nc(nocopy) { }
+#endif
     from_string(char* s, ULong b, Boolean nocopy = 0)
       : val(s), bound(b), nc(nocopy) { }   // deprecated
 
