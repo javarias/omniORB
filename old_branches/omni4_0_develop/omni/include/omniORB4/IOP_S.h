@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/05/02 14:20:15  sll
+  Make sure that getStream() is used instead of casting to get a cdrStream
+  from a IOP_C and IOP_S.
+
   Revision 1.1.2.1  2001/04/18 17:26:29  sll
   Big checkin with the brand new internal APIs.
 
@@ -54,14 +58,15 @@ public:
   virtual const char* operation_name() const = 0;
 
   enum State { UnUsed,
-	       InputFullyBuffered,
-	       InputPartiallyBuffered,
 	       Idle,
+	       Zombie,
+	       WaitForRequestHeader,
 	       RequestHeaderIsBeingProcessed,
 	       RequestIsBeingProcessed,
 	       WaitingForReply,
 	       ReplyIsBeingComposed,
-	       Zombie
+	       InputFullyBuffered,
+	       InputPartiallyBuffered
   };
 
   // A IOP_S instance operates in one of the following states:
