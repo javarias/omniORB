@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:49  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -59,7 +62,7 @@ public:
 
   Any& exception();
 
-  virtual void _raise();
+  virtual void _raise() const;
   static UnknownUserException* _downcast(Exception*);
   static const UnknownUserException* _downcast(const Exception*);
   static inline UnknownUserException* _narrow(Exception* e) {

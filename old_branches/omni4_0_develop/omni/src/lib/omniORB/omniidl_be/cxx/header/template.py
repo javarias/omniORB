@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.14  2001/09/19 17:29:04  dpg1
+# Cosmetic changes.
+#
 # Revision 1.5.2.13  2001/08/17 13:45:56  dpg1
 # C++ mapping fixes.
 #
@@ -770,7 +773,7 @@ public:
   @constructor@
   @name@& operator=(const @name@&);
   virtual ~@name@();
-  virtual void _raise();
+  virtual void _raise() const;
   static @name@* _downcast(CORBA::Exception*);
   static const @name@* _downcast(const CORBA::Exception*);
   static inline @name@* _narrow(CORBA::Exception* _e) {

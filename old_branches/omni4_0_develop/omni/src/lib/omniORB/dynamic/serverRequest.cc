@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.9  2001/08/17 13:42:48  dpg1
+ callDescriptor::userException() no longer has to throw an exception.
+
  Revision 1.8.2.8  2001/08/15 10:37:59  dpg1
  Update DSI to use Current, inProcessIdentity.
 
@@ -298,7 +301,7 @@ private:
 
   // We don't expect any of these functions to be called.
   // Any call to these functions is a bug!
-  void _raise() {
+  void _raise() const {
     throw omniORB::fatalException(__FILE__,__LINE__,
 				  "Wrong usage of class FromAnyUserException");
   }
@@ -345,10 +348,10 @@ omniServerRequest::do_reply()
 
 #     define TEST_AND_EXTRACT_SYSEXCEPTION(name) \
       if ( strcmp("IDL:omg.org/CORBA/" #name ":1.0",repoid) == 0 ) { \
-        CORBA::name* ex; \
+        const CORBA::name* ex; \
  	pd_calldesc->pd_exception >>= ex; \
         if (pd_handle.iop_s()) { \
- 	  pd_handle.iop_s()->SendException(ex); \
+ 	  pd_handle.iop_s()->SendException((CORBA::name*)ex); \
  	  return; \
         } \
         else { \

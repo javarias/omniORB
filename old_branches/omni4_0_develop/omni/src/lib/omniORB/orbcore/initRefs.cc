@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.10  2001/08/21 11:02:16  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.2.2.9  2001/08/17 17:12:39  sll
   Modularise ORB configuration parameters.
 
@@ -335,6 +339,33 @@ omniInitialReferences::setDefaultInitRefFromFile(const char* defInit)
 }
 
 
+struct resolvePseudoEntry {
+  const char* id;
+  omniInitialReferences::pseudoObj_fn fn;
+
+  resolvePseudoEntry(const char* i, omniInitialReferences::pseudoObj_fn f)
+    : id(i), fn(f) {}
+
+  resolvePseudoEntry() : id(0), fn(0) {}
+
+  // Using default copy constructor
+};
+
+static omnivector<resolvePseudoEntry>*& thePseudoFnList()
+{
+  static omnivector<resolvePseudoEntry>* the_list = 0;
+  if (the_list == 0) the_list = new omnivector<resolvePseudoEntry>;
+  return the_list;
+}
+
+
+void
+omniInitialReferences::registerPseudoObjFn(const char* identifier,
+					   pseudoObj_fn fn)
+{
+  thePseudoFnList()->push_back(resolvePseudoEntry(identifier, fn));
+}
+
 
 static CORBA::Object_ptr
 resolvePseudo(const char* id, unsigned int cycles)
@@ -346,14 +377,12 @@ resolvePseudo(const char* id, unsigned int cycles)
   // since holding a reference there would prevent the objects from
   // being released properly when they have been destroyed.
 
-  if( !strcmp(id, "POACurrent") ) {
-    return omniOrbPOACurrent::theCurrent();
-  }
-  else if( !strcmp(id, "RootPOA") ) {
-    return omniOrbPOA::rootPOA();
-  }
-  else if( !strcmp(id, "omniINSPOA") ) {
-    return omniOrbPOA::omniINSPOA();
+  omnivector<resolvePseudoEntry>::iterator i    = thePseudoFnList()->begin();
+  omnivector<resolvePseudoEntry>::iterator last = thePseudoFnList()->end();
+  
+  for (; i != last; i++) {
+    if (!strcmp(id, (*i).id))
+      return ((*i).fn)();
   }
   return 0;
 }
@@ -939,6 +968,15 @@ public:
     orbOptions::singleton().registerHandler(supportBootstrapAgentHandler_);
     orbOptions::singleton().registerHandler(bootstrapAgentHostnameHandler_);
     orbOptions::singleton().registerHandler(bootstrapAgentPortHandler_);
+  }
+
+#ifdef __GNUG__
+  virtual
+#endif
+  ~omni_initRefs_initialiser() {
+    omnivector<resolvePseudoEntry>*& the_list = thePseudoFnList();
+    delete the_list;
+    the_list = 0;
   }
 
   void attach() {

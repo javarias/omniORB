@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/08/15 10:26:08  dpg1
+  New object table behaviour, correct POA semantics.
+
   Revision 1.2.2.4  2001/05/29 17:03:48  dpg1
   In process identity.
 
@@ -88,7 +91,7 @@ public:
   ForwardRequest(CORBA::Object_ptr i_forward_reference);
   ForwardRequest& operator=(const ForwardRequest&);
   virtual ~ForwardRequest();
-  virtual void _raise();
+  virtual void _raise() const;
   static ForwardRequest* _downcast(CORBA::Exception*);
   static const ForwardRequest* _downcast(const CORBA::Exception*);
   static inline ForwardRequest* _narrow(CORBA::Exception* e) {

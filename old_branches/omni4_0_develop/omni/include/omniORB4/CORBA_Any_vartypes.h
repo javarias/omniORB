@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:44  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -171,11 +174,14 @@ public:
   inline void operator<<=(Any::from_octet o) {
     *pd_data <<= o;
   }
-  inline void operator<<=(Any::from_string s){
+  inline void operator<<=(Any::from_string s) {
     *pd_data <<= s;
   }
-  inline void operator<<=(Any::from_wstring s){
+  inline void operator<<=(Any::from_wstring s) {
     *pd_data <<= s;
+  }
+  inline void operator<<=(Any::from_fixed f) {
+    *pd_data <<= f;
   }
 
   // Any member-function extraction operators:
@@ -258,9 +264,16 @@ public:
   inline Boolean operator>>=(Any::to_wstring s) const {
     return (*pd_data >>= s);
   }
+  inline Boolean operator>>=(Any::to_fixed f) const {
+    return (*pd_data >>= f);
+  }
   inline Boolean operator>>=(Any::to_object o) const {
     return (*pd_data >>= o);
   }
+  inline Boolean operator>>=(const CORBA::SystemException*& e) const {
+    return (*pd_data >>= e);
+  }
+
   friend class Any_OUT_arg;
 
 private:

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/08/03 17:45:09  sll
+  Moved OMNIORB_THROW so that it can be used in stub headers
+
   Revision 1.1.4.1  2001/04/18 17:18:17  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -79,7 +82,7 @@ CORBA::Exception::insertExceptionToAnyNCP scope::name::insertToAnyFnNCP = 0; \
  \
 scope::name::~name() {} \
  \
-void scope::name::_raise() { throw *this; } \
+void scope::name::_raise() const { throw *this; } \
  \
 scope::name* scope::name::_downcast(CORBA::Exception* e) { \
   return (name*)_NP_is_a(e, "Exception/UserException/"#scope"::"#name); \

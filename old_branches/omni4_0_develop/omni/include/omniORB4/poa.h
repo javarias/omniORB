@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.9  2001/08/01 10:08:20  dpg1
+  Main thread policy.
+
   Revision 1.2.2.8  2001/07/31 16:04:07  sll
   Added ORB::create_policy() and associated types and operators.
 
@@ -471,7 +474,7 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
       InvalidPolicy(CORBA::UShort  i_index);
       InvalidPolicy& operator=(const InvalidPolicy&);
       virtual ~InvalidPolicy();
-      virtual void _raise();
+      virtual void _raise() const;
       static InvalidPolicy* _downcast(CORBA::Exception*);
       static const InvalidPolicy* _downcast(const CORBA::Exception*);
       static inline InvalidPolicy* _narrow(CORBA::Exception* e) {

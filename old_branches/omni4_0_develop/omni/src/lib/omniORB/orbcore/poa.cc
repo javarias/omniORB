@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.21  2001/09/20 09:27:44  dpg1
+  Remove assertion failure on exit if not all POAs are deleted.
+
   Revision 1.2.2.20  2001/09/19 17:26:51  dpg1
   Full clean-up after orb->destroy().
 
@@ -190,6 +193,7 @@
 #include <initialiser.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <initRefs.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -2148,7 +2152,6 @@ omniOrbPOA::rootPOA(int init_if_none)
   return theRootPOA;
 }
 
-
 PortableServer::POA_ptr
 omniOrbPOA::omniINSPOA()
 {
@@ -3589,14 +3592,21 @@ static poaHoldRequestTimeoutHandler poaHoldRequestTimeoutHandler_;
 /////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
+
+static CORBA::Object_ptr resolveRootPOAFn(){ return omniOrbPOA::rootPOA(); }
+static CORBA::Object_ptr resolveINSPOAFn() { return omniOrbPOA::omniINSPOA(); }
+
 class omni_poa_initialiser : public omniInitialiser {
 public:
 
   omni_poa_initialiser() {
     orbOptions::singleton().registerHandler(poaHoldRequestTimeoutHandler_);
+    omniInitialReferences::registerPseudoObjFn("RootPOA",    resolveRootPOAFn);
+    omniInitialReferences::registerPseudoObjFn("omniINSPOA", resolveINSPOAFn);
   }
 
-  void attach() { }
+  void attach() {
+  }
   void detach() { }
 };
 

@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.19.2.11  2001/09/24 10:41:08  dpg1
+ * Minor codes for Dynamic library and omniORBpy.
+ *
  * Revision 1.19.2.10  2001/08/22 13:29:45  dpg1
  * Re-entrant Any marshalling.
  *
@@ -656,7 +659,7 @@ CORBA::Boolean CORBA::Any::operator>>=(const CORBA::Any*& a) const
   }
 }
 
-// pre- CORBA 2.3 operator. Obsoluted.
+// pre- CORBA 2.3 operator. Obsoleted.
 CORBA::Boolean CORBA::Any::operator>>=(Any& a) const
 {
   tcDescriptor tcd;
@@ -825,6 +828,25 @@ CORBA::Any::operator>>=(to_string s) const
       s.val = 0; return 0;
     }
   }
+}
+
+
+CORBA::Boolean
+CORBA::Any::operator>>=(const CORBA::SystemException*& e) const
+{
+  CORBA::TypeCode_var tc = type();
+  CORBA::Boolean r;
+#define EXTRACT_IF_MATCH(name) \
+  if (tc->equivalent(CORBA::_tc_##name)) { \
+    const CORBA::name* ex; \
+    r = *this >>= ex; \
+    e = ex; \
+    return r; \
+  }
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(EXTRACT_IF_MATCH)
+#undef EXTRACT_IF_MATCH
+
+  return 0;
 }
 
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.13  2001/09/19 17:26:47  dpg1
+# Full clean-up after orb->destroy().
+#
 # Revision 1.3.2.12  2001/08/15 10:26:11  dpg1
 # New object table behaviour, correct POA semantics.
 #
@@ -633,7 +636,7 @@ CORBA::Exception::insertExceptionToAnyNCP @scoped_name@::insertToAnyFnNCP = 0;
 
 @scoped_name@::~@name@() {}
 
-void @scoped_name@::_raise() { throw *this; }
+void @scoped_name@::_raise() const { throw *this; }
 
 @scoped_name@* @scoped_name@::_downcast(CORBA::Exception* _e) {
   return (@name@*) _NP_is_a(_e, \"Exception/UserException/@scoped_name@\");

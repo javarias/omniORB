@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.19  2001/08/17 13:39:43  dpg1
+ Split CORBA.h into separate bits.
+
  Revision 1.2.2.18  2001/08/15 10:19:29  dpg1
  _name and _rep_id methods in CORBA::Exception.
 
@@ -366,7 +369,6 @@ _CORBA_MODULE_BEG
   //////////////////////////////////////////////////////////////////////
 
 # include "CORBA_TypeCode.h"
-# include "CORBA_DynAny.h"
 # include "CORBA_Request.h"
 # include "CORBA_ServerRequest.h"
 # include "CORBA_UnknownUserException.h"
@@ -429,6 +431,7 @@ extern void _omni_set_NameService(CORBA::Object_ptr);
 #include <omniORB4/poa.h>
 #include <omniORB4/fixed.h>
 #include <omniORB4/BiDirPolicy.h>
+#include <omniORB4/dynAny.h>
 
 #include <omniORB4/minorCode.h>
 

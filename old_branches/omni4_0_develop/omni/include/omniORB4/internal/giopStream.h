@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2001/09/04 14:38:09  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.5  2001/09/03 16:50:43  sll
   Added the deadline parameter and access functions. All member functions
   that previously had deadline arguments now use the per-object deadline
@@ -87,13 +91,19 @@ struct giopStream_Buffer {
 };
 
 class giopStream : public cdrStream {
- public:
+public:
 
   giopStream(giopStrand*);
   // No thread safety precondition
 
   ~giopStream();
   // No thread safety precondition
+
+  virtual void* ptrToClass(int* cptr);
+  static inline giopStream* downcast(cdrStream* s) {
+    return (giopStream*)s->ptrToClass(&_classid);
+  }
+  static _core_attr int _classid;
 
   void reset();
 

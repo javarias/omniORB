@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/17 13:39:46  dpg1
+  Split CORBA.h into separate bits.
+
 */
 
 #ifndef INSIDE_OMNIORB_CORBA_MODULE
@@ -43,7 +46,7 @@ class Exception {
 public:
   virtual ~Exception();
 
-  virtual void _raise() = 0;
+  virtual void _raise() const = 0;
   // 'throw' a copy of self. Must be overriden by all descendants.
 
   static inline Exception* _downcast(Exception* e) { return e; }
@@ -199,7 +202,7 @@ private:
       return *this; \
     } \
     virtual ~name(); \
-    virtual void _raise(); \
+    virtual void _raise() const; \
     static name* _downcast(Exception*); \
     static const name* _downcast(const Exception*); \
     static inline name* _narrow(Exception* e) { return _downcast(e); } \
@@ -251,10 +254,10 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(OMNIORB_DECLARE_SYS_EXCEPTION)
 OMNIORB_DECLARE_USER_EXCEPTION_IN_CORBA(WrongTransaction, _dyn_attr)
 
 
-  //////////////////////////////////////////////////////////////////////
-  ////////////////////////// PolicyError      //////////////////////////
-  //////////////////////////////////////////////////////////////////////
-  typedef _CORBA_Short PolicyErrorCode;
+//////////////////////////////////////////////////////////////////////
+////////////////////////// PolicyError      //////////////////////////
+//////////////////////////////////////////////////////////////////////
+typedef _CORBA_Short PolicyErrorCode;
 _CORBA_MODULE_VARINT const PolicyErrorCode 
 BAD_POLICY _init_in_decl_( = 0 );
 _CORBA_MODULE_VARINT const PolicyErrorCode 
@@ -280,7 +283,7 @@ public:
   PolicyError(PolicyErrorCode);
   PolicyError& operator=(const PolicyError&);
   virtual ~PolicyError();
-  virtual void _raise();
+  virtual void _raise() const;
   static PolicyError* _downcast(CORBA::Exception*);
   static const PolicyError* _downcast(const CORBA::Exception*);
   static inline PolicyError* _narrow(CORBA::Exception* e) { 

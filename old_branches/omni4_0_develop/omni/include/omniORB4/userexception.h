@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.5  2001/09/19 17:44:20  sll
+ Remove obsolute system exception WRONG_TRANSACTION
+
  Revision 1.2.2.4  2001/07/31 15:59:02  sll
  Added new 2.4.2 System Exceptions
 
@@ -86,7 +89,7 @@ public:  \
     * (CORBA::UserException*) this = _ex;  return *this;  \
   }  \
   virtual ~name();  \
-  virtual void _raise();  \
+  virtual void _raise() const;  \
   static name* _downcast(CORBA::Exception*);  \
   static const name* _downcast(const CORBA::Exception*);  \
   static inline name* _narrow(CORBA::Exception* _ex) {  \
@@ -122,7 +125,7 @@ public:  \
     * (UserException*) this = _ex;  return *this;  \
   }  \
   virtual ~name();  \
-  virtual void _raise();  \
+  virtual void _raise() const;  \
   static name* _downcast(Exception*);  \
   static const name* _downcast(const Exception*);  \
   static inline name* _narrow(Exception* _ex) {  \

@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.7  2001/09/19 17:26:52  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.2.2.6  2001/08/15 10:26:14  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -104,7 +107,7 @@ PortableServer::ForwardRequest& PortableServer::ForwardRequest::operator=(const 
 
 PortableServer::ForwardRequest::~ForwardRequest() {}
 
-void PortableServer::ForwardRequest::_raise() { throw *this; }
+void PortableServer::ForwardRequest::_raise() const { throw *this; }
 
 PortableServer::ForwardRequest* PortableServer::ForwardRequest::_downcast(CORBA::Exception* e) {
   return (ForwardRequest*) _NP_is_a(e, "Exception/UserException/PortableServer::ForwardRequest");

@@ -28,6 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.2.5  2001/08/17 13:47:32  dpg1
+// Small bug fixes.
+//
 // Revision 1.1.2.4  2001/08/03 17:41:18  sll
 // System exception minor code overhaul. When a system exeception is raised,
 // a meaning minor code is provided.
@@ -437,9 +440,11 @@ CORBA::Fixed::NP_asString() const
   return r;
 }
 
-void
+CORBA::Boolean
 CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 {
+  CORBA::Boolean precise = 1;
+
   // Skip leading white space
   while (isspace(*s)) ++s;
 
@@ -502,6 +507,7 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 
   // Truncate if too many digits
   while (pd_digits > OMNI_FIXED_DIGITS && pd_scale > 0) {
+    precise = 0;
     --i; --pd_digits; --pd_scale;
   }
 
@@ -514,7 +520,7 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
 
   if (pd_digits > OMNI_FIXED_DIGITS) {
     OMNIORB_THROW(DATA_CONVERSION,
-		  DATA_CONVERSION_BadInput, CORBA::COMPLETED_NO);
+		  DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
   }
 
   // Scan back through the string, setting the value least
@@ -529,7 +535,7 @@ CORBA::Fixed::NP_fromString(const char* s, CORBA::Boolean ignore_end)
   // Make sure zero is always positive
   if (pd_digits == 0) pd_negative = 0;
 
-  PR_checkLimits();
+  return precise && PR_checkLimits();
 }
 
 
@@ -544,17 +550,20 @@ CORBA::Fixed::PR_setLimits(UShort idl_digits, UShort idl_scale)
   PR_checkLimits();
 }
 
-void
+CORBA::Boolean
 CORBA::Fixed::PR_checkLimits()
 {
-  if (pd_idl_digits == 0) return;
+  if (pd_idl_digits == 0) return 1;
 
-  if (pd_scale > pd_idl_scale)
+  if (pd_scale > pd_idl_scale) {
     *this = truncate(pd_idl_scale);
+    return 0;
+  }
 
   if (pd_digits - pd_scale > pd_idl_digits - pd_idl_scale)
     OMNIORB_THROW(DATA_CONVERSION,
 		  DATA_CONVERSION_RangeError, CORBA::COMPLETED_NO);
+  return 1;
 }
 
 void

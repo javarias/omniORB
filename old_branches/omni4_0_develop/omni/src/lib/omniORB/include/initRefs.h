@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
+  In process identity.
+
   Revision 1.1.4.1  2001/04/18 17:18:16  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -103,6 +106,16 @@ public:
 
   static CORBA::ORB::ObjectIdList* list();
   // Real implementation of ORB::list_initial_services().
+
+
+  typedef CORBA::Object_ptr (*pseudoObj_fn)();
+  static void registerPseudoObjFn(const char* identifier, pseudoObj_fn fn);
+  // Function to register a pseudo object. If resolve() is called with
+  // the given identifier, the function is called. The registered
+  // function must return a suitable pseudo object when called, and
+  // must be thread safe. The identifier string must exist for the
+  // lifetime of the initRefs module.
+  //  This function is NOT thread safe.
 
 
   // Deprecated INIT bootagent functions:
