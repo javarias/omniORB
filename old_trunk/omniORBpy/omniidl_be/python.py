@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20  2000/01/04 15:29:41  dpg1
+# Fixes to modules generated within a package.
+#
 # Revision 1.19  1999/12/21 16:06:15  dpg1
 # DOH!  global= not module= !
 #
@@ -414,7 +417,7 @@ enum_item_at_module_scope = """\
 _0_@modname@.@item@ = omniORB.EnumItem("@item@", @eval@)"""
 
 enum_object_and_descriptor_at_module_scope = """\
-_0_@modname@.@ename@ = omniORB.Enum("@repoId@", (@eitems@))
+_0_@modname@.@ename@ = omniORB.Enum("@repoId@", (@eitems@,))
 
 _0_@modname@._d_@ename@  = (omniORB.tcInternal.tv_enum, _0_@modname@.@ename@._NP_RepositoryId, "@ename@", _0_@modname@.@ename@._items)
 _0_@modname@._tc_@ename@ = omniORB.tcInternal.createTypeCode(_0_@modname@._d_@ename@)
@@ -424,7 +427,7 @@ enum_item = """\
 @item@ = omniORB.EnumItem("@item@", @eval@)"""
 
 enum_object_and_descriptor = """\
-@ename@ = omniORB.Enum("@repoId@", (@eitems@))
+@ename@ = omniORB.Enum("@repoId@", (@eitems@,))
 
 _d_@ename@  = (omniORB.tcInternal.tv_enum, @ename@._NP_RepositoryId, "@ename@", @ename@._items)
 _tc_@ename@ = omniORB.tcInternal.createTypeCode(_d_@ename@)
