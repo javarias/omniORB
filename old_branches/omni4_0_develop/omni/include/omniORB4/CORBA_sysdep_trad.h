@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.10  2003/06/03 17:36:58  dgrisby
+  Std stream patch broke some platforms.
+
   Revision 1.1.2.9  2003/03/12 14:07:44  dgrisby
   MacOS port. Thanks Wolfgang Textor.
 
@@ -236,7 +239,16 @@
 #  define OMNI_REQUIRES_FQ_BASE_CTOR
 
 #elif defined(__BCPLUSPLUS__)
+// Borland C++ Builder
 #  define HAS_Cplusplus_Namespace
+#  define HAS_Std_Namespace
+
+#  define HAS_LongLong
+#  define _CORBA_LONGLONG_DECL   __int64
+#  define _CORBA_ULONGLONG_DECL  unsigned __int64
+#  define _CORBA_LONGLONG_CONST(x) (x)
+
+#  define OMNI_REQUIRES_FQ_BASE_CTOR
 
 #elif defined(__KCC)
 // Kai C++
