@@ -27,10 +27,11 @@
 // Description:
 //    TypeCode support
 
-
 // $Id$
-
 // $Log$
+// Revision 1.1.2.1  2000/10/13 13:55:27  dpg1
+// Initial support for omniORB 4.
+//
 
 #include <omnipy.h>
 
@@ -150,8 +151,6 @@ r_marshalTypeCode(cdrStream&           stream,
 {
   CORBA::Long tc_offset;
 
-  //  cout << endl << "marshalTypeCode... " << flush;
-
   // If this TypeCode has already been sent, use an indirection:
   if (omniORB::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
 
@@ -160,8 +159,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     tk_ind >>= stream;
     offset >>= stream;
-
-    //    cout << "indirection to " << offset << endl;
   }
   else {
     CORBA::ULong   tk;
@@ -177,13 +174,11 @@ r_marshalTypeCode(cdrStream&           stream,
     }
 
     // Marshal the kind
-    tk >>= stream;
+    if (tk != 0xffffffff) tk >>= stream;
 
     // Offset of this TypeCode (within the current encapsulation if any):
     tc_offset = stream.currentOutputPtr() - 4;
 
-    //    cout << "offset = " << tc_offset << " " << flush;
-    
     switch (tk) {
     case CORBA::tk_null:
     case CORBA::tk_void:
@@ -204,12 +199,10 @@ r_marshalTypeCode(cdrStream&           stream,
     case CORBA::tk_ulonglong:
 #endif
       // Nothing more to be sent
-      //      cout << "simple: " << tk << endl;
       break;
 
     case CORBA::tk_string:
       {
-	//	cout << "string" << endl;
 	// Send max length
 	t_o = PyTuple_GET_ITEM(d_o, 1); OMNIORB_ASSERT(PyInt_Check(t_o));
 	CORBA::ULong len = PyInt_AS_LONG(t_o);
@@ -219,7 +212,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_objref:
       {
-	//	cout << "objref" << endl;
 	// Add entry to descriptor offset map:
 	dom.add(d_o, tc_offset);
 
@@ -241,7 +233,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_struct:
       {
-	//	cout << "struct" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -285,7 +276,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_union:
       {
-	//	cout << "union" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -348,7 +338,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_enum:
       {
-	//	cout << "enum" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -385,7 +374,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_sequence:
       {
-	//	cout << "sequence" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -407,7 +395,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_array:
       {
-	//	cout << "array" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -429,7 +416,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_alias:
       {
-	//	cout << "alias" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -453,7 +439,6 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case CORBA::tk_except:
       {
-	//	cout << "except" << endl;
 	dom.add(d_o, tc_offset);
 
 	cdrEncapsulationStream encap;
@@ -498,20 +483,29 @@ r_marshalTypeCode(cdrStream&           stream,
 
     case 0xffffffff:
       {
-	//	cout << "indirect" << endl;
-	t_o = PyTuple_GET_ITEM(d_o, 1); OMNIORB_ASSERT(PyList_Check(t_o));
-	t_o = PyList_GET_ITEM(t_o, 0); OMNIORB_ASSERT(t_o);
+	PyObject* l = PyTuple_GET_ITEM(d_o, 1);
+	OMNIORB_ASSERT(PyList_Check(l));
+	t_o = PyList_GET_ITEM(l, 0); OMNIORB_ASSERT(t_o);
+
+	if (PyString_Check(t_o)) {
+	  // Indirection to a repoId -- find the corresponding descriptor
+	  t_o = PyDict_GetItem(omniPy::pyomniORBtypeMap, t_o);
+	  if (!t_o) OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
+
+	  Py_INCREF(t_o);
+	  PyList_SetItem(l, 0, t_o);
+	}
 
 	CORBA::Long position, offset;
 
-	if (!dom.lookup(t_o, position))
-	  OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
-
-	offset = position - (tc_offset + 4);
-
-	//	cout << "indirect to " << offset << endl;
-
-	offset >>= stream;
+	if (dom.lookup(t_o, position)) {
+	  tk     >>= stream;
+	  offset   = position - (tc_offset + 4);
+	  offset >>= stream;
+	}
+	else {
+	  r_marshalTypeCode(stream, t_o, dom);
+	}
       }
       break;
 
@@ -519,7 +513,6 @@ r_marshalTypeCode(cdrStream&           stream,
       OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
     }
   }
-  //  cout << "marshalTypeCode() done." << endl;
 }
 
 
@@ -536,8 +529,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 {
   PyObject* d_o = 0; // Descriptor object to build
   PyObject* t_o;
-
-  //  cout << "unmarshal typecode... " << flush;
 
   // Read kind
   CORBA::ULong tk; tk <<= stream;
@@ -565,14 +556,12 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_ulonglong:
 #endif
     {
-      //      cout << "simple: " << tk << endl;
       d_o = PyInt_FromLong(tk); odm.add(d_o, tc_offset);
     }
     break;
 
   case CORBA::tk_string:
     {
-      //      cout << "string" << endl;
       d_o = PyTuple_New(2); odm.add(d_o, tc_offset);
       PyTuple_SET_ITEM(d_o, 0, PyInt_FromLong(tk));
 
@@ -584,7 +573,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_objref:
     {
-      //      cout << "objref" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -599,7 +587,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_struct:
     {
-      //      cout << "struct" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -668,7 +655,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_union:
     {
-      //      cout << "union" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -767,7 +753,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_enum:
     {
-      //      cout << "enum" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -822,7 +807,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_sequence:
     {
-      //      cout << "sequence" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -843,7 +827,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_array:
     {
-      //      cout << "array" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -864,7 +847,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_alias:
     {
-      //      cout << "alias" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -896,7 +878,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case CORBA::tk_except:
     {
-      //      cout << "except" << endl;
       CORBA::ULong size; size <<= stream;
       cdrEncapsulationStream encap(stream, size);
 
@@ -965,7 +946,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case 0xffffffff:
     {
-      //      cout << "indirect" << endl;
       CORBA::ULong position, offset;
 
       offset  <<= stream;
@@ -986,8 +966,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
   default:
     OMNIORB_THROW(BAD_TYPECODE, 0, CORBA::COMPLETED_NO);
   }
-
-  //  cout << "r_unmarshalTypeCode ended." << endl;
   return d_o;
 }
 
