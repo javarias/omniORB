@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16.2.4  2001/04/18 18:18:10  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.16.2.3  2000/11/09 12:27:56  dpg1
   Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -95,6 +98,7 @@
 #include <omniORB4/IOP_S.h>
 #include <corbaBoa.h>
 #include <omniORB4/callDescriptor.h>
+#include <omniORB4/callHandle.h>
 #include <localIdentity.h>
 #include <initRefs.h>
 #include <dynamicLib.h>
@@ -613,7 +617,7 @@ omniOrbBOA::decrRefCount()
 
 
 void
-omniOrbBOA::dispatch(IOP_S& giop_s, omniLocalIdentity* id)
+omniOrbBOA::dispatch(omniCallHandle& handle, omniLocalIdentity* id)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);  OMNIORB_ASSERT(id->servant());
@@ -630,13 +634,13 @@ omniOrbBOA::dispatch(IOP_S& giop_s, omniLocalIdentity* id)
   if( omniORB::traceInvocations ) {
     omniORB::logger l;
     l << "Dispatching remote call \'" 
-      << giop_s.operation_name() << "\' to: "
+      << handle.operation_name() << "\' to: "
       << id << '\n';
   }
 
-  if( !id->servant()->_dispatch(giop_s) ) {
-    if( !id->servant()->omniServant::_dispatch(giop_s) ) {
-      giop_s.SkipRequestBody();
+  if( !id->servant()->_dispatch(handle) ) {
+    if( !id->servant()->omniServant::_dispatch(handle) ) {
+      handle.SkipRequestBody();
       OMNIORB_THROW(BAD_OPERATION,0, CORBA::COMPLETED_NO);
     }
   }
@@ -644,7 +648,8 @@ omniOrbBOA::dispatch(IOP_S& giop_s, omniLocalIdentity* id)
 
 
 void
-omniOrbBOA::dispatch(IOP_S& giop_s, const CORBA::Octet* key, int keysize)
+omniOrbBOA::dispatch(omniCallHandle& handle,
+		     const CORBA::Octet* key, int keysize)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(key && keysize == sizeof(omniOrbBoaKey));

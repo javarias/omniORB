@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2001/04/18 18:18:07  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.2  2000/09/27 17:57:05  sll
   Changed include/omniORB3 to include/omniORB4
 
@@ -141,7 +144,7 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
 
 
 void
-omniLocalIdentity::dispatch(IOP_S& giop_s)
+omniLocalIdentity::dispatch(omniCallHandle& handle)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(pd_adapter && pd_servant);
@@ -150,7 +153,7 @@ omniLocalIdentity::dispatch(IOP_S& giop_s)
 
   omni::remoteInvocationCount++;
 
-  pd_adapter->dispatch(giop_s, this);
+  pd_adapter->dispatch(handle, this);
 }
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/04/18 18:18:06  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.3  2000/11/09 12:27:58  dpg1
   Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -70,6 +73,7 @@
 #include <exceptiondefs.h>
 #include <omniORB4/IOP_S.h>
 #include <omniORB4/callDescriptor.h>
+#include <omniORB4/callHandle.h>
 #include <objectStub.h>
 
 OMNI_USING_NAMESPACE(omni)
@@ -132,27 +136,27 @@ omniServant::_non_existent()
 }
 
 _CORBA_Boolean
-omniServant::_dispatch(IOP_S& giop_s)
+omniServant::_dispatch(omniCallHandle& handle)
 {
-  const char* op = giop_s.operation_name();
+  const char* op = handle.operation_name();
 
   if( strcmp(op, "_is_a") == 0 ) {
     omni_is_a_CallDesc call_desc("_is_a",sizeof("_is_a"),0,1);
-    _upcall(giop_s,call_desc);
+    handle.upcall(this,call_desc);
     return 1;
   }
 
   if( strcmp(op, "_non_existent") == 0 ) {
     omni_non_existent_CallDesc call_desc("_non_existent",
 					 sizeof("_non_existent"),1);
-    _upcall(giop_s,call_desc);
+    handle.upcall(this,call_desc);
     return 1;
   }
 
   if( strcmp(op, "_interface") == 0 ) {
     omni_interface_CallDesc call_desc("_interface",
 				      sizeof("_interface"),1);
-    _upcall(giop_s,call_desc);
+    handle.upcall(this,call_desc);
     return 1;
   }
 
@@ -164,15 +168,6 @@ omniServant::_dispatch(IOP_S& giop_s)
   }
   return 0;
 }
-
-void
-omniServant::_upcall(IOP_S& giop_s, omniCallDescriptor& desc)
-{
-  giop_s.ReceiveRequest(desc);
-  desc.doLocalCall(this);
-  giop_s.SendReply();
-}
-
 
 void
 omniServant::_addIdentity(omniLocalIdentity* id)

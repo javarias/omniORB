@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:16  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.1  2000/07/17 10:35:55  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -56,6 +60,7 @@
 
 class omniServant;
 class omniObjRef;
+class omniCallHandle;
 
 OMNI_NAMESPACE_BEGIN(omni)
 class omniObjAdapter;
@@ -101,12 +106,12 @@ public:
   virtual omniIdentity::equivalent_fn get_real_is_equivalent() const;
   // Override omniIdentity.
 
-  void dispatch(_OMNI_NS(IOP_S)&);
+  void dispatch(omniCallHandle&);
   // Dispatches a remote invocation.  Grabs a reference
   // to this identity, and dispatches the call to the
   // object adapter (releasing the reference before
   // returning).
-  //  Must hold <omni::internalLock on entry.  It is not held
+  //  Must hold <omni::internalLock> on entry.  It is not held
   // on exit.
 
   void finishedWithDummyId();

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:15  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.1  2000/07/17 10:35:57  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -72,6 +76,8 @@
 #include <objectAdapter.h>
 #include <poamanager.h>
 #include <taskqueue.h>
+
+#include <omniORB4/callHandle.h>
 
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -151,8 +157,9 @@ public:
 
   virtual void  incrRefCount();
   virtual void  decrRefCount();
-  virtual void  dispatch(IOP_S&, omniLocalIdentity*);
-  virtual void  dispatch(IOP_S&, const _CORBA_Octet* key, int keysize);
+  virtual void  dispatch(omniCallHandle&, omniLocalIdentity*);
+  virtual void  dispatch(omniCallHandle&,
+			 const _CORBA_Octet* key, int keysize);
   virtual void  dispatch(omniCallDescriptor&, omniLocalIdentity*);
   virtual int   objectExists(const _CORBA_Octet* key, int keysize);
   virtual void  lastInvocationHasCompleted(omniLocalIdentity* id);
@@ -313,20 +320,40 @@ private:
   // the adapter (so <pd_nOutstandingDeadObjects> is not incremented).
   //  Must not hold <omni::internalLock>.
 
-  void dispatch_to_ds(IOP_S&, const _CORBA_Octet*, int);
-  void dispatch_to_sa(IOP_S&, const _CORBA_Octet*, int);
-  void dispatch_to_sl(IOP_S&, const _CORBA_Octet*, int);
+  void dispatch_to_ds(omniCallHandle&, const _CORBA_Octet*, int);
+  void dispatch_to_sa(omniCallHandle&, const _CORBA_Octet*, int);
+  void dispatch_to_sl(omniCallHandle&, const _CORBA_Octet*, int);
   // Called from dispatch(), to deal with dispatches using the
   // default servant, ServantActivator and ServantLocator
   // respectively.
 
-  void call_postinvoke(PortableServer::ServantLocator_ptr sl,
-		       PortableServer::ObjectId& oid,
-		       const char* op,
-		       PortableServer::ServantLocator::Cookie cookie,
-		       PortableServer::Servant servant);
-  // Calls the ServantLocator::postinvoke() method.  Used by
-  // dispatch_to_sl() above.
+  class PostInvokeHook : public omniCallHandle::UpcallHook {
+  public:
+    PostInvokeHook(omniOrbPOA*                            poa,
+		   omni_tracedmutex*                      call_lock,
+		   PortableServer::ServantLocator_ptr     sl,
+		   PortableServer::ObjectId&              oid,
+		   const char*                            op,
+		   PortableServer::ServantLocator::Cookie cookie,
+		   PortableServer::Servant                servant)
+      : pd_poa(poa), pd_call_lock(call_lock),
+	pd_sl(sl), pd_oid(oid), pd_op(op),
+	pd_cookie(cookie), pd_servant(servant)
+    {}
+
+    virtual void upcall(omniServant*, omniCallDescriptor&);
+
+  private:
+    void call_postinvoke();
+
+    omniOrbPOA*                            pd_poa;
+    omni_tracedmutex*                      pd_call_lock;
+    PortableServer::ServantLocator_ptr     pd_sl;
+    PortableServer::ObjectId&              pd_oid;
+    const char*                            pd_op;
+    PortableServer::ServantLocator::Cookie pd_cookie;
+    PortableServer::Servant                pd_servant;
+  };
 
   omniOrbPOA* attempt_to_activate_adapter(const char* name);
   // Attempts to activate a child POA by invoking the AdapterActivator.

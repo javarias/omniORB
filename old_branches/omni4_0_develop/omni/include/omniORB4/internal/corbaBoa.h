@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:18  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.2.2.1  2000/07/17 10:35:51  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -97,8 +101,9 @@ public:
   /////////////////////////////
   virtual void  incrRefCount();
   virtual void  decrRefCount();
-  virtual void  dispatch(IOP_S&, omniLocalIdentity*);
-  virtual void  dispatch(IOP_S&, const _CORBA_Octet* key, int keysize);
+  virtual void  dispatch(omniCallHandle&, omniLocalIdentity*);
+  virtual void  dispatch(omniCallHandle&,
+			 const _CORBA_Octet* key, int keysize);
   virtual void  dispatch(omniCallDescriptor&, omniLocalIdentity*);
   virtual int   objectExists(const _CORBA_Octet* key, int keysize);
   virtual void  lastInvocationHasCompleted(omniLocalIdentity* id);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/04/18 18:18:08  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.3  2000/10/03 17:39:25  sll
   Cleanup the_argsServiceList and the_fileServiceList in module detach().
 
@@ -681,13 +684,13 @@ omniInitialReferences::initialise_bootstrap_agentImpl()
 
 
 int
-omniInitialReferences::invoke_bootstrap_agentImpl(IOP_S& giop_s)
+omniInitialReferences::invoke_bootstrap_agentImpl(omniCallHandle& handle)
 {
   omni_tracedmutex_lock sync(ba_lock);
 
   if( !the_bootagentImpl )  return 0;
 
-  ((omniServant*) the_bootagentImpl)->_dispatch(giop_s);
+  ((omniServant*) the_bootagentImpl)->_dispatch(handle);
   return 1;
 }
 

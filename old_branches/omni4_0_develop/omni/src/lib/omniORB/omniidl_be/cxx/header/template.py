@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.7  2001/04/19 09:30:12  sll
+#  Big checkin with the brand new internal APIs.
+# Scoped where appropriate with the omni namespace.
+#
 # Revision 1.5.2.6  2001/03/13 10:32:09  dpg1
 # Fixed point support.
 #
@@ -368,7 +372,7 @@ public:
   @operations@
   
 public:  // Really protected, workaround for xlC
-  virtual _CORBA_Boolean _dispatch(_OMNI_NS(IOP_S)&);
+  virtual _CORBA_Boolean _dispatch(omniCallHandle&);
 
 private:
   virtual void* _ptrToInterface(const char*);

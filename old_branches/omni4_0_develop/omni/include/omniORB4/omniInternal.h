@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2001/05/10 15:08:37  dpg1
+  _compatibleServant() replaced with _localServantTarget().
+  createIdentity() now takes a target string.
+  djr's fix to deactivateObject().
+
   Revision 1.2.2.6  2001/04/18 17:50:44  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -341,6 +346,10 @@ _CORBA_MODULE_BEG
   //
   // <locked> => hold <internalLock>.
 
+  _CORBA_MODULE_FN omniIdentity* createInProcessIdentity(const _CORBA_Octet* k,
+							 int keysize);
+  // Returns an omniIdentity to contact an object in this address
+  // space which is unsuitable for contact through a localIdentity.
 
   _CORBA_MODULE_FN omniIdentity* createLoopBackIdentity(omniIOR* ior,
 							const _CORBA_Octet* k,

@@ -26,9 +26,14 @@
 // Description:
 //    Implementation of methods defined in class omni.
 //      
- 
+
 /*
   $Log$
+  Revision 1.2.2.9  2001/05/10 15:08:37  dpg1
+  _compatibleServant() replaced with _localServantTarget().
+  createIdentity() now takes a target string.
+  djr's fix to deactivateObject().
+
   Revision 1.2.2.8  2001/05/09 17:05:34  sll
   createIdentity() now can deal with it being called more than once with the
   same IOR.
@@ -121,6 +126,7 @@
 #include <omniORB4/proxyFactory.h>
 #include <omniORB4/omniServant.h>
 #include <localIdentity.h>
+#include <inProcessIdentity.h>
 #include <remoteIdentity.h>
 #include <objectAdapter.h>
 #include <anonObject.h>
@@ -556,8 +562,7 @@ omni::deactivateObject(const CORBA::Octet* key, int keysize)
 	if( has_remote_id )
 	  remote_id = objreflist->_identity();
 	else {
-	  remote_id = createLoopBackIdentity(objreflist->_getIOR(),
-					     newid->key(),newid->keysize());
+	  remote_id = createInProcessIdentity(newid->key(),newid->keysize());
 	}
       }
       omniInternal::replaceImplementation(objreflist, remote_id, newid);
@@ -600,21 +605,13 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
 
   if (local_id) {
     // We are told this is a local object, check to see if we can just
-    // use the localIdentity or we have to use the loopback identity
-    if (local_id->servant()) {
-      if (local_id->servant()->_ptrToInterface(target)) {
-	return local_id;
-      }
-      else {
-	// *** Return local-but-no-local-call identity
-	ior->duplicate();
-	return createLoopBackIdentity(ior,local_id->key(),local_id->keysize());
-      }
+    // use the localIdentity or we have to use an in process identity
+    if (local_id->servant() && local_id->servant()->_ptrToInterface(target)) {
+      return local_id;
     }
     else {
-      // *** Return local-but-not-yet-activated identity
-      ior->duplicate();
-      return createLoopBackIdentity(ior,local_id->key(),local_id->keysize());
+      // Return in process identity
+      return createInProcessIdentity(local_id->key(),local_id->keysize());
     }
   }
 
@@ -682,20 +679,13 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
     // insert a dummy entry
     local_id = locateIdentity(object_key.get_buffer(),object_key.length(),
 			      hashv, 1);
-    if (local_id->servant()) {
-      if (local_id->servant()->_ptrToInterface(target)) {
-	return local_id;
-      }
-      else {
-	// *** Return local-but-no-local-call identity
-	ior->duplicate();
-	return createLoopBackIdentity(ior,local_id->key(),local_id->keysize());
-      }
+
+    if (local_id->servant() && local_id->servant()->_ptrToInterface(target)) {
+      return local_id;
     }
     else {
-      // *** Return local-but-not-yet-activated identity
-      ior->duplicate();
-      return createLoopBackIdentity(ior,local_id->key(),local_id->keysize());
+      // Return in process identity
+      return createInProcessIdentity(local_id->key(),local_id->keysize());
     }
   }
   else {
@@ -706,6 +696,12 @@ omni::createIdentity(omniIOR* ior,omniLocalIdentity*& local_id,
 				    rope);
     return result;
   }
+}
+
+
+omniIdentity*
+omni::createInProcessIdentity(const _CORBA_Octet* key,int keysize){
+  return new omniInProcessIdentity(key,keysize);
 }
 
 
@@ -957,9 +953,8 @@ omni::locationForward(omniObjRef* objref, omniObjRef* new_location,
       if ( nl_id == nl_lid ) {
 	// local & exists but doesn't support our interface
 
-	// *** Create local-but-no-local-call identity
-	nl_id = createLoopBackIdentity(new_location->_getIOR(),
-				       nl_id->key(),nl_id->keysize());
+	// Create in process identity
+	nl_id = createInProcessIdentity(nl_id->key(),nl_id->keysize());
 	objref->pd_flags.type_verified = 0;
       }
       omniInternal::replaceImplementation(objref, nl_id, nl_lid);

@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/04/18 17:50:43  sll
+  Big checkin with the brand new internal APIs.
+  Scoped where appropriate with the omni namespace.
+
   Revision 1.2.2.4  2000/11/09 12:27:50  dpg1
   Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -756,9 +760,7 @@ _CORBA_MODULE_BEG
     // but may be overridden by subclasses.
 
     // omniORB internal.
-    virtual _CORBA_Boolean _dispatch(_OMNI_NS(IOP_S)&);
-    // DJR - NB. probably should not pass the standard object
-    // ops up to the invoke routine...
+    virtual _CORBA_Boolean _dispatch(omniCallHandle&);
 
   private:
     virtual omniObjRef* _do_get_interface();

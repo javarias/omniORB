@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.3  2001/04/18 18:18:05  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.2.2.2  2000/09/27 18:03:40  sll
   Updated to use the new cdrStream abstraction.
   Updated to match the changes in the proxyFactory class.
@@ -277,7 +280,7 @@ PortableServer::_impl_AdapterActivator::~_impl_AdapterActivator() {}
 
 
 CORBA::Boolean
-PortableServer::_impl_AdapterActivator::_dispatch(IOP_S& giop_s)
+PortableServer::_impl_AdapterActivator::_dispatch(omniCallHandle& handle)
 {
   return 0;
 }
@@ -410,7 +413,7 @@ PortableServer::_impl_ServantManager::~_impl_ServantManager() {}
 
 
 CORBA::Boolean
-PortableServer::_impl_ServantManager::_dispatch(IOP_S& giop_s)
+PortableServer::_impl_ServantManager::_dispatch(omniCallHandle& handle)
 {
   return 0;
 }
@@ -626,7 +629,7 @@ PortableServer::_impl_ServantActivator::~_impl_ServantActivator() {}
 
 
 CORBA::Boolean
-PortableServer::_impl_ServantActivator::_dispatch(IOP_S& giop_s)
+PortableServer::_impl_ServantActivator::_dispatch(omniCallHandle& handle)
 {
   return 0;
 }
@@ -848,7 +851,7 @@ PortableServer::_impl_ServantLocator::~_impl_ServantLocator() {}
 
 
 CORBA::Boolean
-PortableServer::_impl_ServantLocator::_dispatch(IOP_S& giop_s)
+PortableServer::_impl_ServantLocator::_dispatch(omniCallHandle& handle)
 {
   return 0;
 }

@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.1.4.1  2001/04/18 17:18:16  sll
+ Big checkin with the brand new internal APIs.
+ These files were relocated and scoped with the omni namespace.
+
  Revision 1.2.2.2  2000/11/09 12:27:57  dpg1
  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 
@@ -58,11 +62,11 @@
 #endif
 
 class omniCallDescriptor;
+class omniCallHandle;
 class omniLocalIdentity;
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-class IOP_S;
 class Rope;
 
 class omniObjAdapter {
@@ -110,10 +114,11 @@ public:
   virtual void decrRefCount() = 0;
   // Locking rules are object adapter specific.
 
-  virtual void dispatch(IOP_S&, omniLocalIdentity*) = 0;
+  virtual void dispatch(omniCallHandle&, omniLocalIdentity*) = 0;
   // Dispatch request to given object.
 
-  virtual void dispatch(IOP_S&, const _CORBA_Octet* key, int keysize) = 0;
+  virtual void dispatch(omniCallHandle&,
+			const _CORBA_Octet* key, int keysize) = 0;
   // Dispatch request to object with given key (which is not
   // in the active object map).
 
