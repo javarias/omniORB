@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // scavenger.h                Created on: 5/8/97
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.3.6.2  1999/09/24 15:01:37  djr
+  Added module initialisers, and sll's new scavenger implementation.
+
   Revision 1.3.2.1  1999/09/21 20:37:17  sll
   -Simplified the scavenger code and the mechanism in which connections
    are shutdown. Now only one scavenger thread scans both incoming

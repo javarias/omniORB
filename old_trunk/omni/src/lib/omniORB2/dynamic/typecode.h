@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB3
 // typecode.h                 Created on: 03/09/98
 //                            Author1   : James Weatherall (jnw)
 //                            Author2   : David Riddoch (djr)
@@ -30,8 +30,21 @@
 
 /*
  * $Log$
- * Revision 1.8  1999/08/24 12:37:20  djr
- * TypeCode_struct and TypeCode_except modified to use 'const char*' properly.
+ * Revision 1.8.6.5  2000/06/22 10:40:13  dpg1
+ * exception.h renamed to exceptiondefs.h to avoid name clash on some
+ * platforms.
+ *
+ * Revision 1.8.6.4  2000/02/15 13:43:43  djr
+ * Fixed bug in create_union_tc() -- problem if discriminator was an alias.
+ *
+ * Revision 1.8.6.3  1999/10/14 17:31:34  djr
+ * Minor corrections.
+ *
+ * Revision 1.8.6.2  1999/10/14 16:22:04  djr
+ * Implemented logging when system exceptions are thrown.
+ *
+ * Revision 1.8.6.1  1999/09/22 14:26:39  djr
+ * Major rewrite of orbcore to support POA.
  *
  * Revision 1.7  1999/07/01 10:28:14  djr
  * Added two methods to TypeCode_pairlist.
@@ -60,8 +73,8 @@
 #ifndef __TYPECODE_H__
 #define __TYPECODE_H__
 
-#include <omniORB2/CORBA.h>
 #include <omniutilities.h>
+#include <exceptiondefs.h>
 
 
 ///////////////////////////
@@ -113,7 +126,7 @@ enum TypeCode_paramListType {
 inline TypeCode_base*
 ToTcBase_Checked(CORBA::TypeCode_ptr a)
 {
-  if( CORBA::is_nil(a) )  throw CORBA::BAD_TYPECODE(0, CORBA::COMPLETED_NO);
+  if( CORBA::is_nil(a) )  OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
 
   return (TypeCode_base*) a;
 }
@@ -122,7 +135,7 @@ inline const TypeCode_base*
 ToConstTcBase_Checked(const CORBA::TypeCode* a)
 {
   if (CORBA::is_nil((CORBA::TypeCode_ptr)a))
-    throw CORBA::BAD_TYPECODE(0, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(BAD_TYPECODE,0, CORBA::COMPLETED_NO);
 
   return (const TypeCode_base*)a;
 }

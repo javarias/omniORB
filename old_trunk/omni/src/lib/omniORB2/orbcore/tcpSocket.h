@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB2
+//                            Package   : omniORB
 // tcpSocket.h                Created on: 30/9/97
 //                            Author    : Sai Lai Lo (sll)
 //
@@ -29,6 +29,14 @@
 
 /*
  $Log$
+ Revision 1.5.6.3  2000/01/28 15:57:10  djr
+ Removed superflouous ref counting in Strand_iterator.
+ Removed flags to indicate that Ropes and Strands are heap allocated.
+ Improved allocation of client requests to strands.
+
+ Revision 1.5.6.2  1999/09/24 15:01:39  djr
+ Added module initialisers, and sll's new scavenger implementation.
+
  Revision 1.5.2.1  1999/09/21 20:37:18  sll
  -Simplified the scavenger code and the mechanism in which connections
   are shutdown. Now only one scavenger thread scans both incoming
@@ -149,8 +157,7 @@ private:
   omni_condition                pd_shutdown_cond;
   int                           pd_shutdown_nthreads;
 
-  ~tcpSocketMTincomingFactory() {} // Cannot delete a factory instance
-
+  virtual ~tcpSocketMTincomingFactory();
 };
 
 
@@ -168,7 +175,7 @@ public:
   friend class nobody;
 
 private:
-  ~tcpSocketMToutgoingFactory() {} // Cannot delete a factory instance
+  virtual ~tcpSocketMToutgoingFactory();
 };
 
 class tcpSocketStrand : public reliableStreamStrand
@@ -178,8 +185,7 @@ public:
   static const unsigned int buffer_size;
 
   tcpSocketStrand(tcpSocketOutgoingRope *r,
-		  tcpSocketEndpoint *remote,
-		  _CORBA_Boolean heapAllocated = 0);
+		  tcpSocketEndpoint *remote);
   // Concurrency Control:
   //    MUTEX = r->pd_lock
   // Pre-condition:
@@ -188,8 +194,7 @@ public:
   //    Still hold <MUTEX> on exit, even if an exception is raised
 
   tcpSocketStrand(tcpSocketIncomingRope *r,
-		  tcpSocketHandle_t sock,
-		  _CORBA_Boolean heapAllocated = 0);
+		  tcpSocketHandle_t sock);
   // Concurrency Control:
   //    MUTEX = r->pd_lock
   // Pre-condition:
@@ -322,8 +327,8 @@ private:
 
 class tcpSocketEndpoint : public Endpoint {
 public:
-  tcpSocketEndpoint(CORBA::Char *h,CORBA::UShort p);
-  tcpSocketEndpoint(const tcpSocketEndpoint *e);
+  tcpSocketEndpoint(const CORBA::Char* h,CORBA::UShort p);
+  tcpSocketEndpoint(const tcpSocketEndpoint* e);
   tcpSocketEndpoint &operator=(const tcpSocketEndpoint &e);
   CORBA::Boolean operator==(const tcpSocketEndpoint *e);
   virtual ~tcpSocketEndpoint();
