@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.26  1999/06/18 21:15:17  sll
+  Updated copyright notice.
+
   Revision 1.25  1999/06/18 20:36:31  sll
   Replaced _LC_attr with _core_attr.
 
@@ -96,6 +99,7 @@
 
 #if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS)
 #include <strings.h>
+#include <string.h>
 #else
 #include <string.h>
 #endif
