@@ -28,8 +28,22 @@
 
 # $Id$
 # $Log$
+# Revision 1.4.2.2  2000/08/21 11:35:34  djs
+# Lots of tidying
+#
+# Revision 1.4.2.1  2000/08/02 10:52:01  dpg1
+# New omni3_1_develop branch, merged from omni3_develop.
+#
 # Revision 1.4  2000/07/13 15:25:59  dpg1
 # Merge from omni3_develop for 3.0 release.
+#
+# Revision 1.1.2.8  2000/07/24 16:32:19  djs
+# Fixed typo in previous BOA skeleton bugfix.
+# Suppressed compiler warning (from gcc -Wall) when encountering a call with
+# no arguments and no return value.
+#
+# Revision 1.1.2.7  2000/07/24 10:17:34  djs
+# Added missing BOA skeleton constructor
 #
 # Revision 1.1.2.6  2000/06/05 13:04:20  djs
 # Removed union member name clash (x & pd_x, pd__default, pd__d)
@@ -166,10 +180,16 @@ void*
     return (CORBA::Object_ptr) this;
   if( !strcmp(id, @name@::_PD_repoId) )
     return (@name@_ptr) this;
-  @inherited_repoIDs@
+  @_ptrToObjRef@
   return 0;
 }
 """
+
+interface_objref_repoID = """\
+if( !strcmp(id, @inherits_fqname@::_PD_repoId) )
+  return (@inherits_fqname@_ptr) this;
+"""
+
 
 interface_context_array = """\
 static const char*const @context_descriptor@[] = {
@@ -177,12 +197,18 @@ static const char*const @context_descriptor@[] = {
 };
 """
 
+interface_objref_contextinfo = """\
+omniCallDescriptor::ContextInfo _ctxt_info(_ctxt, @context_descriptor@, @n@);
+_call_desc.set_context_info(&_ctxt_info);
+"""
+
+
 interface_callback = """\
 // Local call call-back function.
 static void
 @local_call_descriptor@(omniCallDescriptor* cd, omniServant* svnt)
 {
-  @call_descriptor@* tcd = (@call_descriptor@*) cd;
+  @get_call_descriptor@
   @impl_fqname@* impl = (@impl_fqname@*) svnt->_ptrToInterface(@name@::_PD_repoId);
   @result@impl->@cxx_operation_name@(@operation_arguments@);
 }
@@ -243,13 +269,10 @@ void @call_descriptor@::userException(GIOP_C& giop_client, const char* repoId)
 """
 
 interface_operation = """\
-@result_type@ @objref_fqname@::@operation_name@(@arguments@)
-{
-  @call_descriptor@ _call_desc(@call_desc_args@);
-  @context@
-  _invoke(_call_desc);
-  @return_string@
-}
+@call_descriptor@ _call_desc(@call_desc_args@);
+@context@
+_invoke(_call_desc);
+@return_string@
 """
 
 
@@ -298,8 +321,7 @@ interface_impl = """\
 CORBA::Boolean
 @impl_fqname@::_dispatch(GIOP_S& giop_s)
 {
-  @this_dispatch@
-  @inherited_dispatch@
+  @dispatch@
   return 0;
 }
 
@@ -310,7 +332,7 @@ void*
     return (void*) 1;
   if( !strcmp(id, @name@::_PD_repoId) )
     return (@impl_name@*) this;
-  @Other_repoIDs@
+  @_ptrToInterface@
   return 0;
 }
 
@@ -333,6 +355,8 @@ if( !strcmp(id, @inherited_name@::_PD_repoId) )
 """
 
 interface_sk = """\
+@sk_fqname@::@sk_name@(const omniOrbBoaKey& k): omniOrbBoaServant(k) {}
+
 @sk_fqname@::~@sk_name@() {}
 """
 
