@@ -29,6 +29,12 @@
 
 /*
  $Log$
+ Revision 1.5.4.3  1999/10/02 18:21:30  sll
+ Added support to decode optional tagged components in the IIOP profile.
+ Added support to negogiate with a firewall proxy- GIOPProxy to invoke
+ remote objects inside a firewall.
+ Added tagged component TAG_ORB_TYPE to identify omniORB IORs.
+
  Revision 1.5.4.2  1999/09/25 17:00:22  sll
  Merged changes from omni2_8_develop branch.
 
@@ -218,6 +224,7 @@ public:
   // Post-condition:
   //    Still hold <MUTEX> on exit, even if an exception is raised
 
+protected:
   virtual ~tcpSocketStrand();
   // MUTEX:
   //    pd_rope->pd_lock
@@ -226,6 +233,7 @@ public:
   // Post-condition:
   //    Still hold <MUTEX> on exit
 
+public:
   void real_shutdown();
   void ll_send(void* buf,size_t sz);
   size_t ll_recv(void* buf,size_t sz);
@@ -317,6 +325,7 @@ public:
   CORBA::Boolean is_outgoing() const { return 1; }
   CORBA::Boolean remote_is(Endpoint *&e);
   CORBA::Boolean this_is(Endpoint *&e) { return 0; }
+  CORBA::Boolean oneCallPerConnection();
 
   Strand *newStrand();
 
