@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/04/18 17:50:43  sll
+  Big checkin with the brand new internal APIs.
+  Scoped where appropriate with the omni namespace.
+
   Revision 1.2.2.4  2000/11/07 18:44:03  sll
   Renamed omniObjRef::_hash and _is_equivalent to __hash and __is_equivalent
   to avoid name clash with the member functions of CORBA::Object.
@@ -97,12 +101,10 @@ public:
   //  This function does not throw any exceptions.
   //  This function is thread-safe.
 
-  virtual _CORBA_Boolean _compatibleServant(omniServant* svnt);
-  // Return true if the servant can be used in a local case
-  // optimisation, false if it must be contacted through the loopback
-  // interface.
+  virtual const char* _localServantTarget();
+  // Return a string which servant->_ptrToInterface() must accept for
+  // the servant to be contacted with the local case optimisation.
   // This funtion is thread safe.
-  // Must hold <omni::internalLock>.
 
   inline const char* _mostDerivedRepoId() const {
     return pd_mostDerivedRepoId;
