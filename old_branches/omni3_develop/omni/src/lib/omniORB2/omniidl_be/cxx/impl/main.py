@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.6  2001/04/25 16:55:11  dpg1
+# Properly handle files #included at non-file scope.
+#
 # Revision 1.1.2.5  2000/05/16 11:16:01  djs
 # Updated to simplify memory management, correct errors in function prototypes,
 # add missing attribute functions and generate #warnings which the user should
@@ -53,7 +56,7 @@
 import string
 
 from omniidl import idlast, idlvisitor
-from omniidl_be.cxx import tyutil, util, id, types
+from omniidl_be.cxx import tyutil, util, id, types, config
 from omniidl_be.cxx.impl import template
 
 import main
