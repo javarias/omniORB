@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.15  2000/04/03 11:21:00  dpg1
+// Error report if a method does not exist on upcall.
+//
 // Revision 1.14  2000/03/24 16:48:58  dpg1
 // Local calls now have proper pass-by-value semantics.
 // Lots of little stability improvements.
@@ -201,7 +204,7 @@ Py_Servant::_widenFromTheMostDerivedIntf(const char* repoId,
   else {
     lockWithNewThreadState _t;
     PyObject* isa = PyObject_CallMethod(omniPy::pyomniORBmodule,
-					(char*)"static_is_a", (char*)"Ns",
+					(char*)"static_is_a", (char*)"Os",
 					pyskeleton_, repoId);
     if (!isa)
       PyErr_Print();

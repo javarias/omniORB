@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.20  2000/04/03 11:02:51  dpg1
+// Error report if a method does not exist on upcall.
+//
 // Revision 1.19  2000/04/03 09:18:59  dpg1
 // Missed a few places which should have changed in 1.17.
 //
@@ -340,7 +343,7 @@ Py_omniServant::_is_a(const char* logical_type_id)
   else {
     lockWithNewThreadState _t;
     PyObject* pyisa = PyObject_CallMethod(omniPy::pyomniORBmodule,
-					  (char*)"static_is_a", (char*)"Ns",
+					  (char*)"static_is_a", (char*)"Os",
 					  pyskeleton_, logical_type_id);
     if (!pyisa) PyErr_Print();
     OMNIORB_ASSERT(pyisa && PyInt_Check(pyisa));
