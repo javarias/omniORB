@@ -29,6 +29,11 @@
  
 /*
   $Log$
+  Revision 1.21.4.3  1999/11/04 20:20:19  sll
+  GIOP engines can now do callback to the higher layer to calculate total
+  message size if necessary.
+  Where applicable, changed to use the new server side descriptor-based stub.
+
   Revision 1.21.4.2  1999/10/05 20:35:33  sll
   Added support to GIOP 1.2 to recognise all TargetAddress mode.
   Now handles NEEDS_ADDRESSING_MODE and LOC_NEEDS_ADDRESSING_MODE.
@@ -198,7 +203,7 @@ GIOP_S::InitialiseReply(GIOP::ReplyStatusType status, giopMarshaller& m)
 class GIOP_S_null_marshaller : public giopMarshaller {
 public:
   void marshalData() {}
-  size_t dataSize(size_t initialoffset) {}
+  size_t dataSize(size_t initialoffset) { return 0; }
 };
 
 void
