@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.2  2000/10/12 15:37:50  sll
+# Updated from omni3_1_develop.
+#
 # Revision 1.15.2.1  2000/08/21 11:35:14  djs
 # Lots of tidying
 #
@@ -103,6 +106,7 @@ import omniidl_be.cxx.header.tie
 import omniidl_be.cxx.header.forward
 import omniidl_be.cxx.header.marshal
 import omniidl_be.cxx.header.tcstring
+import omniidl_be.cxx.header.defs
 
 from omniidl_be.cxx.header import template
 
@@ -134,7 +138,6 @@ def defs_fragment(stream, tree):
     tcstring = omniidl_be.cxx.header.tcstring.__init__(stream)
     tree.accept(tcstring)
 
-    import omniidl_be.cxx.header.defs
     defs = omniidl_be.cxx.header.defs.__init__(stream)
     tree.accept(defs)
 
@@ -226,7 +229,6 @@ def monolithic(stream, tree):
         tree.accept(tcstring)
 
     def main_defs(stream = stream, tree = tree):
-        import omniidl_be.cxx.header.defs
         defs = omniidl_be.cxx.header.defs.__init__(stream)
         tree.accept(defs)
 

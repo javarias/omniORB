@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.7.2.3  2000/11/03 19:17:37  sll
+# Generated code use include omniORB4.
+#
 # Revision 1.7.2.2  2000/10/12 15:37:52  sll
 # Updated from omni3_1_develop.
 #
@@ -77,6 +80,8 @@
 #
 
 from omniidl_be.cxx import config, output, ast, id
+import omniidl_be.cxx.skel.main
+import omniidl_be.cxx.skel.poa
 
 def monolithic(stream, tree):
     """Creates one large skeleton with all code inside"""
@@ -103,11 +108,9 @@ static const char* @prefix@_library_version = @library@;
                hh = config.state['HH Suffix'],
                prefix = config.state['Private Prefix'])
 
-    import omniidl_be.cxx.skel.main
     skel = omniidl_be.cxx.skel.main.__init__(stream)
     tree.accept(skel)
 
-    import omniidl_be.cxx.skel.poa
     poa_skel = omniidl_be.cxx.skel.poa.__init__(stream)
     tree.accept(poa_skel)
 
@@ -120,11 +123,9 @@ def fragment(stream, tree):
                program = config.state['Program Name'],
                library = config.state['Library Version'])
 
-    import omniidl_be.cxx.skel.main
     skel = omniidl_be.cxx.skel.main.__init__(stream)
     tree.accept(skel)
 
-    import omniidl_be.cxx.skel.poa
     poa_skel = omniidl_be.cxx.skel.poa.__init__(stream)
     tree.accept(poa_skel)
 
