@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.21.6.12  2000/08/18 12:14:19  dme
+  Allow replacement of proxyObjectFactories
+  Don't mask omniORB::fatalException on server side
+
   Revision 1.21.6.11  2000/06/22 10:37:50  dpg1
   Transport code now throws omniConnectionBroken exception rather than
   CORBA::COMM_FAILURE when things go wrong. This allows the invocation
@@ -712,7 +716,10 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
     }
   }
   catch(const omniORB::fatalException& ex) {
-      throw; // don't mask bugs!
+    throw; // don't mask bugs!
+  }
+  catch(omniConnectionBroken& ex) {
+    throw; // Propagate exception to caller
   }
   catch(...) {
     if( omniORB::traceLevel > 1 ) {
