@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1  2000/03/03 17:41:41  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 
 #include <omnipy.h>
 
@@ -72,7 +75,7 @@ extern "C" {
       pm->activate();
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, "AdapterInactive");
+      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
       OMNIORB_ASSERT(excc);
       PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
       PyErr_SetObject(excc, exci);
@@ -96,7 +99,7 @@ extern "C" {
       pm->hold_requests(wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, "AdapterInactive");
+      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
       OMNIORB_ASSERT(excc);
       PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
       PyErr_SetObject(excc, exci);
@@ -120,7 +123,7 @@ extern "C" {
       pm->discard_requests(wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, "AdapterInactive");
+      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
       OMNIORB_ASSERT(excc);
       PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
       PyErr_SetObject(excc, exci);
@@ -144,7 +147,7 @@ extern "C" {
       pm->deactivate(eo, wfc);
     }
     catch (PortableServer::POAManager::AdapterInactive& ex) {
-      PyObject* excc = PyObject_GetAttrString(pyPM, "AdapterInactive");
+      PyObject* excc = PyObject_GetAttrString(pyPM, (char*)"AdapterInactive");
       OMNIORB_ASSERT(excc);
       PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
       PyErr_SetObject(excc, exci);

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.29  2000/03/03 17:41:42  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.28  2000/02/04 12:17:11  dpg1
 // Support for VMS.
 //
@@ -261,10 +264,10 @@ extern "C" {
   static PyObject*
   omnipy_coreVersion(PyObject* self, PyObject* args)
   {
-    static char* cv = OMNIORB_VERSION_STRING;
+    static char* cv = (char*)OMNIORB_VERSION_STRING;
 
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
-    return Py_BuildValue("s", cv);
+    return Py_BuildValue((char*)"s", cv);
   }
 
   static PyObject*
