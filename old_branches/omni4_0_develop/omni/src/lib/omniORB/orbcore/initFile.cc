@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.32.2.3  2000/11/09 12:27:57  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.32.2.2  2000/09/27 18:00:49  sll
   Use the helper functions in _CORBA_String_helper.
 
@@ -190,6 +193,7 @@
 #define INIT_MAX_CONFIG 10   
                      // Maximum number of entries in configuration 
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 initFile::initFile() : fData(0), fsize(0), currpos(0)
 {
@@ -696,3 +700,5 @@ public:
 static omni_initFile_initialiser initialiser;
 
 omniInitialiser& omni_initFile_initialiser_ = initialiser;
+
+OMNI_NAMESPACE_END(omni)

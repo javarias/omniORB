@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:59:38  sll
+  Updated to use the new cdrStream abstraction.
+
   Revision 1.2.2.1  2000/07/17 10:35:53  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -59,6 +62,7 @@
 #include <dynamicLib.h>
 #include <exceptiondefs.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 static void init();
 static void deinit();

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2000/11/15 17:47:58  dpg1
+  Typo in Monday's servant manager fix
+
   Revision 1.2.2.4  2000/11/13 12:39:54  dpg1
   djr's fix to exceptions in servant managers from omni3_develop
 
@@ -127,11 +130,11 @@
 #endif
 
 #include <poaimpl.h>
+#include <omniORB4/IOP_S.h>
 #include <omniORB4/callDescriptor.h>
 #include <localIdentity.h>
 #include <poamanager.h>
 #include <exceptiondefs.h>
-#include <ropeFactory.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -160,6 +163,7 @@
 
 #define SYS_ASSIGNED_ID_SIZE    4
 
+OMNI_USING_NAMESPACE(omni)
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////// PortableServer::POA_Helper /////////////////////
@@ -1285,7 +1289,7 @@ omniOrbPOA::decrRefCount()
 
 
 void
-omniOrbPOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
+omniOrbPOA::dispatch(IOP_S& giop_s, omniLocalIdentity* id)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);  OMNIORB_ASSERT(id->servant());
@@ -1305,13 +1309,13 @@ omniOrbPOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
 
   if( omniORB::traceInvocations ) {
     omniORB::logger l;
-    l << "Dispatching remote call \'" << giop_s.invokeInfo().operation()
+    l << "Dispatching remote call \'" << giop_s.operation_name()
       << "\' to: " << id << '\n';
   }
 
   if( !id->servant()->_dispatch(giop_s) ) {
     if( !id->servant()->omniServant::_dispatch(giop_s) ) {
-      giop_s.RequestReceived(1);
+      giop_s.SkipRequestBody();
       OMNIORB_THROW(BAD_OPERATION,0, CORBA::COMPLETED_NO);
     }
   }
@@ -1319,7 +1323,7 @@ omniOrbPOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
 
 
 void
-omniOrbPOA::dispatch(GIOP_S& giop_s, const CORBA::Octet* key, int keysize)
+omniOrbPOA::dispatch(IOP_S& giop_s, const CORBA::Octet* key, int keysize)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(key);
@@ -2302,7 +2306,7 @@ omniOrbPOA::add_object_to_etherealisation_queue(
 
 
 void
-omniOrbPOA::dispatch_to_ds(GIOP_S& giop_s, const CORBA::Octet* key,
+omniOrbPOA::dispatch_to_ds(IOP_S& giop_s, const CORBA::Octet* key,
 			   int keysize)
 {
   pd_lock.lock();
@@ -2326,7 +2330,7 @@ omniOrbPOA::dispatch_to_ds(GIOP_S& giop_s, const CORBA::Octet* key,
 
 
 void
-omniOrbPOA::dispatch_to_sa(GIOP_S& giop_s, const CORBA::Octet* key,
+omniOrbPOA::dispatch_to_sa(IOP_S& giop_s, const CORBA::Octet* key,
 			   int keysize)
 {
   // A bit of prep. outside the critical sections...
@@ -2462,7 +2466,7 @@ omniOrbPOA::dispatch_to_sa(GIOP_S& giop_s, const CORBA::Octet* key,
 
 
 void
-omniOrbPOA::dispatch_to_sl(GIOP_S& giop_s, const CORBA::Octet* key,
+omniOrbPOA::dispatch_to_sl(IOP_S& giop_s, const CORBA::Octet* key,
 			   int keysize)
 {
   pd_lock.lock();
@@ -2492,7 +2496,7 @@ omniOrbPOA::dispatch_to_sl(GIOP_S& giop_s, const CORBA::Octet* key,
   PortableServer::Servant servant;
   PortableServer::ServantLocator::Cookie cookie = 0;
   try {
-    servant = sl->preinvoke(oid, this, giop_s.invokeInfo().operation(),
+    servant = sl->preinvoke(oid, this, giop_s.operation_name(),
 			    cookie);
   }
 #ifndef HAS_Cplusplus_catch_exception_by_base
@@ -2529,10 +2533,10 @@ omniOrbPOA::dispatch_to_sl(GIOP_S& giop_s, const CORBA::Octet* key,
     the_id.dispatch(giop_s);
   }
   catch(...) {
-    call_postinvoke(sl, oid, giop_s.invokeInfo().operation(), cookie, servant);
+    call_postinvoke(sl, oid, giop_s.operation_name(), cookie, servant);
     throw;
   }
-  call_postinvoke(sl, oid, giop_s.invokeInfo().operation(), cookie, servant);
+  call_postinvoke(sl, oid, giop_s.operation_name(), cookie, servant);
 }
 
 

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 17:35:50  sll
+  Updated include/omniORB3 to include/omniORB4
+
   Revision 1.2.2.1  2000/07/17 10:35:59  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -50,6 +53,7 @@
 
 #include <taskqueue.h>
 
+OMNI_NAMESPACE_BEGIN(omni)
 
 class omniTaskQueueTask : public omniTaskQueue::Task {
 public:
@@ -144,3 +148,5 @@ omniTaskQueue::run_undetached(void*)
 //////////////////////////////////////////////////////////////////////
 
 omniTaskQueue::Task::~Task()  {}
+
+OMNI_NAMESPACE_END(omni)

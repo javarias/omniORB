@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.2  2000/09/27 17:35:49  sll
+  Updated include/omniORB3 to include/omniORB4
+
   Revision 1.10.2.1  2000/07/17 10:35:53  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -90,7 +93,9 @@
 #include <excepthandler.h>
 #include <omniORB4/omniObjRef.h>
 #include <exceptiondefs.h>
+#include <omniORB4/minorCode.h>
 
+OMNI_USING_NAMESPACE(omni)
 
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the variables external linkage otherwise. Its a bug.
@@ -145,6 +150,16 @@ omni_defaultTransientExcHandler(void*,
 				CORBA::ULong n_retries,
 				const CORBA::TRANSIENT& ex)
 {
+  CORBA::ULong why = ex.minor();
+
+  switch (why) {
+  case TRANSIENT_POANoResource:
+  case TRANSIENT_NoUsableProfile:
+  case TRANSIENT_ConnectFailed:
+    // No point to retry.
+    return 0;
+  }
+
   if (omniORB::trace(10))
     omniORB::logf("defaultTransientExceptionHandler: retry %dth times.",
 		  int(n_retries));

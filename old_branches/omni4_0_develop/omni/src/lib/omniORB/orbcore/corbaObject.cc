@@ -28,6 +28,10 @@
  
 /*
   $Log$
+  Revision 1.20.2.3  2000/11/07 18:44:03  sll
+  Renamed omniObjRef::_hash and _is_equivalent to __hash and __is_equivalent
+  to avoid name clash with the member functions of CORBA::Object.
+
   Revision 1.20.2.2  2000/09/27 18:13:26  sll
   Use the new cdrStream abstraction.
   Removed obsoluted code CORBA::UnMarshalObjRef() and CORBA::MarshalObjRef().
@@ -104,9 +108,10 @@
 
 #include <omniORB4/omniObjRef.h>
 #include <objectAdapter.h>
-#include <ropeFactory.h>
 #include <anonObject.h>
 #include <exceptiondefs.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// CORBA::Object ///////////////////////////
@@ -247,7 +252,7 @@ void
 CORBA::
 Object::_marshalObjRef(CORBA::Object_ptr obj, cdrStream& s)
 {
-  OMNIORB_ASSERT(!obj->_NP_is_pseudo());
+  if (obj->_NP_is_pseudo()) OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_NO);
   omniObjRef::_marshal(obj->_PR_getobj(),s);
 }
 

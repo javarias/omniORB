@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.3  2000/11/09 12:27:58  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.2.2.2  2000/09/27 17:41:41  sll
   Updated include/omniORB3 to include/omniORB4
 
@@ -72,6 +75,8 @@
 #include <poamanager.h>
 #include <poaimpl.h>
 #include <exceptiondefs.h>
+
+OMNI_USING_NAMESPACE(omni)
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////// PortableServer::POAManager /////////////////////
