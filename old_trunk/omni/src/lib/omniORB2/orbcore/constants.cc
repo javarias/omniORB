@@ -29,6 +29,9 @@
 
 /*
   $Log$
+// Revision 1.4  1997/05/06  15:07:47  sll
+// Public release.
+//
   */
 
 #include <omniORB2/CORBA.h>
@@ -100,7 +103,7 @@ const GIOP_Basetypes::MessageHeader::HeaderType
 	 };
 
 // Length of the longest system exception IR repository ID
-//   it is currently "IDL:omg.org/CORBA/OBJECT_NOT_EXIST:1.0"
+//   it is currently "IDL:omg.org/CORBA/TRANSACTION_ROLLEDBACK:1.0"
 // the value include the terminating null character
 const CORBA::ULong 
       GIOP_Basetypes::SysExceptRepoID::maxIDLen = 
@@ -217,6 +220,19 @@ const GIOP_Basetypes::_SysExceptRepoID
 const GIOP_Basetypes::_SysExceptRepoID 
       GIOP_Basetypes::SysExceptRepoID::DATA_CONVERSION ((CORBA::Char *)
                                                         "IDL:omg.org/CORBA/DATA_CONVERSION");
+
+const GIOP_Basetypes::_SysExceptRepoID 
+      GIOP_Basetypes::SysExceptRepoID::TRANSACTION_REQUIRED ((CORBA::Char *)
+                                                        "IDL:omg.org/CORBA/TRANSACTION_REQUIRED");
+const GIOP_Basetypes::_SysExceptRepoID 
+      GIOP_Basetypes::SysExceptRepoID::TRANSACTION_ROLLEDBACK ((CORBA::Char *)
+                                                        "IDL:omg.org/CORBA/TRANSACTION_ROLLEDBACK");
+const GIOP_Basetypes::_SysExceptRepoID 
+      GIOP_Basetypes::SysExceptRepoID::INVALID_TRANSACTION ((CORBA::Char *)
+                                                        "IDL:omg.org/CORBA/INVALID_TRANSACTION");
+const GIOP_Basetypes::_SysExceptRepoID 
+      GIOP_Basetypes::SysExceptRepoID::WRONG_TRANSACTION ((CORBA::Char *)
+                                                        "IDL:omg.org/CORBA/WRONG_TRANSACTION");
 
 const unsigned int omniORB::hash_table_size = 103;
 
