@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.20  1999/06/02 16:43:53  sll
+  Added support for -F flag.
+
   Revision 1.19  1999/04/12 09:07:04  djr
   Updated version.
 
@@ -376,13 +379,32 @@ o2be_root::produce_hdr(std::fstream &s)
     }
   }
 
-  s << "#ifdef _LC_attr\n"
-      << "# error \"A local CPP macro _LC_attr has already been defined.\"\n"
+  s << "#ifdef USE_stub_in_nt_dll\n"
+    << "#ifndef USE_core_stub_in_nt_dll\n"
+    << "#define USE_core_stub_in_nt_dll\n"
+    << "#endif\n"
+    << "#ifndef USE_dyn_stub_in_nt_dll\n"
+    << "#define USE_dyn_stub_in_nt_dll\n"
+    << "#endif\n"
+    << "#endif\n\n";
+
+  s << "#ifdef _core_attr\n"
+      << "# error \"A local CPP macro _core_attr has already been defined.\"\n"
       << "#else\n"
-      << "# ifdef  USE_stub_in_nt_dll\n"
-      << "#  define _LC_attr _OMNIORB_NTDLL_IMPORT\n"
+      << "# ifdef  USE_core_stub_in_nt_dll\n"
+      << "#  define _core_attr _OMNIORB_NTDLL_IMPORT\n"
       << "# else\n"
-      << "#  define _LC_attr\n"
+      << "#  define _core_attr\n"
+      << "# endif\n"
+      << "#endif\n\n";
+
+  s << "#ifdef _dyn_attr\n"
+      << "# error \"A local CPP macro _dyn_attr has already been defined.\"\n"
+      << "#else\n"
+      << "# ifdef  USE_dyn_stub_in_nt_dll\n"
+      << "#  define _dyn_attr _OMNIORB_NTDLL_IMPORT\n"
+      << "# else\n"
+      << "#  define _dyn_attr\n"
       << "# endif\n"
       << "#endif\n\n";
 
@@ -391,7 +413,8 @@ o2be_root::produce_hdr(std::fstream &s)
 
   produce_hdr_defs(s);
 
-  s << "\n#undef _LC_attr\n\n";
+  s << "\n#undef _core_attr\n"
+    << "#undef _dyn_attr\n\n";
 
   produce_hdr_operators(s);
 
