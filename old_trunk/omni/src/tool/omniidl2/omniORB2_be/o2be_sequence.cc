@@ -27,6 +27,11 @@
 
 /*
   $Log$
+  Revision 1.25  1999/06/27 16:48:38  sll
+  Do not expand a sequence of sequence to a template of template of base type
+  if the element sequence is a typedef. This is necessary because a sequence
+  definition is now a class and not a template instance.
+
   Revision 1.24  1999/06/22 14:55:46  sll
   Correct type casting in any extraction operator.
 
@@ -756,6 +761,18 @@ o2be_sequence::produce_typecode_member(std::fstream& s)
 void
 o2be_sequence::produce_typedef_hdr(std::fstream& s, o2be_typedef* tdef)
 {
+  
+  if (tdef->base_type()->node_type() == AST_Decl::NT_typedef) {
+    o2be_typedef* decl = o2be_typedef::narrow_from_decl(tdef->base_type());
+    IND(s); s << "\ntypedef " << decl->unambiguous_name(tdef) << " "
+	      << tdef->uqname() << "\n";
+    IND(s); s << "typedef " << decl->unambiguous_name(tdef) << "_var "
+	      << tdef->uqname() << "_var;\n";
+    IND(s); s << "typedef " << decl->unambiguous_name(tdef) << "_out "
+	      << tdef->uqname() << "_out;\n\n";
+    return;
+  }
+    
   {
     // gcc requires that the marshalling operators for the element
     // be declared before the sequence template is typedef'd.
