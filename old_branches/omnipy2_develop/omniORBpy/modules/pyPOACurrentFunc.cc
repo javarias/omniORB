@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.2  2001/09/24 10:48:27  dpg1
+// Meaningful minor codes.
+//
 // Revision 1.1.2.1  2001/06/11 13:06:26  dpg1
 // Support for PortableServer::Current.
 //
@@ -123,12 +126,12 @@ extern "C" {
 
     OMNIORB_ASSERT(pc);
 
-    CORBA::Object_var objref;
     CORBA::Object_ptr lobjref;
     const char* mdri;
 
     try {
       omniPy::InterpreterUnlocker _u;
+      CORBA::Object_var objref;
       objref  = pc->get_reference();
       mdri    = objref->_PR_getobj()->_mostDerivedRepoId();
       lobjref = omniPy::makeLocalObjRef(mdri, objref);
