@@ -256,7 +256,7 @@ ifdef AIX
 
 DIR_CPPFLAGS += -I. -I/usr/local/include -DNO_STRCASECMP
 
-lib = _omniidlmodule.so
+lib = _omniidlmodule.a
 libinit = init_omniidl
 py_exp = $(PYPREFIX)/lib/python$(PYVERSION)/config/python.exp
 

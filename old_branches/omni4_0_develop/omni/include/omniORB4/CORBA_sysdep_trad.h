@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2002/10/14 15:09:58  dgrisby
+  Cope with platforms where sizeof(bool) != 1.
+
   Revision 1.1.2.3  2002/03/13 16:05:38  dpg1
   Transport shutdown fixes. Reference count SocketCollections to avoid
   connections using them after they are deleted. Properly close
@@ -237,6 +240,12 @@
 #    define HAS_Cplusplus_Bool
 #    define HAS_Cplusplus_Namespace
 #    define HAS_Std_Namespace
+#    define HAS_LongLong
+#    define HAS_LongDouble
+#    define _CORBA_LONGLONG_DECL long long
+#    define _CORBA_ULONGLONG_DECL unsigned long long
+#    define _CORBA_LONGDOUBLE_DECL long double
+#    define _CORBA_LONGLONG_CONST(x) (x##LL)
 #  endif
 
 #elif defined(__hpux__)

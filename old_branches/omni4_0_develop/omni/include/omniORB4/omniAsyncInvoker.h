@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2002/01/09 11:35:21  dpg1
+  Remove separate omniAsyncInvoker library to save library overhead.
+
   Revision 1.1.4.3  2001/08/01 10:03:39  dpg1
   AyncInvoker no longer maintains its own dedicated thread queue.
   Derived classes must provide the implementation.
@@ -146,6 +149,9 @@ class omniTask : public omniTaskLink {
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+
+class omniAsyncWorker;
+
 class omniAsyncInvoker {
  public:
   omniAsyncInvoker(unsigned int max=10000);
