@@ -27,6 +27,10 @@
 
 /*
   $Log$
+  Revision 1.39.6.14  2000/01/27 10:55:48  djr
+  Mods needed for powerpc_aix.  New macro OMNIORB_BASE_CTOR to provide
+  fqname for base class constructor for some compilers.
+
   Revision 1.39.6.13  1999/11/22 10:50:44  djr
   Fixed bug in omniidl3.  typedef of Object was broken.
 
@@ -2140,15 +2144,7 @@ static void internal_find_prefix(StringBuf& result,
   int wp_len = strlen(str_w_prefix);
   int wop_len = strlen(str_wo_prefix);
 
-  if( wop_len == wp_len && strcmp(str_w_prefix, str_wo_prefix) )
-    cerr << "internal_find_prefix: " << str_w_prefix << " " << str_wo_prefix
-	 << '\n';//??
-
   if( wop_len >= wp_len )  return;
-
-  if( strcmp(str_w_prefix + wp_len - wop_len, str_wo_prefix) )
-    cerr << "internal_find_prefix: " << str_w_prefix << " " << str_wo_prefix
-	 << '\n';//??
 
   result += StringBuf::extent(str_w_prefix, str_w_prefix + wp_len - wop_len);
 }
