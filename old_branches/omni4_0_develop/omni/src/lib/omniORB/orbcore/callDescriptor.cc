@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.5  2001/04/18 18:18:11  sll
+ Big checkin with the brand new internal APIs.
+
  Revision 1.2.2.4  2000/11/03 18:46:19  sll
  Moved string marshal functions into cdrStream.
 
@@ -71,6 +74,7 @@
 #include <omniORB4/callDescriptor.h>
 #include <exceptiondefs.h>
 #include <dynamicLib.h>
+#include <omniCurrent.h>
 
 OMNI_USING_NAMESPACE(omni)
 

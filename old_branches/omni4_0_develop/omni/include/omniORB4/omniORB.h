@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.6  2001/05/11 14:25:54  sll
+  Added operator for omniORB::logger to report system exception status and
+  minor code.
+
   Revision 1.2.2.5  2001/04/18 17:50:44  sll
   Big checkin with the brand new internal APIs.
   Scoped where appropriate with the omni namespace.
@@ -725,6 +729,20 @@ _CORBA_MODULE_BEG
   //                                                                    //
   _CORBA_MODULE_VAR int poaHoldRequestTimeout;                          //
   //                                                                    //
+  ////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
+  // supportCurrent                                                     //
+  // If the value of this variable is TRUE, per-thread information is   //
+  // made available through the Current interfaces, e.g.                //
+  // PortableServer::Current. If you do not need this information, you  //
+  // can set the value to FALSE(0), resulting in a small performance    //
+  // improvement. The default is TRUE(1).                               //
+  //   	       	       	       	       	       	       	       	       	//
+  _CORBA_MODULE_VAR _core_attr CORBA::Boolean supportCurrent;           //
+  //                                                                    //
+  //     This value can be changed at runtime by direct assignment      //
+  //     to this variable.                                              //
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////

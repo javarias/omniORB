@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
+  In process identity.
+
   Revision 1.1.4.1  2001/04/18 17:18:15  sll
   Big checkin with the brand new internal APIs.
   These files were relocated and scoped with the omni namespace.
@@ -82,7 +85,7 @@
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-#define PS_VERSION  ":2.3"
+#define PS_VERSION  ":2.4"
 
 class omniOrbPOAManager;
 
@@ -254,6 +257,8 @@ public:
   // Throws OBJ_ADAPTER if an adapter activator throws a system
   // exception.
 
+  PortableServer::ObjectId* localId_to_ObjectId(omniLocalIdentity* lid);
+  // For the given omniLocalIdentity within this POA, return its ObjectId.
 
 private:
   void create_key(omniObjKey& key_out, const CORBA::Octet* id, int idsize);

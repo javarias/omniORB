@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.5  2001/05/31 16:18:15  dpg1
+  inline string matching functions, re-ordered string matching in
+  _ptrToInterface/_ptrToObjRef
+
   Revision 1.2.2.4  2001/04/18 18:18:05  sll
   Big checkin with the brand new internal APIs.
 
@@ -77,7 +81,10 @@
 
 #include <poamanager.h>
 #include <poaimpl.h>
+#include <poacurrentimpl.h>
 #include <exceptiondefs.h>
+#include <omniCurrent.h>
+#include <omniORB4/minorCode.h>
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -167,9 +174,19 @@ omniOrbPOAManager::hold_requests(CORBA::Boolean wait_for_completion)
 {
   CHECK_NOT_NIL();
 
-  if( wait_for_completion && 0 /*?? in context of invocation */ )
-    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
-
+  if( wait_for_completion ) {
+    // Complain if in the context of an operation invocation.
+    // Fortunately, the spec says we don't have to worry about whether
+    // we're in the context of an operation invocation in a POA
+    // managed by this POAManager. An invocation on any POA in the
+    // same ORB will do.
+    omniCurrent* current = omniCurrent::get();
+    if (current && current->callDescriptor()) {
+      OMNIORB_THROW(BAD_INV_ORDER,
+		    BAD_INV_ORDER_WouldDeadLock,
+		    CORBA::COMPLETED_NO);
+    }
+  }
   POASeq poas;
   {
     omni_tracedmutex_lock sync(pm_lock);
@@ -202,9 +219,19 @@ omniOrbPOAManager::discard_requests(CORBA::Boolean wait_for_completion)
 {
   CHECK_NOT_NIL();
 
-  if( wait_for_completion && 0 /*?? in context of invocation */ )
-    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
-
+  if( wait_for_completion ) {
+    // Complain if in the context of an operation invocation.
+    // Fortunately, the spec says we don't have to worry about whether
+    // we're in the context of an operation invocation in a POA
+    // managed by this POAManager. An invocation on any POA in the
+    // same ORB will do.
+    omniCurrent* current = omniCurrent::get();
+    if (current && current->callDescriptor()) {
+      OMNIORB_THROW(BAD_INV_ORDER,
+		    BAD_INV_ORDER_WouldDeadLock,
+		    CORBA::COMPLETED_NO);
+    }
+  }
   POASeq poas;
   {
     omni_tracedmutex_lock sync(pm_lock);
@@ -258,9 +285,19 @@ omniOrbPOAManager::deactivate(CORBA::Boolean etherealize_objects,
 {
   CHECK_NOT_NIL();
 
-  if( wait_for_completion && 0 /*?? in context of invocation */ )
-    OMNIORB_THROW(BAD_INV_ORDER,0, CORBA::COMPLETED_NO);
-
+  if( wait_for_completion ) {
+    // Complain if in the context of an operation invocation.
+    // Fortunately, the spec says we don't have to worry about whether
+    // we're in the context of an operation invocation in a POA
+    // managed by this POAManager. An invocation on any POA in the
+    // same ORB will do.
+    omniCurrent* current = omniCurrent::get();
+    if (current && current->callDescriptor()) {
+      OMNIORB_THROW(BAD_INV_ORDER,
+		    BAD_INV_ORDER_WouldDeadLock,
+		    CORBA::COMPLETED_NO);
+    }
+  }
   POASeq* ppoas = new POASeq;
   POASeq& poas = *ppoas;
   {

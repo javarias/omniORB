@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/05/29 17:03:51  dpg1
+  In process identity.
+
   Revision 1.2.2.3  2001/04/18 18:18:07  sll
   Big checkin with the brand new internal APIs.
 
@@ -66,6 +69,7 @@
 
 #include <localIdentity.h>
 #include <omniORB4/callDescriptor.h>
+#include <omniORB4/callHandle.h>
 #include <objectAdapter.h>
 #include <exceptiondefs.h>
 
@@ -112,6 +116,8 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(pd_adapter && pd_servant);
 
+  call_desc.localId(this);
+
   omniLocalIdentity_RefHolder rh(this);
 
   omni::localInvocationCount++;
@@ -148,6 +154,8 @@ omniLocalIdentity::dispatch(omniCallHandle& handle)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(pd_adapter && pd_servant);
+
+  handle.localId(this);
 
   omniLocalIdentity_RefHolder rh(this);
 
