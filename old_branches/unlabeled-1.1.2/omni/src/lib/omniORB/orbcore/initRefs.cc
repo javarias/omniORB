@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2000/06/22 10:40:15  dpg1
+  exception.h renamed to exceptiondefs.h to avoid name clash on some
+  platforms.
+
   Revision 1.1.2.2  2000/06/19 13:56:25  dpg1
   Explicit cast to (const char*) when using String_var with logger.
 
@@ -103,7 +107,7 @@ static omni_tracedmutex ba_lock;
 struct serviceRecord {
   CORBA::String_member id;
   CORBA::String_member uri;
-  CORBA::Object_member ref;
+  CORBA::Object_Member ref;
 };
 
 static _CORBA_PseudoValue_Sequence<serviceRecord> the_argsServiceList;

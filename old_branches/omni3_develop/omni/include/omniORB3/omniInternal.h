@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2000/04/27 10:36:48  dpg1
+  Interoperable Naming Service
+
+  stringToObject() and objectToString() moved to omniURI.h.
+
   Revision 1.1.2.8  2000/02/22 12:25:37  dpg1
   A few things made `publicly' accessible so omniORBpy can get its hands
   on them.
@@ -223,7 +228,9 @@ public:
   // we don't initialise to empty string.
   //  <len> does not include nul terminator.
 
-  static inline void freeString(char* s) { delete[] s; }
+  static inline void freeString(char* s) { 
+    if (s && s != empty_string) delete[] s; 
+  }
   // As CORBA::string_free().
 
   static omni_tracedmutex& nilRefLock();

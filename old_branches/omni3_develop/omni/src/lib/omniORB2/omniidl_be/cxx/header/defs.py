@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.14  2000/06/26 16:23:57  djs
+# Better handling of #include'd files (via new commandline options)
+# Refactoring of configuration state mechanism.
+#
 # Revision 1.31.2.13  2000/06/19 18:19:49  djs
 # Implemented union discriminant setting function _d(_value) with checks for
 # illegal uses (setting to a label corresponding to a non-current member and
@@ -647,7 +651,7 @@ def visitTypedef(node):
                 templateName = d_type.sequenceTemplate(environment)
 
                 if d_seqType.string():
-                    element = "_CORBA_String_member"
+                    element = "_CORBA_String_element"
                     element_IN = "char *"
                 elif d_seqType.objref():
                     element = seqType.base(environment) + "_ptr"
@@ -725,7 +729,7 @@ def visitTypedef(node):
                         # special case alert
                         element_reference = element
                     elif d_seqType.objref():
-                        element_reference = d_seqType.objRefTemplate("Member",
+                        element_reference = d_seqType.objRefTemplate("Element",
                                                                      environment)
                     # only if an anonymous sequence
                     elif seqType.sequence():

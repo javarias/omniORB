@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.7  2000/06/02 14:15:17  dpg1
+ SystemException constructors now public so exceptions caught by base
+ class can be rethrown
+
  Revision 1.1.2.6  2000/03/03 14:29:15  djr
  Improvement to BOA skeletons (less generated code).
 
@@ -2268,7 +2272,7 @@ _CORBA_MODULE_BEG
         return *this;
       }
 
-      inline _CORBA_String_member operator [] (_CORBA_ULong i) {   return (*pd_seq)[i]; }
+      inline _CORBA_String_element operator [] (_CORBA_ULong i) {   return (*pd_seq)[i]; }
       inline T* operator -> () { return pd_seq; }
 #if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
       inline operator T& () const { return *pd_seq; }
@@ -2304,7 +2308,7 @@ _CORBA_MODULE_BEG
       inline operator T*&() { return _data; }
       inline T*& ptr() { return _data; }
       inline T* operator->() { return _data; }
-      inline _CORBA_String_member operator [] (_CORBA_ULong i) {
+      inline _CORBA_String_element operator [] (_CORBA_ULong i) {
 	return (*_data)[i];
       }
       T*& _data;

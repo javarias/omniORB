@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/21 11:29:45  djr
+  Added _core_attr to declaration of _PD_repoId in exceptions & interfaces.
+
   Revision 1.1.2.3  1999/10/16 13:22:52  djr
   Changes to support compiling on MSVC.
 
@@ -53,7 +56,7 @@
 
 class ForwardRequest : public CORBA::UserException {
 public:
-  CORBA::Object_member forward_reference;
+  CORBA::Object_Member forward_reference;
 
   inline ForwardRequest() {
     pd_insertToAnyFn    = insertToAnyFn;
