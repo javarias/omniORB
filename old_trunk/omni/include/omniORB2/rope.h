@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.6  1999/01/25 18:06:24  sll
+  Added comment on the side-effect of WrTimedLock and WrUnlock(Strand*).
+
   Revision 1.5  1998/03/19 19:59:01  sll
   Added comment to clarify the sync. requirement of newStrand().
 
@@ -813,10 +816,6 @@ public:
   }
 
   inline Rope_var(const Rope_var& p) {
-    if (_ptr) {
-      _ptr->decrRefCount();
-      _ptr = 0;
-    }
     if (p._ptr) {
       p._ptr->incrRefCount();
     }
