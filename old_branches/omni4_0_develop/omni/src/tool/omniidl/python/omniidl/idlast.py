@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.6  2001/08/29 11:55:23  dpg1
+# Enumerator nodes record their value.
+#
 # Revision 1.15.2.5  2001/06/08 17:12:25  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -1117,8 +1120,15 @@ CORBAObject = Interface("<built in>", 0, 0, [], [],
 CORBAObject._Decl__builtIn = 1
 registerDecl(["CORBA", "Object"], CORBAObject)
 
+CORBAValueBase = Value("<built in>", 0, 0, [], [],
+                       "ValueBase", ["CORBA", "ValueBase"],
+                       "IDL:omg.org/CORBA/ValueBase:1.0",
+                       0, [], 0, [])
+CORBAValueBase._Decl__builtIn = 1
+registerDecl(["CORBA", "ValueBase"], CORBAValueBase)
+
 CORBAModule = Module("<built in>", 0, 0, [], [], "CORBA", ["CORBA"],
-                     "IDL:omg.org/CORBA:1.0", [CORBAObject])
+                     "IDL:omg.org/CORBA:1.0", [CORBAObject, CORBAValueBase])
 registerDecl(["CORBA"], CORBAModule)
 
 
@@ -1126,4 +1136,5 @@ def clear():
     """Clear back-end structures ready for another run"""
     declMap.clear()
     registerDecl(["CORBA", "Object"], CORBAObject)
+    registerDecl(["CORBA", "ValueBase"], CORBAValueBase)
     registerDecl(["CORBA"], CORBAModule)

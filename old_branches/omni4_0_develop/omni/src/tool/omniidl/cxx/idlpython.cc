@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.17.2.12  2001/11/14 17:13:43  dpg1
+// Long double support.
+//
 // Revision 1.17.2.11  2001/10/17 16:48:33  dpg1
 // Minor error message tweaks
 //
@@ -1306,6 +1309,17 @@ visitDeclaredType(DeclaredType* t)
     if (t->kind() == IdlType::tk_objref) {
       PyObject* pysn   = Py_BuildValue((char*)"[ss]", (char*)"CORBA",
 				       (char*)"Object");
+
+      PyObject* pydecl = PyObject_CallMethod(idlast_, (char*)"findDecl",
+					     (char*)"O", pysn);
+
+      result_          = PyObject_CallMethod(idltype_, (char*)"declaredType",
+					     (char*)"NNii", pydecl, pysn,
+					     (int)t->kind(), (int)t->local());
+    }
+    else if (t->kind() == IdlType::tk_value) {
+      PyObject* pysn   = Py_BuildValue((char*)"[ss]", (char*)"CORBA",
+				       (char*)"ValueBase");
 
       PyObject* pydecl = PyObject_CallMethod(idlast_, (char*)"findDecl",
 					     (char*)"O", pysn);
