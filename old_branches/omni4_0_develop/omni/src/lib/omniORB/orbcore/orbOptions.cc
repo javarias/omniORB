@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2003/07/26 22:52:22  dgrisby
+  Avoid spurious gcc warnings when sizeof pointer > sizeof int.
+
   Revision 1.1.2.6  2002/03/18 15:13:09  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -343,7 +346,8 @@ orbOptions::sequenceString*
 orbOptions::dumpSpecified() const {
 
   sequenceString_var result(new sequenceString(pd_values.size()));
-  
+  result->length(pd_values.size());
+
   omnivector<HandlerValuePair*>::const_iterator i = pd_values.begin();
   omnivector<HandlerValuePair*>::const_iterator last = pd_values.end();
 
@@ -367,6 +371,7 @@ orbOptions::dumpCurrentSet() const {
   if (!pd_handlers_sorted) ((orbOptions*)this)->sortHandlers();
 
   sequenceString_var result(new sequenceString(pd_handlers.size()));
+  result->length(pd_values.size());
 
   omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
   omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
