@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.14  2004/04/30 16:39:35  dgrisby
+// Log CORBA exceptions with Python tracebacks. Thanks Luke Deller.
+//
 // Revision 1.1.2.13  2004/02/16 13:56:41  dgrisby
 // Cope with long int in exception minor code.
 //
@@ -194,6 +197,7 @@ omniPy::handlePythonException()
   PyObject *etype, *evalue, *etraceback;
   PyObject *erepoId = 0;
   PyErr_Fetch(&etype, &evalue, &etraceback);
+  PyErr_NormalizeException(&etype, &evalue, &etraceback);
   OMNIORB_ASSERT(etype);
 
   if (evalue && PyInstance_Check(evalue))
