@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.2  2000/01/31 11:05:58  djr
+ Fixed bug in unmarshalling of String_member.
+
  Revision 1.5.2.1  2000/01/27 15:05:18  djr
  String_member now initialised to empty string by default.
 
@@ -169,7 +172,11 @@ public:
   typedef char* ptr_t;
 
   inline _CORBA_String_member()
-    : pd_data((char*) ""), pd_rel(0), _ptr(pd_data) {}
+#ifndef OMNI_EMPTY_STRING_MEMBERS
+    : pd_data(0), pd_rel(1), _ptr(pd_data) {}
+#else
+    : pd_data(_CORBA_String_var::string_dup("")), pd_rel(1), _ptr(pd_data) {}
+#endif
 
   inline _CORBA_String_member(char*& p, _CORBA_Boolean rel) 
     : pd_data(0), pd_rel(rel), _ptr(p) {}
@@ -177,7 +184,6 @@ public:
   inline _CORBA_String_member(const _CORBA_String_member& s) 
            : pd_data(0), pd_rel(1), _ptr(pd_data) {
     if (s._ptr)  _ptr = _CORBA_String_var::string_dup(s._ptr);
-    else         _ptr = 0;
   }
 
   inline ~_CORBA_String_member() {
@@ -189,6 +195,7 @@ public:
   inline _CORBA_String_member& operator=(char* s) {
     if (pd_rel && ((char*)_ptr))  delete[] _ptr;
     _ptr = s;
+    pd_rel = 1;
     return *this;
   }
 
@@ -197,7 +204,10 @@ public:
       delete[] _ptr;
       _ptr = 0;
     }
-    if (s)  _ptr = _CORBA_String_var::string_dup(s);
+    if( s ) {
+      _ptr = _CORBA_String_var::string_dup(s);
+      pd_rel = 1;
+    }
     return *this;
   }
 
@@ -206,7 +216,10 @@ public:
       delete[] _ptr;
       _ptr = 0;
     }
-    if (s._ptr)  _ptr = _CORBA_String_var::string_dup(s._ptr);
+    if( s._ptr ) {
+      _ptr = _CORBA_String_var::string_dup(s._ptr);
+      pd_rel = 1;
+    }
     return *this;
   }
 
@@ -215,7 +228,10 @@ public:
       delete[] _ptr;
       _ptr = 0;
     }
-    if( (const char*)s )  _ptr = _CORBA_String_var::string_dup((const char*)s);
+    if( (const char*)s ) {
+      _ptr = _CORBA_String_var::string_dup((const char*)s);
+      pd_rel = 1;
+    }
     return *this;
   }
 
