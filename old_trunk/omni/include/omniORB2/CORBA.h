@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.45  1999/08/30 17:40:22  sll
+ Removed use of _T and _T_var.
+
  Revision 1.44  1999/08/24 12:36:44  djr
  PR_structMember now uses 'const char*'.
 
@@ -3295,6 +3298,7 @@ _CORBA_MODULE CORBA
 _CORBA_MODULE_BEG
 #endif
 
+#if defined(ENABLE_CLIENT_IR_SUPPORT)
 #if defined(_OMNIORB2_LIBRARY)
 #    undef   _core_attr
 #    define  _core_attr  _OMNIORB_NTDLL_IMPORT
@@ -3309,6 +3313,7 @@ _CORBA_MODULE_BEG
 #    define  _core_attr  _OMNIORB_NTDLL_IMPORT
 #else
 #include <omniORB2/ir_defs.hh>
+#endif
 #endif
 
 _CORBA_MODULE_END
@@ -3353,7 +3358,10 @@ _omni_callSystemExceptionHandler(omniObject*,
 extern void _omni_set_NameService(CORBA::Object_ptr);
 
 #include <omniORB2/corbaidl_operators.hh>
+
+#if defined(ENABLE_CLIENT_IR_SUPPORT)
 #include <omniORB2/ir_operators.hh>
+#endif
 
 #undef _core_attr
 #undef _dyn_attr
