@@ -29,6 +29,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.1  2003/05/28 10:13:01  dgrisby
+// Preliminary interceptor support. General clean-up.
+//
 
 #include <omnipy.h>
 #include <pyThreadCache.h>
@@ -68,6 +71,7 @@ pyNumberToULong(PyObject* obj, CORBA::CompletionStatus completion)
       return r;
   }
   OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, completion);
+  return 0;
 }
 
 
