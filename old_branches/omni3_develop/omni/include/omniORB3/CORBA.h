@@ -29,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.1.2.15  2001/06/01 13:56:57  sll
+ Long long define for HPUX.
+ External CPP define guard for IR.h
+
  Revision 1.1.2.14  2000/12/11 10:16:37  dpg1
  CORBA::Object::_narrow() failed to increment reference count.
 
@@ -1496,6 +1500,9 @@ _CORBA_MODULE_BEG
 
     static _ptr_type        _duplicate(_ptr_type);
     static inline _ptr_type _narrow(Object_ptr o) { return _duplicate(o); }
+    static inline _ptr_type _unchecked_narrow(Object_ptr o) {
+      return _duplicate(o);
+    }
     static _ptr_type        _nil();
 
     //////////////////////

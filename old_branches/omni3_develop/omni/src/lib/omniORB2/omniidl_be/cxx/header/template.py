@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.19  2001/08/20 13:48:01  dpg1
+# Wrong _out type generated for fixed length structs/unions.
+# (Back-ported from omniORB 4.)
+#
 # Revision 1.3.2.18  2001/08/16 09:11:35  dpg1
 # Union discriminator not copied.
 #
@@ -297,6 +301,7 @@ public:
 
   static _ptr_type _duplicate(_ptr_type);
   static _ptr_type _narrow(CORBA::Object_ptr);
+  static _ptr_type _unchecked_narrow(CORBA::Object_ptr);
   static _ptr_type _nil();
 
   static inline size_t _alignedSize(_ptr_type, size_t);

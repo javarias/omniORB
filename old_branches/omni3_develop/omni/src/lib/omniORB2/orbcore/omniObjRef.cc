@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2001/05/04 16:53:08  dpg1
+  Work-around for Compaq C++ optimiser bug.
+
   Revision 1.1.2.6  2000/06/22 10:40:16  dpg1
   exception.h renamed to exceptiondefs.h to avoid name clash on some
   platforms.
@@ -192,6 +195,38 @@ omniObjRef::_realNarrow(const char* repoId)
   return target;
 }
 
+void*
+omniObjRef::_uncheckedNarrow(const char* repoId)
+{
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
+  OMNIORB_ASSERT(repoId && *repoId);
+
+  // Attempt to narrow the reference using static type info.
+  void* target = _ptrToObjRef(repoId);
+
+  if( target ) {
+    omni::duplicateObjRef(this);
+  }
+  else {
+    omniObjRef* objref;
+
+    omni::internalLock->lock();
+
+    if( _localId() )
+      objref = omni::createObjRef(pd_mostDerivedRepoId, repoId, _localId());
+    else
+      objref = omni::createObjRef(pd_mostDerivedRepoId, repoId,
+				  pd_iopprofiles, 0, 1);
+
+    omni::internalLock->unlock();
+
+    if( objref ) {
+      target = objref->_ptrToObjRef(repoId);
+      OMNIORB_ASSERT(target);
+    }
+  }
+  return target;
+}
 
 void
 omniObjRef::_assertExistsAndTypeVerified()

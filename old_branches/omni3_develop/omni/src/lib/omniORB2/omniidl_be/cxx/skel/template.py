@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.11  2001/04/27 11:03:56  dpg1
+# Fix scoping bug in MSVC work-around for external constant linkage.
+#
 # Revision 1.1.2.10  2001/01/29 10:52:47  djs
 # In order to fix interface inheritance name ambiguity problem the
 # call-base-class-by-typedef (rather than direct) MSVC workaround was
@@ -135,7 +138,6 @@ interface_class = """\
   return obj;
 }
 
-
 @name@_ptr
 @name@::_narrow(CORBA::Object_ptr obj)
 {
@@ -144,6 +146,13 @@ interface_class = """\
   return e ? e : _nil();
 }
 
+@name@_ptr
+@name@::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
+  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
+  return e ? e : _nil();
+}
 
 @name@_ptr
 @name@::_nil()
