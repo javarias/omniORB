@@ -1,5 +1,5 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB3
+//                            Package   : omniORB
 // serverRequest.cc           Created on: 9/1998
 //                            Author    : David Riddoch (djr)
 //
@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.1  2000/07/17 10:35:42  sll
+ Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
+
  Revision 1.9  2000/07/13 15:26:02  dpg1
  Merge from omni3_develop for 3.0 release.
 
@@ -50,7 +53,7 @@
 
 */
 
-#include <omniORB3/CORBA.h>
+#include <omniORB4/CORBA.h>
 
 #ifdef HAS_pch
 #pragma hdrstop
