@@ -19,16 +19,19 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
 //	*** PROPRIETORY INTERFACE ***
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:19:00  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.1  2001/02/23 16:47:04  sll
   Added new files.
 
@@ -57,7 +60,7 @@ class giopStrand;
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-class giopRope : public Rope, public Rope::Link {
+class giopRope : public Rope, public RopeLink {
  public:
 
   static int selectRope(const giopAddressList&,
@@ -74,7 +77,7 @@ class giopRope : public Rope, public Rope::Link {
   // This is normally the entry function that causes a rope to be created
   // in the first place.
   //
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -91,14 +94,14 @@ class giopRope : public Rope, public Rope::Link {
 
   virtual ~giopRope();
   // No thread safety precondition
-  
+
 
   IOP_C* acquireClient(const omniIOR*,
 		       const CORBA::Octet* key,
 		       CORBA::ULong keysize,
 		       omniCallDescriptor*);
   // Acquire a GIOP_C from this rope.
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -107,7 +110,7 @@ class giopRope : public Rope, public Rope::Link {
   // Release the GIOP_C back to this rope. The GIOP_C must have been acquired
   // previously through acquireClient from this rope. Passing in a GIOP_C
   // from a different rope would result in undefined behaviour.
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -115,7 +118,7 @@ class giopRope : public Rope, public Rope::Link {
 
   void incrRefCount();
   // Increment the reference count by 1.
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -123,7 +126,7 @@ class giopRope : public Rope, public Rope::Link {
   void decrRefCount();
   // Decrement the reference count by 1. If the reference count becomes
   // 0, the rope will be deleted at the earliest convenient time.
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -141,7 +144,7 @@ class giopRope : public Rope, public Rope::Link {
   // value to decide when all the addresses have been tried. This
   // is done by comparing the return value with the address in use when
   // the first call is made.
-  // 
+  //
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
@@ -156,7 +159,7 @@ class giopRope : public Rope, public Rope::Link {
   CORBA::Boolean oneCallPerConnection() {
     // No thread safety precondition, use with extreme care
     // return True(1) if only one call can be in progress at any time on
-    // each strand. 
+    // each strand.
     // return False(0) if the same strand can be used to carry multiple
     // concurrent calls.
     // The default is True.
@@ -192,10 +195,10 @@ class giopRope : public Rope, public Rope::Link {
   omnivector<CORBA::ULong>::size_type   pd_address_in_use;
   CORBA::ULong         pd_maxStrands;
   CORBA::Boolean       pd_oneCallPerConnection;
-  int                  pd_nwaiting; 
+  int                  pd_nwaiting;
   omni_tracedcondition pd_cond;
 
-  static _core_attr Rope::Link ropes;
+  static _core_attr RopeLink ropes;
   // All ropes created by selectRope are linked together by this list.
 
 

@@ -19,16 +19,20 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
 //	Wrapper for libc functions which are non-reentrant
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:18:16  sll
+  Big checkin with the brand new internal APIs.
+  These files were relocated and scoped with the omni namespace.
+
   Revision 1.7.2.1  2000/07/17 10:35:54  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -78,7 +82,7 @@ public:
     hostent_var () { pd_buffer = 0; pd_buflen = 0; }
     ~hostent_var() { if (pd_buffer) delete [] pd_buffer; }
 
-    const struct hostent * hostent() { 
+    const struct hostent * hostent() {
       if (pd_buffer) {
 	return &pd_ent;
       }
@@ -95,10 +99,27 @@ public:
   };
 
 #endif // _HAS_NETDB_
-			   
+
 };
 
 
 OMNI_NAMESPACE_END(omni)
+
+#ifdef _HAS_NOT_GOT_strcasecmp
+
+#if defined(_MSC_VER)
+#if    defined(_OMNIORB_LIBRARY)
+#define _NT_DLL_ATTR __declspec(dllexport)
+#else
+#define _NT_DLL_ATTR __declspec(dllimport)
+#endif
+#else
+#define _NT_DLL_ATTR
+#endif
+
+int _NT_DLL_ATTR strcasecmp(const char *s1, const char *s2);
+int _NT_DLL_ATTR strncasecmp(const char *s1, const char *s2,size_t n);
+
+#endif
 
 #endif // __LIBCWRAPPER_H__

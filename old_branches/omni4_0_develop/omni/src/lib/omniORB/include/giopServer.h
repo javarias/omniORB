@@ -19,16 +19,19 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
 //	*** PROPRIETORY INTERFACE ***
-// 
+//
 
 /*
   $Log$
+  Revision 1.1.4.1  2001/04/18 17:19:00  sll
+  Big checkin with the brand new internal APIs.
+
   Revision 1.1.2.1  2001/02/23 16:47:04  sll
   Added new files.
 
@@ -74,7 +77,10 @@ public:
     Link* next;
     Link* prev;
 
-    Link() : next(this), prev(this) {}
+    Link() {
+			next = this;
+			prev = this;
+		}
 
     void insert(Link& head);
     void remove();
@@ -105,7 +111,7 @@ private:
 
   void deactivate();
   // deactivate all endpoints in pd_endpoints. This involves terminating
-  // all giopRendezvousers and giopWorkers. For each giopRendezvouser, 
+  // all giopRendezvousers and giopWorkers. For each giopRendezvouser,
   // its endpoint is reentered into pd_endpoints.
   //
   // This function does not raise an exception.

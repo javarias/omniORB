@@ -19,7 +19,7 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8.2.6  2001/05/08 16:30:10  sll
+ DSI now handles set_exceptions() correctly for both user and system exceptions.
+
  Revision 1.8.2.5  2001/04/19 09:15:43  sll
  Big checkin with the brand new internal APIs.
  Scoped where appropriate with the omni namespace.
@@ -248,7 +251,7 @@ class FromAnyUserException : public CORBA::UserException {
 public:
   virtual ~FromAnyUserException() {}
 
-  FromAnyUserException(const CORBA::Any& v,const char* id) : 
+  FromAnyUserException(const CORBA::Any& v,const char* id) :
       value(v), repoid(id) {}
 
   const char* _NP_repoId(int* size) const {
@@ -264,11 +267,11 @@ private:
 
   // We don't expect any of these functions to be called.
   // Any call to these functions is a bug!
-  void _raise() { 
+  void _raise() {
     throw omniORB::fatalException(__FILE__,__LINE__,
 				  "Wrong usage of class FromAnyUserException");
   }
-  Exception* _NP_duplicate() const {
+  CORBA::Exception* _NP_duplicate() const {
     throw omniORB::fatalException(__FILE__,__LINE__,
 				  "Wrong usage of class FromAnyUserException");
   }
