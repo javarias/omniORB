@@ -19,16 +19,19 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 //    02111-1307, USA
 //
 //
 // Description:
 //	*** PROPRIETARY INTERFACE ***
-//	
+//
 
 /*
   $Log$
+  Revision 1.1.2.5  2000/11/22 14:37:58  dpg1
+  Code set marshalling functions now take a string length argument.
+
   Revision 1.1.2.4  2000/11/16 12:33:43  dpg1
   Minor fixes to permit use of UShort as WChar.
 
@@ -48,6 +51,10 @@
 
 
 //#include <CONV_FRAME.hh>
+
+class cdrStream;
+
+OMNI_NAMESPACE_BEGIN(omni)
 
 class CONV_FRAME {
 public:
@@ -106,8 +113,6 @@ public:
 //
 // In all functions involving string lengths, the length does not
 // include the terminating null.
-
-class cdrStream;
 
 class omniCodeSet {
 public:
@@ -522,7 +527,7 @@ public:
     virtual _CORBA_Boolean fastUnmarshalWChar  (cdrStream&          stream,
 						NCS_W*              ncs,
 						_CORBA_WChar&       c);
-    
+
     virtual _CORBA_Boolean fastUnmarshalWString(cdrStream&          stream,
 						NCS_W*              ncs,
 						_CORBA_ULong        bound,
@@ -555,5 +560,6 @@ public:
 
 };
 
+OMNI_NAMESPACE_END(omni)
 
 #endif // __CODESETS_H__
