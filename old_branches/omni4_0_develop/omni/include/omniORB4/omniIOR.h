@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/10/03 17:37:07  sll
+  Changed omniIOR synchronisation mutex from omni::internalLock to its own
+  mutex.
+
   Revision 1.1.2.1  2000/09/27 16:54:08  sll
   *** empty log message ***
 
@@ -56,9 +60,8 @@ public:
   GIOP::AddressingDisposition        addr_mode;
   _CORBA_ULong                       addr_selected_profile_index;
   _CORBA_ULong                       orb_type;
-
-
-
+  omniCodeSet::TCS_C*                tcs_c;
+  omniCodeSet::TCS_W*                tcs_w;
 
   // Extra info decoded from tag_components_ are storied as
   // opaque data accessible by the relevant modules.
@@ -130,6 +133,16 @@ public:
   // On return, the only valid fields are:
   //    repositoryID, iopProfiles and decoded.
   // 
+
+
+  // Handlers for each of the tagged component used by the ORB
+  static void  add_TAG_ORB_TYPE(IOP::TaggedComponent&, const omniIOR*);
+  static void  unmarshal_TAG_ORB_TYPE(const IOP::TaggedComponent&, omniIOR*);
+  static char* dump_TAG_ORB_TYPE(const IOP::TaggedComponent&);
+
+  static void  add_TAG_CODE_SETS(IOP::TaggedComponent&, const omniIOR*);
+  static void  unmarshal_TAG_CODE_SETS(const IOP::TaggedComponent&, omniIOR*);
+  static char* dump_TAG_CODE_SETS(const IOP::TaggedComponent&);
 
 };
 
