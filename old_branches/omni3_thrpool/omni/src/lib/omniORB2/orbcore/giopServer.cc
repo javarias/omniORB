@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.7  1999/10/27 17:32:11  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.21.6.6  1999/10/18 11:27:39  djr
   Centralised list of system exceptions.
 
@@ -123,6 +126,9 @@
 #include <bootstrap_i.h>
 #include <exception.h>
 
+#define STRACE(prefix,message)  \
+  omniORB::logs(15, "giopServer " prefix ": " message)
+
 
 size_t  GIOP_Basetypes::max_giop_message_size = 2048 * 1024;
 
@@ -136,6 +142,9 @@ MarshallSystemException(GIOP_S *s,
 GIOP_S::GIOP_S(Strand *s)
   : NetBufferedStream(s,1,0,0)
 {
+  // holding the read lock on the strand. As soon as the GIOP
+  // message has been completely read, should release the lock
+  // and signal the rendezvouser thread.
   pd_state = GIOP_S::Idle;
   pd_operation = &pd_op_buffer[0];
   pd_principal = &pd_pr_buffer[0];
@@ -175,6 +184,7 @@ GIOP_S::~GIOP_S()
 void
 GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
 {
+  STRACE("GIOP_S", "RequestReceived");
   if (pd_state != GIOP_S::RequestIsBeingProcessed)
     throw omniORB::fatalException(__FILE__,__LINE__,
 				  "GIOP_S::RequestReceived() entered with the wrong state.");				  
@@ -217,7 +227,7 @@ GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
 	skip(0,1);
       }
     }
-
+  STRACE("GIOP_S", "++ write lock");
   WrLock();
   // Strictly speaking, we do not need to have exclusive write access to
   // the strand so early. However, WrLock() has the side effect of resetting
@@ -258,6 +268,7 @@ GIOP_S::ReplyHeaderSize()
 void
 GIOP_S::InitialiseReply(const GIOP::ReplyStatusType status, size_t msgsize)
 {
+  STRACE("GIOP_S", "InitialiseReply");
   if (!pd_response_expected)
     throw terminateProcessing();
 
@@ -305,6 +316,7 @@ GIOP_S::InitialiseReply(const GIOP::ReplyStatusType status, size_t msgsize)
 void
 GIOP_S::ReplyCompleted()
 {
+  STRACE("GIOP_S", "ReplyCompleted");
   if (!pd_response_expected)
     {
       if (pd_state != GIOP_S::WaitingForReply)
@@ -334,13 +346,14 @@ GIOP_S::ReplyCompleted()
   }
   
   pd_state = GIOP_S::Idle;
-
+  STRACE("GIOP_S", "-- write lock");
   WrUnlock();
 }
 
 void
 GIOP_S::dispatcher(Strand *s)
 {
+  STRACE("GIOP_S", "Running dispatcher");
   GIOP_S gs(s);
 
   gs.pd_state = GIOP_S::RequestIsBeingProcessed;
@@ -482,6 +495,7 @@ GIOP_S::dispatcher(Strand *s)
 void
 GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 {
+  STRACE("GIOP_S", "HandleRequest");
   CORBA::ULong msgsize;
 
   try {
@@ -703,6 +717,7 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
 void
 GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
 {
+  STRACE("GIOP_S", "HandleLocateRequest");
   CORBA::ULong msgsize;
 
   try {
@@ -763,6 +778,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
       }
       catch(omniORB::LOCATION_FORWARD& lf) {
 	status = GIOP::UNKNOWN_OBJECT;
+	STRACE("GIOP_S", "++ write lock");
 	WrLock();
 	pd_state = ReplyIsBeingComposed;
 
@@ -779,6 +795,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
 	CORBA::Object::_marshalObjRef(lf.get_obj(), *this);
 	flush(1);
 	pd_state = GIOP_S::Idle;
+	STRACE("GIOP_S", "-- write lock");
 	WrUnlock();
       }
       catch(...) {
@@ -791,6 +808,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
   }
 
   if( status != GIOP::OBJECT_FORWARD ) {
+    STRACE("GIOP_S", "++ write lock");
     WrLock();
     pd_state = GIOP_S::ReplyIsBeingComposed;
 
@@ -806,6 +824,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
     flush(1);
     pd_state = GIOP_S::Idle;
     WrUnlock();
+    STRACE("GIOP_S", "-- write lock");
   }
 }
 
@@ -813,6 +832,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
 void
 GIOP_S::HandleCancelRequest(CORBA::Boolean byteorder)
 {
+  STRACE("GIOP_S", "HandleCancelRequest");
   // XXX Not supported yet!!!
   // For the moment, silently ignore this message
   
@@ -835,6 +855,7 @@ GIOP_S::HandleCancelRequest(CORBA::Boolean byteorder)
 void
 GIOP_S::HandleMessageError()
 {
+  STRACE("GIOP_S", "HandleMessageError");
   // Hm... a previous message might have gone wrong
   // For the moment, just close down the connection
   HandleCloseConnection();
@@ -844,6 +865,7 @@ GIOP_S::HandleMessageError()
 void
 GIOP_S::HandleCloseConnection()
 {
+  STRACE("GIOP_S", "HandleCloseConnection");
   setStrandIsDying();
   OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
 }
@@ -851,6 +873,8 @@ GIOP_S::HandleCloseConnection()
 void
 GIOP_S::SendMsgErrorMessage()
 {
+  STRACE("GIOP_S", "SendMsgErrorMessage");
+  STRACE("GIOP_S", "++ write lock");
   WrLock();
   WrMessageSize(0);
   put_char_array((CORBA::Char*) MessageHeader::MessageError,
@@ -859,6 +883,7 @@ GIOP_S::SendMsgErrorMessage()
   operator>>= ((CORBA::ULong)0,*this);
   flush(1);
   WrUnlock();
+  STRACE("GIOP_S", "-- write lock");
   return;
 }
 
@@ -866,6 +891,7 @@ GIOP_S::SendMsgErrorMessage()
 void
 GIOP_S::MaybeMarshalUserException(void* pex)
 {
+  STRACE("GIOP_S", "MaybeMarshalUserException");
   CORBA::UserException& ex = * (CORBA::UserException*) pex;
 
   int i, repoid_size;
@@ -936,3 +962,4 @@ omniORB::MaxMessageSize(size_t newvalue)
 {
   GIOP_Basetypes::max_giop_message_size = newvalue;
 }
+
