@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.21  1998/03/25 14:40:11  sll
+  *** empty log message ***
+
   Revision 1.20  1998/03/25 14:18:57  sll
   Temporary work-around for egcs compiler.
 
@@ -88,7 +91,7 @@ o2be_operation::o2be_operation(AST_Type *rt, AST_Operation::Flags fl,
 }
 
 void
-o2be_operation::produce_decl(fstream &s,
+o2be_operation::produce_decl(std::fstream &s,
 			     const char *prefix,
 			     const char *alias_prefix,
 			     idl_bool/* ignored */,
@@ -229,7 +232,7 @@ o2be_operation::produce_decl(fstream &s,
 }
 
 void
-o2be_operation::produce_invoke(fstream &s)
+o2be_operation::produce_invoke(std::fstream &s)
 {
   s << uqname() << " ( ";
   {
@@ -247,7 +250,7 @@ o2be_operation::produce_invoke(fstream &s)
 }
 
 void
-o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
+o2be_operation::produce_proxy_skel(std::fstream &s,o2be_interface &def_in,
 				   const char* alias_prefix)
 {
   idl_bool hasVariableLenOutArgs = I_FALSE;
@@ -710,7 +713,8 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
   INC_INDENT_LEVEL();
   IND(s); s << "if (omniORB::traceLevel > 10) {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "cerr << \"Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\" << endl;\n";
+  IND(s); s << "omniORB::log << \"Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\\n\";\n";
+  IND(s); s << "omniORB::log.flush();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   IND(s); s << "throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);\n";
@@ -723,7 +727,8 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
   IND(s); s << "}\n";
   IND(s); s << "if (omniORB::traceLevel > 10) {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "cerr << \"GIOP::LOCATION_FORWARD: retry request.\" << endl;\n";
+  IND(s); s << "omniORB::log << \"GIOP::LOCATION_FORWARD: retry request.\\n\";\n";
+  IND(s); s << "omniORB::log.flush();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   IND(s); s << "break;\n";
@@ -1218,7 +1223,7 @@ o2be_operation::produce_proxy_skel(fstream &s,o2be_interface &def_in,
 }
 
 void
-o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
+o2be_operation::produce_server_skel(std::fstream &s,o2be_interface &def_in)
 {
   if (flags() == AST_Operation::OP_oneway) {
     IND(s); s << "if (_0RL_response_expected) {\n";
@@ -1596,7 +1601,7 @@ o2be_operation::produce_server_skel(fstream &s,o2be_interface &def_in)
 }
 
 void
-o2be_operation::produce_nil_skel(fstream &s,const char* alias_prefix)
+o2be_operation::produce_nil_skel(std::fstream &s,const char* alias_prefix)
 {
   IND(s); produce_decl(s,0,alias_prefix);
   s << "{\n";
@@ -1672,7 +1677,7 @@ o2be_operation::produce_nil_skel(fstream &s,const char* alias_prefix)
 }
 
 void
-o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
+o2be_operation::produce_lcproxy_skel(std::fstream &s,o2be_interface &def_in,
 				     const char* alias_prefix)
 {
   idl_bool hasVariableLenOutArgs = I_FALSE;
@@ -2134,7 +2139,8 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
   INC_INDENT_LEVEL();
   IND(s); s << "if (omniORB::traceLevel > 10) {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "cerr << \"Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\" << endl;\n";
+  IND(s); s << "omniORB::log << \"Received GIOP::LOCATION_FORWARD message that contains a nil object reference.\\n\";\n";
+  IND(s); s << "omniORB::log.flush();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   IND(s); s << "throw CORBA::COMM_FAILURE(0,CORBA::COMPLETED_NO);\n";
@@ -2146,7 +2152,8 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
   IND(s); s << "_0RL_w->_forward_to(obj);\n";
   IND(s); s << "if (omniORB::traceLevel > 10) {\n";
   INC_INDENT_LEVEL();
-  IND(s); s << "cerr << \"GIOP::LOCATION_FORWARD: retry request.\" << endl;\n";
+  IND(s); s << "omniORB::log << \"GIOP::LOCATION_FORWARD: retry request.\\n\";\n";
+  IND(s); s << "omniORB::log.flush();\n";
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n";
   IND(s);
@@ -2705,7 +2712,7 @@ o2be_operation::produce_lcproxy_skel(fstream &s,o2be_interface &def_in,
 }
 
 void
-o2be_operation::produce_dead_skel(fstream& s, const char* alias_prefix)
+o2be_operation::produce_dead_skel(std::fstream& s, const char* alias_prefix)
 {
   IND(s); produce_decl(s,0,alias_prefix,I_FALSE,I_TRUE);
   s << "{\n";
@@ -2781,7 +2788,7 @@ o2be_operation::produce_dead_skel(fstream& s, const char* alias_prefix)
 }
 
 void
-o2be_operation::produce_home_skel(fstream& s, o2be_interface &def_in,
+o2be_operation::produce_home_skel(std::fstream& s, o2be_interface &def_in,
 				  const char* alias_prefix)
 {
   IND(s); produce_decl(s,0,alias_prefix,I_FALSE,I_TRUE);
@@ -2798,7 +2805,7 @@ o2be_operation::produce_home_skel(fstream& s, o2be_interface &def_in,
 }
 
 void
-o2be_operation::produce_wrapproxy_skel(fstream& s,
+o2be_operation::produce_wrapproxy_skel(std::fstream& s,
 				       o2be_interface &def_in,
 				       const char* alias_prefix)
 {
@@ -2816,7 +2823,7 @@ o2be_operation::produce_wrapproxy_skel(fstream& s,
 }
 
 void
-o2be_operation::produce_mapping_with_indirection(fstream& s,
+o2be_operation::produce_mapping_with_indirection(std::fstream& s,
 						 const char* alias_prefix)
 {
   if (!has_variable_out_arg() && !has_pointer_inout_arg())
@@ -3461,7 +3468,7 @@ o2be_operation::ast2ArgMapping(AST_Decl *decl,
 }
 
 void
-o2be_operation::declareVarType(fstream &s,AST_Decl *decl,AST_Decl* used_in,
+o2be_operation::declareVarType(std::fstream &s,AST_Decl *decl,AST_Decl* used_in,
 			       idl_bool is_var,idl_bool is_arrayslice)
 {
   AST_Decl *truetype = decl;
@@ -3516,7 +3523,7 @@ o2be_operation::declareVarType(fstream &s,AST_Decl *decl,AST_Decl* used_in,
 }
 
 void
-o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
+o2be_operation::produceUnMarshalCode(std::fstream &s, AST_Decl *decl,
 				     AST_Decl* used_in,
 				     const char *netstream,
 				     const char *argname,
@@ -3892,7 +3899,7 @@ o2be_operation::produceUnMarshalCode(fstream &s, AST_Decl *decl,
 }
 
 void
-o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
+o2be_operation::produceMarshalCode(std::fstream &s, AST_Decl *decl,
 				   AST_Decl* used_in,
 				   const char *netstream,
 				   const char *argname,
@@ -4253,7 +4260,7 @@ o2be_operation::produceMarshalCode(fstream &s, AST_Decl *decl,
 }
 
 void
-o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
+o2be_operation::produceSizeCalculation(std::fstream &s, AST_Decl *decl,
 				       AST_Decl* used_in,
 				       const char *netstream,
 				       const char *sizevar,
@@ -4583,7 +4590,7 @@ o2be_operation::produceSizeCalculation(fstream &s, AST_Decl *decl,
 
 
 void
-o2be_operation::produceConstStringMarshalCode(fstream &s,
+o2be_operation::produceConstStringMarshalCode(std::fstream &s,
 			      const char *netstream,
 			      const char *str,size_t len)
 {
@@ -4594,7 +4601,7 @@ o2be_operation::produceConstStringMarshalCode(fstream &s,
 }
 
 void
-o2be_operation::produceConstStringSizeCalculation(fstream &s,
+o2be_operation::produceConstStringSizeCalculation(std::fstream &s,
 				  const char *sizevar,
 				  size_t len)
 {

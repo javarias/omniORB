@@ -27,6 +27,9 @@
 
 /*
   $Log$
+// Revision 1.7  1998/01/27  16:50:17  ewc
+//  Added support for type Any and TypeCode
+//
   Revision 1.6  1997/12/23 19:29:37  sll
   Now generate the implementation of array helper functions defined in
   the global scope in the skeleton file. This applies to typedef of array
@@ -99,7 +102,7 @@ o2be_typedef::o2be_typedef(AST_Type *bt, UTL_ScopedName *n, UTL_StrList *p)
 }
 
 void
-o2be_typedef::produce_hdr(fstream &s)
+o2be_typedef::produce_hdr(std::fstream &s)
 {
   AST_Decl *decl = base_type();
   const char *tname = o2be_name::narrow_and_produce_fqname(decl);
@@ -112,9 +115,8 @@ o2be_typedef::produce_hdr(fstream &s)
     if (check_recursive_seq() == I_FALSE) {
       set_recursive_seq(I_FALSE);
       // TypeCode_ptr declaration
-      IND(s); s << ((defined_in() == idl_global->root()) ? "extern " : 
-		    "static ") 
-		<< "const CORBA::TypeCode_ptr " << tcname() << ";\n";
+      IND(s); s << VarToken(*this)
+		<< " const CORBA::TypeCode_ptr " << tcname() << ";\n";
     }
     else set_recursive_seq(I_TRUE);
   }
@@ -156,7 +158,7 @@ o2be_typedef::produce_hdr(fstream &s)
 }
 
 void
-o2be_typedef::produce_skel(fstream &s)
+o2be_typedef::produce_skel(std::fstream &s)
 {
   AST_Decl *decl = base_type();
 
@@ -177,14 +179,42 @@ o2be_typedef::produce_skel(fstream &s)
       recursive_seq() == I_FALSE) {
     // Produce code for types any and TypeCode
     this->produce_typecode_skel(s);
-    
-    IND(s); s << "const CORBA::TypeCode_ptr " << fqtcname() << " = & " 
-	      << "_01RL_" << _fqtcname() << ";\n\n";
+
+    if (defined_in() != idl_global->root() &&
+	defined_in()->scope_node_type() == AST_Decl::NT_module)
+      {
+	s << "\n#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)\n";
+	IND(s); s << "// MSVC++ does not give the constant external linkage othewise.\n";
+	AST_Decl* inscope = ScopeAsDecl(defined_in());
+	char* scopename = o2be_name::narrow_and_produce_uqname(inscope);
+	if (strcmp(scopename,o2be_name::narrow_and_produce_fqname(inscope)))
+	  {
+	    scopename = o2be_name::narrow_and_produce__fqname(inscope);
+	    IND(s); s << "namespace " << scopename << " = " 
+		      << o2be_name::narrow_and_produce_fqname(inscope)
+		      << ";\n";
+	  }
+	IND(s); s << "namespace " << scopename << " {\n";
+	INC_INDENT_LEVEL();
+	IND(s); s << "const CORBA::TypeCode_ptr " << tcname() << " = & " 
+		  << "_01RL_" << _fqtcname() << ";\n\n";
+	DEC_INDENT_LEVEL();
+	IND(s); s << "}\n";
+	s << "#else\n";
+	IND(s); s << "const CORBA::TypeCode_ptr " << fqtcname() << " = & " 
+		  << "_01RL_" << _fqtcname() << ";\n\n";
+	s << "#endif\n";
+      }
+    else
+      {
+	IND(s); s << "const CORBA::TypeCode_ptr " << fqtcname() << " = & " 
+		  << "_01RL_" << _fqtcname() << ";\n\n";
+      }
   }
 }
 
 void
-o2be_typedef::produce_typecode_skel(fstream &s)
+o2be_typedef::produce_typecode_skel(std::fstream &s)
 {  
   if (idl_global->compile_flags() & IDL_CF_ANY) {
     s << "#ifndef " << "__01RL_" << _fqtcname() << "__\n";
