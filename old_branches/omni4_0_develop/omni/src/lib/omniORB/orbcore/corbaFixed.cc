@@ -28,6 +28,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.2.9  2002/01/21 17:40:05  dpg1
+// Lost sign in Fixed->double conversion. (Thanks Slava Garelin)
+//
 // Revision 1.1.2.8  2001/11/14 17:13:43  dpg1
 // Long double support.
 //
@@ -1210,7 +1213,9 @@ CORBA::Fixed::operator<<=(cdrStream& s)
   CORBA::Octet d;
 
   // Sign indicator
-  int vi, di, bi = digits_to_read;
+  int vi;                   // Index into pd_val
+  int di;                   // Digit index
+  int bi = digits_to_read;  // Buffer index
 
   d = buffer[bi/2] & 0xF;
 
@@ -1257,9 +1262,9 @@ CORBA::Fixed::operator<<=(cdrStream& s)
   }
   OMNIORB_ASSERT(vi == pd_digits);
 
-  // Strip off leading zeros. Remember to stop if there are no digits left!
+  // Strip off leading zeros. Stop when we hit the decimal point.
   --vi;
-  while (vi >= 0 && pd_val[vi] == 0) --vi;
+  while (vi >= pd_scale && pd_val[vi] == 0) --vi;
 
   pd_digits = vi + 1;
 
@@ -1276,4 +1281,5 @@ CORBA::Fixed::operator<<=(cdrStream& s)
 
   OMNIORB_ASSERT(pd_digits <= pd_idl_digits);
   OMNIORB_ASSERT(pd_scale  <= pd_idl_scale);
+  OMNIORB_ASSERT(pd_scale  <= pd_digits);
 }
