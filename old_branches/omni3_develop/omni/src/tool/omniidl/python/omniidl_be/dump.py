@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.1  2000/06/28 13:54:53  dpg1
+# Remove dependency on traceback module.
+#
 # Revision 1.6  1999/11/11 15:55:29  dpg1
 # Python back-end interface now supports valuetype declarations.
 # Back-ends still don't support them, though.
@@ -56,14 +59,12 @@ class DumpVisitor (idlvisitor.AstVisitor, idlvisitor.TypeVisitor):
         self.st = st
 
     def visitAST(self, node):
-        print "//", map(str, node.comments())
         for n in node.declarations():
             n.accept(self)
 
     def visitModule(self, node):
         self.st.out("""\
-module @id@ { // @comments@""", id = node.identifier(),
-                    comments=str(map(str, node.comments())))
+module @id@ {""", id = node.identifier())
 
         self.st.inc_indent()
 
@@ -86,9 +87,8 @@ module @id@ { // @comments@""", id = node.identifier(),
             inherits = ""
 
         self.st.out("""\
-interface @id@ @inherits@{ // @comments@""",
-               id = node.identifier(), inherits=inherits,
-                    comments=str(map(str, node.comments())))
+interface @id@ @inherits@{""",
+               id = node.identifier(), inherits=inherits)
 
         self.st.inc_indent()
 
@@ -102,8 +102,7 @@ interface @id@ @inherits@{ // @comments@""",
 
     def visitForward(self, node):
         self.st.out("""\
-interface @id@; // @comments@""", id = node.identifier(),
-                    comments = str(map(str, node.comments())))
+interface @id@;""", id = node.identifier())
 
 
     def visitConst(self, node):
@@ -270,11 +269,9 @@ enum @id@ {@enums@};""",
         ids  = string.join(node.identifiers(), ", ")
 
         self.st.out("""\
-@readonly@attribute @type@ @ids@; // @comments@, @pragmas@""",
+@readonly@attribute @type@ @ids@;""",
 
-                    readonly=readonly, type=type, ids=ids,
-                    comments = str(map(str, node.comments())),
-                    pragmas = str(map(lambda x: (x.text(), x.line()), node.pragmas())))
+               readonly=readonly, type=type, ids=ids)
 
 
     def visitOperation(self, node):
@@ -294,8 +291,6 @@ enum @id@ {@enums@};""",
             p.paramType().accept(self)
             type = self.__result_type
             paraml.append(inout + " " + type + " " + p.identifier())
-            if p.comments():
-                paraml.append(" /* " + str(p.comments()) + " */ ")
 
         params = string.join(paraml, ", ")
 
@@ -310,11 +305,10 @@ enum @id@ {@enums@};""",
             raises = ""
 
         self.st.out("""\
-@oneway@@rtype@ @id@(@params@)@raises@; // @comments@""",
+@oneway@@rtype@ @id@(@params@)@raises@;""",
                
-                    oneway=oneway, rtype=rtype, id=node.identifier(),
-                    params=params, raises=raises,
-                    comments=str(map(str, node.comments())))
+               oneway=oneway, rtype=rtype, id=node.identifier(),
+               params=params, raises=raises)
 
     def visitNative(self, node):
         self.st.out("""\
