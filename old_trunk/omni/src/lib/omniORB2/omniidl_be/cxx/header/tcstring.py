@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  2000/01/19 11:23:29  djs
+# Moved most C++ code to template file
+#
 # Revision 1.1  2000/01/17 17:02:48  djs
 # Support for tcParser #ifdefs in .hh
 #
@@ -35,8 +38,8 @@
 """Produce bounded string #ifdefs for .hh"""
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, util, config, name
+from omniidl.be.cxx.header import template
 
 import tcstring
 

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/13 14:16:35  djs
+# Properly clears state between processing separate IDL input files
+#
 # Revision 1.5  2000/01/10 18:42:22  djs
 # Removed redundant code, tidied up.
 #
@@ -48,8 +51,8 @@
 # similar to o2be_root::produce_poa_skel in the old C++ BE
 
 from omniidl import idlast, idltype, idlutil
-
 from omniidl.be.cxx import tyutil, util, name, config
+from omniidl.be.cxx.skel import template
 
 import poa
 
@@ -107,8 +110,7 @@ def visitInterface(node):
     enter(name)
     scope = currentScope()
     
-    stream.out("""\
-POA_@fqname@::~@POA_prefix@@name@() {}""",
+    stream.out(template.interface_POA,
                POA_prefix = POA_prefix(),
                name = name,
                fqname = fqname)

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14  2000/01/11 12:02:46  djs
+# More tidying up
+#
 # Revision 1.13  2000/01/10 18:42:22  djs
 # Removed redundant code, tidied up.
 #
@@ -81,11 +84,8 @@
 import string
 
 from omniidl import idlutil, idltype, idlast
-
 from omniidl.be.cxx import util, tyutil, skutil, name
-
-from omniidl.be.cxx.skel import mangler
-
+from omniidl.be.cxx.skel import mangler, template
 
 
 import proxy
@@ -98,7 +98,7 @@ def __init__(environment, stream):
     return self
 
 
-proxy_class_template = """\
+_proxy_class_template = """\
 // Proxy call descriptor class. Mangled signature:
 //  @signature@
 class @call_descriptor@
@@ -117,7 +117,7 @@ public:
 };
 """
 
-unmarshal_template = """\
+_unmarshal_template = """\
 void @call_descriptor@::unmarshalReturnedValues(GIOP_C& giop_client)
 {
   @pre_decls@
@@ -126,7 +126,7 @@ void @call_descriptor@::unmarshalReturnedValues(GIOP_C& giop_client)
 }
 """
 
-alignment_template = """\
+_alignment_template = """\
 CORBA::ULong @call_descriptor@::alignedSize(CORBA::ULong msgsize)
 {
   @size_calculation@
@@ -134,14 +134,14 @@ CORBA::ULong @call_descriptor@::alignedSize(CORBA::ULong msgsize)
 }
 """
 
-marshal_template = """\
+_marshal_template = """\
 void @call_descriptor@::marshalArguments(GIOP_C& giop_client)
 {
   @marshal_block@
 }
 """
 
-exception_template = """\
+_exception_template = """\
 void @call_descriptor@::userException(GIOP_C& giop_client, const char* repoId)
 {
   @exception_block@
@@ -319,7 +319,7 @@ def operation(operation, seed):
                              "virtual void userException(GIOP_C&, const char*);"
     
     # Write the proxy class definition
-    stream.out(proxy_class_template,
+    stream.out(template.interface_proxy_class,
                signature = signature,
                call_descriptor = descriptor,
                ctor_args = ctor_args_string,
@@ -354,11 +354,11 @@ def operation(operation, seed):
                                 None, name, "giop_client")
                 
         # write the alignment function
-        stream.out(alignment_template,
+        stream.out(template.interface_proxy_alignment,
                    call_descriptor = descriptor,
                    size_calculation = str(size_calculation))
         # write the marshal function
-        stream.out(marshal_template,
+        stream.out(template.interface_proxy_marshal,
                    call_descriptor = descriptor,
                    marshal_block = str(marshal_block))
 
@@ -571,7 +571,7 @@ pd_result = new @type@;""", type = return_type_base)
                                   string_via_member = 1)
 
         # write the unmarshal function
-        stream.out(unmarshal_template,
+        stream.out(template.interface_proxy_unmarshal,
                    call_descriptor = descriptor,
                    pre_decls = str(pre_decls),
                    unmarshal_block = str(unmarshal_block),
@@ -604,7 +604,7 @@ pd_result = new @type@;""", type = return_type_base)
 }""", switch = switch, repoID_str = repoID_str, exname = exname)
 
         # write the user exception template
-        stream.out(exception_template,
+        stream.out(template.interface_proxy_exn,
                    call_descriptor = descriptor,
                    exception_block = str(block))
         
@@ -717,7 +717,7 @@ pd_result <<= giop_client;"""
         unmarshal_decl = "virtual void unmarshalReturnedValues(GIOP_C&);"
         result_mem_fn = "inline " + return_type + " result() { return pd_result; }"
         result_mem_data = return_type + " pd_result;"
-        stream.out(proxy_class_template,
+        stream.out(template.interface_proxy_class,
                    signature = read_signature,
                    call_descriptor = read_desc,
                    ctor_args = ctor_args,
@@ -732,7 +732,7 @@ pd_result <<= giop_client;"""
         # -------------------------------------------------------------
     
         # write the read unmarshalReturned function
-        stream.out(unmarshal_template,
+        stream.out(template.interface_proxy_unmarshal,
                    call_descriptor = read_desc,
                    pre_decls = "",
                    unmarshal_block = unmarshal_ret,
@@ -747,7 +747,7 @@ pd_result <<= giop_client;"""
         marshal_decl = "virtual CORBA::ULong alignedSize(CORBA::ULong);\n" +\
                        "virtual void marshalArguments(GIOP_C&);"
         member_data = fully_scoped_in_type + " arg_0;"
-        stream.out(proxy_class_template,
+        stream.out(template.interface_proxy_class,
                    signature = write_signature,
                    call_descriptor = write_desc,
                    ctor_args = ctor_args,
@@ -762,13 +762,13 @@ pd_result <<= giop_client;"""
         # -------------------------------------------------------------
         
         # write the write alignment template
-        stream.out(alignment_template,
+        stream.out(template.interface_proxy_alignment,
                    call_descriptor = write_desc,
                    size_calculation = size)
 
         # -------------------------------------------------------------
         
         # write the write marshal template
-        stream.out(marshal_template,
+        stream.out(template.interface_proxy_marshal,
                    call_descriptor = write_desc,
                    marshal_block = str(marshal_arg))
