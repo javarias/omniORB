@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.7  2005/01/06 16:39:24  dgrisby
+ * DynValue and DynValueBox implementations; misc small fixes.
+ *
  * Revision 1.40.2.6  2004/10/13 17:58:20  dgrisby
  * Abstract interfaces support; values support interfaces; value bug fixes.
  *
@@ -5287,6 +5290,9 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
     case CORBA::tk_char:
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_char));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_char));
+    case CORBA::tk_wchar:
+      otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_wchar));
+      return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_wchar));
     case CORBA::tk_octet:
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_octet));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_octet));

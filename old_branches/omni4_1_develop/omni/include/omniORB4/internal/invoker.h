@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:45  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.3  2002/01/09 11:35:22  dpg1
   Remove separate omniAsyncInvoker library to save library overhead.
 
@@ -45,6 +48,16 @@
 
 #ifndef __INVOKER_H__
 #define __INVOKER_H__
+
+#ifdef _core_attr
+#  error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#  define _core_attr
+#else
+#  define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -63,8 +76,10 @@ OMNI_NAMESPACE_BEGIN(omni)
     int cancel_dedicated(omniTask*);
   };
 
-  extern ORBAsyncInvoker* orbAsyncInvoker;
+  extern _core_attr ORBAsyncInvoker* orbAsyncInvoker;
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __INVOKER_H__

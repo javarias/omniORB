@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.17.2.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
 # Revision 1.17.2.1  2003/03/23 21:02:42  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -126,6 +129,9 @@ class ConfigurationState:
 
             # Generate local servant shortcut code?
             'Shortcut':              0,
+
+            # Extra ifdefs for stubs in dlls?
+            'DLLIncludes':           0,
 
             # Are we in DEBUG mode?
             'Debug':                 0

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.4  2004/10/13 17:58:18  dgrisby
+  Abstract interfaces support; values support interfaces; value bug fixes.
+
   Revision 1.4.2.3  2004/07/23 10:29:57  dgrisby
   Completely new, much simpler Any implementation.
 
@@ -396,7 +399,10 @@ _CORBA_MODULE_BEG
 
   protected:
     inline POAManager(int is_nil = 0) {
-      _PR_setobj((omniObjRef*) (is_nil ? 0:1));
+      if (is_nil)
+	_PR_setobj((omniObjRef*)0);
+      else
+	_PR_setobj((omniObjRef*)1);
     }
     virtual ~POAManager();
 
@@ -555,7 +561,12 @@ _CORBA_MODULE_BEG
     static POA_ptr _the_root_poa();
 
   protected:
-    inline POA(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+    inline POA(int nil) {
+      if (nil)
+	_PR_setobj((omniObjRef*)0);
+      else
+	_PR_setobj((omniObjRef*)1);
+    }
     virtual ~POA();
 
   private:

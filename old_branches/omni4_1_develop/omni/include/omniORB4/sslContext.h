@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:02  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.5  2002/09/05 14:29:01  dgrisby
   Link force mechanism wasn't working with gcc.
 
@@ -66,7 +69,9 @@ OMNI_FORCE_LINK(omnisslTP);
 #     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
+#define crypt _openssl_broken_crypt
 #include <openssl/ssl.h>
+#undef crypt
 
 OMNI_NAMESPACE_BEGIN(omni)
   class omni_sslTransport_initialiser;
@@ -121,6 +126,10 @@ class sslContext {
   virtual void set_DH();
 
   virtual void set_ephemeralRSA();
+
+  virtual int set_verify_mode();
+  // Set the SSL verify mode.
+  // Defaults to return SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT.
 
   sslContext();
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:23  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.4  2003/01/14 11:48:15  dgrisby
   Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -125,7 +128,7 @@ public:
     }
     return *this;
   }
-  inline Policy* operator [] (_CORBA_ULong _s) {
+  inline Policy_member& operator [] (_CORBA_ULong _s) {
     return (*_pd_seq)[_s];
   }
   inline PolicyList* operator -> () { return _pd_seq; }

@@ -10,6 +10,9 @@
 %% Notes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% $Log$
+%% Revision 1.1.4.1  2003/03/23 21:03:40  dgrisby
+%% Start of omniORB 4.1.x development branch.
+%%
 %% Revision 1.1.2.1  2003/02/17 02:03:07  dgrisby
 %% vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 %%
@@ -53,8 +56,6 @@ extern "C" void omni_thread_wrapper(void* ptr);
    bool m_bConstructed;
 
 #define OMNI_CONDITION_IMPLEMENTATION \
-   long waiters_; \
-   SEM_ID waiters_lock_; \
    SEM_ID sema_;
 
 #define OMNI_SEMAPHORE_IMPLEMENTATION \

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:09  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.13  2003/01/16 11:08:26  dgrisby
   Patches to support Digital Mars C++. Thanks Christof Meerwald.
 
@@ -140,6 +143,10 @@ void
 omniORB::setClientCallTimeout(CORBA::Object_ptr obj, CORBA::ULong v)
 {
   omniObjRef* oo = obj->_PR_getobj();
+  if (!oo)
+    OMNIORB_THROW(INV_OBJREF, INV_OBJREF_InvokeOnNilObjRef,
+		  CORBA::COMPLETED_NO);
+
   oo->_setTimeout(v / 1000, (v % 1000) * 1000000);
 }
 

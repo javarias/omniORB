@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:03:55  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.16  2003/02/17 01:45:50  dgrisby
   Pipe to kick select thread (on Unix).
 
@@ -180,9 +183,7 @@ OMNI_NAMESPACE_END(omni)
 #    include <poll.h>
 #  endif
 
-#  if !defined(__VMS)
-#    include <fcntl.h>
-#  endif
+#  include <fcntl.h>
 
 #  if defined (__uw7__)
 #    ifdef shutdown
@@ -223,6 +224,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 #  define ERRNO              errno
 #  define RC_EINTR           EINTR
 #  define RC_EBADF           EBADF
+#  define RC_EAGAIN          EAGAIN
 
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -249,6 +251,7 @@ extern int SocketSetnonblocking(SocketHandle_t sock);
 
 extern int SocketSetblocking(SocketHandle_t sock);
 
+extern int SocketSetCloseOnExec(SocketHandle_t sock);
 
 class SocketLink {
 
@@ -303,6 +306,9 @@ public:
 
   void clearSelectable(SocketHandle_t);
   // Indicates that this connection need not be watched any more.
+
+  CORBA::Boolean isSelectable(SocketHandle_t sock);
+  // Indicates whether the given socket can be selected upon.
 
   CORBA::Boolean Select();
   // Returns TRUE(1) if the Select() has successfully done a scan.

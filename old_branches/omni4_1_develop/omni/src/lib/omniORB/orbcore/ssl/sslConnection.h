@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.5  2001/07/31 16:16:23  sll
   New transport interface to support the monitoring of active connections.
 
@@ -80,6 +83,8 @@ class sslConnection : public giopConnection, public SocketLink {
   void setSelectable(CORBA::Boolean now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
+
+  CORBA::Boolean isSelectable();
 
   void Peek(giopConnection::notifyReadable_t func,void* cookie);
 

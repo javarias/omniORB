@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.5  2002/08/21 06:23:16  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -85,6 +88,7 @@ private:
   SocketHandle_t                   pd_new_conn_socket;
   giopConnection::notifyReadable_t pd_callback_func;
   void*                            pd_callback_cookie;
+  CORBA::Boolean                   pd_poked;
 
   tcpEndpoint();
   tcpEndpoint(const tcpEndpoint&);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2003/11/06 11:56:57  dgrisby
+  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
   Revision 1.1.4.2  2003/05/20 16:53:15  dgrisby
   Valuetype marshalling support.
 
@@ -388,7 +391,7 @@ static void write_codeset_name(char* buf, const char* cname,
     strcat(buf,cname);
   else {
     char* p = buf + strlen(buf);
-    sprintf(p,"0x%08lx",id);
+    sprintf(p,"0x%08lx",(unsigned long)id);
   }
 }
 

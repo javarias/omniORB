@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.5  2004/10/13 17:58:22  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.20.2.4  2004/02/16 10:10:30  dgrisby
 # More valuetype, including value boxes. C++ mapping updates.
 #
@@ -257,8 +260,13 @@ else """,
 
     if dims != []:
         type_name = d_type.base(environment)
+        if type_name == element_name:
+            type_name = d_type.base()
     else:
         type_name = type.base(environment)
+        if type_name == element_name:
+            type_name = type.base()
+            
     bounded = ""
     kind = d_type.type().kind()
     
@@ -381,8 +389,12 @@ def unmarshall(to, environment, type, decl, name, from_where):
     
     if dims != []:
         type_name = d_type.base(environment)
+        if type_name == element_name:
+            type_name = d_type.base()
     else:
         type_name = type.base(environment)
+        if type_name == element_name:
+            type_name = type.base()
         
     bounded = ""
     kind = d_type.type().kind()

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:07  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.9  2003/01/22 11:43:52  dgrisby
   Minor error message fixes in registry code.
 
@@ -82,7 +85,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 static void parseConfigReg(orbOptions& opt, HKEY rootkey);
 static void parseOldConfigReg(orbOptions& opt, HKEY rootkey);
 
-void
+CORBA::Boolean
 orbOptions::importFromRegistry() throw (orbOptions::Unknown,
 					orbOptions::BadParam) {
 
@@ -105,7 +108,7 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
-    return;
+    return 1;
   }
 
   rootregname = OLD_REGKEY1;
@@ -124,6 +127,7 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
+    return 1;
   }
 
   rootregname = OLD_REGKEY2;
@@ -141,7 +145,9 @@ orbOptions::importFromRegistry() throw (orbOptions::Unknown,
       RegCloseKey(rootkey);
       throw;
     }
+    return 1;
   }
+  return 0;
 }
 
 #define KEYBUFSIZE   128
@@ -178,7 +184,7 @@ CORBA::Boolean getRegEntry(HKEY rootkey, DWORD index,
   while ( isspace(*p) )
     p++;
   key = p;
-  if (!*p != '\0') {
+  if (*p != '\0') {
     p += strlen(key) - 1;
     while ( isspace(*p) )
       p--;
@@ -267,8 +273,10 @@ void parseConfigReg(orbOptions& opt, HKEY rootkey) {
   if (total) {
     keybuf = CORBA::string_alloc(keybufsize);
     valuebuf = CORBA::string_alloc(valuebufsize);
-    if (totalsubkeys) subkeybuf = CORBA::string_alloc(subkeybufsize);
   }
+
+  if (totalsubkeys)
+    subkeybuf = CORBA::string_alloc(subkeybufsize);
 
   DWORD index = 0;
   while (index < total) {

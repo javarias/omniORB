@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.21.2.1  2003/03/23 21:01:37  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.17.2.13  2002/12/19 13:55:14  dgrisby
 # Don't try to delete non-existent file when no preprocessor.
 #
@@ -208,7 +211,12 @@ def parseArgs(args):
             preprocessor_args.append("-D" + a)
 
         elif o == "-I":
-            preprocessor_args.append("-I" + a)
+            if sys.platform != "OpenVMS":
+                preprocessor_args.append('-I "%s"' % a)
+            else:
+                # It would be stupid, rude, and evil to put spaces in
+                # a dirname on VMS
+                preprocessor_args.append('-I%s' % a)
 
         elif o == "-U":
             preprocessor_args.append("-U" + a)

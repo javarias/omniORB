@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.2  2004/02/16 10:10:32  dgrisby
+  More valuetype, including value boxes. C++ mapping updates.
+
   Revision 1.4.2.1  2003/03/23 21:02:05  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -355,7 +358,8 @@ PortableServer::ServantBase::_do_get_interface()
     call_desc(omniDynamicLib::ops->lookup_id_lcfn, "lookup_id", 10, repoId);
   repository->_PR_getobj()->_invoke(call_desc);
 
-  return call_desc.result() ? call_desc.result()->_PR_getobj() : 0;
+  CORBA::Object_ptr result = call_desc.result();
+  return result ? result->_PR_getobj() : 0;
 }
 
 

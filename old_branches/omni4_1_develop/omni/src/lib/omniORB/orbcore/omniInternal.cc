@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.2  2003/05/20 16:53:17  dgrisby
+  Valuetype marshalling support.
+
   Revision 1.5.2.1  2003/03/23 21:02:09  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -226,6 +229,11 @@ CORBA::ULong  omniORB::traceLevel = 1;
 //
 //    Valid values = (n >= 0)
 
+CORBA::Boolean  omniORB::traceExceptions = 0;
+//    If true, then system exceptions are logged when they are thrown.
+//
+//    Valid values = 0 or 1
+
 CORBA::Boolean  omniORB::traceInvocations = 0;
 //    If true, then each local and remote invocation will generate a trace 
 //    message.
@@ -237,6 +245,19 @@ CORBA::Boolean  omniORB::traceThreadId = 0;
 //
 //    Valid values = 0 or 1
 
+
+const CORBA::Char                omni::myByteOrder = _OMNIORB_HOST_BYTE_ORDER_;
+omni_tracedmutex*                omni::internalLock = 0;
+omni_tracedmutex*                omni::poRcLock = 0;
+_CORBA_Unbounded_Sequence_Octet  omni::myPrincipalID;
+const omni::alignment_t          omni::max_alignment = omni::ALIGN_8;
+
+int                              omni::remoteInvocationCount = 0;
+int                              omni::localInvocationCount = 0;
+int                              omni::mainThreadId = 0;
+
+omni_tracedmutex*                omni::objref_rc_lock = 0;
+// Protects omniObjRef reference counting and linked list.
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -272,19 +293,6 @@ using omniORB::operator==;
 #  endif
 #endif
 
-
-const CORBA::Char                omni::myByteOrder = _OMNIORB_HOST_BYTE_ORDER_;
-omni_tracedmutex*                omni::internalLock = 0;
-omni_tracedmutex*                omni::poRcLock = 0;
-_CORBA_Unbounded_Sequence_Octet  omni::myPrincipalID;
-const omni::alignment_t          omni::max_alignment = ALIGN_8;
-
-int                              omni::remoteInvocationCount = 0;
-int                              omni::localInvocationCount = 0;
-int                              omni::mainThreadId = 0;
-
-omni_tracedmutex*                omni::objref_rc_lock = 0;
-// Protects omniObjRef reference counting and linked list.
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -633,10 +641,33 @@ omniObjTableEntry::setDeactivating()
 }
 
 void
+omniObjTableEntry::setDeactivatingOA()
+{
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
+  OMNIORB_ASSERT(pd_state == ACTIVE);
+  OMNIORB_ASSERT(pd_nInvocations > 0);
+
+  if( omniORB::trace(15) ) {
+    omniORB::logger l;
+    l << "State " << this << " -> deactivating (OA destruction)\n";
+  }
+
+  if (pd_nInvocations == 1)
+    pd_state = DEACTIVATING_OA;
+  else
+    pd_state = DEACTIVATING;
+
+  --pd_nInvocations;
+
+  if (pd_waiters)
+    pd_cond->broadcast();
+}
+
+void
 omniObjTableEntry::setEtherealising()
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
-  OMNIORB_ASSERT(pd_state == DEACTIVATING);
+  OMNIORB_ASSERT(pd_state & DEACTIVATING);
 
   pd_servant->_removeActivation(this);
 
@@ -784,9 +815,9 @@ omni::createIdentity(omniIOR* ior, const char* target, CORBA::Boolean locked)
   omniIOR_var holder(ior); // Place the ior inside a var. If ever
                            // any function we called results in an
                            // exception being thrown, the ior is released
-                           // by the var, hence fullifilling the semantics
+                           // by the var, hence fullfilling the semantics
                            // of this function.
-                           // If this function completed normally, make
+                           // If this function completes normally, make
                            // sure that _retn() is called on the var so
                            // that the ior is not released incorrectly!
 
@@ -983,6 +1014,35 @@ omni::createObjRef(const char* targetRepoId,
     id->gainRef(objref);
   }
 
+  if (orbParameters::persistentId.length()) {
+    // Check to see if we need to re-write the IOR.
+
+    omniIOR::IORExtraInfoList& extra = ior->getIORInfo()->extraInfo();
+
+    for (CORBA::ULong index = 0; index < extra.length(); index++) {
+
+      if (extra[index]->compid == IOP::TAG_OMNIORB_PERSISTENT_ID) {
+
+	if (!id->inThisAddressSpace()) {
+
+	  omniORB::logs(15, "Re-write local persistent object reference.");
+
+	  omniObjRef* new_objref;
+	  {
+	    omni_optional_lock sync(*internalLock, locked, locked);
+
+	    omniIOR* new_ior = new omniIOR(ior->repositoryID(),
+					   id->key(), id->keysize());
+
+	    new_objref = createObjRef(targetRepoId, new_ior, 1, 0);
+	  }
+	  releaseObjRef(objref);
+	  objref = new_objref;
+	}
+	break;
+      }
+    }
+  }
   return objref;
 }
 
@@ -1218,6 +1278,8 @@ public:
 				 orbOptions::expect_ulong_msg);
     }
     omniORB::traceLevel = v;
+    if (v >= 10)
+      omniORB::traceExceptions = 1;
   }
 
   void dump(orbOptions::sequenceString& result) {
@@ -1228,6 +1290,35 @@ public:
 };
 
 static traceLevelHandler traceLevelHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
+class traceExceptionsHandler : public orbOptions::Handler {
+public:
+
+  traceExceptionsHandler() : 
+    orbOptions::Handler("traceExceptions",
+			"traceExceptions = 0 or 1",
+			1,
+			"-ORBtraceExceptions < 0 | 1 >") {}
+
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    omniORB::traceExceptions = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),omniORB::traceExceptions,
+			     result);
+  }
+};
+
+static traceExceptionsHandler traceExceptionsHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
 class traceInvocationsHandler : public orbOptions::Handler {
@@ -1355,6 +1446,7 @@ public:
 
   omni_omniInternal_initialiser() {
     orbOptions::singleton().registerHandler(traceLevelHandler_);
+    orbOptions::singleton().registerHandler(traceExceptionsHandler_);
     orbOptions::singleton().registerHandler(traceInvocationsHandler_);
     orbOptions::singleton().registerHandler(traceThreadIdHandler_);
     orbOptions::singleton().registerHandler(objectTableSizeHandler_);
@@ -1415,13 +1507,13 @@ OMNI_NAMESPACE_END(omni)
 //            Nil object reference list                                    //
 /////////////////////////////////////////////////////////////////////////////
 
-static omnivector<CORBA::Object_ptr>* nilObjectList() {
+static omnivector<CORBA::Object_ptr>*& nilObjectList() {
   static omnivector<CORBA::Object_ptr>* the_list = 0;
   if (!the_list) the_list = new omnivector<CORBA::Object_ptr>;
   return the_list;
 }
 
-static omnivector<omniTrackedObject*>* trackedList() {
+static omnivector<omniTrackedObject*>*& trackedList() {
   static omnivector<omniTrackedObject*>* the_list = 0;
   if (!the_list) the_list = new omnivector<omniTrackedObject*>;
   return the_list;
@@ -1471,6 +1563,7 @@ _omniFinalCleanup::~_omniFinalCleanup()
     delete *i;
 
   delete nilObjectList();
+  nilObjectList() = 0;
 
   int tracked = 0;
   omnivector<omniTrackedObject*>::iterator j = trackedList()->begin();
@@ -1478,6 +1571,7 @@ _omniFinalCleanup::~_omniFinalCleanup()
     delete *j;
 
   delete trackedList();
+  trackedList() = 0;
 
   if (omniORB::trace(15)) {
     omniORB::logger l;

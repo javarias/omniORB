@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23.2.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
 # Revision 1.23.2.1  2003/03/23 21:02:43  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -185,7 +188,8 @@ usage_string = """\
   -Wbold_prefix     Map C++ reserved words with prefix _
   -Wbinline         Generate code for #included files inline with the main file
   -Wbkeep_inc_path  Preserve IDL #include path in header #includes
-  -Wbuse_quotes     Use quotes in #includes: "foo" rather than <foo>"""
+  -Wbuse_quotes     Use quotes in #includes: "foo" rather than <foo>
+  -Wbdll_includes   Extra support for #included IDL in DLLs"""
 
 # Encountering an unknown AST node will cause an AttributeError exception
 # to be thrown in one of the visitors. Store a list of those not-supported
@@ -235,6 +239,8 @@ def process_args(args):
             config.state['Inline Includes']   = 1
         elif arg == "shortcut":
             config.state['Shortcut']          = 1
+        elif arg == "dll_includes":
+            config.state['DLLIncludes']       = 1
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 

@@ -16,6 +16,9 @@
 
 /*
  $Log$
+ Revision 1.7.2.1  2003/03/23 21:02:55  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.6  1999/03/11 16:26:15  djr
  Updated copyright notice
 
@@ -36,7 +39,12 @@
 //
  */
 
-#include <iostream.h>
+#ifdef HAVE_STD
+#  include <iostream>
+   using namespace std;
+#else
+#  include <iostream.h>
+#endif
 #include <stdlib.h>
 #include <omnithread.h>
 

@@ -28,6 +28,9 @@
 //
 
 // $Log$
+// Revision 1.1.4.1  2003/03/23 21:02:24  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.1.2.4  2001/10/17 16:33:28  dpg1
 // New downcast mechanism for cdrStreams.
 //
@@ -165,7 +168,7 @@ cdrStreamAdapter::ptrToClass(int* cptr)
 {
   if (cptr == &cdrStreamAdapter::_classid) return (cdrStreamAdapter*)this;
   if (cptr == &cdrStream       ::_classid) return (cdrStream*)       this;
-  return 0;
+  return pd_actual.ptrToClass(cptr);
 }
 
 int cdrStreamAdapter::_classid;

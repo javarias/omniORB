@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:25  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/08/17 13:39:44  dpg1
   Split CORBA.h into separate bits.
 
@@ -91,7 +94,12 @@ public:
   static _core_attr const char* _PD_repoId;
 
 protected:
-  inline BOA(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+  inline BOA(int nil) {
+    if (nil)
+      _PR_setobj((omniObjRef*)0);
+    else
+      _PR_setobj((omniObjRef*)1);
+  }
   virtual ~BOA();
 
 private:

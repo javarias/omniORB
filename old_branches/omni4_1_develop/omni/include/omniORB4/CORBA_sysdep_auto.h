@@ -30,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.1  2003/03/23 21:04:21  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.1.2.2  2002/02/18 11:59:12  dpg1
  Full autoconf support.
 
@@ -55,6 +58,10 @@
 #  define HAS_Cplusplus_const_cast
 #endif
 
+#ifdef HAVE_REINTERPRET_CAST
+#  define HAS_Cplusplus_reinterpret_cast
+#endif
+
 #ifdef HAVE_NAMESPACES
 #  define HAS_Cplusplus_Namespace
 #endif
@@ -74,10 +81,17 @@
 #  define _CORBA_LONGLONG_CONST(x) (x##LL)
 #endif
 
-#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE > 8)
+
+#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE == 16)
 #  define HAS_LongDouble
 #  define _CORBA_LONGDOUBLE_DECL long double
 #endif
+
+#if defined(SIZEOF_LONG_DOUBLE) && (SIZEOF_LONG_DOUBLE == 12) && defined(__i386__)
+#  define HAS_LongDouble
+#  define _CORBA_LONGDOUBLE_DECL long double
+#endif
+
 
 #ifndef _CORBA_WCHAR_DECL
 #  if defined(SIZEOF_WCHAR_T) && (SIZEOF_WCHAR_T > 0)

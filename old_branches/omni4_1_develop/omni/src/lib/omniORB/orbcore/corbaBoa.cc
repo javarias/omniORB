@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.1  2003/03/23 21:02:23  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.16.2.17  2003/02/17 02:03:08  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -480,7 +483,7 @@ omniOrbBOA::destroy()
 		  omniObjTableEntry::ETHEREALISING);
 
     if (entry->state() == omniObjTableEntry::ACTIVE)
-      entry->setDeactivating();
+      entry->setDeactivatingOA();
 
     entry = entry->nextInOAObjList();
   }
@@ -494,7 +497,7 @@ omniOrbBOA::destroy()
 
   entry = obj_list;
   while( entry ) {
-    if (entry->state() == omniObjTableEntry::DEACTIVATING)
+    if (entry->state() & omniObjTableEntry::DEACTIVATING)
       entry->setEtherealising();
 
     OMNIORB_ASSERT(entry->is_idle());
@@ -511,6 +514,8 @@ omniOrbBOA::destroy()
     entry->setDead();
     entry = next;
   }
+
+  omni::internalLock->unlock();
 
   // Wait for objects which have been detached to complete
   // their etherealisations.
@@ -800,6 +805,15 @@ omniOrbBOA::lastInvocationHasCompleted(omniLocalIdentity* id)
   // This function should only ever be called with a localIdentity
   // which is an objectTableEntry, since those are the only ones which
   // can be deactivated.
+
+  if (entry->state() == omniObjTableEntry::DEACTIVATING_OA) {
+    if (omniORB::trace(15)) {
+      omniORB::logger l;
+      l << "BOA not etherealising object " << entry <<".\n";
+    }
+    omni::internalLock->unlock();
+    return;
+  }
 
   if( omniORB::trace(15) ) {
     omniORB::logger l;

@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.13.2.4  2005/01/06 16:39:24  dgrisby
+   DynValue and DynValueBox implementations; misc small fixes.
+
    Revision 1.13.2.3  2004/07/23 10:29:58  dgrisby
    Completely new, much simpler Any implementation.
 
@@ -341,11 +344,6 @@ DynAnyImplBase::_NP_decrRefCount()
     if( pd_refcount > 0 )  pd_refcount--;
 
     if( pd_refcount == 0 && pd_is_root ) {
-      if ( !pd_destroyed && omniORB::trace(25)) {
-	omniORB::logger l;
-	l << "Warning: Last reference to DynAny dropped without having "
-	     "called destroy()\n";
-      }
       do_delete = 1;
       // This hook allows derived types to detach their children
       // so that they will be destroyed when their ref count goes
@@ -797,7 +795,9 @@ DynAnyImpl::get_string()
     else
       throw;
   }
+#ifndef __DECCXX
   return 0;
+#endif
 }
 
 
@@ -1194,7 +1194,9 @@ DynFixedImpl::set_value(const char* val)
     else
       throw DynamicAny::DynAny::TypeMismatch();
   }
+#ifndef __DECCXX
   return 0; // Never reach here
+#endif
 }
 
 ///////////////////////////////
@@ -1826,7 +1828,9 @@ DynAnyConstrBase::get_string()
     else
       throw;
   }
+#ifndef __DECCXX
   return 0;
+#endif
 }
 
 

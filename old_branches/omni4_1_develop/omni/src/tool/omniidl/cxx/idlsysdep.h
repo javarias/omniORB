@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.8.2.1  2003/03/23 21:01:44  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.4.2.5  2002/02/01 11:22:06  dpg1
 // strcasecmp/stricmp redefinition on Windows.
 //
@@ -63,7 +66,12 @@
 
 // As usual, Windows manages to be different...
 #ifdef __WIN32__
+// declspec is a define in windef.h under MINGW
+#ifdef __MINGW32__
+#  define DLL_EXPORT __attribute__((dllexport))
+#else
 #  define DLL_EXPORT _declspec(dllexport)
+#endif
 #else
 #  define DLL_EXPORT
 #  include <strings.h>

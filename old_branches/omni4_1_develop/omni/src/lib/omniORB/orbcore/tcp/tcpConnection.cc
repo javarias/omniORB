@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.11  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -77,6 +80,10 @@
 #include <tcp/tcpConnection.h>
 #include <stdio.h>
 #include <omniORB4/linkHacks.h>
+
+#if defined(__vxWorks__)
+#include "selectLib.h"
+#endif
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpConnection);
 
@@ -223,7 +230,8 @@ tcpConnection::Recv(void* buf, size_t sz,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > orbParameters::scanGranularity) {
+      if (orbParameters::scanGranularity > 0 && 
+	  t.tv_sec > orbParameters::scanGranularity) {
 	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
@@ -334,6 +342,9 @@ tcpConnection::tcpConnection(SocketHandle_t sock,
     pd_peeraddress = ip4ToString((CORBA::ULong)addr.sin_addr.s_addr,
 				 (CORBA::UShort)addr.sin_port,"giop:tcp:");
   }
+
+  SocketSetCloseOnExec(sock);
+
   belong_to->addSocket(this);
 }
 
@@ -358,6 +369,13 @@ tcpConnection::clearSelectable() {
 
   pd_belong_to->clearSelectable(pd_socket);
 }
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+tcpConnection::isSelectable() {
+  return pd_belong_to->isSelectable(pd_socket);
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 void

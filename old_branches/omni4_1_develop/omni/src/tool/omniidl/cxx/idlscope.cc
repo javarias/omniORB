@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18.2.3  2004/10/13 17:58:25  dgrisby
+// Abstract interfaces support; values support interfaces; value bug fixes.
+//
 // Revision 1.18.2.2  2004/02/16 10:10:33  dgrisby
 // More valuetype, including value boxes. C++ mapping updates.
 //
@@ -1313,7 +1316,9 @@ keywordClash(const char* identifier, const char* file, int line)
     "setraises", "typeid", "typeprefix", "uses", 0
   };
 
-  for (const char** k = keywords; *k; k++) {
+  const char** k;
+
+  for (k = keywords; *k; k++) {
     if (Config::caseSensitive) {
       if (!strcmp(*k, identifier)) {
 	IdlError(file, line, "Identifier '%s' is identical to keyword '%s'",
@@ -1329,7 +1334,7 @@ keywordClash(const char* identifier, const char* file, int line)
       }
     }
   }
-  for (const char** k = new_keywords; *k; k++) {
+  for (k = new_keywords; *k; k++) {
     if (Config::caseSensitive) {
       if (!strcmp(*k, identifier)) {
 	IdlWarning(file, line, "Identifier '%s' is identical to "

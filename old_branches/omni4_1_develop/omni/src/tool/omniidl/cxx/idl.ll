@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.1  2003/03/23 21:01:48  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.9.2.8  2001/10/22 10:48:22  dpg1
 // Cope with DOS line endings in all IDL situations.
 //
@@ -111,11 +114,7 @@
 #include <idlexpr.h>
 #include <idlast.h>
 
-#ifndef __VMS
 #include <y.tab.h>
-#else
-#include <y_tab.h>
-#endif
 
 char*       currentFile;
 IDL_Boolean mainFile  = 1; // Are we processing the main file

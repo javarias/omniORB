@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.5  2005/01/06 16:35:18  dgrisby
+# Narrowing for abstract interfaces.
+#
 # Revision 1.1.6.4  2004/10/13 17:58:22  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #
@@ -429,7 +432,8 @@ class _objref_I(Class):
                    inherits_fqname = "CORBA::AbstractBase")
 
     # build the inherits list
-    inherits_str = ""
+    
+    inherits_str_list = []
     for i in self.interface().inherits():
       objref_name = i.name().prefix("_objref_")
 
@@ -438,7 +442,7 @@ class _objref_I(Class):
       if objref_name.needFlatName(self._environment):
         objref_str = objref_name.flatName()
 
-      this_inherits_str = objref_str + "(ior, id),\n"
+      this_inherits_str = objref_str + "(ior, id)"
 
       # FIXME:
       # The powerpc-aix OMNIORB_BASE_CTOR workaround still works here
@@ -454,10 +458,18 @@ class _objref_I(Class):
         inherits_scope_prefix = string.join(prefix, "::") + "::"
         this_inherits_str = "OMNIORB_BASE_CTOR(" + inherits_scope_prefix +\
                             ")" + this_inherits_str
-      inherits_str = inherits_str + this_inherits_str
+
+      inherits_str_list.append(this_inherits_str)
+
+    inherits_str = string.join(inherits_str_list, ",\n")
+    if inherits_str:
+      comma = ","
+    else:
+      comma = ""
 
     if config.state['Shortcut']:
-      init_shortcut = ", _shortcut(0)"
+      inherits_str  = inherits_str + ","
+      init_shortcut = "_shortcut(0)"
     else:
       init_shortcut = ""
 
@@ -466,6 +478,7 @@ class _objref_I(Class):
                fq_objref_name = self.name().fullyQualify(),
                objref_name = self.name().simple(),
                inherits_str = inherits_str,
+               comma = comma,
                _ptrToObjRef_ptr = _ptrToObjRef_ptr,
                _ptrToObjRef_str = _ptrToObjRef_str,
                init_shortcut = init_shortcut)
@@ -648,11 +661,13 @@ class _impl_I(Class):
       for i in self.interface().allInherits():
         inherited_name = i.name()
         impl_inherited_name = inherited_name.prefix("_impl_")
-        inherited_str = inherited_name.unambiguous(self._environment)
-        impl_inherited_str = impl_inherited_name.unambiguous(self._environment)
-        if inherited_name.needFlatName(self._environment):
-          inherited_str = inherited_name.flatName()
-          impl_inherited_str = impl_inherited_name.flatName()
+
+        # HERE: using the fully scoped name may fail on old MSVC
+        # versions, but it is required by newer MSVC versions.
+        # Marvellous.
+        inherited_str      = inherited_name.fullyQualify()
+        impl_inherited_str = impl_inherited_name.fullyQualify()
+
         stream.out(omniidl_be.cxx.skel.template.interface_impl_repoID_ptr,
                    inherited_name = inherited_str,
                    impl_inherited_name = impl_inherited_str)
@@ -661,11 +676,10 @@ class _impl_I(Class):
       for i in self.interface().allInherits():
         inherited_name = i.name()
         impl_inherited_name = inherited_name.prefix("_impl_")
-        inherited_str = inherited_name.unambiguous(self._environment)
-        impl_inherited_str = impl_inherited_name.unambiguous(self._environment)
-        if inherited_name.needFlatName(self._environment):
-          inherited_str = inherited_name.flatName()
-          impl_inherited_str = impl_inherited_name.flatName()
+
+        inherited_str      = inherited_name.fullyQualify()
+        impl_inherited_str = impl_inherited_name.fullyQualify()
+
         stream.out(omniidl_be.cxx.skel.template.interface_impl_repoID_str,
                    inherited_name = inherited_str,
                    impl_inherited_name = impl_inherited_str)

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:03:44  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.6  2002/03/18 15:13:07  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -213,11 +216,11 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void importFromFile(const char* filename) throw (Unknown,BadParam);
+  CORBA::Boolean importFromFile(const char* filename) throw (Unknown,BadParam);
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
   ////////////////////////////////////////////////////////////////////////
-  void importFromRegistry() throw (Unknown,BadParam);
+  CORBA::Boolean importFromRegistry() throw (Unknown,BadParam);
 #endif
 
   ////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:03:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.10  2003/01/16 12:47:08  dgrisby
   Const cast macro. Thanks Matej Kenda.
 
@@ -181,14 +184,14 @@ public:
 #endif
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!_data || (_CORBA_ULong)_CORBA_WString_helper::len(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!_data || (_CORBA_ULong)_CORBA_WString_helper::len(_data) < index_) {
+    if (!_data) {
       _CORBA_bound_check_error();	// never return
     }
     return _data[index_];
@@ -281,14 +284,14 @@ public:
   inline _CORBA_WString_member& operator=(const _CORBA_WString_element& s);
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!_ptr || (_CORBA_ULong)_CORBA_WString_helper::len(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!_ptr || (_CORBA_ULong)_CORBA_WString_helper::len(_ptr) < index_) {
+    if (!_ptr) {
       _CORBA_bound_check_error();	// never return
     }
     return _ptr[index_];
@@ -395,16 +398,14 @@ public:
   }
 
   inline _CORBA_WChar& operator[] (_CORBA_ULong index_) {
-    if (!((_CORBA_WChar*)pd_data) ||
-	(_CORBA_ULong)_CORBA_WString_helper::len(pd_data) < index_) {
+    if (!((_CORBA_WChar*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];
   }
 
   inline _CORBA_WChar operator[] (_CORBA_ULong index_) const {
-    if (!((_CORBA_WChar*)pd_data) ||
-	(_CORBA_ULong)_CORBA_WString_helper::len(pd_data) < index_) {
+    if (!((_CORBA_WChar*)pd_data)) {
       _CORBA_bound_check_error();	// never return
     }
     return pd_data[index_];
@@ -616,9 +617,9 @@ public:
   }
 
 #if SIZEOF_PTR == SIZEOF_LONG
-  typedef long ptr_arith_t;
+  typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
-  typedef int ptr_arith_t;
+  typedef unsigned int ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif

@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:21  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.9  2003/03/12 14:07:44  dgrisby
   MacOS port. Thanks Wolfgang Textor.
 
@@ -73,6 +76,9 @@
 
 #define HAS_Cplusplus_const_cast
 // Unset this define if the compiler does not support const_cast<T*>
+
+#define HAS_Cplusplus_reinterpret_cast
+// Unset this define if the compiler does not support reinterpret_cast<T>
 
 #define HAS_Cplusplus_catch_exception_by_base
 // Unset this define if the compiler does not support catching
@@ -147,6 +153,15 @@
 #     define HAS_Cplusplus_Bool
 #  endif
 
+// Since gcc 3.3 old IOstream's are considered deprecated.
+#  if (__GNUG__ > 3 || (__GNUG__ == 3 && __GNUC_MINOR__ >= 3))
+#     define HAS_Cplusplus_Namespace
+#     define HAS_Std_Namespace
+#     ifndef HAVE_STD
+#         define HAVE_STD 1
+#     endif
+#  endif
+
 // GCC claims to support long long on all platforms
 #  define HAS_LongLong
 #  define HAS_LongDouble
@@ -180,6 +195,7 @@
 #  else
 //    Compaq C++ 5.x
 #     undef  HAS_Cplusplus_const_cast
+#     undef  HAS_Cplusplus_reinterpret_cast
 #     define OMNI_REQUIRES_FQ_BASE_CTOR
 
 #  endif
@@ -210,6 +226,9 @@
 #    endif
 #    define HAS_Cplusplus_Namespace
 #    define HAS_Std_Namespace
+#    ifndef HAVE_STD
+#        define HAVE_STD 1
+#    endif
 #  endif
 
 #  define HAS_LongLong
@@ -235,7 +254,16 @@
 #  define OMNI_REQUIRES_FQ_BASE_CTOR
 
 #elif defined(__BCPLUSPLUS__)
+// Borland C++ Builder
 #  define HAS_Cplusplus_Namespace
+#  define HAS_Std_Namespace
+
+#  define HAS_LongLong
+#  define _CORBA_LONGLONG_DECL   __int64
+#  define _CORBA_ULONGLONG_DECL  unsigned __int64
+#  define _CORBA_LONGLONG_CONST(x) (x)
+
+#  define OMNI_REQUIRES_FQ_BASE_CTOR
 
 #elif defined(__KCC)
 // Kai C++
@@ -270,6 +298,7 @@
 #elif defined(__xlC__)
 #  if (__xlC__ <= 0x0306)
 #    undef HAS_Cplusplus_const_cast
+#    undef HAS_Cplusplus_reinterpret_cast
 #  elif (__xlC__ >= 0x0500) // added in xlC 5.0 (a.k.a. Visual Age 5.0)
 #    define HAS_Cplusplus_Bool
 #    define HAS_Cplusplus_Namespace
@@ -359,12 +388,24 @@
 #if defined(__linux__)
 #  define OMNI_SOCKNAME_SIZE_T socklen_t
 #  define HAVE_STRTOULL 1
+#  ifndef HAVE_STD
+#    define HAVE_STD 1
+#  endif
 
 #elif defined(__sunos__)
+#  ifndef HAVE_STD
+#    define HAVE_STD 1
+#  endif
 #  define HAVE_STRTOULL 1
 #  define HAVE_ISNANORINF
 #  define HAVE_NAN_H
-#  define OMNI_SOCKNAME_SIZE_T size_t
+#  if __OSVERSION__ == 4
+#    define OMNI_SOCKNAME_SIZE_T int
+#  elif __OSVERSION__ == 5 || __OSVERSION__ == 6
+#    define OMNI_SOCKNAME_SIZE_T size_t
+#  else
+#    define OMNI_SOCKNAME_SIZE_T socklen_t
+#  endif
 #  if __OSVERSION__ == 5 && (!defined(__GNUG__) || __GNUG__ < 3)
 #    define NEED_GETHOSTNAME_PROTOTYPE
 #  endif
@@ -425,8 +466,16 @@
 #  undef HAVE_UNAME
 #  undef HAVE_GETHOSTNAME
 
+#ifdef __MINGW32__
+#  define HAVE_STRCASECMP
+#  define HAVE_STRNCASECMP
+#  define HAVE_VPRINTF
+#endif
+
 #elif defined(__vxWorks__)
 #  undef HAVE_GETTIMEOFDAY
+#  undef HAVE_STRCASECMP
+#  undef HAVE_STRNCASECMP
 
 #elif defined(__macos__)
 #  define SIZEOF_WCHAR 2

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:02:15  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.23  2003/02/17 01:20:00  dgrisby
   Avoid deadlock with bidir connection shutdown.
 
@@ -411,9 +414,18 @@ giopRope::releaseClient(IOP_C* iop_c) {
     s->state(giopStrand::DYING);
     if (omniORB::trace(30)) {
       omniORB::logger l;
-      l << "Unexpected error encountered in talking to the server "
-	<< s->connection->peeraddress()
-	<< " , the connection is closed immediately.\n";
+
+      if (s->connection) {
+	l << "Unexpected error encountered in talking to the server "
+	  << s->connection->peeraddress()
+	  << " . The connection is closed immediately.\n";
+      }
+      else {
+	OMNIORB_ASSERT(s->address);
+	l << "Unexpected error encountered before talking to the server "
+	  << s->address->address()
+	  << " . No connection was opened.\n";
+      }
     }
   }
 
@@ -545,6 +557,11 @@ giopRope::notifyCommFailure(const giopAddress* addr,
     if (pd_address_in_use >= pd_addresses_order.size())
       pd_address_in_use = 0;
     addr_in_use = pd_addresses[pd_addresses_order[pd_address_in_use]];
+
+    if (omniORB::trace(20)) {
+      omniORB::logger l;
+      l << "Switch rope to use address " << addr_in_use->address() << "\n";
+    }
   }
 
   if (!heldlock) {
@@ -784,7 +801,7 @@ public:
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
-    if (!orbOptions::getULong(value,v)) {
+    if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
 			 orbOptions::expect_greater_than_zero_ulong_msg);
     }

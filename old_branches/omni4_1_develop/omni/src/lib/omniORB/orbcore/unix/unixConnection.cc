@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:57  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.6  2002/03/21 10:59:13  dpg1
   HPUX fixes.
 
@@ -163,7 +166,8 @@ unixConnection::Recv(void* buf, size_t sz,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > orbParameters::scanGranularity) {
+      if (orbParameters::scanGranularity > 0 && 
+	  t.tv_sec > orbParameters::scanGranularity) {
 	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
@@ -266,6 +270,8 @@ unixConnection::unixConnection(SocketHandle_t sock,
     pd_peeraddress = unToString(filename_1);
   }
 
+  SocketSetCloseOnExec(sock);
+
   belong_to->addSocket(this);
 }
 
@@ -289,6 +295,12 @@ void
 unixConnection::clearSelectable() {
 
   pd_belong_to->clearSelectable(pd_socket);
+}
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+unixConnection::isSelectable() {
+  return pd_belong_to->isSelectable(pd_socket);
 }
 
 /////////////////////////////////////////////////////////////////////////

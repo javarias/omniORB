@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.1  2003/03/23 21:04:03  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.1.2.8  2003/01/16 12:47:08  dgrisby
  Const cast macro. Thanks Matej Kenda.
 
@@ -1901,9 +1904,9 @@ public:
   }
 
 #if SIZEOF_PTR == SIZEOF_LONG
-  typedef long ptr_arith_t;
+  typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
-  typedef int ptr_arith_t;
+  typedef unsigned int ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif

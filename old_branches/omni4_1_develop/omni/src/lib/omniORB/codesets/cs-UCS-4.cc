@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2003/05/20 16:53:14  dgrisby
+  Valuetype marshalling support.
+
   Revision 1.1.4.1  2003/03/23 21:02:51  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -333,7 +336,7 @@ TCS_W_UCS_4::marshalWString(cdrStream& stream,
   
   stream.declareArrayLength(omni::ALIGN_4, mlen);
 
-  for (_CORBA_ULong i=0; i<=len; i++) {
+  for (_CORBA_ULong i=0; i < len; i++) {
     uc = us[i];
 
     if (uc < 0xd800) {

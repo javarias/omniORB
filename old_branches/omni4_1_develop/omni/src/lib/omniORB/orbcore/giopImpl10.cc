@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.2  2003/07/10 21:55:56  dgrisby
+  Use re-entrant GIOP 1.0 size calc.
+
   Revision 1.1.6.1  2003/03/23 21:02:16  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -219,8 +222,11 @@ giopImpl10::inputMessageBegin(giopStream* g,
                      g->pd_currentInputBuffer->start;
 
   if (hdr[4] != 1 || hdr[5] != 0) {
-    inputTerminalProtocolError(g);
-    // never reaches here.
+    // We accept a CloseConnection message with any GIOP version.
+    if ((GIOP::MsgType)hdr[7] != GIOP::CloseConnection) {
+      inputTerminalProtocolError(g);
+      // never reaches here.
+    }
   }
 
   g->pd_unmarshal_byte_swap = (((hdr[6] & 0x1) == _OMNIORB_HOST_BYTE_ORDER_)
@@ -972,8 +978,8 @@ giopImpl10::sendMsgErrorMessage(giopStream* g) {
   if (omniORB::trace(1)) {
     omniORB::logger l;
     l << "To endpoint: " << g->pd_strand->connection->peeraddress()
-      <<". Send GIOP 1.0 MessageError because a protocol error has been detected. "
-      << "Connection is closed.\n";
+      << ". Send GIOP 1.0 MessageError because a protocol error has "
+      << "been detected. Connection is closed.\n";
   }
 
   if (!g->pd_currentOutputBuffer) {
@@ -1024,8 +1030,8 @@ giopImpl10::marshalRequestHeader(giopStream* g) {
   omniInterceptors::clientSendRequest_T::info_T info(*g,
 				                     *(giop_c.ior()),
 						     calldesc.op(),
-						     response_expected,
-						     !response_expected);
+						     !response_expected,
+						     response_expected);
   omniInterceptorP::visit(info);
 
   {

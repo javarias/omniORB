@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.8  2005/01/06 16:35:18  dgrisby
+# Narrowing for abstract interfaces.
+#
 # Revision 1.8.2.7  2004/10/13 17:58:24  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #
@@ -213,9 +216,10 @@ main = """\
 # define USE_dyn_stub_in_nt_dll_NOT_DEFINED_@guard@
 #endif
 
+@sub_include_pre@
 @cxx_direct_include@
-
 @includes@
+@sub_include_post@
 
 #ifdef USE_stub_in_nt_dll
 #ifndef USE_core_stub_in_nt_dll
@@ -277,6 +281,27 @@ main = """\
 #endif  // __@guard@_hh__
 """
 
+
+sub_include_pre = """\
+#ifdef INCLUDED_stub_in_nt_dll
+# ifdef USE_stub_in_nt_dll
+#  error "cannot use both INCLUDED_stub_in_nt_dll and USE_stub_in_nt_dll."
+# else
+#  define USE_stub_in_nt_dll
+# endif
+# define INCLUDED_stub_in_nt_dll_DEFINED_@guard@
+# undef INCLUDED_stub_in_nt_dll
+#endif
+"""
+
+sub_include_post = """\
+#ifdef INCLUDED_stub_in_nt_dll_DEFINED_@guard@
+# undef USE_stub_in_nt_dll
+# define INCLUDED_stub_in_nt_dll 
+# undef INCLUDED_stub_in_nt_dll_DEFINED_@guard@
+#endif
+"""
+
 main_include = """\
 #ifndef __@guardname@_EXTERNAL_GUARD__
 #define __@guardname@_EXTERNAL_GUARD__
@@ -323,8 +348,8 @@ class @POA_name@ :
 public:
   virtual ~@POA_name@();
 
-  inline @scopedID@_ptr _this() {
-    return (@scopedID@_ptr) _do_this(@scopedID@::_PD_repoId);
+  inline ::@scopedID@_ptr _this() {
+    return (::@scopedID@_ptr) _do_this(::@scopedID@::_PD_repoId);
   }
 };
 """
@@ -499,6 +524,8 @@ private:
   _objref_@name@(const _objref_@name@&);
   _objref_@name@& operator = (const _objref_@name@&);
   // not implemented
+
+  friend class @name@;
 };
 """
 
@@ -620,20 +647,11 @@ typedef @base@_copyHelper @derived@_copyHelper;
 typedef @base@_var @derived@_var;
 typedef @base@_out @derived@_out;
 typedef @base@_forany @derived@_forany;
-"""
 
-typedef_simple_to_array_static_fn = """\
-static @derived@_slice* @derived@_alloc() { return @base@_alloc(); }
-static @derived@_slice* @derived@_dup(const @derived@_slice* p) { return @base@_dup(p); }
-static void @derived@_copy( @derived@_slice* _to, const @derived@_slice* _from ) { @base@_copy(_to, _from); }
-static void @derived@_free( @derived@_slice* p) { @base@_free(p); }
-"""
-
-typedef_simple_to_array_extern = """\
-extern @derived@_slice* @derived@_alloc();
-extern @derived@_slice* @derived@_dup(const @derived@_slice* p);
-extern void @derived@_copy( @derived@_slice* _to, const @derived@_slice* _from );
-extern void @derived@_free( @derived@_slice* p);
+@qualifier@ inline @derived@_slice* @derived@_alloc() { return @base@_alloc(); }
+@qualifier@ inline @derived@_slice* @derived@_dup(const @derived@_slice* p) { return @base@_dup(p); }
+@qualifier@ inline void @derived@_copy( @derived@_slice* _to, const @derived@_slice* _from ) { @base@_copy(_to, _from); }
+@qualifier@ inline void @derived@_free( @derived@_slice* p) { @base@_free(p); }
 """
 
 typedef_simple_string = """\
@@ -656,6 +674,7 @@ typedef CORBA::TypeCode_var @name@_var;
 typedef_simple_any = """\
 typedef CORBA::Any @name@;
 typedef CORBA::Any_var @name@_var;
+typedef CORBA::Any_out @name@_out;
 """
 
 typedef_simple_fixed = """\
@@ -665,6 +684,7 @@ typedef @name@& @name@_out;
 
 typedef_simple_basic = """\
 typedef @base@ @derived@;
+typedef @base@_out @derived@_out;
 """
 
 typedef_simple_constructed = """\
@@ -697,22 +717,12 @@ typedef_enum_oper_friend = """\
 typedef_array = """\
 typedef @type@ @name@@dims@;
 typedef @type@ @name@_slice@taildims@;
-"""
 
-# this is almost the same as typedef_simple_to_array_extern above
-typedef_array_extern = """\
-extern @name@_slice* @name@_alloc();
-extern @name@_slice* @name@_dup(const @name@_slice* _s);
-extern void @name@_free(@name@_slice* _s);
-extern void @name@_copy(@name@_slice* _to, const @name@_slice* _from);
-"""
-
-typedef_array_static = """\
-static inline @name@_slice* @name@_alloc() {
+@qualifier@ inline @name@_slice* @name@_alloc() {
   return new @name@_slice[@firstdim@];
 }
 
-static inline @name@_slice* @name@_dup(const @name@_slice* _s) {
+@qualifier@ inline @name@_slice* @name@_dup(const @name@_slice* _s) {
   if (!_s) return 0;
   @name@_slice* _data = @name@_alloc();
   if (_data) {
@@ -721,11 +731,11 @@ static inline @name@_slice* @name@_dup(const @name@_slice* _s) {
   return _data;
 }
 
-static inline void @name@_copy(@name@_slice* _to, const @name@_slice* _from){
+@qualifier@ inline void @name@_copy(@name@_slice* _to, const @name@_slice* _from){
   @copy_loop@
 }
 
-static inline void @name@_free(@name@_slice* _s) {
+@qualifier@ inline void @name@_free(@name@_slice* _s) {
     delete [] _s;
 }
 """
@@ -1154,13 +1164,13 @@ friend class ::@private_prefix@_tcParser_unionhelper_@name@;
 #endif
 """
 
-union_proxy_float = """\
+union_proxy_float = """
 #ifdef USING_PROXY_FLOAT
   @type@ _pd_@name@@dims@;
 #endif
 """
 
-union_noproxy_float = """\
+union_noproxy_float = """
 #ifndef USING_PROXY_FLOAT
   @type@ _pd_@name@@dims@;
 #endif

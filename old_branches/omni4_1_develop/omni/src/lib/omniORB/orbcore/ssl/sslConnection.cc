@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.11  2001/12/03 13:39:55  dpg1
   Explicit socket shutdown flag for Windows.
 
@@ -211,7 +214,8 @@ sslConnection::Recv(void* buf, size_t sz,
 	return 0;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
-      if (t.tv_sec > orbParameters::scanGranularity) {
+      if (orbParameters::scanGranularity > 0 && 
+	  t.tv_sec > orbParameters::scanGranularity) {
 	t.tv_sec = orbParameters::scanGranularity;
       }
 #endif
@@ -348,6 +352,8 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 			       (CORBA::ULong)addr.sin_addr.s_addr,
 			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
   }
+  SocketSetCloseOnExec(sock);
+
   belong_to->addSocket(this);
 }
 
@@ -385,6 +391,13 @@ sslConnection::clearSelectable() {
 
   pd_belong_to->clearSelectable(pd_socket);
 }
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+sslConnection::isSelectable() {
+  return pd_belong_to->isSelectable(pd_socket);
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 void

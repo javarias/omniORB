@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2004/04/02 13:26:25  dgrisby
+  Start refactoring TypeCode to support value TypeCodes, start of
+  abstract interfaces support.
+
   Revision 1.1.4.2  2003/09/26 16:12:53  dgrisby
   Start of valuetype support.
 
@@ -288,7 +292,12 @@ public:
   virtual ~ORB();
 
 protected:
-  inline ORB(int nil) { _PR_setobj((omniObjRef*) (nil ? 0:1)); }
+  inline ORB(int nil) {
+    if (nil)
+      _PR_setobj((omniObjRef*)0);
+    else
+      _PR_setobj((omniObjRef*)1);
+  }
 
 private:
   ORB(const ORB&);
