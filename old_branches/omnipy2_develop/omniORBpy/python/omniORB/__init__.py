@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.15  2003/03/12 11:17:49  dgrisby
+# Any / TypeCode fixes.
+#
 # Revision 1.26.2.14  2002/11/27 00:18:25  dgrisby
 # Per thread / per objref timeouts.
 #
@@ -353,9 +356,13 @@ Make stubs for the Interface Repository appear in the CORBA module"""
 #   traceLevel
 #   traceInvocations
 #   traceThreadId
+#   log
 #   nativeCharCodeSet
 #   fixed
 #   minorCodeToString
+#   setClientCallTimeout
+#   setClientThreadCallTimeout
+#   myIPAddresses
 
 from _omnipy.omni_func import *
 
