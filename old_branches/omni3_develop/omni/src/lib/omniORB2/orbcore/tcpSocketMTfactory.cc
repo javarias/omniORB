@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.23  2001/12/11 16:53:01  dpg1
+  Bunch of new platforms, plus other minor tweaks.
+
   Revision 1.22.6.22  2001/08/28 11:07:29  dpg1
   Deadlock when a worker thread can't be started.
 
@@ -302,6 +305,11 @@
 #  else
 #    define USE_SELECT_ON_RECV
 #  endif
+#endif
+
+#if defined(__freebsd__)
+#  include <poll.h>
+#  define USE_POLL_ON_RECV
 #endif
 
 #if !defined(__VMS)
