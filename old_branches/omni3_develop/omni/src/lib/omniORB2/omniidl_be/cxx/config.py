@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.5  2000/05/04 14:34:51  djs
+# Added new flag splice-modules which causes all continuations to be output
+# as one lump. Default is now to output them in pieces following the IDL.
+#
 # Revision 1.12.2.4  2000/04/26 18:22:12  djs
 # Rewrote type mapping code (now in types.py)
 # Rewrote identifier handling code (now in id.py)
@@ -95,7 +99,7 @@ self = config
 # similar in purpose to idl_global()-> data and o2be::global data in the
 # omniidl2 c++ compiler
 
-self._programName   = "omniidl3"    # programs own name
+self._programName   = "omniidl (C++ backend)"    # programs own name
 self._libVersion    = "omniORB_3_0" # library version
 self._hdrsuffix     = ".hh"         # suffix for header files
 self._skelsuffix    = "SK.cc"       # suffix for stub files
