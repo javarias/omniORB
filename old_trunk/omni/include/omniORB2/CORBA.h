@@ -13,6 +13,9 @@
 
 /*
  $Log$
+ Revision 1.4  1997/01/23 14:55:59  sll
+ Removed non-essential template dependency
+
  * Revision 1.3  1997/01/21  14:49:15  ewc
  * Added support for initial reference interface and also includes
  * the COSS Naming Service Interface.
@@ -699,6 +702,9 @@ typedef _CORBA_Double  Double;
   public:
     // omniORB2 specifics
     static Object_ptr _nil();
+    static _CORBA_Boolean is_nil(Object_ptr obj);
+    static void release(Object_ptr obj);
+    static void duplicate(Object_ptr obj);
     static size_t NP_alignedSize(Object_ptr obj,size_t initialoffset);
     static void marshalObjRef(Object_ptr obj,NetBufferedStream &s);
     static Object_ptr unmarshalObjRef(NetBufferedStream &s);
