@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:28:30  sll
+  Initial revision
+
   */
 
 #ifndef __ROPE_H__
@@ -392,6 +395,8 @@ private:
   Strand &operator=(const Strand&);
 };
 
+typedef Strand::Sync Strand_Sync;
+
 class Endpoint {
 public:
   Endpoint(_CORBA_Char *protocol) {
@@ -467,6 +472,9 @@ class Anchor {
 public:
   Anchor();
   ~Anchor();
+
+  static Anchor incomingAnchor;
+  static Anchor outgoingAnchor;
 
 private:
   friend class Rope;
@@ -559,14 +567,20 @@ public:
 
 
   friend class Strand;
-  friend Strand::Sync;
   friend class Strand_iterator;
   friend class Rope_iterator;
 
-protected:
-  omni_mutex pd_lock;
-private:
+#ifndef __DECCXX
+  // DEC C++ compiler (as of version 5.4) fails to recognise class Strand::Sync
+  // is a friend and allows access to the following protected members.
 
+  friend class Strand::Sync;
+
+protected:
+
+#endif
+
+  omni_mutex pd_lock;
   virtual Strand *getStrand();
   // Concurrency Control:
   //     MUTEX = pd_lock
@@ -589,6 +603,9 @@ private:
   //     Must hold <MUTEX> on entry
   // Post-condition:
   //     Must hold <MUTEX> on exit, even if an exception is raised
+
+private:
+
 
   unsigned int    pd_maxStrands;
 
