@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.8  2001/06/08 17:12:16  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
 # Revision 1.33.2.7  2001/03/13 10:32:08  dpg1
 # Fixed point support.
 #
@@ -429,7 +432,7 @@ def visitConst(node):
     d_constType = constType.deref()
     if d_constType.string():
         type_string = "char *"
-    elif d_constType.string():
+    elif d_constType.wstring():
         type_string = "CORBA::WChar *"
     elif d_constType.fixed():
         type_string = constType.member()
