@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.17  2000/09/25 11:03:28  dpg1
+# Remove use of _T as a template class name
+#
 # Revision 1.3.2.16  2000/08/10 10:38:23  sll
 # Support new pragma hh in the cxx omniidl backend.  Added CPP macro guards
 # to stub header to preserve the value of USE_core_stub_in_nt_dll and
@@ -776,19 +779,20 @@ exception_member = """\
 
 union_ctor_nonexhaustive = """\
 if ((_pd__default = _value._pd__default)) {
-  _pd__d = _value._pd__d;
   @default@
 }
 else {
   switch(_value._pd__d) {
     @cases@
   }
-}"""
+}
+_pd__d = _value._pd__d;"""
 
 union_ctor_exhaustive = """\
 switch(_value._pd__d) {
   @cases@
-}"""
+}
+_pd__d = _value._pd__d;"""
 
 union_ctor_case = """\
 case @discrimvalue@: @name@(_value._pd_@name@); break;
