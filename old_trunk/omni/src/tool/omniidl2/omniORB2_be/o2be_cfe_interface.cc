@@ -10,6 +10,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/08 17:32:59  sll
+  Initial revision
+
   */
 
 #include <stdlib.h>
@@ -25,6 +28,7 @@ char *o2be_global::pd_hdrsuffix = DEFAULT_IDL_HDR_SUFFIX;
 char *o2be_global::pd_skelsuffix = DEFAULT_IDL_SKEL_SUFFIX;
 size_t o2be_global::pd_suffixlen = DEFAULT_IDL_SUFFIXLEN;
 int o2be_global::pd_fflag = 0;
+int o2be_global::pd_aflag = 0;
 
 //
 // Initialize the BE. The protocol requires only that this routine
