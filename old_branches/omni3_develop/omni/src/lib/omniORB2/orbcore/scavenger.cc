@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.10.6.4  2000/01/07 14:51:14  djr
+  Call timeouts are now disabled by default.
+
   Revision 1.10.6.3  1999/09/27 11:01:11  djr
   Modifications to logging.
 
@@ -319,10 +322,7 @@ omniORB_Scavenger::run_undetached(void*)
   LOGMESSAGE(15,"","start.");
 
   unsigned long abs_sec,abs_nsec;
-  omni_thread::get_time(&abs_sec,&abs_nsec);
-
-  if (ScanPeriod)
-    abs_sec += ScanPeriod;
+  omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
 
   omni_mutex_lock sync(pd_mutex);
 
@@ -333,8 +333,7 @@ omniORB_Scavenger::run_undetached(void*)
       poke = pd_cond.timedwait(abs_sec,abs_nsec);
       if (poke) {
 	LOGMESSAGE(15,"","woken by poke()");
-	omni_thread::get_time(&abs_sec,&abs_nsec);	
-	abs_sec += ScanPeriod;
+	omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
       }
     }
     else {
@@ -370,7 +369,7 @@ omniORB_Scavenger::run_undetached(void*)
       }
     }
 
-    abs_sec += ScanPeriod;
+    omni_thread::get_time(&abs_sec,&abs_nsec,ScanPeriod);
   }
 
   LOGMESSAGE(15,"","exit.");
