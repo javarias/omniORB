@@ -4,27 +4,31 @@
 <page title="omniORB features" head="omniORB features" id="features">
 
 omniORB is a CORBA Object Request Broker (ORB) for C++ and Python.
-There are currently two main strands of development, a stable release
-and a beta release.
 
-<h2>Stable release: omniORB 3.0.x</h2>
+<h2>Stable release: omniORB 4.0.0</h2>
 
-omniORB 3.0.x adheres to version 2.3 of the CORBA specification, with
-some CORBA 2.4 features. The technical highlights are:
+omniORB 4.0 adheres to version 2.6 of the CORBA specification. The
+technical highlights are:
 
 <ul>
   <li>C++ and Python language bindings.</li>
-  <li>Support for the Portable Object Adapter (POA).</li>
-  <li>Backwards-compatible with the omniORB 2.x BOA.</li>
-  <li>Support for the CORBA 2.4 Interoperable Naming Service (INS).</li>
-  <li>Internet Inter-ORB Protocol (IIOP) 1.0 used as the native
-      protocol.</li>
+  <li>Adheres to the CORBA 2.6 specification.</li>
+  <li>Support for GIOP and IIOP 1.0, 1.1 and 1.2.</li>
   <li>Fully multithreaded runtime.</li>
   <li>TypeCode and type Any.</li>
-  <li>CORBA 2.2 DynAny support.</li>
+  <li>CORBA 2.6 DynAny interfaces.</li>
   <li>Dynamic Invocation and Dynamic Skeleton interfaces.</li>
   <li>Complete Naming Service, omniNames.</li>
-  <li>The following platforms are supported:
+  <li>Support for wchar, wstring and code set negotiation.</li>
+  <li>Full long long, long double, fixed point support.</li>
+  <li>PortableServer::Current.</li>
+  <li>Unix domain socket transport.</li>
+  <li>Bidirectional GIOP.</li>
+  <li>Interoperable Secure Socket Layer transport.</li>
+  <li>Flexible thread management.</li>
+  <li>Interceptors.</li>
+  <li>The following platforms are supported (although some have only
+      been tested with earlier releases):
     <ul>
       <li>Windows NT / XP / 9x with Visual C++ version 5.0 and above</li>
       <li>Linux / EGCS 2.91 or GCC 2.95 and above</li>
@@ -50,41 +54,20 @@ some CORBA 2.4 features. The technical highlights are:
   <li>Fully interoperable with other CORBA ORBs.</li>
 </ul>
 
+<p>
 There are a number of missing features, notably:
 
 <ul>
-  <li>Support for IDL types long double, wchar, wstring, fixed,
-      valuetype. Long long types are supported if the C++ compiler has
-      native support for 64-bit types, but long longs cannot be
-      inserted into Anys, to retain library binary compatibility with
-      omniORB 3.0.0.
-  </li>
-  <li>The PortableServer::Current interface is not supported.</li>
+  <li>Support for objects by value.</li>
+  <li>Support for portable interceptors.</li>
 </ul>
 
+These features are planned for omniORB version 4.1.
+</p>
 
-<h2>Beta release: omniORB 4.0.x</h2>
-
-omniORB 4.0 is currently in beta. In addition to the features of
-omniORB 3.0 listed above, it has the following additional features:
-
-<ul>
-  <li>Adheres to the CORBA 2.6 specification.</li>
-  <li>Support for GIOP 1.1 and 1.2.</li>
-  <li>Support for wchar, wstring and code set negotiation.</li>
-  <li>Full long long, long double, fixed point support.</li>
-  <li>PortableServer::Current.</li>
-  <li>Unix domain socket transport.</li>
-  <li>Bidirectional GIOP.</li>
-  <li>Interoperable Secure Socket Layer transport.</li>
-  <li>More flexible thread management.</li>
-  <li>CORBA 2.6 DynAny interfaces.</li>
-  <li>Many other optimisations and improvements.</li>
-</ul>
-
-<br/>
-
+<p>
 <small>Portions of this page are based on a features page Copyright
 AT&amp;T Laboratories Cambridge.</small>
+</p>
 
 </page>
