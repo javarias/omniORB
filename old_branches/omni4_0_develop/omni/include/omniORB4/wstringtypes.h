@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2000/11/09 12:27:50  dpg1
+  Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+
   Revision 1.1.2.1  2000/10/27 15:42:03  dpg1
   Initial code set conversion support. Not yet enabled or fully tested.
 
@@ -81,8 +84,6 @@ static inline _CORBA_WChar* dup(const _CORBA_WChar* s) {
 }
 // As CORBA::wstring_dup().
 
-static void marshal(const _CORBA_WChar*,cdrStream&);
-static _CORBA_WChar* unmarshal(cdrStream&);
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -284,7 +285,7 @@ public:
     return tmp;
   }
 
-  void operator >>= (cdrStream& s) const { _CORBA_WString_helper::marshal(_ptr,s); }
+  void operator >>= (cdrStream& s) const;
   void operator <<= (cdrStream& s);
 
   inline _CORBA_WChar*& _NP_ref() {return _ptr;}
