@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.11  1998/03/19 15:22:47  sll
+  Fixed so that omniObject ctor would not reject zero length key.
+
   Revision 1.10  1998/02/27 13:59:30  sll
   Minor update to cope with the change of manager() to _objectManager() in
   class omniObject.
@@ -434,7 +437,11 @@ omniObject::assertObjectExistent()
     {
       // Use GIOP LocateRequest to verify that the object exists.
       CORBA::ULong retries = 0;
+#ifndef EGCS_WORKAROUND
 AOE_again:
+#else
+while (1) {
+#endif
       omniRopeAndKey rak;
       CORBA::Boolean fwd = getRopeAndKey(rak);
       CORBA::Boolean reuse = 0;
@@ -497,7 +504,11 @@ AOE_again:
 	if (!_omni_callSystemExceptionHandler(this,retries++,ex))
 	  throw;
       }
+#ifndef EGCS_WORKAROUND
       goto AOE_again;
+#else
+}
+#endif
     }
   return;
 }
@@ -530,7 +541,11 @@ omniObject::_real_is_a(const char *repoId)
   }
 
   CORBA::ULong   _retries = 0;
+#ifndef EGCS_WORKAROUND
 ISA_again:
+#else
+while(1) {
+#endif
   omniRopeAndKey _r;
   CORBA::Boolean _fwd = getRopeAndKey(_r);
   CORBA::Boolean _reuse = 0;
@@ -610,7 +625,11 @@ ISA_again:
     if (!_omni_callSystemExceptionHandler(this,_retries++,ex))
       throw;
   }
+#ifndef EGCS_WORKAROUND
   goto ISA_again;
+#else
+}
+#endif
 #ifdef NEED_DUMMY_RETURN
   {
     // never reach here! Dummy return to keep some compilers happy.
