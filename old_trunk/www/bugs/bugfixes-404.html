@@ -2,7 +2,7 @@
   <!--Automatically generated with XSLT-->
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORB 4.0.3 bugs</title>
+    <title>omniORB 4.0.4 bugs</title>
     <link type='text/css' href='../styles.css' rel='stylesheet'>
   </head>
   <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
@@ -11,7 +11,7 @@
         <td class='header' width='15%'>
           <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
         <td class='header'>
-          <h1 align='center'>omniORB 4.0.3 bugs</h1>
+          <h1 align='center'>omniORB 4.0.4 bugs</h1>
         </td>
       </tr>
       <tr>
@@ -53,10 +53,10 @@
           <hr width='80%'>
           <p align='center'>
             <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/4.0.3' width='1' alt=''></p>
+            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/4.0.4' width='1' alt=''></p>
         </td><td class='main' valign='top' align='left'>
           <p>
-	  The following bugs in omniORB 4.0.3 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+	  The following bugs in omniORB 4.0.4 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
         </p>
           <table width='95%' align='center'>
             <tr>
@@ -67,30 +67,24 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>Unions with multiple cases not properly unmarshalled</b>
-            (bug number 9)
-            <a name='bug9'></a>
+                <b>Connections incorrectly refused on Windows</b>
+            (bug number 1)
+            <a name='bug1'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Thu Jul 29 11:32:51 BST 2004</td>
+              <td>Mon Sep 13 16:27:09 BST 2004</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
               <td>dgrisby</td>
             </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Martin Laporte</td>
-            </tr>
             <tr valign='top'>
               <td>Description:</td>
               <td>
-  When a union with multiple case labels for a single member was
-  unmarshalled, its internal initialised flag was not correctly set,
-  meaning the receiver could not change the case label as they should
-  be able to.
+  A change to make Unix servers more robust in heavy use accidentally
+  meant that Windows servers could reject valid connections.
   </td>
             </tr>
             <tr>
@@ -101,77 +95,14 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>Fixed point broken</b>
-            (bug number 8)
-            <a name='bug8'></a>
+                <b>Reusing an NVList failed</b>
+            (bug number 2)
+            <a name='bug2'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Thu Jul  1 20:01:13 BST 2004</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dgrisby</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Simone Viani</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  Numerous problems in fixed point rounding.
-  </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Rare failure in GIOP 1.2 system exception marshalling</b>
-            (bug number 7)
-            <a name='bug7'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Jun 18 15:43:49 BST 2004</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dgrisby</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Duncan Grisby</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  The GIOP message length was sometimes incorrectly set when
-  marshalling system exceptions in GIOP 1.2.
-  </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Bug in GIOP 1.1 SystemException marshalling</b>
-            (bug number 6)
-            <a name='bug6'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed May  5 11:52:34 BST 2004</td>
+              <td>Sun Oct 17 22:27:47 BST 2004</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
@@ -184,7 +115,8 @@
             <tr valign='top'>
               <td>Description:</td>
               <td>
-  System exceptions were incorrectly marshalled in GIOP 1.1.
+  The cached data inside Anys was not reset, meaning that reusing an
+  NVList did not work.
   </td>
             </tr>
             <tr>
@@ -195,73 +127,14 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>Incorrect retry semantics with location forwarding</b>
-            (bug number 5)
-            <a name='bug5'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Apr  7 18:45:34 BST 2004</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dgrisby</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  Retries to IORs with multiple addresses in did not work correctly
-  after a location forward.
-  </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>IfR access broken</b>
-            (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Mar 30 10:51:03 BST 2004</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dgrisby</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Alex Tingle</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  _do_get_interface did not work.
-  </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>System id policy did not work with default servant</b>
+                <b>Errors in accept() not handled.</b>
             (bug number 3)
             <a name='bug3'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Fri Feb 13 16:40:15 GMT 2004</td>
+              <td>Sun Oct 17 22:58:47 BST 2004</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
@@ -269,13 +142,12 @@
             </tr>
             <tr>
               <td>Reported by:</td>
-              <td>Duncan Grisby</td>
+              <td>Kamaldeep Singh Khanuja</td>
             </tr>
             <tr valign='top'>
               <td>Description:</td>
               <td>
-  An incorrect assertion in the POA meant default servants and servant
-  managers could not be used in POAs with the system id policy.
+  Recoverable errors from accept() were not handled.
   </td>
             </tr>
             <tr>
@@ -286,14 +158,14 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>Very large giopMaxMsgSize values did not work</b>
-            (bug number 2)
-            <a name='bug2'></a>
+                <b>Broken stubs for typedef to sequence of forward-declared structs</b>
+            (bug number 4)
+            <a name='bug4'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Fri Feb  6 16:18:15 GMT 2004</td>
+              <td>Sun Oct 17 23:17:07 BST 2004</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
@@ -301,14 +173,7 @@
             </tr>
             <tr>
               <td>Reported by:</td>
-              <td>Duncan Grisby</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  The way giopMaxMsgSize was handled meant that very large values were
-  handled incorrectly.
-  </td>
+              <td>Jeremy Van Grinsven</td>
             </tr>
             <tr>
               <td colspan='2'>
@@ -318,23 +183,56 @@
             <tr>
               <td>Summary:</td>
               <td>
-                <b>SSL connections did not time out</b>
-            (bug number 1)
-            <a name='bug1'></a>
+                <b>wchar missing from TypeCode unmarshalling</b>
+            (bug number 5)
+            <a name='bug5'></a>
               </td>
             </tr>
             <tr>
               <td>Date:      </td>
-              <td>Wed Dec  3 14:38:55 GMT 2003</td>
+              <td>Sun Oct 17 23:22:21 BST 2004</td>
             </tr>
             <tr>
               <td>Fixed by:  </td>
               <td>dgrisby</td>
             </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Luke Deller</td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td>Summary:</td>
+              <td>
+                <b>Intermittent errors using GIOP 1.0 with bidirectional
+  settings</b>
+            (bug number 6)
+            <a name='bug6'></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Date:      </td>
+              <td>Mon Oct 18 01:20:32 BST 2004</td>
+            </tr>
+            <tr>
+              <td>Fixed by:  </td>
+              <td>dgrisby</td>
+            </tr>
+            <tr>
+              <td>Reported by:</td>
+              <td>Luke Tunmer</td>
+            </tr>
             <tr valign='top'>
               <td>Description:</td>
               <td>
-  Timeouts did not occur at the time SSL connections were established.
+  When bidirectional GIOP is selected, a thread is started to read
+  incoming messages. That thread would be upset if it received a
+  message from GIOP 1.0 or 1.1. The thread should not be started
+  unless the connection is used for GIOP 1.2.
   </td>
             </tr>
             <tr>
