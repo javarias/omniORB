@@ -28,7 +28,11 @@
 //	
 
 
-/* $Log$
+/* 
+ * $Log$
+ * Revision 1.5  1998/04/07 19:40:53  sll
+ * Moved inline member functions to this module.
+ *
  * Revision 1.4  1998/03/17 12:52:19  sll
  * Corrected typo.
  *
@@ -1877,7 +1881,13 @@ CORBA::TypeCode_ptr
 CORBA::TypeCode::_nil()
 {
   if (!_nil_TypeCodeV) {
+#if !defined(__DECCXX_VER) || __DECCXX_VER > 50590004
     _nil_TypeCodeV == new CORBA::_nil_TypeCode;
+#else
+    // Workaround for compiler bug in DEC cxx v5.5
+    CORBA::_nil_TypeCode tmp;
+    _nil_TypeCodeV = new CORBA::TypeCode(tmp);
+#endif
   }
   return _nil_TypeCodeV;
 }
