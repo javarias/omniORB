@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6  2000/01/11 11:35:36  djs
+# Added support for fragment generation (-F) mode
+#
 # Revision 1.5  1999/12/24 18:20:12  djs
 # Builds list of IDL files #included by walking the AST and examining the
 # file() of each Decl node.
@@ -105,6 +108,14 @@ def setFragmentFlag(flag):
 def FragmentFlag():
     global __fragment
     return __fragment
+
+# generate boa compatible skeletons
+def setBOAFlag(flag):
+    global __BOA
+    __BOA = flag
+def BOAFlag():
+    global __BOA
+    return __BOA
     
 # suffix added to basename to get header filename
 def hdrsuffix():

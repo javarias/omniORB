@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14  2000/01/11 14:12:41  djs
+# Updated commandline option help to include Fragment generation
+#
 # Revision 1.13  2000/01/11 11:35:36  djs
 # Added support for fragment generation (-F) mode
 #
@@ -96,7 +99,8 @@ usage_string = """\
   -Wba            Generate code for TypeCodes and Any
   -Wbtp           Generate 'tie' implementation skeletons
   -Wbtf           Generate flattened 'tie' implementation skeletons
-  -WbF            Generates code fragments (for expert only)"""
+  -WbF            Generates code fragments (for expert only)
+  -WbBOA           Generates BOA compatible skeletons"""
 
 # -----------------------------
 # Process back end specific arguments
@@ -113,11 +117,16 @@ def flat_tie():
 def fragments():
     config.setFragmentFlag(1)
 
+def boa():
+    config.setBOAFlag(1)
+
+
 arguments = {
     "a":  typecode_any,
     "tp": tie,
     "tf": flat_tie,
-    "F":  fragments
+    "F":  fragments,
+    "BOA":boa,
     }
 
 def process_args(args):
@@ -156,6 +165,7 @@ def run(tree, args):
     config.setTieFlag(0)
     config.setFlatTieFlag(0)
     config.setFragmentFlag(0)
+    config.setBOAFlag(0)
 
     process_args(args)
        

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.18  2000/01/11 14:13:23  djs
+# Updated array mapping to include NAME_copy(to, from) as per 2.3 spec
+#
 # Revision 1.17  2000/01/11 12:02:45  djs
 # More tidying up
 #
@@ -162,6 +165,11 @@ def visitInterface(node):
                       ["_impl_" + tyutil.name(scopedName)]
     impl_fqname = string.join(map(tyutil.mapID, impl_scopedName), "::")
     impl_name = environment.nameToString(environment.relName(impl_scopedName))
+
+    sk_scopedName = tyutil.scope(scopedName) + \
+                    ["_sk_" + tyutil.name(scopedName)]
+    sk_fqname = string.join(map(tyutil.mapID, sk_scopedName), "::")
+    sk_name = environment.nameToString(environment.relName(sk_scopedName))
 
 
     # build the helper class methods
@@ -624,7 +632,13 @@ const char*
 """,
                impl_fqname = impl_fqname,
                name = name)
-    
+
+    # BOA compatible skeletons
+    if config.BOAFlag():
+        stream.out("""\
+@sk_fqname@::~@sk_name@() {}""",
+                   sk_fqname = sk_fqname,
+                   sk_name = sk_name)
 
     #leave()
 
