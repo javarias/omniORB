@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.1  2000/05/24 17:15:37  dpg1
+// Added omniMapper.
+//
 
 #include <omniORB3/CORBA.h>
 #include <stdlib.h>
@@ -94,7 +97,8 @@ Mapper::do_redir()
 {
   if (verbose) {
     CORBA::String_var ior = orb->object_to_string(obj_);
-    cout << "Mapping `" << id_ << "' to " << ior << endl;
+    cout << "Mapping `" << (const char*)id_
+	 << "' to " << (const char*)ior << endl;
   }
   throw omniORB::LOCATION_FORWARD(CORBA::Object::_duplicate(obj_));
 }
@@ -182,7 +186,8 @@ processConfigFile(const char* configFile)
       obj = orb->string_to_object(ior);
     }
     catch (...) {
-      cerr << "Error: invalid IOR string `" << ior << "'." << endl;
+      cerr << "Error: invalid IOR string `"
+	   << (const char*)ior << "'." << endl;
       exit(1);
     }
     m = new Mapper(id, obj);
