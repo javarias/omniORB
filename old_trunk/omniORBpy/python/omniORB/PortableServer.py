@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.2  1999/09/24 09:22:01  dpg1
+# Added copyright notices.
+#
 # Revision 1.1  1999/09/22 15:46:11  dpg1
 # Fake POA implemented.
 #
@@ -50,6 +53,10 @@ class Servant:
             poa = orb.resolve_initial_references("RootPOA")
             poa.activate_object(self)
             return self._objref
+
+    def _default_POA(self):
+        orb = CORBA.ORB_init()
+        return orb.resolve_initial_references("RootPOA")
 
 
 # ObjectId
