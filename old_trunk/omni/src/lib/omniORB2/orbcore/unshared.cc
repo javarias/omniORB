@@ -14,6 +14,9 @@
 
 /*
   $Log$
+  Revision 1.1  1997/01/23 16:59:32  sll
+  Initial revision
+
  */
 
 #include <omniORB2/CORBA.h>
@@ -22,6 +25,8 @@
 #include "tcpSocket_UNIX.h"
 #elif defined(ATMosArchitecture)
 #include "tcpSocket_ATMos.h"
+#elif defined(NTArchitecture)
+#include "tcpSocket_NT.h"
 #else
 #error "No tcpSocket.h header for this architecture."
 #endif
@@ -55,3 +60,5 @@ size_t              GIOP_Basetypes::max_giop_message_size = 256 * 1024;
 omni_mutex          LibcWrapper::non_reentrant;
 
 _CORBA_Unbounded_Sequence_Octet omniORB::myPrincipalID;
+
+static const CosNaming::NamingContext_proxyObjectFactory CosNaming_NamingContext_proxyObjectFactory1; // To ensure that Naming Stubs are linked.
