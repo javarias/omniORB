@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2000/04/27 10:51:44  dpg1
+  Interoperable Naming Service
+
+  Add magic INS POA.
+
   Revision 1.1.2.6  2000/02/09 12:04:53  djr
   Fixed memory allocation bug in Any insertion/extraction of strings.
   Optimisation for insertion/extraction of sequence of simple types.
@@ -255,13 +260,15 @@ private:
   int adapter_name_is_valid(const char* name);
   // Return true if <name> is a valid name for an adapter.
 
-  void synchronise_request();
-  // Must hold <omni::internalLock> on entry.  If the POA is
-  // in the DISCARDING or INACTIVE state, <omni::internalLock>
-  // is released, and a suitable exception is thrown.  If the
-  // state is HOLDING, blocks until the state changes.  If it
-  // is (or becomes) ACTIVE, just returns -- and the mutex is
-  // still held on exit.
+  void synchronise_request(omniLocalIdentity* lid);
+  // Must hold <omni::internalLock> on entry.  If the POA is in the
+  // DISCARDING or INACTIVE state, <omni::internalLock> is released,
+  // and a suitable exception is thrown.  If the state is HOLDING,
+  // blocks until the state changes.  If it is (or becomes) ACTIVE,
+  // and the object is still active, just returns -- and the mutex is
+  // still held on exit. If the object has been deactivated while the
+  // POA is in the HOLDING state, releases <omni::internalLock> and
+  // throws CORBA::TRANSIENT.
 
   void deactivate_objects(omniLocalIdentity* idle_objs);
   // Deactivate all objects in the given list.  Does not etherealise

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.2  1999/10/27 17:32:12  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.1  1999/09/22 14:26:53  djr
   Major rewrite of orbcore to support POA.
 
@@ -164,6 +167,9 @@ public:
     *pd_prevInOAObjList = 0;
     pd_prevInOAObjList = new_head;
     *new_head = this;
+  }
+  inline CORBA::Boolean deactivated() {
+    return pd_adapter && !pd_prevInOAObjList;
   }
   // Locking for these methods is the responsiblility of
   // the object adapter which owns this list.

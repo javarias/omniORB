@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2000/05/05 18:59:36  dpg1
+  Back out last change, since it doesn't work.
+
   Revision 1.1.2.17  2000/05/05 17:00:46  dpg1
   INS POA now has the USE_SERVANT_MANAGER policy, with the small
   exception that it raises OBJECT_NOT_EXIST rather than OBJ_ADAPTER if
@@ -1286,7 +1289,7 @@ omniOrbPOA::dispatch(GIOP_S& giop_s, omniLocalIdentity* id)
   enterAdapter();
 
   if( pd_rq_state != (int) PortableServer::POAManager::ACTIVE )
-    synchronise_request();
+    synchronise_request(id);
 
   startRequest();
 
@@ -1350,7 +1353,7 @@ omniOrbPOA::dispatch(omniCallDescriptor& call_desc, omniLocalIdentity* id)
   enterAdapter();
 
   if( pd_rq_state != (int) PortableServer::POAManager::ACTIVE )
-    synchronise_request();
+    synchronise_request(id);
 
   startRequest();
 
@@ -2125,7 +2128,7 @@ omniOrbPOA::adapter_name_is_valid(const char* name)
 
 
 void
-omniOrbPOA::synchronise_request()
+omniOrbPOA::synchronise_request(omniLocalIdentity* lid)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
@@ -2170,6 +2173,21 @@ omniOrbPOA::synchronise_request()
     // very appropriate looking at the description of
     // CORBA::OBJ_ADAPTER.
     OMNIORB_THROW(OBJ_ADAPTER,0, CORBA::COMPLETED_NO);
+  }
+
+  // Check to see if the object has been deactivated while we've been
+  // holding. If so, throw a TRANSIENT exception.
+  CORBA::Boolean deactivated;
+  pd_lock.lock();
+  deactivated = lid->deactivated();
+  pd_lock.unlock();
+
+  if (deactivated) {
+    // We have to do startRequest() here, since the identity
+    // will do endInvocation() when we pass through there.
+    startRequest();
+    omni::internalLock->unlock();
+    OMNIORB_THROW(TRANSIENT,0, CORBA::COMPLETED_NO);
   }
 }
 
