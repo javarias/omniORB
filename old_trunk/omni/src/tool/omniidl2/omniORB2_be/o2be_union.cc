@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.17  1998/10/14 14:13:28  sll
+  Do not put fixed-size struct inside the anonymous union data member in a
+  union.
+
   Revision 1.16  1998/08/19 15:54:50  sll
   New member functions void produce_binary_operators_in_hdr and the like
   are responsible for generating binary operators <<= etc in the global
@@ -522,7 +526,6 @@ o2be_union::produce_hdr(std::fstream &s)
 		ntype != o2be_operation::tAny &&
 		ntype != o2be_operation::tTypeCode)
 	      {
-		has_fix_member = I_TRUE;
 		if (ntype == o2be_operation::tArrayFixed) 
 		  {
 		    // Array of fixed size union is a special case, the data
@@ -539,12 +542,17 @@ o2be_union::produce_hdr(std::fstream &s)
 		    while (dd->node_type() == AST_Decl::NT_typedef) {
 		      dd = o2be_typedef::narrow_from_decl(dd)->base_type();
 		    }
-		    if (dd->node_type() == AST_Decl::NT_union) {
-		      // The element is a union. Do not define the data member
+		    if (dd->node_type() == AST_Decl::NT_union ||
+			dd->node_type() == AST_Decl::NT_struct) {
+		      // The element is a union or a struct. 
+		      // Do not define the data member
 		      // in the anonymous union.
-		      has_fix_member = I_FALSE;
 		    }
+		    else
+		      has_fix_member = I_TRUE;
 		  }
+		else
+		  has_fix_member = I_TRUE;
 	      }
 
 	    switch (ntype)
