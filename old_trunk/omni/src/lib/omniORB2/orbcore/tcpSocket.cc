@@ -28,11 +28,15 @@
 
 /*
   $Log$
+  Revision 1.1  1997/12/09 18:43:12  sll
+  Initial revision
+
   */
 
 #include <omniORB2/CORBA.h>
 #include <ropeFactory.h>
 #include <tcpSocket.h>
+#include <gatekeeper.h>
 
 #ifndef Swap16
 #define Swap16(s) ((((s) & 0xff) << 8) | (((s) >> 8) & 0xff))
@@ -60,6 +64,10 @@ tcpSocketFactoryType::init()
   singleton = new tcpSocketFactoryType;
   singleton->next = ropeFactoryTypeList;
   ropeFactoryTypeList = singleton;
+
+  if (omniORB::traceLevel >= 2) {
+    cerr << "omniORB2 gateKeeper is " << gateKeeper::version() << endl;
+  }
 }
 
 tcpSocketFactoryType::tcpSocketFactoryType()
