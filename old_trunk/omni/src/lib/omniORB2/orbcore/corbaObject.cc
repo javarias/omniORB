@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.13  1998/08/14 13:44:30  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.12  1998/04/07 19:50:22  sll
   Replace cerr with omniORB::log.
 
@@ -348,7 +352,9 @@ Object::_get_implementation()
   // XXX not implemented yet
   throw omniORB::fatalException(__FILE__,__LINE__,
 				"CORBA::Object::_get_implementation() has not been implemeted yet.");
+#ifdef NEED_DUMMY_RETURN
   return 0;
+#endif
 }
 
 CORBA::InterfaceDef_ptr
@@ -358,7 +364,9 @@ Object::_get_interface()
   // XXX not implemented yet
   throw omniORB::fatalException(__FILE__,__LINE__,
 				"CORBA::Object::_get_interface() has not been implemeted yet.");
+#ifdef NEED_DUMMY_RETURN
   return 0;
+#endif
 }
 
 size_t
