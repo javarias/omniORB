@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.17  2000/03/03 17:41:27  dpg1
+# Major reorganisation to support omniORB 3.0 as well as 2.8.
+#
 # Revision 1.16  2000/01/31 10:51:41  dpg1
 # Fix to exception throwing.
 #
@@ -291,6 +294,11 @@ def newModule(mname):
     mlist   = string.split(mname, ".")
     current = ""
     mod     = None
+
+    # If we're trying to re-open the CORBA module, make it appear as
+    # just "CORBA", as well as "omniORB.CORBA"
+    if mlist[0] == "CORBA" and sys.modules.has_key("omniORB.CORBA"):
+        sys.modules["CORBA"] = sys.modules["omniORB.CORBA"]
 
     for name in mlist:
         current = current + name
