@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.4  2000/11/20 11:58:39  dpg1
+// No need to initialise omniIOR module before uri module.
+//
 // Revision 1.2.2.3  2000/11/09 12:27:59  dpg1
 // Huge merge from omni3_develop, plus full long long from omni3_1_develop.
 //
@@ -231,7 +234,8 @@ CORBA::Boolean
 iorURIHandler::syntaxIsValid(const char* sior)
 {
   // Just check that the IOR is a sequence of hex digits
-  for (int i=4; sior[i]; i++) {
+  int i;
+  for (i=4; sior[i]; i++) {
     if (!((sior[i] >= '0' && sior[i] <= '9') ||
 	  (sior[i] >= 'a' && sior[i] <= 'f') ||
 	  (sior[i] >= 'A' && sior[i] <= 'F')))
@@ -441,6 +445,15 @@ ParseVersionNumber(const char*& c, CORBA::Char& majver, CORBA::Char& minver)
 
 corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
 {
+  if (*c == '\0' || *c == ',' || *c == '/' || *c == '#') {
+    // Empty host name -- use localhost, default port
+    host_   = CORBA::string_dup("localhost");
+    port_   = IIOP::DEFAULT_CORBALOC_PORT;
+    majver_ = 1;
+    minver_ = 0;
+    return;
+  }
+
   const char* p;
   ParseVersionNumber(c, majver_, minver_);
 
@@ -449,6 +462,7 @@ corbalocURIHandler::IiopObjAddr::IiopObjAddr(const char*& c)
   if (p == c) OMNIORB_THROW(BAD_PARAM,
 			    MINOR_BAD_SCHEME_SPECIFIC_PART,
 			    CORBA::COMPLETED_NO);
+
   host_ = CORBA::string_alloc(1 + p - c);
   char* h = (char*)host_;
   if (!h) OMNIORB_THROW(NO_MEMORY,0,CORBA::COMPLETED_NO);
