@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.9  1998/04/22 16:39:50  sll
+  Added try-catch loop to guard against exception raised by the thread library
+  when it cannot create a new thread for tcpSocketWorker.
+
   Revision 1.8  1998/04/08 16:06:49  sll
   Added support for Reliant UNIX 5.43
 
@@ -811,12 +815,12 @@ realConnect(tcpSocketEndpoint* r)
       CLOSESOCKET(sock);
       return RC_INVALID_SOCKET;
     }
-    // Set the socket back to blocking
-    fl = 0;
-    if (fcntl(sock,F_SETFL,fl) < RC_SOCKET_ERROR) {
-      CLOSESOCKET(sock);
-      return RC_INVALID_SOCKET;
-    }
+  }
+  // Set the socket back to blocking
+  fl = 0;
+  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
+    CLOSESOCKET(sock);
+    return RC_INVALID_SOCKET;
   }
 
 #else
