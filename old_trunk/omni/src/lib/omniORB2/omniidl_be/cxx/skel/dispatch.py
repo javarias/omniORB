@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.2  1999/11/26 18:50:21  djs
+# Bugfixes and refinements
+#
 # Revision 1.1  1999/11/24 18:01:02  djs
 # New module to handle operation dispatching
 #
@@ -47,7 +50,7 @@ import dispatch
 self = dispatch
 
 def __init__(environment, stream):
-    self.__environment = environment
+    self.__environment = environment.leaveScope()
     self.__stream = stream
     return self
 
@@ -60,8 +63,9 @@ def __init__(environment, stream):
 def argument_instance(type):
     assert isinstance(type, idltype.Type)
     environment = self.__environment
+    
     deref_type = tyutil.deref(type)
-    dims = tyutil.typeDims(deref_type)
+    dims = tyutil.typeDims(type)
     
     is_variable = tyutil.isVariableType(deref_type)
     is_array = dims != []
@@ -69,9 +73,22 @@ def argument_instance(type):
     # in, out, inout (corresponds to idltype.Parameter.direction()
     mapping = ["", "", ""]
 
+    # all strings are CORBA::String_var
+    if tyutil.isString(deref_type) and not(is_array):
+        mapping = ["CORBA::String_var", "CORBA::String_var",
+                   "CORBA::String_var"]
+        return mapping
+
+    # all object references are _var types
+    if tyutil.isObjRef(deref_type) and not(is_array):
+        name = environment.principalID(deref_type, fully_scope = 0)
+        mapping = [name + "_var", name + "_var", name + "_var"]
+
+        return mapping
+        
     # typedefs aren't dereferenced
     if tyutil.isTypedef(type):
-        name = environment.principalID(type, fully_scope = 1)
+        name = environment.principalID(type, fully_scope = 0)
         mapping[0] = name
         # out types have storage allocated here
         if is_variable:
@@ -82,20 +99,8 @@ def argument_instance(type):
         
         return mapping
 
-    # all object references are _var types
-    if tyutil.isObjRef(deref_type):
-        name = environment.principalID(type, fully_scope = 1)
-        mapping = [name + "_var", name + "_var", name + "_var"]
 
-        return mapping
-        
-    # all strings are CORBA::String_var
-    if tyutil.isString(deref_type):
-        mapping = ["CORBA::String_var", "CORBA::String_var",
-                   "CORBA::String_var"]
-        return mapping
-
-    name = environment.principalID(type, fully_scope = 1)
+    name = environment.principalID(type, fully_scope = 0)
     mapping = [name, name, name]
     if is_variable:
         mapping[1] = name + "_var"
@@ -153,6 +158,7 @@ def is_pointer(type):
 def operation(operation):
     environment = self.__environment
     stream = self.__stream
+    
     operation_name = tyutil.mapID(operation.identifier())
 
     return_type = operation.returnType()
@@ -189,7 +195,7 @@ def operation(operation):
         direction = argument.direction()
         argument_type = argument.paramType()
         argument_type_name = environment.principalID(argument_type,
-                                                     fully_scope = 1)
+                                                     fully_scope = 0)
         argument_is_variable = tyutil.isVariableType(argument_type)
         argument_dims = tyutil.typeDims(argument_type)
         is_array = argument_dims != []
@@ -220,7 +226,8 @@ def operation(operation):
         arg_is_pntr = 0
         if is_array and direction == 1: # only out
             # fixed structures don't do slices?
-            if tyutil.isStruct(deref_argument_type) and \
+            if (tyutil.isStruct(deref_argument_type) or \
+                tyutil.isUnion(deref_argument_type)) and \
                not(argument_is_variable):
                 pass
             
@@ -261,7 +268,7 @@ def operation(operation):
         result_mapping = argument_instance(return_type)[1]
         return_is_pointer = is_pointer(return_type) and not(return_is_array)
         return_type_name = environment.principalID(return_type,
-                                                   fully_scope = 1)
+                                                   fully_scope = 0)
         
         # exception- arrays of fixed types use the _var mapping
         if not(return_is_variable) and return_is_array:
