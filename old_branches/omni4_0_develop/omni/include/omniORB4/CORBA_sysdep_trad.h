@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2003/03/12 14:07:44  dgrisby
+  MacOS port. Thanks Wolfgang Textor.
+
   Revision 1.1.2.8  2003/02/21 15:56:09  dgrisby
   Silence macro redefinition warnings on Windows.
 
@@ -207,6 +210,7 @@
 #    endif
 #    define HAS_Cplusplus_Namespace
 #    define HAS_Std_Namespace
+#    define HAVE_STD
 #  endif
 
 #  define HAS_LongLong
