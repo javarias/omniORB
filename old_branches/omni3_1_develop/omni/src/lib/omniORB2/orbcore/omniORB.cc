@@ -28,6 +28,12 @@
 
 /*
   $Log$
+  Revision 1.3.2.1  2000/09/27 17:13:08  djs
+  Struct member renaming
+  Added command line options
+  Added CORBA::ValueBase (just to do reference counting)
+  General refactoring
+
   Revision 1.3  2000/07/13 15:25:56  dpg1
   Merge from omni3_develop for 3.0 release.
 
@@ -85,7 +91,7 @@ CORBA::Boolean           strictIIOP = 1;
 char*                    serverName = 0;
 CORBA::Boolean           tcAliasExpand = 0;
 unsigned int             maxTcpConnectionPerServer = 5;
-unsigned int             AMIMaxQueueSize = 0;
+int                      AMIMaxQueueSize = -1;
 unsigned int             AMIMaxWorkerThreads = 5;
 unsigned int             AMIWorkerTimeout = 30;
 CORBA::Boolean           diiThrowsSysExceptions = 0;
@@ -109,7 +115,7 @@ CORBA::String_var	 omniORB::serverName((const char*) "unknown");
 #endif
 CORBA::Boolean           omniORB::tcAliasExpand = 0;
 unsigned int             omniORB::maxTcpConnectionPerServer = 5;
-unsigned int             omniORB::AMIMaxQueueSize = 0;
+int                      omniORB::AMIMaxQueueSize = -1;
 unsigned int             omniORB::AMIMaxWorkerThreads = 5;
 unsigned int             omniORB::AMIWorkerTimeout = 30;
 CORBA::Boolean           omniORB::diiThrowsSysExceptions = 0;

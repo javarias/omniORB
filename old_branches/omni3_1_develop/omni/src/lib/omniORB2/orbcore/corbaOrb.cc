@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.34.2.4  2000/09/27 17:13:06  djs
+  Struct member renaming
+  Added command line options
+  Added CORBA::ValueBase (just to do reference counting)
+  General refactoring
+
   Revision 1.34.2.3  2000/09/14 16:04:15  djs
   Added module initialiser for AMI module
 
@@ -951,8 +957,8 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 			" -ORBAMIMaxQueueSize parameter.");
 	  return 0;
 	}
-	unsigned int v;
-	if( sscanf(argv[idx+1],"%u",&v) != 1 ) {
+	int v;
+	if( sscanf(argv[idx+1],"%d",&v) != 1 ) {
 	  omniORB::logs(1, "CORBA::ORB_init failed: invalid"
 			" -ORBAMIMaxQueueSize parameter.");
 	  return 0;
@@ -1171,7 +1177,7 @@ parse_ORB_args(int& argc, char** argv, const char* orb_identifier)
 	  "    -ORBInitialHost <name>\n"
 	  "    -ORBInitialPort <1-65535>\n"
 	  "    -ORBno_bootstrap_agent\n"
-	  "    -ORBAMIMaxQueueSize <n entries, n == 0 for unbounded>\n"
+	  "    -ORBAMIMaxQueueSize <n entries, n == -1 for unbounded (defaul)>\n"
 	  "    -ORBAMIMaxWorkerThreads <n threads>\n"
 	  "    -ORBAMIWorkerTimeout <n seconds>\n"
 	  "    -ORBdiiThrowsSysExceptions <0|1>\n"

@@ -29,6 +29,15 @@
 
 /*
   $Log$
+  Revision 1.3.2.2  2000/09/27 17:09:29  djs
+  Renamed ExceptionHolder_base struct members
+  Added CORBA::ValueBase
+  More compliant Messaging::Poller
+  Refactored AMI call descriptor and main execution path
+  Removed inefficient internal ReplyHander servant in the polling case
+  Added command line options
+  Added omniInitialiser for AMI
+
   Revision 1.3.2.1  2000/08/04 17:10:24  dpg1
   Long long support
 
@@ -593,13 +602,13 @@ _CORBA_MODULE_BEG
   ////////////////////////////////////////////////////////////////////////
   // AMIMaxQueueSize                                                    //
   //   Asycnronous requests are stuck in a queue which can be made to be//
-  // unbounded (if this variable == 0) or to have a finite bound. Note  //
+  // unbounded (if this variable == -1) or to have a finite bound. Note //
   // that if an attempt to add a request to the queue is made whilst the//
   // queue is full, the calling thread will block. Not ideal since the  //
   // AMI calls are meant to be non-blocking. (The default value is 0, ie//
   // unbounded)                                                         //
   //                                                                    //
-  _CORBA_MODULE_VAR _core_attr unsigned int AMIMaxQueueSize;            //
+  _CORBA_MODULE_VAR _core_attr int AMIMaxQueueSize;                     //
   ////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////

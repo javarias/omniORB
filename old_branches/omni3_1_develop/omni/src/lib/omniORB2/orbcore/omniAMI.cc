@@ -29,6 +29,10 @@
 
 /* 
   $Log$
+  Revision 1.1.2.7  2000/10/10 15:07:13  djs
+  Improved comments & tracing
+  Moved code from header file to here
+
   Revision 1.1.2.6  2000/09/28 18:29:40  djs
   Bugfixes in Poller (wrt timout behaviour and is_ready function)
   Removed traces of Private POA/ internal ReplyHandler servant for Poller
@@ -232,13 +236,13 @@ void AMI::shutdown(){
 
   // stop anyone else adding things to the queue
   shutting_down = 1;
-
+  AMITRACE("AMI", "Waking all worker threads");
   // wake them all up
   for (unsigned int i = 0; i < nWorkers; i++){
     omniAMICall *empty = NULL;
     queue->enqueue(empty);
   }
-
+  AMITRACE("AMI", "Waiting for workers to complete");
   // wait for them to complete
   while (nWorkers > 0) shutdown_cond.wait();
   

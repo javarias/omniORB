@@ -29,6 +29,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.1.2.7  2000/10/10 15:07:34  djs
+# Bug in storing the invocation target
+#
 # Revision 1.1.2.6  2000/09/28 18:29:21  djs
 # Bugfixes in Poller (wrt timout behaviour and is_ready function)
 # Removed traces of Private POA/ internal ReplyHandler servant for Poller
@@ -108,7 +111,7 @@ public:
     @delete_sent_arguments@
   }
   virtual void delete_replies(){
-    _pd_holder->_remove_ref();
+    if (_pd_holder) _pd_holder->_remove_ref();
     @delete_replies@
   }
   
