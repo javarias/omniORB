@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.8  2000/06/27 16:15:10  sll
+# New classes: _CORBA_String_element, _CORBA_ObjRef_Element,
+# _CORBA_ObjRef_tcDesc_arg to support assignment to an element of a
+# sequence of string and a sequence of object reference.
+#
 # Revision 1.1.2.7  2000/06/26 16:23:27  djs
 # Refactoring of configuration state mechanism.
 #
@@ -339,10 +344,10 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s) {
 # Generated symbols:
 #   NONE
 typedef_sequence_oper = """\
-void operator <<= (CORBA::Any& _a, const @fqname@& s)
+void operator <<= (CORBA::Any& _a, const @fqname@& _s)
 {
   tcDescriptor tcdesc;
-  @private_prefix@_buildDesc@decl_cname@(tcdesc, s);
+  @private_prefix@_buildDesc@decl_cname@(tcdesc, _s);
   _a.PR_packFrom(@tcname@, &tcdesc);
 }
 
@@ -351,14 +356,14 @@ void @private_prefix@_seq_delete_@guard_name@(void* _data)
   delete (@fqname@*)_data;
 }
 
-CORBA::Boolean operator >>= (const CORBA::Any& _a, @fqname@*& s_out)
+CORBA::Boolean operator >>= (const CORBA::Any& _a, @fqname@*& _s_out)
 {
-  return _a >>= (const @fqname@*&) s_out;
+  return _a >>= (const @fqname@*&) _s_out;
 }
 
-CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& s_out)
+CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& _s_out)
 {
-  s_out = 0;
+  _s_out = 0;
   @fqname@* stmp = (@fqname@*) _a.PR_getCachedData();
   if( stmp == 0 ) {
     tcDescriptor tcdesc;
@@ -366,7 +371,7 @@ CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& s_out)
     @private_prefix@_buildDesc@decl_cname@(tcdesc, *stmp);
     if( _a.PR_unpackTo(@tcname@, &tcdesc)) {
       ((CORBA::Any*)&_a)->PR_setCachedData((void*)stmp, @private_prefix@_seq_delete_@guard_name@);
-      s_out = stmp;
+      _s_out = stmp;
       return 1;
     } else {
       delete (@fqname@ *)stmp;
@@ -375,7 +380,7 @@ CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& s_out)
   } else {
     CORBA::TypeCode_var tctmp = _a.type();
     if( tctmp->equivalent(@tcname@) ) {
-      s_out = stmp;
+      _s_out = stmp;
       return 1;
     } else {
       return 0;
@@ -586,13 +591,13 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a,const @fqname@*& _sp) {
   }
 }
 
-static void @private_prefix@_insertToAny__c@guard_name@(CORBA::Any& _a,const CORBA::Exception& e) {
-  const @fqname@ & _ex = (const @fqname@ &) e;
+static void @private_prefix@_insertToAny__c@guard_name@(CORBA::Any& _a,const CORBA::Exception& _e) {
+  const @fqname@ & _ex = (const @fqname@ &) _e;
   operator<<=(_a,_ex);
 }
 
-static void @private_prefix@_insertToAnyNCP__c@guard_name@ (CORBA::Any& _a,const CORBA::Exception* e) {
-  const @fqname@ * _ex = (const @fqname@ *) e;
+static void @private_prefix@_insertToAnyNCP__c@guard_name@ (CORBA::Any& _a,const CORBA::Exception* _e) {
+  const @fqname@ * _ex = (const @fqname@ *) _e;
   operator<<=(_a,_ex);
 }
 
