@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/04 17:08:34  djr
+  Some more fixes/MSVC work-arounds.
+
   Revision 1.1.2.2  1999/09/30 11:52:33  djr
   Implemented use of AdapterActivators in POAs.
 
@@ -52,7 +55,7 @@ class omniOrbPOAManager : public PortableServer::POAManager {
 public:
   virtual ~omniOrbPOAManager();
   inline omniOrbPOAManager(int is_nil = 0)
-    : POAManager(is_nil),
+    : OMNIORB_BASE_CTOR(PortableServer::)POAManager(is_nil),
       pd_refCount(1),
       pd_state(HOLDING)
     {}

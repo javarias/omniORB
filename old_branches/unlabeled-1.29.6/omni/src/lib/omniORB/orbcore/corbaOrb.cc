@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.29.6.12  2000/01/22 16:46:04  djr
+  Added -ORBtraceInvocations to option help summary.
+
   Revision 1.29.6.11  2000/01/20 11:51:34  djr
   (Most) Pseudo objects now used omni::poRcLock for ref counting.
   New assertion check OMNI_USER_CHECK.
@@ -320,7 +323,7 @@ omniOrbORB::~omniOrbORB()  {}
 
 
 omniOrbORB::omniOrbORB(int nil)
-  : ORB(nil),
+  : OMNIORB_BASE_CTOR(CORBA::)ORB(nil),
     pd_refCount(1),
     pd_destroyed(0),
     pd_shutdown(0),

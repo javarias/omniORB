@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2000/01/20 11:51:36  djr
+  (Most) Pseudo objects now used omni::poRcLock for ref counting.
+  New assertion check OMNI_USER_CHECK.
+
   Revision 1.1.2.11  2000/01/03 20:35:09  djr
   Added check for POA being CORBA::release()d too many times.
 
@@ -1037,7 +1041,7 @@ omniOrbPOA::reference_to_servant(CORBA::Object_ptr reference)
     if( !id )  throw WrongAdapter();
 
     if( id->keysize() < pd_poaIdSize ||
-	memcmp(id->key(), pd_poaId, pd_poaIdSize) )
+	memcmp(id->key(), (const char*) pd_poaId, pd_poaIdSize) )
       throw WrongAdapter();
 
     omniServant* servant = id->servant();
@@ -1081,7 +1085,7 @@ omniOrbPOA::reference_to_id(CORBA::Object_ptr reference)
   if( !id )  throw WrongAdapter();
 
   if( id->keysize() < pd_poaIdSize ||
-      memcmp(id->key(), pd_poaId, pd_poaIdSize) )
+      memcmp(id->key(), (const char*) pd_poaId, pd_poaIdSize) )
     throw WrongAdapter();
 
   int idsize = id->keysize() - pd_poaIdSize;
@@ -1286,7 +1290,7 @@ omniOrbPOA::dispatch(GIOP_S& giop_s, const CORBA::Octet* key, int keysize)
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(key);
   OMNIORB_ASSERT(keysize >= pd_poaIdSize &&
-		 !memcmp(key, pd_poaId, pd_poaIdSize));
+		 !memcmp(key, (const char*) pd_poaId, pd_poaIdSize));
 
   // Check that the key is the right size (if system generated).
   if( !pd_policy.user_assigned_id &&
@@ -1411,7 +1415,7 @@ omniOrbPOA::omniOrbPOA(const char* name,
 		       omniOrbPOAManager* manager,
 		       const Policies& policies,
 		       omniOrbPOA* parent)
-  : POA(0),
+  : OMNIORB_BASE_CTOR(PortableServer::)POA(0),
     pd_destroyed(0),
     pd_dying(0),
     pd_refCount(1),
@@ -1469,7 +1473,7 @@ omniOrbPOA::omniOrbPOA(const char* name,
 
 
 omniOrbPOA::omniOrbPOA()  // nil constructor
-  : POA(1),
+  : OMNIORB_BASE_CTOR(PortableServer::)POA(1),
     pd_destroyed(1),
     pd_dying(1),
     pd_refCount(0),
@@ -2424,6 +2428,10 @@ omniOrbPOA::attempt_to_activate_adapter(const char* name)
   // suceeded, return that POA or fail if it failed.
   if( !start_adapteractivating_child_or_block(name) )
     return find_child(name);
+
+  // ?? NB. We could implement the above without an dynamic allocations
+  // by useing a queue, and allocating queue entries on the stack
+  // (much like linux kernel wait queues).
 
   poa_lock.unlock();
 

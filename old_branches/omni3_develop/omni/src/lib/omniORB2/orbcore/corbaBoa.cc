@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.13.6.9  1999/10/29 13:18:15  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.13.6.8  1999/10/27 17:32:10  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -182,7 +185,7 @@ omniOrbBOA::~omniOrbBOA()  {}
 
 
 omniOrbBOA::omniOrbBOA(int nil)
-  : BOA(nil),
+  : OMNIORB_BASE_CTOR(CORBA::)BOA(nil),
     pd_state(IDLE),
     pd_refCount(1),
     pd_activeObjList(0),

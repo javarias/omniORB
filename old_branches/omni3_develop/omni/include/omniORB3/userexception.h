@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  1999/10/21 11:29:46  djr
+ Added _core_attr to declaration of _PD_repoId in exceptions & interfaces.
+
  Revision 1.1.2.5  1999/10/18 17:28:19  djr
  Fixes for building MSVC dlls.
 
@@ -57,7 +60,8 @@ public:  \
     pd_insertToAnyFn    = insertToAnyFn;  \
     pd_insertToAnyFnNCP = insertToAnyFnNCP;  \
   }  \
-  inline name(const name& _ex) : UserException(_ex) {}  \
+  inline name(const name& _ex) :  \
+    OMNIORB_BASE_CTOR(CORBA::)UserException(_ex) {}  \
   inline name& operator=(const name& _ex) {  \
     * (CORBA::UserException*) this = _ex;  return *this;  \
   }  \

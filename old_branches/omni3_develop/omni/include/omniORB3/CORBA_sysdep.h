@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.3  1999/10/21 10:59:20  djr
+ *** empty log message ***
+
  Revision 1.1.2.2  1999/09/30 11:49:26  djr
  Implemented catching user-exceptions in GIOP_S for all compilers.
 
@@ -633,6 +636,15 @@ strdup (char* str)
 
 
 #endif // HAS_Cplusplus_Namespace
+
+
+//??#ifdef OMNI_REQUIRES_FQ_BASE_CTOR
+#if 1
+# define OMNIORB_BASE_CTOR(a)   a
+#else
+# define OMNIORB_BASE_CTOR(a)
+#endif
+
 
 #ifndef USE_omniORB_logStream
 // New stubs use omniORB::logStream. Old stubs still need cerr. Include

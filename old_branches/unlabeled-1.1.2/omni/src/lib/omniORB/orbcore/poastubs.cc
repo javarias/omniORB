@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/29 13:18:19  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.1.2.3  1999/10/16 13:22:54  djr
   Changes to support compiling on MSVC.
 
@@ -546,7 +549,7 @@ PortableServer::_objref_ServantActivator::~_objref_ServantActivator() {}
 
 PortableServer::_objref_ServantActivator::_objref_ServantActivator(const char* mdri, IOP::TaggedProfileList* p,
          omniIdentity* id, omniLocalIdentity* lid)
- : _objref_ServantManager(mdri, p, id, lid),
+ : OMNIORB_BASE_CTOR(PortableServer::)_objref_ServantManager(mdri, p, id, lid),
    omniObjRef(PortableServer::ServantActivator::_PD_repoId, mdri, p, id, lid)
 {
   _PR_setobj(this);
@@ -777,7 +780,7 @@ PortableServer::_objref_ServantLocator::~_objref_ServantLocator() {}
 
 PortableServer::_objref_ServantLocator::_objref_ServantLocator(const char* mdri, IOP::TaggedProfileList* p,
          omniIdentity* id, omniLocalIdentity* lid)
- : _objref_ServantManager(mdri, p, id, lid),
+ : OMNIORB_BASE_CTOR(PortableServer::)_objref_ServantManager(mdri, p, id, lid),
    omniObjRef(PortableServer::ServantLocator::_PD_repoId, mdri, p, id, lid)
 {
   _PR_setobj(this);
