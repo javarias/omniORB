@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.4  2001/08/17 17:07:06  sll
+  Remove the use of omniORB::logStream.
+
   Revision 1.2.2.3  2001/08/17 13:49:08  dpg1
   Optional logging for traced mutexes and condition variables.
 
@@ -105,7 +108,7 @@ omni_tracedmutex::~omni_tracedmutex()
     omniORB::logger log;
     log <<
       "omniORB: Assertion failed -- mutex destroyed whilst still being used\n"
-      " by a condition variable.\n" << bug_msg;
+      " by " << pd_n_conds << " condition variable(s).\n" << bug_msg;
     log.flush();
 
     BOMB_OUT();

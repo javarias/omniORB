@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.13  2001/08/17 13:45:56  dpg1
+# C++ mapping fixes.
+#
 # Revision 1.5.2.12  2001/08/15 10:26:10  dpg1
 # New object table behaviour, correct POA semantics.
 #
@@ -1124,7 +1127,7 @@ union_member = """\
 ## Enum
 ##
 enum = """\
-enum @name@ { @memberlist@ };
+enum @name@ { @memberlist@ /*, __max_@name@=0xffffffff */ };
 typedef @name@& @name@_out;
 """
 
