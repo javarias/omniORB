@@ -29,6 +29,9 @@
 
 
 /* $Log$
+ * Revision 1.11  1999/03/11 16:25:58  djr
+ * Updated copyright notice
+ *
  * Revision 1.10  1999/03/01 09:12:18  djr
  * Accept insertion of null strings into Any (with warning message)
  *
@@ -648,5 +651,8 @@ CORBA::Any::type() const
 const void*
 CORBA::Any::value() const
 {
-  return pdAnyP()->getBuffer();
+  if (pdAnyP()->getTC_parser()->getTC() == CORBA::_tc_null)
+    return 0;
+  else
+    return pdAnyP()->getBuffer();
 }
