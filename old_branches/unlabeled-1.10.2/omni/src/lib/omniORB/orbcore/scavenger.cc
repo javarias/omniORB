@@ -28,6 +28,17 @@
  
 /*
   $Log$
+  Revision 1.10.2.1  1999/09/21 20:37:17  sll
+  -Simplified the scavenger code and the mechanism in which connections
+   are shutdown. Now only one scavenger thread scans both incoming
+   and outgoing connections. A separate thread do the actual shutdown.
+  -omniORB::scanGranularity() now takes only one argument as there is
+   only one scan period parameter instead of 2.
+  -Trace messages in various modules have been updated to use the logger
+   class.
+  -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                 -ORBscanIncomingPeriod.
+
   Revision 1.10  1999/08/31 19:22:37  sll
   Revert back to single inheritance. The bug that causes occasional thread
   exit on startup has been identified. start_undetached() should be called
@@ -305,7 +316,7 @@ omniORB_Scavenger::run_undetached(void*)
 
   omni_mutex_lock sync(pd_mutex);
 
-  while (1) {
+  while (!pd_isdying) {
 
     int poke = 0;
     if (ScanPeriod) {
@@ -322,9 +333,7 @@ omniORB_Scavenger::run_undetached(void*)
       omni_thread::get_time(&abs_sec,&abs_nsec);	
     }
 
-    if (pd_isdying) break;
-    
-    if (poke) continue;
+    if (poke || pd_isdying) continue;
   
     LOGMESSAGE(15,"","scanning connections");
 
