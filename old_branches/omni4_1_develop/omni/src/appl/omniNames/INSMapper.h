@@ -24,6 +24,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.1  2003/03/23 21:03:18  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.2.2.4  2001/09/19 17:33:17  dpg1
 // Update omniMapper and omniNames INS mapper to ORB core changes from a
 // while ago.
@@ -48,7 +51,7 @@
 #include <omniORB4/CORBA.h>
 
 class INSMapper :
-  public PortableServer::RefCountServantBase
+  public PortableServer::ServantBase
 {
 public:
 

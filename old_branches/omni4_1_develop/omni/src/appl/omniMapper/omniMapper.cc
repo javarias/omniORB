@@ -23,6 +23,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.1  2003/03/23 21:03:18  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.2.2.7  2002/01/16 12:35:46  dpg1
 // omniMapper used -ORBendpoint instead of -ORBendPoint.
 //
@@ -85,7 +88,7 @@ usage()
 
 
 class Mapper :
-  public PortableServer::RefCountServantBase
+  public PortableServer::ServantBase
 {
 public:
 
