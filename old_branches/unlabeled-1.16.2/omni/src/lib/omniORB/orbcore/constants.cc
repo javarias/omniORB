@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.16  2000/07/13 15:25:58  dpg1
+  Merge from omni3_develop for 3.0 release.
+
   Revision 1.14.6.4  2000/07/12 13:07:17  dpg1
   The default corbaloc port is 2809, not 2089 as specified in the
   specification!
@@ -274,6 +277,10 @@ const GIOP_Basetypes::_SysExceptRepoID
 const GIOP_Basetypes::_SysExceptRepoID 
       GIOP_Basetypes::SysExceptRepoID::DATA_CONVERSION ((CORBA::Char *)
 					"IDL:omg.org/CORBA/DATA_CONVERSION");
+
+const GIOP_Basetypes::_SysExceptRepoID 
+      GIOP_Basetypes::SysExceptRepoID::TIMEOUT ((CORBA::Char *)
+                                       "IDL:omg.org/CORBA/TIMEOUT");
 
 const GIOP_Basetypes::_SysExceptRepoID 
       GIOP_Basetypes::SysExceptRepoID::TRANSACTION_REQUIRED ((CORBA::Char *)
