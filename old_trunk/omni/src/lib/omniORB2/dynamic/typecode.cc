@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.7  1998/04/08 16:07:50  sll
+ * Minor change to help some compiler to find the right TypeCode ctor.
+ *
  * Revision 1.6  1998/04/08 14:07:26  sll
  * Added workaround in CORBA::TypeCode::_nil() for a bug in DEC Cxx v5.5.
  *
@@ -131,8 +134,8 @@ CORBA::TypeCode::TypeCode(CORBA::TCKind t, CORBA::ULong length,
 }
   
 
-CORBA::TypeCode::TypeCode(CORBA::TCKind t, const char* repoId, 
-			  const char* name,const StructMemberSeq& members)
+CORBA::TypeCode::TypeCode(CORBA::TCKind t, const char* repoId,
+			  const char* name,const CORBA::StructMemberSeq& members)
 {
   if (t != CORBA::tk_struct && t != CORBA::tk_except)
     {
