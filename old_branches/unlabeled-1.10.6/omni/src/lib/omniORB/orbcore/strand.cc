@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.6.8  2000/06/12 13:02:02  dpg1
+  sll's fix for sll's fix for rope deletion race condition :-)
+
   Revision 1.10.6.7  2000/06/12 11:16:08  dpg1
   sll's fix for rope deletion race condition
 
@@ -106,7 +109,7 @@
 #include <scavenger.h>
 #include <ropeFactory.h>
 #include <initialiser.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 #define LOGMESSAGE(level,prefix,message)  \
@@ -221,7 +224,7 @@ Sync::Sync(Strand *s,CORBA::Boolean rdLock,CORBA::Boolean wrLock)
   if (s->_strandIsDying()) {
     // If this strand or the rope it belongs is being shutdown, stop here
     s->pd_rope->pd_lock.unlock();
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
   }
 
   // enter this to the list in strand <s>

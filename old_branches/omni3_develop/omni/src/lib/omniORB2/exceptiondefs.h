@@ -1,6 +1,6 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB
-// exception.h                Created on: 27/5/99
+// exceptiondefs.h            Created on: 27/5/99
 //                            Author    : David Riddoch (djr)
 //
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/18 11:27:37  djr
+  Centralised list of system exceptions.
+
   Revision 1.1.2.2  1999/10/14 16:21:54  djr
   Implemented logging when system exceptions are thrown.
 
@@ -38,6 +41,20 @@
 
 #ifndef __OMNIORB_EXCEPTION_H__
 #define __OMNIORB_EXCEPTION_H__
+
+
+class omniConnectionBroken {
+public:
+  inline omniConnectionBroken(CORBA::ULong m, CORBA::CompletionStatus c)
+    : pd_minor(m), pd_status(c) {}
+
+  inline CORBA::ULong minor()                const { return pd_minor;  }
+  inline CORBA::CompletionStatus completed() const { return pd_status; }
+
+private:
+  CORBA::ULong            pd_minor;
+  CORBA::CompletionStatus pd_status;
+};
 
 
 #ifndef OMNIORB_NO_EXCEPTION_LOGGING
@@ -53,13 +70,16 @@ public:
 
 #undef OMNIORB_EX
 
-
+  static void omniConnectionBroken(const char*, int, CORBA::ULong,
+				   CORBA::CompletionStatus);
 };
 
 
 #define OMNIORB_THROW(name, minor, completion) \
   omniExHelper::name(__FILE__, __LINE__, minor, completion)
 
+#define OMNIORB_THROW_CONNECTION_BROKEN(minor, completion) \
+  omniExHelper::omniConnectionBroken(__FILE__, __LINE__, minor, completion)
 
 #else
 
@@ -67,6 +87,8 @@ public:
 #define OMNIORB_THROW(name, minor, completion) \
   throw CORBA::name(minor, completion)
 
+#define OMNIORB_THROW_CONNECTION_BROKEN(minor, completion) \
+  throw omniConnectionBroken(minor, completion)
 
 #endif
 

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.21.6.10  2000/05/05 16:59:44  dpg1
+  Bug in HandleLocateRequest() when catching a LOCATION_FORWARD
+
   Revision 1.21.6.9  2000/04/27 10:48:00  dpg1
   Interoperable Naming Service
 
@@ -132,7 +135,7 @@
 #include <omniORB3/omniServant.h>
 #include <localIdentity.h>
 #include <initRefs.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 size_t  GIOP_Basetypes::max_giop_message_size = 2048 * 1024;
@@ -221,7 +224,7 @@ GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
 	  }
 	  else {
 	    setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
 	  }
 	}
       else {
@@ -237,7 +240,7 @@ GIOP_S::RequestReceived(CORBA::Boolean skip_msg)
   // has been killed asynchronously by the scavenger. If it is the case
   // (as indicated by strandIsDying() == 1), we do not proceed any further.
   if (strandIsDying()) {
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
   }
 
   pd_state = GIOP_S::WaitingForReply;
@@ -378,7 +381,7 @@ GIOP_S::dispatcher(Strand *s)
 	    // Wrong header
 	    gs.SendMsgErrorMessage();
 	    gs.setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
 	  }
 	gs.RdMessageSize(sizeof(CORBA::ULong),hdr[6]);
 	gs.HandleRequest(hdr[6]);
@@ -396,7 +399,7 @@ GIOP_S::dispatcher(Strand *s)
 	    // Wrong header
 	    gs.SendMsgErrorMessage();
 	    gs.setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
 	  }
 	gs.RdMessageSize(sizeof(CORBA::ULong),hdr[6]);
 	gs.HandleLocateRequest(hdr[6]);
@@ -414,7 +417,7 @@ GIOP_S::dispatcher(Strand *s)
 	    // Wrong header
 	    gs.SendMsgErrorMessage();
 	    gs.setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
 	  }
 	gs.RdMessageSize(sizeof(CORBA::ULong),hdr[6]);
 	gs.HandleCancelRequest(hdr[6]);
@@ -432,7 +435,7 @@ GIOP_S::dispatcher(Strand *s)
 	    // Wrong header
 	    gs.SendMsgErrorMessage();
 	    gs.setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
 	  }
 	gs.HandleMessageError();
 	break;
@@ -449,7 +452,7 @@ GIOP_S::dispatcher(Strand *s)
 	    // Wrong header
 	    gs.SendMsgErrorMessage();
 	    gs.setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
 	  }
 	gs.HandleCloseConnection();
 	break;
@@ -459,7 +462,7 @@ GIOP_S::dispatcher(Strand *s)
 	// Wrong header or invalid message type
 	gs.SendMsgErrorMessage();
 	gs.setStrandIsDying();
-	OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+	OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
       }
     }
 
@@ -503,7 +506,7 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
     if (msgsize > MaxMessageSize()) {
       SendMsgErrorMessage();
       setStrandIsDying();
-      OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
     }
 
     RdMessageSize(msgsize,byteorder);  // Set the size of the message body.
@@ -724,7 +727,7 @@ GIOP_S::HandleLocateRequest(CORBA::Boolean byteorder)
     if (msgsize > MaxMessageSize()) {
       SendMsgErrorMessage();
       setStrandIsDying();
-      OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+      OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
     }
 
     RdMessageSize(msgsize, byteorder);  // Set the size of the message body.
@@ -835,7 +838,7 @@ GIOP_S::HandleCancelRequest(CORBA::Boolean byteorder)
   if (msgsize > MaxMessageSize()) {
     SendMsgErrorMessage();
     setStrandIsDying();
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
   }
 
   RdMessageSize(msgsize,byteorder);    // set the size of the message body
@@ -857,7 +860,7 @@ void
 GIOP_S::HandleCloseConnection()
 {
   setStrandIsDying();
-  OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+  OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
 }
 
 void

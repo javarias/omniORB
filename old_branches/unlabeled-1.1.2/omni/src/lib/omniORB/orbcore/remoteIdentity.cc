@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/27 17:32:16  djr
+  omni::internalLock and objref_rc_lock are now pointers.
+
   Revision 1.1.2.3  1999/10/14 16:22:16  djr
   Implemented logging when system exceptions are thrown.
 
@@ -48,7 +51,7 @@
 #include <remoteIdentity.h>
 #include <omniORB3/callDescriptor.h>
 #include <dynamicLib.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -157,12 +160,14 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
 
     }
   }
-  catch(CORBA::COMM_FAILURE& ex) {
+  catch(omniConnectionBroken& ex) {
     if( reuse ){
       CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
       throw ex2;
     }
-    else throw;
+    else {
+      OMNIORB_THROW(COMM_FAILURE, ex.minor(), ex.completed());
+    }
   }
 }
 
@@ -226,12 +231,14 @@ omniRemoteIdentity::locateRequest()
 
     }
   }
-  catch(CORBA::COMM_FAILURE& ex) {
+  catch(omniConnectionBroken& ex) {
     if( reuse ){
       CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
       throw ex2;
     }
-    else throw;
+    else {
+      OMNIORB_THROW(COMM_FAILURE, ex.minor(), ex.completed());
+    }
   }
 }
 

@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.12.6.3  1999/10/18 11:27:39  djr
+  Centralised list of system exceptions.
+
   Revision 1.12.6.2  1999/10/14 16:22:09  djr
   Implemented logging when system exceptions are thrown.
 
@@ -68,7 +71,7 @@
 #endif
 
 #include <scavenger.h>
-#include <exception.h>
+#include <exceptiondefs.h>
 
 
 GIOP_C::GIOP_C(Rope *r)
@@ -230,7 +233,7 @@ GIOP_C::ReceiveReply()
     {
       // Wrong header
       setStrandIsDying();
-      OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
     }
 
   CORBA::ULong msgsize;
@@ -245,7 +248,7 @@ GIOP_C::ReceiveReply()
   if (msgsize > MaxMessageSize()) {
     // message size has exceeded the limit
     setStrandIsDying();
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
   }
 
   RdMessageSize(msgsize,hdr[6]);
@@ -288,7 +291,7 @@ GIOP_C::ReceiveReply()
     // Should never receive anything other that the above
     // Same treatment as wrong header
     setStrandIsDying();
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
   }
   return (GIOP::ReplyStatusType)rc;
 }
@@ -333,7 +336,7 @@ GIOP_C::RequestCompleted(CORBA::Boolean skip_msg)
 	  }
 	  else {
 	    setStrandIsDying();
-	    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_NO);
+	    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_NO);
 	  }
 	}
       else {
@@ -398,7 +401,7 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
       {
 	// Wrong header
 	setStrandIsDying();
-	OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+	OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
       }
 
     CORBA::ULong msgsize;
@@ -413,7 +416,7 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
     if (msgsize > MaxMessageSize()) {
       // message size has exceeded the limit
       setStrandIsDying();
-      OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+      OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
     }
 
     RdMessageSize(msgsize,hdr[6]);
@@ -440,7 +443,7 @@ GIOP_C::IssueLocateRequest(const void   *objkey,
     // Should never receive anything other that the above
     // Same treatment as wrong header
     setStrandIsDying();
-    OMNIORB_THROW(COMM_FAILURE,0,CORBA::COMPLETED_MAYBE);
+    OMNIORB_THROW_CONNECTION_BROKEN(0,CORBA::COMPLETED_MAYBE);
   }
   return (GIOP::LocateStatusType)rc;
 }
