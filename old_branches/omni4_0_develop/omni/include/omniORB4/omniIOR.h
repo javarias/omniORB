@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/09/08 21:12:38  dgrisby
+  Properly handle IORs with no usable profiles.
+
   Revision 1.1.2.11  2002/01/02 18:13:43  dpg1
   Platform fixes/additions.
 
@@ -97,8 +100,8 @@ public:
   _CORBA_Long addr_selected_profile_index() const {
     return pd_addr_selected_profile_index;
   }
-  void addr_selected_profile_index(_CORBA_Long index) {
-    pd_addr_selected_profile_index = index;
+  void addr_selected_profile_index(_CORBA_Long index_) {
+    pd_addr_selected_profile_index = index_;
   }
 
   // set and get functions for addr_mode.

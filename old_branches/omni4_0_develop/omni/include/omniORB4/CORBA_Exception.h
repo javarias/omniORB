@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/11/01 12:04:31  dpg1
+  Function in SystemException to return minor code string.
+
   Revision 1.1.2.2  2001/10/17 16:44:00  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -172,8 +175,8 @@ public:
     pd_minor = e.pd_minor;
     pd_status = e.pd_status;
   }
-  inline SystemException(ULong minor, CompletionStatus status) {
-    pd_minor = minor;
+  inline SystemException(ULong minor_, CompletionStatus status) {
+    pd_minor = minor_;
     pd_status = status;
   }
   inline SystemException& operator=(const SystemException& e) {
@@ -198,8 +201,8 @@ private:
 #define OMNIORB_DECLARE_SYS_EXCEPTION(name) \
   class name : public SystemException { \
   public: \
-    inline name(ULong minor = 0, CompletionStatus completed = COMPLETED_NO) \
-      : SystemException (minor, completed) { \
+    inline name(ULong minor_ = 0, CompletionStatus completed_ = COMPLETED_NO) \
+      : SystemException (minor_, completed_) { \
           pd_insertToAnyFn    = insertToAnyFn; \
           pd_insertToAnyFnNCP = insertToAnyFnNCP; \
     } \

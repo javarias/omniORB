@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.6  2001/10/29 17:42:36  dpg1
+ Support forward-declared structs/unions, ORB::create_recursive_tc().
+
  Revision 1.1.2.5  2001/06/08 17:12:08  dpg1
  Merge all the bug fixes from omni3_develop.
 
@@ -139,13 +142,13 @@ public:
     }
     pd_len = len;
   }
-  inline T& operator[] (_CORBA_ULong index) {
-    if (index >= pd_len) _CORBA_bound_check_error();
-    return pd_buf[index];
+  inline T& operator[] (_CORBA_ULong index_) {
+    if (index_ >= pd_len) _CORBA_bound_check_error();
+    return pd_buf[index_];
   }
-  inline const T& operator[] (_CORBA_ULong index) const {
-    if (index >= pd_len) _CORBA_bound_check_error();
-    return pd_buf[index];
+  inline const T& operator[] (_CORBA_ULong index_) const {
+    if (index_ >= pd_len) _CORBA_bound_check_error();
+    return pd_buf[index_];
   }
   static inline T* allocbuf(_CORBA_ULong nelems) {
     T* tmp = 0;
@@ -226,12 +229,12 @@ protected:
   inline _CORBA_Sequence(_CORBA_ULong max,
 			 _CORBA_ULong len,
 			 T           *value,
-			 _CORBA_Boolean release = 0,
+			 _CORBA_Boolean release_ = 0,
 			 _CORBA_Boolean bounded = 0
 			 ) 
       : pd_max(max), 
 	pd_len(len), 
-	pd_rel(release),
+	pd_rel(release_),
 	pd_bounded(bounded),
 	pd_buf(value)
   {
@@ -252,7 +255,7 @@ protected:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
+		      _CORBA_Boolean release_ = 0) {
     if (len > max || (len && !data)) {
       _CORBA_bound_check_error();
       // never reach here
@@ -263,7 +266,7 @@ protected:
     pd_max = max;
     pd_len = len;
     pd_buf = data;
-    pd_rel = release;
+    pd_rel = release_;
   }
 
 protected:
@@ -312,8 +315,8 @@ public:
   inline _CORBA_Unbounded_Sequence(_CORBA_ULong max,
 				   _CORBA_ULong len,
 				   T           *value,
-				   _CORBA_Boolean release = 0) 
-    : Base_T_seq(max,len,value,release) {}
+				   _CORBA_Boolean release_ = 0) 
+    : Base_T_seq(max,len,value,release_) {}
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
     return *this;
@@ -324,8 +327,8 @@ public:
   // CORBA 2.3 additions
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -355,8 +358,8 @@ public:
   }
   // CORBA 2.3 additions
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -446,11 +449,11 @@ protected:
   inline _CORBA_Sequence_Forward(_CORBA_ULong max,
 				 _CORBA_ULong len,
 				 T           *value,
-				 _CORBA_Boolean release = 0,
+				 _CORBA_Boolean release_ = 0,
 				 _CORBA_Boolean bounded = 0)
       : pd_max(max),
 	pd_len(len),
-	pd_rel(release),
+	pd_rel(release_),
 	pd_bounded(bounded),
 	pd_buf(value)
   {
@@ -462,7 +465,7 @@ protected:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
+		      _CORBA_Boolean release_ = 0) {
     if (len > max || (len && !data)) {
       _CORBA_bound_check_error();
       // never reach here
@@ -473,7 +476,7 @@ protected:
     pd_max = max;
     pd_len = len;
     pd_buf = data;
-    pd_rel = release;
+    pd_rel = release_;
   }
 
 protected:
@@ -504,14 +507,14 @@ public:
   inline _CORBA_Unbounded_Sequence_Forward(_CORBA_ULong max,
 					   _CORBA_ULong len,
 					   T           *value,
-					   _CORBA_Boolean release = 0) 
-    : Base_T_seq(max,len,value,release) {}
+					   _CORBA_Boolean release_ = 0) 
+    : Base_T_seq(max,len,value,release_) {}
 
   inline ~_CORBA_Unbounded_Sequence_Forward() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -531,8 +534,8 @@ public:
     Base_T_seq(max,len,value,rel,1) {}
   inline ~_CORBA_Bounded_Sequence_Forward() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -559,9 +562,9 @@ protected:
   inline _CORBA_Sequence_w_FixSizeElement(_CORBA_ULong max,
 					  _CORBA_ULong len,
 					  T           *value,
-					  _CORBA_Boolean release = 0,
+					  _CORBA_Boolean release_ = 0,
 					  _CORBA_Boolean bounded = 0
-	       )  : Base_T_seq(max,len,value,release,bounded) {}
+	       )  : Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -608,8 +611,8 @@ public:
   // CORBA 2.3 additions
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -647,8 +650,8 @@ public:
 
   // CORBA 2.3 additions
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -675,9 +678,10 @@ protected:
   inline _CORBA_Sequence_Char(_CORBA_ULong max,
 			      _CORBA_ULong len,
 			      T           *value,
-			      _CORBA_Boolean release = 0,
+			      _CORBA_Boolean release_ = 0,
 			      _CORBA_Boolean bounded = 0
-			      )  : Base_T_seq(max,len,value,release,bounded) {}
+			      )  : Base_T_seq(max,len,value,
+					      release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -710,9 +714,9 @@ protected:
   inline _CORBA_Sequence_Boolean(_CORBA_ULong max,
 	       _CORBA_ULong len,
 	       T           *value,
-	       _CORBA_Boolean release = 0,
+	       _CORBA_Boolean release_ = 0,
 	       _CORBA_Boolean bounded = 0
-	       )  : Base_T_seq(max,len,value,release,bounded) {}
+	       )  : Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -746,10 +750,10 @@ protected:
   inline _CORBA_Sequence_Octet(_CORBA_ULong max,
 			       _CORBA_ULong len,
 			       T           *value,
-			       _CORBA_Boolean release = 0,
+			       _CORBA_Boolean release_ = 0,
 			       _CORBA_Boolean bounded = 0
 			       )  : 
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -782,10 +786,10 @@ protected:
   inline _CORBA_Sequence_WChar(_CORBA_ULong max,
 			       _CORBA_ULong len,
 			       T           *value,
-			       _CORBA_Boolean release = 0,
+			       _CORBA_Boolean release_ = 0,
 			       _CORBA_Boolean bounded = 0
 			       )  : 
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -816,8 +820,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Char(_CORBA_ULong max,
 					 _CORBA_ULong len,
 					 T   *value,
-					 _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					 _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Char (const T_seq& s) : Base_T_seq(s) {}
 
@@ -829,8 +833,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Char() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -852,8 +856,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Boolean(_CORBA_ULong max,
 					    _CORBA_ULong len,
 					    T   *value,
-					    _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					    _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Boolean(const T_seq& s) : Base_T_seq(s) {}
 
@@ -865,8 +869,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Boolean() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -888,8 +892,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Octet(_CORBA_ULong max,
 					  _CORBA_ULong len,
 					  T   *value,
-					  _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					  _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Octet (const T_seq& s) : Base_T_seq(s) {}
 
@@ -901,8 +905,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Octet() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -924,8 +928,8 @@ public:
   inline _CORBA_Unbounded_Sequence_WChar(_CORBA_ULong max,
 					  _CORBA_ULong len,
 					  T   *value,
-					  _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					  _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_WChar (const T_seq& s) : Base_T_seq(s) {}
 
@@ -937,8 +941,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_WChar() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -957,8 +961,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Char(_CORBA_ULong len,
 				       T    *value,
-				       _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+				       _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Char(const T_seq& s) : Base_T_seq(s) {}
 
@@ -969,8 +973,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Char() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -989,8 +993,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Boolean(_CORBA_ULong len,
 					  T    *value,
-					  _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					  _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Boolean(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1001,8 +1005,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Boolean() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1021,8 +1025,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Octet(_CORBA_ULong len,
 					T    *value,
-					_CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					_CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Octet(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1033,8 +1037,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Octet() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1053,8 +1057,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_WChar(_CORBA_ULong len,
 					T    *value,
-					_CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					_CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_WChar(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1065,8 +1069,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_WChar() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1101,15 +1105,15 @@ public:
   }
   // These have to return pointer to slice to support brain-dead compilers
   // (such as MSVC, which handles references to arrays poorly).
-  inline T_slice* operator[] (_CORBA_ULong index)
+  inline T_slice* operator[] (_CORBA_ULong index_)
   {
-    if (index >= pd_len) _CORBA_bound_check_error();
-    return (T_slice*)(pd_buf[index]);
+    if (index_ >= pd_len) _CORBA_bound_check_error();
+    return (T_slice*)(pd_buf[index_]);
   }
-  inline const T_slice* operator[] (_CORBA_ULong index) const
+  inline const T_slice* operator[] (_CORBA_ULong index_) const
   {
-    if (index >= pd_len) _CORBA_bound_check_error();
-    return (const T_slice*)(pd_buf[index]);
+    if (index_ >= pd_len) _CORBA_bound_check_error();
+    return (const T_slice*)(pd_buf[index_]);
   }
   static inline T* allocbuf(_CORBA_ULong nelems)
   {
@@ -1194,12 +1198,12 @@ protected:
   inline _CORBA_Sequence_Array(_CORBA_ULong max,
 			       _CORBA_ULong len,
 			       T           *value,
-			       _CORBA_Boolean release = 0,
+			       _CORBA_Boolean release_ = 0,
 			       _CORBA_Boolean bounded = 0
 			       ) 
       : pd_max(max), 
 	pd_len(len), 
-	pd_rel(release),
+	pd_rel(release_),
 	pd_bounded(bounded),
 	pd_buf(value)
   {
@@ -1223,7 +1227,7 @@ protected:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
+		      _CORBA_Boolean release_ = 0) {
     if (len > max || (len && !data)) {
       _CORBA_bound_check_error();
       // never reach here
@@ -1234,7 +1238,7 @@ protected:
     pd_max = max;
     pd_len = len;
     pd_buf = data;
-    pd_rel = release;
+    pd_rel = release_;
   }
 
 
@@ -1287,8 +1291,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array(_CORBA_ULong max,
 					 _CORBA_ULong len,
 					 T           *value,
-					 _CORBA_Boolean release = 0)
-     : Base_T_seq(max,len,value,release) {}
+					 _CORBA_Boolean release_ = 0)
+     : Base_T_seq(max,len,value,release_) {}
   inline T_seq &operator= (const T_seq& s) {
     Base_T_seq::operator= (s);
     return *this;
@@ -1298,8 +1302,8 @@ public:
   // CORBA 2.3 additions
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -1319,8 +1323,8 @@ public:
   inline _CORBA_Bounded_Sequence_Array() : Base_T_seq(max,1) {}
   inline _CORBA_Bounded_Sequence_Array(_CORBA_ULong len,
 				       T           *value,
-				       _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+				       _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
   inline _CORBA_Bounded_Sequence_Array(const T_seq& s) : Base_T_seq(s) {}
   inline T_seq&operator= (const T_seq&s) {
     Base_T_seq::operator= (s);
@@ -1331,8 +1335,8 @@ public:
 
   // CORBA 2.3 additions
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -1361,8 +1365,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array_w_FixSizeElement(_CORBA_ULong max,
 							  _CORBA_ULong len,
 							  T           *value,
-					   _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release) {}
+					   _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_) {}
   inline T_seq& operator= (const T_seq& s)
   {
     Base_T_seq::operator= (s);
@@ -1373,8 +1377,8 @@ public:
   // CORBA 2.3 additions
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -1413,8 +1417,8 @@ public:
 
   // CORBA 2.3 additions
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(len,data,release_);
   }
 
   inline void operator>>= (cdrStream &s) const;
@@ -1443,10 +1447,10 @@ protected:
   inline _CORBA_Sequence_Array_Char(_CORBA_ULong max,
 				    _CORBA_ULong len,
 				    T           *value,
-				    _CORBA_Boolean release = 0,
+				    _CORBA_Boolean release_ = 0,
 				    _CORBA_Boolean bounded = 0
 				    )  :
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -1481,10 +1485,10 @@ protected:
   inline _CORBA_Sequence_Array_Boolean(_CORBA_ULong max,
 				    _CORBA_ULong len,
 				    T           *value,
-				    _CORBA_Boolean release = 0,
+				    _CORBA_Boolean release_ = 0,
 				    _CORBA_Boolean bounded = 0
 				    )  :
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -1520,10 +1524,10 @@ protected:
   inline _CORBA_Sequence_Array_Octet(_CORBA_ULong max,
 				    _CORBA_ULong len,
 				    T           *value,
-				    _CORBA_Boolean release = 0,
+				    _CORBA_Boolean release_ = 0,
 				    _CORBA_Boolean bounded = 0
 				    )  :
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -1558,10 +1562,10 @@ protected:
   inline _CORBA_Sequence_Array_WChar(_CORBA_ULong max,
 				    _CORBA_ULong len,
 				    T           *value,
-				    _CORBA_Boolean release = 0,
+				    _CORBA_Boolean release_ = 0,
 				    _CORBA_Boolean bounded = 0
 				    )  :
-    Base_T_seq(max,len,value,release,bounded) {}
+    Base_T_seq(max,len,value,release_,bounded) {}
 
   inline T_seq &operator= (const T_seq &s) {
     Base_T_seq::operator= (s);
@@ -1595,8 +1599,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array_Char(_CORBA_ULong max,
 					       _CORBA_ULong len,
 					       T   *value,
-					       _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					       _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Array_Char (const T_seq& s) : 
     Base_T_seq(s) {}
@@ -1610,8 +1614,8 @@ public:
 
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1635,8 +1639,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array_Boolean(_CORBA_ULong max,
 					       _CORBA_ULong len,
 					       T   *value,
-					       _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					       _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Array_Boolean (const T_seq& s) : 
     Base_T_seq(s) {}
@@ -1649,8 +1653,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Array_Boolean() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1674,8 +1678,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array_Octet(_CORBA_ULong max,
 					       _CORBA_ULong len,
 					       T   *value,
-					       _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					       _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Array_Octet (const T_seq& s) : 
     Base_T_seq(s) {}
@@ -1688,8 +1692,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Array_Octet() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1713,8 +1717,8 @@ public:
   inline _CORBA_Unbounded_Sequence_Array_WChar(_CORBA_ULong max,
 					       _CORBA_ULong len,
 					       T   *value,
-					       _CORBA_Boolean release = 0) : 
-    Base_T_seq(max,len,value,release) {}
+					       _CORBA_Boolean release_ = 0) : 
+    Base_T_seq(max,len,value,release_) {}
 
   inline _CORBA_Unbounded_Sequence_Array_WChar (const T_seq& s) : 
     Base_T_seq(s) {}
@@ -1727,8 +1731,8 @@ public:
   inline ~_CORBA_Unbounded_Sequence_Array_WChar() {}
 
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T* data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1747,8 +1751,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Array_Char(_CORBA_ULong len,
 					     T    *value,
-					     _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					     _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Array_Char(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1759,8 +1763,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Array_Char() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1780,8 +1784,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Array_Boolean(_CORBA_ULong len,
 					     T    *value,
-					     _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					     _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Array_Boolean(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1792,8 +1796,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Array_Boolean() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1812,8 +1816,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Array_Octet(_CORBA_ULong len,
 					     T    *value,
-					     _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					     _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Array_Octet(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1824,8 +1828,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Array_Octet() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1844,8 +1848,8 @@ public:
 
   inline _CORBA_Bounded_Sequence_Array_WChar(_CORBA_ULong len,
 					     T    *value,
-					     _CORBA_Boolean release = 0)
-    : Base_T_seq(max,len,value,release,1) {}
+					     _CORBA_Boolean release_ = 0)
+    : Base_T_seq(max,len,value,release_,1) {}
 
   inline _CORBA_Bounded_Sequence_Array_WChar(const T_seq& s) : Base_T_seq(s) {}
 
@@ -1856,8 +1860,8 @@ public:
 
   inline ~_CORBA_Bounded_Sequence_Array_WChar() {}
 
-  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+  inline void replace(_CORBA_ULong len, T* data,_CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -1914,8 +1918,8 @@ public:
     if (!nelems) return 0;
     T** b = new T*[nelems+2];
     ptr_arith_t l = nelems;
-    for (_CORBA_ULong i = 2; i < nelems+2; i++) {
-      b[i] = T_Helper::_nil();
+    for (_CORBA_ULong i_ = 2; i_ < nelems+2; i_++) {
+      b[i_] = T_Helper::_nil();
     }
     b[0] = (T*) ((ptr_arith_t)0x53514F4AU);
     b[1] = (T*) l;
@@ -1997,9 +2001,9 @@ protected:
   inline _CORBA_Sequence_ObjRef(_CORBA_ULong max,
 				_CORBA_ULong len,
 				T** value, 
-				_CORBA_Boolean release = 0,
+				_CORBA_Boolean release_ = 0,
 				_CORBA_Boolean bounded = 0)
-    : pd_max(max), pd_len(len), pd_rel(release),
+    : pd_max(max), pd_len(len), pd_rel(release_),
       pd_bounded(bounded), pd_data(value)
   {
     if (len > max || (len && !value)) {
@@ -2025,7 +2029,7 @@ protected:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T** data,
-		      _CORBA_Boolean release = 0) {
+		      _CORBA_Boolean release_ = 0) {
     if (len > max || (len && !data)) {
       _CORBA_bound_check_error();
       // never reach here
@@ -2036,7 +2040,7 @@ protected:
     pd_max = max;
     pd_len = len;
     pd_data = data;
-    pd_rel = release;
+    pd_rel = release_;
   }
 
 
@@ -2051,14 +2055,14 @@ protected:
       _CORBA_new_operator_return_null();
       // never reach here
     }
-    for (unsigned long i=0; i < pd_len; i++) {
+    for (unsigned long i_=0; i_ < pd_len; i_++) {
       if (pd_rel) {
-	newdata[i] = pd_data[i];
-	pd_data[i] = T_Helper::_nil();
+	newdata[i_] = pd_data[i_];
+	pd_data[i_] = T_Helper::_nil();
       }
       else {
-	T_Helper::duplicate(pd_data[i]);
-	newdata[i] = pd_data[i];
+	T_Helper::duplicate(pd_data[i_]);
+	newdata[i_] = pd_data[i_];
       }
     }
     if (pd_rel && pd_data) {
@@ -2109,8 +2113,8 @@ public:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T** data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
@@ -2143,8 +2147,8 @@ public:
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong len, T** data,
-		      _CORBA_Boolean release = 0) {
-    Base_T_seq::replace(max,len,data,release);
+		      _CORBA_Boolean release_ = 0) {
+    Base_T_seq::replace(max,len,data,release_);
   }
 };
 
