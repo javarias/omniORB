@@ -28,6 +28,8 @@
 
 /*
  $Log$
+ Revision 1.16  1999/05/25 13:18:20  sll
+ 
  Revision 1.15  1999/04/21 13:15:31  djr
  *** empty log message ***
 
@@ -963,7 +965,7 @@ public:
 
 template<class T, class ElemT,int max>
 class _CORBA_Bounded_Sequence_ObjRef
-  : public _CORBA_Sequence_ObjRef<class T, class ElemT>
+  : public _CORBA_Sequence_ObjRef<T,ElemT>
 {
 public:
   inline _CORBA_Bounded_Sequence_ObjRef() : 
