@@ -29,6 +29,9 @@
 
 /* 
    $Log$
+   Revision 1.2  1997/12/10 13:45:10  sll
+   Cleanup to remove constructs that trigger the MSVC nested class bug.
+
  * Revision 1.1  1997/12/10 11:52:39  sll
  * Initial revision
  *
@@ -157,6 +160,8 @@ public:
   public:
     virtual void _move(CORBA::Object_ptr to) = 0;
     virtual void _remove() = 0;
+
+    virtual ~_lc_sk() {}
   };
 
 
