@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.6  2001/08/03 17:47:45  sll
+ Removed obsoluted code.
+
  Revision 1.2.2.5  2000/11/22 14:37:59  dpg1
  Code set marshalling functions now take a string length argument.
 
@@ -235,6 +238,10 @@ public:
       _ptr = _CORBA_String_helper::dup(s._ptr);
   }
 
+  inline _CORBA_String_member(const char* s) {
+    _ptr = _CORBA_String_helper::dup(s);
+  }
+
   inline ~_CORBA_String_member() {
     _CORBA_String_helper::free(_ptr);
   }
@@ -335,7 +342,7 @@ public:
     : pd_rel(rel), pd_data(p) {}
 
   inline _CORBA_String_element(const _CORBA_String_element& s) 
-  : pd_rel(s.pd_rel), pd_data(s.pd_data) {}
+    : pd_rel(s.pd_rel), pd_data(s.pd_data) { }
 
   inline ~_CORBA_String_element() {
   // intentionally does nothing.
@@ -349,52 +356,44 @@ public:
   }
 
   inline _CORBA_String_element& operator= (const char* s) {
-    if (pd_rel) {
+    if (pd_rel)
       _CORBA_String_helper::free(pd_data);
-      if (s)
-	pd_data = _CORBA_String_helper::dup(s);
-      else
-	pd_data = 0;
-    } else {
-      pd_data = (char*)s;
-    }
+    if (s)
+      pd_data = _CORBA_String_helper::dup(s);
+    else
+      pd_data = 0;
     return *this;
   }
 
   inline _CORBA_String_element& operator=(const _CORBA_String_element& s) {
     if (&s != this) {
-      if (pd_rel) {
+      if (pd_rel)
 	_CORBA_String_helper::free(pd_data);
-	if (s.pd_data && s.pd_data != _CORBA_String_helper::empty_string)
-	  pd_data = _CORBA_String_helper::dup(s.pd_data);
-	else
-	  pd_data = (char*)s.pd_data;
-      } else
+      if (s.pd_data && s.pd_data != _CORBA_String_helper::empty_string)
+	pd_data = _CORBA_String_helper::dup(s.pd_data);
+      else
 	pd_data = (char*)s.pd_data;
     }
     return *this;
   }
 
   inline _CORBA_String_element& operator=(const _CORBA_String_var& s) {
-    if (pd_rel) {
+    if (pd_rel)
       _CORBA_String_helper::free(pd_data);
-      if( (const char*)s )
-	pd_data = _CORBA_String_helper::dup((const char*)s);
-      else
-	pd_data = 0;
-    } else
-      pd_data = (char*)(const char*)s;
+    if( (const char*)s )
+      pd_data = _CORBA_String_helper::dup((const char*)s);
+    else
+      pd_data = 0;
     return *this;
   }
 
   inline _CORBA_String_element& operator=(const _CORBA_String_member& s) {
-    if (pd_rel) {
+    if (pd_rel)
       _CORBA_String_helper::free(pd_data);
-      if( (const char*)s && (const char*) s != _CORBA_String_helper::empty_string)
-	pd_data = _CORBA_String_helper::dup((const char*)s);
-      else
-	pd_data = (char*)(const char*)s;
-    } else
+    if( (const char*)s &&
+	(const char*) s != _CORBA_String_helper::empty_string)
+      pd_data = _CORBA_String_helper::dup((const char*)s);
+    else
       pd_data = (char*)(const char*)s;
     return *this;
   }
