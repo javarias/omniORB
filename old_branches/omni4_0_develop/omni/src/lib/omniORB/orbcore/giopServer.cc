@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.23  2002/09/09 22:11:50  dgrisby
+  SSL transport cleanup even if certificates are wrong.
+
   Revision 1.22.2.22  2002/09/04 23:29:30  dgrisby
   Avoid memory corruption with multiple list removals.
 
@@ -275,7 +278,6 @@ giopServer::addBiDirStrand(giopStrand* s,giopActiveCollection* watcher) {
 void
 giopServer::start()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   ensureNotInFlux();
@@ -296,7 +298,6 @@ giopServer::start()
 void
 giopServer::stop()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   ensureNotInFlux();
@@ -316,7 +317,6 @@ giopServer::stop()
 void
 giopServer::remove()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   ensureNotInFlux();
@@ -410,7 +410,9 @@ giopServer::activate()
       cs->connection->pd_n_workers++;
     }
     else {
+      pd_lock.unlock();
       cs->connection->setSelectable(1);
+      pd_lock.lock();
     }
   }
 
@@ -688,7 +690,6 @@ giopServer::csInsert(giopStrand* s)
 void
 giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   switch (pd_state) {
@@ -725,7 +726,9 @@ giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
 	conn->pd_n_workers++;
       }
       else {
+	pd_lock.unlock();
 	conn->setSelectable(1);
+	pd_lock.lock();
       }
       break;
     }
@@ -787,7 +790,6 @@ giopServer::notifyRzReadable(giopConnection* conn,
 {
   // Theory of operation: read the state diagrams at the end of this file.
 
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   switch (pd_state) {
@@ -904,7 +906,6 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
   giopConnection* conn = w->strand()->connection;
 
   if (conn->pd_has_dedicated_thread) {
-
     // This connection is managed with the thread-per-connection policy
     if (!w->singleshot()) {
       // This is the dedicated thread
@@ -938,7 +939,7 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
     // This connection is managed with the thread-pool policy.
 
     OMNIORB_ASSERT(w->singleshot() == 1); // Never called by a dedicated thread
-    CORBA::Boolean doselect;
+    CORBA::Boolean select_and_return = 0;
     {
       omni_tracedmutex_lock sync(pd_lock);
 
@@ -960,8 +961,14 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
 	delete w;
 	conn->pd_n_workers--;
 	pd_n_temporary_workers--;
-	return 0;
+
+	select_and_return = 1;
       }
+    }
+    if (select_and_return) {
+      // Connection is selectable now
+      conn->setSelectable(1);
+      return 0;
     }
 
     if (orbParameters::threadPoolWatchConnection) {
@@ -977,6 +984,10 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
 	// There is data to be read. Tell the worker to go around again.
 	return 1;
       }
+    }
+    else {
+      // Connection is selectable now
+      conn->setSelectable(1);
     }
 
     // Worker is no longer needed.
