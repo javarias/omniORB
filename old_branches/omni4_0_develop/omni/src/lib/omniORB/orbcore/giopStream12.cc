@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2000/11/15 17:23:27  sll
+  Added call interceptors. Added  char, wchar codeset convertor support.
+
   Revision 1.1.4.2  2000/11/03 19:12:06  sll
   Use new marshalling functions for byte, octet and char. Use get_octet_array
   instead of get_char_array and put_octet_array instead of put_char_array.
@@ -549,7 +552,7 @@ public:
 
       if (spillover) {
 	memcpy((void*)g->pd_outb_mkr,
-	       (void*)((omni::ptr_arith_t)g->pd_outb_mkr + size),
+	       (void*)((omni::ptr_arith_t)buf + size),
 	       spillover);
 	g->pd_outb_mkr = (void*)((omni::ptr_arith_t)g->pd_outb_mkr+spillover);
       }
