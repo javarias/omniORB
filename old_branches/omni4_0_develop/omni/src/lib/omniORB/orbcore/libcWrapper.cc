@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.11  2003/06/02 13:27:58  dgrisby
+  Memory leak on platforms with reentrant gethostbyname.
+
   Revision 1.19.2.10  2003/02/17 02:03:08  dgrisby
   vxWorks port. (Thanks Michael Sturm / Acterna Eningen GmbH).
 
@@ -309,6 +312,11 @@ again:
   return ret;
 
 # endif
+
+#elif defined(__vxWorks__) && __OSVERSION__ < 54
+  int ip4 = hostGetByName(const_cast<char*>(node)); // grep /etc/hosts
+  if (ip4 == ERROR) return 0;
+  return new IP4AddrInfo(ip4, port);
 
 #else
   // Use non-reentrant gethostbyname()

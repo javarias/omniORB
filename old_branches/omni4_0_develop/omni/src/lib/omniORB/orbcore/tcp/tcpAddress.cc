@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2003/01/14 12:20:34  dgrisby
+  Verify that a connect really has connected.
+
   Revision 1.1.2.13  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -81,6 +84,10 @@
 #include <tcp/tcpAddress.h>
 #include <stdio.h>
 #include <omniORB4/linkHacks.h>
+
+#if defined(__vxWorks__)
+#include "selectLib.h"
+#endif
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpAddress);
 

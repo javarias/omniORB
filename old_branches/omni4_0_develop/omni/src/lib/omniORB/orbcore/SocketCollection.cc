@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2003/02/17 10:39:52  dgrisby
+  Fix inevitable Windows problem.
+
   Revision 1.1.2.13  2003/02/17 01:46:23  dgrisby
   Pipe to kick select thread (on Unix).
 
@@ -81,6 +84,7 @@
 
 #if defined(__vxWorks__)
 #  include "pipeDrv.h"
+#  include "selectLib.h"
 #  include "iostream.h"
 #endif
 
@@ -115,21 +119,21 @@ SocketSetTimeOut(unsigned long abs_sec,
 /////////////////////////////////////////////////////////////////////////
 int
 SocketSetnonblocking(SocketHandle_t sock) {
-# if !defined(__WIN32__)
-  int fl = O_NONBLOCK;
-  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
-    return RC_INVALID_SOCKET;
-  }
-  return 0;
-# elif defined(__vxWorks__)
+# if defined(__vxWorks__)
   int fl = TRUE;
   if (ioctl(sock, FIONBIO, (int)&fl) == ERROR) {
     return RC_INVALID_SOCKET;
   }
   return 0;
-# else
+# elif defined(__WIN32__)
   u_long v = 1;
   if (ioctlsocket(sock,FIONBIO,&v) == RC_SOCKET_ERROR) {
+    return RC_INVALID_SOCKET;
+  }
+  return 0;
+# else
+  int fl = O_NONBLOCK;
+  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
     return RC_INVALID_SOCKET;
   }
   return 0;
@@ -139,21 +143,21 @@ SocketSetnonblocking(SocketHandle_t sock) {
 /////////////////////////////////////////////////////////////////////////
 int
 SocketSetblocking(SocketHandle_t sock) {
-# if !defined(__WIN32__)
-  int fl = 0;
-  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
-    return RC_INVALID_SOCKET;
-  }
-  return 0;
-# elif defined(__vxWorks__)
+# if defined(__vxWorks__)
   int fl = FALSE;
   if (ioctl(sock, FIONBIO, (int)&fl) == ERROR) {
     return RC_INVALID_SOCKET;
   }
   return 0;
-# else
+# elif defined(__WIN32__)
   u_long v = 0;
   if (ioctlsocket(sock,FIONBIO,&v) == RC_SOCKET_ERROR) {
+    return RC_INVALID_SOCKET;
+  }
+  return 0;
+# else
+  int fl = 0;
+  if (fcntl(sock,F_SETFL,fl) == RC_SOCKET_ERROR) {
     return RC_INVALID_SOCKET;
   }
   return 0;

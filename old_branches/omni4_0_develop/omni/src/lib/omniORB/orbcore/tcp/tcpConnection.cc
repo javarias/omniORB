@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2003/04/15 10:40:47  dgrisby
+  Timeouts ignored in some cases when scan granularity set to zero.
+
   Revision 1.1.2.11  2003/01/06 11:11:55  dgrisby
   New AddrInfo instead of gethostbyname.
 
@@ -77,6 +80,10 @@
 #include <tcp/tcpConnection.h>
 #include <stdio.h>
 #include <omniORB4/linkHacks.h>
+
+#if defined(__vxWorks__)
+#include "selectLib.h"
+#endif
 
 OMNI_EXPORT_LINK_FORCE_SYMBOL(tcpConnection);
 
