@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1  2000/03/03 17:41:43  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 
 
 #include <omnipy.h>
@@ -63,9 +66,7 @@ extern "C" {
       else
 	objref = CORBA::Object::_nil();
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     return omniPy::createPyCorbaObjRef(0, objref);
   }
 
@@ -152,9 +153,7 @@ extern "C" {
       PyErr_SetObject(excc, exci);
       return 0;
     }
-    catch (const CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     return omniPy::createPyCorbaObjRef(0, objref);
   }
 

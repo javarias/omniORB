@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.13  2000/03/03 17:41:43  dpg1
+// Major reorganisation to support omniORB 3.0 as well as 2.8.
+//
 // Revision 1.12  1999/12/15 12:17:19  dpg1
 // Changes to compile with SunPro CC 5.0.
 //
@@ -164,7 +167,7 @@ omniPy::Py_OmniProxyCallDesc::userException(GIOP_C&     giop_client,
     Py_DECREF(exctuple);
 
     PyErr_SetObject(PyTuple_GET_ITEM(d_o, 1), exc_i);
-    throw CORBA::UserException();
+    throw UserExceptionHandled();
   }
   else {
     giop_client.RequestCompleted(1);

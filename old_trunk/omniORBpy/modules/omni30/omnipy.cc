@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.30  2000/03/06 18:46:25  dpg1
+// (char*)s for Solaris.
+//
 // Revision 1.29  2000/03/03 17:41:42  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -443,9 +446,7 @@ extern "C" {
       return PyString_FromStringAndSize((char*)stream.data(),
 					stream.alreadyWritten());
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
   static PyObject*
@@ -465,9 +466,7 @@ extern "C" {
       stream.byteOrder(byteOrder);
       return omniPy::unmarshalPyObject(stream, desc);
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
 
@@ -542,9 +541,18 @@ extern "C" {
 	return Py_None;
       }
     }
+#ifdef HAS_Cplusplus_catch_exception_by_base
     catch (const CORBA::SystemException& ex) {
       call_desc.systemException(ex);
     }
+#else
+#define DO_CALL_DESC_SYSTEM_EXCEPTON(exc) \
+    catch (const CORBA::exc& ex) { \
+      call_desc.systemException(ex); \
+    }
+OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
+#undef DO_CALL_DESC_SYSTEM_EXCEPTON
+#endif
     catch (const omniPy::UserExceptionHandled& ex) {
       // Exception has been handled by the call descriptor
     }
@@ -593,9 +601,7 @@ extern "C" {
       CORBA::Boolean isa = cxxobjref->_is_a(repoId);
       return PyInt_FromLong(isa);
     }
-    catch (const CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
   static PyObject*
@@ -618,9 +624,7 @@ extern "C" {
       CORBA::Boolean nex = cxxobjref->_non_existent();
       return PyInt_FromLong(nex);
     }
-    catch (const CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
   static PyObject*
@@ -646,9 +650,7 @@ extern "C" {
       CORBA::Boolean ise = cxxobjref1->_is_equivalent(cxxobjref2);
       return PyInt_FromLong(ise);
     }
-    catch (const CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
   static PyObject*
@@ -693,9 +695,8 @@ extern "C" {
       omniPy::InterpreterUnlocker ul;
       isa = cxxsource->_is_a(repoId);
     }
-    catch (const CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     if (isa) {
       omniObjRef* oosource = cxxsource->_PR_getobj();
       omniObjRef* oodest = omniPy::createObjRef(oosource->_mostDerivedRepoId(),

@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.2  2000/03/06 18:45:53  dpg1
+// Support for deactivate_object().
+//
 // Revision 1.1  2000/03/03 17:41:42  dpg1
 // Major reorganisation to support omniORB 3.0 as well as 2.8.
 //
@@ -162,9 +165,7 @@ extern "C" {
       Py_INCREF(Py_None);
       return Py_None;
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
   }
 
   static PyObject* pyPOA_get_the_name(PyObject* self, PyObject* args)
@@ -240,9 +241,8 @@ extern "C" {
       pyos = omniPy::getServantForPyObject(pyServant);
       RAISE_PY_BAD_PARAM_IF(!pyos);
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     omniObject* oobj = pyos->PR_getobj();
 
     CORBA::Octet* key;
@@ -323,9 +323,8 @@ extern "C" {
       pyos = omniPy::getServantForPyObject(pyServant);
       RAISE_PY_BAD_PARAM_IF(!pyos);
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     omniObject* oobj = pyos->PR_getobj();
 
     CORBA::Octet* key;
@@ -356,9 +355,8 @@ extern "C" {
       pyos = omniPy::getServantForPyObject(pyservant);
       RAISE_PY_BAD_PARAM_IF(!pyos);
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     PyObject* pyobjref = PyObject_GetAttrString(pyservant,
 						(char*)"_omni_objref");
     OMNIORB_ASSERT(pyobjref);
@@ -525,9 +523,8 @@ extern "C" {
       pyos = omniPy::getServantForPyObject(pyservant);
       RAISE_PY_BAD_PARAM_IF(!pyos);
     }
-    catch (CORBA::SystemException& ex) {
-      return omniPy::handleSystemException(ex);
-    }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     PyObject* pyobjref = PyObject_GetAttrString(pyservant,
 						(char*)"_omni_objref");
     OMNIORB_ASSERT(pyobjref);
