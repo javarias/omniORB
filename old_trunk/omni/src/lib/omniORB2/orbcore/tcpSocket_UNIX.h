@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/01/23 16:55:41  sll
+  New static member variable has_spawned_rendevous_threads.
+
  * Revision 1.2  1997/01/08  18:29:54  ewc
  * Renamed from tcpSocket.h to tcpSocket_UNIX.h
  *
@@ -175,7 +178,10 @@ public:
 private:
 
   void transmit();
-  void fetch();
+  void fetch(CORBA::ULong max=0);
+  // fetch data from the network to the internal buffer.
+  // If <max>=0, fetch as much as possible, otherwise fetch at most <max>
+  // bytes.
 
   tcpSocketHandle_t pd_socket;
   void    *pd_tx_buffer;
