@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.41  2004/02/11 11:53:51  dgrisby
+  Robustness in the face of exceptions from _remove_ref().
+
   Revision 1.2.2.40  2003/07/02 11:01:06  dgrisby
   Race condition in POA destruction.
 
@@ -1790,13 +1793,20 @@ omniOrbPOA::dispatch(omniCallHandle& handle,
   handle.poa(this);
 
   // Check that the key is the right size (if system generated).
-  if( !pd_policy.user_assigned_id &&
-      keysize - pd_poaIdSize != SYS_ASSIGNED_ID_SIZE )
+  if( !pd_policy.user_assigned_id ) {
+    CORBA::ULong length_check;
 
-    OMNIORB_THROW(OBJECT_NOT_EXIST,
-		  OBJECT_NOT_EXIST_NoMatch,
-		  CORBA::COMPLETED_NO);
+    if (!pd_policy.transient && poaUniquePersistentSystemIds)
+      length_check = SYS_ASSIGNED_ID_SIZE + TRANSIENT_SUFFIX_SIZE;
+    else
+      length_check = SYS_ASSIGNED_ID_SIZE;
 
+    if (keysize - pd_poaIdSize != length_check) {
+      OMNIORB_THROW(OBJECT_NOT_EXIST,
+		    OBJECT_NOT_EXIST_NoMatch,
+		    CORBA::COMPLETED_NO);
+    }
+  }
   switch( pd_policy.req_processing ) {
   case RPP_ACTIVE_OBJ_MAP:
     OMNIORB_THROW(OBJECT_NOT_EXIST,
