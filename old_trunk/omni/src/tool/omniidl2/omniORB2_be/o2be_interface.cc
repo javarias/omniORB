@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.20  1998/05/20 18:23:58  sll
+  New option (-t) enable the generation of tie implementation template.
+
   Revision 1.19  1998/04/07 18:48:03  sll
   Use std::fstream instead of fstream.
   Stub code modified to accommodate the use of namespace to represent module.
@@ -1198,7 +1201,7 @@ o2be_interface::produce_hdr(std::fstream &s)
     IND(s); s << "private:\n";
     INC_INDENT_LEVEL();
     IND(s); s << lcproxy_uqname() << " *_orig_" << _fqname() << ";\n";
-    IND(s); s << objref_uqname() << " _actual_" << _fqname() << ";\n\n";
+    IND(s); s << uqname() << "_var _actual_" << _fqname() << ";\n\n";
     DEC_INDENT_LEVEL();
 
     IND(s); s << "public:\n\n";
@@ -1248,8 +1251,9 @@ o2be_interface::produce_hdr(std::fstream &s)
     IND(s); s << "virtual void *_widenFromTheMostDerivedIntf(const char *repoId,CORBA::Boolean is_cxx_type = 0);\n";
 
     IND(s); s << "virtual void _set_actual(CORBA::Object_ptr p);\n";
-    IND(s); s << wrapproxy_uqname() << "(" << lcproxy_uqname()
+    IND(s); s << "void _set_proxy(" << lcproxy_uqname()
 	      << " *proxy);\n";
+    IND(s); s << wrapproxy_uqname() << "() {}\n";
 
     DEC_INDENT_LEVEL();
     IND(s); s << "};\n\n";
@@ -1861,6 +1865,7 @@ o2be_interface::produce_skel(std::fstream &s)
     IND(s); s << "}\n\n";
 
     IND(s); s << "p->_set_wrap_" << _fqname() << "(w);\n";
+    IND(s); s << "CORBA::release(p);\n";
     IND(s); s << "return (CORBA::Object_ptr)w;\n";
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n";
@@ -2146,7 +2151,7 @@ o2be_interface::produce_skel(std::fstream &s)
     IND(s); s << home_fqname() << "::_release_actual()\n";
     IND(s); s << "{\n";
     INC_INDENT_LEVEL();
-    IND(s); s << "CORBA::release(_actual_" << _fqname() << ");";
+    IND(s); s << "CORBA::release(_actual_" << _fqname() << ");\n";
     {
       int ni,j;
       AST_Interface **intftable;
@@ -2237,76 +2242,12 @@ o2be_interface::produce_skel(std::fstream &s)
 	      << " *proxy,Rope *r,CORBA::Octet *key,size_t keysize,"
 	      << "IOP::TaggedProfileList *profiles,CORBA::Boolean release)"
 	      << " : omniObject(" << IRrepoId()
-	      << ",r,key,keysize,profiles,release)";
-    {
-      int ni,j;
-      AST_Interface **intftable;
-      ni = n_inherits();
-      intftable = inherits();
-      for (j=0; j< ni; j++)
-	{
-	  o2be_interface * intf = o2be_interface::narrow_from_decl(intftable[j]);
-	  char* intf_name = (char*)intf->unambiguous_wrapproxy_name(this);
-	  if (o2be_global::mflag()) {
-	    // MSVC {4.2,5.0} cannot deal with a call to a virtual member
-	    // of a base class using the member function's fully/partially
-	    // scoped name. Have to use the alias for the base class in the
-	    // global scope to refer to the virtual member function instead.
-	    if (strcmp(intf_name,intf->wrapproxy_uqname()) != 0) {
-	      intf_name = new char[strlen(intf->_scopename())+
-				  strlen(intf->wrapproxy_uqname())+1];
-	      strcpy(intf_name,intf->_scopename());
-	      strcat(intf_name,intf->wrapproxy_uqname());
-	    }
-	  }
-	  s << ", " << intf_name << "(proxy)";
-	}
-    }
-    s << "\n";
+	      << ",r,key,keysize,profiles,release)\n";
     IND(s); s << "{\n";
     INC_INDENT_LEVEL();
     IND(s); s << "omni::objectIsReady(this);\n";
     IND(s); s << "omni::objectDuplicate(proxy);\n";
-    IND(s); s << "_orig_" << _fqname() << " = proxy;\n";
-    IND(s); s << "_actual_" << _fqname() << " = " << fqname()
-	      << "::_duplicate(proxy);\n";
-    DEC_INDENT_LEVEL();
-    IND(s); s << "}\n\n";
-
-    IND(s); s << wrapproxy_fqname() << "::" << wrapproxy_uqname()
-	      << "(" << lcproxy_fqname() << " *proxy)";
-    {
-      int ni,j;
-      AST_Interface **intftable;
-      ni = n_inherits();
-      intftable = inherits();
-      char *sep = " : ";
-      for (j=0; j< ni; j++)
-	{
-	  o2be_interface * intf = o2be_interface::narrow_from_decl(intftable[j]);
-	  char* intf_name = (char*)intf->unambiguous_wrapproxy_name(this);
-	  if (o2be_global::mflag()) {
-	    // MSVC {4.2,5.0} cannot deal with a call to a virtual member
-	    // of a base class using the member function's fully/partially
-	    // scoped name. Have to use the alias for the base class in the
-	    // global scope to refer to the virtual member function instead.
-	    if (strcmp(intf_name,intf->wrapproxy_uqname()) != 0) {
-	      intf_name = new char[strlen(intf->_scopename())+
-				  strlen(intf->wrapproxy_uqname())+1];
-	      strcpy(intf_name,intf->_scopename());
-	      strcat(intf_name,intf->wrapproxy_uqname());
-	    }
-	  }
-	  s << sep << intf_name << "(proxy)";
-	  sep = ", ";
-	}
-    }
-    s << "\n";
-    IND(s); s << "{\n";
-    INC_INDENT_LEVEL();
-    IND(s); s << "_orig_" << _fqname() << " = proxy;\n";
-    IND(s); s << "_actual_" << _fqname() << " = " << fqname()
-	      << "::_duplicate(proxy);\n";
+    IND(s); s << "_set_proxy(proxy);\n";
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n\n";
 
@@ -2318,8 +2259,6 @@ o2be_interface::produce_skel(std::fstream &s)
     INC_INDENT_LEVEL();
     IND(s); s << "_unregister_wrap();\n";
     DEC_INDENT_LEVEL();
-    IND(s); s << "CORBA::release(_orig_" << _fqname() << ");\n";
-    IND(s); s << "CORBA::release(_actual_" << _fqname() << ");\n";
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n\n";
 
@@ -2353,7 +2292,6 @@ o2be_interface::produce_skel(std::fstream &s)
     IND(s); s << wrapproxy_fqname() << "::_reset_proxy()\n";
     IND(s); s << "{\n";
     INC_INDENT_LEVEL();
-    IND(s); s << "CORBA::release(_actual_" << _fqname() << ");\n";
     IND(s); s << "_actual_" << _fqname() << " = " << fqname()
 	      << "::_duplicate(_orig_" << _fqname() << ");\n";
     {
@@ -2406,7 +2344,6 @@ o2be_interface::produce_skel(std::fstream &s)
     IND(s); s << wrapproxy_fqname() << "::_set_actual(CORBA::Object_ptr p)\n";
     IND(s); s << "{\n";
     INC_INDENT_LEVEL();
-    IND(s); s << "CORBA::release(_actual_" << _fqname() << ");\n";
     IND(s); s << "_actual_" << _fqname() << " = " << fqname()
 	      << "::_narrow(p);\n";
     {
@@ -2435,6 +2372,43 @@ o2be_interface::produce_skel(std::fstream &s)
     }
     DEC_INDENT_LEVEL();
     IND(s); s << "}\n\n";
+
+    // _set_proxy:
+    IND(s); s << "void\n";
+    IND(s); s << wrapproxy_fqname() << "::_set_proxy("
+	      << lcproxy_fqname() << " *proxy)\n";
+    IND(s); s << "{\n";
+    INC_INDENT_LEVEL();
+    IND(s); s << "_orig_" << _fqname() << " = proxy;\n";
+    IND(s); s << "_actual_" << _fqname() << " = " << fqname()
+	      << "::_duplicate(proxy);\n";
+    {
+      int ni,j;
+      AST_Interface **intftable;
+      ni = n_inherits();
+      intftable = inherits();
+      for (j=0; j< ni; j++)
+	{
+	  o2be_interface * intf = o2be_interface::narrow_from_decl(intftable[j]);
+	  char* intf_name = (char*)intf->unambiguous_wrapproxy_name(this);
+	  if (o2be_global::mflag()) {
+	    // MSVC {4.2,5.0} cannot deal with a call to a virtual member
+	    // of a base class using the member function's fully/partially
+	    // scoped name. Have to use the alias for the base class in the
+	    // global scope to refer to the virtual member function instead.
+	    if (strcmp(intf_name,intf->wrapproxy_uqname()) != 0) {
+	      intf_name = new char[strlen(intf->_scopename())+
+				  strlen(intf->wrapproxy_uqname())+1];
+	      strcpy(intf_name,intf->_scopename());
+	      strcat(intf_name,intf->wrapproxy_uqname());
+	    }
+	  }
+	  IND(s); s << intf_name << "::_set_proxy(proxy);\n";
+	}
+    }
+    DEC_INDENT_LEVEL();
+    IND(s); s << "}\n";
+
     s << "\n// *** End of LifeCycle stuff\n\n";
   }
 
