@@ -19,6 +19,15 @@
 #elif defined(__VMS)
 #include "config-vms.h"
 
+#elif defined(__osf1__)
+#include "config-osf1.h"
+
+#elif defined(__SINIX__)
+#include "config-sinix.h"
+
+#elif defined(__irix__)
+#include "config-irix.h"
+
 #endif
 
 #define BITS_PER_UNIT SIZEOF_UNSIGNED_CHAR
