@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.15  2001/08/15 17:59:12  dpg1
+  Minor POA bugs.
+
   Revision 1.2.2.14  2001/08/15 10:26:13  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -3309,7 +3312,7 @@ transfer_and_check_policies(omniOrbPOA::Policies& pout,
 	break;
       }
 
-    case BiDirPolicy::BIDIRECTIONAL_POLICY_TYPE /* 37 */:
+    case /*BiDirPolicy::BIDIRECTIONAL_POLICY_TYPE*/ 37:
       {
 	BiDirPolicy::BidirectionalPolicy_var p;
 	p = BiDirPolicy::BidirectionalPolicy::_narrow(pin[i]);

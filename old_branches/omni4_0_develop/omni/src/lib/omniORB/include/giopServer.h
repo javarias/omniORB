@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2001/07/31 16:28:01  sll
+  Added GIOP BiDir support.
+
   Revision 1.1.4.3  2001/07/13 15:19:30  sll
   Manage the state of each connection internally. Added new callback
   functions.
@@ -271,8 +274,6 @@ public:
   //
   CORBA::Boolean notifySwitchToBiDirectional(giopConnection*);
 
-private:
-
   struct connectionState {
     giopConnection*  connection;
     giopStrand*      strand;
@@ -285,6 +286,7 @@ private:
     static CORBA::ULong hashsize;
   };
 
+private:
   connectionState** pd_connectionState;
 
   connectionState* csLocate(giopConnection*);
