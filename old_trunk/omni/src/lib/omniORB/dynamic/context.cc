@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.8  1999/06/25 13:50:24  sll
+ Renamed compatibility flag to omniORB_27_CompatibleAnyExtraction.
+
  Revision 1.7  1999/06/22 14:59:03  sll
  set_one_value now correctly use the any extraction operator for string.
  It takes into account of the configuration variable copyStringInAnyExtraction.
@@ -621,7 +624,7 @@ unmarshal(buf_t& s)
 {
   CORBA::ULong nentries;
   nentries <<= s;
-  if( nentries % 1 )  throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
+  if( nentries % 2 )  throw CORBA::MARSHAL(0, CORBA::COMPLETED_MAYBE);
   nentries /= 2;
 
   ContextImpl* c = new ContextImpl("", CORBA::Context::_nil());
