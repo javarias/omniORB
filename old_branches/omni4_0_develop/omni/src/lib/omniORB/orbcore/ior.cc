@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.10.2.3  2000/10/04 16:53:16  sll
+  Added default interceptor to encode and decode supported tag components.
+
   Revision 1.10.2.2  2000/09/27 18:20:32  sll
   Removed obsoluted IOP::iorToEncapStr and IOP::EncapStrToIor.
   Added new function IOP::IOR::unmarshaltype_id(), IIOP::encodeProfile(),
@@ -160,7 +163,7 @@ IOP::IOR::unmarshaltype_id(cdrStream& s) {
 
   case 1:
     id = CORBA::string_alloc(1);
-    ::operator<<=((CORBA::Char&)((char*)id)[0],s);
+    id[0] = s.unmarshalOctet();
     if (((char*)id)[0] != '\0')
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
     idlen = 0;
@@ -168,7 +171,7 @@ IOP::IOR::unmarshaltype_id(cdrStream& s) {
     
   default:
     id = CORBA::string_alloc(idlen);
-    s.get_char_array((CORBA::Char*)((const char*)id), idlen);
+    s.get_octet_array((CORBA::Octet*)((const char*)id), idlen);
     if( ((char*)id)[idlen - 1] != '\0' )
       throw CORBA::MARSHAL(0,CORBA::COMPLETED_MAYBE);
     break;
@@ -186,7 +189,7 @@ IIOP::addAlternativeIIOPAddress(IOP::MultipleComponentProfile& components,
   CORBA::ULong hlen = strlen(addr.host) + 1;
   cdrEncapsulationStream s(hlen+8,1);
   hlen >>= s;
-  s.put_char_array((const CORBA::Char*)(const char*)addr.host,hlen);
+  s.put_octet_array((const CORBA::Octet*)(const char*)addr.host,hlen);
   addr.port >>= s;
 
   _CORBA_Octet* p; CORBA::ULong max,len; s.getOctetStream(p,max,len);
@@ -206,9 +209,9 @@ IIOP::encodeProfile(const IIOP::ProfileBody& body,IOP::TaggedProfile& profile)
   CORBA::ULong bufsize;
   {
     cdrCountingStream s;
-    omni::myByteOrder >>= s;
-    body.version.major >>= s;
-    body.version.minor >>= s;
+    s.marshalOctet(omni::myByteOrder);
+    s.marshalOctet(body.version.major);
+    s.marshalOctet(body.version.minor);
     body.address.host >>= s;
     body.address.port >>= s;
     body.object_key >>= s;
@@ -227,8 +230,8 @@ IIOP::encodeProfile(const IIOP::ProfileBody& body,IOP::TaggedProfile& profile)
 
   {
     cdrEncapsulationStream s(bufsize,1);
-    body.version.major >>= s;
-    body.version.minor >>= s;
+    s.marshalOctet(body.version.major);
+    s.marshalOctet(body.version.minor);
     body.address.host >>= s;
     body.address.port >>= s;
     body.object_key >>= s;
@@ -260,8 +263,8 @@ IIOP::decodeProfile(const IOP::TaggedProfile& profile,
 			   profile.profile_data.length(),
 			   1); 
 
-  body.version.major <<= s;
-  body.version.minor <<= s;
+  body.version.major = s.unmarshalOctet();
+  body.version.minor = s.unmarshalOctet();
 
   if (body.version.major != 1) 
     throw CORBA::MARSHAL(0,CORBA::COMPLETED_NO);

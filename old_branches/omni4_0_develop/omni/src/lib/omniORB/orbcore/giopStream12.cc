@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2000/09/27 17:30:29  sll
+  *** empty log message ***
+
   Revision 1.1.2.7  2000/03/27 17:37:50  sll
   Changed to use the new giopStreamImpl interface.
   Added support to allow call multiplexing on the client side.
@@ -1396,14 +1399,14 @@ private:
     g->pd_request_id = vl;
 
     // response flag
-    vb <<= s;
+    vb = s.unmarshalOctet();
     r.response_expected((vb & 0x1));
     r.result_expected((vb & 0x2) ? 1 : 0);
 
     // padding
-    vb <<= s;
-    vb <<= s;
-    vb <<= s;
+    vb = s.unmarshalOctet();
+    vb = s.unmarshalOctet();
+    vb = s.unmarshalOctet();
 
     // object key
     r.unmarshalIORAddressingInfo(s);
@@ -1416,7 +1419,7 @@ private:
     }
     r.set_operation_size(vl);
     char* op = r.operation();
-    s.get_char_array((CORBA::Char*)op,vl);
+    s.get_octet_array((CORBA::Octet*)op,vl);
     op[vl-1] = '\0';
 
     // Service context
@@ -1543,20 +1546,20 @@ void giop_1_2_Impl::marshalRequestHeader::marshal(cdrStream& s)
   CORBA::Octet v = ((pd_oneway ? 0 : 1) << 1) + 
                    (pd_response_expected ? 1 : 0);
   if (v == 0x02) v = 0x00;    // Can't be. reset to 0x00.
-  v >>= s;
+  s.marshalOctet(v);
 
   // reserved[3]
   v = 0;
-  v >>= s;
-  v >>= s;
-  v >>= s;
+  s.marshalOctet(v);
+  s.marshalOctet(v);
+  s.marshalOctet(v);
 
   // Target address
   pd_ior->marshalIORAddressingInfo(s);
 
     // operation
   operator>>= ((CORBA::ULong) pd_opsize, s);
-  s.put_char_array((CORBA::Char*) pd_op, pd_opsize);
+  s.put_octet_array((CORBA::Octet*) pd_op, pd_opsize);
 
     // Service context
   ::operator>>=((CORBA::ULong)0,s);
@@ -2047,7 +2050,7 @@ public:
 #endif
       size_t size = ((omni::ptr_arith_t)s.pd_inb_end - 
 		     (omni::ptr_arith_t)s.pd_input_hdr_end);
-      g->put_char_array((CORBA::Char*)s.pd_input_hdr_end,
+      g->put_octet_array((CORBA::Octet*)s.pd_input_hdr_end,
 			(int)size,omni::ALIGN_8);
       s.pd_inb_mkr = s.pd_inb_end;
     }
@@ -2074,7 +2077,7 @@ public:
       s.pd_inb_mkr = s.pd_input_hdr_end;
       size_t size = ((omni::ptr_arith_t)s.pd_inb_end - 
 		     (omni::ptr_arith_t)s.pd_inb_mkr);
-      g->put_char_array((CORBA::Char*)s.pd_inb_mkr,
+      g->put_octet_array((CORBA::Octet*)s.pd_inb_mkr,
 			(int)size,omni::ALIGN_8);
       s.pd_inb_mkr = s.pd_inb_end;
       while ((bp = bp->next)) {
@@ -2085,7 +2088,7 @@ public:
 
 	s.pd_inb_mkr = (void*)((omni::ptr_arith_t)s.pd_inb_begin + 16);
 	size -= bp->size - 16;
-	g->put_char_array((CORBA::Char*)s.pd_inb_mkr,(int)size,omni::ALIGN_8);
+	g->put_octet_array((CORBA::Octet*)s.pd_inb_mkr,(int)size,omni::ALIGN_8);
 	s.pd_inb_mkr = s.pd_inb_end;
       }
       s.pd_input_fragmented = 0;

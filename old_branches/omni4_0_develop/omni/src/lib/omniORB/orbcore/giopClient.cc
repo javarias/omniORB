@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.13.2.4  2000/10/10 14:48:33  sll
+  RequestCompleted() should not call inputMessageEnd if no response is
+  expected.
+
   Revision 1.13.2.3  2000/10/09 16:21:54  sll
   Removed reference to omniConnectionBroken.
 
@@ -267,7 +271,7 @@ GIOP_C::UnMarshallSystemException()
 
   CORBA::Char repoid[omniORB_GIOP_Basetypes_SysExceptRepoID_maxIDLen];
 
-  pd_cdrStream->get_char_array(repoid, len);
+  pd_cdrStream->get_octet_array(repoid, len);
   CORBA::ULong m;
   CORBA::ULong s;
   m <<= *pd_cdrStream;

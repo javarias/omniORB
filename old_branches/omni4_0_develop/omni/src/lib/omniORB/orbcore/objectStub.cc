@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2000/09/27 17:30:30  sll
+  *** empty log message ***
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -39,25 +42,25 @@
 void
 omni_is_a_CallDesc::marshalArguments(cdrStream& s)
 {
-  _CORBA_String_helper::marshal(a_1,s);
+  s.marshalString(a_1);
 }
 
 void
 omni_is_a_CallDesc::unmarshalReturnedValues(cdrStream& s)
 {
-  result <<= s;
+  result = s.unmarshalBoolean();
 }
 
 void
 omni_is_a_CallDesc::unmarshalArguments(cdrStream& s)
 {
-  a_1 = _CORBA_String_helper::unmarshal(s);
+  a_1 = s.unmarshalString();
 }
 
 void
 omni_is_a_CallDesc::marshalReturnedValues(cdrStream& s)
 {
-  result >>= s;
+  s.marshalBoolean(result);
 }
 
 void
@@ -73,13 +76,13 @@ omni_is_a_CallDesc::lcfn(omniCallDescriptor* cd, omniServant* servant)
 void
 omni_non_existent_CallDesc::unmarshalReturnedValues(cdrStream& s)
 {
-  result <<= s;
+  result = s.unmarshalBoolean();
 }
 
 void
 omni_non_existent_CallDesc::marshalReturnedValues(cdrStream& s)
 {
-  result >>= s;
+  s.marshalBoolean(result);
 }
 
 

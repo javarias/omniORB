@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.2  2000/09/27 18:05:51  sll
+  Use the new giop engine APIs to drive a remote call.
+
   Revision 1.2.2.1  2000/07/17 10:35:58  sll
   Merged from omni3_develop the diff between omni3_0_0_pre3 and omni3_0_0.
 
@@ -165,7 +168,7 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
       if (!s.checkInputOverrun(1,repoIdLen))
 	OMNIORB_THROW(MARSHAL,0, CORBA::COMPLETED_MAYBE);
       CORBA::String_var repoId(_CORBA_String_helper::alloc(repoIdLen - 1));
-      s.get_char_array((CORBA::Char*)(char*) repoId, repoIdLen);
+      s.get_octet_array((CORBA::Octet*)(char*) repoId, repoIdLen);
 
       call_desc.userException(giop_client, repoId);
       // Never get here - this must throw either a user exception

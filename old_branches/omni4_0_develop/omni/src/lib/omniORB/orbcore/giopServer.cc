@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.22.2.3  2000/10/03 17:38:50  sll
+  Fixed typo that cause user exception to be marshalled as system exception.
+
   Revision 1.22.2.2  2000/09/27 18:21:53  sll
   Use the new GIOP engine to handle a remote call.
 
@@ -578,7 +581,7 @@ public:
     const char* repoid = pd_ex._NP_repoId(&repoid_size);
 
     CORBA::ULong(repoid_size) >>= s;
-    s.put_char_array((const CORBA::Char*) repoid, repoid_size);
+    s.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
     pd_ex._NP_marshal(s);
   }
   
@@ -630,7 +633,7 @@ public:
     const char* repoid = pd_ex._NP_repoId(&repoid_size);
 
     CORBA::ULong(repoid_size) >>= s;
-    s.put_char_array((const CORBA::Char*) repoid, repoid_size);
+    s.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
     pd_ex.minor() >>= s;
     CORBA::ULong(pd_ex.completed()) >>= s;
   }
