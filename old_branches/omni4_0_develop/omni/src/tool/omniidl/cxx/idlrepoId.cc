@@ -28,8 +28,8 @@
 
 // $Id$
 // $Log$
-// Revision 1.6  2000/07/13 15:25:53  dpg1
-// Merge from omni3_develop for 3.0 release.
+// Revision 1.3.2.1  2000/08/29 10:20:27  dpg1
+// Operations and attributes now have repository ids.
 //
 // Revision 1.3  1999/11/08 10:50:47  dpg1
 // Change to behaviour when files end inside a scope.
@@ -293,7 +293,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setRepoId(r_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 
@@ -341,7 +341,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setVersion(a_, i_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 
