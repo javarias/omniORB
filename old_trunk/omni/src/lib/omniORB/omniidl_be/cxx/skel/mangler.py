@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  1999/11/23 18:48:26  djs
+# Bugfixes, more interface operations and attributes code
+#
 # Revision 1.2  1999/11/19 20:09:03  djs
 # Fixed signature generating bug when return type is void
 #
@@ -188,8 +191,9 @@ def produce_operation_signature(operation):
     raises.sort(lexicographic)
 
     def exception_signature(exception):
-        name = tyutil.name(tyutil.mapID(exception.scopedName()))
-        return EXCEPTION_SEPARATOR + name
+        cname = CANNON_NAME_SEPARATOR +\
+                string.join(exception.scopedName(), SCOPE_SEPARATOR)
+        return EXCEPTION_SEPARATOR + cname
     
     raises_sigs = map(exception_signature, raises)
     raises_str = string.join(raises_sigs, "")
