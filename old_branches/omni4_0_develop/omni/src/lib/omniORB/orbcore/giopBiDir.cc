@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/23 10:11:53  sll
+  Initialise BiDirPolicy constants properly for compilers with no namespace
+  support.
+
   Revision 1.1.2.4  2001/08/21 11:02:14  sll
   orbOptions handlers are now told where an option comes from. This
   is necessary to process DefaultInitRef and InitRef correctly.
@@ -61,6 +65,7 @@
 #include <tcp/tcpTransportImpl.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <transportRules.h>
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -439,6 +444,7 @@ BiDirClientRope::acquireClient(const omniIOR* ior,
     else {
       // now make the connection manage by the giopServer.
       s.biDir = 1;
+      s.gatekeeper_checked = 1;
       giopActiveCollection* watcher = c->registerMonitor();
       if (omniORB::trace(20)) {
 	omniORB::logger log;
@@ -530,6 +536,64 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info) {
       }
 
       if (addrList.empty()) continue;
+
+
+      // Check serverTransportRule to see if we should allow bidir from
+      // this client.
+      {
+	transportRules::sequenceString actions;
+	CORBA::ULong matchedRule;
+	CORBA::Boolean acceptbidir;
+	CORBA::Boolean dumprule = 0;
+	const char* why;
+
+	if ( (acceptbidir = transportRules::serverRules().
+	                    match(strand.connection->peeraddress(),
+				  actions,matchedRule)) ) {
+	  CORBA::ULong i;
+	  for (i = 0; i < actions.length(); i++ ) {
+	    if (strcmp(actions[i],"bidir") == 0) {
+	      break;
+	    }
+	  }
+	  if ( i == actions.length() ) {
+	    acceptbidir = 0;
+	    why = (const char*) "\"bidir\" is not found in the matched rule: ";
+	    dumprule = 1;
+	  }
+	}
+	else {
+	  why = (const char*) "no matching rule is bound";
+	}
+
+	if ( !acceptbidir ) {
+	  if ( omniORB::trace(1) ) {
+	    omniORB::logger log;
+	    log << "Request from " << strand.connection->peeraddress()
+		<< " to switch to bidirectional is rejected because " 	
+		<< why;
+	    if (dumprule) {
+	      CORBA::String_var rule;
+	      rule = transportRules::serverRules().dumpRule(matchedRule);
+	      log << "\"" << (const char*) rule << "\"";
+	    }
+	    log << "\n";
+	  }
+	  continue;
+	}
+
+	if ( omniORB::trace(5) ) {
+
+	  CORBA::String_var rule;
+	  rule = transportRules::serverRules().dumpRule(matchedRule);
+
+	  omniORB::logger log;
+	  log << "Accepted request from " 
+	      << strand.connection->peeraddress()
+	      << " to switch to bidirectional because of this rule: \""
+	      << (const char*) rule << "\"\n";
+	}
+      }
 
       {
 	ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
