@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.3  2000/07/13 15:26:04  dpg1
+ Merge from omni3_develop for 3.0 release.
+
  Revision 1.1.2.7  2000/01/27 10:55:44  djr
  Mods needed for powerpc_aix.  New macro OMNIORB_BASE_CTOR to provide
  fqname for base class constructor for some compilers.
@@ -169,6 +172,7 @@ doit (INTF_REPOS) \
 doit (BAD_CONTEXT) \
 doit (OBJ_ADAPTER) \
 doit (DATA_CONVERSION) \
+doit (TIMEOUT) \
 doit (TRANSACTION_REQUIRED) \
 doit (TRANSACTION_ROLLEDBACK) \
 doit (INVALID_TRANSACTION) \

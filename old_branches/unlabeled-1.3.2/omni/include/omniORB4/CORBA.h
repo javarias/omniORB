@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.3.2.2  2000/08/07 09:51:51  dpg1
+ Minor long long mistakes.
+
  Revision 1.3.2.1  2000/08/04 17:10:23  dpg1
  Long long support
 
@@ -2680,6 +2683,8 @@ _CORBA_MODULE_BEG
 #endif
 #endif
 
+#include <omniORB3/pollable_defs.hh>
+
 _CORBA_MODULE_END
 
 
@@ -2688,6 +2693,7 @@ _CORBA_MODULE_END
 #include <omniORB3/templatedefns.h>
 #include <omniORB3/corba_operators.h>
 #include <omniORB3/poa.h>
+#include <omniORB3/pollable_operators.hh>
 
 
 //?? These really want to be renamed and put elsewhere.
@@ -2720,6 +2726,8 @@ _CORBA_MODULE_BEG
 #include <omniORB3/ir_poa.hh>
 #endif
 
+#include <omniORB3/pollable_poa.hh>
+
 _CORBA_MODULE_END
 
 
@@ -2740,6 +2748,8 @@ _CORBA_MODULE_END
 #define USE_dyn_stub_in_nt_dll_NOT_DEFINED
 #endif
 #include <omniORB3/Naming.hh>
+#include <omniORB3/Messaging.h>
+#include <omniORB3/omniAMI.h>
 #ifdef  USE_core_stub_in_nt_dll_NOT_DEFINED
 #undef  USE_core_stub_in_nt_dll
 #undef  USE_core_stub_in_nt_dll_NOT_DEFINED
