@@ -11,6 +11,9 @@
 
 /*
   $Log$
+  Revision 1.3  1997/01/23 16:41:48  sll
+  non_reentrant is now a static member of the LibcWrapper class.
+
 // Revision 1.2  1997/01/08  18:10:50  ewc
 // Added support for ATMos, added IP check function
 //
@@ -73,8 +76,18 @@ again:
   non_reentrant.lock();
 
   struct hostent *hp;
-  if ((hp = ::gethostbyname(name)) <= 0) {
+
 #ifdef __atmos__
+  if ((hp = ::gethostbyname(name)) <= 0)
+    {
+      rc = 0;
+      non_reentrant.unlock();
+      return -1;
+    }
+#else
+  if ((hp = ::gethostbyname(name)) == NULL) 
+    {
+#ifdef __NT__
     rc = 0;
 #else
     rc = h_errno;
@@ -82,7 +95,8 @@ again:
 
     non_reentrant.unlock();
     return -1;
-  }
+    }
+#endif
 
   // Have to copy the data point to by struct hostent *hp into h.pd_buffer
   //
