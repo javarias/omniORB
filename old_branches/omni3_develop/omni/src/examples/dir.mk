@@ -1,4 +1,5 @@
-SUBDIRS = echo thread lifecycle anyExample dii dsi
+SUBDIRS = echo poa boa thread lifecycle anyExample dii dsi
+
 
 all::
 	@$(MakeSubdirs)

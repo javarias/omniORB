@@ -64,7 +64,7 @@ THREAD_LIB =
 # CORBA stuff
 #
 
-CorbaImplementation = OMNIORB2
+CorbaImplementation = OMNIORB
 
 #
 # OMNI thread stuff

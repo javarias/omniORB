@@ -75,8 +75,8 @@ THREAD_LIB = -lthread $(CXXMTFLAG)
 # CORBA stuff
 #
 
-omniORB2GatekeeperImplementation = OMNIORB2_TCPWRAPGK
-CorbaImplementation = OMNIORB2
+omniORBGatekeeperImplementation = OMNIORB_TCPWRAPGK
+CorbaImplementation = OMNIORB
 
 #
 # OMNI thread stuff
@@ -127,7 +127,7 @@ OMNIPARTCL_LIB_DEPEND := $(GENERATE_LIB_DEPEND) $(OMNITHREAD_LIB_DEPEND)
 JAVA_ROOT = /usr/java
 JAVAIDL_ROOT = /usr/local/javaIDL
 
-# Default location of the omniORB2 configuration file [falls back to this if
+# Default location of the omniORB configuration file [falls back to this if
 # the environment variable OMNIORB_CONFIG is not set] :
 
 OMNIORB_CONFIG_DEFAULT_LOCATION = /usr/local/etc/omniORB.cfg

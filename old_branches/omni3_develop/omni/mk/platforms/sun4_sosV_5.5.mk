@@ -91,8 +91,8 @@ THREAD_LIB = -lthread $(CXXMTFLAG)
 # CORBA stuff
 #
 
-omniORB2GatekeeperImplementation = OMNIORB2_TCPWRAPGK
-CorbaImplementation = OMNIORB2
+omniORBGatekeeperImplementation = OMNIORB_TCPWRAPGK
+CorbaImplementation = OMNIORB
 
 #
 # OMNI thread stuff
@@ -116,7 +116,7 @@ ThreadSystem = Posix
 lib_depend := $(patsubst %,$(LibPattern),omnithread)
 OMNITHREAD_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
 
-# Default location of the omniORB2 configuration file [falls back to this if
+# Default location of the omniORB configuration file [falls back to this if
 # the environment variable OMNIORB_CONFIG is not set] :
 
 OMNIORB_CONFIG_DEFAULT_LOCATION = /etc/omniORB.cfg
