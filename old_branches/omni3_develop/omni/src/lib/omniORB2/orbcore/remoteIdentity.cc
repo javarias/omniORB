@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/14 16:22:16  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.2  1999/09/28 10:54:35  djr
   Removed pretty-printing of object keys from object adapters.
 
@@ -56,13 +59,13 @@ class omniRemoteIdentity_RefHolder {
 public:
   inline omniRemoteIdentity_RefHolder(omniRemoteIdentity* id) : pd_id(id) {
     pd_id->pd_refCount++;
-    omni::internalLock.unlock();
+    omni::internalLock->unlock();
   }
 
   inline ~omniRemoteIdentity_RefHolder() {
-    omni::internalLock.lock();
+    omni::internalLock->lock();
     int done = --pd_id->pd_refCount > 0;
-    omni::internalLock.unlock();
+    omni::internalLock->unlock();
     if( done )  return;
     delete pd_id;
   }
@@ -78,7 +81,7 @@ private:
 void
 omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   omniRemoteIdentity_RefHolder rh(this);
 
@@ -167,7 +170,7 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
 void
 omniRemoteIdentity::gainObjRef(omniObjRef*)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   pd_refCount++;
 }
@@ -176,7 +179,7 @@ omniRemoteIdentity::gainObjRef(omniObjRef*)
 void
 omniRemoteIdentity::loseObjRef(omniObjRef*)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   if( --pd_refCount > 0 )  return;
 
@@ -187,7 +190,7 @@ omniRemoteIdentity::loseObjRef(omniObjRef*)
 void
 omniRemoteIdentity::locateRequest()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
 
   omniRemoteIdentity_RefHolder rh(this);
 

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/14 16:22:11  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.2  1999/09/30 12:25:59  djr
   Minor changes.
 
@@ -57,16 +60,16 @@
 class omniLocalIdentity_RefHolder {
 public:
   inline omniLocalIdentity_RefHolder(omniLocalIdentity* id) : pd_id(id) {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     pd_id->pd_nInvocations++;
   }
 
   inline ~omniLocalIdentity_RefHolder() {
-    omni::internalLock.lock();
+    omni::internalLock->lock();
     pd_id->pd_nInvocations--;
     pd_id->pd_adapter->leaveAdapter();
     int done = pd_id->pd_nInvocations > 0;
-    omni::internalLock.unlock();
+    omni::internalLock->unlock();
     if( done )  return;
     // Object has been deactivated, and the last invocation
     // has completed.  Pass the object back to the adapter
@@ -85,7 +88,7 @@ private:
 void
 omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(pd_adapter && pd_servant);
 
   omniLocalIdentity_RefHolder rh(this);
@@ -122,7 +125,7 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
 void
 omniLocalIdentity::dispatch(GIOP_S& giop_s)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(pd_adapter && pd_servant);
 
   omniLocalIdentity_RefHolder rh(this);
@@ -136,7 +139,7 @@ omniLocalIdentity::dispatch(GIOP_S& giop_s)
 void
 omniLocalIdentity::finishedWithDummyId()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(!pd_servant && !pd_adapter && !pd_localRefs);
 
   omniORB::logs(15, "Dummy omniLocalIdentity deleted (no more local refs).");
@@ -148,7 +151,7 @@ omniLocalIdentity::finishedWithDummyId()
 void
 omniLocalIdentity::die()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(pd_nInvocations == 0);
   OMNIORB_ASSERT(pd_localRefs == 0);
 
@@ -164,7 +167,7 @@ omniLocalIdentity::die()
 void
 omniLocalIdentity::gainObjRef(omniObjRef* objref)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(objref);
 
   *(objref->_addrOfLocalRefList()) = pd_localRefs;
@@ -175,7 +178,7 @@ omniLocalIdentity::gainObjRef(omniObjRef* objref)
 void
 omniLocalIdentity::loseObjRef(omniObjRef* objref)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(objref);
 
   omniObjRef** p = &pd_localRefs;

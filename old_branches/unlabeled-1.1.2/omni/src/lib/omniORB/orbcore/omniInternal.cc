@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/14 16:22:13  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.3  1999/09/27 08:48:33  djr
   Minor corrections to get rid of warnings.
 
@@ -64,7 +67,7 @@ using omniORB::operator==;
 
 
 const CORBA::Char                omni::myByteOrder = _OMNIORB_HOST_BYTE_ORDER_;
-omni_tracedmutex                 omni::internalLock;
+omni_tracedmutex*                omni::internalLock = 0;
 omni_tracedmutex                 omni::nilRefLock;
 _CORBA_Unbounded_Sequence__Octet omni::myPrincipalID;
 const omni::alignment_t          omni::max_alignment = ALIGN_8;
@@ -72,7 +75,7 @@ const omni::alignment_t          omni::max_alignment = ALIGN_8;
 int                              omni::remoteInvocationCount = 0;
 int                              omni::localInvocationCount = 0;
 
-static omni_tracedmutex          objref_rc_lock;
+static omni_tracedmutex*         objref_rc_lock = 0;
 // Protects omniObjRef reference counting.
 
 // The local object table.
@@ -104,7 +107,6 @@ static int objTblSizes[] = {
   536870912 + 5,
   1073741824 + 83       // 2^30 -- I'd be suprised if this is exceeded!
 };
-
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// omniInternal ////////////////////////////
@@ -142,7 +144,7 @@ void
 omniInternal::replaceImplementation(omniObjRef* objref, omniIdentity* id,
 				    omniLocalIdentity* local_id)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(objref);
   OMNIORB_ASSERT(id);
 
@@ -175,7 +177,7 @@ omniInternal::replaceImplementation(omniObjRef* objref, omniIdentity* id,
 void
 omniInternal::removeAndDestroyDummyId(omniLocalIdentity* id)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);
 
   omniORB::logs(15, "Removing dummy entry from object table -- no local refs");
@@ -198,7 +200,7 @@ omniInternal::removeAndDestroyDummyId(omniLocalIdentity* id)
 void
 omniInternal::resizeObjectTable()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(numObjectsInTable > maxNumObjects ||
 		 numObjectsInTable < minNumObjects && objectTableSizeI > 0);
 
@@ -264,21 +266,21 @@ omni::duplicateObjRef(omniObjRef* objref)
 {
   OMNIORB_ASSERT(objref);
 
-  objref_rc_lock.lock();
+  objref_rc_lock->lock();
   objref->pd_refCount++;
-  objref_rc_lock.unlock();
+  objref_rc_lock->unlock();
 }
 
 
 void
 omni::releaseObjRef(omniObjRef* objref)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 0);
   OMNIORB_ASSERT(objref);
 
-  objref_rc_lock.lock();
+  objref_rc_lock->lock();
   int rc = --objref->pd_refCount;
-  objref_rc_lock.unlock();
+  objref_rc_lock->unlock();
 
   if( rc > 0 )  return;
 
@@ -297,7 +299,7 @@ omni::releaseObjRef(omniObjRef* objref)
   // done is in omni::createObjRef() -- which checks that it is
   // safe first.
 
-  omni::internalLock.lock();
+  omni::internalLock->lock();
 
   omniLocalIdentity* lid = objref->_localId();
 
@@ -320,7 +322,7 @@ omni::releaseObjRef(omniObjRef* objref)
       omniInternal::removeAndDestroyDummyId(lid);
   }
 
-  internalLock.unlock();
+  internalLock->unlock();
 
   if( !lid && omniORB::trace(15) )
     omniORB::logf("ObjRef(%s) -- deleted.", objref->_mostDerivedRepoId());
@@ -333,7 +335,7 @@ omni::releaseObjRef(omniObjRef* objref)
 omniServant*
 omni::objRefToServant(omniObjRef* objref)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
   OMNIORB_ASSERT(objref);
 
   omniLocalIdentity* lid = objref->_localId();
@@ -347,7 +349,7 @@ omniLocalIdentity*
 omni::locateIdentity(const CORBA::Octet* key, int keysize, _CORBA_ULong hashv,
 		     _CORBA_Boolean create_dummy)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
 
   omniLocalIdentity** head = objectTable + hashv % objectTableSize;
   omniLocalIdentity* id = *head;
@@ -377,7 +379,7 @@ omniLocalIdentity*
 omni::activateObject(omniServant* servant, omniObjAdapter* adapter,
 		     omniObjKey& key)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
 
   CORBA::ULong hashv = hash(key.key(), key.size());
 
@@ -416,7 +418,7 @@ omni::activateObject(omniServant* servant, omniObjAdapter* adapter,
 omniLocalIdentity*
 omni::deactivateObject(const CORBA::Octet* key, int keysize)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
 
   omniLocalIdentity** pid = objectTable + hash(key, keysize) % objectTableSize;
 
@@ -500,7 +502,7 @@ omni::createObjRef(const char* mostDerivedRepoId,
 		   CORBA::Boolean release_profiles,
 		   CORBA::Boolean locked)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, locked);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, locked);
   OMNIORB_ASSERT(mostDerivedRepoId);
   OMNIORB_ASSERT(targetRepoId);
   OMNIORB_ASSERT(profiles);
@@ -522,7 +524,7 @@ omni::createObjRef(const char* mostDerivedRepoId,
 
     CORBA::ULong hashv = hash(key, keysize);
 
-    omni_optional_lock sync(internalLock, locked, locked);
+    omni_optional_lock sync(*internalLock, locked, locked);
 
     // If the identity does not exist in the local object table,
     // this will insert a dummy entry.
@@ -582,9 +584,9 @@ omni::createObjRef(const char* mostDerivedRepoId,
   omniObjRef* objref = pof->newObjRef(mostDerivedRepoId, profiles, id, 0);
   if( target_intf_not_confirmed )  objref->pd_flags.type_verified = 0;
 
-  if( !locked )  internalLock.lock();
+  if( !locked )  internalLock->lock();
   id->gainObjRef(objref);
-  if( !locked )  internalLock.unlock();
+  if( !locked )  internalLock->unlock();
 
   return objref;
 }
@@ -598,7 +600,7 @@ omni::createObjRef(const char* mostDerivedRepoId,
 		   _CORBA_Boolean release_profiles,
 		   _CORBA_Octet* key)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
   OMNIORB_ASSERT(mostDerivedRepoId);
   OMNIORB_ASSERT(targetRepoId);
 
@@ -624,10 +626,10 @@ omni::createObjRef(const char* mostDerivedRepoId,
 	// 'cos if it is then the objref is about to be deleted!
 	// See omni::releaseObjRef().
 
-	objref_rc_lock.lock();
+	objref_rc_lock->lock();
 	int dying = objref->pd_refCount == 0;
 	if( !dying )  objref->pd_refCount++;
-	objref_rc_lock.unlock();
+	objref_rc_lock->unlock();
 
 	if( !dying ) {
 	  if( key )  delete[] key;
@@ -748,7 +750,7 @@ omni::createObjRef(const char* mostDerivedRepoId,
 void
 omni::revertToOriginalProfile(omniObjRef* objref)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 0);
   OMNIORB_ASSERT(objref);
 
   omniORB::logs(10, "Reverting object reference to original profile");
@@ -762,7 +764,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
 				      rope, is_local) )
     OMNIORB_THROW(INV_OBJREF,0, CORBA::COMPLETED_NO);
 
-  omni_tracedmutex_lock sync(internalLock);
+  omni_tracedmutex_lock sync(*internalLock);
 
   // We might have already been reverted... We check here
   // rather than sooner, so as to avoid holding <internalLock>
@@ -813,7 +815,7 @@ omni::revertToOriginalProfile(omniObjRef* objref)
 void
 omni::locationForward(omniObjRef* objref, omniObjRef* new_location)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 0);
   OMNIORB_ASSERT(objref);
   OMNIORB_ASSERT(new_location);
 
@@ -830,7 +832,7 @@ omni::locationForward(omniObjRef* objref, omniObjRef* new_location)
   }
 
   {
-    omni_tracedmutex_lock sync(omni::internalLock);
+    omni_tracedmutex_lock sync(*internalLock);
 
     // We assume that the new object exists, and that it supports
     // the correct interface.  If it doesn't exist we'll get an
@@ -949,7 +951,10 @@ class omni_omniInternal_initialiser : public omniInitialiser {
 public:
 
   void attach() {
-    OMNIORB_ASSERT(!objectTable);
+    OMNIORB_ASSERT(!objectTable);  OMNIORB_ASSERT(!omni::internalLock);
+
+    omni::internalLock = new omni_tracedmutex;
+    objref_rc_lock = new omni_tracedmutex;
 
     numObjectsInTable = 0;
     minNumObjects = 0;

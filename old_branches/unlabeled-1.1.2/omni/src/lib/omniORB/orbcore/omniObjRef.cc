@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  1999/10/14 16:22:14  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.1  1999/09/22 14:26:59  djr
   Major rewrite of orbcore to support POA.
 
@@ -53,7 +56,7 @@
 int
 omniObjRef::_getRopeAndKey(omniRopeAndKey& rak, CORBA::Boolean* is_local) const
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   if( is_local )  *is_local = 0;
 
@@ -61,7 +64,7 @@ omniObjRef::_getRopeAndKey(omniRopeAndKey& rak, CORBA::Boolean* is_local) const
   int use_loopback = 0;
 
   {
-    omni_tracedmutex_lock sync(omni::internalLock);
+    omni::internalLock->lock();
 
     fwd = pd_flags.forward_location;
     rak.key(pd_id->key(), pd_id->keysize());
@@ -72,6 +75,8 @@ omniObjRef::_getRopeAndKey(omniRopeAndKey& rak, CORBA::Boolean* is_local) const
       use_loopback = 1;
     else
       rak.rope(((omniRemoteIdentity*) pd_id)->rope());
+
+    omni::internalLock->unlock();
   }
 
   if( use_loopback )  rak.rope(omniObjAdapter::defaultLoopBack());
@@ -83,10 +88,9 @@ omniObjRef::_getRopeAndKey(omniRopeAndKey& rak, CORBA::Boolean* is_local) const
 void
 omniObjRef::_getTheKey(omniObjKey& key, int locked) const
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, locked);
-  omni_optional_lock sync(omni::internalLock, locked, locked);
-
+  if( !locked )  omni::internalLock->lock();
   key.copy(pd_id->key(), pd_id->keysize());
+  if( !locked )  omni::internalLock->unlock();
 }
 
 
@@ -99,8 +103,10 @@ omniObjRef::_real_is_a(const char* repoId)
   if( !strcmp(repoId, pd_mostDerivedRepoId) )  return 1;
 
   {
-    omni_tracedmutex_lock sync(omni::internalLock);
-    if( pd_flags.type_verified )  return 0;
+    omni::internalLock->lock();
+    int tv = pd_flags.type_verified;
+    omni::internalLock->unlock();
+    if( tv )  return 0;
   }
 
   // Reach here because pd_flags.type_verified == 0, and we could not
@@ -115,7 +121,7 @@ omniObjRef::_real_is_a(const char* repoId)
 void*
 omniObjRef::_realNarrow(const char* repoId)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   OMNIORB_ASSERT(repoId && *repoId);
 
   // Attempt to narrow the reference using static type info.
@@ -142,15 +148,17 @@ omniObjRef::_realNarrow(const char* repoId)
       // replaced by one of a more derived type.  In this case the
       // narrow will fail, since we can't be expected to know this.
 
-      omni_tracedmutex_lock sync(omni::internalLock);
-
       omniObjRef* objref;
+
+      omni::internalLock->lock();
 
       if( _localId() )
 	objref = omni::createObjRef(pd_mostDerivedRepoId, repoId, _localId());
       else
 	objref = omni::createObjRef(pd_mostDerivedRepoId, repoId,
 				    pd_iopprofiles, 0, 1);
+
+      omni::internalLock->unlock();
 
       if( objref ) {
 	target = objref->_ptrToObjRef(repoId);
@@ -165,7 +173,7 @@ omniObjRef::_realNarrow(const char* repoId)
 void
 omniObjRef::_assertExistsAndTypeVerified()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   // NB. We don't lock here to protect <pd_flags> while reading.  This
   // just means that there could potentially be multiple threads doing
@@ -186,9 +194,10 @@ omniObjRef::_assertExistsAndTypeVerified()
       OMNIORB_THROW(INV_OBJREF,0,CORBA::COMPLETED_NO);
     }
     {
-      omni_tracedmutex_lock sync(omni::internalLock);
+      omni::internalLock->lock();
       pd_flags.type_verified = 1;
       pd_flags.object_exists = 1;
+      omni::internalLock->unlock();
     }
     return;
   }
@@ -197,8 +206,9 @@ omniObjRef::_assertExistsAndTypeVerified()
 
     _locateRequest();
     {
-      omni_tracedmutex_lock sync(omni::internalLock);
+      omni::internalLock->lock();
       pd_flags.object_exists = 1;
+      omni::internalLock->unlock();
     }
 
   }
@@ -265,7 +275,7 @@ omniObjRef_is_a_lcfn(omniCallDescriptor* cd, omniServant* servant)
 CORBA::Boolean
 omniObjRef::_remote_is_a(const char* a_repoId)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   omniObjRef_is_a_CallDesc call_desc(omniObjRef_is_a_lcfn,
 				     "_is_a", sizeof("_is_a"), a_repoId);
@@ -306,7 +316,7 @@ omniObjRef_non_existent_lcfn(omniCallDescriptor* cd, omniServant* servant)
 CORBA::Boolean
 omniObjRef::_remote_non_existent()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   omniObjRef_non_existent_CallDesc call_desc(omniObjRef_non_existent_lcfn,
 					     "_non_existent",
@@ -406,7 +416,7 @@ omniObjRef::_systemExceptionHandler(void* new_handler,void* cookie)
 
 omniObjRef::~omniObjRef()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   if( pd_refCount ) {
     if( omniORB::traceLevel > 0 ) {
@@ -486,7 +496,7 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
 
     try{
 
-      omni::internalLock.lock();
+      omni::internalLock->lock();
       fwd = pd_flags.forward_location;
       _identity()->dispatch(call_desc);
       return;
@@ -558,10 +568,10 @@ omniObjRef::_locateRequest()
 
     try{
 
-      omni::internalLock.lock();
+      omni::internalLock->lock();
       if( pd_id == pd_localId ) {
 	// Its a local object, and we know its here.
-	omni::internalLock.unlock();
+	omni::internalLock->unlock();
 	return;
       }
       fwd = pd_flags.forward_location;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  1999/10/14 16:22:14  djr
+  Implemented logging when system exceptions are thrown.
+
   Revision 1.1.2.2  1999/09/27 11:01:11  djr
   Modifications to logging.
 
@@ -55,13 +58,13 @@ omniServant::~omniServant()
     l << "ERROR -- A servant has been deleted that is still activated.\n"
       " repo id: " << _mostDerivedRepoId() << "\n";
 
-    omni::internalLock.lock();
+    omni::internalLock->lock();
     omniLocalIdentity* id = pd_identities;
     while( id ) {
       l << "      id: " << id << '\n';
       id = id->servantsNextIdentity();
     }
-    omni::internalLock.unlock();
+    omni::internalLock->unlock();
   }
 }
 
@@ -167,7 +170,7 @@ omniServant::_dispatch(GIOP_S& giop_s)
 void
 omniServant::_addIdentity(omniLocalIdentity* id)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);  OMNIORB_ASSERT(id->servant() == this);
 
   *id->addrOfServantsNextIdentity() = pd_identities;
@@ -178,7 +181,7 @@ omniServant::_addIdentity(omniLocalIdentity* id)
 void
 omniServant::_removeIdentity(omniLocalIdentity* id)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
   OMNIORB_ASSERT(id);
 
   omniLocalIdentity** p = &pd_identities;

@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.4  1999/10/14 16:22:12  djr
+ Implemented logging when system exceptions are thrown.
+
  Revision 1.1.2.3  1999/09/24 17:11:13  djr
  New option -ORBtraceInvocations and omniORB::traceInvocations.
 
@@ -252,9 +255,9 @@ omniObjAdapter::adapterInactive()
 void
 omniObjAdapter::waitForActiveRequestsToComplete(int locked)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, locked);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, locked);
 
-  if( !locked )  omni::internalLock.lock();
+  if( !locked )  omni::internalLock->lock();
 
   OMNIORB_ASSERT(pd_nReqActive >= 0);
 
@@ -262,16 +265,16 @@ omniObjAdapter::waitForActiveRequestsToComplete(int locked)
   while( pd_nReqActive )  pd_signal.wait();
   pd_signalOnZeroInvocations--;
 
-  if( !locked )  omni::internalLock.unlock();
+  if( !locked )  omni::internalLock->unlock();
 }
 
 
 void
 omniObjAdapter::waitForAllRequestsToComplete(int locked)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, locked);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, locked);
 
-  if( !locked )  omni::internalLock.lock();
+  if( !locked )  omni::internalLock->lock();
 
   OMNIORB_ASSERT(pd_nReqInThis >= 0);
 
@@ -279,14 +282,14 @@ omniObjAdapter::waitForAllRequestsToComplete(int locked)
   while( pd_nReqInThis )  pd_signal.wait();
   pd_signalOnZeroInvocations--;
 
-  if( !locked )  omni::internalLock.unlock();
+  if( !locked )  omni::internalLock->unlock();
 }
 
 
 void
 omniObjAdapter::met_detached_object()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   sd_detachedObjectLock.lock();
 
@@ -303,7 +306,7 @@ omniObjAdapter::met_detached_object()
 void
 omniObjAdapter::wait_for_detached_objects()
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 0);
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
 
   sd_detachedObjectLock.lock();
   pd_signalOnZeroDetachedObjects++;
@@ -379,9 +382,14 @@ omniObjAdapter::omniObjAdapter()
   : pd_nReqInThis(0),
     pd_nReqActive(0),
     pd_signalOnZeroInvocations(0),
-    pd_signal(&omni::internalLock),
+    pd_signal(omni::internalLock ? omni::internalLock : &oa_lock),
     pd_nDetachedObjects(0),
     pd_signalOnZeroDetachedObjects(0),
     pd_isActive(0)
 {
+  // NB. We always initialise pd_signal with omni::internalLock.
+  // The case that it is initialised with &oa_lock only happends
+  // for 'nil' object adapters, which may be contructed before
+  // the ORB is initialised.  Thus omni::internalLock is not
+  // initialised, and we have to use something else...
 }

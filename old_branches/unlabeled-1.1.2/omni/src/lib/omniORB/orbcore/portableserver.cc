@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.4  1999/10/16 13:22:54  djr
+  Changes to support compiling on MSVC.
+
   Revision 1.1.2.3  1999/10/14 16:22:16  djr
   Implemented logging when system exceptions are thrown.
 
@@ -192,7 +195,7 @@ PortableServer::ServantBase::_do_this(const char* repoId)
     PortableServer::POA_var poa = this->_default_POA();
 
     {
-      omni_tracedmutex_lock sync(omni::internalLock);
+      omni_tracedmutex_lock sync(*omni::internalLock);
 
       omniLocalIdentity* id = _identities();
 

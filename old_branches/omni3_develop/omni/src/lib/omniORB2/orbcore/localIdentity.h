@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/22 14:26:53  djr
+  Major rewrite of orbcore to support POA.
+
 */
 
 #ifndef __OMNIORB_LOCALIDENTITY_H__
@@ -95,7 +98,7 @@ public:
   //  Must hold <omni::internalLock>.
 
   inline void deactivate() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     OMNIORB_ASSERT(pd_nInvocations > 0);
     --pd_nInvocations;
   }
@@ -116,25 +119,25 @@ public:
   // are incremented.
 
   inline omniObjRef* localRefList() const {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return pd_localRefs;
   }
 
   inline omniLocalIdentity* nextInObjectTable() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return pd_nextInObjectTable;
   }
   inline omniLocalIdentity** addrOfNextInObjectTable() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return &pd_nextInObjectTable;
   }
 
   inline omniLocalIdentity* servantsNextIdentity() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return pd_servantsNextIdentity;
   }
   inline omniLocalIdentity** addrOfServantsNextIdentity() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return &pd_servantsNextIdentity;
   }
 

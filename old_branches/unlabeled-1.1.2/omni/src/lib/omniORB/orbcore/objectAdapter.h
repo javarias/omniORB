@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.2  1999/09/28 10:54:34  djr
+ Removed pretty-printing of object keys from object adapters.
+
  Revision 1.1.2.1  1999/09/22 14:26:56  djr
  Major rewrite of orbcore to support POA.
 
@@ -109,14 +112,14 @@ public:
   // exception, giving an alternative location for the object.
 
   inline void enterAdapter() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     OMNIORB_ASSERT(pd_nReqInThis >= 0);
     pd_nReqInThis++;
   }
   // Adapter calls this when a request enters the adapter.
 
   inline void startRequest() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     OMNIORB_ASSERT(pd_nReqActive >= 0);
     pd_nReqActive++;
   }
@@ -126,7 +129,7 @@ public:
   // an exception).
 
   inline void leaveAdapter() {
-    ASSERT_OMNI_TRACEDMUTEX_HELD(omni::internalLock, 1);
+    ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     OMNIORB_ASSERT(pd_nReqInThis > 0);  OMNIORB_ASSERT(pd_nReqActive > 0);
     --pd_nReqInThis;
     --pd_nReqActive;
@@ -137,11 +140,11 @@ public:
   // leaves the adapter.
 
   inline void exitAdapter(int loentry=0, int loexit=0) {
-    if( !loentry )  omni::internalLock.lock();
+    if( !loentry )  omni::internalLock->lock();
     OMNIORB_ASSERT(pd_nReqInThis > 0);
     --pd_nReqInThis;
     int do_signal = !pd_nReqInThis && pd_signalOnZeroInvocations;
-    if( !loexit )  omni::internalLock.unlock();
+    if( !loexit )  omni::internalLock->unlock();
     if( do_signal )  pd_signal.broadcast();
   }
 
