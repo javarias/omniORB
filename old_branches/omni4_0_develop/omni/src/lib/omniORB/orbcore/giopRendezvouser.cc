@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/07/13 15:26:18  sll
+  notifyReadable now really tells the server a connection is ready to be
+  read. Use AcceptAndMonitor instead of Accept.
+
   Revision 1.1.4.2  2001/06/20 18:35:18  sll
   Upper case send,recv,connect,shutdown to avoid silly substutition by
   macros defined in socket.h to rename these socket functions
@@ -48,9 +52,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 void
 giopRendezvouser::notifyReadable(void* this_,giopConnection* conn) {
+
   giopRendezvouser* r = (giopRendezvouser*)this_;
   r->pd_server->notifyRzReadable(conn);
-
 }
 
 void
@@ -61,10 +65,10 @@ giopRendezvouser::execute() {
     exit_on_error = 0;
     giopConnection* newconn = 0;
     try {
-
       newconn = pd_endpoint->AcceptAndMonitor(notifyReadable,this);
-      if (newconn)
+      if (newconn) {
 	pd_server->notifyRzNewConnection(this,newconn);
+      }
       else {
 	exit_on_error = 1;
 	break;
@@ -80,7 +84,7 @@ giopRendezvouser::execute() {
     catch(...) {
       // Catch all unexpected error conditions. Reach here means that we
       // should not continue!
-      if( omniORB::trace(0) ) {
+      if( omniORB::trace(1) ) {
 	omniORB::logger l;
 	l << "Unexpected exception caught by giopRendezvouser\n";
       }

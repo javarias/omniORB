@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2001/12/03 18:46:25  dpg1
+  Race condition in giopWorker destruction.
+
   Revision 1.1.4.16  2001/11/12 13:47:09  dpg1
   Minor fixes.
 
@@ -209,7 +212,7 @@ GIOP_S::dispatcher() {
       return handleCancelRequest();
     }
     else {
-      if( omniORB::trace(0) ) {
+      if( omniORB::trace(1) ) {
 	omniORB::logger l;
 	l << "Unexpected message type (" << (CORBA::ULong) pd_requestType
 	  << ")received by a server thread at "
@@ -544,7 +547,7 @@ GIOP_S::ReceiveRequest(omniCallDescriptor& desc) {
   pd_n_user_excns = desc.n_user_excns();
   pd_user_excns = desc.user_excns();
 
-  cdrStream& s = (cdrStream&)*this;
+  cdrStream& s = *this;
   desc.unmarshalArguments(s);
   pd_state = WaitingForReply;
 

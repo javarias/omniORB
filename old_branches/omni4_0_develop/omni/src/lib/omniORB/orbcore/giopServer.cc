@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.22.2.18  2002/02/13 16:02:39  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
   Revision 1.22.2.17  2002/02/01 11:21:19  dpg1
   Add a ^L to comments.
 
@@ -78,6 +82,7 @@
 #include <giopRendezvouser.h>
 #include <giopMonitor.h>
 #include <giopStrand.h>
+#include <giopStreamImpl.h>
 #include <initialiser.h>
 #include <omniORB4/omniInterceptors.h>
 #include <orbOptions.h>
@@ -307,11 +312,10 @@ giopServer::remove()
   }
 
   giopEndpointList::iterator i;
-  i    = pd_endpoints.begin();
+  i = pd_endpoints.begin();
 
   while (i != pd_endpoints.end()) {
     (*i)->Shutdown();
-    delete *i;
     pd_endpoints.erase(i);
   }
 }
@@ -333,10 +337,12 @@ giopServer::activate()
       // Cannot start serving this endpoint.
       // Leave it in pd_endpoints.
       // Do not raise an exception. Instead, just moan about it.
-      omniORB::logger log;
-      log << "Cannot create a rendezvouser for this endpoint: ";
-      log << (*i)->address();
-      log << "\n";
+      if (omniORB::trace(1)) {
+	omniORB::logger log;
+	log << "Cannot create a rendezvouser for this endpoint: ";
+	log << (*i)->address();
+	log << "\n";
+      }
       delete task;
       i++;
       continue;
@@ -361,11 +367,13 @@ giopServer::activate()
       giopWorker* task = new giopWorker(cs->strand,this,0);
       if (!orbAsyncInvoker->insert(task)) {
 	// Cannot start serving this new connection.
-	omniORB::logger log;
-	log << "Cannot create a worker for this bidirectional connection: "
-	    << " to "
-	    << cs->connection->peeraddress()
-	    << "\n";
+	if (omniORB::trace(1)) {
+	  omniORB::logger log;
+	  log << "Cannot create a worker for this bidirectional connection: "
+	      << " to "
+	      << cs->connection->peeraddress()
+	      << "\n";
+	}
 	delete task;
 	cs->connection->Shutdown();
 	csRemove(cs->connection);
@@ -384,7 +392,7 @@ giopServer::activate()
 
   {
     omnivector<giopActiveCollection*>::iterator i;
-    i    = pd_bidir_collections.begin();
+    i = pd_bidir_collections.begin();
 
     while (i != pd_bidir_collections.end()) {
       giopMonitor* task = new giopMonitor(*i,this);
@@ -392,10 +400,12 @@ giopServer::activate()
       if (!orbAsyncInvoker->insert(task)) {
 	// Cannot start serving this collection.
 	// Do not raise an exception. Instead, just moan about it.
-	omniORB::logger log;
-	log << "Cannot create a monitor for this bidir collection type: ";
-	log << (*i)->type();
-	log << "\n";
+	if (omniORB::trace(1)) {
+	  omniORB::logger log;
+	  log << "Cannot create a monitor for this bidir collection type: ";
+	  log << (*i)->type();
+	  log << "\n";
+	}
 	delete task;
       }
       else {
@@ -410,7 +420,7 @@ giopServer::activate()
 void
 giopServer::deactivate()
 {
-  // Caller is holding pd_lock
+  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock, 1);
 
   OMNIORB_ASSERT(pd_state == ACTIVE);
 
@@ -422,6 +432,17 @@ giopServer::deactivate()
     for (CORBA::ULong i=0; i < connectionState::hashsize; i++) {
       connectionState** head = &(pd_connectionState[i]);
       while (*head) {
+	{
+	  // Send close connection message.
+	  GIOP::Version ver = giopStreamImpl::maxVersion()->version();
+	  char hdr[12];
+	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
+	  hdr[4] = ver.major;   hdr[5] = ver.minor;
+	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
+	  hdr[7] = (char)GIOP::CloseConnection;
+	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
+	  (*head)->connection->Send(hdr,12);
+	}
 	(*head)->connection->Shutdown();
 	head = &((*head)->next);
       }
@@ -458,6 +479,8 @@ giopServer::deactivate()
     // a chance to remove themselves from the lists. Notice that the server
     // is now in the INFLUX state. This means that no start, stop, remove,
     // instantiate can progress until we are done here.
+    omniORB::logs(25, "giopServer waits for completion of rendezvousers "
+		  "and workers");
     pd_cond.wait();
     goto again;
   }
@@ -685,12 +708,12 @@ giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
 void
 giopServer::notifyRzDone(giopRendezvouser* r, CORBA::Boolean exit_on_error)
 {
-  ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,0);
   omni_tracedmutex_lock sync(pd_lock);
 
   if (!exit_on_error) {
     OMNIORB_ASSERT(pd_state == INFLUX);
-    // For the moment, we do not instantiate giopRendezvouser to do single shot.
+    // For the moment, we do not instantiate giopRendezvouser to do
+    // single shot.
     // Therefore, this function will *NEVER* be called until:
     //  1. We have called deactivate()
     //  2. giopRendezvouser have encountered a non-recoverable error. In which
@@ -704,10 +727,12 @@ giopServer::notifyRzDone(giopRendezvouser* r, CORBA::Boolean exit_on_error)
   delete r;
 
   if (exit_on_error) {
-    omniORB::logger log;
-    log << "Unrecoverable error for this endpoint: ";
-    log << ept->address();
-    log << ", it will no longer be serviced.\n";
+    if (omniORB::trace(1)) {
+      omniORB::logger log;
+      log << "Unrecoverable error for this endpoint: ";
+      log << ept->address();
+      log << ", it will no longer be serviced.\n";
+    }
     ept->Shutdown();
     delete ept;
   }
@@ -738,6 +763,7 @@ giopServer::notifyRzReadable(giopConnection* conn,
 
   switch (pd_state) {
   case ACTIVE:
+  case INFLUX:
     {
       if (conn->pd_dying) return;
 
@@ -759,6 +785,7 @@ giopServer::notifyRzReadable(giopConnection* conn,
       task->insert(cs->workers);
       conn->pd_n_workers++;
       pd_n_temporary_workers++;
+      break;
     }
   default:
     break;

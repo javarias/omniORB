@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.37  2002/02/21 15:57:46  dpg1
+  Remove dead code.
+
   Revision 1.33.2.36  2002/02/11 15:15:50  dpg1
   Things for ETS kernel.
 
@@ -322,7 +325,7 @@
 #include <orbParameters.h>
 #include <omniIdentity.h>
 
-#ifdef HAS_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 #  include <signal.h>
 #  include <errno.h>
 #endif
@@ -1428,7 +1431,7 @@ public:
   void attach() {
 
 #if !defined(__CIAO__)
-# if defined(HAS_SIGACTION)
+# if defined(HAVE_SIGACTION)
 
     struct sigaction act;
     sigemptyset(&act.sa_mask);
@@ -1445,7 +1448,7 @@ public:
 	  " SIG_IGN handler for signal SIGPIPE. (errno = " << errno << ")\n";
       }
     }
-# elif defined(HAS_SIGVEC)
+# elif defined(HAVE_SIGVEC)
     struct sigvec act;
     act.sv_mask = 0;
     act.sv_handler = SIG_IGN;

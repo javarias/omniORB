@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2002/03/11 12:21:07  dpg1
+  ETS things.
+
   Revision 1.1.2.7  2002/01/09 11:37:46  dpg1
   Platform, constness fixes.
 
@@ -68,6 +71,10 @@
 #if defined(UnixArchitecture)
 #include <sys/ioctl.h>
 #include <net/if.h>
+#endif
+
+#if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
+#include <winsock2.h>
 #endif
 
 #include <omniORB4/linkHacks.h>

@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2002/01/31 10:16:33  dpg1
+  Missing define in traditional sysdep.
+
   Revision 1.1.2.1  2002/01/15 16:38:10  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.
@@ -69,6 +72,9 @@
 
 #define GETTIMEOFDAY_TIMEZONE
 // Unset if gettimeofday() doesn't take a timezone argument
+
+#define HAVE_SIGNAL_H 1
+// Unset if no signal.h header
 
 #define HAVE_SIGACTION 1
 // Unset if no sigaction() function
@@ -354,6 +360,7 @@
 #  undef HAVE_GETOPT
 #  undef HAVE_GETTIMEOFDAY
 #  undef HAVE_GETPID
+#  undef HAVE_SIGNAL_H
 #  undef HAVE_SIGACTION
 #  undef HAVE_STRCASECMP
 #  undef HAVE_STRNCASECMP

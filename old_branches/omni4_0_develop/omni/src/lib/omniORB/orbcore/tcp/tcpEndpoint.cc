@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2002/03/11 12:24:39  dpg1
+  Restrict bind to specified host, if any.
+
   Revision 1.1.2.6  2001/07/31 16:16:17  sll
   New transport interface to support the monitoring of active connections.
 
@@ -210,7 +213,7 @@ tcpEndpoint::Bind() {
   if (!(char*)pd_address.host || strlen(pd_address.host) == 0) {
     pd_address.host = tcpConnection::ip4ToString(addr.sin_addr.s_addr);
   }
-  if (strcmp(pd_address.host,"127.0.0.1") == 0 && omniORB::trace(1)) {
+  if (omniORB::trace(1) && strcmp(pd_address.host,"127.0.0.1") == 0) {
     omniORB::logger log;
     log << "Warning: the local loop back interface (127.0.0.1) is used as this server's address.\n";
     log << "Warning: only clients on this machine can talk to this server.\n";
@@ -235,7 +238,7 @@ tcpEndpoint::Poke() {
       omniORB::logger log;
       log << "Warning: Fail to connect to myself ("
 	  << (const char*) pd_address_string << ") via tcp!\n";
-      log << "Warning: ATM this is ignored but this may cause the ORB shutdown to hang.\n";
+      log << "Warning: This is ignored but this may cause the ORB shutdown to hang.\n";
     }
   }
   else {
@@ -248,6 +251,8 @@ tcpEndpoint::Poke() {
 void
 tcpEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
+  decrRefCount();
+  omniORB::logs(20, "TCP endpoint shut down.");
 }
 
 /////////////////////////////////////////////////////////////////////////

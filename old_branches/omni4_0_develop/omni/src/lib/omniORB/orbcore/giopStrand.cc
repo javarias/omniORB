@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2001/09/19 17:26:49  dpg1
+  Full clean-up after orb->destroy().
+
   Revision 1.1.4.11  2001/09/10 17:51:46  sll
   Scavenger now manages passive connections as well.
   Send CloseConnection message when a scavenger close a connection.
@@ -93,16 +96,16 @@ CORBA::ULong orbParameters::scanGranularity = 5;
 
 CORBA::ULong orbParameters::outConScanPeriod = 120;
 //  Idle connections shutdown. The ORB periodically scans all the
-//  incoming connections to detect if they are idle.
+//  outgoing connections to detect if they are idle.
 //  If no operation has passed through a connection for a scan period,
 //  the ORB would treat this connection idle and shut it down.
 //
 //  Valid values = (n >= 0 in seconds) 
 //                  0 --> do not close idle connections.
 
-CORBA::ULong orbParameters::inConScanPeriod = 180;
+CORBA::ULong orbParameters::inConScanPeriod = 20;
 //  Idle connections shutdown. The ORB periodically scans all the
-//  outgoing connections to detect if they are idle.
+//  incoming connections to detect if they are idle.
 //  If no operation has passed through a connection for a scan period,
 //  the ORB would treat this connection idle and shut it down.
 //
@@ -956,6 +959,9 @@ public:
     }
     // Close server strands
     {
+      // XXX This code should never find any strands, since they
+      // should have all been shutdown earlier. I'm leaving it here
+      // just in case.
       StrandList* p = giopStrand::passive.next;
       while ( p != &giopStrand::passive ) {
 	giopStrand* s = (giopStrand*)p;

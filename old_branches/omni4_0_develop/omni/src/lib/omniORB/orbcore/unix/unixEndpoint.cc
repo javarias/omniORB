@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2002/01/15 16:38:14  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.1.2.6  2001/11/28 20:33:43  dpg1
   Minor Unix transport bugs.
 
@@ -162,7 +166,7 @@ unixEndpoint::Poke() {
       omniORB::logger log;
       log << "Warning: Fail to connect to myself ("
 	  << (const char*) pd_address_string << ") via tcp!\n";
-      log << "Warning: ATM this is ignored but this may cause the ORB shutdown to hang.\n";
+      log << "Warning: This is ignored but this may cause the ORB shutdown to hang.\n";
     }
   }
   else {
@@ -175,6 +179,8 @@ unixEndpoint::Poke() {
 void
 unixEndpoint::Shutdown() {
   SHUTDOWNSOCKET(pd_socket);
+  decrRefCount();
+  omniORB::logs(20, "Unix endpoint shut down.");
 }
 
 /////////////////////////////////////////////////////////////////////////
