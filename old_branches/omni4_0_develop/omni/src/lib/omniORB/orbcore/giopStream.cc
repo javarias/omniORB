@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2001/09/26 10:48:11  sll
+  Fixed a bug which causes problems when, in a single recv(), the ORB read
+  more than one GIOP messages into its buffer and the last of these messages
+  is only partially read.
+
   Revision 1.1.4.18  2001/09/10 17:53:07  sll
   In inputMessage, if a strand is dying and has been orderly_closed, i.e. a
   GIOP CloseConnection has been received, set the retry flag in the
@@ -142,10 +147,15 @@ giopStream::~giopStream() {
 }
 
 ////////////////////////////////////////////////////////////////////////
-CORBA::Boolean
-giopStream::is_giopStream() {
-  return 1;
+void*
+giopStream::ptrToClass(int* cptr)
+{
+  if (cptr == &giopStream::_classid) return (giopStream*)this;
+  if (cptr == &cdrStream ::_classid) return (cdrStream*) this;
+
+  return 0;
 }
+int giopStream::_classid;
 
 ////////////////////////////////////////////////////////////////////////
 void

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2001/09/20 11:30:59  sll
+  On the server, the final state of a GIOP_S is ReplyCompleted instead of
+  Idle. This is necessary because the idle connection management code
+  treats Idle as a state where the idle counter can be restarted.
+
   Revision 1.1.4.13  2001/09/10 17:44:34  sll
   Added stopIdleCounter() call inside dispatcher when the header has been
   received.
@@ -147,6 +152,18 @@ GIOP_S::~GIOP_S() {
   if (pd_operation != (char*)pd_op_buffer) delete [] pd_operation;
   if (pd_principal != pd_pr_buffer) delete [] pd_principal;
 }
+
+////////////////////////////////////////////////////////////////////////
+void*
+GIOP_S::ptrToClass(int* cptr)
+{
+  if (cptr == &GIOP_S    ::_classid) return (GIOP_S*)    this;
+  if (cptr == &giopStream::_classid) return (giopStream*)this;
+  if (cptr == &cdrStream ::_classid) return (cdrStream*) this;
+
+  return 0;
+}
+int GIOP_S::_classid;
 
 ////////////////////////////////////////////////////////////////////////
 CORBA::Boolean

@@ -28,6 +28,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.3  2001/06/13 20:12:32  sll
+// Minor updates to make the ORB compiles with MSVC++.
+//
 // Revision 1.1.2.2  2001/05/10 15:03:50  dpg1
 // Update cdrStreamAdapter to modified cdrStream interface.
 //
@@ -153,3 +156,13 @@ cdrStreamAdapter::completion()
   StreamAdapterStateCopier _c(this);
   return pd_actual.completion();
 }
+
+void*
+cdrStreamAdapter::ptrToClass(int* cptr)
+{
+  if (cptr == &cdrStreamAdapter::_classid) return (cdrStreamAdapter*)this;
+  if (cptr == &cdrStream       ::_classid) return (cdrStream*)       this;
+  return 0;
+}
+
+int cdrStreamAdapter::_classid;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2001/09/10 17:43:44  sll
+  Stop idle counter inside initialise.
+
   Revision 1.1.4.7  2001/09/04 14:38:51  sll
   Added the boolean argument to notifyCommFailure to indicate if
   omniTransportLock is held by the caller.
@@ -81,6 +84,18 @@ GIOP_C::GIOP_C(giopRope* r,giopStrand* s) : giopStream(s),
 ////////////////////////////////////////////////////////////////////////
 GIOP_C::~GIOP_C() {
 }
+
+////////////////////////////////////////////////////////////////////////
+void*
+GIOP_C::ptrToClass(int* cptr)
+{
+  if (cptr == &GIOP_C    ::_classid) return (GIOP_C*)    this;
+  if (cptr == &giopStream::_classid) return (giopStream*)this;
+  if (cptr == &cdrStream ::_classid) return (cdrStream*) this;
+
+  return 0;
+}
+int GIOP_C::_classid;
 
 ////////////////////////////////////////////////////////////////////////
 void

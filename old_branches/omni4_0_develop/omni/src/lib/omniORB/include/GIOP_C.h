@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2001/09/04 14:38:08  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.2  2001/05/01 16:07:33  sll
   All GIOP implementations should now work with fragmentation and abitrary
   sizes non-copy transfer.
@@ -44,6 +48,16 @@
 
 #include <omniORB4/IOP_C.h>
 
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 class GIOP_C : public IOP_C, public giopStream, public giopStreamList {
@@ -51,6 +65,12 @@ class GIOP_C : public IOP_C, public giopStream, public giopStreamList {
 
   GIOP_C(giopRope*,giopStrand*);
   ~GIOP_C();
+
+  virtual void* ptrToClass(int* cptr);
+  static inline GIOP_C* downcast(cdrStream* s) {
+    return (GIOP_C*)s->ptrToClass(&_classid);
+  }
+  static _core_attr int _classid;
 
   void InitialiseRequest();
 
@@ -120,5 +140,7 @@ private:
 };
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __GIOP_C_H__

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2001/09/04 14:38:09  sll
+  Added the boolean argument to notifyCommFailure to indicate if
+  omniTransportLock is held by the caller.
+
   Revision 1.1.4.4  2001/07/13 15:17:38  sll
   Ctor takes a giopWorker rather than a giopServer.
 
@@ -51,6 +55,16 @@
 
 #include <omniORB4/IOP_S.h>
 
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
+
 class omniCallDescriptor;
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -64,6 +78,12 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
   GIOP_S(giopStrand*);
   GIOP_S(const GIOP_S&);
   ~GIOP_S();
+
+  virtual void* ptrToClass(int* cptr);
+  static inline GIOP_S* downcast(cdrStream* s) {
+    return (GIOP_S*)s->ptrToClass(&_classid);
+  }
+  static _core_attr int _classid;
 
   CORBA::Boolean dispatcher();
   // This function do not raise an exception.
@@ -243,5 +263,7 @@ private:
 };
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __GIOP_S_H__

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2001/08/21 11:02:12  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.1.2.8  2001/08/17 17:12:35  sll
   Modularise ORB configuration parameters.
 
@@ -99,15 +103,19 @@ cdrStream::cdrStream() : pd_unmarshal_byte_swap(0), pd_marshal_byte_swap(0),
 			 pd_ncs_w(orbParameters::nativeWCharCodeSet) {}
 
 /////////////////////////////////////////////////////////////////////////////
+void*
+cdrStream::ptrToClass(int* cptr)
+{
+  if (cptr == &cdrStream::_classid) return (cdrStream*)this;
+  return 0;
+}
+
+int cdrStream::_classid;
+
+/////////////////////////////////////////////////////////////////////////////
 CORBA::ULong 
 cdrStream::completion() {
   return CORBA::COMPLETED_NO;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-CORBA::Boolean
-cdrStream::is_giopStream() {
-  return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
