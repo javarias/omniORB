@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.14  1998/08/13 22:39:34  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.13  1998/08/10 15:33:07  sll
   Now catch all errors instead of letting o2be_fatal_exception to cause
   core dump.
@@ -240,6 +244,8 @@ o2be_root::produce_hdr(std::fstream &hdr)
 
   o2be_module::produce_hdr(hdr);
 
+  o2be_module::produce_binary_operators_in_hdr(hdr);
+
   if (idl_global->compile_flags() & IDL_BE_GENERATE_TIE) {
     o2be_module::produce_tie_templates(hdr);
   }
@@ -267,6 +273,9 @@ o2be_root::produce_skel(std::fstream &skel)
     idl_global->set_indent(new UTL_Indenter());
 
   o2be_module::produce_skel(skel);
+
+  o2be_module::produce_binary_operators_in_skel(skel);
+
   return;
 }
 
