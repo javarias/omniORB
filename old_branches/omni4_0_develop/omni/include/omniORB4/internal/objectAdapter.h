@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.2  2001/05/29 17:03:49  dpg1
+ In process identity.
+
  Revision 1.1.4.1  2001/04/18 17:18:16  sll
  Big checkin with the brand new internal APIs.
  These files were relocated and scoped with the omni namespace.
@@ -195,7 +198,7 @@ public:
 
 
   ////////////////////
-  // Incoming Ropes //
+  // Incoming       //
   ////////////////////
 
   static Rope* defaultLoopBack();
@@ -204,6 +207,8 @@ public:
   static _CORBA_Boolean matchMyEndpoints(const char*);
   // Returns true(1) if the argument is the address of one of my endpoints
   // returns false(0) otherwise.
+
+  static const omnivector<const char*>& listMyEndpoints();
 
   struct Options {
     inline Options() : noBootstrapAgent(0) {}
