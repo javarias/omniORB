@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2002/03/13 16:05:39  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
   Revision 1.1.4.12  2001/09/19 17:26:49  dpg1
   Full clean-up after orb->destroy().
 
@@ -103,7 +108,7 @@ CORBA::ULong orbParameters::outConScanPeriod = 120;
 //  Valid values = (n >= 0 in seconds) 
 //                  0 --> do not close idle connections.
 
-CORBA::ULong orbParameters::inConScanPeriod = 20;
+CORBA::ULong orbParameters::inConScanPeriod = 180;
 //  Idle connections shutdown. The ORB periodically scans all the
 //  incoming connections to detect if they are idle.
 //  If no operation has passed through a connection for a scan period,
