@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.12  1999/11/29 15:04:47  dpg1
+# Fixed bug in clear().
+#
 # Revision 1.11  1999/11/25 11:20:33  dpg1
 # Tidy documentation changes.
 #
@@ -911,6 +914,13 @@ def registerDecl(scopedName, decl):
             
             # repeat forward declaration
             rdecl._more.append(decl)
+
+        elif (isinstance(decl, Forward) and isinstance(rdecl, Interface)) or \
+             (isinstance(decl, ValueForward) and \
+              (isinstance(rdecl, ValueAbs) or isinstance(rdecl, Value))):
+
+            # forward declaration of full declaration
+            decl._fullDecl = rdecl
 
         elif isinstance(decl, Module) and \
              isinstance(rdecl, Module):
