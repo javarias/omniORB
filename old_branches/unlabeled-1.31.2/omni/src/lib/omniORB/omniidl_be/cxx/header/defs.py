@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.4  2000/03/24 17:18:48  djs
+# Missed _ from typedefs to objrefs
+#
 # Revision 1.31.2.3  2000/03/24 16:24:22  djs
 # Produced 2 invalid typedefs in the case of a typedef to an object reference
 # (it transformed a " " into a "_" by mistake)
@@ -186,11 +189,10 @@ def visitModule(node):
 
     # In case of continuations, don't output the definitions
     # more than once
-    slash_scopedName = string.join(node.scopedName(), "/")
-    if self.__completedModules.has_key(slash_scopedName):
+    if self.__completedModules.has_key(node):
         return
-    self.__completedModules[slash_scopedName] = 1
-
+    self.__completedModules[node] = 1
+    
     id = node.identifier()
     cxx_id = tyutil.mapID(id)
     
@@ -206,8 +208,7 @@ def visitModule(node):
 
     # deal with continuations
     for c in node.continuations():
-        slash_scopedName = string.join(c.scopedName(), "/")
-        self.__completedModules[slash_scopedName] = 1
+        self.__completedModules[node] = 1
         for n in c.definitions():
             n.accept(self)
 
@@ -249,13 +250,6 @@ def visitInterface(node):
         for n in node.declarations():
             n.accept(self)
             
-    #Other_IDL = util.StringStream()
-    #_stream = self.stream
-    #self.stream = Other_IDL
-    #for n in node.declarations():
-    #    n.accept(self)
-    #self.stream = _stream
-
     # Output the this interface's corresponding class
     stream.out(template.interface_type,
                name = cxx_name,
@@ -685,13 +679,6 @@ def visitTypedef(node):
                                    element = element_ptr,
                                    derived = templateName)
                         
-                #bounds = util.StringStream()
-                #if not(bounded):
-                #    bounds.out(template.sequence_type_bounds,
-                #               name = derivedName,
-                #               element = element_ptr,
-                #               derived = templateName)
-
                 # output the main sequence definition
                 stream.out(template.sequence_type,
                            name = derivedName,
@@ -1473,4 +1460,3 @@ def visitEnum(node):
     
     node.written = cxx_name
     return
-

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.1  2000/02/14 18:34:54  dpg1
+# New omniidl merged in.
+#
 # Revision 1.15  2000/01/20 18:26:13  djs
 # Tie template output order problem
 #
@@ -117,10 +120,9 @@ def visitModule(node):
     if not(node.mainFile()):
         return
 
-    slash_scopedName = string.join(node.scopedName(), '/')
-    if self.__completedModules.has_key(slash_scopedName):
+    if self.__completedModules.has_key(node):
         return
-    self.__completedModules[slash_scopedName] = 1
+    self.__completedModules[node] = 1
     
     name = tyutil.mapID(node.identifier())
 
@@ -135,8 +137,7 @@ def visitModule(node):
     for n in node.definitions():
         n.accept(self)
     for c in node.continuations():
-        slash_scopedName = string.join(c.scopedName(), '/')
-        self.__completedModules[slash_scopedName] = 1
+        self.__completedModules[node] = 1
         for n in c.definitions():
             n.accept(self)
 
