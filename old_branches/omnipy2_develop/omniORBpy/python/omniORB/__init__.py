@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.1  2000/10/13 13:55:31  dpg1
+# Initial support for omniORB 4.
+#
 # Revision 1.26  2000/10/02 17:34:58  dpg1
 # Merge for 1.2 release
 #
@@ -284,6 +287,10 @@ Make stubs for the Interface Repository appear in the CORBA module"""
 #   installTransientExceptionHandler()
 #   installCommFailureExceptionHandler()
 #   installSystemExceptionHandler()
+#   traceLevel
+#   maxTcpConnectionPerServer
+#   nativeCharCodeSet
+#   fixed
 
 from _omnipy.omni_func import *
 
@@ -614,6 +621,24 @@ def static_is_a(cls, repoId):
     for b in cls.__bases__:
         if static_is_a(b, repoId): return 1
     return 0
+
+
+# Fixed point type
+
+class fixedConstructor:
+    def __init__(self, repoId, digits, scale):
+        self._NP_RepositoryId = repoId
+        self.digits           = digits
+        self.scale            = scale
+
+    def __call__(self, arg):
+        try:
+            return fixed(self.digits, self.scale, arg)
+        except TypeError:
+            raise TypeError("Invalid type for fixed argument")
+
+    def __repr__(self):
+        return "omniORB fixed<%d,%d> constructor" % (self.digits, self.scale)
 
 
 # WorkerThread class used to make the threading module happy during

@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.3  2000/11/22 14:43:58  dpg1
+# Support code set conversion and wchar/wstring.
+#
 # Revision 1.28.2.2  2000/11/01 15:29:01  dpg1
 # Support for forward-declared structs and unions
 # RepoIds in indirections are now resolved at the time of use
@@ -698,6 +701,9 @@ def is_nil(obj):
         return 0
     raise BAD_PARAM()
 
+# Fixed point constructor
+fixed = omniORB.fixed
+
 
 #############################################################################
 #                                                                           #
@@ -722,8 +728,8 @@ except NameError:
 #############################################################################
 
 # Note that we do not include the majority of the IfR declarations
-# here, because that would cause lots of bloat. Code which requires it
-# should compile ir.idl and manually import ir_idl.
+# here, because that would cause lots of bloat. Call
+# omniORB.importIRStubs() to import the full IfR declarations.
 
 # typedef string Identifier
 class Identifier:

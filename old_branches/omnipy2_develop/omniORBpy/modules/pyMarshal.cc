@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.4  2000/11/22 14:43:58  dpg1
+// Support code set conversion and wchar/wstring.
+//
 // Revision 1.1.2.3  2000/11/06 17:10:08  dpg1
 // Update to cdrStream interface
 //
@@ -42,6 +45,7 @@
 
 
 #include <omnipy.h>
+#include <pyFixed.h>
 
 #ifdef Py_UNICODEOBJECT_H
 #  include <codeSetUtil.h>
@@ -1103,8 +1107,23 @@ validateTypeWString(PyObject* d_o, PyObject* a_o,
 static void
 validateTypeFixed(PyObject* d_o, PyObject* a_o,
 		  CORBA::CompletionStatus compstatus)
-{
-  OMNIORB_THROW(NO_IMPLEMENT, 0, compstatus);
+{ // digits, scale
+  if (!omnipyFixed_Check(a_o)) VT_THROW_BAD_PARAM;
+
+  PyObject* t_o;
+
+  t_o = PyTuple_GET_ITEM(d_o, 1); int dlimit = PyInt_AS_LONG(t_o);
+  t_o = PyTuple_GET_ITEM(d_o, 2); int slimit = PyInt_AS_LONG(t_o);
+
+  int digits = ((omnipyFixedObject*)a_o)->ob_fixed->fixed_digits();
+  int scale  = ((omnipyFixedObject*)a_o)->ob_fixed->fixed_scale();
+
+  if (scale > slimit) {
+    digits -= (scale - slimit);
+    scale   = slimit;
+  }
+  if (digits > dlimit)
+    OMNIORB_THROW(DATA_CONVERSION, 0, compstatus);
 }
 
 static void
@@ -2094,8 +2113,15 @@ marshalPyObjectWString(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 
 static void
 marshalPyObjectFixed(cdrStream& stream, PyObject* d_o, PyObject* a_o)
-{
-  OMNIORB_ASSERT(0);
+{ // digits, scale
+  PyObject* t_o;
+
+  t_o = PyTuple_GET_ITEM(d_o, 1); int dlimit = PyInt_AS_LONG(t_o);
+  t_o = PyTuple_GET_ITEM(d_o, 2); int slimit = PyInt_AS_LONG(t_o);
+
+  CORBA::Fixed f(*(((omnipyFixedObject*)a_o)->ob_fixed));
+  f.PR_setLimits(dlimit, slimit);
+  f >>= stream;
 }
 
 static void
@@ -2976,9 +3002,18 @@ unmarshalPyObjectWString(cdrStream& stream, PyObject* d_o)
 
 static PyObject*
 unmarshalPyObjectFixed(cdrStream& stream, PyObject* d_o)
-{
-  OMNIORB_THROW(NO_IMPLEMENT, 0, CORBA::COMPLETED_NO);
-  return 0;
+{ // digits, scale
+  PyObject* t_o;
+
+  t_o = PyTuple_GET_ITEM(d_o, 1); int dlimit = PyInt_AS_LONG(t_o);
+  t_o = PyTuple_GET_ITEM(d_o, 2); int slimit = PyInt_AS_LONG(t_o);
+
+  CORBA::Fixed f;
+  f.PR_setLimits(dlimit, slimit);
+
+  f <<= stream;
+
+  return omniPy::newFixedObject(f);
 }
 
 static PyObject*
@@ -4546,7 +4581,17 @@ static PyObject*
 copyArgumentFixed(PyObject* d_o, PyObject* a_o,
 		  CORBA::CompletionStatus compstatus)
 {
-  return setPyNoImplement(compstatus);
+  PyObject* t_o;
+
+  t_o = PyTuple_GET_ITEM(d_o, 1); int dlimit = PyInt_AS_LONG(t_o);
+  t_o = PyTuple_GET_ITEM(d_o, 2); int slimit = PyInt_AS_LONG(t_o);
+
+  try {
+    CORBA::Fixed f(*(((omnipyFixedObject*)a_o)->ob_fixed));
+    f.PR_setLimits(dlimit, slimit);
+    return omniPy::newFixedObject(f);
+  }
+  OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 }
 
 static PyObject*
