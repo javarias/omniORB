@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.10  2000/05/24 10:35:38  dpg1
+// _this() wasn't catching exceptions.
+//
 // Revision 1.9  2000/05/11 11:58:25  dpg1
 // Throw system exceptions with OMNIORB_THROW.
 //
@@ -61,6 +64,18 @@
 //
 
 #include <omnipy.h>
+
+
+class PYOSReleaseHelper {
+public:
+  PYOSReleaseHelper(omniPy::Py_omniServant* pyos) : pyos_(pyos) {}
+  ~PYOSReleaseHelper() {
+    omniPy::InterpreterUnlocker _u;
+    pyos_->_remove_ref();
+  }
+private:
+  omniPy::Py_omniServant* pyos_;
+};
 
 
 PyObject*
@@ -532,12 +547,12 @@ extern "C" {
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyServant);
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
       {
 	omniPy::InterpreterUnlocker _u;
 	poa->set_servant(pyos);
-	pyos->_remove_ref();
       }
       Py_INCREF(Py_None);
       return Py_None;
@@ -561,17 +576,16 @@ extern "C" {
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyServant);
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
       PortableServer::ObjectId_var oid;
       {
 	omniPy::InterpreterUnlocker _u;
 	oid = poa->activate_object(pyos);
-	pyos->_remove_ref();
       }
-      PyObject* pyoid = PyString_FromStringAndSize((const char*)oid->NP_data(),
-						   oid->length());
-      return pyoid;
+      return PyString_FromStringAndSize((const char*)oid->NP_data(),
+					oid->length());
     }
     catch (PortableServer::POA::ServantAlreadyActive& ex) {
       return raisePOAException(pyPOA, "ServantAlreadyActive");
@@ -600,13 +614,13 @@ extern "C" {
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyServant);
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
       PortableServer::ObjectId oid(oidlen, oidlen, (CORBA::Octet*)oidstr, 0);
       {
 	omniPy::InterpreterUnlocker _u;
 	poa->activate_object_with_id(oid, pyos);
-	pyos->_remove_ref();
       }
       Py_INCREF(Py_None);
       return Py_None;
@@ -726,17 +740,16 @@ extern "C" {
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyServant);
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
       PortableServer::ObjectId_var oid;
       {
 	omniPy::InterpreterUnlocker _u;
 	oid = poa->servant_to_id(pyos);
-	pyos->_remove_ref();
       }
-      PyObject* pyoid = PyString_FromStringAndSize((const char*)oid->NP_data(),
-						   oid->length());
-      return pyoid;
+      return PyString_FromStringAndSize((const char*)oid->NP_data(),
+					oid->length());
     }
     catch (PortableServer::POA::ServantNotActive& ex) {
       return raisePOAException(pyPOA, "ServantNotActive");
@@ -760,6 +773,7 @@ extern "C" {
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyServant);
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
       CORBA::Object_ptr objref;
@@ -770,13 +784,7 @@ extern "C" {
       CORBA::Object_ptr lobjref =
 	omniPy::makeLocalObjRef(pyos->_mostDerivedRepoId(), objref);
 
-      PyObject* result =
-	omniPy::createPyCorbaObjRef(pyos->_mostDerivedRepoId(), lobjref);
-      {
-	omniPy::InterpreterUnlocker _u;
-	pyos->_remove_ref();
-      }
-      return result;
+      return omniPy::createPyCorbaObjRef(pyos->_mostDerivedRepoId(), lobjref);
     }
     catch (PortableServer::POA::ServantNotActive& ex) {
       return raisePOAException(pyPOA, "ServantNotActive");
@@ -866,9 +874,8 @@ extern "C" {
 	omniPy::InterpreterUnlocker _u;
 	oid = poa->reference_to_id(objref);
       }
-      PyObject* pyoid = PyString_FromStringAndSize((const char*)oid->NP_data(),
-						   oid->length());
-      return pyoid;
+      return PyString_FromStringAndSize((const char*)oid->NP_data(),
+					oid->length());
     }
     catch (PortableServer::POA::WrongAdapter& ex) {
       return raisePOAException(pyPOA, "WrongAdapter");
@@ -990,16 +997,11 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"O", &pyservant)) return 0;
 
     omniPy::Py_omniServant* pyos = omniPy::getServantForPyObject(pyservant);
-
     RAISE_PY_BAD_PARAM_IF(!pyos);
+    PYOSReleaseHelper _r(pyos);
 
     try {
-      PyObject* result = pyos->py_this();
-      {
-	omniPy::InterpreterUnlocker _u;
-	pyos->_remove_ref();
-      }
-      return result;
+      return pyos->py_this();
     }
     catch (PortableServer::POA::WrongPolicy& ex) {
       PyObject* pyPOA = PyObject_GetAttrString(omniPy::pyPortableServerModule,
