@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.19  1999/01/07 09:35:34  djr
+  Changes to support new TypeCode/Any implementation, which is now
+  placed in a new file ...DynSK.cc (by default).
+
   Revision 1.18  1998/10/16 11:26:21  sll
   Previously, if a fixed size union branch is followed by an array of union
   branch, the data member of the fixed size branch is not defined in the
@@ -159,11 +163,11 @@
 #define ADPT_CLASS_TEMPLATE  "_CORBA_ConstrType_Variable_OUT_arg"
 
 static void
-produce_disc_value(std::fstream &s,AST_ConcreteType *t,AST_Expression *exp,
-		   AST_Decl* used_in);
+produce_disc_value(std::fstream& s,AST_ConcreteType *t,AST_Expression *exp,
+		   AST_Decl* used_in, idl_bool use_fqname=I_FALSE);
 
 static void
-produce_default_value(o2be_union &u,std::fstream& s);
+produce_default_value(o2be_union& u,std::fstream& s);
 
 // added to address a problem with "default: break;" being generated when the
 // discriminator is a boolean:
@@ -294,7 +298,7 @@ is_array_of_fixed_size_union(o2be_operation::argType ntype, o2be_field* f)
 }
 
 void
-o2be_union::produce_hdr(std::fstream &s)
+o2be_union::produce_hdr(std::fstream& s)
 {
   // Front end erroneously lets Octet through as a
   // discriminator type. Catch here.
@@ -1113,10 +1117,10 @@ o2be_union::produce_hdr(std::fstream &s)
 
   IND(s); s << "\n";
   IND(s); s << "size_t NP_alignedSize(size_t initialoffset) const;\n";
-  IND(s); s << "void operator>>= (NetBufferedStream &) const;\n";
-  IND(s); s << "void operator<<= (NetBufferedStream &);\n";
-  IND(s); s << "void operator>>= (MemBufferedStream &) const;\n";
-  IND(s); s << "void operator<<= (MemBufferedStream &);\n\n";
+  IND(s); s << "void operator>>= (NetBufferedStream&) const;\n";
+  IND(s); s << "void operator<<= (NetBufferedStream&);\n";
+  IND(s); s << "void operator>>= (MemBufferedStream&) const;\n";
+  IND(s); s << "void operator<<= (MemBufferedStream&);\n\n";
 
   if (idl_global->compile_flags() & IDL_CF_ANY) {
     s << "#if defined(__GNUG__) || defined(__DECCXX)\n";
@@ -1320,7 +1324,7 @@ o2be_union::produce_hdr(std::fstream &s)
 
 
 void
-o2be_union::produce_skel(std::fstream &s)
+o2be_union::produce_skel(std::fstream& s)
 {
   s << "\n";
   {
@@ -1515,7 +1519,7 @@ o2be_union::produce_skel(std::fstream &s)
   IND(s); s << "}\n\n";
 
   IND(s); s << "void\n";
-  IND(s); s << fqname() << "::operator>>= (NetBufferedStream &_n) const\n";
+  IND(s); s << fqname() << "::operator>>= (NetBufferedStream& _n) const\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   {
@@ -1652,7 +1656,7 @@ o2be_union::produce_skel(std::fstream &s)
   IND(s); s << "}\n\n";
 
   IND(s); s << "void\n";
-  IND(s); s << fqname() << "::operator<<= (NetBufferedStream &_n)\n";
+  IND(s); s << fqname() << "::operator<<= (NetBufferedStream& _n)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   {
@@ -1740,7 +1744,7 @@ o2be_union::produce_skel(std::fstream &s)
   IND(s); s << "}\n\n";
   
   IND(s); s << "void\n";
-  IND(s); s << fqname() << "::operator>>= (MemBufferedStream &_n) const\n";
+  IND(s); s << fqname() << "::operator>>= (MemBufferedStream& _n) const\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   {
@@ -1877,7 +1881,7 @@ o2be_union::produce_skel(std::fstream &s)
   IND(s); s << "}\n\n";
 
   IND(s); s << "void\n";
-  IND(s); s << fqname() << "::operator<<= (MemBufferedStream &_n)\n";
+  IND(s); s << fqname() << "::operator<<= (MemBufferedStream& _n)\n";
   IND(s); s << "{\n";
   INC_INDENT_LEVEL();
   {
@@ -1966,7 +1970,7 @@ o2be_union::produce_skel(std::fstream &s)
 
 
 void
-o2be_union::produce_dynskel(std::fstream &s)
+o2be_union::produce_dynskel(std::fstream& s)
 {
   {
     // declare any constructor types defined in this scope
@@ -2120,7 +2124,7 @@ o2be_union::produce_binary_operators_in_hdr(std::fstream &s)
 
 
 void
-o2be_union::produce_binary_operators_in_dynskel(std::fstream &s)
+o2be_union::produce_binary_operators_in_dynskel(std::fstream& s)
 {
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
@@ -2226,8 +2230,7 @@ o2be_union::produce_binary_operators_in_dynskel(std::fstream &s)
   INC_INDENT_LEVEL();
   IND(s); s << fqname() << "* _u = (" << fqname() << "*)_desc->opq_union;\n";
   IND(s); s << "_u->pd__d = ("
-	    << o2be_name::narrow_and_produce_unambiguous_name(disc_type(),
-							      this)
+	    << o2be_name::narrow_and_produce_fqname(disc_type())
 	    << ")_discrim;\n";
   IND(s); s << "_u->pd__default = _is_default;\n";
   DEC_INDENT_LEVEL();
@@ -2278,7 +2281,7 @@ o2be_union::produce_binary_operators_in_dynskel(std::fstream &s)
 	  if (l->label_kind() == AST_UnionLabel::UL_label)
 	    {
 	      IND(s); s << "case ";
-	      produce_disc_value(s, disc_type(), l->label_val(), this);
+	      produce_disc_value(s, disc_type(), l->label_val(), this, I_TRUE);
 	      s << ":\n";
 	      INC_INDENT_LEVEL();
 	      char* val = new char[1 + 7 + strlen(ub->uqname())];
@@ -2397,7 +2400,7 @@ o2be_union::produce_binary_operators_in_dynskel(std::fstream &s)
 
 
 void
-o2be_union::produce_typecode_skel(std::fstream &s)
+o2be_union::produce_typecode_skel(std::fstream& s)
 {
   if( have_produced_typecode_skel() )  return;
   set_have_produced_typecode_skel();
@@ -2449,8 +2452,8 @@ o2be_union::produce_typecode_skel(std::fstream &s)
 	  AST_Decl* v = 
 	    AST_Enum::narrow_from_decl(ct)->lookup_by_value(l->label_val());
 	  s << o2be_name::narrow_and_produce_fqname(v);
-	}else
-	  produce_disc_value(s, disc_type(), l->label_val(), this);
+	} else
+	  produce_disc_value(s, disc_type(), l->label_val(), this, I_TRUE);
       } else {
 	// this label is default
 	s << "0";
@@ -2516,7 +2519,7 @@ o2be_union::produce_decls_at_global_scope_in_hdr(std::fstream& s)
 
 
 void
-o2be_union::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
+o2be_union::produce_typedef_hdr(std::fstream& s, o2be_typedef* tdef)
 {
   IND(s); s << "typedef " << unambiguous_name(tdef)
 	    << " " << tdef->uqname() << ";\n";
@@ -2656,7 +2659,7 @@ o2be_union::no_missing_disc_value()
 
 static
 void
-produce_default_value(o2be_union &u,std::fstream& s)
+produce_default_value(o2be_union& u,std::fstream& s)
 {
   AST_Decl* decl = u.disc_type();
   while (decl->node_type() == AST_Decl::NT_typedef)
@@ -2764,12 +2767,13 @@ produce_default_value(o2be_union &u,std::fstream& s)
   return;
 }
 
+
 static
 void
-produce_disc_value(std::fstream &s,AST_ConcreteType *t,AST_Expression *exp,
-		   AST_Decl* used_in)
+produce_disc_value(std::fstream& s, AST_ConcreteType* t,
+		   AST_Expression* exp, AST_Decl* used_in,
+		   idl_bool use_fqname)
 {
-
   if (t->node_type() != AST_Decl::NT_enum)
     {
       AST_Expression::AST_ExprValue *v = exp->ev();
@@ -2813,7 +2817,8 @@ produce_disc_value(std::fstream &s,AST_ConcreteType *t,AST_Expression *exp,
   else
     {
       AST_Decl* v = AST_Enum::narrow_from_decl(t)->lookup_by_value(exp);
-      s << o2be_name::narrow_and_produce_unambiguous_name(v,used_in);
+      s << o2be_name::narrow_and_produce_unambiguous_name(v, used_in,
+							  use_fqname);
     }
 }
 
