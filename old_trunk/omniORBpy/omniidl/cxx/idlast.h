@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.11  2000/03/06 15:15:54  dpg1
+// Minor bug fixes to omniidl. New -nf and -k flags.
+//
 // Revision 1.8.2.1  2000/03/06 15:03:48  dpg1
 // Minor bug fixes to omniidl. New -nf and -k flags.
 //
@@ -220,9 +223,9 @@ private:
   Comment*          comments_;
   Comment*          lastComment_;
 
+protected:
   static Decl*      mostRecent_;
 
-protected:
   Decl* next_;
   Decl* last_;
 };
