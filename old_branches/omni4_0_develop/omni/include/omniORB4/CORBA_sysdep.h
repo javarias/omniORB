@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.7  2001/04/18 17:50:45  sll
+ Big checkin with the brand new internal APIs.
+ Scoped where appropriate with the omni namespace.
+
  Revision 1.2.2.6  2000/11/15 19:16:30  sll
  Added provision to override default mapping of CORBA::WChar to C++ wchar_t.
 
@@ -439,7 +443,7 @@
    // Wide character size
 #  if defined(__linux__) || defined(__sunos__)
 #    define SIZEOF_WCHAR 4
-#  elif defined(__win32__)
+#  elif defined(__WIN32__)
 #    define SIZEOF_WCHAR 2
 #  else
 #    error "sizeof wchar_t not known for this platform"
