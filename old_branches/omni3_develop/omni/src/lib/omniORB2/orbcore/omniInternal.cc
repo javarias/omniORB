@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.6  1999/10/29 13:18:18  djr
+  Changes to ensure mutexes are constructed when accessed.
+
   Revision 1.1.2.5  1999/10/27 17:32:13  djr
   omni::internalLock and objref_rc_lock are now pointers.
 
@@ -411,8 +414,9 @@ omni::activateObject(omniServant* servant, omniObjAdapter* adapter,
 
   if( omniORB::trace(10) ) {
     omniORB::logger l;
-    l << "Activating: " << id << '\n';
-    if( objreflist )  l << " (has local refs).\n";
+    l << "Activating: " << id;
+    if( objreflist )  l << " (has local refs)";
+    l << '\n';
   }
 
   while( objreflist ) {
