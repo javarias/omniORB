@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.13  2001/09/20 09:27:44  dpg1
+ Remove assertion failure on exit if not all POAs are deleted.
+
  Revision 1.2.2.12  2001/08/21 11:02:16  sll
  orbOptions handlers are now told where an option comes from. This
  is necessary to process DefaultInitRef and InitRef correctly.
@@ -218,7 +221,7 @@ omniObjAdapter::initialise()
 						   (*i)->no_publish,
 						   (*i)->no_listen);
 	if (!address) {
-	  if (omniORB::trace(0)) {
+	  if (omniORB::trace(1)) {
 	    omniORB::logger log;
 	    log << "Error: Unable to create an endpoint of this description: "
 		<< (const char*)(*i)->uri
@@ -245,7 +248,7 @@ omniObjAdapter::initialise()
       const char* address = instantiate_endpoint(estr,0,0);
 
       if (!address) {
-	if (omniORB::trace(0)) {
+	if (omniORB::trace(1)) {
 	  omniORB::logger log;
 	  log << "Error: Unable to create an endpoint of this description: "
 	      << (const char*)estr
@@ -264,6 +267,9 @@ omniObjAdapter::initialise()
       omniInitialReferences::initialise_bootstrap_agentImpl();
   }
   catch (const CORBA::INITIALIZE&) {
+    throw;
+  }
+  catch (omniORB::fatalException&) {
     throw;
   }
   catch (...) {

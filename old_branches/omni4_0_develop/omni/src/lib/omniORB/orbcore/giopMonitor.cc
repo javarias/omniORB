@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/07/31 16:36:01  sll
+  Added GIOP BiDir support.
+
 */
 
 #include <omniORB4/CORBA.h>
@@ -55,7 +58,7 @@ giopMonitor::execute() {
   catch(...) {
     // Catch all unexpected error conditions. Reach here means that we
     // should not continue!
-    if( omniORB::trace(0) ) {
+    if( omniORB::trace(1) ) {
       omniORB::logger l;
       l << "Unexpected exception caught by giopMonitor\n";
     }

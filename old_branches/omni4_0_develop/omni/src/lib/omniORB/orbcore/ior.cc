@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.10.2.19  2002/03/14 14:39:44  dpg1
+  Obscure bug in objref creation with unaligned buffers.
+
   Revision 1.10.2.18  2002/01/02 18:17:00  dpg1
   Relax IOR strictness when strictIIOP not set.
 
@@ -787,7 +790,7 @@ omniIOR::unmarshal_TAG_OMNIORB_UNIX_TRANS(const IOP::TaggedComponent& c ,
   // Check if we are on the same host and hence can use unix socket.
   char self[64];
   if (gethostname(&self[0],64) == RC_SOCKET_ERROR) {
-    if (omniORB::trace(0)) {
+    if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "Cannot get the name of this host\n";
     }
@@ -1070,7 +1073,7 @@ omniIOR::add_TAG_OMNIORB_UNIX_TRANS(const char* filename) {
 
   char self[64];
   if (gethostname(&self[0],64) == RC_SOCKET_ERROR) {
-    if (omniORB::trace(0)) {
+    if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "Cannot get the name of this host\n";
     }

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2001/09/12 19:43:19  sll
+  Enforce GIOP message size limit.
+
   Revision 1.1.4.12  2001/09/10 17:46:10  sll
   When a connection is broken, check if it has been shutdown orderly. If so,
   do a retry.
@@ -991,7 +994,7 @@ giopImpl12::getInputData(giopStream* g,omni::alignment_t align,size_t sz) {
 	}
 	// Very bad. Should never happen given our invariant.
 	{
-	  if( omniORB::trace(0) ) {
+	  if( omniORB::trace(1) ) {
 	    omniORB::logger l;
 	    l << "Fatal error in unmarshalling message from "
 	      << g->pd_strand->connection->peeraddress()
@@ -1081,7 +1084,7 @@ giopImpl12::copyInputData(giopStream* g,void* b, size_t sz,
       }
       // Very bad. Should never happen given our invariant.
       {
-	if( omniORB::trace(0) ) {
+	if( omniORB::trace(1) ) {
 	  omniORB::logger l;
 	  l << "Fatal error in unmarshalling message from "
 	    << g->pd_strand->connection->peeraddress()
