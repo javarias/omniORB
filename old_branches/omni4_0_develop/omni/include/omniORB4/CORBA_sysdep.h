@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.12  2001/06/21 11:35:17  sll
+ Define size of wchar_t for freebsd and darwin.
+
  Revision 1.2.2.11  2001/06/20 18:39:03  sll
  On solaris with gcc 3.0, there is no need to provide a prototype for
  gethostname.
@@ -873,12 +876,6 @@
 #ifndef OMNI_CONSTRTYPE_FIX_VAR
 // Only used when the source tree is patched with DEC C++ 5.6 workarounds
 #define OMNI_CONSTRTYPE_FIX_VAR(T) typedef T::_var_type T##_var;
-#endif
-
-#ifndef USE_omniORB_logStream
-// New stubs use omniORB::logStream. Old stubs still need cerr. Include
-// the necessary iostream header if that is the case.
-#include <iostream.h>
 #endif
 
 // #define ENABLE_CLIENT_IR_SUPPORT
