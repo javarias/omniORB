@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18  2000/03/07 10:35:14  dpg1
+// More sensible idea of the "most recent" declaration.
+//
 // Revision 1.14.2.2  2000/03/07 10:31:26  dpg1
 // More sensible idea of the "most recent" declaration.
 //
@@ -125,13 +128,15 @@ void
 Comment::
 append(const char* commentText)
 {
-  assert(mostRecent_);
-  char* newText = new char[(strlen(mostRecent_->commentText_) +
-			    strlen(commentText) + 1)];
-  strcpy(newText, mostRecent_->commentText_);
-  strcat(newText, commentText);
-  delete [] mostRecent_->commentText_;
-  mostRecent_->commentText_ = newText;
+  if (Config::keepComments) {
+    assert(mostRecent_);
+    char* newText = new char[(strlen(mostRecent_->commentText_) +
+			      strlen(commentText) + 1)];
+    strcpy(newText, mostRecent_->commentText_);
+    strcat(newText, commentText);
+    delete [] mostRecent_->commentText_;
+    mostRecent_->commentText_ = newText;
+  }
 }
 
 
