@@ -290,7 +290,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setRepoId(r_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 
@@ -338,7 +338,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setVersion(a_, i_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 

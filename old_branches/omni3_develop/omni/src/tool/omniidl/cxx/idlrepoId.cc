@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.3  1999/11/08 10:50:47  dpg1
+// Change to behaviour when files end inside a scope.
+//
 // Revision 1.2  1999/11/02 17:07:25  dpg1
 // Changes to compile on Solaris.
 //
@@ -287,7 +290,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setRepoId(r_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 
@@ -335,7 +338,7 @@ public:
   void visitUnionCase    (UnionCase* d)    { error(d); }
   void visitEnumerator   (Enumerator* d)   { error(d); }
   void visitAttribute    (Attribute* d)    { error(d); }
-  void visitOperation    (Operation* d)    { error(d); }
+  void visitOperation    (Operation* d)    { d->setVersion(a_, i_, f_, l_); }
   void visitStateMember  (StateMember* d)  { error(d); }
   void visitFactory      (Factory* d)      { error(d); }
 
