@@ -27,9 +27,11 @@
 // Description:
 //      Implementation of type any
 
-
 /*
  * $Log$
+ * Revision 1.19.2.7  2001/04/19 09:14:16  sll
+ * Scoped where appropriate with the omni namespace.
+ *
  * Revision 1.19.2.6  2001/03/13 10:32:05  dpg1
  * Fixed point support.
  *
@@ -927,6 +929,43 @@ CORBA::Any::operator>>=(to_object o) const
   tcd.p_objref.setObjectPtr = _0RL_tcParser_objref_setObjectPtr;
   return pdAnyP()->getObjRef(tcd);
 }
+
+static
+void delete_object(void* data) {
+  CORBA::release((CORBA::Object_ptr)data);
+}
+
+
+CORBA::Boolean
+CORBA::Any::operator>>=(CORBA::Object_ptr& obj) const
+{
+  CORBA::Object_ptr sp = (CORBA::Object_ptr) PR_getCachedData();
+  if (sp == 0) {
+    tcDescriptor tcd;
+    CORBA::Object_var tmp;
+    _0RL_buildDesc_cCORBA_mObject(tcd, tmp);
+    if( PR_unpackTo(CORBA::_tc_Object, &tcd) ) {
+      if (!omniORB::omniORB_27_CompatibleAnyExtraction) {
+        ((CORBA::Any*)this)->PR_setCachedData((void*)(CORBA::Object_ptr)tmp,
+					      delete_object);
+      }
+      obj = tmp._retn();
+      return 1;
+    } else {
+      obj = CORBA::Object::_nil(); return 0;
+    }
+  }
+  else {
+    CORBA::TypeCode_var tc = type();
+    if (tc->equivalent(CORBA::_tc_Object)) {
+      obj = sp; return 1;
+    }
+    else {
+      obj = CORBA::Object::_nil(); return 0;
+    }
+  }
+}
+
 
 
 void
