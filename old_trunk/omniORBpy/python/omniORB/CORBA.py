@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.19  2000/03/03 17:41:28  dpg1
+# Major reorganisation to support omniORB 3.0 as well as 2.8.
+#
 # Revision 1.17  2000/01/31 10:51:42  dpg1
 # Fix to exception throwing.
 #
@@ -91,7 +94,7 @@
 import _omnipy
 import omniORB
 
-import threading, types, exceptions, time
+import threading, types, time
 
 
 #############################################################################
@@ -111,7 +114,7 @@ FALSE = 0
 #                                                                           #
 #############################################################################
 
-class Exception (exceptions.Exception):
+class Exception:
     pass
 
 # Completion status:
