@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/01/06 23:10:12  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.3  2003/11/06 11:56:57  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -649,7 +652,7 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 
       if (omniORB::trace(25)) {
 	omniORB::logger log;
-	log << " recieve codeset service context and set TCS to ("
+	log << " receive codeset service context and set TCS to ("
 	    << ((tcs_c) ? tcs_c->name() : "none") << "," 
 	    << ((tcs_w) ? tcs_w->name() : "none") << ")\n";
       }
