@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.16  2002/09/21 23:27:11  dgrisby
+# New omniORB.any helper module.
+#
 # Revision 1.28.2.15  2002/06/11 20:21:31  dgrisby
 # Missed out wchar, wstring TypeCodes.
 #
@@ -525,6 +528,12 @@ class ORB:
 
     def create_string_tc(self, bound):
         return tcInternal.createStringTC(bound)
+
+    def create_wstring_tc(self, bound):
+        return tcInternal.createWStringTC(bound)
+
+    def create_fixed_tc(self, digits, scale):
+        return tcInternal.createFixedTC(digits, scale)
 
     def create_sequence_tc(self, bound, element_type):
         return tcInternal.createSequenceTC(bound, element_type)

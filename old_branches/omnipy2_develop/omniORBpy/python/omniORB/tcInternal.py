@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.10.2.6  2002/06/11 20:21:31  dgrisby
+# Missed out wchar, wstring TypeCodes.
+#
 # Revision 1.10.2.5  2002/05/27 01:02:37  dgrisby
 # Fix bug with scope lookup in generated code. Fix TypeCode clean-up bug.
 #
@@ -237,6 +240,14 @@ def createInterfaceTC(id, name):
 
 def createStringTC(bound):
     d = (tv_string, bound)
+    return createTypeCode(d)
+
+def createWStringTC(bound):
+    d = (tv_wstring, bound)
+    return createTypeCode(d)
+
+def createFixedTC(digits, scale):
+    d = (tv_fixed, digits, scale)
     return createTypeCode(d)
 
 def createSequenceTC(bound, element_type):
