@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2000/11/03 19:12:06  sll
+  Use new marshalling functions for byte, octet and char. Use get_octet_array
+  instead of get_char_array and put_octet_array instead of put_char_array.
+
   Revision 1.1.4.1  2000/09/27 17:30:29  sll
   *** empty log message ***
 
@@ -64,6 +68,7 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/omniInterceptors.h>
 #include <giopStreamImpl.h>
 #include <ropeFactory.h>
 #include <tcpSocket.h>
@@ -134,23 +139,25 @@ private:
   public:
     marshalRequestHeader(omniIOR* ior,
 			 const char* op,size_t opsz,CORBA::Boolean w,
-			 CORBA::Boolean resp, CORBA::ULong req) :
+			 CORBA::Boolean resp, CORBA::ULong req,
+			 const IOP::ServiceContextList& svc) :
       end_of_data(0),
       pd_ior(ior), pd_op(op), pd_opsize(opsz), pd_oneway(w),
       pd_response_expected(resp),
-      pd_request_id(req) {}
+      pd_request_id(req), pd_service_context(svc) {}
 
     void marshal(cdrStream&);
 
     void* end_of_data;
 
   private:
-    omniIOR*         pd_ior;
-    const char*      pd_op;
-    size_t           pd_opsize;
-    CORBA::Boolean   pd_oneway;
-    CORBA::Boolean   pd_response_expected;
-    CORBA::ULong     pd_request_id;
+    omniIOR*                       pd_ior;
+    const char*                    pd_op;
+    size_t                         pd_opsize;
+    CORBA::Boolean                 pd_oneway;
+    CORBA::Boolean                 pd_response_expected;
+    CORBA::ULong                   pd_request_id;
+    const IOP::ServiceContextList& pd_service_context;
 
     marshalRequestHeader();
     marshalRequestHeader(const marshalRequestHeader&);
@@ -233,14 +240,22 @@ public:
 					CORBA::Boolean oneway,
 					CORBA::Boolean response_expected)
   {
-    // XXX Call interceptor(s) 
+    omniInterceptors::clientSendRequest_T::info_T info(*g,
+						       *ior,
+						       opname,
+						       oneway,
+						       response_expected);
+
+    omniORB::getInterceptors()->clientSendRequest.visit(info);
 
     g->pd_output_at_most_once = oneway;
 
     g->pd_request_id = g->pd_strand->sequenceNumber();
     marshalRequestHeader marshaller(ior,opname,opnamesize,oneway,
 				    response_expected,
-				    g->pd_request_id);
+				    g->pd_request_id,
+				    info.service_contexts);
+
     outputMessageBegin(g,requestHeader,&marshaller);
 
     if (!g->pd_output_msgsent_size) {
@@ -400,7 +415,7 @@ public:
       if (g->pd_output_header_marshaller) {
 	// We are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	cdrCountingStream s(12);
+	cdrCountingStream s(g->TCS_C(),g->TCS_W(),12);
 	g->pd_output_header_marshaller->marshal(s);
 	g->pd_output_msgfrag_size  = s.total();
       }
@@ -480,7 +495,7 @@ public:
       if (g->pd_output_header_marshaller) {
 	// Now we are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	cdrCountingStream s(12);
+	cdrCountingStream s(g->TCS_C(),g->TCS_W(),12);
 	g->pd_output_header_marshaller->marshal(s);
 	g->pd_output_msgfrag_size = fragsz = s.total();
       }
@@ -1193,7 +1208,8 @@ public:
     case GIOP::Request:
       {
 	unmarshalRequestHeader(g,r);
-	// XXX Call interceptor(s);
+	omniInterceptors::serverReceiveRequest_T::info_T info(*g,r);
+	omniORB::getInterceptors()->serverReceiveRequest.visit(info);
 	break;
       }
     case GIOP::LocateRequest:
@@ -1423,15 +1439,7 @@ private:
     op[vl-1] = '\0';
 
     // Service context
-    CORBA::ULong svcccount;
-    CORBA::ULong svcctag;
-    CORBA::ULong svcctxtsize;
-    svcccount <<= s;
-    while (svcccount-- > 0) {
-      svcctag <<= s;
-      svcctxtsize <<= s;
-      s.skipInput(svcctxtsize);
-    }
+    r.service_contexts() <<= s;
 
     if (giop_1_2_singleton->inputRemaining(g))
       s.alignInput(omni::ALIGN_8);
@@ -1562,7 +1570,7 @@ void giop_1_2_Impl::marshalRequestHeader::marshal(cdrStream& s)
   s.put_octet_array((CORBA::Octet*) pd_op, pd_opsize);
 
     // Service context
-  ::operator>>=((CORBA::ULong)0,s);
+  pd_service_context >>= s;
 
   end_of_data = s.PR_get_outb_mkr();
 

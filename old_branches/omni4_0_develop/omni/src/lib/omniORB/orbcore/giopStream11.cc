@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2000/11/03 19:12:06  sll
+  Use new marshalling functions for byte, octet and char. Use get_octet_array
+  instead of get_char_array and put_octet_array instead of put_char_array.
+
   Revision 1.1.4.1  2000/09/27 17:30:29  sll
   *** empty log message ***
 
@@ -47,6 +51,7 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/omniInterceptors.h>
 #include <giopStreamImpl.h>
 #include <initialiser.h>
 
@@ -112,18 +117,21 @@ private:
   public:
     marshalRequestHeader(omniIOR* ior,
 			 const char* op,size_t opsz,_CORBA_Boolean w,
-			 CORBA::ULong req) :
+			 CORBA::ULong req,
+			 const IOP::ServiceContextList& svc) :
       pd_ior(ior), pd_op(op), pd_opsize(opsz), pd_response_expected(w),
-      pd_request_id(req) {}
+      pd_request_id(req), pd_service_context(svc) {}
 
     void marshal(cdrStream&);
 
   private:
-    omniIOR*         pd_ior;
-    const char*      pd_op;
-    size_t           pd_opsize;
-    CORBA::Boolean   pd_response_expected;
-    CORBA::ULong     pd_request_id;
+    omniIOR*                       pd_ior;
+    const char*                    pd_op;
+    size_t                         pd_opsize;
+    CORBA::Boolean                 pd_response_expected;
+    CORBA::ULong                   pd_request_id;
+    const IOP::ServiceContextList& pd_service_context;
+
 
     marshalRequestHeader();
     marshalRequestHeader(const marshalRequestHeader&);
@@ -199,14 +207,21 @@ public:
 					CORBA::Boolean oneway,
 					CORBA::Boolean response_expected)
   {
-    // XXX Call interceptor(s) 
+    omniInterceptors::clientSendRequest_T::info_T info(*g,
+						       *ior,
+						       opname,
+						       oneway,
+						       response_expected);
+
+    omniORB::getInterceptors()->clientSendRequest.visit(info);
 
     g->pd_output_at_most_once = oneway;
 
     g->pd_request_id = g->pd_strand->sequenceNumber();
     marshalRequestHeader marshaller(ior,opname,opnamesize,
 				    (oneway?0:response_expected),
-				    g->pd_request_id);
+				    g->pd_request_id,
+				    info.service_contexts);
     outputMessageBegin(g,requestHeader,&marshaller);
     
     return g->pd_request_id;
@@ -320,7 +335,7 @@ public:
       if (g->pd_output_header_marshaller) {
 	// We are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	cdrCountingStream s(12);
+	cdrCountingStream s(g->TCS_C(),g->TCS_W(),12);
 	g->pd_output_header_marshaller->marshal(s);
 	g->pd_output_msgfrag_size  = s.total();
       }
@@ -390,7 +405,7 @@ public:
       if (g->pd_output_header_marshaller) {
 	// Now we are given a callback object to work out the size of the
 	// message. We call this method to determine the size.
-	cdrCountingStream s(12);
+	cdrCountingStream s(g->TCS_C(),g->TCS_W(),12);
 	g->pd_output_header_marshaller->marshal(s);
 	g->pd_output_msgfrag_size = fragsz = s.total();
       }
@@ -936,7 +951,8 @@ public:
     case GIOP::Request:
       {
 	unmarshalRequestHeader(g,r);
-	// XXX Call interceptor(s);
+	omniInterceptors::serverReceiveRequest_T::info_T info(*g,r);
+	omniORB::getInterceptors()->serverReceiveRequest.visit(info);
 	break;
       }
     case GIOP::LocateRequest:
@@ -1137,15 +1153,7 @@ private:
     cdrStream& s = *g;
 
     // Service context
-    CORBA::ULong svcccount;
-    CORBA::ULong svcctag;
-    CORBA::ULong svcctxtsize;
-    svcccount <<= s;
-    while (svcccount-- > 0) {
-      svcctag <<= s;
-      svcctxtsize <<= s;
-      s.skipInput(svcctxtsize);
-    }
+    r.service_contexts() <<= s;
 
     CORBA::ULong   vl;
     CORBA::Boolean vb;
@@ -1310,7 +1318,7 @@ private:
 void giop_1_1_Impl::marshalRequestHeader::marshal(cdrStream& s)
 {
     // Service context
-  ::operator>>=((CORBA::ULong)0,s);
+  pd_service_context >>= s;
 
   pd_request_id >>= s;
 
