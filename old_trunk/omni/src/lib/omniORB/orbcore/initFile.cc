@@ -29,6 +29,13 @@
 
 /*
   $Log$
+  Revision 1.24  1998/08/21 19:11:36  sll
+  Now store the initial object reference to the NameService into
+  omniInitialReferences::singleton().
+  Recognise new keys: ORBInitialHost and ORBInitialPort. Call into
+  omniInitialReferences::singleton() to register the host+port where the
+  special bootstrapping agent can be located.
+
   Revision 1.23  1998/08/14 13:47:39  sll
   Added pragma hdrstop to control pre-compile header if the compiler feature
   is available.
@@ -137,6 +144,11 @@ initFile::~initFile()
   if (fData) {
     delete [] fData;
   }
+#if defined(NTArchitecture)
+  if (use_registry) {
+    RegCloseKey(init_hkey);
+  }
+#endif
 }
 
 
