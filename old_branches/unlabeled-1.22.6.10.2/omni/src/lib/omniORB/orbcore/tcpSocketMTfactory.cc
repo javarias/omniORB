@@ -29,6 +29,15 @@
 
 /*
   $Log$
+  Revision 1.22.6.10.2.7  2000/05/24 20:16:54  djs
+  * Restructured connections -> thread mapping code
+        (tcpSocketMTImpl.cc tcpSocketMTInterface.h)
+  * Added extra command line options:
+        -ORBconcurrencyModel {tpc, q, lf}    (tpc = Thread Per Connection
+                                              q   = Queue-based Thread Pool
+                                              lf  = Leader-Follower Thread Pool)
+        -ORBthreadPoolSize <n>
+
   Revision 1.22.6.10.2.6  2000/05/19 14:55:21  djs
   Preliminary instance of leader-follow pattern
 
@@ -214,11 +223,11 @@
 // include the polling code
 #include "event.h"
 #include "poll.h"
-#endif
 
 // we need semaphores to modify data in a signal handler
 // (not on sparc though)
 #include <semaphore.h>
+#endif /* OLD */
 
 #if defined(__WIN32__)
 
