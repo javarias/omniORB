@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2002/01/09 11:37:46  dpg1
+  Platform, constness fixes.
+
   Revision 1.1.2.6  2001/08/24 16:46:36  sll
   Use WSAIoctl SIO_ADDRESS_LIST_QUERY to get the address of the
   IP address of all network interfaces.
@@ -277,6 +280,21 @@ void unix_get_ifinfo(omnivector<const char*>& ifaddrs) {
 
 /////////////////////////////////////////////////////////////////////////
 #if defined(NTArchitecture)
+
+#if defined(__ETS_KERNEL__)
+extern "C" int WSAAPI ETS_WSAIoctl(
+  SOCKET s,
+  DWORD dwIoControlCode,
+  LPVOID lpvInBuffer,
+  DWORD cbInBuffer,
+  LPVOID lpvOutBuffer,
+  DWORD cbOutBuffer,
+  LPDWORD lpcbBytesReturned,
+  LPWSAOVERLAPPED lpOverlapped,
+  LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine
+);
+#define WSAIoctl ETS_ESAIoctl
+#endif
 
 static
 void win32_get_ifinfo(omnivector<const char*>& ifaddrs) {

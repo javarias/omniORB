@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2001/08/24 16:45:42  sll
+  Switch to use Winsock 2. Moved winsock initialisation to this module.
+
   Revision 1.1.2.10  2001/08/23 16:00:50  sll
   Added method in giopTransportImpl to return the addresses of the host
   interfaces.
@@ -386,32 +389,42 @@ public:
     if (once) return;
 
 #ifdef __WIN32__
-
     // Initialize WinSock:
 
     WORD versionReq;
     WSADATA wData;
+#ifdef __ETS_KERNEL__
+    versionReq = MAKEWORD(1, 1);  // ETS kernel only supports 1.1
+#else
     versionReq = MAKEWORD(2, 0);  // Must use 2.2 in order to use
                                   // SIO_ADDRESS_LIST_QUERY
+#endif
 
     int rc = WSAStartup(versionReq, &wData);
 
     if (rc != 0) {
-	    // Couldn't find a usable DLL.
-	    OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
-	                  CORBA::COMPLETED_NO);
-	  }
+      // Couldn't find a usable DLL.
+      OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
+		    CORBA::COMPLETED_NO);
+    }
 
     // Confirm that the returned Windows Sockets DLL supports 2.0
 
+#ifdef __ETS_KERNEL__
+    // Confirm that the returned Windows Sockets DLL supports 1.1
+
+    if ( LOBYTE( wData.wVersion ) != 1 ||
+         HIBYTE( wData.wVersion ) != 1 )  {
+#else
     if ( LOBYTE( wData.wVersion ) != 2 ||
          HIBYTE( wData.wVersion ) != 0 )  {
-	    // Couldn't find a usable DLL
-	    WSACleanup();
-	    OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
-		                 CORBA::COMPLETED_NO);
-    }
+#endif
 
+      // Couldn't find a usable DLL
+      WSACleanup();
+      OMNIORB_THROW(INITIALIZE,INITIALIZE_FailedLoadLibrary,
+		    CORBA::COMPLETED_NO);
+    }
 #endif
 
     giopTransportImpl* impl = implHead();

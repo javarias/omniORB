@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/21 11:02:18  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
   Revision 1.1.2.4  2001/08/20 16:39:19  dpg1
   Correct spelling mistake :-)
 
@@ -49,6 +53,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#define WIN32_LEAN_AND_MEAN
+
 #include <windows.h>
 #include <winreg.h>
 
