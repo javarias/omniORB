@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2002/04/29 11:52:51  dgrisby
+  More fixes for FreeBSD, Darwin, Windows.
+
   Revision 1.1.2.11  2002/04/28 20:43:25  dgrisby
   Windows, FreeBSD, ETS fixes.
 
@@ -86,6 +89,7 @@
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 
 #include <omniORB4/linkHacks.h>
