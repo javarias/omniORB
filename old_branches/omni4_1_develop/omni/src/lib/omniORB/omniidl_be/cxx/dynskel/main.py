@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.16.2.1  2003/03/23 21:02:40  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.14.2.10  2001/11/27 14:37:25  dpg1
 # long double TC descriptor.
 #
@@ -1126,4 +1129,5 @@ def visitException(node):
     finishingNode()
 
 
-
+def visitValue(node):
+    print "*** visitValue dynskel main"

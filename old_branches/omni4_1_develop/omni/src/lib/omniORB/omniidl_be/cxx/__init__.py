@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23.2.1  2003/03/23 21:02:43  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.20.2.7  2002/09/03 09:32:57  dgrisby
 # C++ back-end bails out if asked to compile more than one file.
 #
@@ -182,13 +185,12 @@ usage_string = """\
   -Wbold_prefix     Map C++ reserved words with prefix _
   -Wbinline         Generate code for #included files inline with the main file
   -Wbkeep_inc_path  Preserve IDL #include path in header #includes
-  -Wbuse_quotes     Use quotes in #includes: \"foo\" rather than <foo>"""
+  -Wbuse_quotes     Use quotes in #includes: "foo" rather than <foo>"""
 
 # Encountering an unknown AST node will cause an AttributeError exception
 # to be thrown in one of the visitors. Store a list of those not-supported
 # so we can produce a friendly error message later.
-AST_unsupported_nodes = [ "Native", "StateMember", "Factory", "ValueForward",
-                          "ValueBox", "ValueAbs", "Value" ]
+AST_unsupported_nodes = [ "Native" ]
 
 def process_args(args):
     for arg in args:

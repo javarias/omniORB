@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.1  2003/03/23 21:02:42  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.1.4.13  2003/01/14 11:48:16  dgrisby
 # Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 #
@@ -489,6 +492,8 @@ class CallDescriptor:
                     holder = holder + "_slice*"
                 if h_is_ptr:
                     holder = holder + "*"
+                if argtype.value() or argtype.valuebox():
+                    holder = holder + "*"
                 data_members.append(holder + " " + holder_n + ";")
 
         if self.__has_return_value:
@@ -601,10 +606,12 @@ class CallDescriptor:
                 d_type = argtype.deref(1)
                 if argtype.array():
                     alloc = argtype.base() + "_alloc()"
-                elif not (d_type.typecode() or \
-                          d_type.string() or \
-                          d_type.wstring() or \
-                          d_type.objref()):
+                elif not (d_type.typecode() or
+                          d_type.string()   or
+                          d_type.wstring()  or
+                          d_type.objref()   or
+                          d_type.value()    or
+                          d_type.valuebox()):
                     alloc = "new " + argtype.base()
                 if alloc != "":
                     marshal_block.out(storage_n + " = " + alloc + ";")
@@ -654,7 +661,9 @@ class CallDescriptor:
                 elif not (d_type.typecode() or \
                           d_type.string() or \
                           d_type.wstring() or \
-                          d_type.objref()):
+                          d_type.objref() or \
+                          d_type.value() or \
+                          d_type.valuebox()):
                     alloc = "new " + argtype.base()
                 if alloc != "":
                     marshal_block.out(argname + " = " + alloc + ";")
@@ -681,7 +690,9 @@ class CallDescriptor:
                     elif not (d_type.typecode() or \
                               d_type.string() or \
                               d_type.wstring() or \
-                              d_type.objref()):
+                              d_type.objref() or \
+                              d_type.value() or \
+                              d_type.valuebox()):
                         alloc = "new " + argtype.base()
                     if alloc != "":
                         marshal_block.out(arg_n + " = " + alloc + ";")
@@ -703,11 +714,10 @@ class CallDescriptor:
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n"+ \
                                       "*" + arg_n + " = " + \
                                       "(char*) _CORBA_String_helper::empty_string;")
-                elif d_type.string():
-                    # XXX the empty string constant may be wrong.
+                elif d_type.wstring():
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n" + \
                                       "*" + arg_n + " = " + \
-                                      "(CORBA::WChar*) _CORBA_WString_helper::empty_string;")
+                                      "(CORBA::WChar*) _CORBA_WString_helper::empty_wstring;")
                 arg_n = "*" + arg_n
             skutil.unmarshall(marshal_block, None,
                               argtype, None, arg_n, "_n")
@@ -817,6 +827,8 @@ _arg_mapping = {
     idltype.tk_any:
     ( ((1,1),(0,1)), ((0,0),(1,1)), ((0,1),(0,1)), ((0,0),(1,1)) ),
     idltype.tk_value:
+    ( ((0,0),(0,1)), ((0,0),(1,1)), ((0,1),(0,1)), ((0,0),(1,1)) ),
+    idltype.tk_value_box:
     ( ((0,0),(0,1)), ((0,0),(1,1)), ((0,1),(0,1)), ((0,0),(1,1)) ),
     }
 

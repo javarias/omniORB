@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19.2.1  2003/03/23 21:02:39  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.16.2.8  2001/11/14 17:13:43  dpg1
 # Long double support.
 #
@@ -882,3 +885,7 @@ static CORBA::TypeCode_ptr @mangled_name@ = CORBA::TypeCode::PR_exception_tc("@r
 
 
     finishingNode()
+
+def visitValue(node):
+    print "*** value typecode"
+

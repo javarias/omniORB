@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.1  2003/03/23 21:02:38  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.33.2.14  2001/10/29 17:42:39  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -268,6 +271,7 @@ import string
 
 from omniidl import idlast, idltype, idlutil
 from omniidl_be.cxx import output, config, id, types, iface, cxx, ast, util
+from omniidl_be.cxx import value
 from omniidl_be.cxx.header import template
 
 import defs
@@ -390,7 +394,7 @@ def visitInterface(node):
 
     # Output the this interface's corresponding class
     stream.out(template.interface_type,
-               name = id.mapID(node.identifier()),
+               name = cxx_name,
                Other_IDL = Other_IDL)
 
     _objref_I = iface.instance("_objref_I")(I)
@@ -1450,13 +1454,13 @@ def visitUnion(node):
                                name = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+
                 elif d_caseType.typecode():
                     stream.out(template.union_typecode,
                                name = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
-                
-                    
+                                    
                 elif isinstance(d_caseType.type(), idltype.Base) or \
                      d_caseType.enum():
                     # basic type
@@ -1471,11 +1475,13 @@ def visitUnion(node):
                                name = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+
                 elif d_caseType.wstring():
                     stream.out(template.union_wstring,
                                name = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+
                 elif d_caseType.objref():
                     scopedName = d_caseType.type().decl().scopedName()
 
@@ -1493,6 +1499,7 @@ def visitUnion(node):
                                Helper_name = Helper_name,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+
                 elif caseType.typedef() or d_caseType.struct() or \
                      d_caseType.union():
                     stream.out(template.union_constructed,
@@ -1508,6 +1515,10 @@ def visitUnion(node):
                                member = member,
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
+
+                elif d_caseType.value():
+                    # *** HERE
+                    pass
 
                 else:
                     util.fatalError("Unknown union case type encountered")
@@ -1650,3 +1661,7 @@ def visitEnum(node):
                    qualifier = qualifier, name = name)
     
     return
+
+def visitValue(node):
+    v = value.getValueType(node)
+    v.module_decls(stream, self)

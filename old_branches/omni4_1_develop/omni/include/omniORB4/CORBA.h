@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.2  2003/09/26 16:12:53  dgrisby
+ Start of valuetype support.
+
  Revision 1.5.2.1  2003/03/23 21:04:26  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -441,6 +444,7 @@ extern void _omni_set_NameService(CORBA::Object_ptr);
 
 #include <omniORB4/omniORB.h>
 #include <omniORB4/proxyFactory.h>
+#include <omniORB4/valueType.h>
 
 #include <omniORB4/templatedefns.h>
 #include <omniORB4/corba_operators.h>

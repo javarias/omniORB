@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.17.2.1  2003/03/23 21:02:42  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.14.2.6  2002/09/03 09:32:57  dgrisby
 # C++ back-end bails out if asked to compile more than one file.
 #
@@ -62,7 +65,7 @@ class ConfigurationState:
             # Useful data from CVS
             'CVS ID':                '$Id$',
             # Relevant omniORB C++ library version
-            'Library Version':       'omniORB_4_0',
+            'Library Version':       'omniORB_4_1',
             # Suffix of generated header file
             'HH Suffix':             '.hh',
             # Suffix of generated Skeleton file

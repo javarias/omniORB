@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.1  2003/03/23 21:02:40  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.14.2.4  2002/09/03 09:32:57  dgrisby
 # C++ back-end bails out if asked to compile more than one file.
 #
@@ -183,9 +186,6 @@ the webpage:
 def unsupportedIDL():
     e = """\
 Unsupported IDL construct encountered in input.
-
-omniORB does not currently support:
-  IDL type valuetype
 """
     fatalError(e)
     

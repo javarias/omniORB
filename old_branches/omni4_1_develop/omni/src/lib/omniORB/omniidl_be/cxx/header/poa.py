@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.1  2003/03/23 21:02:36  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.17.2.4  2001/10/29 17:42:40  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -274,3 +277,9 @@ def visitMember(node):
     pass
 def visitException(node):
     pass
+
+def visitValue(node):
+    from omniidl_be.cxx import value
+    v = value.getValueType(node)
+
+    v.poa_module_decls(stream, self)

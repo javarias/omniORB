@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.1  2003/03/23 21:02:41  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.1.4.12  2003/03/03 15:02:30  dgrisby
 # -Wbvirtual_objref option went astray. Thanks Malge Nishant.
 #
@@ -187,7 +190,6 @@ class Class(cxx.Class):
 class _objref_Method(cxx.Method):
   def __init__(self, callable, parent_class):
     assert isinstance(callable, call.Callable)
-    assert isinstance(parent_class, cxx.Class)
     self._callable = callable
     self._parent_class = parent_class
     self.from_Callable()

@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.1  2003/03/23 21:02:36  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.5.2.19  2001/11/12 13:46:07  dpg1
 # _unchecked_narrow, improved _narrow.
 #
@@ -181,10 +184,6 @@ footer = """\
 ## Main file
 ##
 main = """\
-#ifndef USE_omniORB_logStream
-#define USE_omniORB_logStream
-#endif
-
 #ifndef __CORBA_H_EXTERNAL_GUARD__
 #include <omniORB4/CORBA.h>
 #endif
@@ -236,6 +235,8 @@ main = """\
 @defs@
 
 @poa@
+
+@obv@
 
 @other_tie@
 
@@ -293,6 +294,16 @@ _CORBA_MODULE_BEG
 POA_module_end = """\
 _CORBA_MODULE_END
 """
+
+OBV_module_begin = """\
+_CORBA_MODULE @OBV_prefix@@name@
+_CORBA_MODULE_BEG
+"""
+
+OBV_module_end = """\
+_CORBA_MODULE_END
+"""
+
 
 POA_interface = """\
 class @POA_name@ :

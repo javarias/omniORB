@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.1  2003/03/23 21:02:37  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.6.2.4  2001/10/29 17:42:40  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -141,3 +144,7 @@ def visitDeclarator(node):
 def visitException(node):
     pass
 
+
+def visitValue(node):
+    # ***
+    pass
