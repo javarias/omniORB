@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.5  2001/09/19 17:26:50  dpg1
+ Full clean-up after orb->destroy().
+
  Revision 1.1.2.4  2001/09/03 16:52:05  sll
  New signature for locateRequest. Now accept a calldescriptor argument.
 
@@ -165,8 +168,9 @@ omniInProcessIdentity::dispatch(omniCallDescriptor& call_desc)
 
     OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch,
 		  CORBA::COMPLETED_NO);
-  }
+
 #ifdef HAS_Cplusplus_catch_exception_by_base
+  }
   catch (CORBA::Exception&) {
     throw;
   }
