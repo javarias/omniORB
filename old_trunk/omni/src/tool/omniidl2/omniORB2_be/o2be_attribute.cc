@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.15  1998/03/25 14:19:50  sll
+  Temporary work-around for egcs compiler.
+
   Revision 1.14  1998/01/27 16:34:29  ewc
    Added support for type any and TypeCode
 
@@ -168,7 +171,7 @@ o2be_attribute::produce_proxy_rd_skel(fstream &s,o2be_interface &defined_in)
   s << " {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
-  s << "#ifndef EGCS_WORKAROUND\n"
+  s << "#ifndef EGCS_WORKAROUND\n";
   s << "_0RL_again:\n";
   s << "#else\n";
   s << "while(1) {\n";
@@ -616,7 +619,7 @@ o2be_attribute::produce_proxy_wr_skel(fstream &s,o2be_interface &defined_in)
   s << " {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
-  s << "#ifndef EGCS_WORKAROUND\n"
+  s << "#ifndef EGCS_WORKAROUND\n";
   s << "_0RL_again:\n";
   s << "#else\n";
   s << "while(1) {\n";
@@ -1046,7 +1049,7 @@ o2be_attribute::produce_lcproxy_rd_skel(fstream &s,o2be_interface &defined_in)
   s << " {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
-  s << "#ifndef EGCS_WORKAROUND\n"
+  s << "#ifndef EGCS_WORKAROUND\n";
   s << "_0RL_again:\n";
   s << "#else\n";
   s << "while(1) {\n";
@@ -1521,7 +1524,7 @@ o2be_attribute::produce_lcproxy_wr_skel(fstream &s,o2be_interface &defined_in)
   s << " {\n";
   INC_INDENT_LEVEL();
   IND(s); s << "CORBA::ULong _0RL_retries = 0;\n";
-  s << "#ifndef EGCS_WORKAROUND\n"
+  s << "#ifndef EGCS_WORKAROUND\n";
   s << "_0RL_again:\n";
   s << "#else\n";
   s << "while(1) {\n";
