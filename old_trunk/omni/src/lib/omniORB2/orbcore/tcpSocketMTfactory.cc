@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.11  1998/08/14 13:54:38  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.10  1998/06/29 17:13:30  sll
   Fixed Solaris specific code in realConnect. Now switch the socket back
   to blocking mode after connect() until all circumstance.
@@ -557,7 +561,7 @@ tcpSocketMToutgoingFactory::findOrCreateOutgoing(Endpoint* addr)
 	return r;
       }
     }
-  r = new tcpSocketOutgoingRope(this,5,te);
+  r = new tcpSocketOutgoingRope(this,omniORB::maxTcpConnectionPerServer,te);
   r->incrRefCount(1);
   return r;
 }
