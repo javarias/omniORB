@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.30  1999/07/05 09:29:34  sll
+ * member_label should return an octet if it is the default member.
+ *
  * Revision 1.29  1999/07/01 10:27:38  djr
  * Fixed NP_aliasExpand().
  * Added omg.org to a few IR repo IDs.
@@ -4677,6 +4680,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 	// check that <label> is of the correct type
 	if( !tc->equivalent(lbl_tc) )
 	  throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
+	break;
       }
     default:
       throw CORBA::BAD_PARAM(0, CORBA::COMPLETED_NO);
