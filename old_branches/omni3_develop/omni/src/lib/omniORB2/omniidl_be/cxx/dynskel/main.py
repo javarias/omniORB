@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.12.2.2  2000/03/15 20:49:18  djs
+# Problem with typedefs to sequences or array declarators defined externally
+# and used within a local struct or union.
+# Refactoring of this code is now required....
+#
 # Revision 1.12.2.1  2000/02/14 18:34:56  dpg1
 # New omniidl merged in.
 #
@@ -398,12 +403,12 @@ def visitUnion(node):
                         stream.out(str(bdesc.sequence(full_deref_caseType)))
 
         # FIXME: unify common code with bdesc/member#
-        if tyutil.isStruct(caseType) or \
-           tyutil.isUnion(caseType)  or \
-           tyutil.isEnum(caseType):
+        if tyutil.isStruct(deref_caseType) or \
+           tyutil.isUnion(deref_caseType)  or \
+           tyutil.isEnum(deref_caseType):
             # only if not defined in this file
-            if not(caseType.decl().mainFile()):
-                stream.out(str(bdesc.external(caseType)))
+            if not(deref_caseType.decl().mainFile()):
+                stream.out(str(bdesc.external(deref_caseType)))
 
         if tyutil.isString(caseType) and caseType.bound() != 0:
             stream.out(template.bdesc_string,
