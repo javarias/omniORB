@@ -28,9 +28,6 @@
 
 # $Id$
 # $Log$
-# Revision 1.9  2000/07/13 15:25:51  dpg1
-# Merge from omni3_develop for 3.0 release.
-#
 # Revision 1.6.2.3  2000/08/14 14:35:14  dpg1
 # IDL dumping now properly escapes string and char constants
 #

@@ -1,6 +1,5 @@
 #
-# alpha_osf1_4.0.mk - make variables and rules specific to Digital Unix
-# (i.e. OSF1) 4.0.
+# alpha_osf1_5.0.mk - make variables and rules specific to Tru64 5.0
 #
 
 OSF1 = 1
@@ -9,10 +8,6 @@ AlphaProcessor = 1
 
 #
 # Python set-up
-#
-# WARNING: Python's configure put a "#define inline __inline" into
-# -------  /usr/local/include/python2.0/config.h!
-#          This macro has to be suppressed!
 #
 # You must set a path to a Python 1.5.2 interpreter.
 
@@ -30,7 +25,8 @@ include $(THIS_IMPORT_TREE)/mk/unix.mk
 # C preprocessor macro definitions for this architecture
 #
 
-IMPORT_CPPFLAGS += -D__alpha__ -D__osf1__ -D__OSVERSION__=4
+IMPORT_CPPFLAGS += -D__alpha__ -D__osf1__ -D__OSVERSION__=5
+
 
 #
 # Standard programs
@@ -38,48 +34,30 @@ IMPORT_CPPFLAGS += -D__alpha__ -D__osf1__ -D__OSVERSION__=4
 
 AR = ar clq
 
-#
-# Use DIGITAL C++ V6.1-029 on DIGITAL UNIX V4.0E (Rev. 1091)
+CXX = /usr/bin/cxx
+# For DEC C++ 6.2
+CXXOPTIONS = -ptr $(TOP)/cxx_respository
 #
 DecCxxMajorVersion = 6
-DecCxxMinorVersion = 1
-
-CXX         = cxx
-CXXOPTIONS  = -ptr $(TOP)/cxx_respository
+DecCxxMinorVersion = 2
 #
-# Let us allways generate thread save code (-pthread includes -D_REENTRANT)
-#
-CXXOPTIONS += -pthread
-#
-# For DEC C++ 6.0
+# For DEC C++ 6.2
 # Uncommment the following line to speed up the compilation, but may require
 # manually deleted some .pch and cxx_respository/TIMESTAMP files to pick
 # up changes in templates or the order of -I flags.
 #
 # CXXOPTIONS += -ttimestamp -pch
 
-CXXMAKEDEPEND += -D__DECCXX -D__cplusplus
-CXXDEBUGFLAGS  = -O
+CXXMAKEDEPEND += -D__DECCXX -D__DECCXX_VER=60290024 -D__cplusplus
+CXXDEBUGFLAGS = -O
 
-CXXLINK	       = $(CXX)
-CXXLINKOPTIONS = $(CXXDEBUGFLAGS) $(CXXOPTIONS) -call_shared
+CXXLINK		= $(CXX)
+CXXLINKOPTIONS  = $(CXXDEBUGFLAGS) $(CXXOPTIONS) -call_shared
 
-#
-# Use DEC C V5.8-009 on Digital UNIX V4.0E (Rev. 1091)
-#
-CC           = cc
-CMAKEDEPEND += -D__DECC
-CDEBUGFLAGS  = -O
-#
-# The following is needed for src/tool/omkdepend/omkdepend to avoid SIGSEGV
-#
-COPTIONS     = -DNeedVarargsPrototypes
-#
-# Let us allways generate thread save code (-pthread includes -D_REENTRANT)
-#
-COPTIONS    += -pthread
+CC = cc
+CDEBUGFLAGS = -g 
 
-CLINK        = $(CC)
+CLINK = $(CC) -g
 
 
 #
@@ -136,16 +114,7 @@ CorbaImplementation = OMNIORB
 ThreadSystem = Posix
 
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=10 -DNoNanoSleep
-OMNITHREAD_CPPFLAGS       = -pthread
-#
-# Note: -pthread includes -D_REENTRANT
-#
-# The pthread package before 4.0 was POSIX 1003.4a draft 4. If for some
-# reason it is necessary to run the same binaries on 4.0 and older systems
-# (e.g. 3.2), use the following make variables instead.
-#
-# OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=4 -DNoNanoSleep 
-# OMNITHREAD_CPPFLAGS = -D_PTHREAD_USE_D4 -D_REENTRANT
+OMNITHREAD_CPPFLAGS = -D_REENTRANT -pthread
 
 OMNITHREAD_LIB = $(patsubst %,$(LibSearchPattern),omnithread) \
 		 -lpthread -lexc

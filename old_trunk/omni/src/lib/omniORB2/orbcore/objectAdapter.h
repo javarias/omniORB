@@ -28,9 +28,6 @@
 
 /*
  $Log$
- Revision 1.3  2000/07/13 15:25:56  dpg1
- Merge from omni3_develop for 3.0 release.
-
  Revision 1.1.2.4  2000/08/08 15:01:44  dpg1
  -ORBpoa_iiop_port no longer overrides OMNIORB_USEHOSTNAME.
 

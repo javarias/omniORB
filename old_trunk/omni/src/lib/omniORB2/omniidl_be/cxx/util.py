@@ -28,9 +28,6 @@
 
 # $Id$
 # $Log$
-# Revision 1.15  2000/07/13 15:26:01  dpg1
-# Merge from omni3_develop for 3.0 release.
-#
 # Revision 1.12.2.10  2000/08/14 19:34:45  djs
 # Performs a quick scan of the AST looking for unsupported IDL constructs
 # before doing anything else.

@@ -29,9 +29,6 @@
 
 /*
   $Log$
-  Revision 1.33  2000/07/13 15:25:57  dpg1
-  Merge from omni3_develop for 3.0 release.
-
   Revision 1.30.6.10  2000/07/21 10:03:09  dpg1
   String_var copy initialisations changed to direct initialisations.
 

@@ -28,8 +28,8 @@
 #
 # $Id$
 # $Log$
-# Revision 1.14  2000/07/13 15:26:00  dpg1
-# Merge from omni3_develop for 3.0 release.
+# Revision 1.11.2.9  2000/10/16 18:05:58  djs
+# Tie templates used wrong operation argument mapping (bug #3)
 #
 # Revision 1.11.2.8  2000/07/17 09:36:40  djs
 # Now handles the case where an interface inherits from a typedef to another
@@ -157,7 +157,9 @@ def write_template(name, inherits, node, stream,
 
             for parameter in parameters:
                 paramType = types.Type(parameter.paramType())
-                param_type_name = paramType.op(types.direction(parameter))
+                # Need to call the _impl operation not the _objref operation
+                param_type_name = paramType.op(types.direction(parameter),
+                                               use_out = 0)
                 param_id = id.mapID(parameter.identifier())
                 signature.append(param_type_name + " " + param_id)
                 call.append(param_id)

@@ -29,8 +29,8 @@
  
 /*
   $Log$
-  Revision 1.23  2000/07/13 15:25:57  dpg1
-  Merge from omni3_develop for 3.0 release.
+  Revision 1.21.6.13  2001/01/10 15:23:37  dpg1
+  Propagate omniConnectionBroken out of HandleRequest().
 
   Revision 1.21.6.12  2000/08/18 12:14:19  dme
   Allow replacement of proxyObjectFactories
@@ -719,7 +719,10 @@ GIOP_S::HandleRequest(CORBA::Boolean byteorder)
     }
   }
   catch(const omniORB::fatalException& ex) {
-      throw; // don't mask bugs!
+    throw; // don't mask bugs!
+  }
+  catch(omniConnectionBroken& ex) {
+    throw; // Propagate exception to caller
   }
   catch(...) {
     if( omniORB::traceLevel > 1 ) {

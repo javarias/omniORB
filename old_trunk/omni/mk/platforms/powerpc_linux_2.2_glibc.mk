@@ -1,10 +1,10 @@
 #
-# i586_linux_2.0_glibc2.1.mk - make variables and rules specific to Linux 2.x
-#                              and glibc-2.1
+# powerpc_linux_2.2_glibc.mk - make variables and rules specific to Linux 2.x
+#                              and glibc, on PowerPC
 #
 
 Linux = 1
-x86Processor = 1
+PowerPCProcessor = 1
 
 ABSTOP = $(shell cd $(TOP); pwd)
 
@@ -74,7 +74,7 @@ CLINKOPTIONS = $(CDEBUGFLAGS) $(COPTIONS) \
 
 INSTALL = install -c
 
-IMPORT_CPPFLAGS += -D__x86__ -D__linux__ -D__OSVERSION__=2
+IMPORT_CPPFLAGS += -D__powerpc__ -D__linux__ -D__OSVERSION__=2
 
 
 #

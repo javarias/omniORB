@@ -28,9 +28,6 @@
 
 # $Id$
 # $Log$
-# Revision 1.15  2000/07/13 15:26:00  dpg1
-# Merge from omni3_develop for 3.0 release.
-#
 # Revision 1.12.2.8  2000/08/10 10:38:23  sll
 # Support new pragma hh in the cxx omniidl backend.  Added CPP macro guards
 # to stub header to preserve the value of USE_core_stub_in_nt_dll and
