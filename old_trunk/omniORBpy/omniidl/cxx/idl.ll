@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.4  1999/11/05 10:36:42  dpg1
+// Sorted out isatty() problems.
+//
 // Revision 1.3  1999/11/02 17:07:28  dpg1
 // Changes to compile on Solaris.
 //
@@ -78,7 +81,7 @@ int fixed(char* s);
 %s known_pragma
 %x unknown_pragma
 
-WS          [ \t\v\n\f]
+WS          [ \t\v\n\f\r]
 SPACE       [ \t]
 
 ASCIILETTER [a-zA-Z]
