@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.9  2001/06/01 11:09:25  dpg1
+// Make use of new omni::ptrStrCmp() and omni::strCmp().
+//
 // Revision 1.1.2.8  2001/05/14 15:22:00  dpg1
 // cdrMarshal() / cdrUnmarshal() are back.
 //
@@ -90,6 +93,7 @@ PyObject* omniPy::pyOBJREF_TWIN;
 PyObject* omniPy::pySERVANT_TWIN;
 PyObject* omniPy::pyPOA_TWIN;
 PyObject* omniPy::pyPOAMANAGER_TWIN;
+PyObject* omniPy::pyPOACURRENT_TWIN;
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -301,12 +305,14 @@ extern "C" {
     omniPy::pySERVANT_TWIN    = PyString_FromString((char*)"__omni_svt");
     omniPy::pyPOA_TWIN        = PyString_FromString((char*)"__omni_poa");
     omniPy::pyPOAMANAGER_TWIN = PyString_FromString((char*)"__omni_mgr");
+    omniPy::pyPOACURRENT_TWIN = PyString_FromString((char*)"__omni_pct");
 
     OMNIORB_ASSERT(omniPy::pyORB_TWIN);
     OMNIORB_ASSERT(omniPy::pyOBJREF_TWIN);
     OMNIORB_ASSERT(omniPy::pySERVANT_TWIN);
     OMNIORB_ASSERT(omniPy::pyPOA_TWIN);
     OMNIORB_ASSERT(omniPy::pyPOAMANAGER_TWIN);
+    OMNIORB_ASSERT(omniPy::pyPOACURRENT_TWIN);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -725,6 +731,7 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     omniPy::initORBFunc(d);
     omniPy::initPOAFunc(d);
     omniPy::initPOAManagerFunc(d);
+    omniPy::initPOACurrentFunc(d);
     omniPy::initomniFunc(d);
   }
 }

@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.10  2001/06/01 11:09:26  dpg1
+// Make use of new omni::ptrStrCmp() and omni::strCmp().
+//
 // Revision 1.2.4.9  2001/05/29 17:10:14  dpg1
 // Support for in process identity.
 //
@@ -80,6 +83,7 @@ extern "C" {
 #define SERVANT_TWIN    omniPy::pySERVANT_TWIN
 #define POA_TWIN        omniPy::pyPOA_TWIN
 #define POAMANAGER_TWIN omniPy::pyPOAMANAGER_TWIN
+#define POACURRENT_TWIN omniPy::pyPOACURRENT_TWIN
 
 
 // Useful macro
@@ -125,6 +129,7 @@ public:
   static PyObject* pySERVANT_TWIN;
   static PyObject* pyPOA_TWIN;
   static PyObject* pyPOAMANAGER_TWIN;
+  static PyObject* pyPOACURRENT_TWIN;
 
   ////////////////////////////////////////////////////////////////////////////
   // Constant strings to facilitate comparison by pointer                   //
@@ -181,6 +186,7 @@ public:
   static void initORBFunc       (PyObject* d);
   static void initPOAFunc       (PyObject* d);
   static void initPOAManagerFunc(PyObject* d);
+  static void initPOACurrentFunc(PyObject* d);
   static void initomniFunc      (PyObject* d);
 
 
@@ -225,6 +231,9 @@ public:
 
   static
   PyObject* createPyPOAManagerObject(const PortableServer::POAManager_ptr pm);
+
+  static
+  PyObject* createPyPOACurrentObject(const PortableServer::Current_ptr pc);
 
 
   ////////////////////////////////////////////////////////////////////////////
