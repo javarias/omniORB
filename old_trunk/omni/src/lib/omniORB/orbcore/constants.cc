@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.5  1997/08/21 21:55:23  sll
+  Added system exception TRANSACTION_REQUIRED, TRANSACTION_ROLLEDBACK,
+  INVALID_TRANSACTION, WRONG_TRANSACTION.
+
 // Revision 1.4  1997/05/06  15:07:47  sll
 // Public release.
 //
@@ -42,9 +46,9 @@ const IOP::ServiceID       IOP::TransactionService = 0;
 const CORBA::Char          IIOP::current_major = 1;
 const CORBA::Char          IIOP::current_minor = 0;
 const CORBA::Boolean       omni::myByteOrder = _OMNIORB_HOST_BYTE_ORDER_;
-const char*                omni::myORBId = "omniORB2";
-const char*                omni::myBOAId = "omniORB2_BOA";
 const omni::alignment_t    omni::max_alignment = ALIGN_8;
+
+const CORBA::Char* CORBA::Object::repositoryID = (CORBA::Char*) "IDL:omg.org/CORBA/Object:1.0";
 
 const GIOP_Basetypes::MessageHeader::HeaderType
          GIOP_Basetypes::MessageHeader::Request = {
