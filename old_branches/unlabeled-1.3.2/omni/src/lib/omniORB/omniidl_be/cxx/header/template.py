@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.12  2000/07/04 12:57:55  djs
+# Fixed Any insertion/extraction operators for unions and exceptions
+#
 # Revision 1.3.2.11  2000/06/26 16:24:00  djs
 # Better handling of #include'd files (via new commandline options)
 # Refactoring of configuration state mechanism.
@@ -341,6 +344,7 @@ class _sk_@name@ :
   @sk_inherits@
 {
 public:
+  _sk_@name@(const omniOrbBoaKey&);
   virtual ~_sk_@name@();
   inline @name@::_ptr_type _this() {
     return (@name@::_ptr_type) omniOrbBoaServant::_this(@name@::_PD_repoId);

@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.6  2000/06/05 13:04:20  djs
+# Removed union member name clash (x & pd_x, pd__default, pd__d)
+# Removed name clash when a sequence is called "pd_seq"
+#
 # Revision 1.1.2.5  2000/05/31 18:03:40  djs
 # Better output indenting (and preprocessor directives now correctly output at
 # the beginning of lines)
@@ -326,6 +330,8 @@ if( !strcmp(id, @inherited_name@::_PD_repoId) )
 """
 
 interface_sk = """\
+@sk_fqname@::@sk_fqname@(const omniOrbBoaKey& k): omniOrbBoaServant(k) {}
+
 @sk_fqname@::~@sk_name@() {}
 """
 
