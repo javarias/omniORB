@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.4  1999/09/27 13:31:44  djr
+  Updated logging to always issue omniORB: prefix.
+
   Revision 1.22.2.3  1999/09/22 19:56:52  sll
   Correct typo.
 
@@ -240,8 +243,8 @@ public:
   tcpSocketWorker(tcpSocketStrand* s, tcpSocketMTincomingFactory* f) : 
           omni_thread(s), pd_factory(f), pd_sync(s,0,0) 
     {
-      s->decrRefCount();
       start();
+      s->decrRefCount();
     }
   virtual ~tcpSocketWorker() { 
     omni_mutex_lock sync(pd_factory->pd_shutdown_lock);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.6.7  1999/10/16 13:22:55  djr
+  Changes to support compiling on MSVC.
+
   Revision 1.22.6.6  1999/10/14 16:22:18  djr
   Implemented logging when system exceptions are thrown.
 
@@ -256,8 +259,8 @@ public:
   tcpSocketWorker(tcpSocketStrand* s, tcpSocketMTincomingFactory* f) : 
           omni_thread(s), pd_factory(f), pd_sync(s,0,0) 
     {
-      s->decrRefCount();
       start();
+      s->decrRefCount();
     }
   virtual ~tcpSocketWorker() { 
     omni_mutex_lock sync(pd_factory->pd_shutdown_lock);
