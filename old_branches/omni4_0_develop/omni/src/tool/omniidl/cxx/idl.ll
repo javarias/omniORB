@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.9.2.6  2001/06/13 11:28:20  dpg1
+// Proper omniidl support for wchar/wstring constants.
+//
 // Revision 1.9.2.5  2001/03/13 10:32:10  dpg1
 // Fixed point support.
 //
@@ -220,7 +223,7 @@ _{IDENT} {
   yylval.int_literal_val = idl_strtoul(yytext, 10);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
-	     "Integer literal `%s' is too big", yytext);
+	     "Integer literal '%s' is too big", yytext);
   }
   return INTEGER_LITERAL;
 }
@@ -230,7 +233,7 @@ _{IDENT} {
   yylval.int_literal_val = idl_strtoul(yytext, 8);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
-	     "Integer literal `%s' is too big", yytext);
+	     "Integer literal '%s' is too big", yytext);
   }
   return INTEGER_LITERAL;
 }
@@ -240,7 +243,7 @@ _{IDENT} {
   yylval.int_literal_val = idl_strtoul(yytext, 16);
   if (errno == ERANGE) {
     IdlError(currentFile, yylineno,
-	     "Integer literal `%s' is too big", yytext);
+	     "Integer literal '%s' is too big", yytext);
   }
   return INTEGER_LITERAL;
 }
@@ -445,7 +448,7 @@ char octalToChar(char* s) {
   unsigned long ret = strtoul(s+1, 0, 8);
 
   if (ret > 255) {
-    IdlError(currentFile, yylineno, "Octal character value `%s' too big", s);
+    IdlError(currentFile, yylineno, "Octal character value '%s' too big", s);
   }
 
   return ret;
@@ -472,8 +475,8 @@ char escapeToChar(char* s) {
   case '\"': return '\"';
   }
   IdlWarning(currentFile, yylineno,
-	     "Behaviour for escape sequence `%s' is undefined by IDL; "
-	     "using `%c'", s, s[1]);
+	     "Behaviour for escape sequence '%s' is undefined by IDL; "
+	     "using '%c'", s, s[1]);
   return s[1];
 }
 
@@ -481,7 +484,7 @@ IDL_UShort octalToWChar(char* s) {
   unsigned long ret = strtoul(s+1, 0, 8);
 
   if (ret > 255) { // This really is meant to be 255
-    IdlError(currentFile, yylineno, "Octal character value `%s' too big", s);
+    IdlError(currentFile, yylineno, "Octal character value '%s' too big", s);
   }
 
   return ret;
@@ -508,8 +511,8 @@ IDL_UShort escapeToWChar(char* s) {
   case '\"': return '\"';
   }
   IdlWarning(currentFile, yylineno,
-	     "Behaviour for escape sequence `%s' is undefined by IDL; "
-	     "using `%c'.", s, s[1]);
+	     "Behaviour for escape sequence '%s' is undefined by IDL; "
+	     "using '%c'.", s, s[1]);
   return s[1];
 }
 

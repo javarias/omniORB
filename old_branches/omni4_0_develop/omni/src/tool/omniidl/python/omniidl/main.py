@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.3  2000/12/05 17:45:22  dpg1
+# omniidl case sensitivity updates from omni3_develop.
+#
 # Revision 1.17.2.2  2000/10/10 10:18:54  dpg1
 # Update omniidl front-end from omni3_develop.
 #
@@ -144,7 +147,7 @@ def parseArgs(args):
         opts,files = getopt.getopt(args, "D:I:U:EY:NW:b:n:kKC:dVuhvqp:iT")
     except getopt.error, e:
         sys.stderr.write("Error in arguments: " + e + "\n")
-        sys.stderr.write("Use `" + cmdname + " -u' for usage\n")
+        sys.stderr.write("Use '" + cmdname + " -u' for usage\n")
         sys.exit(1)
 
     for opt in opts:
@@ -188,7 +191,7 @@ def parseArgs(args):
         elif o == "-C":
             if not os.path.isdir(a):
                 if not quiet:
-                    sys.stderr.write(cmdname + ": `" + a + \
+                    sys.stderr.write(cmdname + ": '" + a + \
                                      "' is not a directory\n")
                 sys.exit(1)
             cd_to = a
@@ -208,7 +211,7 @@ def parseArgs(args):
             else:
                 if not quiet:
                     sys.stderr.write(cmdname + \
-                                     ": unknown error suppresion option `" + \
+                                     ": unknown error suppresion option '" + \
                                      a + "'\n")
                     sys.stderr.write("Use " + cmdname + " -u for usage\n")
                 sys.exit(1)
@@ -289,7 +292,7 @@ def main(argv=None):
 
     elif len(files) == 0:
         if not quiet:
-            sys.stderr.write(cmdname + ": No files specified. Use `" \
+            sys.stderr.write(cmdname + ": No files specified. Use '" \
                              + cmdname + " -u' for usage.\n")
         sys.exit(1)
 
@@ -297,27 +300,27 @@ def main(argv=None):
     bemodules = []
     for backend in backends:
         if verbose:
-            sys.stderr.write(cmdname + ": Importing back-end `" +\
+            sys.stderr.write(cmdname + ": Importing back-end '" +\
                              backend + "'\n")
         try:
             be = be_import(backend)
         except ImportError, msg:
             if not quiet:
                 sys.stderr.write(cmdname + \
-                                 ": Could not import back-end `" + \
+                                 ": Could not import back-end '" + \
                                  backend + "'\n")
                 sys.stderr.write(cmdname + \
                                  ": Maybe you need to use the -p option?\n")
                 sys.stderr.write(cmdname + \
-                                 ": (The error was `" + str(msg) + "')\n")
+                                 ": (The error was '" + str(msg) + "')\n")
             sys.exit(1)
 
         if verbose:
             if hasattr(be, "__file__"):
-                sys.stderr.write(cmdname + ": `" + backend + \
-                                 "' imported from `" + be.__file__ + "'\n")
+                sys.stderr.write(cmdname + ": '" + backend + \
+                                 "' imported from '" + be.__file__ + "'\n")
             else:
-                sys.stderr.write(cmdname + ": `" + backend + \
+                sys.stderr.write(cmdname + ": '" + backend + \
                                  "' imported from unknown file\n")
 
         bemodules.append(be)
@@ -325,7 +328,7 @@ def main(argv=None):
             preprocessor_args.extend(be.cpp_args)
 
         if print_usage and hasattr(be, "usage_string"):
-            print "\nArguments for back-end `" + backend + "':\n"
+            print "\nArguments for back-end '" + backend + "':\n"
             print be.usage_string
 
     if print_usage:
@@ -339,7 +342,7 @@ def main(argv=None):
     for file in files:
         if file != "-" and not os.path.isfile(file):
             if not quiet:
-                sys.stderr.write(cmdname + ": `" + file + "' does not exist\n")
+                sys.stderr.write(cmdname + ": '" + file + "' does not exist\n")
             sys.exit(1)
 
  	if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
@@ -351,8 +354,8 @@ def main(argv=None):
 
         if not no_preprocessor:
             if verbose:
-                sys.stderr.write(cmdname + ": Preprocessing `" +\
-                                 file + "' with `" + preproc_cmd + "'\n")
+                sys.stderr.write(cmdname + ": Preprocessing '" +\
+                                 file + "' with '" + preproc_cmd + "'\n")
 
             if preprocessor_only:
                 err = os.system(preproc_cmd)
@@ -366,7 +369,7 @@ def main(argv=None):
             if temp_file:
                 if verbose:
                     sys.stderr.write(cmdname + \
-                                     ": cpp output to temporary file `" + \
+                                     ": cpp output to temporary file '" + \
                                      temp_file + "'\n")
                 err = os.system(preproc_cmd + " >" + temp_file)
                 if err:
@@ -413,7 +416,7 @@ def main(argv=None):
             i = 0
             for backend in backends:
                 if verbose:
-                    sys.stderr.write(cmdname + ": Running back-end `" +\
+                    sys.stderr.write(cmdname + ": Running back-end '" +\
                                      backend + "'\n")
 
                 bemodules[i].run(tree, backends_args[i])

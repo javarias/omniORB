@@ -23,6 +23,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.2.2.5  2001/09/19 17:33:17  dpg1
+// Update omniMapper and omniNames INS mapper to ORB core changes from a
+// while ago.
+//
 // Revision 1.2.2.4  2001/06/08 17:12:08  dpg1
 // Merge all the bug fixes from omni3_develop.
 //
@@ -281,7 +285,7 @@ main(int argc, char** argv)
   }
   catch (CORBA::INITIALIZE& ex) {
     cerr << "Failed to initialise the POA. "
-	 << "Is omniMapper is already running?" << endl;
+	 << "Is omniMapper already running?" << endl;
     return 1;
   }
 
