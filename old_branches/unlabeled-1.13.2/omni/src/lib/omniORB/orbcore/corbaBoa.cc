@@ -29,6 +29,17 @@
 
 /*
   $Log$
+  Revision 1.13.2.1  1999/09/21 20:37:15  sll
+  -Simplified the scavenger code and the mechanism in which connections
+   are shutdown. Now only one scavenger thread scans both incoming
+   and outgoing connections. A separate thread do the actual shutdown.
+  -omniORB::scanGranularity() now takes only one argument as there is
+   only one scan period parameter instead of 2.
+  -Trace messages in various modules have been updated to use the logger
+   class.
+  -ORBscanGranularity replaces -ORBscanOutgoingPeriod and
+                                 -ORBscanIncomingPeriod.
+
   Revision 1.13  1999/08/30 18:55:29  sll
   Added ENABLE_CLIENT_IR_SUPPORT.
 
@@ -100,6 +111,7 @@
 #endif
 
 static CORBA::BOA_ptr     boa = 0;
+static int                boa_destroyed = 0;
 static const char*        myBOAId = "omniORB2_BOA";
 static omni_mutex         internalLock;
 static omni_condition     internalCond(&internalLock);
@@ -201,8 +213,13 @@ CORBA::
 ORB::BOA_init(int &argc, char **argv, const char *boa_identifier)
 {
   omni_mutex_lock sync(internalLock);
-  if (boa)
-    return CORBA::BOA::_duplicate(boa);
+
+  if( boa_destroyed ) {
+    omniORB::logs(1, "The BOA cannot be re-initialised!");
+    throw CORBA::BAD_INV_ORDER(0, CORBA::COMPLETED_NO);
+  }
+
+  if( boa )  return CORBA::BOA::_duplicate(boa);
 
   try {
     rootObjectManager = new BOAobjectManager;
@@ -352,6 +369,7 @@ BOA::destroy()
       internalBlockingFlag--;
     }
   }
+  boa_destroyed = 1;
 }
 
 
