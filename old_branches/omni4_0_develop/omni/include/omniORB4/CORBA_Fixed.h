@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2002/10/15 23:24:14  dgrisby
+  Avoid clash with Solaris defining truncate to truncate64.
+
   Revision 1.1.2.2  2001/10/17 16:44:00  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -117,11 +120,15 @@ public:
   UShort fixed_digits() const { return pd_digits; }
   UShort fixed_scale()  const { return pd_scale;  }
 
+  char*  to_string()    const;
+  // Return a string with trailing zeros to match the scale.
+
+
   // omniORB specific functions
 
   char* NP_asString() const;
   // Return a string containing the fixed. Caller frees with
-  // CORBA::string_free().
+  // CORBA::string_free(). Does not include trailing zeros.
 
   CORBA::Boolean NP_fromString(const char* val, Boolean ignore_end = 0);
   // Set the value from the given string.
