@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.14  2003/01/14 11:48:15  dgrisby
+ Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+
  Revision 1.2.2.13  2001/11/06 15:41:35  dpg1
  Reimplement Context. Remove CORBA::Status. Tidying up.
 
@@ -280,7 +283,7 @@ public:
 		     size_t oplen, const char* a_0,
 		     _CORBA_Boolean upcall=0) :
       omniCallDescriptor(lcfn, op_, oplen, 0, 0, 0, upcall),
-      arg_0((char*)a_0) {}
+      arg_0( OMNI_CONST_CAST(char*, a_0) ) {}
  
     inline ~_cCORBA_mObject_i_cstring() {
       if (is_upcall()) { 

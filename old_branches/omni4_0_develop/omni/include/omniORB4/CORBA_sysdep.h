@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.20  2003/01/16 11:08:26  dgrisby
+ Patches to support Digital Mars C++. Thanks Christof Meerwald.
+
  Revision 1.2.2.19  2002/02/18 11:59:12  dpg1
  Full autoconf support.
 
@@ -82,7 +85,14 @@
 #  define UnixArchitecture 1
 #endif
 
-
+//
+// Macro to provide const_cast functionality on all platforms.
+//
+#ifdef HAS_Cplusplus_const_cast
+  #define OMNI_CONST_CAST(_t, _v) const_cast<_t>(_v)
+#else
+  #define OMNI_CONST_CAST(_t, _v) (_t)(_v)
+#endif
 
 #if defined(__GNUG__)
 // GNU G++ compiler
