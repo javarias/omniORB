@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/23 16:00:35  sll
+  Added method in giopTransportImpl to return the addresses of the host
+  interfaces.
+
 */
 
 #ifndef __TRANSPORTRULE_H__
@@ -93,6 +97,13 @@ class transportRules {
   // The priority of the matched rule is returned in <priority>.
   // Return false if <endpoint> does not match any rule. In that case
   // <actions and <priority> are not initialised.
+
+  ////////////////////////////////////////////////////////////////////////
+  char* dumpRule(CORBA::ULong index);
+  // Return the string representation of the rule at <index>. Returns 0
+  // if the index is out of range. If the value of <priority> returned
+  // by match() is used as <index> in this function, the string representation
+  // of the rule that match() matches is returned.
 
   ////////////////////////////////////////////////////////////////////////
   class sequenceString_var;
