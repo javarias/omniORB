@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3  2000/02/01 09:26:45  djs
+# Tracking fixes in old compiler: powerpc-aix scoped identifier workarounds
+#
 # Revision 1.2  2000/01/19 11:23:29  djs
 # Moved most C++ code to template file
 #
@@ -301,8 +304,6 @@ public:
   inline @name@::_ptr_type _this() {
     return (@name@::_ptr_type) omniOrbBoaServant::_this(@name@::_PD_repoId);
   }
-  inline void _obj_is_ready(CORBA::BOA_ptr) { omniOrbBoaServant::_obj_is_ready(); }
-  inline CORBA::BOA_ptr _boa() { return CORBA::BOA::getBOA(); }
 };
 """
 

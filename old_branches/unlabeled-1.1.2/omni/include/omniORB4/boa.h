@@ -28,21 +28,14 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  1999/09/24 09:51:42  djr
+  Moved from omniORB2 + some new files.
+
 */
 
 #ifndef __OMNIORB_BOA_H__
 #define __OMNIORB_BOA_H__
 
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////// omniOrbBoaKey ///////////////////////////
-//////////////////////////////////////////////////////////////////////
-
-struct omniOrbBoaKey {
-  _CORBA_ULong hi;
-  _CORBA_ULong med;
-  _CORBA_ULong lo;
-};
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// omniOrbBoaServant /////////////////////////
@@ -71,6 +64,8 @@ public:
   // <repoId>).  Otherwise throws BAD_INV_ORDER.
 
   inline const omniOrbBoaKey& _key() const { return pd_key; }
+  inline void _obj_is_ready(CORBA::BOA_ptr) { _obj_is_ready(); }
+  inline CORBA::BOA_ptr _boa() { return CORBA::BOA::getBOA(); }
 
 private:
   virtual omniObjRef* _do_get_interface();

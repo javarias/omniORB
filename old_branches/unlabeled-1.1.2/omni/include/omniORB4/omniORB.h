@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  1999/09/30 11:49:27  djr
+  Implemented catching user-exceptions in GIOP_S for all compilers.
+
   Revision 1.1.2.4  1999/09/27 11:01:09  djr
   Modifications to logging.
 
@@ -101,6 +104,18 @@
 
 #ifndef __OMNIORB_H__
 #define __OMNIORB_H__
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////// omniOrbBoaKey ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+struct omniOrbBoaKey {
+  _CORBA_ULong hi;
+  _CORBA_ULong med;
+  _CORBA_ULong lo;
+};
+
 
 _CORBA_MODULE omniORB
 

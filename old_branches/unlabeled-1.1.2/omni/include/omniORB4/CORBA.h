@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.5  1999/10/21 11:04:59  djr
+ Added _core_attr to declarations of _PD_repoId in interfaces.
+
  Revision 1.1.2.4  1999/10/18 17:28:17  djr
  Fixes for building MSVC dlls.
 
@@ -217,7 +220,10 @@
 #include <omniORB3/templatedecls.h>
 #include <omniORB3/stringtypes.h>
 #include <omniORB3/userexception.h>
-#include <omniORB3/boa.h>
+
+
+// Forward declarations.
+class omniOrbBoaServant;
 
 
 _CORBA_MODULE CORBA
@@ -2588,6 +2594,9 @@ _CORBA_MODULE_BEG
 #endif
 
 _CORBA_MODULE_END
+
+
+#include <omniORB3/boa.h>
 
 
 #undef _core_attr
