@@ -29,6 +29,9 @@
 
 
 /* $Log$
+ * Revision 1.3  1998/03/17 12:12:31  ewc
+ * Bug fix to NP_aliasExpand()
+ *
 // Revision 1.2  1998/02/20  14:45:43  ewc
 // Changed to compile with aCC on HPUX
 //
@@ -661,7 +664,7 @@ CORBA::TypeCode::NP_aliasExpand() const
 	{
 	  CORBA::TypeCode_var new_tc = member_tc->NP_aliasExpand();
 	  return new CORBA::TypeCode(CORBA::tk_sequence,this->length(),
-				     *(new_tc.operator->()))
+				     *(new_tc.operator->()));
 	}
     }
   
