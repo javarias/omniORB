@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.6  2001/11/13 14:11:46  dpg1
+// Tweaks for CORBA 2.5 compliance.
+//
 // Revision 1.5.2.5  2001/10/17 16:48:33  dpg1
 // Minor error message tweaks
 //
@@ -53,9 +56,6 @@
 // Revision 1.1  1999/10/27 14:05:56  dpg1
 // *** empty log message ***
 //
-
-#include <iostream.h>
-
 
 #include <idlrepoId.h>
 #include <idlast.h>
