@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.9  1998/08/13 22:45:25  sll
+  Added pragma hdrstop to control pre-compile header if the compiler feature
+  is available.
+
   Revision 1.8  1998/04/07 18:51:41  sll
   Use std::fstream instead of fstream.
 
@@ -80,9 +84,8 @@ o2be_string::o2be_string(AST_Expression *v)
   set_tcname("");
   set_fqtcname("");
   set__fqtcname("");
-
-  set_recursive_seq(I_FALSE);
 }
+
 
 o2be_string::o2be_string(AST_Expression *v, long wide)
 	 : AST_String(v, wide),
@@ -134,11 +137,13 @@ o2be_string::o2be_string(AST_Expression *v, long wide)
   set__fqtcname("");
 }
 
-const char *
+
+const char*
 o2be_string::fieldMemberTypeName()
 {
   return "CORBA::String_member";
 }
+
 
 void
 o2be_string::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
@@ -146,6 +151,7 @@ o2be_string::produce_typedef_hdr(std::fstream &s, o2be_typedef *tdef)
   IND(s); s << "typedef char* " << tdef->uqname() << ";\n";
   IND(s); s << "typedef CORBA::String_var " << tdef->uqname() << "_var;\n";
 }
+
 
 size_t
 o2be_string::max_length()
