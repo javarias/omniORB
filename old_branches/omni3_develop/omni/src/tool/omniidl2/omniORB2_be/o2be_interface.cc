@@ -27,6 +27,9 @@
 
 /*
   $Log$
+  Revision 1.39.6.1  1999/09/24 10:05:24  djr
+  Updated for omniORB3.
+
   Revision 1.37  1999/06/25 13:52:25  sll
   Updated any extraction operator to non-copy semantics but can be override
   by the value of omniORB_27_CompatibleAnyExtraction.
@@ -1038,24 +1041,20 @@ o2be_interface::produce_skel(std::fstream &s)
   INC_INDENT_LEVEL();
   {
     UTL_ScopeActiveIterator i(this,UTL_Scope::IK_decls);
-    idl_bool first = I_TRUE;
     while( !i.is_done() ) {
       AST_Decl* d = i.item();
       if( d->node_type() == AST_Decl::NT_op ) {
-	IND(s); s << (first ? "" : "else ")
-		  << "if( !strcmp(giop_s.operation(), \""
+	IND(s); s << "if( !strcmp(giop_s.operation(), \""
 		  << d->local_name()->get_string()
 		  << "\") ) {\n";
 	INC_INDENT_LEVEL();
 	o2be_operation::narrow_from_decl(d)->produce_server_skel(s, module);
 	DEC_INDENT_LEVEL();
 	IND(s); s << "}\n";
-	first = I_FALSE;
       }
       else if( d->node_type() == AST_Decl::NT_attr ) {
 	o2be_attribute* a = o2be_attribute::narrow_from_decl(d);
-	IND(s); s << (first ? "" : "else ")
-		  << "if( !strcmp(giop_s.operation(), \""
+	IND(s); s << "if( !strcmp(giop_s.operation(), \""
 		  << "_get_" << a->local_name()->get_string()
 		  << "\") ) {\n";
 	INC_INDENT_LEVEL();
@@ -1063,7 +1062,7 @@ o2be_interface::produce_skel(std::fstream &s)
 	DEC_INDENT_LEVEL();
 	IND(s); s << "}\n";
 	if( !a->readonly() ) {
-	  IND(s); s << "else if( !strcmp(giop_s.operation(), \""
+	  IND(s); s << "if( !strcmp(giop_s.operation(), \""
 		    << "_set_" << a->local_name()->get_string()
 		    << "\") ) {\n";
 	  INC_INDENT_LEVEL();
@@ -1071,7 +1070,6 @@ o2be_interface::produce_skel(std::fstream &s)
 	  DEC_INDENT_LEVEL();
 	  IND(s); s << "}\n";
 	}
-	first = I_FALSE;
       }
       i.next();
     }
@@ -1109,17 +1107,13 @@ o2be_interface::produce_skel(std::fstream &s)
 	  strcat(intf_name,intf->server_uqname());
 	}
       }
-      IND(s); s << (first ? "" : "else ")
-		<< "if( " << intf_name << "::_dispatch(giop_s) ) {\n";
+      IND(s); s << "if( " << intf_name << "::_dispatch(giop_s) ) {\n";
       INC_INDENT_LEVEL();
       IND(s); s << "return 1;\n";
       DEC_INDENT_LEVEL();
       IND(s); s << "}\n";
-      first = I_FALSE;
     }
-    IND(s); s << (first ? "{\n" : "else {\n");
-    IND(s); s << "  return 0;\n";
-    IND(s); s << "}\n";
+    IND(s); s << "return 0;\n";
   }
   DEC_INDENT_LEVEL();
   IND(s); s << "}\n\n\n";
