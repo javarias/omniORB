@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13  1999/12/15 12:17:18  dpg1
+// Changes to compile with SunPro CC 5.0.
+//
 // Revision 1.12  1999/12/01 11:35:22  dpg1
 // Include path for Python.h changed to be consistent with omnipy module.
 //
@@ -1172,7 +1175,9 @@ main(int argc, char** argv)
 
   init_omniidl();
 
-  PyObject* pymain = PyImport_ImportModule("omniidl.main");
+  PyObject* mod    = PyString_FromString("omniidl.main");
+  PyObject* pymain = PyImport_Import(mod);
+  Py_DECREF(mod);
 
   if (!pymain) {
     PyErr_Print();
