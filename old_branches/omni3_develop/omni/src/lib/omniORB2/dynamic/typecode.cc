@@ -30,6 +30,9 @@
 
 /* 
  * $Log$
+ * Revision 1.33.6.10  2000/06/27 16:23:25  sll
+ * Merged OpenVMS port.
+ *
  * Revision 1.33.6.9  2000/03/20 15:09:30  djr
  * Fixed signed/unsigned mismatch.
  *
@@ -1182,6 +1185,7 @@ TypeCode_objref::TypeCode_objref(const char* repositoryId, const char* name)
   pd_name = name;
   pd_alignmentTable.setNumEntries(1);
   pd_alignmentTable.addNasty(this);
+  pd_complete = 1;
 }
 
 
@@ -1214,6 +1218,7 @@ TypeCode_objref::NP_unmarshalComplexParams(MemBufferedStream &s,
 
   _ptr->pd_repoId <<= s;
   _ptr->pd_name <<= s;
+  _ptr->pd_complete = 1;
 
   return _ptr;
 }
