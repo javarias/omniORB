@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2001/08/23 10:11:16  sll
+  Use AF_UNIX if AF_LOCAL is not defined.
+
   Revision 1.1.2.4  2001/08/17 17:12:42  sll
   Modularise ORB configuration parameters.
 
@@ -149,7 +152,7 @@ unixEndpoint::Bind() {
 void
 unixEndpoint::Poke() {
 
-  unixAddress* target = new unixAddress(pd_address_string);
+  unixAddress* target = new unixAddress(pd_filename);
   giopActiveConnection* conn;
   if ((conn = target->Connect()) == 0) {
     if (omniORB::trace(1)) {

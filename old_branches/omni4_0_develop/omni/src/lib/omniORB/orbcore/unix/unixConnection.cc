@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2001/08/24 15:56:45  sll
+  Fixed code which made the wrong assumption about the semantics of
+  do { ...; continue; } while(0)
+
   Revision 1.1.2.2  2001/08/07 15:42:17  sll
   Make unix domain connections distinguishable on both the server and client
   side.
@@ -239,7 +243,7 @@ unixConnection::unixConnection(SocketHandle_t sock,
   static CORBA::ULong suffix = 0;
 
   CORBA::String_var filename_1;
-  filename_1 = CORBA::string_alloc(strlen(filename)+8);
+  filename_1 = CORBA::string_alloc(strlen(filename)+12);
   sprintf(filename_1,"%s %08x",filename,(unsigned int)++suffix);
 
   if (isActive) {
