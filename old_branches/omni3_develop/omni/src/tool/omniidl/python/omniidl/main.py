@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.15.2.8  2000/03/16 11:09:30  dpg1
+# Better error reporting if import fails.
+#
 # Revision 1.15.2.7  2000/03/14 14:54:17  dpg1
 # Incorrect message with omniidl -E.
 #
@@ -279,7 +282,12 @@ def my_import(name):
 def be_import(name):
     try:
         return my_import("omniidl_be." + name)
-    except ImportError:
+    except ImportError, ex:
+        if sys.modules.has_key("omniidl_be." + name):
+            # The first import found the module, but some nested
+            # import failed.
+            raise ex
+
         return my_import(name)
 
 def main(argv=None):
