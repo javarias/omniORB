@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2001/09/13 15:36:00  sll
+  Provide hooks to openssl for thread safety.
+  Switched to select v2 or v3 methods but accept only v3 or tls v1 protocol.
+  Added extra method set_supported_versions.
+
   Revision 1.1.2.1  2001/06/11 18:11:07  sll
   *** empty log message ***
 
@@ -37,8 +42,17 @@
 #ifndef __SSLCONTEXT_H__
 #define __SSLCONTEXT_H__
 
-#include <openssl/ssl.h>
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
 
+#if defined(_OMNIORB_SSL_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
+
+#include <openssl/ssl.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
   class omni_sslTransport_initialiser;
@@ -52,11 +66,11 @@ class sslContext {
   
   // These three parameters must be set or else the default way to
   // initialise a sslContext singleton will not be used.
-  static const char* certificate_authority_file; // In PEM format
-  static const char* key_file;                   // In PEM format
-  static const char* key_file_password;
+  static _core_attr const char* certificate_authority_file; // In PEM format
+  static _core_attr const char* key_file;                   // In PEM format
+  static _core_attr const char* key_file_password;
 
-  static sslContext* singleton;
+  static _core_attr sslContext* singleton;
 
   virtual ~sslContext();
 
