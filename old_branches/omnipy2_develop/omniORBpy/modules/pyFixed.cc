@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.2.1  2001/04/09 15:22:15  dpg1
+// Fixed point support.
+//
 
 #include <omnipy.h>
 #include <pyFixed.h>
@@ -93,6 +96,9 @@ omniPy::newFixedObject(PyObject* self, PyObject* args)
 	  throw;
 	}
       }
+      else if (omnipyFixed_Check(pyv)) {
+	return omniPy::newFixedObject(*((omnipyFixedObject*)pyv)->ob_fixed);
+      }
     }
     else if (size == 3) {
       PyObject* pyd = PyTuple_GetItem(args, 0);
@@ -137,6 +143,11 @@ omniPy::newFixedObject(PyObject* self, PyObject* args)
 	}
 	else if (PyString_Check(pyv)) {
 	  CORBA::Fixed f(PyString_AsString(pyv));
+	  f.PR_setLimits(digits, scale);
+	  return omniPy::newFixedObject(f);
+	}
+	else if (omnipyFixed_Check(pyv)) {
+	  CORBA::Fixed f(*((omnipyFixedObject*)pyv)->ob_fixed);
 	  f.PR_setLimits(digits, scale);
 	  return omniPy::newFixedObject(f);
 	}
