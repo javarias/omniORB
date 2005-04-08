@@ -1,0 +1,38 @@
+include ../../stdmk/stdmk_nt
+
+EXE = 	Client.exe Manager.exe Server.exe 
+
+all: $(EXE)
+
+clean:
+	del *.obj
+	del *.exe
+	del *_c.cpp
+	del *_s.cpp
+	del *.hh
+	del *.log
+	del *.out
+	del *.ilk
+	del *.pdb
+
+#
+# "Bank" specific make rules
+#
+
+Demo_c.cpp: Demo.idl
+	$(ORBCC) Demo.idl
+
+Demo_s.cpp: Demo.idl
+	$(ORBCC) Demo.idl
+
+Client.exe: Demo_c.obj Client.obj 
+	$(LINK_EXE) /out:Client.exe Client.obj \
+	Demo_c.obj $(LIBORB) $(STDCC_LIBS)
+
+Manager.exe: Demo_c.obj Manager.obj 
+	$(LINK_EXE) /out:Manager.exe Manager.obj \
+	Demo_c.obj $(LIBORB) $(STDCC_LIBS)
+
+Server.exe: Demo_s.obj Demo_c.obj Server.obj
+	$(LINK_EXE) /out:Server.exe Server.obj \
+	Demo_s.obj Demo_c.obj $(LIBORB) $(STDCC_LIBS)

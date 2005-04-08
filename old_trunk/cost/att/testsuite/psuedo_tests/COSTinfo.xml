@@ -1,0 +1,17 @@
+<testset name="Pseudo operation tests">
+
+  <test name="pseudo_tests">
+    <description>
+    Check CORBA::Object pseudo operations.
+    </description>
+
+    <tests>CORBA::Object::_non_existent</tests>
+    <tests>CORBA::Object::_is_a</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>server</server>
+    <client>client</client>
+  </test>
+</testset>

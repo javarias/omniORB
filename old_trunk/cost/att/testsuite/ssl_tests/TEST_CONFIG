@@ -1,0 +1,7 @@
+sslfragTest1 120 "fragServer root.pem server.pem password"  "fragClient root.pem client.pem password"
+sslfragTest2 120 "fragServer root.pem server.pem password"  "fragClient2 root.pem client.pem password"
+sslfragTest3 120 "fragServer root.pem server.pem password" "fragClient root.pem client.pem password -ORBmaxGIOPVersion 1.1"
+sslfragTest4 120 "fragServer root.pem server.pem password" "fragClient2 root.pem client.pem password -ORBmaxGIOPVersion 1.1"
+ssllimitTest1 60 "fragServer -ORBgiopMaxMsgSize 40000" "limitClient1 -ORBmaxGIOPVersion 1.1 -ORBgiopMaxMsgSize 80000"
+ssllimitTest1 60 "fragServer -ORBgiopMaxMsgSize 40000" "limitClient1 -ORBmaxGIOPVersion 1.2 -ORBgiopMaxMsgSize 80000"
+

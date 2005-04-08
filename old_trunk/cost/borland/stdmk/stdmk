@@ -1,0 +1,48 @@
+######################################################################
+### Solaris Makefile definitions 
+### 
+### Environment Variables:
+### 
+### VBROKERDIR (required)	: set to base directory of VisiBroker  
+###				: for C++ installation.
+### Uncomment appropriate lines to switch between multi-threaded
+### and single threaded builds and or debug vs non-debug builds.
+######################################################################
+
+
+### Platform specific compiler definitions (multi-threaded)
+CC         = CC -mt -DTHREAD -DSOLARIS
+### Platform specific compiler definitions (Single-threaded)
+##CC         = CC -DSOLARIS
+
+### Platform specific compiler definitions (debug build)
+DEBUG      = -g -xs 
+### Platform specific compiler definitions (non-debug build)
+##DEBUG      = 
+
+STDCC_LIBS = -lsocket -lnsl -ldl -lposix4
+
+### VisiBroker directory locations
+ORBCC      = $(VBROKERDIR)/bin/idl2cpp
+LIBPATH    = -L$(VBROKERDIR)/lib
+CCINCLUDES = -I. -I$(VBROKERDIR)/include -I$(VBROKERDIR)/include/stubs
+
+### Multi-threaded ORB library
+LIBORB     = -lorb_r -lvport_r -lcosnm_r -lcosev_r
+### Single-threaded ORB library
+##LIBORB     = -lorb -lvport -lcosnm -lcosev
+
+### Compiler flags for debug
+CCFLAGS    = $(CCINCLUDES) $(DEBUG)
+
+
+### Standard build rules for .C (user code) and .cc (generated code) files
+
+.SUFFIXES: .C .o .h .hh .cc .java .class
+
+.C.o:
+	$(CC) $(CCFLAGS) -c -o $@ $<
+ 
+.cc.o:
+	$(CC) $(CCFLAGS) -c -o $@ $<
+

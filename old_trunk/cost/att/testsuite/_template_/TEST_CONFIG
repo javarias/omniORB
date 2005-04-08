@@ -1,0 +1,14 @@
+# This is a sample test configuration file
+#
+# The structure of this configuration file is rather simple -- one
+# line per test case (comment lines begn with a '#'):
+# <test name> <timeout> <server 1> <server 2> .. <client>
+#
+# <test name>: a string which identifies the test
+# <timeout>: timeout in seconds for the test, the client program has to
+#	     terminate within this time, otherwise the test fails
+# <server 1> .. <server n>: server programs are started in the given order
+# <client>: client program
+#
+"_template_ test 1" 5 server client
+"_template_ test 2" 10 server client

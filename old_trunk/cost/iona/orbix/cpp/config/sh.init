@@ -1,0 +1,81 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# ----------------------------------------------------------------------
+# Don't make any changes below this line
+# ----------------------------------------------------------------------
+
+#
+# Check the command line parameters
+#
+auto="false"
+for arg in ${1+"$@"}
+do
+    if test -n "$arg" -a "$arg" = "--auto"
+then
+    auto="true"
+    fi
+done
+
+#
+# Remove echo incompatibilities
+#
+if test "`echo -e xxx`" = "xxx"
+then
+    echo="echo -e"
+else
+    echo=echo
+fi
+
+#
+# Check for Windows
+#
+windows=
+if test -d 'c:/' # Simple check for windows
+then
+    windows="yes"
+else
+    windows="no"
+fi
+
+#
+# Set the executable extension
+#
+exe=
+if test "$windows" = "yes"
+then
+    exe=".exe"
+fi
+
+#
+# Function to kill the test server (if there is one)
+#
+rm -f srvid
+kill_server()
+{
+    if test -r srvid
+    then
+        srvid=`cat srvid`
+	kill $srvid
+	wait $srvid
+	rm -f srvid
+    fi
+}
+
+#
+# Function to kill the test server and exit
+#
+deactivate()
+{
+    kill_server
+    exit
+}
+trap deactivate 1 2 3 4 5 6 7 8 10 12 13 14 15
+

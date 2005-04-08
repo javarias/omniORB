@@ -1,0 +1,74 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# User settings
+
+ORB_HOME	= /opt/inprise/vbroker
+
+# ORB-specific configuration
+
+# VisiBroker 4.5
+IDL		= $(ORB_HOME)/bin/idl2cpp
+IDLFLAGS	= -client_ext "" -server_ext _skel -hdr_suffix h -src_suffix cpp -namespace -DCPP -I$(ORB_HOME)/idl
+IDL_PIFLAGS	= 
+ORB_CPPFLAGS	= -DVBROKER -I$(ORB_HOME)/include -DHAVE_EXCEPTION_INSERTERS
+ORB_LDFLAGS	= -L$(ORB_HOME)/lib
+ORB_LIBS	= -lorb_r.so
+
+
+# Platform-specific configuration
+
+# Linux, GCC 2.95.3
+CXX		= c++
+CXXLD		= c++
+CXXFLAGS	= -Wall
+AR		= ar
+ARFLAGS		= cr
+LIBS		= -lpthread
+
+# Solaris, Forte 6 C++ 5.2 update 1, patch 109508-02
+#CXX		= CC
+#CXXFLAGS	= -mt
+#AR		= CC
+#ARFLAGS	= -mt -xar -o
+#LIBS		= -lsocket -lnsl -lposix4 -lpthread
+
+# HP-UX, aC++
+#CXX		= aCC
+#CXXFLAGS	=
+#AR		= ar
+#ARFLAGS	= cr
+#LIBS		= -lpthread
+
+# IRIX 6.5, SGI C++ 7.3
+#CXX		= CC
+#CXXFLAGS	=
+#AR		= CC
+#ARFLAGS	= -ar -o
+#LIBS		=
+
+# DEC OSF/1, DEC C++ 6.2
+#CXX		= cxx
+#CXXFLAGS	= -pthread -distinguish_nested_enums -msg_disable narrowptr
+#AR		= cxx
+#ARFLAGS	=
+#LIBS		=
+
+# AIX 4.3.x, VisualAge C++ 5.0
+#CXX		= xlC_r
+#CXXFLAGS	= -qnotempinc -qrtti=all
+#AR		= xlC_r
+#ARFLAGS	=
+#LIBS		=
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

@@ -1,0 +1,212 @@
+enum Beer
+{
+    Stout,
+    Lager
+};
+
+interface ex4 {};
+
+struct FixLen
+{
+    long  m1;
+    short m2;
+};
+
+struct VarLen
+{
+    string m1;
+    long   m2;
+};
+
+
+typedef sequence<Object> SeqObject;
+typedef sequence<ex4>    SeqIntf;
+typedef sequence<long>   SeqLong;
+typedef sequence<string> SeqString;
+typedef sequence<FixLen> SeqFixedStruct;
+typedef sequence<VarLen> SeqVarStruct;
+typedef sequence<Beer>   SeqBeer;
+
+const unsigned long BSEQ_OBJECT_SIZE = 2;
+typedef sequence<Object, BSEQ_OBJECT_SIZE> BSeqObject;
+
+const unsigned long BSEQ_INTF_SIZE = 1;
+typedef sequence<ex4, BSEQ_INTF_SIZE> BSeqIntf;
+
+const unsigned long BSEQ_LONG_SIZE = 5;
+typedef sequence<long, BSEQ_LONG_SIZE> BSeqLong;
+
+const unsigned long BSEQ_STRING_SIZE = 3;
+typedef sequence<string, BSEQ_STRING_SIZE> BSeqString;
+
+const unsigned long BSEQ_FIXEDLEN_SIZE = 1;
+typedef sequence<FixLen, BSEQ_FIXEDLEN_SIZE> BSeqFixedStruct;
+
+const unsigned long BSEQ_VARLEN_SIZE = 1;
+
+typedef sequence<VarLen, BSEQ_VARLEN_SIZE> BSeqVarStruct;
+
+const unsigned long BSEQ_ENUM_SIZE = 2;
+typedef sequence<Beer, BSEQ_ENUM_SIZE>   BSeqBeer;
+
+typedef sequence<sequence<Object> > SeqSeqObject;
+typedef sequence<sequence<ex4> >    SeqSeqIntf;
+typedef sequence<sequence<long> >   SeqSeqLong;
+typedef sequence<sequence<string> > SeqSeqString;
+typedef sequence<sequence<FixLen> > SeqSeqFixedStruct;
+typedef sequence<sequence<VarLen> > SeqSeqVarStruct;
+typedef sequence<sequence<Beer> >   SeqSeqBeer;
+
+interface TestSeq
+{
+    SeqObject
+    op_seq_object(
+	in SeqObject    arg1,
+	inout SeqObject arg2,
+	out SeqObject   arg3
+    );
+    SeqIntf
+    op_seq_intf(
+	in SeqIntf    arg1,
+	inout SeqIntf arg2,
+	out SeqIntf   arg3
+    );
+    SeqLong
+    op_seq_long(
+	in SeqLong    arg1,
+	inout SeqLong arg2,
+	out SeqLong   arg3
+    );
+    SeqString
+    op_seq_string(
+	in SeqString    arg1,
+	inout SeqString arg2,
+	out SeqString   arg3
+    );
+    SeqFixedStruct
+    op_seq_FixLenstruct(
+	in SeqFixedStruct    arg1,
+	inout SeqFixedStruct arg2,
+	out SeqFixedStruct   arg3
+    );
+    SeqVarStruct
+    op_seq_varstruct(
+	in SeqVarStruct    arg1,
+	inout SeqVarStruct arg2,
+	out SeqVarStruct   arg3
+    );
+    SeqBeer
+    op_seq_enum(
+	in SeqBeer    arg1,
+	inout SeqBeer arg2,
+	out SeqBeer   arg3
+    );
+
+    BSeqObject
+    op_bseq_object(
+	in BSeqObject    arg1,
+	inout BSeqObject arg2,
+	out BSeqObject   arg3
+    );
+    BSeqIntf
+    op_bseq_intf(
+	in BSeqIntf    arg1,
+	inout BSeqIntf arg2,
+	out BSeqIntf   arg3
+    );
+    BSeqLong
+    op_bseq_long(
+	in BSeqLong    arg1,
+	inout BSeqLong arg2,
+	out BSeqLong   arg3
+    );
+    BSeqString
+    op_bseq_string(
+	in BSeqString    arg1,
+	inout BSeqString arg2,
+	out BSeqString   arg3
+    );
+    BSeqFixedStruct
+    op_bseq_FixLenstruct(
+	in BSeqFixedStruct    arg1,
+	inout BSeqFixedStruct arg2,
+	out BSeqFixedStruct   arg3
+    );
+    BSeqVarStruct
+    op_bseq_varstruct(
+	in BSeqVarStruct    arg1,
+	inout BSeqVarStruct arg2,
+	out BSeqVarStruct   arg3
+    );
+    BSeqBeer
+    op_bseq_enum(
+	in BSeqBeer    arg1,
+	inout BSeqBeer arg2,
+	out BSeqBeer   arg3
+    );
+
+    SeqSeqObject
+    op_seq_seqobject(
+	in SeqSeqObject    arg1,
+	inout SeqSeqObject arg2,
+	out SeqSeqObject   arg3
+    );
+    SeqSeqIntf
+    op_seq_seqintf(
+	in SeqSeqIntf    arg1,
+	inout SeqSeqIntf arg2,
+	out SeqSeqIntf   arg3
+    );
+    SeqSeqLong
+    op_seq_seqlong(
+	in SeqSeqLong    arg1,
+	inout SeqSeqLong arg2,
+	out SeqSeqLong   arg3
+    );
+    SeqSeqString
+    op_seq_seqstring(
+	in SeqSeqString    arg1,
+	inout SeqSeqString arg2,
+	out SeqSeqString   arg3
+    );
+    SeqSeqFixedStruct
+    op_seq_seqFixLenstruct(
+	in SeqSeqFixedStruct    arg1,
+	inout SeqSeqFixedStruct arg2,
+	out SeqSeqFixedStruct   arg3
+    );
+    SeqSeqVarStruct
+    op_seq_seqvarstruct(
+	in SeqSeqVarStruct    arg1,
+	inout SeqSeqVarStruct arg2,
+	out SeqSeqVarStruct   arg3
+    );
+
+    SeqSeqBeer
+    op_seq_seqenum(
+	in SeqSeqBeer    arg1,
+	inout SeqSeqBeer arg2,
+	out SeqSeqBeer   arg3
+    );
+};
+
+
+struct FixedSeqTest
+{
+    sequence<long> m1;
+    SeqSeqLong m2;
+    enum food { italian, french } m3;
+    struct stuff { long m1; short m2; string m3; } m4;
+    sequence<long, 1> m5;
+};
+
+struct VarSeqTest
+{
+    sequence<long> m1;
+    string m3;
+    SeqSeqLong m2;
+    Object m4;
+    ex4 m5;
+    sequence<long, 2> m6;
+};
+

@@ -1,0 +1,78 @@
+Shutdown Test
+=============
+
+This tests verifies the ORB's graceful shutdown in several scenarios.
+The test is a modification of the standard account example. The test
+consists of the following programs:
+
+1. account_client: This is the standard account client that binds to
+an account server and queries the balance using the method balance().
+The difference, though, is that it queries the server for balance()
+ in an infinite loop. 
+
+2. account_server: This is the standard account server implementing 
+the balance() method. in addition, this server also implements a
+shutdown() method. The shutdown method calls 
+	(a) CORBA::ORB::shutdown() or 
+	(b) a combination of BOA::deactivate_obj() followed by 
+	    a CORBA::release( obj ). 
+
+The shutdown() method takes a Boolean variable as an argument and 
+chooses between (a) and (b). 
+
+3. shutdown: This program binds to the account server and invokes the 
+shutdown() method implemented by the server. By passing a command line
+argument to this program (either 1 or 0), you will be able to shutdown
+the server in one of two ways, describd above. 
+
+Scenarios
+=========
+
+1. Start an osagent if one is not running yet. 
+   Start several account_clients. (atleast 4 or 5).  
+   Start one account_server on the command prompt (both UNIX/Windows).
+   Watch the clients making progress. 
+   Kill the account_server explicitly by typing "control-C".
+   Watch the clients catching CORBA::NO_IMPLEMENT exceptions.
+   Start another account_server. 
+   Make sure the account_clients rebind to the newly started 
+   account_server and continue to make progress. 
+   Make sure none of the account_clients hang or crash.
+
+2. Repeat scenario 1. 
+   Instead of typing "control-C" to kill the account_server, use the 
+   task manager on Windows to kill the account_server. 
+   Make sure none of the account_clients hang or crash.
+
+3. Repeat Scenario 1.
+   Instead of killing the account_server manually, start the shutdown 
+   client program in another window/terminal and specify no argument
+   on the command line.
+   Make sure none of the account_clients hang or crash.
+
+4. Repeat Scenario 1.
+   Instead of killing the account_server manually, start the shutdown
+   client program in another window/terminal and specify the command
+   line argument 1.
+   Make sure none of the account_clients hang or crash.
+
+5. Start an osagent if one is not running yet. 
+   Start two account_servers. 
+   Start several account_clients (atleast 4 or 5).
+   Watch the clients making progress. 
+   Kill one of the two account_servers started by explicitly typing "control-C".
+   Watch the clients failover and bind to the other account_server started
+   earlier.
+   Make sure none of the account_clients hang or crash.
+    
+6. Repeat Scenario 5.
+   Instead of starting both the account_servers on the same machine, 
+   Start the second account_server on a different machine. 
+   Make sure none of the account_clients hang or crash.
+
+7. Repeat all of the above Scenarios with command line arguments to the
+   account_server: -OAlocalipc 0 etc. 
+   Make sure none of the account_clients hang or crash.
+
+8. Make sure you run the shutdown test with the single threaded server
+   as well.

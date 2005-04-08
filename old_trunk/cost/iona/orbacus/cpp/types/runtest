@@ -1,0 +1,47 @@
+#!/bin/sh
+# **********************************************************************
+#
+# Copyright (c) 2001
+# IONA Technologies, Inc.
+# Waltham, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Try to find top-level directory
+#
+if test -f config/sh.init
+then
+    top_srcdir=.
+elif test -f ../config/sh.init
+then
+    top_srcdir=..
+else
+    $echo "$0: can't find top-level directory"
+    exit
+fi
+
+#
+# Run standard init script
+#
+. $top_srcdir/config/sh.init
+
+#
+# Delete old log files
+#
+rm -f types.log
+
+#
+# Run the tests
+#
+$echo
+$top_srcdir/types/TestConst${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestTypeCode${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestAny${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestDynAny${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestUnion${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestFixed${exe} 2>&1 | tee -a types.log
+$top_srcdir/types/TestSequence${exe} 2>&1 | tee -a types.log
+

@@ -1,0 +1,71 @@
+
+module TypeCodeTest {
+
+  interface Echo {
+    TypeCode echo_tc(in TypeCode t);
+    any echo_any(in any a);
+  };
+
+  struct SimpleStructTest {
+    long a;
+    short b;
+    double c;
+    sequence<Echo> d;
+  };
+
+  struct IndirectionStructTest {
+    Echo a;
+    Echo aa;
+    Echo aaa;
+  };
+
+  struct RecursiveStructTest {
+    long a;
+    sequence<RecursiveStructTest> b;
+    sequence<RecursiveStructTest> b2;
+    SimpleStructTest c;
+    SimpleStructTest c2;
+  };
+
+  typedef sequence<RecursiveStructTest>	StructTestList;
+
+  struct ComplexStructTest {
+    struct SubStruct {
+      sequence <StructTestList>	a;
+      sequence <ComplexStructTest> b;
+    } a;
+    sequence <ComplexStructTest> b;
+  };
+
+  union	SimpleUnionTest	switch(long) {
+  case 1: long a;
+  case 2: short	b;
+  case 3: double c;
+  case 4: sequence<Echo> d;
+  };
+
+  union	DefaultUnionTest switch(long) {
+  case 1: long a;
+  case 2: short	b;
+  case 3: double c;
+  default:
+  case 4: sequence<Echo> d;
+  };
+
+  enum EnumTest	{ one, two, three };
+
+  union	EnumUnionTest switch(EnumTest) {
+  case one: long a;
+  case two: short b;
+  };
+
+  union	ComplexUnionTest switch(EnumTest) {
+  case one: long a;
+  case two: short b;
+  default: sequence<ComplexUnionTest> c;
+    //case three: sequence<ComplexUnionTest> c;
+  };
+
+  typedef sequence <ComplexUnionTest> ComplexUnionTestList;
+
+};

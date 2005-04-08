@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the Implicit Activation POA Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Implicit Activation Bank</H2>
+The example has the standard AccountManager and Account interfaces.&nbsp;
+AccountManager is used for opening an account and Account is used for querying
+the balance on the account.&nbsp; The importance of the example is to show
+how to set POA policies such that servants can be automatically activated
+by the POA whenever a reference or id associated to the servant is obtained.&nbsp;
+The reference obtained is published to the client via a file "ior.dat".
+
+<P>Both the servants for AccountManager and Account are activated by myPOA
+using implicit activation.
+
+<P>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+<UL>
+<LI>
+To use the right policies on POA creation so it can activate servants implicitly</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+<LI>
+<A HREF="implicit_activation_java.html">Java example</A></LI>
+<LI>
+<A HREF="implicit_activation_cpp.html">Cpp example</A></LI>
+</UL>
+
+<HR WIDTH="100%">
+<BR>Return to the <A HREF="../../README.html">top-level examples page</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,90 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the BOA Bank for Java</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2> BOA Bank for Java</H2>
+ <BR>
+<HR WIDTH="100%">
+<h3>Directory Contents</h3>
+<ul>
+  <li> <a href="Bank.idl">Bank.idl</a></li>
+  <br>
+  IDL interface for the <b>Bank</b> object. 
+  <li> <a href="Server.java">Server.java</a></li>
+  <br>
+  Bank server. Creates an instance of the <b>Bank</b> and calls <tt>com.inprise.vbroker.CORBA.BOA.impl_is_ready()</tt> 
+  to make this object available to client programs.&nbsp; The Bank Server implementation 
+  implements two methods: <tt>open</tt>, which opens a bank account, and <tt>balance</tt>, 
+  which returns the balance in a person's account whose name is provided as input 
+  (by generating a random number). Check the section <a href="#boa_migration">BOA 
+  migration from Visibroker 3.x to 4.0</a> for the changes you must make to your 
+  existing code. 
+  <li> <a href="AccountImpl.java">AccountImpl.java</a></li>
+  <br>
+  Account Object implementation. This program contains the implementation of the 
+  Account object and is part of the Bank Server described above. 
+  <li> <a href="AccountManagerImpl.java">AccountManagerImpl.java</a></li>
+  <br>
+  Account Manager Implementation. This program contains the implementation of 
+  the Account Manager object and is part of the Bank Server described above. 
+  <li> <a href="Client.java">Client.java</a></li>
+  <br>
+  This is the Bank client. It binds to the <b>AccountManager</b> object and invokes 
+  <tt>open()</tt> to open a bank account. It then invokes <tt>balance()</tt> on 
+  the <b>account</b> object reference obtained to query the balance. 
+  <li> <a href="Makefile.java">Makefile.java</a> (vbmake.bat <i>on Windows</i>): 
+    Used to build java targets.</li>
+  <li><a href="Makefile">Makefile</a> Used to build both C++ and Java targets.</li>
+</ul>
+<h3> BOA migration from Visibroker 3.x to 4.0<a name="#boa_migration"></a></h3>
+<p>Your existing BOA based Server code from Visibroker 3.x needs slight modification 
+  in order to run under Visibroker 4.0. The modifications in most cases are trivial 
+  and can be accomplished by simple scripts. The client code from Visibroker 3.x 
+  must run without any code modifications.</p>
+<ul>
+  <li>idl2java option: By default, Visibroker 4.0 idl2java generates code assuming 
+    that you will use POA. In order to make it generate code for BOA, you must 
+    specify &quot;-boa&quot; option to idl2java compiler.The Makefile.java shipped 
+    with this example uses that option.</li>
+  <li>ORB casting: Until Visibroker 3.3, there were Visibroker proprietary methods 
+    on org.omg.CORBA.ORB class. These methods have now moved to com.inprise.vbroker.CORBA.ORB 
+    class. So in order to access those ORB methods, you must cast the ORB to com.inprise.vbroker.CORBA.ORB. 
+  </li>
+  <li>Package of BOA class : The BOA class has moved from org.omg.CORBA package 
+    to com.inprise.vbroker.CORBA package. You must change the package of BOA appropriately.</li>
+</ul>
+<h3>Building this example</h3>
+Typing <b>make java</b> (or <b>vbmake</b> <i>on Windows</i>) in the bank subdirectory 
+will cause the <a href="Bank.idl">Bank.idl</a> to be run through the idl2java 
+compiler. It will also build the following classes for the examples described 
+above: 
+<ul>
+  <li> Server.class</li>
+  <li> Client.class</li>
+</ul>
+<h3> Running this example</h3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent 
+executable) is running on your network. Then start the bank server using the command: 
+<ul>
+  <pre><tt><b>prompt></b> vbj Server&nbsp; &amp; 
+(start vbj Server <i>on Windows</i>)
+<i>// make the server run in the background</i></tt></pre>
+</ul>
+Next, open a user's bank account and query the balance in the account using the 
+command 
+<ul>
+  <pre><i><tt><b>prompt></b> vbj Client john</tt></i></pre>
+</ul>
+<i>or 
+<UL>
+  <PRE><TT><B>prompt></B> vbj Client &nbsp; 
+// uses a default name</TT></PRE>
+</UL>
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="bank.html">BOA Bank example page</A>. </i> 
+</BODY></HTML>

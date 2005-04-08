@@ -1,0 +1,36 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module test
+{
+module poa
+{
+
+interface Test
+{
+    void aMethod();
+};
+
+struct TestInfo
+{
+    Test obj;
+    string except_id;
+};
+typedef sequence<TestInfo> TestInfoSeq;
+
+interface TestServer
+{
+    TestInfoSeq get_info();
+
+    void deactivate();
+};
+
+}; // End module poa
+}; // End module test

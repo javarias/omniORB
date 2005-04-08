@@ -1,0 +1,38 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module ORBTest_LongDouble
+{
+    exception ExLongDouble
+    {
+	long double value;
+    };
+    
+    interface Intf
+    {
+	attribute long double attrLongDouble;
+
+	long double
+	opLongDouble(
+	    in long double a0,
+	    inout long double a1,
+	    out long double a2
+	);
+
+	long double
+	opLongDoubleEx(
+	    in long double a0,
+	    inout long double a1,
+	    out long double a2
+	)
+	    raises (ExLongDouble);
+    };
+
+}; // module ORBTest_LongDouble

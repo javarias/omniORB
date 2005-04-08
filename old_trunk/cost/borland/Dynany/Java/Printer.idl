@@ -1,0 +1,16 @@
+// Printer.idl
+
+module Printer {
+  enum EnumType {first, second, third, fourth};
+
+  struct StructType {
+    string str;
+    EnumType e;
+    float fl;
+  };
+
+  interface PrinterManager {
+    void printAny(in any info); 
+    oneway void shutdown();
+  };
+};

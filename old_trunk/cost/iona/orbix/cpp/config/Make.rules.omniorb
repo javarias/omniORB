@@ -1,0 +1,37 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# User settings
+
+ORB_HOME	= /opt/omniORB/omni
+
+# ORB-specific configuration
+IDL		= $(ORB_HOME)/bin/i586_linux_2.0_glibc2.1/omniidl
+IDLFLAGS	= -I$(ORB_HOME)/idl -bcxx -Wba -Wbh=.h -Wbs=.cpp -DHAVE_NO_CORBA_2_4 -DHAVE_NO_FIXED_TYPE -DHAVE_NO_LONG_DOUBLE_TYPE
+IDL_PIFLAGS	=
+ORB_CPPFLAGS	= -DOMNIORB -I$(ORB_HOME)/include -D__x86__ -D__linux__ -D__OSVERSION__=2 -D_REENTRANT -DHAVE_NO_FIXED_TYPE -DHAVE_NO_LONG_DOUBLE_TYPE -DHAVE_NO_SKEL_HEADER
+ORB_LDFLAGS	= -L$(ORB_HOME)/lib/i586_linux_2.0_glibc2.1
+ORB_LIBS	= -lomniORB3 -lomniDynamic3 -lomniGK_stub -lomnithread
+
+
+# Platform-specific configuration
+
+# Linux, GCC 2.95.3
+CXX		= c++
+CXXLD		= c++
+CXXFLAGS	= -Wall
+AR		= ar
+ARFLAGS		= cr
+LIBS		=
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

@@ -1,0 +1,33 @@
+Adding a New Test-Case
+======================
+
+Create a new directory (or place it into an already existing
+directory)
+
+Maybe you want to start by copying the contents of _template_ to your
+new directory.
+
+Write your client and server programs; you can have as many servers as
+you like (or no server at all).
+
+The servers are started in the order given in the test-configuration
+file and they have to write the string "SERVER READY" to standard
+error just after completing startup. If they output any IOR to
+standard error, this IOR will be passed on to the next server/client
+on the command line (-i <IOR>). A server should terminate after its
+standard input is closed; if it doesn't it will be killed and the test
+fails. You don't have to care about these details if you use the
+omnitest library (inherit from OmniServerApp and call server_object to
+register your server object with the naming server) or use one of the
+OMNI_SIMPLE_SERVER macros (see omnitest.h).
+
+A client has to do all the error checking for a test and has to
+terminate within the specified timeout. A test is considered as failed
+if the client doesn't terminate on its own, dumps core, exits with a
+non-zeo return code, or if any of the servers doesn't terminate after
+its standard input is closed.
+
+Finally, you have to write a makefile (dir.mk) and a
+test-configuration file (TEST_CONFIG, have a look at
+_template_/TEST_CONFIG for the file format) so the test-controller
+knows how to build and start your tests.

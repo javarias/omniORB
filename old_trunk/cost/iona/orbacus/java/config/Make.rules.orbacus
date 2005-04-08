@@ -1,0 +1,34 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+ORB_HOME	= $(HOME)/java/ob
+
+# ORB-specific configuration
+JIDL		= jidl
+JIDLFLAGS	= -I$(ORB_HOME)/idl/OB -I$(ORB_HOME)/idl
+JIDL_PIFLAGS	= --with-interceptor-args --prefix-package omg.org org.omg
+
+
+# Platform-specific configuration
+
+# Sun's Java2
+JAVA		= java
+JAVAC		= javac
+JAVACFLAGS	=
+
+
+# IBM's jikes Java compiler
+#JAVAC		= jikes
+#JAVACFLAGS	= -nowarn
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

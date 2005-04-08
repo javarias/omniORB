@@ -1,0 +1,41 @@
+// **********************************************************************
+//
+// Copyright (c) 1999
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+#ifndef POA_MANAGER_PROXY_IDL
+#define POA_MANAGER_PROXY_IDL
+
+interface POAManagerProxy
+{
+    exception AdapterInactive
+    {
+    };
+
+    enum State
+    {
+	HOLDING, ACTIVE, DISCARDING, INACTIVE
+    };
+
+    void activate()
+	raises(AdapterInactive);
+
+    void hold_requests(in boolean wait_for_completion)
+	raises(AdapterInactive);
+
+    void discard_requests(in boolean wait_for_completion)
+	raises(AdapterInactive);
+
+    void deactivate(in boolean etherealize_objects,
+		    in boolean wait_for_completion)
+	raises(AdapterInactive);
+
+    State get_state();
+};
+
+#endif

@@ -1,0 +1,19 @@
+#
+fragTest1 120 fragServer fragClient
+fragTest2 120 fragServer fragClient2
+fragTest3 120 fragServer "fragClient -ORBmaxGIOPVersion 1.1"
+fragTest4 120 fragServer "fragClient2 -ORBmaxGIOPVersion 1.1"
+fragTest5 120 fragServer "fragClient -ORBmaxGIOPVersion 1.0"
+fragTest6 120 fragServer "fragClient2 -ORBmaxGIOPVersion 1.0"
+limitTest1 60 "fragServer -ORBgiopMaxMsgSize 40000" "limitClient1 -ORBmaxGIOPVersion 1.0 -ORBgiopMaxMsgSize 80000"
+limitTest1 60 "fragServer -ORBgiopMaxMsgSize 40000" "limitClient1 -ORBmaxGIOPVersion 1.1 -ORBgiopMaxMsgSize 80000"
+limitTest1 60 "fragServer -ORBgiopMaxMsgSize 40000" "limitClient1 -ORBmaxGIOPVersion 1.2 -ORBgiopMaxMsgSize 80000"
+#
+# Bidirectional GIOP tests
+bidirTest1 120 bidirServer "nestedCallClient no_poa_test"
+bidirTest2 120 bidirServer "nestedCallClient no_poa_policy_test"
+bidirTest3 120 bidirServer "nestedCallClient 40"
+bidirTest4 120 "bidirServer -ORBthreadPerConnectionPolicy 0" "nestedCallClient 40 -ORBthreadPerConnectionPolicy 0"
+bidirTest5 120 bidirServer2 "nestedCallClient 40"
+bidirTest6 120 "bidirServer2 -ORBthreadPerConnectionPolicy 0" "nestedCallClient 40 -ORBthreadPerConnectionPolicy 0"
+

@@ -1,0 +1,77 @@
+// Copyright (c) 2000, 2001 NEC Corporation. All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are
+// met:
+// 
+// 1. The functionality to test the interoperability specified by the 
+//    Object Management Group's CORBA/IIOP specification version two (or 
+//    later versions) must be preserved.
+//    
+// 2. Redistributions of source code must retain the above copyright 
+//    notice, this list of conditions and the following disclaimer as the
+//    first lines of this file unmodified.
+//    
+// 3. Redistributions in binary form must reproduce the above copyright 
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the 
+//    distribution.
+//    
+// THIS SOFTWARE IS PROVIDED BY NEC CORPORATION ``AS IS'' AND ANY EXPRESS
+// OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY 
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+// IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// CVS
+// $Id$
+
+/*------------------*/
+/* data definitions */
+/*------------------*/
+
+/*------------------------------*/
+/* exceptional data definitions */
+/*------------------------------*/
+
+// A
+exception A_except1 {
+    short v1;
+    unsigned short v2;
+    long v3;
+    unsigned long v4;
+    float v5;
+    double v6;
+    char v7;
+    boolean v8;
+    octet v9;
+};
+
+/*-----------------------*/
+/* interface definitions */
+/*-----------------------*/
+
+interface rm11 {
+// A
+    short op1(in short argin, out short argout, inout short arginout);
+    unsigned short op2(in unsigned short argin, out unsigned short argout, inout unsigned short arginout);
+    long op3(in long argin, out long argout, inout long arginout);
+    unsigned long op4(in unsigned long argin, out unsigned long argout, inout unsigned long arginout);
+    float op5(in float argin, out float argout, inout float arginout);
+    double op6(in double argin, out double argout, inout double arginout);
+    char op7(in char argin, out char argout, inout char arginout);
+    boolean op8(in boolean argin, out boolean argout, inout boolean arginout);
+    octet op9(in octet argin, out octet argout, inout octet arginout);
+    any op10(in any argin, out any argout, inout any arginout);
+    string op11(in string argin, out string argout, inout string arginout);
+    Object op12(in Object argin, out Object argout, inout Object arginout);
+    TypeCode op13(in TypeCode argin, out TypeCode argout, inout TypeCode arginout);
+    // pragma: exception=A_except1
+    void excop1() raises(A_except1);
+};

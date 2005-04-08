@@ -1,0 +1,45 @@
+
+module extest {
+  
+  interface  Test{ 
+    
+    struct extS {
+      wchar twc;
+      wstring twstr;
+      long long tll;
+      unsigned long long tull;
+#ifndef NO_LONG_DOUBLE
+      long double tld;
+#endif
+    };
+    typedef sequence<extS> extTestSeq; 
+    
+    // Simple Methods
+    
+    wchar t_wc();
+    wstring t_wstr();
+    long long t_ll();
+    unsigned long long t_ull();
+#ifndef NO_LONG_DOUBLE
+    long double t_ld();
+#endif
+    
+    // simple Methods with inout parameters
+    
+    void t_wc_inout( inout wchar twc);
+    void t_wstr_inout (inout wstring twstr);
+    void t_ll_inout (inout long long tll);
+    void t_ull_inout (inout unsigned long long tull);
+#ifndef NO_LONG_DOUBLE
+    void t_ld_inout (inout long double tld);
+#endif
+    
+    // Method to access the structure
+    
+    extS t_struct ();
+    void t_struct_inout ( inout extS teststruct);
+    void t_extTS_inout ( inout extTestSeq testseq); 
+    
+  };
+  
+};

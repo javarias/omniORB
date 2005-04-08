@@ -1,0 +1,39 @@
+# **********************************************************************
+#
+# Copyright (c) 2002
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# Required for JDK 1.4 due to broken DynamicAny implementation,
+# can also be used with JDK 1.3
+BOOTCLASSPATH	= -bootclasspath $(CLASSPATH):$(JAVA_HOME)/jre/lib/rt.jar
+
+
+# Don't change anything below this line
+
+.SUFFIXES:
+.SUFFIXES:	.java .class
+
+.java.class:
+	$(JAVAC) $(BOOTCLASSPATH) $(JAVACFLAGS) $<
+
+all::
+
+classes:
+	mkdir classes
+
+generated:
+	mkdir generated
+
+$(top_srcdir)/lib:
+	mkdir $(top_srcdir)/lib
+
+clean::
+	rm -rf classes
+	rm -rf generated
+	rm -f *.log
+	rm -f *~

@@ -1,0 +1,68 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Check for Windows
+#
+if test -d 'c:/' # Simple check for windows
+then
+    SEPARATOR=";"
+else
+    SEPARATOR=":"
+fi
+
+# SUN's JDK 1.3 or higher
+JAVA=java
+
+#
+# Remove echo incompatibilities
+#
+if test "`echo -e xxx`" = "xxx"
+then
+    echo="echo -e"
+else
+    echo=echo
+fi
+
+#   
+# Function to set Java boot classpath if JDK 1.3 or 1.4 is being used
+#   
+set_bootclasspath()
+{
+    java_version=`$JAVA -version 2>&1`
+    if `$echo $java_version | grep '1\.[34]' > /dev/null`
+    then
+        JAVA="$JAVA -Xbootclasspath/p:$CLASSPATH"
+    fi
+}
+
+#
+# Function to kill the test server (if there is one)
+#
+rm -f srvid
+kill_server()
+{
+    if test -r srvid
+    then
+        srvid=`cat srvid`
+	kill $srvid
+	rm -f srvid
+    fi
+}
+
+#
+# Function to kill the test server and exit
+#
+deactivate()
+{
+    kill_server
+    exit
+}
+trap deactivate 1 2 3 4 5 6 7 8 10 12 13 14 15

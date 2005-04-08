@@ -1,0 +1,28 @@
+include ../../stdmk/stdmk_nt
+
+EXE = 	account_client.exe account_server.exe shutdown.exe
+
+##all: checkenv $(EXE)
+all: $(EXE)
+
+clean:	
+	 del *.obj *.hh *_[sc].cpp $(EXE) *.log
+
+#
+# "Account" specific make rules
+#
+
+account_c.cpp account_s.cpp: account.idl
+	$(ORBCC) -boa account.idl
+
+account_client.exe: account_c.obj account_clnt.obj 
+	$(LINK_EXE) /out:$@ account_clnt.obj account_c.obj $(LIBORB) $(STDCC_LIBS)
+
+shutdown.exe: account_c.obj shutdown.obj
+	$(LINK_EXE) /out:$@ shutdown.obj account_c.obj \
+	$(LIBORB) $(STDCC_LIBS)
+
+account_server.exe: account_s.obj account_c.obj account_srvr.obj
+	$(LINK_EXE) /out:$@ account_srvr.obj account_s.obj \
+	account_c.obj $(LIBORB) $(STDCC_LIBS)
+

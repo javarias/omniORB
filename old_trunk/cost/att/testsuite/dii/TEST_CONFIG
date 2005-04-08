@@ -1,0 +1,15 @@
+send_multiple_requests_deferred_1.2 60 defersrv deferclt
+dii_1.2 60 ssi dii
+multidii_1.2 60 ../basic_tests/echosrv multidii
+sii_1.2 60 ssi sii
+sngladdrsp_1.2 60 sngladdrsp
+send_multiple_requests_deferred_1.1 60 defersrv "deferclt -ORBmaxGIOPVersion 1.1"
+dii_1.1 60 ssi "dii -ORBmaxGIOPVersion 1.1"
+multidii_1.1 60 ../basic_tests/echosrv "multidii -ORBmaxGIOPVersion 1.1"
+sii_1.1 60 ssi "sii -ORBmaxGIOPVersion 1.1"
+sngladdrsp_1.1 60 "sngladdrsp -ORBmaxGIOPVersion 1.1"
+send_multiple_requests_deferred_1.0 60 defersrv "deferclt -ORBmaxGIOPVersion 1.0"
+dii_1.0 60 ssi "dii -ORBmaxGIOPVersion 1.0"
+multidii_1.0 60 ../basic_tests/echosrv "multidii -ORBmaxGIOPVersion 1.0"
+sii_1.0 60 ssi "sii -ORBmaxGIOPVersion 1.0"
+sngladdrsp_1.0 60 "sngladdrsp -ORBmaxGIOPVersion 1.0"

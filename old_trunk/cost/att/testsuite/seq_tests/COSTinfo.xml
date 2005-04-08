@@ -1,0 +1,85 @@
+<testset name="Sequence tests">
+
+  <test name="seq long">
+    <description>
+    Sequence long mapping.
+    </description>
+
+    <tests>sequence base type</tests>
+    <tests>sequence sequence</tests>
+
+    <timeout>60</timeout>
+    <standalone>t_seq_long</standalone>
+  </test>
+
+  <test name="seq objref">
+    <description>
+    Sequence objref mapping.
+    </description>
+
+    <tests>sequence objref</tests>
+    <tests>sequence sequence</tests>
+
+    <timeout>60</timeout>
+    <standalone>t_seq_objref</standalone>
+  </test>
+
+  <test name="seq string">
+    <description>
+    Sequence string mapping.
+    </description>
+
+    <tests>sequence string</tests>
+    <tests>sequence sequence</tests>
+
+    <timeout>60</timeout>
+    <standalone>t_seq_string</standalone>
+  </test>
+
+  <test name="seq struct">
+    <description>
+    Sequence struct mapping.
+    </description>
+
+    <tests>sequence struct</tests>
+    <tests>sequence sequence</tests>
+
+    <timeout>60</timeout>
+    <standalone>t_seq_struct</standalone>
+  </test>
+
+  <test name="string">
+    <description>
+    String mapping.
+    </description>
+
+    <tests>string</tests>
+
+    <timeout>60</timeout>
+    <standalone>t_string</standalone>
+  </test>
+
+  <test name="seq tests">
+    <description>
+    Sequence mapping and marshalling.
+    </description>
+
+    <tests>sequence base type</tests>
+    <tests>sequence objref</tests>
+    <tests>sequence struct</tests>
+    <tests>sequence union</tests>
+    <tests>sequence array</tests>
+    <tests>sequence sequence</tests>
+
+    <tests>sequence base type marshal</tests>
+    <tests>sequence objref marshal</tests>
+    <tests>sequence struct marshal</tests>
+    <tests>sequence union marshal</tests>
+    <tests>sequence array marshal</tests>
+    <tests>sequence sequence marshal</tests>
+
+    <timeout>60</timeout>
+    <server>server</server>
+    <client>client</client>
+  </test>
+</testset>

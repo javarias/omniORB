@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+
+<project name="test" default="run-all" basedir=".">
+
+
+  <!-- ==================================================== -->
+  <!--             DynAny Tests build file                  -->
+  <!-- ==================================================== -->
+
+
+   <target name="init">
+      <property name="dirs.idl" value="${basedir}/idl"/>
+      <property name="dirs.src" value="${basedir}/src"/>
+      <property name="dirs.classes" value="${basedir}/classes"/>
+      <property name="dirs.output" value="${basedir}/output"/>
+      <property name="dirs.config" value="${basedir}/config"/>
+      <property name="dirs.orbsetup" value="${dirs.src}/com/prismt/common"/>
+      <path id="project.class.path">
+         <pathelement path="${java.class.path}:${dirs.classes}:${dirs.src}"/>
+      </path>
+	   <property name="class.path" refid="project.class.path"/>
+      <property file="${dirs.config}/orb.properties"/>
+   </target>
+
+
+   <!-- ==================================================== -->
+   <!--             compile and run tests                    -->
+   <!-- ==================================================== -->
+
+
+   <target name="build-all" 
+           depends="init,
+                    compile-idl,
+                    generate-src,
+                    compile-src">
+      <copy file="${orbsetup.file}" tofile="${dirs.orbsetup}/ORBSetup.ini"/>
+   </target>
+
+
+   <target name="compile-src">
+      <javac srcdir="${dirs.src}" 
+             destdir="${dirs.classes}"
+             excludes="generated/**"
+             classpath="${class.path}"/>
+   </target>
+
+
+   <target name="run">
+      <junit fork="yes">
+         <classpath path="${class.path}"/>
+         <jvmarg value="-Xbootclasspath/p:${class.path}"/>
+         <formatter type="plain"/>
+	      <test name="${test}" todir="${dirs.output}"/>
+      </junit>
+   </target>
+
+
+   <!-- ==================================================== -->
+   <!--                  compile idl                         -->
+   <!-- ==================================================== -->
+
+
+   <target name="compile-idl">
+      <condition property="compile.idl">
+         <or>
+            <not>
+               <available file="${dirs.classes}/com/prismt/orb"/>
+            </not>
+            <uptodate targetfile="${dirs.idl}/Tests.idl">
+               <srcfiles dir="${dirs.src}/generated/com/prismt/orb" 
+                         includes="**/*.java"/>
+            </uptodate>
+         </or>
+      </condition>
+   </target>
+
+
+   <target name="generate-src" if="compile.idl">
+      <exec executable="${idl.compiler}">
+	      <arg line="${idl.flags} ${dirs.idl}/Tests.idl"/>
+      </exec>
+      <javac srcdir="${dirs.src}/generated"
+             destdir="${dirs.classes}"
+             includes="com/prismt/orb/**"
+             classpath="${class.path}"/>
+   </target>
+
+
+   <!-- ==================================================== -->
+   <!--                 run dynany tests                     -->
+   <!-- ==================================================== -->
+
+
+   <target name="run-all"
+           depends="build-all"
+           description="Run all DynAny tests, logging results in a single file">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.AllTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-base"
+           depends="build-all"
+           description="Run the base DynAny tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyBaseTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-fixed"
+           depends="build-all"
+           description="Run the DynFixed tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyFixedTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-enum"
+           depends="build-all"
+           description="Run the DynEnum tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyEnumTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-struct"
+           depends="build-all"
+           description="Run the DynStruct tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyStructTest"/>
+      </antcall>
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyNonEmptyExTest"/>
+      </antcall>
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyEmptyExTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-union"
+           depends="build-all"
+           description="Run the DynUnion tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyUnionTest"/>
+      </antcall>
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyUnionIntTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-sequence"
+           depends="build-all"
+           description="Run the DynSequence tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyBoundedSeqTest"/>
+      </antcall>
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyUnboundedSeqTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-array"
+           depends="build-all"
+           description="Run the DynArray tests">
+      <antcall target="run">
+         <param name="test" value="com.prismt.orb.dynany.DynAnyArrayTest"/>
+      </antcall>
+   </target>
+
+
+   <target name="run-all-separate"
+           depends="run-base,
+                    run-fixed,
+                    run-enum,
+                    run-struct,
+                    run-union,
+                    run-sequence,
+                    run-array"
+           description="Run all DynAny tests, logging results in separate files">
+   </target>
+
+
+   <!-- ==================================================== -->
+   <!--                   clean up                           -->
+   <!-- ==================================================== -->
+
+
+   <target name="clean" 
+           depends="init"
+           description="Remove all generated source, class and setup files">
+      <delete file="${dirs.orbsetup}/ORBSetup.ini" failonerror="false"/>
+      <delete dir="${dirs.classes}/com" failonerror="false"/>
+      <delete dir="${dirs.src}/generated/com" failonerror="false"/>
+   </target>
+
+
+</project>

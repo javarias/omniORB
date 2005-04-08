@@ -1,0 +1,19 @@
+<testset name="Inheritance test">
+
+  <test name="inheritance_test">
+    <description>
+    Test inherited interfaces, where the client has not seen the whole
+    IDL inheritance hierarchy.
+    </description>
+
+    <tests>interface inheritance</tests>
+    <tests>narrow to base interface</tests>
+    <tests>narrow to parent interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>server/server</server>
+    <client>client/client</client>
+  </test>
+</testset>

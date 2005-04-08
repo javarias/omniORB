@@ -1,0 +1,122 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; U) [Netscape]">
+   <TITLE>Readme for the Servant Locator Bank for Java </TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Bank Servant Locator for Java</H2>
+
+<HR WIDTH="100%">
+<UL>
+<LI>
+<A HREF="Bank.idl">Bank.idl</A></LI>
+
+<BR>IDL interface for the <B>Bank</B>.
+<LI>
+<A HREF="Server.java">Server.java</A></LI>
+
+<BR>Bank server. Creates a POA named
+bank_servant_locator_poa with USE_SERVANT_MANAGER request processing policy
+and NON_RETAIN servant retention policy. Sets up a servant locator on that
+POA. It then creates two&nbsp; object references one for Savings and another
+for Checking account Manager and writes it out to files "cref.dat" and "sref.dat"
+and starts waiting for client requests.
+<LI>
+<A HREF="AccountManagerLocator.java">AccountManagerLocator.java</A></LI>
+
+<BR>The servant locator for Account manager. Creates and returns either
+a SavingsAccountManager servant or CheckingAccountManager servant based
+on passed in object id&nbsp; in the preinvoke() method.
+<BR>The servants may get garbage collected in the postinvoke() method.
+<LI>
+<A HREF="AccountImpl.java">AccountImpl.java</A></LI>
+
+<BR>Account servant implementation. Implements the balance() method.
+<LI>
+<A HREF="AccountManagerImpl.java">AccountManagerImpl.java</A></LI>
+
+<BR>Account Manager servant Implementation. Implements open() method. Uses
+the DataStore to see if there is already an <B>Account</B> for the specified
+user. If not, creates an account with random balance and stores it and
+returns the created account.
+<LI>
+<A HREF="SavingsAccountManagerImpl.java">SavingsAccountManagerImpl.java</A></LI>
+
+<BR>SavingsAccount Manager servant Implementation.Implements the open()
+method that appends the savings information
+<BR>&nbsp;to the name and calls its superclass's ( AccountManager ) open()
+with the new name.
+<LI>
+<A HREF="CheckingAccountManagerImpl.java">CheckingAccountManagerImpl.java</A></LI>
+
+<BR>&nbsp;CheckingAccount Manager servant Implementation.Implements the
+open() method that appends the checking
+<BR>&nbsp;information to the name and calls its superclass's ( AccountManager
+) open() with the new name.
+<LI>
+<A HREF="Client.java">Client.java</A></LI>
+
+<BR>This is the Bank client. It binds to the <B>AccountManager</B> object
+by either using the savings or checking reference based on input arguments
+and invokes <TT>open()</TT> to open a bank account. It then invokes <TT>balance()</TT>
+on the <B>Account</B> object reference obtained to query the balance.
+<LI>
+<A HREF="Makefile.java">Makefile.java</A> (vbmake.bat
+<I>on Windows</I>): Used to build all the test targets.</LI>
+
+<LI>
+<A HREF="Makefile">Makefile</A> The common Makefile
+used for both C++ and Java.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make java</B>(or <B>vbmake</B> <I>on Windows</I>) in the servant_locator
+subdirectory will cause the <A HREF="Bank.idl">Bank.idl</A>
+to be run through the idl2java compiler. It will also build the following
+classes for the examples described above:
+<UL>
+<LI>
+Server.class</LI>
+
+<LI>
+Client.class</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using
+the command:
+<UL>
+<PRE><TT><B>prompt></B> vbj Server&nbsp; &amp;&nbsp;
+(start vbj Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+<I>Next, open a user's bank account and query the balance in the account
+using the command</I>
+<UL>
+<PRE><I><TT><B>prompt></B> vbj Client&nbsp;&nbsp; // creates a checking account for a default user name</TT></I></PRE>
+</UL>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or
+<UL>
+<PRE><I><TT><B>prompt></B> vbj Client john checking</TT></I></PRE>
+
+<PRE><I><TT>or</TT></I></PRE>
+</UL>
+
+<UL><I><TT><B>prompt></B> vbj Client john savings</TT></I></UL>
+From the server output, you will see that the servant locator's preinvoke
+gets invoked for either one of checking or savings type request. As soon
+as the request gets over, servant locator's postinvoke gets called. Invoke
+the client again. From the server output, you will see that the servant
+locator's preinvoke and postinvoke are called again.
+<BR>
+<HR WIDTH="100%">
+<BR><I>Return to the <A HREF="servant_locator.html">Servant
+Locator example page</A>.</I>
+</BODY>
+</HTML>

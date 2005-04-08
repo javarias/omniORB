@@ -1,0 +1,29 @@
+struct WStringStruct
+{
+    wstring wstring_member;
+};
+
+exception WStringException
+{
+    wstring wstring_member;
+};
+
+union WStringUnion switch (unsigned short)
+{
+  default:
+    wstring wstring_member;
+};
+
+typedef sequence<wstring> WStringSequence;
+
+typedef wstring WStringArray[1];
+
+interface WStringTest
+{
+    wstring
+    op(
+        in    wstring in_wstring,
+        inout wstring inout_wstring,
+        out   wstring out_wstring
+    );
+};

@@ -1,0 +1,919 @@
+/******************************************************************************
+ *
+ *  Copyright (c) 2002                                               
+ *  FhG FOKUS                                                        
+ *  Kaiserin-Augusta-Allee 31                                       
+ *  10589 Berlin                                                  
+ *  Germany                                                     
+ *  Tel: +49-30-3463-7000                 
+ *  Fax: +49-30-3463-8000
+ *
+ *  This TTCN-3 module is for testing CORBA GIOP/IIOP.
+ *  It acts as a client and tests the server side of an ORB.
+ *
+ *****************************************************************************/
+
+module GIOP_client {
+    
+    external function get_object_key() return octetstring;
+    
+    group MessageTypes
+    {
+        const octetstring REQUEST               := '00'O;
+        const octetstring REPLY                 := '01'O;
+        const octetstring CANCELREQUEST         := '02'O;
+        const octetstring LOCATEREQUEST         := '03'O;
+        const octetstring LOCATEREPLY           := '04'O;
+        const octetstring CLOSECONNECTION       := '05'O;
+        const octetstring MESSAGEERROR          := '06'O;
+        const octetstring FRAGMENT              := '07'O;
+        const octetstring WRONGMESSAGETYPE      := '08'O;
+
+    }
+    const charstring giopmagic := "GIOP";
+
+    group ExceptionTypes
+    {
+        const CORBA_ULong NO_EXCEPTION := 0;
+    }
+    const CORBA_Short KeyAddr := 0;
+    group LocateStatusTypes
+    {
+        const CORBA_ULong UNKNOWN_OBJECT             := 0;
+        const CORBA_ULong OBJECT_HERE                := 1;
+        const CORBA_ULong OBJECT_FORWARD             := 2;
+        const CORBA_ULong OBJECT_FORWARD_PERM        := 3;
+        const CORBA_ULong LOC_SYSTEM_EXCEPTION       := 4;
+        const CORBA_ULong LOC_NEEDS_ADDRESSING_MODE  := 5;   
+    }
+    group CORBATypes
+    {
+        type integer CORBA_ULong; //(0 .. 2E32 - 1);
+        type integer CORBA_Long; //(-2E31 .. 2E31 - 1);
+        type integer CORBA_LongLong; //(-2E63 .. 2E63 - 1);
+        type integer CORBA_UShort; //(0 .. 2E16 - 1);
+        type integer CORBA_Short; //(-2E15 .. 2E15 - 1);
+        type octetstring CORBA_Octet length(1);
+        type float CORBA_Float;
+        type float CORBA_Double;
+        type charstring CORBA_Char length(1);
+        type charstring CORBA_String length(6);
+        type integer CORBA_Enum;
+
+        type record TaggedProfile_IIOP
+        {
+            CORBA_ULong tag,
+            octetstring version length(2),
+            charstring host,
+            CORBA_UShort tcp_port,
+            octetstring object_key
+        }
+        type record IOPProfiles
+        {
+            TaggedProfile_IIOP profile_iiop
+        }   
+        type record IOR_IIOP
+        {
+            charstring type_id, // IDL:...
+            IOPProfiles profiles // only one profile assumed
+        }
+        type union TargetAddress_Type
+        {
+            octetstring object_key, // first only object_key is used
+            TaggedProfile_IIOP profile,
+            IOR_IIOP           ior
+        }
+    
+        group MessageHeaderTypes
+        {
+            type record GIOP_Header_Type
+            {
+                charstring magic length(4),
+                octetstring version length(2),
+                octetstring byteorder length(1),
+                octetstring messagetype,
+                CORBA_ULong messagesize
+            }
+  
+            type record Request_Header_Type 
+            {
+                CORBA_ULong request_id,
+                octetstring response_flags length(1),
+                octetstring reserved length(3),
+                CORBA_Short addressing_disposition, // discriminant of target
+                TargetAddress_Type target,
+                charstring  operation, 
+                CORBA_ULong service_context
+            }
+
+            type record Reply_Header_Type 
+            {
+                CORBA_ULong request_id,
+                CORBA_ULong reply_status,
+                CORBA_ULong service_context
+            }
+             
+            type record LocateRequest_Header_Type 
+            {
+                CORBA_ULong request_id,
+                CORBA_Short addressing_disposition, // discriminant of target
+                TargetAddress_Type target
+            }
+            
+            type record LocateReply_Header_Type 
+            {
+                CORBA_ULong request_id,
+                CORBA_ULong locate_status
+            }
+        }
+
+        group MessageBodyTypes 
+        {
+            type record Reply_Body_Type (Return_Value_Type)
+            {
+                Return_Value_Type return_value
+            }
+            type octetstring Reply_Body_Boolean_Type;
+            type CORBA_Long Reply_Body_Long_Type;
+            type CORBA_LongLong Reply_Body_LongLong_Type;
+            type CORBA_Short Reply_Body_Short_Type;
+            type CORBA_Octet Reply_Body_Octet_Type;
+            type CORBA_Float Reply_Body_Float_Type;
+            type CORBA_Double Reply_Body_Double_Type;
+            type CORBA_Char Reply_Body_Char_Type;
+            type CORBA_String Reply_Body_String_Type;
+            type CORBA_Enum Reply_Body_Enum_Type;
+        }
+
+        group GIOPMessageTypes
+        {
+            type record GIOP_Request_Type
+            {
+                GIOP_Header_Type giop_header,
+                Request_Header_Type request_header
+            }
+
+            type record GIOP_Reply_Type (Return_Value_Type)
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Type (Return_Value_Type) reply_body optional
+            }
+
+            type record GIOP_Reply_Boolean_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Boolean_Type reply_body
+            }
+
+            type record GIOP_Reply_Long_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Long_Type reply_body
+            }
+            type record GIOP_Reply_LongLong_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_LongLong_Type reply_body
+            }
+            type record GIOP_Reply_Short_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Short_Type reply_body
+            }
+            type record GIOP_Reply_Octet_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Octet_Type reply_body
+            }
+            type record GIOP_Reply_Float_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Float_Type reply_body
+            }
+            type record GIOP_Reply_Double_Type
+            {
+                GIOP_Header_Type giop_header,
+                Reply_Header_Type reply_header,
+                Reply_Body_Double_Type reply_body
+            }
+            type record GIOP_Reply_Char_Type
+            {
+              GIOP_Header_Type giop_header,
+              Reply_Header_Type reply_header,
+              Reply_Body_Char_Type reply_body
+            }
+            type record GIOP_Reply_String_Type
+            {
+              GIOP_Header_Type giop_header,
+              Reply_Header_Type reply_header,
+              Reply_Body_String_Type reply_body
+            }
+            type record GIOP_Reply_Enum_Type
+            {
+              GIOP_Header_Type giop_header,
+              Reply_Header_Type reply_header,
+              Reply_Body_Enum_Type reply_body
+            }
+            type record GIOP_LocateRequest_Type
+            {
+                GIOP_Header_Type giop_header,
+                LocateRequest_Header_Type locateRequest_header
+            }
+            type record GIOP_LocateReply_Type
+            {
+                GIOP_Header_Type giop_header,
+                LocateReply_Header_Type locateReply_header
+            }
+            type record GIOP_MessageError_Type
+            {
+                GIOP_Header_Type giop_header
+            }
+        }
+    }
+    group CORBADataTemplates
+    {
+        template GIOP_Header_Type GIOP_Header (octetstring Msg_Type,
+                                               CORBA_ULong size):= 
+        {
+            magic := "GIOP",
+            version := '0102'O, // first only the current version
+            byteorder := '00'O, // first only big-endian
+            messagetype := Msg_Type, 
+            messagesize := size // must be set in the encoder
+        }
+        template GIOP_Header_Type WrongMagic_GIOP_Header
+                         (octetstring Msg_Type, CORBA_ULong size):= 
+        {
+            magic := "GIOR",
+            version := '0102'O,
+            byteorder := '00'O,
+            messagetype := Msg_Type, 
+            messagesize := size // must be set in the encoder
+        }
+        template GIOP_Header_Type WrongVersion_GIOP_Header
+                         (octetstring Msg_Type, CORBA_ULong size):= 
+        {
+            magic := "GIOP",
+            version := '0909'O,
+            byteorder := '00'O,
+            messagetype := Msg_Type, 
+            messagesize := size // must be set in the encoder
+        }
+        template GIOP_Header_Type GIOP_Header_1_0 (octetstring Msg_Type,
+                                               CORBA_ULong size):= 
+        {
+            magic := "GIOP",
+            version := '0100'O,
+            byteorder := '00'O,
+            messagetype := Msg_Type, 
+            messagesize := size // must be set in the encoder
+        }
+        template GIOP_Header_Type GIOP_Header_1_1 (octetstring Msg_Type,
+                                               CORBA_ULong size):= 
+        {
+            magic := "GIOP",
+            version := '0101'O,
+            byteorder := '00'O,
+            messagetype := Msg_Type, 
+            messagesize := size // must be set in the encoder
+        }
+        template TargetAddress_Type TargetAddress :=
+        {
+            object_key := get_object_key() 
+        }
+        template TargetAddress_Type TargetAddress_unknown :=
+        {
+            object_key := '000000024711'O
+        }   
+        template Request_Header_Type Request_Header (CORBA_ULong req_id,
+                                                     charstring op) := 
+        {
+            request_id := req_id,
+            response_flags := '03'O,
+            reserved := '000000'O,
+            addressing_disposition := KeyAddr,  
+            target := TargetAddress, // only object_key assumed
+            operation := op,
+            service_context := 0 // 0 is assumed
+        }
+        template Reply_Header_Type Reply_Header (CORBA_ULong req_id,
+                                                 CORBA_ULong rep_stat) := 
+        {
+            request_id := req_id,
+            reply_status := rep_stat,
+            service_context := 0 // 0 is assumed
+        }
+        template Reply_Body_Boolean_Type Reply_Boolean := '01'O;
+        template Reply_Body_Long_Type Reply_Long := 2147483647;
+        template Reply_Body_LongLong_Type Reply_LongLong := 92233;
+        template Reply_Body_Short_Type Reply_Short := 32767;
+        template Reply_Body_Octet_Type Reply_Octet := '08'O;
+        template Reply_Body_Float_Type Reply_Float := 3.4E38;
+        template Reply_Body_Double_Type Reply_Double := 3.14;
+        template Reply_Body_Char_Type Reply_Char := "$";
+        template Reply_Body_String_Type Reply_String := "hello!";
+        template Reply_Body_Enum_Type Reply_Enum := 0;
+        template LocateRequest_Header_Type LocateRequest_Header
+                                                   (CORBA_ULong req_id) := 
+        {
+            request_id := req_id,
+            addressing_disposition := KeyAddr,  
+            target := TargetAddress // only object_key assumed
+        }
+        template LocateReply_Header_Type LocateReply_Header
+                                                   (CORBA_ULong req_id) := 
+        {
+            request_id := req_id,
+            locate_status := OBJECT_HERE  
+        }
+        template LocateRequest_Header_Type LocateRequest_Header_unknown
+                                                   (CORBA_ULong req_id) := 
+        {
+            request_id := req_id,
+            addressing_disposition := KeyAddr,  
+            target := TargetAddress_unknown
+        }
+        template LocateReply_Header_Type LocateReply_Header_unknown
+                                                   (CORBA_ULong req_id) := 
+        {
+            request_id := req_id,
+            locate_status := UNKNOWN_OBJECT
+        }
+    }
+
+    group GIOPMessageTemplates
+    {
+        template GIOP_Request_Type request (CORBA_ULong req_id,
+                                            charstring op) :=
+        {
+            giop_header :=  GIOP_Header(REQUEST, 0),
+            request_header := Request_Header(req_id, op)
+        }
+        template GIOP_Reply_Boolean_Type boolean_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Boolean
+        }
+        template GIOP_Reply_Long_Type long_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Long
+        }
+        template GIOP_Reply_LongLong_Type longlong_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_LongLong
+        }
+        template GIOP_Reply_Short_Type short_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Short
+        }
+        template GIOP_Reply_Octet_Type octet_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Octet
+        }
+        template GIOP_Reply_Float_Type float_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Float
+        }
+        template GIOP_Reply_Double_Type double_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Double
+        }
+        template GIOP_Reply_Char_Type char_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Char
+        }
+        template GIOP_Reply_String_Type string_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_String
+        }
+        template GIOP_Reply_Enum_Type enum_reply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(REPLY, ?), 
+            reply_header := Reply_Header(req_id, NO_EXCEPTION),
+            reply_body := Reply_Enum
+        }
+        template GIOP_LocateRequest_Type locateRequest (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(LOCATEREQUEST, 0),
+            locateRequest_header := LocateRequest_Header(req_id)
+        }
+        template GIOP_LocateReply_Type locateReply (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(LOCATEREPLY, ?),
+            locateReply_header := LocateReply_Header(req_id)
+        }
+        template GIOP_LocateRequest_Type locateRequest_unknown
+                                         (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(LOCATEREQUEST, 0),
+            locateRequest_header := LocateRequest_Header_unknown(req_id)
+        }
+        template GIOP_LocateReply_Type locateReply_unknown
+                                       (CORBA_ULong req_id) :=
+        {
+            giop_header :=  GIOP_Header(LOCATEREPLY, ?),
+            locateReply_header := LocateReply_Header_unknown(req_id)
+        }
+        template GIOP_Request_Type wrong_magic (CORBA_ULong req_id,
+                                                    charstring op) :=
+        {
+            giop_header :=  WrongMagic_GIOP_Header(REQUEST, 0),
+            request_header := Request_Header(req_id, op)
+        }
+        template GIOP_Request_Type wrong_version (CORBA_ULong req_id,
+                                                    charstring op) :=
+        {
+            giop_header :=  WrongVersion_GIOP_Header(REQUEST, 0),
+            request_header := Request_Header(req_id, op)
+        }
+        template GIOP_Request_Type wrong_messagetype (CORBA_ULong req_id,
+                                            charstring op) :=
+        {
+            giop_header :=  GIOP_Header(WRONGMESSAGETYPE, 0),
+            request_header := Request_Header(req_id, op)
+        }
+        template GIOP_MessageError_Type message_error_1_0 :=
+        {
+            giop_header :=  GIOP_Header_1_0(MESSAGEERROR, ?)
+        }
+        template GIOP_MessageError_Type message_error_1_1 :=
+        {
+            giop_header :=  GIOP_Header_1_1(MESSAGEERROR, ?)
+        }
+        template GIOP_MessageError_Type message_error_1_2 :=
+        {
+            giop_header :=  GIOP_Header(MESSAGEERROR, ?)
+        }
+    }
+    
+    type port giop_port_type message 
+    {
+        inout all
+    }
+  
+    type component MTC_Type
+    {
+        timer Timer_reply;
+        port giop_port_type giop_port;
+    }
+   
+    testcase  Return_boolean() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 1;
+        giop_port.send(request(req_id, "return_boolean"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(boolean_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    
+    testcase  Return_long() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_long"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(long_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+
+    testcase  Return_longlong() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_longlong"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(longlong_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_short() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_short"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(short_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_octet() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_octet"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(octet_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_float() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_float"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(float_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_double() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_double"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(double_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_char() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_char"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(char_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_string() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_string"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(string_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Return_enum() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 2;
+        giop_port.send(request(req_id, "return_enum"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(enum_reply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Locate_object() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 3;
+        giop_port.send(locateRequest(req_id));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(locateReply(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+    testcase  Locate_unknown_object() runs on MTC_Type
+    {
+      var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 3;
+        giop_port.send(locateRequest_unknown(req_id));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(locateReply_unknown(req_id))
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }
+
+    testcase  Wrong_magic() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 4;
+        giop_port.send(wrong_magic(req_id, "return_boolean"));
+        Timer_reply.start(5.0);
+        alt
+        {
+          [] giop_port.receive(message_error_1_0)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive(message_error_1_1)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive(message_error_1_2)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive
+          {
+            Timer_reply.stop;
+            verdict.set(fail);
+          }
+          [] Timer_reply.timeout
+          {
+            verdict.set(fail);
+          }
+        }
+    }    
+    
+    testcase  Wrong_version() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 4;
+        giop_port.send(wrong_version(req_id, "return_boolean"));
+        Timer_reply.start(5.0);
+        alt
+        {
+            [] giop_port.receive(message_error_1_2)
+            {
+                Timer_reply.stop;
+                verdict.set(pass);
+            }
+            [] giop_port.receive
+            {
+                Timer_reply.stop;
+                verdict.set(fail);
+            }
+            [] Timer_reply.timeout
+            {
+                verdict.set(fail);
+            }
+        }
+    }    
+    
+    testcase  Wrong_messagetype() runs on MTC_Type
+    {
+        var CORBA_ULong req_id;
+
+        map(self:giop_port, system:giop_port);
+        req_id := 4;
+        giop_port.send(wrong_messagetype(req_id, "return_boolean"));
+        Timer_reply.start(5.0);
+        alt
+        {
+          [] giop_port.receive(message_error_1_2)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive(message_error_1_1)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive(message_error_1_0)
+          {
+            Timer_reply.stop;
+            verdict.set(pass);
+          }
+          [] giop_port.receive
+          {
+            Timer_reply.stop;
+            verdict.set(fail);
+          }
+          [] Timer_reply.timeout
+          {
+            verdict.set(fail);
+            }
+        }
+    }    
+    
+    control
+    {
+      // necessary to run all test cases with muttman
+      /*  1 */ execute(Return_boolean());   
+      /*  2 */ execute(Return_long());
+      /*  3 */ execute(Return_longlong());
+      /*  4 */ execute(Return_short());
+      /*  5 */ execute(Return_octet());
+      /*  6 */ execute(Return_float());
+      /*  7 */ execute(Return_double());
+      /*  8 */ execute(Return_char());
+      /*  9 */ execute(Return_string());
+      /* 10 */ execute(Return_enum());
+      /* 11 */ execute(Locate_object());
+      /* 12 */ execute(Locate_unknown_object());
+      /* 13 */ execute(Wrong_magic());
+      /* 14 */ execute(Wrong_version());
+      /* 15 */ execute(Wrong_messagetype());
+     }
+}

@@ -1,0 +1,34 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+ORB_HOME	= /opt/iona/orbix_art/2.0
+
+# ORB-specific configuration
+JIDL		= $(ORB_HOME)/bin/idl
+JIDLFLAGS	= -jbase:-O. -jpoa:-O. -I$(ORB_HOME)/idl/omg -DHAVE_NO_CORBA_2_4
+JIDL_PIFLAGS	=
+
+
+# Platform-specific configuration
+
+# Sun's Java2
+JAVA		= java
+JAVAC		= javac
+JAVACFLAGS	=
+
+
+# IBM's jikes Java compiler
+#JAVAC		= jikes
+#JAVACFLAGS	= -nowarn
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

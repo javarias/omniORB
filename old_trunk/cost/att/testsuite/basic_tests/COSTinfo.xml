@@ -1,0 +1,284 @@
+<testset name="Basic tests">
+
+  <test name="echo: basic - basic">
+    <description>
+    Simple client-server echoString.
+    </description>
+
+    <tests>string marshal</tests>
+    <tests>narrow to IOR interface</tests>
+    <tests>Root POA</tests>
+  
+    <timeout>60</timeout>
+    <server>echosrv</server>
+    <client>echoclt</client>
+  </test>
+
+  <test name="echo: basic - derived">
+    <description>
+    Simple client-server echoString, attempt to narrow to unsupported
+    derived interface.
+    </description>
+
+    <tests>narrow to incorrect interface</tests>
+    <tests>narrow to IOR interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>echosrv</server>
+    <client>derivedEchoclt</client>
+  </test>
+
+  <test name="echo: basic - multi">
+    <description>
+    Simple client-server echoString, attempt to narrow to unsupported
+    derived interface.
+    </description>
+
+    <tests>narrow to incorrect interface</tests>
+    <tests>narrow to IOR interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>echosrv</server>
+    <client>multiEchoclt</client>
+  </test>
+
+  <test name="echo: derived - basic">
+    <description>
+    Client of base interface to server of derived interface.
+    </description>
+
+    <tests>interface inheritance</tests>
+    <tests>implementation inheritance</tests>
+    <tests>narrow to base interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>derivedEchosrv</server>
+    <client>echoclt</client>
+  </test>
+
+  <test name="echo: derived - derived">
+    <description>
+    Client of derived interface to server of derived interface.
+    </description>
+
+    <tests>interface inheritance</tests>
+    <tests>implementation inheritance</tests>
+    <tests>narrow to IOR interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>derivedEchosrv</server>
+    <client>derivedEchoclt</client>
+  </test>
+
+  <test name="echo: derived - multi">
+    <description>
+    Tries to narrow derivedEcho objref to interfaces it does not
+    support, and to the correct derivedEcho interface.
+    </description>
+
+    <tests>narrow to incorrect interface</tests>
+  
+    <requires>interface inheritance</requires>
+    <requires>implementation inheritance</requires>
+    <requires>narrow to IOR interface</requires>
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>derivedEchosrv</server>
+    <client>multiEchoclt</client>
+  </test>
+
+  <test name="echo: multi - basic">
+    <description>
+    Client of base interface to server of multiply inherited
+    interface.
+    </description>
+
+    <tests>interface multiple inheritance</tests>
+    <tests>narrow to base interface</tests>
+  
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>multiEchosrv</server>
+    <client>echoclt</client>
+  </test>
+
+  <test name="echo: multi - derived">
+    <description>
+    Client of derived interface to server of multiply derived
+    interface.
+    </description>
+
+    <tests>interface multiple inheritance</tests>
+    <tests>narrow to parent interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>multiEchosrv</server>
+    <client>derivedEchoclt</client>
+  </test>
+
+  <test name="echo: multi - multi">
+    <description>
+    Client and server of multiply inherited interface.
+    </description>
+
+    <tests>interface multiple inheritance</tests>
+    <tests>narrow to IOR interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>derivedEchosrv</server>
+    <client>multiEchoclt</client>
+  </test>
+
+  <test name="multiEcho_tie">
+    <description>
+    Multiply inherited interface with tie implementation.
+    </description>
+
+    <tests>tie implementation</tests>
+    <tests>interface multiple inheritance</tests>
+    <tests>narrow to IOR interface</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>tiesrv</server>
+    <client>multiEchoclt</client>
+  </test>
+
+  <test name="nullecho">
+    <description>
+    Performance test of null string echo.
+    </description>
+
+    <tests>performance</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>echosrv</server>
+    <client>nullechoclt</client>
+  </test>
+
+  <test name="refp">
+    <description>
+    Object reference marshalling.
+    </description>
+
+    <tests>objref marshal</tests>
+    <tests>ORB::string_to_object</tests>
+    <tests>ORB::object_to_string</tests>
+    <tests>CORBA::Object::_is_equivalent</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>refpsrv</server>
+    <client>refpclt</client>
+  </test>
+
+  <test name="seqEcho">
+    <description>
+    Sequence marshalling.
+    </description>
+
+    <tests>sequence base type marshal</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>seqEchosrv</server>
+    <client>seqEchoclt</client>
+  </test>
+
+  <test name="tstexcept">
+    <description>
+    Simple user exception.
+    </description>
+
+    <tests>user exception</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>tstexceptsrv</server>
+    <client>tstexceptclt</client>
+  </test>
+
+  <test name="attrEcho">
+    <description>
+    Simple attributes.
+    </description>
+
+    <tests>attribute</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>attrEchosrv</server>
+    <client>attrEchoclt</client>
+  </test>
+
+  <test name="attrObjRef">
+    <description>
+    Object reference attribute.
+    </description>
+
+    <tests>attribute</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>attrObjRefsrv</server>
+    <client>attrObjRefclt</client>
+  </test>
+
+  <test name="concurrent">
+    <description>
+    Concurrent invocations. No need for the server to be threaded.
+    Client must be thread safe, and ideally threaded.
+    </description>
+
+    <tests>multi-threaded client</tests>
+
+    <requires>Root POA</requires>
+    <requires>client threads</requires>
+
+    <timeout>60</timeout>
+    <server>consrv</server>
+    <client>conclt</client>
+  </test>
+
+  <test name="echo: untyped - basic">
+    <description>
+    Create an IOR with typeid IDL:omg.org/CORBA/Object:1.0, backed by
+    a servant that is actually an IDL:Echo:1.0, then try to narrow it
+    to Echo in the client.
+    </description>
+
+    <tests>narrow untyped IOR</tests>
+    <tests>POA::create_reference</tests>
+    <tests>POA::reference_to_id</tests>
+    <tests>POA::activate_object_with_id</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>attrObjRefsrv</server>
+    <client>attrObjRefclt</client>
+  </test>
+
+</testset>

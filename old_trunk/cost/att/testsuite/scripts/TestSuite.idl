@@ -1,0 +1,79 @@
+//
+//    Copyright (C) 2001 AT&T Laboratories Cambridge Ltd.
+//
+//    This file is part of the OMNI Testsuite.
+//
+//    The testsuite is free software; you can redistribute it and/or
+//    modify it under the terms of the GNU Library General Public
+//    License as published by the Free Software Foundation; either
+//    version 2 of the License, or (at your option) any later version.
+//
+//    This library is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//    Library General Public License for more details.
+//
+//    You should have received a copy of the GNU Library General Public
+//    License along with this library; if not, write to the Free
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+//    02111-1307, USA
+//
+//
+/*
+ * Copyright (c) 2000 AT&T
+ * Author: Christof Meerwald
+ */
+
+module TestSuite
+{
+  interface RemoteProgram;
+  interface TestOutputListener;
+
+
+  interface RemoteExecutor
+  {
+    typedef sequence<string> string_seq;
+
+
+    /**
+     * @param name program name to execute
+     * @param args program arguments
+     * @param gdb if program should be executed under the control of gdb
+     * @param listener callback interface object
+     */
+    RemoteProgram execute_program(in string name, in string_seq args,
+				  in boolean gdb,
+				  in TestOutputListener listener);
+  };
+
+
+  interface RemoteProgram
+  {
+    /**
+     * Terminate the program.
+     */
+    void terminate_program();
+
+    void destroy();
+  };
+
+
+  interface TestOutputListener
+  {
+    void on_stdout(in string l);
+
+    void on_stderr(in string l);
+
+    /**
+     * @param exit_code program exit code (-1 ... abnormal program termination)
+     * @param oserror_code OS specific program exit code (signal, ...)
+     */
+    void on_exit(in short exit_code, in long oserror_code);
+
+    /**
+     * Not used yet...
+     */
+    void on_abort(in long reason, in unsigned short gdb_port,
+		  in unsigned short client_port);
+  };
+};

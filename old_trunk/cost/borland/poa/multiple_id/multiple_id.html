@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the Multiple ID POA Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Multiple ID Bank</H2>
+The example has the standard AccountManager and Account interfaces.&nbsp;
+AccountManager is used for opening an account and Account is used for querying
+the balance on the account.&nbsp; This example creates two object references,
+one for Checking and another for Savings AccountManagers and writes it
+out to files "cref.dat" and "sref.dat" respectively and starts waiting
+for requests. It also sets up a default servant on the POA. All the requests
+coming on the POA go through the default servant.
+
+<P>The MULTIPLE_ID IdUniqueness policy is used to create the POA.&nbsp;
+With this policy, our default servant can service more than one object.
+
+<P>Since the same default servant handles all requests on the POA, that
+servant may require some information on the object id. It can obtain that
+information through _object_id() method.
+
+<P>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+<UL>
+<LI>
+Use the right policies on POA creation so it can use default servant</LI>
+
+<LI>
+Use the right policies on POA creation so the default servant and service
+multiple objects</LI>
+
+<LI>
+Set the default servant on the POA</LI>
+
+<LI>
+Create a reference with no servant backing up that reference</LI>
+
+<LI>
+Use the _object_id() method in the default servant implementation to distinguish
+requests.</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+<LI>
+<A HREF="multiple_id_java.html">Java example</A></LI>
+<LI>
+<A HREF="multiple_id_cpp.html">Cpp example</A></LI>
+</UL>
+
+<HR WIDTH="100%">
+<BR>Return to the <A HREF="../../README.html">top-level examples page</A>.
+</BODY>
+</HTML>

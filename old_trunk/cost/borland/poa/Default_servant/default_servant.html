@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the Default Servant Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+<H2> Default Servant Bank </H2>
+<p>The example has two simple interfaces - SavingsAccountManager or CheckingAccountManager
+  to open an Account and to  query the balance in that account. 
+  This example creates two object references, one for Checking and another for Savings AccountManagers
+  and writes it out to files &quot;cref.dat&quot; and &quot;sref.dat&quot; and starts waiting 
+  for requests. It also sets up a default servant on the POA. All the requests 
+  coming on the POA go through the default servant.</p>
+<p>Since the same default servant handles all requests on the POA, that servant 
+  may require some information on the object id. It can obtain that information 
+  through _object_id() method. </p>
+<p>Default servant is ideally suited for serving a large number of servants when 
+  all the servant state is stored in a database. The incoming object id can be 
+  used as a key in to the database to retrieve the state. </p>
+<HR WIDTH="100%">
+<BR>
+From this example, you will learn how to: 
+<UL>
+  <LI> To use the right policies on POA creation so it can use default servant 
+  </LI>
+  <li>To set the default servant on the POA</li>
+  <li>To create a reference with no servant backing up that reference</li>
+  <li>To use the _object_id() method in the default servant implementation to 
+    distinguish requests.</li>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="default_servant_java.html">Java example</A></LI>
+  <LI> <A HREF="default_servant_cpp.html">CPP example</A></LI>
+</UL>
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../../README.html">top-level examples page</A>. 
+</BODY></HTML>

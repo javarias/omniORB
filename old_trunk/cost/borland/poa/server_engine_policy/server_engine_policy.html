@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the POA Server Engine Policy Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Server Engine Policy Bank</H2>
+The example has the standard AccountManager and Account interfaces.&nbsp;
+AccountManager is used for opening an account and Account is used for querying
+the balance in the account. The importance of this example is to show how
+to create your own server engine and how to form the corresponding server
+engine policy and associate the POA with that policy.&nbsp; All requests
+made to objects on the POA will conform to the server properties listed
+by the server engine.&nbsp; This example creates an object reference for
+the <B>AccountManager </B>and writes it out to the file "ior.dat" and starts
+waiting for requests.
+
+<P>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+<UL>
+<LI>
+Get the property manager from the orb.</LI>
+
+<LI>
+Add properties using the property manager.</LI>
+
+<LI>
+Create a server engine policy.</LI>
+
+<LI>
+Set the different attributes of the server engine.</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+<LI>
+<A HREF="server_engine_policy_java.html">Java example</A></LI>
+<LI>
+<A HREF="server_engine_policy_cpp.html">Cpp example</A></LI>
+</UL>
+
+<HR WIDTH="100%">
+<BR>Return to the <A HREF="../../README.html">top-level examples page</A>.
+</BODY>
+</HTML>

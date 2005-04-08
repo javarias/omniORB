@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; U) [Netscape]">
+   <TITLE>Readme for the Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Point Example for C++</H2>
+
+<HR WIDTH="100%">
+<UL>
+<LI>
+<A HREF="Map.idl">Map.idl</A></LI>
+
+<BR>IDL defenitions for the <B>Point </B>and <B>ConnectedPoint </B>value
+types, boxed string valuetype<B> Label, </B>and the <B>PointManager</B>
+<BR>interface.
+<LI>
+<A HREF="Server.C">Server.C</A></LI>
+
+<BR>The main server implementation file. Creates a POA named serverPoa,
+creates an instance of <B>PointManager</B> servant and activates&nbsp;
+that servant on the serverPoa. It then starts waiting for client requests.
+This file also implements&nbsp; the PointManager servant. The operations
+inolve ,creating either a derived point (<B> ConnectedPoint </B>) or a
+plain point (<B>Point)</B> , getting the point&nbsp; information, listing
+the points created,&nbsp; connecting the point( only if it is a ConnectedPoint
+) to a set of points and destroying a point. Each operation refers to a
+point with a value box String <B>Label </B>which is provided when it is
+created. The implementation throws exception that can be caught in the
+client for error inputs.
+<LI>
+<A HREF="Client.C">Client.C</A></LI>
+
+<BR>This file contains the main Client implementation . The client starts
+by displaying a command prompt .The user can enter
+<BR>a set of commands ( see below ) that enable the creation or other operation
+to be invoked. You may notice that the
+<BR>value factories for the valuetypes <B>Point</B> and <B>ConnectedPoint</B>
+are registered with the orb. This is essential for the orb to
+<BR>unmarshal the valuetype from 'on the wire' representation.&nbsp;
+<LI>
+<A HREF="PntImpl.h">PntImpl.h</A></LI>
+
+<BR>This file contains the Point and ConnectedPoint&nbsp; implementation
+.&nbsp;
+<LI>
+<A HREF="Makefile.cpp">Makefile.cpp</A></LI>
+
+<BR>Used to build all the targets .&nbsp;</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make</B> -f Makefile.cpp (or <B>nmake -f Makefile.cpp</B> <I>on
+Windows</I>) in the point subdirectory will cause the <A HREF="Map.idl">Map.idl</A>
+to be run through the idl2cpp compiler. It will also build the following
+executables for the examples described above:
+<UL>
+<LI>
+Server (Server.exe <I>on Windows</I>)</LI>
+
+<LI>
+Client (Client.exe <I>on Windows</I>)</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using
+the command:
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp;&nbsp;
+(start Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+
+<UL><TT><B>prompt> </B>Client</TT><TT></TT>
+
+<P><TT>You will see a prompt</TT>
+<BR><I><TT>&nbsp;Command--></TT></I><I><TT></TT></I>
+
+<P><I><TT>enter the commands based on the following menu</TT></I><I><TT></TT></I>
+
+<P><I><TT>createbase &lt;label></TT></I>
+<BR><I><TT>createderived &lt;label></TT></I>
+<BR><I><TT>connect &lt;label></TT></I>
+<BR><I><TT>destroy &lt;label></TT></I>
+<BR><I><TT>get &lt;label></TT></I>
+<BR><I><TT>list &lt;num copies></TT></I>
+<BR><I><TT>help ( or ? )</TT></I>
+<BR><I><TT>quit</TT></I><I><TT></TT></I>
+
+<P>
+<HR WIDTH="100%"></UL>
+Return to the <A HREF="../../README.html"> Top-level examples page</A>.
+</BODY>
+</HTML>

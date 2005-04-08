@@ -1,0 +1,40 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module ORBTest_Fixed
+{
+    typedef fixed<24,8> TestFixed;
+
+    exception ExFixed
+    {
+	TestFixed value;
+    };
+    
+    interface Intf
+    {
+	attribute TestFixed attrFixed;
+
+	TestFixed
+	opFixed(
+	    in TestFixed a0,
+	    inout TestFixed a1,
+	    out TestFixed a2
+	);
+
+	TestFixed
+	opFixedEx(
+	    in TestFixed a0,
+	    inout TestFixed a1,
+	    out TestFixed a2
+	)
+	    raises (ExFixed);
+    };
+
+}; // module ORBTest_Fixed

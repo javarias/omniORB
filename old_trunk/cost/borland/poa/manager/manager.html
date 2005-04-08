@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the POA Manager Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Manager Example</H2>
+The example has 2 interfaces.&nbsp; <B>MyPOAManager</B> is used to simulate
+the behavior of a POA manager by implementing all the operations of the
+POA manager and direct the calls to the actual POA manager.&nbsp; <B>Counter
+</B>is a dummy object which keeps incrementing the number of times this
+object a request has been invoked on this object.
+
+<P>This example involves 3 parties, the server that creates the poas for
+the <B>MyPOAManager</B> and <B>Counter</B> objects, the client that repeatedly
+invokes the <B>Counter </B>object, and the manager that acts as the third
+party that controls the flow of the requests made on <B>Counter</B> by
+client.
+
+<P>The purpose of the example is to show how requests on objects associated
+with a poa can be kept in holding, active, discarding and inactivate states.&nbsp;
+The user can randomly stop the flow of request on a particular object by
+putting the poa manager of the poa associated with that object in holding
+state.&nbsp; It can also resume the flow by putting it in active state.&nbsp;
+Under discarding state, all requests on the object will be discarded and
+client will receive a <B>TRANSIENT</B> exception when appropriate client
+side policies are adopted.&nbsp; Requests will be resumed once the state
+is set to active.&nbsp; Similarly, under inactive state, all requests will
+be rejected and client will receive an <B>OBJ_ADAPTER</B> exception.&nbsp;
+The inactive state is permanent once entered.
+
+<P>Note: Client must set the appropriate client side policies in order
+to receive the <B>TRANSIENT</B> exception when requests are discarded.
+
+<P>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+<UL>
+<LI>
+Go from one poa state to another.</LI>
+
+<LI>
+Use a third party controller to control request flow.</LI>
+
+<LI>
+Control the flow of client request by discarding requests when overflooded.</LI>
+
+<LI>
+Totally inactive a POA and reject all further requests.</LI>
+
+<LI>
+Set up the client side policy to receive <B>TRANSIENT</B> exception.</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+<LI>
+<A HREF="manager_java.html">Java example</A></LI>
+<LI>
+<A HREF="manager_cpp.html">Cpp example</A></LI>
+</UL>
+
+<HR WIDTH="100%">
+<BR>Return to the <A HREF="../../README.html">top-level examples page</A>.
+</BODY>
+</HTML>

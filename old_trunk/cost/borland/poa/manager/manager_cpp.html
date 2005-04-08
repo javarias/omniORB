@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the POA Manager Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Manager Example for C++</H2>
+
+<HR WIDTH="100%">
+<UL TYPE=DISC>
+<LI>
+<A HREF="Demo.idl">Demo.idl</A></LI>
+
+<BR>IDL interface for the <B>MyPOAManager</B> and <B>Counter.</B>
+<LI>
+<A HREF="Server.C">Server.C</A></LI>
+
+<LI>
+The server. Creates a POA named "counter_poa" for the <B>Counter </B>servant
+and a POA named "my_poa_manager_poa" for the <B>MyPOAManager</B> servant.
+Activates the 2 servants with id "Counter" and "MyPOAManager" respectively.
+Finally, it activates the poa managers for the "counter_poa" and "my_poa_manager_poa"
+and starts waiting for client requests. Both poa's starts with active
+state.  Server.C also contains the  <B>Counter</B> servant implementation.
+Implements the method nextId() that returns the id of the request, starting with the first request's id being zero.
+
+Server.C also includes the <B>MyPOAManager</B> servant Implementation. The server passes the poa manager of "counter_poa" to the constructor when creating this
+servant.&nbsp; All operations on <B>MyPOAManager</B> are directly passed
+onto the actual poa manager of "counter_poa".&nbsp; These operations are
+activate(), hold_requests(), discard_requests(), deactivate() and get_state().
+<LI>
+<A HREF="Client.C">Client.C</A></LI>
+
+<BR>The client. It sets the proper client side policy and binds to the
+<B>Counter</B> object using the id "Counter".&nbsp; It then enters an infinite
+loop that keeps invoking nextId() on the <B>Counter </B>object.&nbsp; Anytime
+an exception is caught, a message indicating the type of exception will
+be printed.
+<LI>
+<A HREF="Manager.C">Manager.C</A></LI>
+
+<BR>The third party that controls the flow of requests on the <B>Counter
+</B>object.&nbsp; It binds to <B>MyPOAManager </B>object using the id "MyPOAManager"
+and keeps prompting for user input.&nbsp; The choices given to users are
+the 5 operations on a POA manager.
+<LI>
+<A HREF="Makefile.cpp">Makefile.cpp</A> :
+Used to build all the C++ targets.</LI>
+
+<LI>
+<A HREF="Makefile">Makefile</A> The common Makefile used for both C++ and
+Java.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make cpp</B> (or <B>nmake cpp</B> <I>on Windows</I>) in the manager
+subdirectory will cause the <A HREF="Demo.idl">Demo.idl</A> to be run through
+the idl2cpp compiler. It will also build the following executables for the
+examples described above:
+<UL>
+<LI>
+Server</LI>
+
+<LI>
+Client</LI>
+
+<LI>
+Manager</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the server using the
+command:
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp;&nbsp;
+(start Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+Next, starts the client and observe the output on the client side:
+<UL>
+<PRE><I><TT><B>prompt></B> Client</TT></I></PRE>
+</UL>
+Then, starts the manager and try to intervene the flow on request and observe
+the output on the client side:
+<UL>
+<PRE><I><TT><B>prompt></B> Manager</TT></I></PRE>
+</UL>
+You will see that when put to holding state, the client side will stop
+printing the request id.&nbsp; Once resume the active state, the client
+side will resume the printing of the request id.&nbsp; When put to the
+discarding state, <B>TRANSIENT </B>exception will be caught on the client
+side.&nbsp; Lastly, exception <B>OBJ_ADAPTER </B>will be caught on the
+client side once the manager sets the state to inactive.&nbsp; The client
+side will catch <B>OBJ_ADAPTER </B>everytime a request is made on the <B>Counter
+</B>and the state is permanent.
+
+<P>
+<HR WIDTH="100%">
+<BR><I>Return to the <A HREF="manager.html">Manager example page</A>.</I>
+</BODY>
+</HTML>

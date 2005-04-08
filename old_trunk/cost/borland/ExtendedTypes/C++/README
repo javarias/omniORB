@@ -1,0 +1,7 @@
+Xtypes test:
+-----------
+This test tests extended IDL types such as longlong, unsigned long long etc.
+If you are running this test between a Windows Client/ UNIX server or
+Windows Server/ UNIX client, then on UNIX, use 
+	make XTRA_FLAGS=-DNO_LONG_DOUBLE all
+This is because Windows does not support the longdouble type.

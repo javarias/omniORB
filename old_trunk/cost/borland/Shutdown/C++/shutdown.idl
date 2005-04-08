@@ -1,0 +1,12 @@
+
+module Shutdown {
+  
+  interface Server {
+    
+    oneway void shutdown(in boolean sync);
+    
+    void shutdown2(in boolean sync);
+  
+  };
+
+};

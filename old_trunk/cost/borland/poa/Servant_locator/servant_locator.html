@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the Servant Locator Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2> Bank Servant Locator</H2>
+<p>This example has a two simple interfaces to open either a Checking Account or Savings Account
+   and to query the balance in that account. Instead of creating a servant 
+  and waiting for requests, this example manufactures a SavingsAccountManager and
+  CheckingAccountManager object reference, writes it out to files named &quot;cref.dat&quot;
+  and &quot;sref.dat&quot; and starts waiting for requests. Example sets up a servant locator 
+  on the POA. The AccountManager servant is created only when the request is made. 
+  Since servant locator is being  used instead of servant activator, 
+  the created servant will be used only for  this request. </p>
+<p></p>
+<p>This scenario of activating the servants only on demand is very useful in Servers 
+  which serve a large number of objects. Object references for these large number 
+  of objects can be manufactured and advertised without bringing the corresponding 
+  servants to life. When a request comes on a particular object reference, POA 
+  realizes that the servant is not in memory, invokes the servant locator set 
+  for that POA which can load the object state from a database and bring the object 
+  to life. </p>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+
+<UL>
+  <LI> To use the right policies on POA creation so it can use servant manager 
+    to process requests</LI>
+  <LI> To write a servant locator</LI>
+  <LI>To set the servant manager on the POA</LI>
+  <LI>To create a reference with servant backing up that reference</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="servant_locator_java.html">Java example</A></LI>
+  <LI> <A HREF="servant_locator_cpp.html">CPP example</A></LI>
+</UL>
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../../README.html">top-level examples page</A>. 
+</BODY></HTML>

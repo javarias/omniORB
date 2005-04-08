@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the QoS example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+QoS for C++</H2>
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="Bank.idl">Bank.idl</A></LI>
+  <BR>
+  IDL interface for the <B>Bank</B>.
+  <LI> <A HREF="Server.C">Server.C</A></LI>
+  <BR>
+  Bank server. This file contains the server, implementations of Account servant and
+  Account Manager servant. The Account servant implements <TT>balance()</TT>. The Account
+  Manager servant implements <TT>open()</TT> which checks in a table to see if there is
+  already an <b>Account</b> for the specified user. If not, it creates an account with random
+  balance and returns the created account. Creates a POA named MyPOA, creates an instance of
+  the <B>AccountManager</B> servant and activates that servant on the MyPOA. It then starts
+  waiting for client requests.
+  <LI> <A HREF="Client.C">Client.C</A></LI>
+  <BR>
+  This is the Bank client. It binds to the <B>AccountManager</B> object and invokes
+  <TT>open()</TT> to open a bank account. It then invokes <TT>balance()</TT> on
+  the <B>Account</B> object reference obtained to query the balance.
+  The Bank client for QoS in addition also sets one policy. This policy affects
+  the rebind behavior of the orb.  By default, the orb will attempt rebinds
+  and reconnects transparently (without user intervention) when the orb detects
+  that the connection has be disrupted. By setting the Rebind policy you can
+  change the behavior the orb will take when this detection is made.
+  <LI> <a href="Makefile.cpp">Makefile.cpp</a> (Makefile.cpp <i>on Windows</i>):
+    Used to build all the test targets.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make</B> -f Makefile.cpp (or <B>nmake -f Makefile.cpp</B> <i>on Windows</i>) in the
+bank_agent subdirectory will cause the <A HREF="Bank.idl">Bank.idl</A> to be run
+through the idl2cpp compiler. It will also build the following executables for the
+examples described above:
+<UL>
+  <LI> Server (Server.exe <i>on Windows</i>)</LI>
+  <LI> Client (Client.exe <i>on Windows</i>)</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using the command:
+
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp;
+(start Server <i>on Windows</i>)
+<i>// make the server run in the background<i></i></i></TT></PRE>
+</UL>
+
+Next, like the standard Bank example, the client will open a user's
+    bank account and query the balance in the account using the
+    command.  At this time you will be prompted to stop the server and
+    restart it again.  This causes the client's reference (BankManager
+    instance) to be invalid. After you've restarted the server the
+    client will attempt to open the user's account again and get a
+    balance. Depending on the parameter described below you will see
+    different behavior. 
+
+<p>After you started the server accordingly for one of the aspects you
+want to test, here is how you invoke the client.
+<pre><b><tt>prompt></tt></b><tt>Client transparent</tt></pre>
+This policy value allows automatic handling of forward messages to a new
+server, regardless of whether the effective policies for the new change.
+It also will open new and reopen closed GIOP connections to server objects.
+<pre><b><tt>prompt></tt></b><tt>Client no_rebind</tt></pre>
+This policy value allows the ORB to open new and reopen closed GIOP connections
+to server objects, and allows automatic handling of forward messages, if
+the effective policies for the new connection would be the same as with
+the current connection.
+<pre><b><tt>prompt></tt></b><tt>Client no_reconnect</tt></pre>
+This policy value disallows the client ORB to reopen closed GIOP connections
+to the same object, as well as all message forwards.
+<pre><b><tt>prompt></tt></b><tt>Client vb_transparent</tt></pre>
+This policy value extends the transparent RebindPolicy value as defined
+by the OMG (as explained above) to handle object fail-over. If this policy
+value is in effect, and a broken connection is detected, the Smart Agent
+is contacted for a new server. If there is one, then the request will be
+issued, without an exception being thrown. This policy value is useful
+if the objects don't maintain state, and a fail-over to another object
+doesn't influence the result of the invocation.
+<pre><b><tt>prompt></tt></b><tt>Client vb_notify_rebind</tt></pre>
+This policy value is like vb_transparent, but when a server shutdown is
+detected, the appropriate exception is thrown, and a rebind attempt will
+be made if the invocation is retried. This policy is useful for statefull
+servers, because a transparent fail-over could lead to problems.
+<pre><b><tt>prompt></tt></b><tt>Client vb_no_rebind</tt></pre>
+This policy value allows reconnections to the same object, but no rebind
+(either through LOCATION_FORWARD or fail-over) to other servers.
+<p>
+
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../README.html">top-level examples page</A>. </i></i>
+</BODY></HTML>

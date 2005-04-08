@@ -1,0 +1,92 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the POA Server Engine Policy Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Server Engine Policy Bank for C++</H2>
+
+<HR WIDTH="100%">
+<UL TYPE=DISC>
+<LI>
+<A HREF="Bank.idl">Bank.idl</A></LI>
+
+<BR>IDL interface for the <B>Bank</B>.
+<LI>
+<A HREF="Server.C">Server.C</A></LI>
+
+<BR>Bank server. Initializes the orb and obtain the property manager from
+the orb.Sets all the different properties of the new server engine
+by adding them to the property manager. Creates a server engine policy
+by specifying the name of new server engine. Creates a POA named
+bank_se_policy_poa using the server engine policy. It then creates
+an instance of the <B>AccountManagerImpl</B> servant, activate it on 
+bank_se_policy_poa, obtain the reference, and writes it out to file "ior.dat".
+Wait for client requests.
+<LI>
+<A HREF="BankImpl.h">BankImpl.h</A></LI>
+
+<BR>This file contains several classes. <B>AccountImpl</B> servant implementation 
+implements the method balance() for querying account balance. 
+<B>AccountManagerImpl</B> servant implements open() method. Uses
+a static table to see if there is already an <B>AccountImpl</B> for the specified
+user. If not, creates an account with random balance and returns the created
+account. When new <B>AccountImpl</B> is created, it is activated on the
+default POA, in this case the rootPOA. Therefore requests to 
+<B>AccountManagerImpl</B> objects conform to the our server engine 
+properties, whereas requests to <B>Account</B> objects conform to the default 
+server engine properties.
+<LI>
+<A HREF="Client.C">Client.C</A></LI>
+
+<BR>This is the Bank client. It binds to the <B>AccountManager</B> object
+using the reference from reading the file.&nbsp; It invokes <TT>open()</TT>
+to open a bank account. It then invokes <TT>balance()</TT> on the <B>Account</B>
+object reference obtained to query the balance.
+<LI>
+<A HREF="Makefile.cpp">Makefile.cpp</A> 
+Used to build all the C++ targets.</LI>
+
+<LI>
+<A HREF="Makefile">Makefile</A> The common Makefile used for both C++ and Java.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make cpp</B> (or <B>nmake cpp</B> <I>on Windows</I>) in the server_engine_policy
+subdirectory will cause the <A HREF="Bank.idl">Bank.idl</A> to be run through
+the idl2cpp compiler. It will also build the following executables for the
+examples described above:
+<UL>
+<LI>
+Server</LI>
+<LI>
+Client</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using
+the command:
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp;&nbsp;
+(start Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+Next, open a user's bank account and query the balance in the account using
+the command
+<UL>
+<PRE><I><TT><B>prompt></B> Client john</TT></I></PRE>
+</UL>
+Now you can do a netstat and observe the port to which the connection is
+bound.
+<BR>
+<HR WIDTH="100%">
+<BR><I>Return to the <A HREF="server_engine_policy.html">Server Engine
+Policy examples page</A>.</I>
+</BODY>
+</HTML>

@@ -1,0 +1,36 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# User settings
+
+ORB_HOME	= /opt/mico
+
+# ORB-specific configuration
+IDL		= $(ORB_HOME)/bin/idl
+IDLFLAGS	= --c++-skel --c++-suffix cpp --any -I$(ORB_HOME)/include/mico -DHAVE_NO_CORBA_2_4 -DHAVE_NO_FIXED_TYPE
+IDL_PIFLAGS	=
+ORB_CPPFLAGS	= -DMICO -DHAVE_EXCEPTION_INSERTERS -DHAVE_NO_CORBA_2_4 -DHAVE_NO_FIXED_TYPE -I$(ORB_HOME)/include
+ORB_LDFLAGS	= -L$(ORB_HOME)/lib
+ORB_LIBS	= -lmico2.3.7
+
+# Platform-specific configuration
+
+# Linux, GCC 2.95.3
+CXX		= $(ORB_HOME)/bin/mico-c++
+CXXLD		= $(ORB_HOME)/bin/mico-ld
+CXXFLAGS	= -Wall
+AR		= $(ORB_HOME)/bin/mico-ar
+ARFLAGS		=
+LIBS		=
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

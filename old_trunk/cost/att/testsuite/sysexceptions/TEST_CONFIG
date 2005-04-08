@@ -1,0 +1,4 @@
+sysexceptions_1.2 60 server client
+sysexceptions_1.1 60 server "client -ORBmaxGIOPVersion 1.1"
+sysexceptions_1.0 60 server "client -ORBmaxGIOPVersion 1.0"
+

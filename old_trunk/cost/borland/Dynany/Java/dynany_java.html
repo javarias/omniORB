@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the dynany example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+DynAny</H2>
+The Client application program will illustrate how to create and initialize
+a DynStruct type.&nbsp; The Client will then create an <B>any </B>type
+from the DynStruct which can then be passed to the Server application program
+for evaluation.&nbsp; The Server application will illustrate how to traverse,
+extract, and display the primitive constituents of the data value associated
+with an <B>any </B>at run-time.&nbsp;&nbsp; It should be pointed out that
+the Server application was written such that it does not have any static
+information for the type of the <B>any</B>.
+<BR>
+<HR WIDTH="100%">
+<H3>
+Directory Contents</H3>
+
+<UL>
+<LI>
+<A HREF="Printer.idl">Printer.idl</A></LI>
+
+<BR>IDL interface for the <B>PrinterManager </B>object and associated type
+values.
+<LI>
+<A HREF="Server.java">Server.java</A></LI>
+
+<BR>PrinterManager server. Creates an instance of the PrinterManager and
+calls <TT>org.omg.CORBA.BOA.impl_is_ready()</TT> to make this object available
+to client programs.&nbsp; The PrinterManager Server implementation implements
+two methods: <I>printAny</I>, which displays the StructType info contained
+within a dynamic any type, and <I>shutdown</I>, which deactivates the PrinterManager
+instance and then shuts down the PrinterManager server process.
+<LI>
+<A HREF="PrinterManagerImpl.java">PrinterManagerImpl.java</A></LI>
+
+<BR>PrinterManager Implementation. This program contains the implementation
+of the PrinterManager object and is part of the PrinterManager Server described
+above.
+<LI>
+<A HREF="Client.java">Client.java</A></LI>
+
+<BR>This is the PrinterManager client. It binds to the <B>PrinterManager
+</B>object and invokes <I>printAny</I><TT>()</TT> passing an <B>any </B>value
+which contains the struct StructType. It then invokes <I>shutdown</I><TT>()</TT>
+on the PrinterManager object which will then unregister and deactivate
+the PrinterManager object and shutdown the PrinterManager Server.
+<LI>
+Makefile (vbmake.bat <I>on Windows</I>): Used to build all the test targets.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make</B> (or <B>vbmake</B> <I>on Windows</I>) in the DynAny subdirectory
+will cause the <A HREF="Printer.idl">Printer.idl</A>&nbsp; to be run through
+the idl2java compiler. It will also build the following classes for the
+examples described above:
+<UL>
+<LI>
+Server.class</LI>
+
+<LI>
+Client.class</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the PrinterManager Server
+using the command:
+<UL>
+<PRE><TT><B>prompt></B> vbj Server&nbsp; &amp;&nbsp;
+(start vbj Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+<I><TT>Next, display the AccountInfo value by typing:</TT></I>
+<UL>
+<PRE><I><TT><B>prompt></B> vbj Client</TT></I></PRE>
+</UL>
+
+<HR WIDTH="100%">
+<BR><I><TT>Return to the <A HREF="../README.html">top-level examples page</A>.</TT></I>
+</BODY>
+</HTML>

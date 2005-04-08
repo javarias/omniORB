@@ -1,0 +1,27 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# Don't change anything below this line
+
+LIB_EXT		= .a
+
+.SUFFIXES:
+.SUFFIXES:      .cpp .o
+
+.cpp.o:
+	$(CXX) -c $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $<
+
+all:: $(SRCS) $(TARGETS)
+
+clean::
+	-rm -f $(GENERATED)
+	-rm -f $(TARGETS)
+	-rm -f core *.o *.bak *.flc sta* *.log *~
+	-rm -rf SunWS_cache

@@ -1,0 +1,96 @@
+
+module TypeCodeTest {
+
+  interface Echo {
+    TypeCode doEcho(in TypeCode t);
+  };
+  
+  //  native Mowgli;
+
+  typedef long MySpecialLong;
+
+  struct VerySimpleStruct {
+	long a;
+	long b;
+  };
+
+  struct SimpleStructTest {
+    long a;
+    long a1;
+    short b;
+    double c;
+    //fixed<5,1> f;
+    string s1;
+    string s2;
+    wstring ws;
+
+    Echo x1;
+    Echo x2;
+
+    VerySimpleStruct y1;
+    VerySimpleStruct y2;
+
+    Echo e[5];
+    sequence<Echo> d;
+    sequence<Echo> g;
+    MySpecialLong msl;
+
+  };
+
+  typedef sequence<sequence<sequence<boolean> > > Damsons;
+
+  struct RecursiveStructTest {
+    long a;
+    sequence<RecursiveStructTest> b;
+    //SimpleStructTest c; 
+  };
+
+  typedef sequence<RecursiveStructTest> RecursiveStructTestList;
+
+  struct NestedRecursiveStruct {
+    long a;
+    sequence<sequence<sequence<NestedRecursiveStruct, 5> > > next;
+  };
+
+  typedef sequence<NestedRecursiveStruct> NestedRecursiveStructList;
+
+
+  struct ComplexStructTest {
+    struct SubStruct {
+      sequence <RecursiveStructTestList> a;
+      sequence <ComplexStructTest> b;
+    } a;
+    sequence <ComplexStructTest> b;
+  };
+
+  union SimpleUnionTest switch(long) {
+  case 1: long a;
+  case 2: short b;
+  case 3: double c;
+  case 4: sequence<Echo> d;
+  };
+
+  union DefaultUnionTest switch(long) {
+  case 1: long a;
+  case 2: short b;
+  case 3: double c;
+  default:
+  case 4: sequence<Echo> d;
+  };
+
+  enum EnumTest { one, two, three };
+
+  union EnumUnionTest switch(EnumTest) {
+  case one: long a;
+  case two: short b;
+  };
+
+  union ComplexUnionTest switch(EnumTest) {
+  case one: long a;
+  case two: short b;
+  default: sequence<ComplexUnionTest> c;
+  };
+  
+  typedef sequence <ComplexUnionTest> ComplexUnionTestList;
+
+};

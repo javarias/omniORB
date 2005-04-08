@@ -1,0 +1,23 @@
+####################################################################
+#
+#  Copyright (c) 2002                                               
+#  FhG FOKUS                                                        
+#  Kaiserin-Augusta-Allee 31                                       
+#  10589 Berlin                                                  
+#  Germany                                                     
+#  Tel: +49-30-3463-7000                 
+#  Fax: +49-30-3463-8000
+#
+#  To compile the ATS.
+#
+####################################################################
+
+#!/bin/sh
+
+jarpath=$TTTHREELIB
+
+flnBase=`basename $1`
+flname=`echo $flnBase | cut -f 1 -d "."`
+flnDir=`dirname $1`
+
+$JAVA_HOME3/bin/java -jar $jarpath/TTthreeCompiler.jar -C $JAVA_HOME3/bin/javac -D --runtime-class-path $jarpath/TTthreeRuntime.jar --verbosity debug -P $flnDir $flname 

@@ -1,0 +1,36 @@
+include ../../stdmk/stdmk_nt
+
+EXE =    server.exe client.exe 
+
+##all: checkenv $(EXE)
+all: $(EXE)
+
+clean: 
+	del  $(EXE) *.obj *_[cs].hh *_[sc].cpp
+
+extest_c.cpp extest_s.cpp extest_c.hh extest_s.hh: extest.idl
+	$(ORBCC) -DNO_LONG_DOUBLE -boa -type_code_info extest.idl
+
+server.obj: server.C extest_s.hh
+	$(CC) $(CCFLAGS) -DNO_LONG_DOUBLE -c /Tp server.C
+
+client.obj: client.C extest_c.hh
+	$(CC) $(CCFLAGS) -DNO_LONG_DOUBLE -c /Tp client.C
+
+server.exe: extest_s.obj extest_c.obj server.obj
+	$(LINK_EXE) /out:$@ server.obj extest_s.obj extest_c.obj \
+	$(LIBORB) $(STDCC_LIBS)
+
+client.exe: extest_c.obj client.obj 
+	$(LINK_EXE) /out:$@ client.obj extest_c.obj \
+	$(LIBORB) $(STDCC_LIBS)
+
+account_client.exe: $(CLIENT_OBJS)
+	$(LINK_EXE) /out:$@ $(CLIENT_OBJS) $(LIBORB) $(STDCC_LIBS)
+
+account_server.exe: $(SERVER_OBJS)
+	$(LINK_EXE) /out:$@ $(SERVER_OBJS) $(LIBORB) $(STDCC_LIBS)
+
+account_srvrtie.exe: $(SRVTIE_OBJS)
+	$(LINK_EXE) /out:$@ $(SRVTIE_OBJS) $(LIBORB) $(STDCC_LIBS)
+

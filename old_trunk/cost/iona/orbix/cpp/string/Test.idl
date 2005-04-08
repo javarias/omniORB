@@ -1,0 +1,29 @@
+struct StringStruct
+{
+    string string_member;
+};
+
+exception StringException
+{
+    string string_member;
+};
+
+union StringUnion switch (unsigned short)
+{
+  default:
+    string string_member;
+};
+
+typedef sequence<string> StringSequence;
+
+typedef string StringArray[1];
+
+interface StringTest
+{
+    string
+    op(
+        in    string in_string,
+        inout string inout_string,
+        out   string out_string
+    );
+};

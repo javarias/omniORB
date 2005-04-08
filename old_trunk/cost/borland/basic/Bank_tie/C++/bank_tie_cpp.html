@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2> Bank Tie for C++</H2>
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="Bank.idl">Bank.idl</A></LI>
+  <BR>
+  IDL interface for the <B>Bank</B>. 
+  <LI> <A HREF="Server.C">Server.C</A></LI>
+  <BR>
+  Bank server. This file contains the server, implementations of Account servant 
+  and Account Manager servant. The Account servant implements <TT>balance()</TT>. 
+  The Account Manager servant implements <TT>open()</TT> which checks in a table 
+  to see if there is already an <b>Account</b> for the specified user. If not, 
+  it creates an account with random balance and returns the created account. Creates 
+  a POA named MyPOA, creates an instance of the <B>AccountManager</B> servant 
+  and activates that servant on the MyPOA. It then starts waiting for client requests. 
+  <LI> <A HREF="Client.C">Client.C</A></LI>
+  <BR>
+  This is the Bank client. It binds to the <B>AccountManager</B> object and invokes 
+  <TT>open()</TT> to open a bank account. It then invokes <TT>balance()</TT> on 
+  the <B>Account</B> object reference obtained to query the balance. 
+  <li> <a href="Makefile.cpp">Makefile.cpp</a> (Makefile.cpp <i>on Solaris</i>): 
+    Used to build Solaris Platform targets.</li>
+  <li><a href="Makefile.nt">Makefile.nt</a> (Makefile.nt <i>on Windows</i>): Used 
+    to build NT Platform targets.</li>
+  <li><a href="Makefile">Makefile</a> Used to build all the test targets.</li>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <b>make</b> <b>cpp</b> for Solaris (or <b>nmake nt</b> <i>on Windows</i>) 
+in the bank_tie subdirectory will cause the <A HREF="Bank.idl">Bank.idl</A> to 
+be run through the idl2cpp compiler. It will also build the following executables 
+for the examples described above: 
+<UL>
+  <LI> Server (Server.exe <i>on Windows</i>)</LI>
+  <LI> Client (Client.exe <i>on Windows</i>)</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using the command:
+
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp; 
+(start Server <i>on Windows</i>)
+<i>// make the server run in the background<i></i></i></TT></PRE>
+</UL>
+
+Next, open a user's bank account and query the balance in the account using the command 
+
+<UL>
+<PRE><TT><B>prompt></B>Client john</TT></PRE>
+</UL>
+
+<UL>
+or
+</UL>
+
+<UL>
+<PRE><TT><B>prompt></B>Client &nbsp; 
+<i>// uses a default name</i></TT></PRE>
+</UL>
+
+
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../../README.html">top-level examples page</A>. 
+</BODY></HTML>

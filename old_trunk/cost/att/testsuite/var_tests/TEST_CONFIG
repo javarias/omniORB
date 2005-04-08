@@ -1,0 +1,7 @@
+struct_var 60 struct_var
+union_var 60 union_var
+seq_var 60 seq_var
+string_var 60 string_var
+str_var 60 str_var
+objref_var 60 objref_var
+array_var 60 array_var

@@ -1,0 +1,12 @@
+# this test has been completely automated:
+#
+# the server generates an echo object, passes the object reference to
+# the client
+#
+# client passes object reference back to the server, server checks if the
+# object exists and disposes the object
+#
+# client passes the same object reference to the server, object should not
+# exist anymore on the server side...
+#
+colocation_tests 60 server client

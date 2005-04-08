@@ -1,0 +1,24 @@
+interface FragTest {
+
+  struct Payload {
+    sequence<octet> o;
+    double          d;  // Vary length of o to test if the ORB still 
+    // maintains that d is properly aligned.
+  };
+
+  typedef sequence <Payload> Payloads;
+
+  // Vary the no. of elements in the argument to test the GIOP fragmentation
+  // code.
+  Payloads bounce(in Payloads arg);
+
+  // vary the size of string to exercise zero-copy marshalling with
+  // fragmentation
+  string bounce_string(in string arg);
+
+
+  // In future all calls other than redirect should be processed by recursively
+  // calling <to>. Call this operation again with a nil object reference stops
+  // the redirection.
+  void redirect(in FragTest to);
+};

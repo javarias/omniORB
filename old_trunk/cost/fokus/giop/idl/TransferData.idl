@@ -1,0 +1,74 @@
+/******************************************************************************
+ *
+ *  Copyright (c) 2002                                               
+ *  FhG FOKUS                                                        
+ *  Kaiserin-Augusta-Allee 31                                       
+ *  10589 Berlin                                                  
+ *  Germany                                                     
+ *  Tel: +49-30-3463-7000                 
+ *  Fax: +49-30-3463-8000
+ *
+ *  This IDL specification is imported by an IDL compiler to generate
+ *  a stub and a skeleton which are parts of the CORBA test components.
+ *  The test components are necessary to execute TTCN-3 based
+ *  GIOP/IIOP tests.
+ *
+ *****************************************************************************/
+
+enum Colour {red, green, blue};
+struct Structtype {
+    string forename;
+    string surname;
+    long phone;
+};
+
+union Uniontype switch (short) 
+{
+    case 0:     octet small;
+    case 1:     short medium;
+    case 2:     long  large;
+    default:    string word;
+};
+
+interface TransferData
+{
+    typedef sequence<string> StrSeq;
+    typedef long LongArray[3][3];
+    typedef fixed<24,0>  Fixed_Value;
+
+    //*********** Primitive Types
+
+    boolean 		   return_boolean();
+    char  		   return_char();
+    string                 return_string();
+    wstring                return_wstring();
+    octet     		   return_octet();
+    short  		   return_short();
+    unsigned short  	   return_ushort();
+    long    		   return_long();
+    unsigned long    	   return_ulong();
+    long long 		   return_longlong();
+    unsigned long long     return_ulonglong();
+    float 		   return_float();
+    double 		   return_double();
+
+    //*********** Constructed Types
+
+    Fixed_Value            return_fixed();
+    Colour                 return_enum();
+    Structtype             return_struct();
+    Uniontype              return_union();
+    StrSeq                 return_sequence();
+    LongArray              return_array();
+
+    //*********** Pseudo-Object Types
+
+    any                    return_tk_wstring();
+    any 		   return_tk_struct();
+    any 		   return_tk_union();
+    any 		   return_tk_enum();
+    any 		   return_tk_sequence();
+    any 		   return_tk_array();
+
+};
+

@@ -1,0 +1,513 @@
+// Copyright (c) 2000, 2001 NEC Corporation. All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without 
+// modification, are permitted provided that the following conditions are
+// met:
+// 
+// 1. The functionality to test the interoperability specified by the 
+//    Object Management Group's CORBA/IIOP specification version two (or 
+//    later versions) must be preserved.
+//    
+// 2. Redistributions of source code must retain the above copyright 
+//    notice, this list of conditions and the following disclaimer as the
+//    first lines of this file unmodified.
+//    
+// 3. Redistributions in binary form must reproduce the above copyright 
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the 
+//    distribution.
+//    
+// THIS SOFTWARE IS PROVIDED BY NEC CORPORATION ``AS IS'' AND ANY EXPRESS
+// OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY 
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+// IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// CVS
+// $Id$
+
+/*------------------*/
+/* data definitions */
+/*------------------*/
+
+// B
+
+enum B { b1, b2, b3 };
+
+
+// C
+
+struct C_struct {
+    short		e_short;
+    unsigned short	e_ushort;
+    long		e_long;
+    unsigned long	e_ulong;
+    float		e_float;
+    double		e_double;
+    char		e_char;
+    boolean		e_boolean;
+    octet		e_octet;
+    any			e_any;
+    string		e_string;
+    Object		e_Object;
+    TypeCode		e_TypeCode;
+};
+
+union C_union switch(long) {
+ case 1:	short		e_short;
+ case 2:	unsigned short	e_ushort;
+ case 3:	long		e_long;
+ case 4:	unsigned long	e_ulong;
+ case 5:	float		e_float;
+ case 6:	double		e_double;
+ case 7:	char		e_char;
+ case 8:	boolean		e_boolean;
+ case 9:	octet		e_octet;
+ case 10:	any		e_any;
+ case 11:	string		e_string;
+ case 12:	Object		e_Object;
+ case 14:	TypeCode	e_TypeCode;
+};    
+    
+typedef sequence<short>		C_sequence_e_short;
+typedef sequence<unsigned short> C_sequence_e_ushort;
+typedef sequence<long>		C_sequence_e_long;
+typedef sequence<unsigned long>	C_sequence_e_ulong;
+typedef sequence<float>		C_sequence_e_float;
+typedef sequence<double>	C_sequence_e_double;
+typedef sequence<char>		C_sequence_e_char;
+typedef sequence<boolean>	C_sequence_e_boolean;
+typedef sequence<octet>		C_sequence_e_octet;
+typedef sequence<any>		C_sequence_e_any;
+typedef sequence<string>	C_sequence_e_string;
+typedef sequence<Object>	C_sequence_e_Object;
+typedef sequence<TypeCode>	C_sequence_e_TypeCode;
+
+typedef short		C_array_e_short[2];
+typedef unsigned short	C_array_e_ushort[2];
+typedef long		C_array_e_long[2];
+typedef unsigned long	C_array_e_ulong[2];
+typedef float		C_array_e_float[2];
+typedef double		C_array_e_double[2];
+typedef char		C_array_e_char[2];
+typedef boolean		C_array_e_boolean[2];
+typedef octet		C_array_e_octet[2];
+typedef any		C_array_e_any[2];
+typedef string		C_array_e_string[2];
+typedef Object		C_array_e_Object[2];
+typedef TypeCode	C_array_e_TypeCode[2];
+
+
+// D
+
+union D_d_short switch (short) {
+ case 1: long l1;
+ case 2: long l2;
+};
+
+union D_d_ushort switch (unsigned short) {
+ case 1: long l1;
+ case 2: long l2;
+};
+
+union D_d_long switch (long) {
+ case 1: long l1;
+ case 2: long l2;
+};
+
+union D_d_ulong switch (unsigned long) {
+ case 1: long l1;
+ case 2: long l2;
+};
+
+union D_d_char switch (char) {
+ case 'a': long l1;
+ case 'b': long l2;
+};
+
+union D_d_boolean switch (boolean) {
+ case TRUE: long l1;
+ case FALSE: long l2;
+};
+
+union D_d_B switch (B) {
+ case b1: long l1;
+ case b2: long l2;
+ case b3: long l3;
+};
+
+
+// E
+
+struct E_struct {
+    B	e_b1;
+    B	e_b2;
+};
+
+union E_union switch (long) {
+ case 1:	B	e_b1;
+ case 2:	B	e_b2;
+};
+
+typedef sequence<B> E_sequence;
+
+typedef B E_array[2];
+
+
+// F
+
+struct F_struct {
+    C_struct			e_c_struct;
+    C_union			e_c_union;
+    C_sequence_e_short		e_c_sequence_e_short;
+    C_sequence_e_ushort		e_c_sequence_e_ushort;
+    C_sequence_e_long		e_c_sequence_e_long;
+    C_sequence_e_ulong		e_c_sequence_e_ulong;
+    C_sequence_e_float		e_c_sequence_e_float;
+    C_sequence_e_double		e_c_sequence_e_double;
+    C_sequence_e_char		e_c_sequence_e_char;
+    C_sequence_e_boolean	e_c_sequence_e_boolean;
+    C_sequence_e_octet		e_c_sequence_e_octet;
+    C_sequence_e_any		e_c_sequence_e_any;
+    C_sequence_e_string		e_c_sequence_e_string;
+    C_sequence_e_Object		e_c_sequence_e_Object;
+    C_sequence_e_TypeCode	e_c_sequence_e_TypeCode;
+    C_array_e_short		e_c_array_e_short;
+    C_array_e_ushort		e_c_array_e_ushort;
+    C_array_e_long		e_c_array_e_long;
+    C_array_e_ulong		e_c_array_e_ulong;
+    C_array_e_float		e_c_array_e_float;
+    C_array_e_double		e_c_array_e_double;
+    C_array_e_char		e_c_array_e_char;
+    C_array_e_boolean	e_c_array_e_boolean;
+    C_array_e_octet		e_c_array_e_octet;
+    C_array_e_any		e_c_array_e_any;
+    C_array_e_string		e_c_array_e_string;
+    C_array_e_Object		e_c_array_e_Object;
+    C_array_e_TypeCode		e_c_array_e_TypeCode;
+};
+
+union F_union switch (long) {
+case 1:	    C_struct			e_c_struct;
+case 2:	    C_union			e_c_union;
+case 3:	    C_sequence_e_short		e_c_sequence_e_short;
+case 4:	    C_sequence_e_ushort		e_c_sequence_e_ushort;
+case 5:	    C_sequence_e_long		e_c_sequence_e_long;
+case 6:	    C_sequence_e_ulong		e_c_sequence_e_ulong;
+case 7:	    C_sequence_e_float		e_c_sequence_e_float;
+case 8:	    C_sequence_e_double		e_c_sequence_e_double;
+case 9:	    C_sequence_e_char		e_c_sequence_e_char;
+case 10:    C_sequence_e_boolean	e_c_sequence_e_boolean;
+case 11:    C_sequence_e_octet		e_c_sequence_e_octet;
+case 12:    C_sequence_e_any		e_c_sequence_e_any;
+case 13:    C_sequence_e_string		e_c_sequence_e_string;
+case 14:    C_sequence_e_Object		e_c_sequence_e_Object;
+case 16:    C_sequence_e_TypeCode	e_c_sequence_e_TypeCode;
+case 17:    C_array_e_short		e_c_array_e_short;
+case 18:    C_array_e_ushort		e_c_array_e_ushort;
+case 19:    C_array_e_long		e_c_array_e_long;
+case 20:    C_array_e_ulong		e_c_array_e_ulong;
+case 21:    C_array_e_float		e_c_array_e_float;
+case 22:    C_array_e_double		e_c_array_e_double;
+case 23:    C_array_e_char		e_c_array_e_char;
+case 24:    C_array_e_boolean		e_c_array_e_boolean;
+case 25:    C_array_e_octet		e_c_array_e_octet;
+case 26:    C_array_e_any		e_c_array_e_any;
+case 27:    C_array_e_string		e_c_array_e_string;
+case 28:    C_array_e_Object		e_c_array_e_Object;
+case 30:    C_array_e_TypeCode		e_c_array_e_TypeCode;
+};
+
+typedef sequence<C_struct>		F_sequence_e_c_struct;
+typedef sequence<C_union>		F_sequence_e_c_union;
+
+
+typedef C_struct			F_array_e_c_struct[2];
+typedef C_union				F_array_e_c_union[2];
+
+
+// G
+
+struct G_struct {
+    E_struct	e_e_struct;
+    E_union	e_e_union;
+    E_sequence	e_e_sequence;
+    E_array	e_e_array;
+};
+
+union G_union switch (long) {
+ case 1: E_struct	e_e_struct;
+ case 2: E_union	e_e_union;
+ case 3: E_sequence	e_e_sequence;
+ case 4: E_array	e_e_array;
+};
+
+typedef sequence<E_struct> G_sequence_e_e_struct;
+typedef sequence<E_union> G_sequence_e_e_union;
+
+typedef E_struct G_array_e_e_struct[2];
+typedef E_union G_array_e_e_union[2];
+
+
+/*------------------------------*/
+/* exceptional data definitions */
+/*------------------------------*/
+
+// A
+exception A_except1 {
+    short v1;
+    unsigned short v2;
+    long v3;
+    unsigned long v4;
+    float v5;
+    double v6;
+    char v7;
+    boolean v8;
+    octet v9;
+};
+
+exception A_except2 {
+    any v10;
+    string v11;
+    Object v12;
+    TypeCode v14;
+};
+
+// B
+exception B_except { B v; };
+
+// C
+exception C_except {
+    C_struct v1;
+    C_union v2; // short
+    C_union v3; // ushort
+    C_union v4; // long
+    C_union v5; // ulong
+    C_union v6; // float
+    C_union v7; // double
+    C_union v8; // char
+    C_union v9; // boolean
+    C_union v10; // octet
+    C_union v11; // any
+    C_union v12; // string
+    C_union v13; // Object
+    C_union v15; // TypeCode
+    C_sequence_e_short v16;
+    C_sequence_e_ushort v17;
+    C_sequence_e_long v18;
+    C_sequence_e_ulong v19;
+    C_sequence_e_float v20;
+    C_sequence_e_double v21;
+    C_sequence_e_char v22;
+    C_sequence_e_boolean v23;
+    C_sequence_e_octet v24;
+    C_sequence_e_any v25;
+    C_sequence_e_string v26;
+    C_sequence_e_Object v27;
+    C_sequence_e_TypeCode v29;
+    C_array_e_short v30;
+    C_array_e_ushort v31;
+    C_array_e_long v32;
+    C_array_e_ulong v33;
+    C_array_e_float v34;
+    C_array_e_double v35;
+    C_array_e_char v36;
+    C_array_e_boolean v37;
+    C_array_e_octet v38;
+    C_array_e_any v39;
+    C_array_e_string v40;
+    C_array_e_Object v41;
+    C_array_e_TypeCode v43;
+};
+
+// D
+exception D_except {
+    D_d_short v1;
+    D_d_ushort v2;
+    D_d_long v3;
+    D_d_ulong v4;
+    D_d_char v5;
+    D_d_boolean v6;
+    D_d_B v7;
+};
+
+// E
+exception E_except {
+    E_struct v1;
+    E_union v2;
+    E_sequence v3;
+    E_array v4;
+};
+
+// F
+exception F_except1 {
+    F_struct v1;
+    F_union v2; // C_struct
+    F_union v3; // C_union
+    F_union v4; // C_sequence_e_short
+    F_union v5; // C_sequence_e_ushort
+    F_union v6; // C_sequence_e_long
+    F_union v7; // C_sequence_e_ulong
+    F_union v8; // C_sequence e_float
+    F_union v9; // C_sequence_e_double
+    F_union v10; // C_sequence_e_char
+    F_union v11; // C_sequence_e_boolean
+    F_union v12; // C_sequence_e_octet
+    F_union v13; // C_sequence_e_any
+    F_union v14; // C_sequence_e_string
+    F_union v15; // C_sequence_e_Object
+    F_union v17; // C_sequence_e_TypeCode
+    F_union v18; // C_array_e_short
+    F_union v19; // C_array_e_ushort
+    F_union v20; // C_array_e_long
+    F_union v21; // C_array_e_ulong
+    F_union v22; // C_array e_float
+    F_union v23; // C_array_e_double
+    F_union v24; // C_array_e_char
+    F_union v25; // C_array_e_boolean
+    F_union v26; // C_array_e_octet
+    F_union v27; // C_array_e_any
+    F_union v28; // C_array_e_string
+    F_union v29; // C_array_e_Object
+    F_union v31; // C_array_e_TypeCode
+};
+
+exception F_except2 {
+    F_sequence_e_c_struct v32;
+    F_sequence_e_c_union v33;
+};
+exception F_except3 {
+    F_array_e_c_struct v62;
+    F_array_e_c_union v63;
+};
+
+// G
+exception G_except {
+    G_struct v1;
+    G_union v2; // E_struct
+    G_union v3; // E_union
+    G_union v4; // E_sequence
+    G_union v5; // E_array
+    G_sequence_e_e_struct v6;
+    G_sequence_e_e_union v7;
+    G_array_e_e_struct v10;
+    G_array_e_e_union v11;
+};
+
+/*-----------------------*/
+/* interface definitions */
+/*-----------------------*/
+
+interface rf11 {
+// A
+    short op1(in short argin, out short argout, inout short arginout);
+    unsigned short op2(in unsigned short argin, out unsigned short argout, inout unsigned short arginout);
+    long op3(in long argin, out long argout, inout long arginout);
+    unsigned long op4(in unsigned long argin, out unsigned long argout, inout unsigned long arginout);
+    float op5(in float argin, out float argout, inout float arginout);
+    double op6(in double argin, out double argout, inout double arginout);
+    char op7(in char argin, out char argout, inout char arginout);
+    boolean op8(in boolean argin, out boolean argout, inout boolean arginout);
+    octet op9(in octet argin, out octet argout, inout octet arginout);
+    any op10(in any argin, out any argout, inout any arginout);
+    string op11(in string argin, out string argout, inout string arginout);
+    Object op12(in Object argin, out Object argout, inout Object arginout);
+    TypeCode op13(in TypeCode argin, out TypeCode argout, inout TypeCode arginout);
+
+// B
+    B op15(in B argin, out B argout, inout B arginout);
+
+// C
+    C_struct op16(in C_struct argin, out C_struct argout, inout C_struct arginout);
+    C_union op17(in C_union argin, out C_union argout, inout C_union arginout);
+    C_sequence_e_short op18(in C_sequence_e_short argin, out C_sequence_e_short argout, inout C_sequence_e_short arginout);
+    C_sequence_e_ushort op19(in C_sequence_e_ushort argin, out C_sequence_e_ushort argout, inout C_sequence_e_ushort arginout);
+    C_sequence_e_long op20(in C_sequence_e_long argin, out C_sequence_e_long argout, inout C_sequence_e_long arginout);
+    C_sequence_e_ulong op21(in C_sequence_e_ulong argin, out C_sequence_e_ulong argout, inout C_sequence_e_ulong arginout);
+    C_sequence_e_float op22(in C_sequence_e_float argin, out C_sequence_e_float argout, inout C_sequence_e_float arginout);
+    C_sequence_e_double op23(in C_sequence_e_double argin, out C_sequence_e_double argout, inout C_sequence_e_double arginout);
+    C_sequence_e_char op24(in C_sequence_e_char argin, out C_sequence_e_char argout, inout C_sequence_e_char arginout);
+    C_sequence_e_boolean op25(in C_sequence_e_boolean argin, out C_sequence_e_boolean argout, inout C_sequence_e_boolean arginout);
+    C_sequence_e_octet op26(in C_sequence_e_octet argin, out C_sequence_e_octet argout, inout C_sequence_e_octet arginout);
+    C_sequence_e_any op27(in C_sequence_e_any argin, out C_sequence_e_any argout, inout C_sequence_e_any arginout);
+    C_sequence_e_string op28(in C_sequence_e_string argin, out C_sequence_e_string argout, inout C_sequence_e_string arginout);
+    C_sequence_e_Object op29(in C_sequence_e_Object argin, out C_sequence_e_Object argout, inout C_sequence_e_Object arginout);
+    C_sequence_e_TypeCode op31(in C_sequence_e_TypeCode argin, out C_sequence_e_TypeCode argout, inout C_sequence_e_TypeCode arginout);
+    C_array_e_short op32(in C_array_e_short argin, out C_array_e_short argout, inout C_array_e_short arginout);
+    C_array_e_ushort op33(in C_array_e_ushort argin, out C_array_e_ushort argout, inout C_array_e_ushort arginout);
+    C_array_e_long op34(in C_array_e_long argin, out C_array_e_long argout, inout C_array_e_long arginout);
+    C_array_e_ulong op35(in C_array_e_ulong argin, out C_array_e_ulong argout, inout C_array_e_ulong arginout);
+    C_array_e_float op36(in C_array_e_float argin, out C_array_e_float argout, inout C_array_e_float arginout);
+    C_array_e_double op37(in C_array_e_double argin, out C_array_e_double argout, inout C_array_e_double arginout);
+    C_array_e_char op38(in C_array_e_char argin, out C_array_e_char argout, inout C_array_e_char arginout);
+    C_array_e_boolean op39(in C_array_e_boolean argin, out C_array_e_boolean argout, inout C_array_e_boolean arginout);
+    C_array_e_octet op40(in C_array_e_octet argin, out C_array_e_octet argout, inout C_array_e_octet arginout);
+    C_array_e_any op41(in C_array_e_any argin, out C_array_e_any argout, inout C_array_e_any arginout);
+    C_array_e_string op42(in C_array_e_string argin, out C_array_e_string argout, inout C_array_e_string arginout);
+    C_array_e_Object op43(in C_array_e_Object argin, out C_array_e_Object argout, inout C_array_e_Object arginout);
+    C_array_e_TypeCode op45(in C_array_e_TypeCode argin, out C_array_e_TypeCode argout, inout C_array_e_TypeCode arginout);
+
+// D
+    D_d_short op46(in D_d_short argin, out D_d_short argout, inout D_d_short arginout);
+    D_d_ushort op47(in D_d_ushort argin, out D_d_ushort argout, inout D_d_ushort arginout);
+    D_d_long op48(in D_d_long argin, out D_d_long argout, inout D_d_long arginout);
+    D_d_ulong op49(in D_d_ulong argin, out D_d_ulong argout, inout D_d_ulong arginout);
+    D_d_char op50(in D_d_char argin, out D_d_char argout, inout D_d_char arginout);
+    D_d_boolean op51(in D_d_boolean argin, out D_d_boolean argout, inout D_d_boolean arginout);
+    D_d_B op52(in D_d_B argin, out D_d_B argout, inout D_d_B arginout);
+
+// E
+    E_struct op53(in E_struct argin, out E_struct argout, inout E_struct arginout);
+    E_union op54(in E_union argin, out E_union argout, inout E_union arginout);
+    E_sequence op55(in E_sequence argin, out E_sequence argout, inout E_sequence arginout);
+    E_array op56(in E_array argin, out E_array argout, inout E_array arginout);
+
+// F
+    F_struct op57(in F_struct argin, out F_struct argout, inout F_struct arginout);
+    F_union op58(in F_union argin, out F_union argout, inout F_union arginout);
+    F_sequence_e_c_struct op59(in F_sequence_e_c_struct argin, out F_sequence_e_c_struct argout, inout F_sequence_e_c_struct arginout);
+    F_sequence_e_c_union op60(in F_sequence_e_c_union argin, out F_sequence_e_c_union argout, inout F_sequence_e_c_union arginout);
+    F_array_e_c_struct op89(in F_array_e_c_struct argin, out F_array_e_c_struct argout, inout F_array_e_c_struct arginout);
+    F_array_e_c_union op90(in F_array_e_c_union argin, out F_array_e_c_union argout, inout F_array_e_c_union arginout);
+
+// G
+    G_struct op119(in G_struct argin, out G_struct argout, inout G_struct arginout);
+    G_union op120(in G_union argin, out G_union argout, inout G_union arginout);
+    G_sequence_e_e_struct op121(in G_sequence_e_e_struct argin, out G_sequence_e_e_struct argout, inout G_sequence_e_e_struct arginout);
+    G_sequence_e_e_union op122(in G_sequence_e_e_union argin, out G_sequence_e_e_union argout, inout G_sequence_e_e_union arginout);
+    G_array_e_e_struct op125(in G_array_e_e_struct argin, out G_array_e_e_struct argout, inout G_array_e_e_struct arginout);
+    G_array_e_e_union op126(in G_array_e_e_union argin, out G_array_e_e_union argout, inout G_array_e_e_union arginout);
+
+// rest of F
+    F_union op129(in F_union argin, out F_union argout, inout F_union arginout);
+    F_union op130(in F_union argin, out F_union argout, inout F_union arginout);
+    F_union op131(in F_union argin, out F_union argout, inout F_union arginout);
+
+// exception
+    // pragma: exception=A_except1
+    void excop1() raises(A_except1);
+    // pragma: exception=A_except2
+    void excop2() raises(A_except2);
+    // pragma: exception=B_except
+    void excop3() raises(B_except);
+    // pragma: exception=C_except
+    void excop4() raises(C_except);
+    // pragma: exception=D_except
+    void excop5() raises(D_except);
+    // pragma: exception=E_except
+    void excop6() raises(E_except);
+    // pragma: exception=F_except1
+    void excop7() raises(F_except1);
+    // pragma: exception=F_except2
+    void excop8() raises(F_except2);
+    // pragma: exception=F_except3
+    void excop9() raises(F_except3);
+    // pragma: exception=G_except
+    void excop10() raises(G_except);
+};

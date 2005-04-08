@@ -1,0 +1,125 @@
+//
+//    Copyright (C) 2001 AT&T Laboratories Cambridge Ltd.
+//
+//    This file is part of the OMNI Testsuite.
+//
+//    The testsuite is free software; you can redistribute it and/or
+//    modify it under the terms of the GNU Library General Public
+//    License as published by the Free Software Foundation; either
+//    version 2 of the License, or (at your option) any later version.
+//
+//    This library is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//    Library General Public License for more details.
+//
+//    You should have received a copy of the GNU Library General Public
+//    License along with this library; if not, write to the Free
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+//    02111-1307, USA
+//
+//
+#include <orb.idl>
+
+typedef long             LongT;
+
+typedef sequence <octet> SeqOctetT;
+typedef sequence <SeqOctetT> SeqSeqOctetT;
+typedef sequence <double> SeqDoubleT;
+typedef sequence <SeqDoubleT> SeqSeqDoubleT;
+typedef sequence <string> SeqStringT;
+
+typedef octet        ArrayOctetT[3];
+typedef double       ArrayDoubleT[4];
+typedef ArrayOctetT  ArrayArrayOctetT[3];
+typedef ArrayDoubleT ArrayArrayDoubleT[2];
+
+
+struct StructDoubleT {
+  long l;
+  double d;
+};
+
+
+enum EnumT {
+  A,B,C
+};
+
+interface ObjT {
+  void op();
+};
+
+struct StructAllT {
+  boolean          b;
+  octet            o;
+  char             c;
+  short            s;
+  unsigned short   us;
+  long             l;
+  unsigned long    ul;
+  float            f;
+  double           d;
+  string           st;
+  SeqOctetT        sq;
+  ObjT             of;
+  CORBA::TypeCode  t;
+  any              a;
+  ArrayOctetT      ar;
+};
+
+union UnionLongT switch(long) {
+case 1: long l;
+case 2: short s;
+};
+
+union UnionDoubleT switch(long) {
+case 1: double d;
+default: long l;
+};
+
+
+union UnionVariableT switch(EnumT) {
+case A: string str;
+case B: double d;
+};
+
+
+typedef sequence<UnionVariableT> SeqUnionT;
+
+typedef UnionVariableT ArrayUnionT[2];
+
+union UnionSequenceT switch(long) {
+case 1: SeqUnionT s;
+case 2: double d;
+};
+
+union UnionArrayT switch(char) {
+case 'a': ArrayUnionT ar;
+case 'b': double d;
+};
+
+union UnionUnionT switch(short) {
+case 1: double d;
+case 2: UnionSequenceT st;
+};
+
+union UnionStructT switch(long) {
+case 1: double d;
+case 2: StructDoubleT tS;
+};
+
+struct StructUnionT {
+  double d; 
+  UnionVariableT u;
+};
+
+
+union UnionDefault1T switch (boolean) {
+case TRUE: long l;
+default  : short s;
+};
+
+union UnionDefault2T switch (boolean) {
+case TRUE: long l;
+case FALSE  : short s;
+};

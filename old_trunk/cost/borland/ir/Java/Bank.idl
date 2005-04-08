@@ -1,0 +1,15 @@
+// Bank.idl
+
+module Bank {
+  interface Account {
+    attribute float balance;
+    //The operation below is to be added at run time.
+    //The client asks the IR if this operation is supported and
+    //if it is, invokes it
+    //string describe();
+  };
+  interface AccountManager {
+    Account open(in string name);
+  };
+};
+

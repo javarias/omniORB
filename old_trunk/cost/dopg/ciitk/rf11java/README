@@ -1,0 +1,259 @@
+======================================================================
+Copyright (c) 2000 NEC Corporation. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are
+met:
+
+1. The functionality to test the interoperability specified by the 
+   Object Management Group's CORBA/IIOP specification version two (or 
+   later versions) must be preserved.
+   
+2. Redistributions of source code must retain the above copyright 
+   notice, this list of conditions and the following disclaimer as the
+   first lines of this file unmodified.
+   
+3. Redistributions in binary form must reproduce the above copyright 
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the 
+   distribution.
+   
+THIS SOFTWARE IS PROVIDED BY NEC CORPORATION ``AS IS'' AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY 
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+======================================================================
+
+CORBA/IIOP Interoperability Test Kit
+
+Distributed Object Promotion Group
+(NEC Corporation developed this test kit. Copyrighted (c) 2000)
+15th April 2000
+
+This test kit is designed to provide the functionality to test the 
+interoperability specified by the Object Management Group's CORBA/IIOP
+specification version two (or later versions). All of the programs 
+included in the test kit are available as open sources based on the 
+BSD style copyright as above.
+
+[TEST CATEGORY]
+
+rf: request-reply invocation / fullset / v1.1
+
+Please review ``TEST CATEGORY AT A GLANCE'' section below to check 
+available operator names in this test category.
+
+[ENVIRONMENT]
+
+This test kit includes one IDL file and four source programs, and they
+have to be compiled using your CORBA IDL compiler and C++/Java 
+compilers in your environment respectively.
+
+[FILES]
+
+The files contained are:
+
+    README		this file
+    dopgirf11.idl	CORBA IDL definition file
+    rf11Client.java	client main program
+    rf11Caller.java	program with procedures calling a server object
+    rf11Server.java	server main program
+    rf11Servant.java	program with server object implementation
+
+[HOW TO RUN]
+
+1. Set up your CORBA runtime environment
+
+2. Execute the server program
+   Just one argument IOR, which is a file name for storing server's 
+   object reference, is required.
+   
+   > server.exe	IOR
+   Server is now ready.
+
+   Now server is running and waiting for client requests.
+
+3. Execute the client program
+   One or more argument is acceptable. The first argument should be 
+   the IOR file name specified and created by the server execution.
+   Rest of the arguments are operation names defined in the IDL file.
+   Please note that Providing no operation names means providing all 
+   of the operations.
+
+   > client IOR op1 op2		... `op1' and `op2' are invoked in turn.
+   > client IOR			... all operations are invoked in turn.
+   
+4. Monitor the client-server invocation progress
+   Both client and server programs generate operation names in turn 
+   and synchronously, or some messages if errors occur.
+
+[BUGS, COMMENTS, SUGGESTIONS]
+
+If you find any problems or bugs in the test kit, please let us know. 
+Any suggestions or feedbacks are also welcome.
+Please e-mail to iiop-request@dopg.gr.jp.
+
+[TEST CATEGORY AT A GLANCE]
+
+--------rm rf om of tx xx nx  	   description---------------------------------
+op1	11 11               	   in/out/inout/return of short
+op2	11 11               	   in/out/inout/return of unsigned short
+op3	11 11               	   in/out/inout/return of long
+op4	11 11               	   in/out/inout/return of unsigned long
+op5	11 11               	   in/out/inout/return of float
+op6	11 11               	   in/out/inout/return of double
+op7	11 11               	   in/out/inout/return of char
+op8	11 11               	   in/out/inout/return of boolean
+op9	11 11               	   in/out/inout/return of octet
+op10	11 11               	   in/out/inout/return of any
+op11	11 11               	   in/out/inout/return of string
+op12	11 11               	   in/out/inout/return of Object
+op13	11 11               	   in/out/inout/return of TypeCode
+op15 	   11               	   in/out/inout/return of B (enum)
+op16 	   11               	   in/out/inout/return of C_struct
+op17 	   11               	   in/out/inout/return of C_union
+op18 	   11               	   in/out/inout/return of C_sequence_e_short
+op19 	   11               	   in/out/inout/return of C_sequence_e_ushort
+op20 	   11               	   in/out/inout/return of C_sequence_e_long
+op21 	   11               	   in/out/inout/return of C_sequence_e_ulong
+op22 	   11               	   in/out/inout/return of C_sequence_e_float
+op23 	   11               	   in/out/inout/return of C_sequence_e_double
+op24 	   11               	   in/out/inout/return of C_sequence_e_char
+op25 	   11               	   in/out/inout/return of C_sequence_e_boolean
+op26 	   11               	   in/out/inout/return of C_sequence_e_octet
+op27 	   11               	   in/out/inout/return of C_sequence_e_any
+op28 	   11               	   in/out/inout/return of C_sequence_e_string
+op29 	   11               	   in/out/inout/return of C_sequence_e_Object
+op31 	   11               	   in/out/inout/return of C_sequence_e_TypeCode
+op32 	   11               	   in/out/inout/return of C_array_e_short
+op33 	   11               	   in/out/inout/return of C_array_e_ushort
+op34 	   11               	   in/out/inout/return of C_array_e_long
+op35 	   11               	   in/out/inout/return of C_array_e_ulong
+op36 	   11               	   in/out/inout/return of C_array_e_float
+op37 	   11               	   in/out/inout/return of C_array_e_double
+op38 	   11               	   in/out/inout/return of C_array_e_char
+op39 	   11               	   in/out/inout/return of C_array_e_boolean
+op40 	   11               	   in/out/inout/return of C_array_e_octet
+op41 	   11               	   in/out/inout/return of C_array_e_any
+op42 	   11               	   in/out/inout/return of C_array_e_string
+op43 	   11               	   in/out/inout/return of C_array_e_Object
+op45 	   11               	   in/out/inout/return of C_array_e_TypeCode
+op46 	   11               	   in/out/inout/return of D_d_short
+op47 	   11               	   in/out/inout/return of D_d_ushort
+op48 	   11               	   in/out/inout/return of D_d_long
+op49 	   11               	   in/out/inout/return of D_d_ulong
+op50 	   11               	   in/out/inout/return of D_d_char
+op51 	   11               	   in/out/inout/return of D_d_boolean
+op52 	   11               	   in/out/inout/return of D_d_B
+op53 	   11               	   in/out/inout/return of E_struct
+op54 	   11               	   in/out/inout/return of E_union
+op55 	   11               	   in/out/inout/return of E_sequence
+op56 	   11               	   in/out/inout/return of E_array
+op57 	   11               	   in/out/inout/return of F_struct
+op58 	   11               	   in/out/inout/return of F_union
+op59 	   11               	   in/out/inout/return of F_sequence_e_c_struct
+op60 	   11               	   in/out/inout/return of F_sequence_e_c_union
+op89 	   11               	   in/out/inout/return of F_array_e_c_struct
+op90 	   11               	   in/out/inout/return of F_array_e_c_union
+op119 	   11               	   in/out/inout/return of G_struct
+op120 	   11               	   in/out/inout/return of G_union
+op121 	   11               	   in/out/inout/return of G_sequence_e_e_struct
+op122 	   11               	   in/out/inout/return of G_sequence_e_e_union
+op125 	   11               	   in/out/inout/return of G_array_e_e_struct
+op126 	   11               	   in/out/inout/return of G_array_e_e_union
+op129 	   11               	   in/out/inout/return of F_union
+op130 	   11               	   in/out/inout/return of F_union
+op131 	   11               	   in/out/inout/return of F_union
+--------rm rf om of tx xx nx  	   description---------------------------------
+op132     	       11   	   context
+--------rm rf om of tx xx nx  	   description---------------------------------
+op133    	    11      	   CosTSInteroperation::PropagationContext
+op134pre    	    11      	   must be invoked prior to op134 operation
+op134    	    11      	   propagation context test
+--------rm rf om of tx xx nx  	   description---------------------------------
+op1001        11 11   	    	   oneway of short
+op1002        11 11   	    	   oneway of unsigned short
+op1003        11 11   	    	   oneway of long
+op1004        11 11   	    	   oneway of unsigned long
+op1005        11 11   	    	   oneway of float
+op1006        11 11   	    	   oneway of double
+op1007        11 11   	    	   oneway of char
+op1008        11 11   	    	   oneway of boolean
+op1009        11 11   	    	   oneway of octet
+op1010        11 11   	    	   oneway of any
+op1011        11 11   	    	   oneway of string
+op1012        11 11   	    	   oneway of Object
+op1013        11 11   	    	   oneway of TypeCode
+op1015  	 11   	    	   oneway of B (enum)
+op1016  	 11   	    	   oneway of C_struct
+op1017  	 11   	    	   oneway of C_union
+op1018  	 11   	    	   oneway of C_sequence_e_short
+op1019  	 11   	    	   oneway of C_sequence_e_ushort
+op1020  	 11   	    	   oneway of C_sequence_e_long
+op1021  	 11   	    	   oneway of C_sequence_e_ulong
+op1022  	 11   	    	   oneway of C_sequence_e_float
+op1023  	 11   	    	   oneway of C_sequence_e_double
+op1024  	 11   	    	   oneway of C_sequence_e_char
+op1025  	 11   	    	   oneway of C_sequence_e_boolean
+op1026  	 11   	    	   oneway of C_sequence_e_octet
+op1027  	 11   	    	   oneway of C_sequence_e_any
+op1028  	 11   	    	   oneway of C_sequence_e_string
+op1029  	 11   	    	   oneway of C_sequence_e_Object
+op1031  	 11   	    	   oneway of C_sequence_e_TypeCode
+op1032  	 11   	    	   oneway of C_array_e_short
+op1033  	 11   	    	   oneway of C_array_e_ushort
+op1034  	 11   	    	   oneway of C_array_e_long
+op1035  	 11   	    	   oneway of C_array_e_ulong
+op1036  	 11   	    	   oneway of C_array_e_float
+op1037  	 11   	    	   oneway of C_array_e_double
+op1038  	 11   	    	   oneway of C_array_e_char
+op1039  	 11   	    	   oneway of C_array_e_boolean
+op1040  	 11   	    	   oneway of C_array_e_octet
+op1041  	 11   	    	   oneway of C_array_e_any
+op1042  	 11   	    	   oneway of C_array_e_string
+op1043  	 11   	    	   oneway of C_array_e_Object
+op1045  	 11   	    	   oneway of C_array_e_TypeCode
+op1046  	 11   	    	   oneway of D_d_short
+op1047  	 11   	    	   oneway of D_d_ushort
+op1048  	 11   	    	   oneway of D_d_long
+op1049  	 11   	    	   oneway of D_d_ulong
+op1050  	 11   	    	   oneway of D_d_char
+op1051  	 11   	    	   oneway of D_d_boolean
+op1052  	 11   	    	   oneway of D_d_B
+op1053  	 11   	    	   oneway of E_struct
+op1054  	 11   	    	   oneway of E_union
+op1055  	 11   	    	   oneway of E_sequence
+op1056  	 11   	    	   oneway of E_array
+op1057  	 11   	    	   oneway of F_struct
+op1058  	 11   	    	   oneway of F_union
+op1059  	 11   	    	   oneway of F_sequence_e_c_struct
+op1060  	 11   	    	   oneway of F_sequence_e_c_union
+op1089  	 11   	    	   oneway of F_array_e_c_struct
+op1090  	 11   	    	   oneway of F_array_e_c_union
+op1119  	 11   	    	   oneway of G_struct
+op1120  	 11   	    	   oneway of G_union
+op1121  	 11   	    	   oneway of G_sequence_e_e_struct
+op1122  	 11   	    	   oneway of G_sequence_e_e_union
+op1125  	 11   	    	   oneway of G_array_e_e_struct
+op1126  	 11   	    	   oneway of G_array_e_e_union
+op1129  	 11   	    	   oneway of F_union
+op1130  	 11   	    	   oneway of F_union
+op1131  	 11   	    	   oneway of F_union
+--------rm rf om of tx xx nx  	   description---------------------------------
+excop1	11 11               	   exception of A_except1
+excop2 	   11               	   exception of A_except2
+excop3 	   11               	   exception of B_except
+excop4 	   11               	   exception of C_except
+excop5 	   11               	   exception of D_except
+excop6 	   11               	   exception of E_except
+excop7 	   11               	   exception of F_except1
+excop8 	   11               	   exception of F_except2
+excop9 	   11               	   exception of F_except3
+excop10	   11               	   exception of G_except

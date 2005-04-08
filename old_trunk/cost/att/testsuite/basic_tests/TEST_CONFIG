@@ -1,0 +1,24 @@
+"echo: basic - basic" 60 "echosrv" echoclt
+"echo: basic - derived" 60 echosrv derivedEchoclt
+"echo: basic - multi" 60 echosrv multiEchoclt
+"echo: derived - basic" 60 derivedEchosrv echoclt
+"echo: derived - derived" 60 derivedEchosrv derivedEchoclt
+"echo: derived - multi" 60 derivedEchosrv multiEchoclt
+"echo: multi - basic" 60 multiEchosrv echoclt
+"echo: multi - derived" 60 multiEchosrv derivedEchoclt
+"echo: multi - multi" 60 multiEchosrv multiEchoclt
+multiEcho_tie 60 tiesrv multiEchoclt
+nullecho 60 echosrv nullechoclt
+refp 60 refpsrv refpclt
+seqEcho 60 seqEchosrv seqEchoclt
+tstexcept 60 "tstexceptsrv" "tstexceptclt"
+#"union discriminator" 5 bug200912
+attrEcho 60 attrEchosrv attrEchoclt
+attrObjRef 60 attrObjRefsrv attrObjRefclt
+con 300 consrv conclt
+
+# we create an object reference with typeid IDL:omg.org/CORBA/Object:1.0
+# (which in fact is an IDL:Echo:1.0) and then try to narrow it to an
+# IDL:Echo:1.0
+echoobjsrv 60 echoobjsrv echoclt
+

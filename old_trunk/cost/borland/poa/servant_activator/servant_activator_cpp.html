@@ -1,0 +1,132 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; U) [Netscape]">
+   <TITLE>Readme for the Servant Activator Bank for C++ </TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Bank Servant Activator for C++</H2>
+
+<HR WIDTH="100%">
+<UL>
+<LI>
+<A HREF="Bank.idl">Bank.idl</A></LI>
+
+<BR>IDL interface for the <B>Bank</B>.
+<LI>
+<A HREF="BankImpl.h">BankImpl.h</A></LI>
+
+<BR>Implements the following classes
+<BR><B>AccountRegistry</B> : Stores a name-value pair of name and account
+information and provides synchronized access.
+<BR><B>AccountImpl </B>: stores a balance for each account
+<BR>The <B>AccountManagerImpl</B> servant implements <TT>open()</TT> method
+which opens an account if necessary with a random balance or returns the
+account if one exists by using the account registry. It also implements
+a helper function called <I>open_account()</I> to append the checking or
+savings flag info to the name to make it unique.&nbsp;&nbsp;
+<LI>
+<A HREF="Server.C">Server.C</A></LI>
+
+<BR>Bank server. This file contains the server implementations of&nbsp;
+Account Manager Servant Activator. The <TT>main()</TT> function&nbsp; creates
+a child POA named bank_servant_activator_poa with USE_SERVANT_MANAGER as
+request processing policy and creates and registers the AccountManager
+Activator as the ServantActivator for the POA. It then creates two references
+one for checking account type and another for savings account and writes
+it out to "cref.dat" and "sref.dat" and waits for client requests.
+<BR>The ServantActivator for Account Manager servant( <B>AccountManagerActivator</B>
+) creates and returns a servant ( <B>AccountManager</B> ) every time the
+<TT>incarnate()</TT> method is invoked by the POA. This servant gets deleted
+when the POA calls etherealize() , which in this case gets called when
+deactivate_object() is called on the POA by a DeActivator thread. The servant
+could be a SavingsAccountManagerImpl or CheckingAccountManagerImpl based
+on the object id passed to incarnate() method. After the servant is created
+the incarnate() method creates the deactivator thread.Note that <TT>etherealize()</TT>
+is also invoked when the POA is destroyed.
+<BR>The <B>DeActivatorThread</B> class implements the <TT>begin()</TT>
+method that deactivates the servant created in <TT>AccountManagerActivator::incarnate()</TT>
+method after approximately 15 seconds.
+<BR>The <B>SavingsAccountManager&nbsp; </B>servant calls AccountManager's
+<I>open_account()</I> with the name and a Savings related flag and returns
+the result.
+<BR>The<B> CheckingAccountManager&nbsp; </B>servant calls AccountManager's
+<I>open_account()</I> with the name and a Checking account&nbsp; related
+flag and returns the result.
+<BR>Note that we create a servant per object in our example.
+<LI>
+<A HREF="Client.C">Client.C</A></LI>
+
+<BR>This is the Bank client. It binds to the <B>AccountManager</B> object
+using the reference from either "cref.dat" or 'sref.dat" based on user
+input and invokes <TT>open()</TT> to open a bank account. It then invokes
+<TT>balance()</TT> on the <B>Account</B> object reference obtained to query
+the balance.
+<LI>
+<A HREF="Makefile.cpp">Makefile.cpp</A> (Makefile.cpp <I>on Windows</I>):
+Used to build all the targets.</LI>
+
+<LI>
+<A HREF="Makefile">Makefile</A> Common Makefile Used for both C++ and Java.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make cpp</B> (or <B>nmake -f Makefile.cpp</B> <I>on Windows</I>)
+in the servant_activator subdirectory will cause the <A HREF="Bank.idl">Bank.idl</A>
+to be run through the idl2cpp compiler. It will also build the following
+executables for the examples described above:
+<UL>
+<LI>
+Server (Server.exe <I>on Windows</I>)</LI>
+
+<LI>
+Client (Client.exe <I>on Windows</I>)</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the bank server using
+the command:
+<UL>
+<PRE><TT><B>prompt></B> Server&nbsp; &amp;&nbsp;
+(start Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+Next, open a user's bank account and query the balance in the account using
+the command
+<UL>
+<PRE><TT><B>prompt></B>Client john checking</TT></PRE>
+</UL>
+
+<UL>or</UL>
+
+<UL>
+<PRE><TT><B>prompt></B>Client&nbsp; john savings&nbsp;
+<I>// uses a default name</I></TT></PRE>
+
+<PRE><I><TT>or</TT></I></PRE>
+
+<PRE><TT><B>prompt></B>Client&nbsp;&nbsp; <I>// uses a default name and creates a checking account</I></TT></PRE>
+</UL>
+From the server output, you will see that the servant activator's <TT>incarnate()</TT>
+method is invoked for the first client request. If you invoke the client
+again within 15 seconds you will see that the <TT>incarnate()</TT> method
+is not called . This is because the servant is already active and is in
+the active object map of the POA. If you wait for 15 seconds you should
+see, from the server output, a message generated by the DeActivator thread
+when it called <TT>deactivate_object()</TT>. This will remove the servant
+from the Active Object Map and invoke <TT>etherealize()</TT> to clean up
+any servant resources. Now if you invoke the client again the <TT>incarnate()</TT>
+method gets called to recreate a servant. You can also see that the incarnate
+method is called
+<BR>for two different types of accounts ( checking and savings ) and the
+same user can hold 2 different accounts.
+<BR>
+<HR WIDTH="100%">
+<BR>Return to the <A HREF="servant_activator.html">top-level examples page</A>.
+</BODY>
+</HTML>

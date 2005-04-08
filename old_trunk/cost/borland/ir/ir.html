@@ -1,0 +1,46 @@
+<html>
+
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<meta NAME="GENERATOR" CONTENT="Microsoft FrontPage 3.0">
+<title>ir</title>
+<meta NAME="Template" CONTENT="C:\Program Files\Microsoft Office\Office\html.dot">
+</head>
+
+<body TEXT="#000000" LINK="#0000ff" VLINK="#800080" BGCOLOR="#ffffff" ALINK="#FF0000">
+
+<h2>Interface Repository</h2>
+
+<p>The Interface Repository example has a simple AccountManager interface to create an
+account and (re)open an account. At the initialization time the AccountManager
+implementation bootstraps the Interface Repository definition for the managed Account
+interface with purpose to expose to the clients the additional operation that has been
+already implemented by this particular Account implementation. The clients now can access
+all known (described in IDL) operations as they do this usually and, additionally, the can
+verify with the Interface Repository the support for other operations and invoke them.
+This example illistrates how we can manage the Interface Repository definition objects and
+how we can do the remote object's introspection using the Interface Repository.</p>
+
+<hr>
+
+<p><br>
+From this example, you will learn how to: 
+
+<ul>
+  <li>Use Interface Repository API to manage its metadata in purpose to expose the object's
+    extended functionality </li>
+</ul>
+
+<h3>Directory Contents</h3>
+
+<ul>
+  <li><a HREF="ir_java.html">Java example</a> </li>
+  <li><a HREF="ir_cpp.html">C++ example</a> </li>
+</ul>
+
+<hr>
+
+<p><br>
+Return to the <a HREF="../README.html">top-level examples page</a>. </p>
+</body>
+</html>

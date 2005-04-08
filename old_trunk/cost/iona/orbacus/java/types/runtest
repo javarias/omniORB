@@ -1,0 +1,55 @@
+#!/bin/sh
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Try to find top-level directory
+#
+if test -f config/sh.init
+then
+    top_srcdir=.
+elif test -f ../config/sh.init
+then
+    top_srcdir=..
+else
+    $echo "$0: can't find top-level directory"
+    exit
+fi
+
+#
+# Run standard init script
+#
+. $top_srcdir/config/sh.init
+
+#
+# Set Java CLASSPATH
+#
+CLASSPATH="$top_srcdir/lib${SEPARATOR}$CLASSPATH"
+export CLASSPATH
+
+#
+# Set the boot classpath
+#
+set_bootclasspath
+
+#
+# Delete old log files
+#
+rm -f types.log
+
+#
+# Run the tests
+#
+$echo 
+$JAVA test.types.TestConst 2>&1 | tee -a types.log
+$JAVA test.types.TestTypeCode 2>&1 | tee -a types.log
+$JAVA test.types.TestAny 2>&1 | tee -a types.log
+$JAVA test.types.TestDynAny 2>&1 | tee -a types.log
+$JAVA test.types.TestUnion 2>&1 | tee -a types.log

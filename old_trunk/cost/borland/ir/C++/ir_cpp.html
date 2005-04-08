@@ -1,0 +1,95 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Generator" content="Microsoft Word 97">
+   <meta name="Template" content="C:\Program Files\Microsoft Office\Office\html.dot">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; SunOS 5.6 sun4u) [Netscape]">
+   <title>Readme for the Interface Repository example</title>
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<h2>Interface Repository Example</h2>
+
+<hr>
+
+<h3>Files in this example</h3>
+
+<ul>
+  <li><b>Bank.idl: The definition of Account and AccountManager interfaces</b></li>
+  <li><b>AccountManagerImpl.h:</b> The servant that implements the AccountManager interface</li>
+  <li><b>AccountImpl.h:</b> The servant&nbsp; that implements the Account interface</li>
+  <li><b>Server.C:</b> The server mainline</li>
+  <li><b>Client.C:</b> The client mainline</li>
+</ul>
+
+<h3>Building this example</h3>
+
+<p>Typing <b>make cpp</b> (or <b>nmake cpp</b> <i>on Windows</i>) in the ir subdirectory
+will this example to be built. This will include the following steps </p>
+
+<p>1. Compile the Bank.idl and generate all CORBA supporting classes <br>
+2. Compile the generated stubs and servants, the servant implementations for interfaces
+described in Bank.idl <br>
+3. Compile the Client and Server mainlines. </p>
+
+<h3>Running this example</h3>
+
+<p>To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. </p>
+
+<p>Start the Interface Repository using the command: 
+
+<dir>
+  <pre><b><i><tt>prompt</tt>&gt;</i> <i>irep myIrep Bank.idl&nbsp; &amp;
+start irep myIrep Bank.idl (on Windows</i>)
+<i>// make the irep run in the background
+// you can use any name for the Interface Repository instead of myIrep</i></b></pre>
+</dir>
+
+<p>Then start the bank server using the command: 
+
+<dir>
+  <pre><b><i><tt>prompt&gt;</tt> Server&nbsp; &amp;&nbsp;
+start Server (on Windows)
+// make the server run in the background</i></b></pre>
+</dir>
+
+<p>Next, open some users'&nbsp; bank account with initial balances 
+
+<dir>
+  <pre><b><i><tt>prompt&gt;</tt> Client peter 12.213</i></b></pre>
+</dir>
+
+<p>or 
+
+<dir>
+  <pre><b><tt>prompt&gt;</tt> Client peter&nbsp;&nbsp;
+// uses a random initial peter's account balance value</b></pre>
+</dir>
+
+<p>or 
+
+<dir>
+  <pre><b><tt>prompt&gt;</tt> Client&nbsp;&nbsp;&nbsp;
+// uses a default name and random balance value</b></pre>
+</dir>
+
+<p>The example server first creates in the Interface Repository an additional operation
+definition in the Account interface as if it would described in there by the user. The
+server's implementation already has the DSI code to handle for this operation to proceed.
+The example client first obtains a reference to the balance object with name specified. If
+it had not been yet created, the AccountManager creates one and initializes its balance to
+a random value. The client obtains this current balance and prints it on the screen. Then
+client modifies the balance value either with one specified by the user or with the
+randomly taken one. And, finally, client verifies with the Interface Repository if this
+Account interface supports the describe operation. If it is the client obtains the
+Account's description via DII and prints it on the screen. </p>
+
+<hr>
+
+<p><i>Return to the <a href="../README.html">top-level examples page</a>.</i> </p>
+</body>
+</html>

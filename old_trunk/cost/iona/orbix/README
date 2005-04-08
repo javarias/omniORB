@@ -1,0 +1,3 @@
+The file func_test.tar.gz contains the O2K for C++ test suite, which was
+donated to COST by IONA Technologies. These tests have not yet been modified
+to work with other ORBs.

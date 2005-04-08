@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the Adapter Activator Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2> Adapter Activator Bank </H2>
+<p>This example has a simple AccountManager interface to open an Account and to 
+  query the balance in that account. It sets an adapter activator on the root 
+  POA, creates a POA hierarchy under root POA, activates a servant on the leaf 
+  POA, writes out the reference and destroys the created POAs. The act of destroying 
+  the POA will also deactivate the servant on that POA. The server then starts 
+  waiting for requests. </p>
+<p>When client makes a request, the server side ORB realizes that the POA on which 
+  the request is made is no longer present. It then invokes adapter activator's 
+  unknown_adapter method repeatedly until all the POA hierarchy is created. The 
+  implementation of unknown_adapter also sets the adapter activator of the newly 
+  created POA to be that of parent's adapter activator.Finally when the leaf POA 
+  is created, the unknown_adapter activates the servant on that POA. With all 
+  the POAs alive and the servant activated on the right POA, the request completes 
+  and client gets the result.</p>
+<p>If you invoke the client again, you will see from the server output that adapter 
+  activators are <b>not</b> fired again. This is because the POAs created by adapter 
+  activators will stay alive until explicitly destroyed.</p>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+
+<UL>
+  <LI> To create an adapter activator and create a POA in its unknown_adapter 
+    method. </LI>
+  <LI>To set adapter activator on a POA</LI>
+  <LI> To ensure an entire POA hierarchy gets created in unknown_adapter by setting 
+    the adapter activator of each new POA. </LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="adapter_activator_java.html">Java example</A></LI>
+  <LI> <A HREF="adapter_activator_cpp.html">CPP example</A></LI>
+</UL>
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../../README.html">top-level examples page</A>. 
+</BODY></HTML>

@@ -1,0 +1,25 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module ORBTest_StubTimeout
+{
+    interface Intf
+    {
+	oneway void
+	sleep_oneway(
+	    in unsigned long sec
+	);
+
+	void
+	sleep_twoway(
+	    in unsigned long sec
+	);
+    };
+};

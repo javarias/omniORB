@@ -1,0 +1,21 @@
+include ../../stdmk/stdmk_nt
+
+EXE = client.exe server.exe
+
+all: $(EXE)
+
+clean:
+	-rm -f *.obj *.exe *_c.* *_s.*
+
+CLIENT_OBJS = TypeCode_c.obj client.obj anystuff.obj
+
+SERVER_OBJS = TypeCode_c.obj TypeCode_s.obj server.obj
+
+TypeCode_c.cpp TypeCode_s.cpp TypeCode_c.hh: TypeCode.idl
+	$(ORBCC) -type_code_info -boa TypeCode.idl
+
+client.exe: $(CLIENT_OBJS)
+	$(LINK_EXE) /out:$@ $(CLIENT_OBJS) $(LIBORB) $(STDCC_LIBS)
+
+server.exe: $(SERVER_OBJS)
+	$(LINK_EXE) /out:$@ $(SERVER_OBJS) $(LIBORB) $(STDCC_LIBS)

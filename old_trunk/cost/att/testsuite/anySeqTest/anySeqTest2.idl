@@ -1,0 +1,10 @@
+typedef sequence<string> seqstr;
+typedef sequence<string,10> seqstr_10;
+
+interface A {
+  typedef sequence<A> nrseqA; // _not_ a recursive sequence (cf. bug 59)
+  void op();
+};
+
+typedef sequence<A> seqA;
+typedef sequence<A,10> seqA_10;

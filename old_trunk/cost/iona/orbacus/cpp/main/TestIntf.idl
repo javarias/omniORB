@@ -1,0 +1,37 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module ORBTest
+{
+    struct TestCase
+    {
+        string impl_description;
+	Object impl;
+    };
+
+    typedef sequence<TestCase> TestCaseList;
+
+    interface Intf
+    {
+	//
+	// General operations
+	//
+
+	void
+	deactivate();
+
+	boolean
+	concurrent_request_execution();
+
+	TestCaseList
+	get_test_case_list();
+    };
+
+}; // module ORBTest

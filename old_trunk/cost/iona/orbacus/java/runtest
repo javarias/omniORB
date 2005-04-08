@@ -1,0 +1,49 @@
+#!/bin/sh
+# **********************************************************************
+#
+# Copyright (c) 2001
+# IONA Technologies, Inc.
+# Waltham, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Run standard init script
+#
+. config/sh.init
+
+#
+# Print welcome message
+#
+$echo
+$echo "**********************"
+$echo "* ORBacus Test Suite *"
+$echo "**********************"
+$echo
+$echo "(All test results are logged in the file \"alltests.log\")"
+
+#
+# Delete top-level log file
+#
+rm -f alltests.log
+
+#
+# Run all tests
+#
+$echo
+$echo "*** Running tests in \"types\" ***"
+sh types/runtest 2>&1 | tee -a alltests.log
+$echo
+$echo "*** Running tests in \"main\" ***"
+sh main/runtest $@ 2>&1 | tee -a alltests.log
+$echo
+$echo "*** Running tests in \"poa\" ***"
+sh poa/runtest 2>&1 | tee -a alltests.log
+$echo
+$echo "*** Running tests in \"obv\" ***"
+sh obv/runtest $@ 2>&1 | tee -a alltests.log
+$echo
+$echo "*** Running tests in \"pi\" ***"
+sh pi/runtest $@ 2>&1 | tee -a alltests.log

@@ -1,0 +1,252 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; SunOS 5.6 sun4u) [Netscape]">
+   <title>Readme for the QoS example</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#990066" alink="#FF0000">
+
+<h2>
+<font color="#000000">Quality of Service </font>(QoS) and the RebindPolicy
+for Java</h2>
+&nbsp;
+<h3>
+Directory Contents</h3>
+
+<ul>
+<li>
+<a href="Bank.idl">Bank.idl</a></li>
+
+<br>IDL interface for the <b>Bank</b>.
+<li>
+<a href="Server.java">Server.java</a></li>
+
+<br>The Bank server, modified for the RebindPolicy test. It creates a POA
+named rebind_agent_poa, creates an instance of the <b>AccountManager</b>
+servant, activates the servant on rebind_agent_poa and obtains the object
+reference for the servant.&nbsp; It then activates the poa manager and
+starts waiting for client requests.
+<li>
+<a href="ForwardServer.java">ForwardServer.java</a></li>
+
+<br>An alternate implementation of the Bank server, which creates a Servant
+Locator which will throw a ForwardException on every second request, resulting
+in a reply with status LOCATION_FORWARD. This is used in the second scenario
+to show how the different settings of the RebindPolicy control the reaction
+of the client-side ORB to this type of Reply.
+<li>
+<a href="AccountImpl.java">AccountImpl.java</a></li>
+
+<br>Account servant implementation. Implements the balance() method.
+<li>
+<a href="AccountManagerImpl.java">AccountManagerImpl.java</a></li>
+
+<br>Account Manager servant Implementation. Implements open() method. Uses
+a static table to see if there is already an <b>Account</b> for the specified
+user. If not, creates an account with random balance. This newly created
+account of type <b>AccountImpl</b>&nbsp; is the servant of the account
+object.&nbsp; This account servant is also implicitly activated by bank_implicit_activation_poa
+when creating the account object reference from the account servant.&nbsp;
+Returns the created account.
+<li>
+<a href="AccountManagerLocator.java">AccountManagerLocator.java</a></li>
+
+<br>AccountManager servant locator, used by ForwardServer.java.
+<li>
+<a href="Client.java">Client.java</a></li>
+
+<br>This is the Bank client. It binds to the <b>AccountManager</b> object
+and invokes <tt>open()</tt> to open a bank account. It then invokes <tt>balance()</tt>
+on the <b>Account</b> object reference obtained to query the balance. The
+client sets the RebindPolicy to the value specified on the command line.
+The client attempts to invoke the AccountManager, waits for the user to
+press return, and then invokes a second time.
+<li>
+<a href="Makefile.java">Makefile.java</a> (<a href="vbmake.bat">vbmake.bat</a>
+<i>on Windows</i>): Used to build all the test targets.</li>
+</ul>
+
+<h3>
+Building this example</h3>
+Typing <b>make</b> -f Makefile.java (or <b>nmake -f Makefile.java</b> <i>on
+Windows</i>) in the qos subdirectory will cause the <a href="Bank.idl">Bank.idl</a>
+to be run through the idl2java compiler.It will also build the class files
+for the examples described above.
+<h3>
+Running the examples</h3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network.
+<h4>
+Starting the server</h4>
+There are 3 scenarios used in this example to demonstrate the behavior
+of the client-side ORB in the presence of the following three events.&nbsp;
+It is controlled by the six incarnations of the Rebind policy. For every
+scenario, you need a different setup on the server-side.
+<p><b>Handling of closed connections&nbsp;</b> The server object sends
+a GIOP CloseConnection message to the client. This may happen when a server
+receives a high number of new connections and closes the least recently
+used one to process them. To simulate this situation, we allow the server
+to have only one open connection at a time, and start a second client,
+which will cause the connection to the first client being dropped.
+<p><tt><b>prompt></b> vbj -Dvbroker.se.iiop_tp.scm.iiop_tp.manager.connectionMax=1
+Server
+&amp;</tt>
+<br><tt>start vbj -Dvbroker.se.iiop_tp.scm.iiop_tp.manager.connectionMax=1
+Server
+<i>(on
+Windows</i>)</tt>
+<br><i><tt>// make the server run in the background</tt></i>
+<p>Start the first client with the policy value you want to test as the
+command line option, e.g. for the OMG NO_RECONNECT value:
+<br><tt><b>prompt> </b>vbj Client no_reconnect</tt>
+<p>The client program will print out the balance on the default account
+and wait for you to press return. Start a second client in another window.
+It will print the balance and, as a side-effect, the server will send a
+GIOP CloseConnection message to the first client.&nbsp; Now hit enter on
+the first client and observe the behavior. The NO_RECONNECT policy value
+will raise a REBIND exceptions, whereas all other policies will allow the
+client ORB to silently reconnect to the server again.
+<p><b>Handling of message forwarding</b>&nbsp; The server object sends
+a reply message to the client which contains the status LOCATION_FORWARD.&nbsp;
+The reply includes an IOR that refers to the object that the client should
+forward the original message to. To test the behavior of the client ORB
+in this case, you need to start the server as below:<b></b>
+<p><tt><b>prompt></b> vbj ForwardServer &amp;</tt>
+<br><tt>start vbj ForwardServer
+(<i>on Windows</i>)</tt>
+<br><i><tt>// make the server run in the background</tt></i>
+<p>Start the client with the policy value you want to test as the command
+line option, e.g. for the VB_NO_REBIND value:
+<br>&nbsp;<tt><b>prompt> </b>vbj Client vb_no_rebind</tt><b></b>
+<p><b>Handling of object failover&nbsp;</b> If the client encounters a
+communication problem with a peer object, that is probably caused by the
+termination of the server, the client ORB will try to use another object
+that provides the same interface, if the setting of the RebindPolicy allows
+for it.
+<br><tt><b>prompt></b> vbj 
+Server &amp;</tt>
+<br><tt>start vbj
+Server
+<i>(on Windows</i>)</tt>
+<br><i><tt>// make the server run in the background</tt></i>
+<p>Start the first client with the policy value you want to test as the
+command line option, e.g. for the OMG NO_RECONNECT value:
+<br><tt><b>prompt> </b>vbj Client vb_transparent</tt><tt></tt>
+<p>While the client waits for you to press return, terminate, and restart
+the server. Fail-over will be disabled or enabled, depending on your choice
+of the RebindPolicy policy value.
+<br>&nbsp;
+<h4>
+Starting the client</h4>
+The following table is a summary of what effect the setting of the RebindPolicy
+has.
+<br>&nbsp;
+<table BORDER COLS=4 WIDTH="100%" NOSAVE >
+<tr>
+<td></td>
+
+<td>Handling of&nbsp; closed connection to same object</td>
+
+<td>Handling of message forwarding</td>
+
+<td>Handling of object failover</td>
+</tr>
+
+<tr>
+<td>NO_RECONNECT</td>
+
+<td>no, throws REBIND</td>
+
+<td>no, throws REBIND</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>VB_NO_REBIND</td>
+
+<td>yes</td>
+
+<td>no, throws REBIND</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>NO_REBIND</td>
+
+<td>yes</td>
+
+<td>yes, if new policies matches,&nbsp;
+<br>throws REBIND otherwise</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>TRANSPARENT</td>
+
+<td>yes</td>
+
+<td>yes</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>VB_NOTIFY_REBIND</td>
+
+<td>yes</td>
+
+<td>yes</td>
+
+<td>yes. throws an exception after failure detection, tries a failover
+on subsequent requests</td>
+</tr>
+
+<tr>
+<td>VB_TRANSPARENT</td>
+
+<td>yes</td>
+
+<td>yes</td>
+
+<td>yes, transparently</td>
+</tr>
+</table>
+<b><tt></tt></b>
+<p>After you started the server accordingly for one of the aspects you
+want to test, here is how you invoke the client.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client transparent</tt></pre>
+This policy value allows automatic handling of forward messages to a new
+server, regardless of whether the effective policies for the new change.
+It also will open new and reopen closed GIOP connections to server objects.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client no_rebind</tt></pre>
+This policy value allows the ORB to open new and reopen closed GIOP connections
+to server objects, and allows automatic handling of forward messages, if
+the effective policies for the new connection would be the same as with
+the current connection.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client no_reconnect</tt></pre>
+This policy value disallows the client ORB to reopen closed GIOP connections
+to the same object, as well as all message forwards.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client vb_transparent</tt></pre>
+This policy value extends the transparent RebindPolicy value as defined
+by the OMG (as explained above) to handle sobject fail-over. If this policy
+value is in effect, and a broken connection is detected, the Smart Agent
+is contacted for a new server. If there is one, then the request will be
+issued, without an exception being thrown. This policy value is useful
+if the objects don't maintain state, and a fail-over to another object
+doesn't influence the result of the invocation.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client vb_notify_rebind</tt></pre>
+This policy value is like vb_transparent, but when a server shutdown is
+detected, the appropriate exception is thrown, and a rebind attempt will
+be made if the invocation is retried. This policy is useful for statefull
+servers, because a transparent fail-over could lead to problems.
+<pre><b><tt>prompt></tt></b>vbj <tt>Client vb_no_rebind</tt></pre>
+This policy value allows reconnections to the same object, but no rebind
+(either through LOCATION_FORWARD or fail-over) to other servers.
+<p>
+<p>Return to the <a href="qos.html">Qos example page</a>.
+</body>
+</html>

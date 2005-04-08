@@ -1,0 +1,36 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+module ORBTest_ExceptionsExt_2_3
+{
+    interface Intf
+    {
+	void
+	op_CODESET_INCOMPATIBLE_Ex();
+
+#ifndef HAVE_NO_CORBA_2_4
+	void
+	op_REBIND_Ex();
+
+	void
+	op_TIMEOUT_Ex();
+
+	void
+	op_TRANSACTION_UNAVAILABLE_Ex();
+
+	void
+	op_TRANSACTION_MODE_Ex();
+
+	void
+	op_BAD_QOS_Ex();
+#endif
+    };
+
+}; // module ORBTest_ExceptionsExt_2_3

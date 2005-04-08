@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE moduleloader PUBLIC "-//FOKUS//DTD MLF//1.2" "mlf.dtd">
+
+<moduleloader Version="1.1">
+  <module Name="GIOP_client" File="GIOP_client.ttcn3" Package="">
+
+    <testadapter Name="giop_ta.GIOP_TA">
+      <description>
+	Test adapter for the GIOP_client test suite
+      </description>
+    </testadapter>
+
+    <testcase Name="Return_boolean" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_boolean function call, the IUT sends a
+	Reply message which has the right format, including the
+	correct CDR of the returned boolean value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_long" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_long function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned long value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_longlong" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_longlong function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned longlong value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_short" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_short function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned short value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_octet" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_octet function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned octet value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_float" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_float function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned float value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_double" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_double function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR
+	of the returned double value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_char" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_char function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR 
+	of the returned char value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_string" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_string function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR 
+	of the returned string value.
+      </description>
+    </testcase>
+
+    <testcase Name="Return_enum" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message,
+	containing a return_enum function call, the IUT sends a Reply
+	message which has the right format, including the correct CDR 
+	of the returned enum value.
+      </description>
+    </testcase>
+
+    <testcase Name="Locate_object" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Locate Request message,
+	the IUT sends a Locate Reply message which has the right
+	format.
+      </description>
+    </testcase>
+
+    <testcase Name="Locate_unknown_object" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Locate Request message,
+	with unknown objectkey the IUT sends a Locate Reply message which
+	has the right format.
+      </description>
+    </testcase>
+
+    <testcase Name="Wrong_magic" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message with a
+	wrong magic value, the IUT sends a Message Error message which
+	has the right format.
+      </description>
+    </testcase>
+    
+    <testcase Name="Wrong_version" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message with a
+	wrong version value, the IUT sends a Message Error message which
+	has the right format.
+      </description>
+    </testcase>
+
+    <testcase Name="Wrong_messagetype" Selection="true" Verdict="none">
+      <description>
+	It is verified that after receiving a Request message with a
+	wrong messagetype value, the IUT sends a Message Error message which
+	has the right format.
+      </description>
+    </testcase>
+
+  </module>
+</moduleloader>

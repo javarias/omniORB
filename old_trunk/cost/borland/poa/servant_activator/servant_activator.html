@@ -1,0 +1,54 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.0b3C (X11; I; SunOS 5.5.1 sun4u) [Netscape]">
+   <TITLE>Readme for the Servant Activator Bank example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2> Bank Servant Activator</H2>
+<p>This example has two simple interfaces - SavingsAccountManager and CheckingAccountManager
+  to open the appropriate Account and to query the balance in that account.
+  Instead of creating the servants and waiting for requests, 
+  this example manufactures two object references, one for SavingsAccountManager and another 
+  for CheckingAccountManager and writes it out to files &quot;cref.dat&quot;
+  and &quot;sref.dat&quot; and starts waiting for requests.
+  Example sets up a servant activator on the POA. The servant is created
+  only when the first request is made. Future requests go through 
+  the already created servant as long as the servant stays in memory.</p>
+<p>Once the servant is created, the example also kicks of a background thread 
+  that deactivates the servant after 15 seconds. This deactivate will cause the 
+  servant activator's etherealize to be invoked giving the servant an opportunity 
+  to store its state if necessary. The next request coming after this point will 
+  again go through the servant activator's incarnate and activates the servant.</p>
+<p></p>
+<p>This scenario of activating the servants only on demand is very useful in Servers 
+  which serve a large number of objects. Object references for these large number 
+  of objects can be manufactured and advertised without bringing the corresponding 
+  servants to life. When a request comes on a particular object reference, POA 
+  realizes that the servant is not in memory, invokes the servant activator set 
+  for that POA which can load the object state from a database and bring the object 
+  to life. The server can also run a background thread to deactivate servants 
+  after a period of inactivity.</p>
+<HR WIDTH="100%">
+<BR>From this example, you will learn how to:
+
+<UL>
+  <LI> To use the right policies on POA creation so it can use servant manager 
+    to process requests</LI>
+  <LI> To write a servant activator</LI>
+  <LI>To set the servant manager on the POA</LI>
+  <LI>To create a reference with servant backing up that reference</LI>
+</UL>
+
+<H3>
+Directory Contents</H3>
+
+<UL>
+  <LI> <A HREF="servant_activator_java.html">Java example</A></LI>
+  <LI> <A HREF="servant_activator_cpp.html">CPP example</A></LI>
+</UL>
+<HR WIDTH="100%">
+<BR>
+Return to the <A HREF="../../README.html">top-level examples page</A>. 
+</BODY></HTML>

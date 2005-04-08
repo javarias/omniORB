@@ -1,0 +1,2 @@
+# tombstone forwards all requests to the given object reference (myechosrv)
+"colocated forwarding" 60 myechosrv tombstone colocated

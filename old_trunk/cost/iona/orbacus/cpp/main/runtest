@@ -1,0 +1,109 @@
+#!/bin/sh
+# **********************************************************************
+#
+# Copyright (c) 2001
+# IONA Technologies, Inc.
+# Waltham, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Try to find top-level directory
+#
+if test -f config/sh.init
+then
+    top_srcdir=.
+elif test -f ../config/sh.init
+then
+    top_srcdir=..
+else
+    $echo "$0: can't find top-level directory"
+    exit
+fi
+
+#
+# Run standard init script
+#
+. $top_srcdir/config/sh.init
+
+#
+# Set client and server names
+#
+client=$top_srcdir/main/client${exe}
+server=$top_srcdir/main/server${exe}
+colloc=$top_srcdir/main/collocated${exe}
+
+#
+# Delete old log files
+#
+rm -f main_client.log
+rm -f main_server.log
+rm -f main_colloc.log
+
+#
+# Set name of reference file
+#
+ref=TestIntf.ref
+
+#
+# Run remote tests
+#
+$echo
+$echo "Running remote tests:"
+
+#
+# Start server
+#
+$echo
+$echo "Waiting for server to start up... \c"
+rm -f $ref
+( $server & echo $! > srvid ) 2>&1 | tee -a main_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(Server was not started)"
+    exit
+else
+    $echo "OK!"
+fi
+
+#
+# Start client
+#
+$client 2>&1 | tee -a main_client.log
+
+#
+# Wait for server deactivation
+#
+$echo "Waiting for server to deactivate... \c"
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(Server was not deactivated by client - deactivating server now)"
+    deactivate
+else
+    $echo "OK!"
+fi
+
+#
+# Run collocated tests
+#
+$echo
+$echo "Running collocated tests:"
+$echo
+$colloc 2>&1 | tee -a main_colloc.log

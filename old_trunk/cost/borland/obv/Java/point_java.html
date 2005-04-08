@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Readme for the Point example</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#990066" ALINK="#FF0000">
+
+<H2>
+Point Example for Java</H2>
+
+<HR WIDTH="100%">
+<UL>
+<LI>
+<A HREF="map.idl">map.idl</A></LI>
+
+<BR>IDL definitions for the <B>Point</B> and <B>ConnectedPoint</B> value
+types,&nbsp; boxed string value type <B>Label</B>, and the <B>PointManager</B>
+interface.
+<LI>
+<A HREF="Server.java">Server.java</A></LI>
+
+<BR>Point server. Creates a POA named <B>serverPoa</B>, creates an instance
+of the <B>PointManager </B>servant and activates that servant on the <B>serverPoa</B>.
+It then starts waiting for client requests.
+<LI>
+<A HREF="PointManagerImpl.java">PointManagerImpl.java</A></LI>
+
+<BR>PointManager servant Implementation. Implements the PointManager interface.
+<LI>
+<A HREF="Client.java">Client.java</A></LI>
+
+<BR>This is the Point client. It binds to the <B>PointManager</B> object
+and invokes operations based on user input.
+<LI>
+&nbsp;<A HREF="Map/PointImpl.java">PointImpl.java</A></LI>
+
+<BR>This is the concrete (stateful) implementation of the Point value type.
+<LI>
+&nbsp;<A HREF="Map/PointDefaultFactory.java">PointDefaultFactory.java</A></LI>
+
+<BR>This is the factory implementation for the Point value type.&nbsp;
+This factory is invoked by the ORB when a Point value type is to be created.
+<LI>
+&nbsp;<A HREF="Map/ConnectedPointImpl.java">ConnectedPointImpl.java</A></LI>
+
+<BR>This is the concrete implementation of the ConnectedPoint value type.&nbsp;
+It is a derived value type of the Point value type.
+<LI>
+&nbsp;<A HREF="Map/ConnectedPointDefaultFactory.java">ConnectedPointDefaultFactory.java</A></LI>
+
+<BR>This is the factory implementation for the ConnectedPoint value type.
+<LI>
+<A HREF="Makefile.java">Makefile.java</A> (vbmake.bat <I>on Windows</I>):
+Used to build all the test targets.</LI>
+</UL>
+
+<H3>
+Building this example</H3>
+Typing <B>make</B> -f Makefile.java (or <B>vbmake</B> <I>on Windows</I>)
+in the point subdirectory will cause the <A HREF="map.idl">map.idl</A>
+to be run through the idl2java compiler. It will also build the following
+classes for the examples described above:
+<UL>
+<LI>
+Server.class</LI>
+
+<LI>
+Client.class</LI>
+
+<LI>
+PointManagerImpl.class</LI>
+</UL>
+
+<H3>
+Running this example</H3>
+To run the examples, first make sure that the VisiBroker Smart Agent (osagent
+executable) is running on your network. Then start the point server using
+the command:
+<UL>
+<PRE><TT><B>prompt></B> vbj Server&nbsp; &amp;&nbsp;
+(start vbj Server <I>on Windows</I>)
+<I>// make the server run in the background</I></TT></PRE>
+</UL>
+
+<UL>
+<PRE><I><TT><B>prompt></B> vbj Client</TT></I></PRE>
+
+<PRE><I>enter commands at the "-->" prompt based on the following menu:</I></PRE>
+<I>USAGE INFORMATION</I>
+<BR><I>createbase &lt;labael></I>
+<BR><I>createderived &lt;label></I>
+<BR><I>connect &lt;label></I>
+<BR><I>destroy &lt;label></I>
+<BR><I>get &lt;label></I>
+<BR><I>list &lt;num copies of each></I>
+<BR><I>quit</I>
+<BR>&nbsp;</UL>
+An example of session follows:
+<BR>&nbsp;
+<BLOCKQUOTE><B><I><TT>Command--></TT></I></B><I>?</I>
+<BR><I>USAGE INFORMATION</I>
+<BR><I>createbase &lt;label></I>
+<BR><I>createderived &lt;label></I>
+<BR><I>connect &lt;label></I>
+<BR><I>destroy &lt;label></I>
+<BR><I>get &lt;label></I>
+<BR><I>list &lt;num copies of each></I>
+<BR><I>quit</I>
+<BR><I><B>Command--></B>createbase Tarzan</I>
+<BR><I>Point is [Tarzan: (0, -1000)]</I>
+<BR><I><B>Command--></B>createderived Jane</I>
+<BR><I>Derived Point is [Jane: (1, -999)]</I>
+<BR><I><B>Command--></B>createderived Cheetah</I>
+<BR><I>Derived Point is [Cheetah: (2, -998)]</I>
+<BR><I><B>Command--></B>connect Jane</I>
+<BR><I><B>Connect Jane to how many points?</B> 1</I>
+<BR><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>connection #0:</B>
+Tarzan</I>
+<BR><I><B>Command--></B>get Jane</I>
+<BR><I>Derived Point is [Jane: (1, -999)]</I>
+<BR><I>Connected to:</I>
+<BR><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point is [Tarzan: (0,
+-1000)]</I>
+<BR><I><B>Command--></B>destroy Cheetah</I>
+<BR><I><B>Command--></B>list 1</I>
+<BR><I>Point is [Tarzan: (0, -1000)]</I>
+<BR><I>Derived Point is [Jane: (1, -999)]</I>
+<BR><I>Connected to:</I>
+<BR><I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point is [Tarzan: (0,
+-1000)]</I>
+<BR><I><B>Command--></B>quit</I>
+<BR><I>quit</I>
+<BR><I></I>&nbsp;</BLOCKQUOTE>
+
+<HR WIDTH="100%">
+<BR><I>Return to the <A HREF="../../README.html">top-level examples page</A>.</I>
+</BODY>
+</HTML>

@@ -1,0 +1,48 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// IONA Technologies, Inc.
+// Waltham, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+// include this after you've defined "T"
+
+struct T_Struct
+{
+    T T_member;
+};
+
+exception T_Exception
+{
+    T T_member;
+};
+
+union T_Union switch (unsigned short)
+{
+    default:
+        T T_member;
+};
+
+typedef sequence<T> T_Sequence;
+
+typedef T T_Array[1];
+
+valuetype T_Valuetype
+{
+    public T T_member;
+};
+
+valuetype T_ValueBox T;
+
+interface T_Interface
+{
+    T
+    op(
+        in    T in_T,
+        inout T inout_T,
+        out   T out_T
+    );
+};

@@ -1,0 +1,32 @@
+####################################################################
+#
+#  Copyright (c) 2002                                               
+#  FhG FOKUS                                                        
+#  Kaiserin-Augusta-Allee 31                                       
+#  10589 Berlin                                                  
+#  Germany                                                     
+#  Tel: +49-30-3463-7000                 
+#  Fax: +49-30-3463-8000
+#
+#  These are the Make.rules for the GIOP test suite.
+#
+####################################################################
+
+# Adapt the following settings to your environment
+
+# User ORB Settings
+JORBHOME=/usr/local/orbs/orbacus/JOB-4.1
+ORBHOME=/usr/local/orbs/orbacus/OB-4.1
+
+JIDL=${ORBHOME}/bin/jidl
+LD_LIBRARY_PATH=${ORBHOME}/lib
+
+# User TTthree Path
+TTTHREELIB=/usr/local/TTthree_lib
+
+# User JAVA Home
+JAVA_HOME=/usr/local/java/jdk1.2.2
+JAVA_HOME3=/usr/local/java/jdk1.3.1_01
+
+# If you are not working under X please comment out the XTERM variable
+XTERM='xterm -e'

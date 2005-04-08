@@ -1,0 +1,3 @@
+dsitest_1.2 60 dsitest ../dii/dii
+dsitest_1.1 60 dsitest "../dii/dii -ORBmaxGIOPVersion 1.1"
+dsitest_1.0 60 dsitest "../dii/dii -ORBmaxGIOPVersion 1.0"

@@ -1,0 +1,3 @@
+org.omg.CORBA.ORBClass=com.iona.corba.art.artimpl.ORBImpl
+org.omg.CORBA.ORBSingletonClass=com.iona.corba.art.artimpl.ORBSingleton
+ORBdomain_name=

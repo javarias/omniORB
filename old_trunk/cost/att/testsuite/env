@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+# You must make sure the following 3 variables corresponds to your setup
+OMNIORBPY=/local/scratch/COST/omni      # The top level directory of omniORBpy
+                                        # omniORBpy is required for the test
+                                        # harness to run.
+PLATFORM=i586_linux_2.0_glibc2.1        # The platform. e.g.linux w/ glibc 2.1
+
+
+OMNIORB=/local/scratch/omniORB_3/omni   # The top level directory of the test
+                                        # target, omniORB 3.
+
+
+
+PYTHONPATH=${OMNIORBPY}/lib/python:${OMNIORBPY}/lib/${PLATFORM}
+
+LD_LIBRARY_PATH=${OMNIORBPY}/lib/${PLATFORM}
+
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${OMNIORB}/lib/${PLATFORM}
+
+PATH=${PATH}:${OMNIORBPY}/bin/${PLATFORM}
+
+export LD_LIBRARY_PATH PYTHONPATH PATH

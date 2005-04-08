@@ -1,0 +1,28 @@
+// **********************************************************************
+//
+// Copyright (c) 1999
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+interface Test
+{
+    void aMethod();
+};
+
+struct TestInfo
+{
+    Test obj;
+    string except_id;
+};
+typedef sequence<TestInfo> TestInfoSeq;
+
+interface TestServer
+{
+    TestInfoSeq get_info();
+
+    void deactivate();
+};

@@ -1,0 +1,8 @@
+t_seq_long 60 t_seq_long
+t_seq_objref 60 t_seq_objref
+t_seq_string 60 t_seq_string
+t_seq_struct 60 t_seq_struct
+t_string 60 t_string
+seq_tests_1.2 60 server client
+seq_tests_1.1 60 server "client -ORBmaxGIOPVersion 1.1"
+seq_tests_1.0 60 server "client -ORBmaxGIOPVersion 1.0"

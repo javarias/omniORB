@@ -1,0 +1,7 @@
+clntseq 60 server t_clntseq
+dynany 60 t_dynany
+dynarray 60 t_dynarray
+dynenum 60 t_dynenum
+dynsequence 60 t_dynsequence
+dynstruct 60 t_dynstruct
+dynunion 60 t_dynunion

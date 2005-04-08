@@ -1,0 +1,423 @@
+#!/bin/sh
+# **********************************************************************
+#
+# Copyright (c) 2001
+# IONA Technologies, Inc.
+# Waltham, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+#
+# Try to find top-level directory
+#
+if test -f config/sh.init
+then
+    top_srcdir=.
+elif test -f ../config/sh.init
+then
+    top_srcdir=..
+else
+    $echo "$0: can't find top-level directory"
+    exit
+fi
+
+#
+# Run standard init script
+#
+. $top_srcdir/config/sh.init
+
+#
+# Delete old log files
+#
+rm -f poa.log
+rm -f poa_client.log
+rm -f poa_server.log
+
+#
+# Run client-only POA tests
+#
+$echo
+$top_srcdir/poa/TestActivate${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestDeactivate${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestCollocated${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestCreate${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestDestroy${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestFind${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestMisc${exe} 2>&1 | tee -a poa.log
+$top_srcdir/poa/TestRefCount${exe} 2>&1 | tee -a poa.log
+
+#
+# Set name of reference file
+#
+ref=Test.ref
+
+#
+# Start TestDefaultServantServer
+#
+$echo "Testing default servant... \c"
+rm -f $ref
+( $top_srcdir/poa/TestDefaultServantServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestDefaultServantServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestDefaultServantServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestRefCountServer
+#
+$echo "Testing reference counting... \c"
+rm -f $ref
+( $top_srcdir/poa/TestRefCountServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestRefCountServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestRefCountServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestServantActivatorServer
+#
+$echo "Testing servant activator... \c"
+rm -f $ref
+( $top_srcdir/poa/TestServantActivatorServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestServantActivatorServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestServantActivatorServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestServantLocatorServer
+#
+$echo "Testing servant locator... \c"
+rm -f $ref
+( $top_srcdir/poa/TestServantLocatorServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestServantLocatorServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestServantLocatorServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestLocationForwardServer
+#
+$echo "Testing LocationForward... \c"
+rm -f $ref
+( $top_srcdir/poa/TestLocationForwardServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestLocationForwardServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestLocationForwardClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestLocationForwardServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestAdapterActivatorServer
+#
+$echo "Testing adapter activator... \c"
+rm -f $ref
+( $top_srcdir/poa/TestAdapterActivatorServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestAdapterActivatorServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestAdapterActivatorServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestPOAManagerServer
+#
+$echo "Testing POAManager... \c"
+rm -f $ref
+( $top_srcdir/poa/TestPOAManagerServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestPOAManagerServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestPOAManagerClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestPOAManagerServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+
+#
+# Start TestMultipleOrbsServer
+#
+$echo "Testing multiple ORB instances (same thread)... \c"
+rm -f $ref
+( $top_srcdir/poa/TestMultipleOrbsServer${exe} & echo $! > srvid ) \
+2>&1 | tee -a poa_server.log &
+count=0
+while test ! -s $ref -a $count -lt 8
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+if test ! -s $ref
+then
+    $echo "Failed!"
+    $echo "(TestMultipleOrbsServer was not started)"
+    exit
+fi
+
+#
+# Run client
+#
+$top_srcdir/poa/TestMultipleOrbsClient${exe} 2>&1 | \
+tee -a poa_client.log
+
+#
+# Wait for server deactivation
+#
+count=0
+while test -r $ref -a $count -lt 3
+do
+    sleep 1
+    count=`expr $count + 1`
+done
+
+if test -r $ref
+then
+    $echo "Failed!"
+    $echo "(TestMultipleOrbsServer was not deactivated by client - \c"
+    $echo "deactivating server now)"
+    deactivate
+else
+    $echo "Done!"
+fi
+

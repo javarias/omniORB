@@ -1,0 +1,103 @@
+<categorylist>
+
+  <class name="static types">
+    <classdesc>Mapping and use of basic and constructed types</classdesc>
+
+    <category name="array _var fixed size element"/>
+    <category name="array _var variable size element"/>
+    <category name="fixed size struct _var"/>
+    <category name="object reference _var"/>
+    <category name="sequence array"/>
+    <category name="sequence base type"/>
+    <category name="sequence objref"/>
+    <category name="sequence sequence"/>
+    <category name="sequence string"/>
+    <category name="sequence struct"/>
+    <category name="sequence union"/>
+    <category name="sequence _var fixed size element"/>
+    <category name="sequence _var variable size element"/>
+    <category name="string"/>
+    <category name="String_var"/>
+    <category name="union _var fixed size element"/>
+    <category name="union _var variable size element"/>
+    <category name="variable size struct _var"/>
+  </class>
+
+  <class name="dynamic types">
+    <classdesc>Mapping and use of Any and TypeCode</classdesc>
+  </class>
+
+  <class name="objects by value">
+    <classdesc>Mapping and use of valuetype and abstract interfaces</classdesc>
+  </class>
+
+  <class name="exceptions">
+    <classdesc>Mapping and use of system and user exceptions</classdesc>
+
+    <category name="system exceptions"/>
+    <category name="user exception"/>
+  </class>
+
+  <class name="ORB">
+    <classdesc>ORB functions</classdesc>
+
+    <category name="ORB::object_to_string"/>
+    <category name="ORB::string_to_object"/>
+  </class>
+
+  <class name="object adapter">
+    <classdesc>POA (and BOA) functions, and servants</classdesc>
+
+    <category name="implementation inheritance"/>
+    <category name="POA::activate_object_with_id"/>
+    <category name="POA::create_reference"/>
+    <category name="POA::reference_to_id"/>
+    <category name="Root POA"/>
+    <category name="tie implementation"/>
+  </class>
+
+  <class name="object reference">
+    <classdesc>Mapping of object references, and invocation</classdesc>
+
+    <category name="attribute"/>
+    <category name="CORBA::Object::_is_a"/>
+    <category name="CORBA::Object::_is_equivalent"/>
+    <category name="CORBA::Object::_non_existent"/>
+    <category name="interface inheritance"/>
+    <category name="interface multiple inheritance"/>
+    <category name="narrow to base interface"/>
+    <category name="narrow to incorrect interface"/>
+    <category name="narrow to IOR interface"/>
+    <category name="narrow to parent interface"/>
+    <category name="narrow untyped IOR"/>
+  </class>
+
+  <class name="marshalling">
+    <classdesc>CDR marshalling and GIOP</classdesc>
+
+    <category name="objref marshal"/>
+    <category name="sequence array marshal"/>
+    <category name="sequence base type marshal"/>
+    <category name="sequence objref marshal"/>
+    <category name="sequence sequence marshal"/>
+    <category name="sequence struct marshal"/>
+    <category name="sequence union marshal"/>
+    <category name="string marshal"/>
+
+  </class>
+
+  <class name="miscellaneous">
+    <classdesc>Things that don't fit elsewhere, like threading,
+    interceptors, etc.</classdesc>
+
+    <category name="client threads"/>
+    <category name="multi-threaded client"/>
+    <category name="performance"/>
+
+  </class>
+
+  <class name="proprietary">
+    <classdesc>ORB specific, non-standard features</classdesc>
+  </class>
+
+</categorylist>

@@ -1,0 +1,8 @@
+# a simple client with no installed exception handler, the server exits after
+# 20 method invocation and the client should get a COMM_FAILURE or
+# TRANSIENT exception
+no_exchandler 300 server client1
+
+# a client with installed exception handlers, the server exits after 20 method
+# invocations and the installed exception handler should be called
+exchandler 300 server client2

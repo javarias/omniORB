@@ -1,0 +1,50 @@
+A TTCN-3 based Test Suite for CORBA GIOP/IIOP
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+This TTCN-3 based test suite can be used to test the
+conformance of parts of a server-side ORB implementation
+The test suite has been used with the Java implementation
+of orbacus under Linux and Solaris.
+
+Settings
+=========
+
+Edit the Make.rules file to set some variables.
+
+You need some Java jar files for the compilation and execution of the
+test suite.
+Download the files from http://www.testingtech.com and put them in the
+$TTTHREELIBDIR.
+(TTthreeCompiler.jar, TTthreeRuntime.jar, tools.jar and also antlr.jar,
+xerces.jar, and xml.jar)
+
+NOTE: Generated Java Code of the TTCN-3 ATS has been added to the
+'src/generated_ets' directory. It will be compiled and you only need
+the TTthreeRuntime.jar from TestingTechnologies and xerces.jar.
+If you have modified the ATS and need to (re)compile
+this version you have to modify the Makefile.
+
+
+Compilation and Installation
+=============================
+
+Type:
+
+1.) make
+2.) make Workdir/ExecuteTest
+
+Run the Tests
+==============
+
+1.) cd Workdir
+
+2.) ./ExecuteTest giop.mlf
+
+3.) e.g. to run all test cases type 'm'. To run a single test case
+    type 'r 1', 'r 2', ... .
+
+
+You don't need the scripts 'corba_server.sh' and 'corba_client.sh' in
+Workdir to run the tests. But if you want to use them you have
+to adapt them to your environment.
+

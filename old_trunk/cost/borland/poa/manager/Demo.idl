@@ -1,0 +1,26 @@
+// Demo.idl
+
+module Demo {
+  interface MyPOAManager {
+    exception AdapterInactive{};
+
+    enum State { HOLDING, ACTIVE, DISCARDING, INACTIVE };
+
+    void activate()
+      raises(AdapterInactive);
+    void hold_requests(in boolean wait_for_completion)
+      raises(AdapterInactive);
+    void discard_requests(in boolean wait_for_completion)
+      raises(AdapterInactive);
+    void deactivate(in boolean etherealize_objects,
+		    in boolean wait_for_completion)
+      raises(AdapterInactive);
+
+    State get_state();
+  };
+ 
+  interface Counter {
+    long nextId();
+  };
+};
+

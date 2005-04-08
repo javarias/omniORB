@@ -1,0 +1,2 @@
+org.omg.CORBA.ORBClass=com.ooc.CORBA.ORB
+org.omg.CORBA.ORBSingletonClass=com.ooc.CORBA.ORBSingleton

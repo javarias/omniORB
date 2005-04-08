@@ -1,0 +1,16 @@
+<testset name="System exception tests">
+
+  <test name="sysexceptions">
+    <description>
+    Test catching and throwing a range of system exceptions.
+    </description>
+
+    <tests>system exceptions</tests>
+
+    <requires>Root POA</requires>
+
+    <timeout>60</timeout>
+    <server>server</server>
+    <client>client</client>
+  </test>
+</testset>

@@ -1,0 +1,43 @@
+// **********************************************************************
+//
+// Copyright (c) 2000
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+#ifndef LOG_IDL
+#define LOG_IDL
+
+#include <orb.idl>
+
+module test
+{
+module pi
+{
+
+/**
+ *
+ * 
+ *
+ **/
+const CORBA::PolicyType MY_SERVER_POLICY_ID = 1010; // TODO: real value?
+
+local interface MyServerPolicy : CORBA::Policy
+{
+    readonly attribute long value;
+};
+
+const CORBA::PolicyType MY_CLIENT_POLICY_ID = 1011; // TODO: real value?
+
+local interface MyClientPolicy : CORBA::Policy
+{
+    readonly attribute long value;
+};
+
+};
+};
+
+#endif

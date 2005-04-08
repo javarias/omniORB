@@ -1,0 +1,41 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+#ifndef LOG_IDL
+#define LOG_IDL
+
+#include <orb.idl>
+
+/**
+ *
+ * 
+ *
+ **/
+const CORBA::PolicyType MY_SERVER_POLICY_ID = 1010; // TODO: real value?
+
+#ifndef HAVE_NO_LOCAL_KEYWORD
+local
+#endif
+interface MyServerPolicy : CORBA::Policy
+{
+    readonly attribute long value;
+};
+
+const CORBA::PolicyType MY_CLIENT_POLICY_ID = 1011; // TODO: real value?
+
+#ifndef HAVE_NO_LOCAL_KEYWORD
+local
+#endif
+interface MyClientPolicy : CORBA::Policy
+{
+    readonly attribute long value;
+};
+
+#endif

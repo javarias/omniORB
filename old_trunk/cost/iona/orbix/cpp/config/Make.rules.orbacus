@@ -1,0 +1,78 @@
+# **********************************************************************
+#
+# Copyright (c) 2001
+# Object Oriented Concepts, Inc.
+# Billerica, MA, USA
+#
+# All Rights Reserved
+#
+# **********************************************************************
+
+# User settings
+
+ORB_HOME	= $(HOME)/cpp/ob
+
+# ORB-specific configuration
+
+# ORBacus 4.1
+IDL		= $(ORB_HOME)/bin/idl
+IDLFLAGS	= -I$(ORB_HOME)/idl/OB -I$(ORB_HOME)/idl --all
+IDL_PIFLAGS	= --with-interceptor-args
+ORB_CPPFLAGS	= -DORBACUS -I$(ORB_HOME)/include -I$(ORB_HOME)/include/OB -I$(HOME)/cpp/jtc/include -DHAVE_EXCEPTION_INSERTERS -DOB_INCLUDE_IFR
+ORB_LDFLAGS	= -L$(ORB_HOME)/lib -L$(HOME)/cpp/jtc/lib
+ORB_LIBS	= -lOB -lJTC -ldl
+
+# ORBacus 4.0.5, local interfaces are not supported
+#IDLFLAGS	= -I$(ORB_HOME)/idl/OB -I$(ORB_HOME)/idl --all -DHAVE_NO_LOCAL_KEYWORD
+#IDL_LOCALFLAGS	= --locality-constrained
+
+
+# Platform-specific configuration
+
+# Linux, GCC 2.95.3/3.0.2
+CXX		= c++
+CXXLD		= c++
+CXXFLAGS	= -Wall
+AR		= ar
+ARFLAGS		= cr
+LIBS		= -lpthread
+
+# Solaris, Forte 6 C++ 5.3 update 2
+#CXX		= CC
+#CXXFLAGS	= -mt
+#AR		= CC
+#ARFLAGS	= -mt -xar -o
+#LIBS		= -lsocket -lnsl -lposix4 -lpthread
+
+# HP-UX, aC++
+#CXX		= aCC
+#CXXFLAGS	=
+#AR		= ar
+#ARFLAGS	= cr
+#LIBS		= -lpthread
+
+# IRIX 6.5, SGI C++ 7.3
+#CXX		= CC
+#CXXFLAGS	=
+#AR		= CC
+#ARFLAGS	= -ar -o
+#LIBS		=
+
+# DEC OSF/1, DEC C++ 6.2
+#CXX		= cxx
+#CXXFLAGS	= -pthread -distinguish_nested_enums -msg_disable narrowptr
+#AR		= cxx
+#ARFLAGS	=
+#LIBS		=
+
+# AIX 4.3.x, VisualAge C++ 5.0
+#CXX		= xlC_r
+#CXXFLAGS	= -qnotempinc -qrtti=all
+#AR		= xlC_r
+#ARFLAGS	=
+#LIBS		=
+
+
+# Don't change anything below this line
+
+include $(top_srcdir)/config/Make.rules.all

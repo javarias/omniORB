@@ -1,0 +1,40 @@
+#!/bin/sh
+####################################################################
+#
+#  Copyright (c) 2002                                               
+#  FhG FOKUS                                                        
+#  Kaiserin-Augusta-Allee 31                                       
+#  10589 Berlin                                                  
+#  Germany                                                     
+#  Tel: +49-30-3463-7000                 
+#  Fax: +49-30-3463-8000
+#
+#  A script for test execution.
+#
+####################################################################
+
+XTERM=@XTERM@
+TTTHREELIB=@TTTHREELIB@
+JAVA_HOME=@JAVA_HOME@
+JAVA_HOME3=@JAVA_HOME3@
+JORBHOME=@JORBHOME@
+
+if [ $# -ne 1 ]; then
+    echo Call with module loader file.
+    exit -1
+fi
+
+JAVA=$JAVA_HOME/bin/java
+JAVA3=$JAVA_HOME3/bin/java
+
+CLASSES=$TTTHREELIB/xerces.jar:$TTTHREELIB/TTthreeRuntime.jar:../lib/GIOP_client.jar:../lib:$CLASSPATH
+
+$XTERM $JAVA3 -Xbootclasspath:$JORBHOME/lib/OB.jar:$JAVA_HOME3/lib:$JAVA_HOME3/jre/lib/rt.jar:../lib/classes transferdata.Server &
+PID=$!
+sleep 2
+
+$JAVA -classpath $JAVA_HOME/jre/lib/rt.jar:$CLASSES com.testingtech.ttcn.tci.MuTTmanImpl $@ 
+
+echo $PID
+kill $PID
+

@@ -1,0 +1,33 @@
+// **********************************************************************
+//
+// Copyright (c) 2001
+// Object Oriented Concepts, Inc.
+// Billerica, MA, USA
+//
+// All Rights Reserved
+//
+// **********************************************************************
+
+#include <Test.idl>
+
+module test
+{
+module poa
+{
+
+interface TestLocationForward : Test
+{
+    void deactivate_servant();
+};
+
+interface TestLocationForwardServer
+{
+    void setForwardRequest(in Object obj);
+
+    Object get_servant();
+
+    void deactivate();
+};
+
+}; // End module poa
+}; // End module test
