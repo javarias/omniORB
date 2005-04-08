@@ -27,6 +27,12 @@ TestRef_impl::~TestRef_impl()
 {
 }
 
+#if 0
+// DG: C++ 1.1 mapping moved _add_ref and _remove_ref put of
+// RefCountServantBase. There is no need to override them here, so we
+// remove them rather than having to have two versions of the
+// functions.
+
 void
 TestRef_impl::_add_ref()
 {
@@ -38,6 +44,7 @@ TestRef_impl::_remove_ref()
 {
     RefCountServantBase::_remove_ref();
 }
+#endif
 
 void
 TestRef_impl::aMethod()

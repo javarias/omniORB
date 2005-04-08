@@ -116,6 +116,8 @@ main(int argc, char* argv[], char*[])
         POA_var root = TestUtil_GetRootPOA(orb);
         POAManager_var manager = root -> the_POAManager();
 
+	manager->activate();
+
         //
         // Create POA w/ RETAIN. This POA should use a seperate
         // POAManager.
@@ -217,6 +219,8 @@ main(int argc, char* argv[], char*[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
 	OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         return status;
     }
@@ -231,6 +235,8 @@ main(int argc, char* argv[], char*[])
 	{
 #ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

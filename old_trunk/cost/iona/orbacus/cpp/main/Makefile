@@ -126,7 +126,7 @@ GENERATED	= TestIntf.cpp \
 		  TestIntfExceptionsExt_2_3_skel.cpp \
 		  TestIntfExceptionsExt_2_3_skel.h
 
-ALL_CXXFLAGS	= $(CXXFLAGS)
+ALL_CXXFLAGS	= $(CXXFLAGS) -g
 ALL_CPPFLAGS	= -I. -I../include $(ORB_CPPFLAGS) $(CPPFLAGS)
 ALL_LDFLAGS	= $(ORB_LDFLAGS) $(LDFLAGS) -L.
 ALL_LIBS	= -lTestMain $(ORB_LIBS) $(LIBS)
@@ -136,7 +136,7 @@ $(LIB_NAME): $(LIB_OBJS)
 
 $(SERVER_NAME): $(SERVER_OBJS) $(LIB_NAME)
 	$(CXXLD) $(ALL_CXXFLAGS) $(ALL_LDFLAGS) -o $@ $(SERVER_OBJS) $(ALL_LIBS)
- 
+
 $(CLIENT_NAME): $(CLIENT_OBJS) $(LIB_NAME)
 	$(CXXLD) $(ALL_CXXFLAGS) $(ALL_LDFLAGS) -o $@ $(CLIENT_OBJS) $(ALL_LIBS)
 

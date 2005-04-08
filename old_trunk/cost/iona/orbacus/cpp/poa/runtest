@@ -375,6 +375,10 @@ else
     $echo "Done!"
 fi
 
+# *** HERE: omniORB doesn't support multiple ORBs, so we bail out
+exit 0
+
+
 #
 # Start TestMultipleOrbsServer
 #

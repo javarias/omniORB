@@ -26,7 +26,11 @@ TestTruncBase_impl::~TestTruncBase_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestTruncBase*
+#else
 ValueBase*
+#endif
 TestTruncBase_impl::_copy_value()
 {
     TestTruncBase_impl* result = new TestTruncBase_impl;
@@ -45,7 +49,11 @@ TestTrunc1_impl::~TestTrunc1_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestTrunc1*
+#else
 ValueBase*
+#endif
 TestTrunc1_impl::_copy_value()
 {
     TestTrunc1_impl* result = new TestTrunc1_impl;
@@ -69,7 +77,11 @@ TestTrunc2_impl::~TestTrunc2_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestTrunc2*
+#else
 ValueBase*
+#endif
 TestTrunc2_impl::_copy_value()
 {
     TestTrunc2_impl* result = new TestTrunc2_impl;

@@ -82,7 +82,7 @@ test_string_f(const char* in, char*& inout, char*& out)
 static
 char *
 ___test_string_f(const char* in,
-		 char*& inout,
+		 CORBA::String_INOUT_arg inout,
 		 CORBA::String_out out)
 {
   return test_string_f(in,inout,out);

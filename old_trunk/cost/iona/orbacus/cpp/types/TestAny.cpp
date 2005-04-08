@@ -733,6 +733,8 @@ main(int argc, char* argv[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
         OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_FAILURE;
     }
@@ -745,8 +747,10 @@ main(int argc, char* argv[])
         }
         catch(const Exception& ex)
         {
-#ifndef HAVE_NO_EXCEPTION_INSERTERS
+#ifdef HAVE_EXCEPTION_INSERTERS
             OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
             status = EXIT_FAILURE;
         }

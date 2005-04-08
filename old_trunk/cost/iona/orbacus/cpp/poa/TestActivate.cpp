@@ -297,12 +297,20 @@ TestServantActivator(ORB_ptr orb, POA_ptr root)
     id3 = ether -> activate_object(servant2);
     activatorImpl -> expect(id1, ether, servant1, true);
     ether -> deactivate_object(id1);
+
+    // DG: No requirement that deactivation happens
+    // immediately. omniORB uses a separate thread, so we have to
+    // sleep here to avoid a race condition.
+    sleep(1);
+
     TEST(activatorImpl -> isValid());
     activatorImpl -> expect(id2, ether, servant1, false);
     ether -> deactivate_object(id2);
+    sleep(1);
     TEST(activatorImpl -> isValid());
     activatorImpl -> expect(id3, ether, servant2, false);
     ether -> deactivate_object(id3);
+    sleep(1);
     TEST(activatorImpl -> isValid());
 
 
@@ -337,6 +345,8 @@ main(int argc, char* argv[], char*[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
 	OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_FAILURE;
     }
@@ -351,6 +361,8 @@ main(int argc, char* argv[], char*[])
 	{
 #ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

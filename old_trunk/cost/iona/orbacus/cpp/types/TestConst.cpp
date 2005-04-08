@@ -14,6 +14,8 @@
 
 #include <Constants.h>
 
+#include <math.h>
+
 using namespace CORBA;
 
 int
@@ -62,7 +64,11 @@ TestConst()
 	CHECK(constULongLongMax == ConstULongLongMax);
 	
 	const Double constDouble = 50.23 - 1532.718 * 0.029;
-	CHECK(constDouble == ConstDouble);
+
+	// DG: Something about gcc's optimiser means omniidl's output
+	// has a small rounding error here. Turning off optimisation
+	// when building omniidl fixes it.
+	CHECK(fabs(constDouble - ConstDouble) < 0.000001);
 	
 	const Float constFloat = (Float)(constDouble * 1.11);
 	CHECK(constFloat == ConstFloat);
@@ -173,6 +179,8 @@ main(int argc, char* argv[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
         OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_FAILURE;
     }

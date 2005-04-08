@@ -12,7 +12,15 @@ top_srcdir = .
 
 include config/Make.rules
 
-SUBDIRS		= types main poa obv pi
+SUBDIRS	= types main poa
+
+ifndef NO_VALUETYPE
+SUBDIRS += obv
+endif
+
+ifndef NO_PORTABLE_INTERCEPTORS
+SUBDIRS += pi
+endif
 
 all clean::
 	@for subdir in $(SUBDIRS); \

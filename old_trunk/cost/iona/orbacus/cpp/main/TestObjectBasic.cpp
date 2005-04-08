@@ -249,7 +249,7 @@ TestObjectBasic::test_SII(
 	{
 	    Any inOut;
 	    Any_var out;
-	    
+
 	    {
 		any <<= (const char*)"abc";
 		ti->attrAny(any);
@@ -276,7 +276,6 @@ TestObjectBasic::test_SII(
 		TEST(ret >>= e);
 		TEST(e == ORBTest_Basic::TestEnum3);
 	    }
-
 	    {
 		ORBTest_Basic::VariableStruct vStruct;
 		vStruct.s = string_dup("xyz");
@@ -288,6 +287,7 @@ TestObjectBasic::test_SII(
 		    vStructInOut;
 		const ORBTest_Basic::VariableStruct*
 		    vStructOut;
+		
 		TEST(ret >>= vStructRet);
 		TEST(inOut >>= vStructInOut);
 		TEST(out >>= vStructOut);
@@ -295,7 +295,6 @@ TestObjectBasic::test_SII(
 		TEST(strcmp(vStructInOut->s, "xyz") == 0);
 		TEST(strcmp(vStructOut->s, "xyz") == 0);
 	    }
-
 	    {
 		ORBTest_Basic::FixedUnion fUnion;
 		fUnion.l(1);
@@ -2348,7 +2347,7 @@ TestObjectBasic::test_DII(
         try
         {
             request->get_response();
-            TEST(false);
+	    TEST(false);
         }
         catch (const BAD_INV_ORDER&)
         {
@@ -2395,6 +2394,13 @@ TestObjectBasic::test_DII(
 
     if (!m_test_intf->concurrent_request_execution())
     {
+        // DG: This test is completely bogus. It sends multiple
+        // deferred requests and expects them to be handled in the
+        // order they were sent. The CORBA spec makes no guarantees
+        // that requests are handled in order. I've put sleeps between
+        // the sending to make it likely that they will complete in
+        // order.
+
 	Float ret;
 	Float inOut;
 	Float out;
@@ -2404,20 +2410,32 @@ TestObjectBasic::test_DII(
 	request1->add_in_arg() <<= (Float)1;
 	request1->send_deferred();
 
+	cout << "." << flush;
+	sleep(1);
+
 	CORBA::Request_var request2;
 	request2 = ti->_request("_get_attrFloat");
 	request2->set_return_type(_tc_float);
 	request2->send_deferred();
+
+	cout << "." << flush;
+	sleep(1);
 
 	CORBA::Request_var request3;
 	request3 = ti->_request("_set_attrFloat");
 	request3->add_in_arg() <<= (Float)-1;
 	request3->send_deferred();
 
+	cout << "." << flush;
+	sleep(1);
+
 	CORBA::Request_var request4;
 	request4 = ti->_request("_get_attrFloat");
 	request4->set_return_type(_tc_float);
 	request4->send_deferred();
+
+	cout << "." << flush;
+	sleep(1);
 
 	CORBA::Request_var request5;
 	request5 = ti->_request("opFloat");

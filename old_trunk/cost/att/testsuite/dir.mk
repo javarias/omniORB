@@ -8,7 +8,8 @@ CORE_TESTS = var_tests \
              sysexceptions \
              userexceptions \
              inheritance_tests \
-             seq_tests
+             seq_tests \
+             poa_tests
 
 DYNAMIC_TESTS = \
              typecodeTest \
@@ -33,9 +34,9 @@ SUBDIRS =  $(COMMON) \
            $(OMNIORB_SPECIFIC_TESTS) \
            $(IDL_TESTS)
 
-ifdef OPEN_SSL_ROOT
-OMNIORB_SPECIFIC_TESTS += ssl_tests
-endif
+#ifdef OPEN_SSL_ROOT
+#OMNIORB_SPECIFIC_TESTS += ssl_tests
+#endif
 
 all::
 	@$(MakeSubdirs)

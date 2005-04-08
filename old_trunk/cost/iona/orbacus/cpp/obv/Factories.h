@@ -85,6 +85,8 @@ public:
     static void install(CORBA::ORB_ptr);
 };
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+
 //
 // TestCustom factory
 //
@@ -102,8 +104,10 @@ public:
                                CORBA::Double);
 };
 
+#endif
+
 //
-// TestCustom factory
+// TestNode factory
 //
 class TestNodeFactory_impl : virtual public TestNode_init
 {

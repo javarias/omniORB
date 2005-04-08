@@ -1,5 +1,7 @@
 include ../mk/beforedir.mk
 
+#CXXDEBUGFLAGS = -g
+
 INTFS = testecho seq2 seq3 seq4 seq5 seq6 seq7 seq8 seq9 seq10 seq1 shutdown
 
 CXXSRCS = t_string.cc t_seq_long.cc t_seq_string.cc \

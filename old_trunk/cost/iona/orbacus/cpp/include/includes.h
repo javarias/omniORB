@@ -22,6 +22,7 @@
 
 // omniORB
 #ifdef OMNIORB
+#include <assert.h>
 #include <omniORB4/CORBA.h>
 #endif
 

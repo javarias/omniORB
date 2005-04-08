@@ -6,7 +6,7 @@
 # FOO_CPPFLAGS = 
 # FOO_LIB
 
-OMNI_TOP_DIR = /home/duncan/omni/inst
+OMNI_TOP_DIR = $(HOME)/omni/41inst
 
 CorbaImplementation = OMNIORB
 Use_omniORB = 1

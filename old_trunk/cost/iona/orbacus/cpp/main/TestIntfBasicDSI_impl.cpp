@@ -919,10 +919,18 @@ TestIntfBasicDSI_impl::invoke(
 	any = list->item(1)->value();
 	const Any* arg1;
 	*any >>= arg1;
+
+	// DG: Original ORBacus tests did not copy the arg1 Any here,
+	// and cast away the const in the call to opAny below. That is
+	// invalid, and breaks on omniORB 4.0.x.
+	Any arg1_copy(*arg1);
 	
 	Any* arg2;
 
-	Any* ret = m_ti->opAny(*arg0, *(Any*)arg1, arg2);
+	Any* ret = m_ti->opAny(*arg0, arg1_copy, arg2);
+
+	any = list->item(1)->value();
+	*any <<= arg1_copy;
 
 	any = list->item(2)->value();
 	*any <<= arg2;
@@ -1651,6 +1659,17 @@ TestIntfBasicDSI_impl::invoke(
 	ORBTest_Basic::FixedArray_slice* ret =
 	    m_ti->opFixedArray(arg0, arg1.inout(), arg2);
 	
+	// DG: Original ORBacus tests made invalid assumptions about
+	// the Any implementation. We have to copy via a temporary Any
+	// because the original Any owns the array. If we try to
+	// re-insert the same array, it is freed before it is
+	// inserted.
+	Any arg1_temp;
+	arg1_temp <<= arg1;
+
+	any = list->item(1)->value();
+	*any = arg1_temp;
+
 	any = list->item(2)->value();
 	*any <<= (
 	    ORBTest_Basic::FixedArray_forany(arg2, false)
@@ -1749,6 +1768,12 @@ TestIntfBasicDSI_impl::invoke(
 	ORBTest_Basic::VariableArray_slice* ret =
 	    m_ti->opVariableArray(arg0, arg1.inout(), arg2);
 	
+	Any arg1_temp;
+	arg1_temp <<= arg1;
+
+	any = list->item(1)->value();
+	*any = arg1_temp;
+
 	any = list->item(2)->value();
 	*any <<= (
 	    ORBTest_Basic::VariableArray_forany(arg2, true)

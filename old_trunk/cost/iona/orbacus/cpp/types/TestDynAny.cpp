@@ -85,6 +85,8 @@ mywcscmp(const wchar_t* ws1, const wchar_t* ws2)
   return wc1 - wc2;
 }
 
+#ifndef HAVE_NO_VALUETYPE
+
 //
 // TestValue1 implementation
 //
@@ -95,7 +97,11 @@ public:
     TestValue1_impl() {}
     virtual ~TestValue1_impl() {}
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValue1* _copy_value() { return 0; }
+#else
     virtual ValueBase* _copy_value() { return 0; }
+#endif
 };
 
 class TestValue1Factory_impl : virtual public ValueFactoryBase
@@ -117,7 +123,11 @@ public:
     TestValue2_impl() {}
     virtual ~TestValue2_impl() {}
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValue2* _copy_value() { return 0; }
+#else
     virtual ValueBase* _copy_value() { return 0; }
+#endif
 };
 
 class TestValue2Factory_impl : virtual public ValueFactoryBase
@@ -140,7 +150,11 @@ public:
     TestValue3_impl() {}
     virtual ~TestValue3_impl() {}
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValue3* _copy_value() { return 0; }
+#else
     virtual ValueBase* _copy_value() { return 0; }
+#endif
 };
 
 class TestValue3Factory_impl : virtual public ValueFactoryBase
@@ -163,7 +177,11 @@ public:
     TestValue4_impl() {}
     virtual ~TestValue4_impl() {}
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValue4* _copy_value() { return 0; }
+#else
     virtual ValueBase* _copy_value() { return 0; }
+#endif
 };
 
 class TestValue4Factory_impl : virtual public ValueFactoryBase
@@ -174,6 +192,8 @@ public:
     TestValue4Factory_impl() {}
     virtual ~TestValue4Factory_impl() {}
 };
+
+#endif
 
 
 //
@@ -1056,7 +1076,12 @@ testBasic(ORB_ptr orb, DynAnyFactory_ptr factory)
     d2 = factory -> create_dyn_any(any);
     d1 -> insert_dyn_any(d2);
     copy = d1 -> get_dyn_any();
+#if 0 // DG
+    // This check is completely bogus. The DynAny contains an Any
+    // which contains a boolean. It is not valid to get the boolean
+    // directly.
     CHECK(copy -> get_boolean() == true);
+#endif
     anyVal <<= (Short)53;
     d1 -> insert_any(anyVal);
     copy = d1 -> get_dyn_any();
@@ -1176,11 +1201,22 @@ testFixed(ORB_ptr orb, DynAnyFactory_ptr factory)
         f1 -> set_value("");
         CHECK("set_value() should not have succeeded" == 0);
     }
+#if 0 // DG
+    // Section 9.2.4 of CORBA 2.6 says set_value should raise
+    // TypeMismatch, not InvalidValue if the value does not contain a
+    // valid fixed point value.
     catch(const DynAny::InvalidValue&)
     {
         // expected
         d1 -> destroy();
     }
+#else
+    catch(const DynAny::TypeMismatch&)
+    {
+        // expected
+        d1 -> destroy();
+    }
+#endif
 
     //
     // Test: set_value() TypeMismatch exception (part 2)
@@ -1988,6 +2024,7 @@ testUnion1(ORB_ptr orb, DynAnyFactory_ptr factory)
     disc -> insert_short(0);
     str = u1 -> member_name();
     CHECK(strcmp(str, "a") == 0);
+    u1 -> seek(1); // DG: must seek here.
     u1 -> insert_long(55);
     disc -> insert_short(1);
     CHECK(u1 -> get_long() == 55);
@@ -2179,6 +2216,7 @@ testUnion2(ORB_ptr orb, DynAnyFactory_ptr factory)
     disc -> insert_boolean(true);
     str = u1 -> member_name();
     CHECK(strcmp(str, "a") == 0);
+    u1 -> seek(1); // DG
     u1 -> insert_long(55);
     CHECK(u1 -> get_long() == 55);
 
@@ -3536,6 +3574,8 @@ testStringArray(ORB_ptr orb, DynAnyFactory_ptr factory)
     d1 -> destroy();
 }
 
+#ifndef HAVE_NO_VALUETYPE
+
 #ifndef HAVE_NO_CORBA_2_4
 
 static void
@@ -3649,6 +3689,9 @@ testStructBox(ORB_ptr orb, DynAnyFactory_ptr factory)
         // expected
     }
     
+    v1 -> set_to_null(); // DG: failed set calls above leave dynAny in
+			 // an indeterminate state.
+
     //
     // Test: set_to_value
     // 
@@ -4063,6 +4106,9 @@ testStringBox(ORB_ptr orb, DynAnyFactory_ptr factory)
     {
         // expected
     }
+
+    v1 -> set_to_null(); // DG: failed set calls above leave dynAny in
+			 // an indeterminate state.
 
     //
     // Test: set_to_value
@@ -4786,6 +4832,21 @@ testValue2(ORB_ptr orb, DynAnyFactory_ptr factory)
     //
     v1 -> set_to_null();
     CHECK(v1 -> is_null());
+
+    // DG: Original ndpSeq has been consumed. Must create another one.
+    ndpSeq = new NameDynAnyPairSeq;
+    ndpSeq -> length(3);
+    ndpSeq[0].id = string_dup("shortVal");
+    any <<= (Short)880;
+    ndpSeq[0].value = factory -> create_dyn_any(any);
+    ndpSeq[1].id = string_dup("longVal");
+    any <<= (Long)280101;
+    ndpSeq[1].value = factory -> create_dyn_any(any);
+    ndpSeq[2].id = string_dup("stringVal");
+    any <<= "you there";
+    ndpSeq[2].value = factory -> create_dyn_any(any);
+    // DG
+
     v1 -> set_members_as_dyn_any(ndpSeq);
     CHECK(!v1 -> is_null());
 
@@ -5122,8 +5183,12 @@ testValue3(ORB_ptr orb, DynAnyFactory_ptr factory)
     tv3v -> shortVal(-55);
     tv3v -> longVal(333);
     tv3v -> stringVal((const char*)"hi there");
-    tv3v -> unionVal()._d(0);
     tv3v -> unionVal().a(333);
+
+    // DG: Move call to _d() after call to a(). C++ mapping doesn't
+    // permit setting descriptor before selecting a case.
+    tv3v -> unionVal()._d(0);
+
     any <<= tv3v;
     d2  = factory -> create_dyn_any(any);
     CHECK(d1 -> equal(d2));
@@ -5198,6 +5263,26 @@ testValue3(ORB_ptr orb, DynAnyFactory_ptr factory)
     //
     v1 -> set_to_null();
     CHECK(v1 -> is_null());
+
+    // DG: original sequence has been consumed
+    ndpSeq = new NameDynAnyPairSeq;
+    ndpSeq -> length(4);
+    ndpSeq[0].id = string_dup("shortVal");
+    any <<= (Short)880;
+    ndpSeq[0].value = factory -> create_dyn_any(any);
+    ndpSeq[1].id = string_dup("longVal");
+    any <<= (Long)280101;
+    ndpSeq[1].value = factory -> create_dyn_any(any);
+    ndpSeq[2].id = string_dup("stringVal");
+    any <<= "you there";
+    ndpSeq[2].value = factory -> create_dyn_any(any);
+    ndpSeq[3].id = string_dup("unionVal");
+    tu4.a(123456);
+    any <<= tu4;
+    ndpSeq[3].value = factory -> create_dyn_any(any);
+    v1 -> set_members_as_dyn_any(ndpSeq);
+    // DG
+
     v1 -> set_members_as_dyn_any(ndpSeq);
     CHECK(!v1 -> is_null());
 
@@ -5636,6 +5721,28 @@ testValue4(ORB_ptr orb, DynAnyFactory_ptr factory)
     //
     v1 -> set_to_null();
     CHECK(v1 -> is_null());
+
+    // DG:
+    ndpSeq = new NameDynAnyPairSeq;
+    ndpSeq -> length(5);
+    ndpSeq[0].id = string_dup("shortVal");
+    any <<= (Short)880;
+    ndpSeq[0].value = factory -> create_dyn_any(any);
+    ndpSeq[1].id = string_dup("longVal");
+    any <<= (Long)280101;
+    ndpSeq[1].value = factory -> create_dyn_any(any);
+    ndpSeq[2].id = string_dup("stringVal");
+    any <<= "you there";
+    ndpSeq[2].value = factory -> create_dyn_any(any);
+    ndpSeq[3].id = string_dup("charVal");
+    any <<= Any::from_char('!');
+    ndpSeq[3].value = factory -> create_dyn_any(any);
+    ndpSeq[4].id = string_dup("longlongVal");
+    any <<= (LongLong)44556677;
+    ndpSeq[4].value = factory -> create_dyn_any(any);
+    v1 -> set_members_as_dyn_any(ndpSeq);
+    // DG
+
     v1 -> set_members_as_dyn_any(ndpSeq);
     CHECK(!v1 -> is_null());
 
@@ -5934,6 +6041,10 @@ testValueStruct(ORB_ptr orb, DynAnyFactory_ptr factory)
     CHECK(ptv2 -> longVal() == 333);
     CHECK(strcmp(ptv2 -> stringVal(), "hi there") == 0);
 
+#if 0 // DG
+    // Nothing in the CORBA spec to require that a derived value can
+    // be inserted with truncation.
+
     //
     // Test: insert_val()
     //
@@ -5963,6 +6074,7 @@ testValueStruct(ORB_ptr orb, DynAnyFactory_ptr factory)
     CHECK(ptv2 != 0);
     TestValue4* ptv4 = TestValue4::_downcast(vb);
     CHECK(ptv4 == 0);
+#endif
 }
 
 #else
@@ -6036,6 +6148,8 @@ testValueStruct(ORB_ptr orb, DynAnyFactory_ptr factory)
 
 #endif
 
+#endif
+
 void
 TestDynAny(ORB_ptr orb)
 {
@@ -6051,16 +6165,22 @@ TestDynAny(ORB_ptr orb)
         cout << "Unable to resolve DynAnyFactory" << endl;
     }
 
+#ifndef HAVE_NO_VALUETYPE
     //
     // Register valuetype factories
     //
     ValueFactoryBase_var valueFactory;
+
+#if 0 // DG
+    // No need to register valuebox factories
     valueFactory = new TestStructBox_init;
     orb -> register_value_factory("IDL:DynAnyTypes/TestStructBox:1.0",
                                   valueFactory);
     valueFactory = new TestStringBox_init;
     orb -> register_value_factory("IDL:DynAnyTypes/TestStringBox:1.0",
                                   valueFactory);
+#endif
+
     valueFactory = new TestValue1Factory_impl;
     orb -> register_value_factory("IDL:DynAnyTypes/TestValue1:1.0",
                                   valueFactory);
@@ -6073,7 +6193,7 @@ TestDynAny(ORB_ptr orb)
     valueFactory = new TestValue4Factory_impl;
     orb -> register_value_factory("IDL:DynAnyTypes/TestValue4:1.0",
                                   valueFactory);
-
+#endif
     DynAnyFactory_var factory = DynAnyFactory::_narrow(obj);
     CHECK(!is_nil(factory));
 
@@ -6086,26 +6206,41 @@ TestDynAny(ORB_ptr orb)
     testEnum(orb, factory);
 
     testStruct(orb, factory);
+
     testException(orb, factory);
 
     testUnion1(orb, factory);
+
     testUnion2(orb, factory);
+
     testUnion3(orb, factory);
+
     testUnion4(orb, factory);
 
     testShortSeq(orb, factory);
+
     testBoundedString10Seq(orb, factory);
+
     testAnySeq(orb, factory);
 
     testStringArray(orb, factory);
 
+
+#ifndef HAVE_NO_VALUETYPE
     testStructBox(orb, factory);
+
     testStringBox(orb, factory);
+
     testValue1(orb, factory);
+
     testValue2(orb, factory);
+
     testValue3(orb, factory);
+
     testValue4(orb, factory);
+
     testValueStruct(orb, factory);
+#endif
 }
 
 int
@@ -6132,6 +6267,8 @@ main(int argc, char* argv[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
         OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_SUCCESS;
     }
@@ -6144,8 +6281,10 @@ main(int argc, char* argv[])
 	}
 	catch(const Exception& ex)
 	{
-#ifndef HAVE_NO_EXCEPTION_INSERTERS
+#ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

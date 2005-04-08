@@ -13,6 +13,7 @@
 
 #include <stdlib.h> // For abort()
 
+#include <iostream>
 #include <fstream>
 
 using namespace std;
@@ -82,5 +83,7 @@ TestMacro(#ex , __FILE__, __LINE__, true) )
 #undef OB_INFO_LN
 #endif
 #define OB_INFO_LN(x) ( OB_COUT << x << OB_ENDL )
+
+#undef minor
 
 #endif

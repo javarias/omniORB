@@ -21,7 +21,6 @@ TARGETS		= $(LIB_NAME) \
 include $(top_srcdir)/config/Make.rules
 
 LIB_OBJS	= TestOBV.o \
-		  TestOBV_skel.o \
 		  Factories.o \
 		  TestAbstractSub_impl.o \
 		  TestCustom_impl.o \
@@ -34,6 +33,9 @@ LIB_OBJS	= TestOBV.o \
 		  TestValueInterface_impl.o \
 		  Server.o \
 		  Client.o
+
+OTHER_LIB_OBJS  = TestOBV_skel.o
+
 
 SERVER_OBJS	= ServerMain.o
 

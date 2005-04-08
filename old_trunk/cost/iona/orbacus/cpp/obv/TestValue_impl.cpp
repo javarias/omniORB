@@ -26,7 +26,11 @@ TestValue_impl::~TestValue_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestValue*
+#else
 ValueBase*
+#endif
 TestValue_impl::_copy_value()
 {
     TestValue_impl* result = new TestValue_impl;
@@ -54,7 +58,11 @@ TestValueSub_impl::~TestValueSub_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestValueSub*
+#else
 ValueBase*
+#endif
 TestValueSub_impl::_copy_value()
 {
     TestValueSub_impl* result = new TestValueSub_impl;

@@ -10,13 +10,24 @@
 
 # User settings
 
-ORB_HOME	= /opt/omniorb
+ORB_HOME	= $(HOME)/omni/41inst
+
+# Use these settings for omniORB 4.0.x
+#OPTION_FLAGS    = -DHAVE_NO_VALUETYPE
+#NO_VALUETYPE    = 1
+
+# Use these settings for omniORB 4.1.x
+OPTION_FLAGS    = -DHAVE_NO_CUSTOM_VALUETYPE
+
+
+NO_PORTABLE_INTERCEPTORS = 1
+
 
 # ORB-specific configuration
 IDL		= $(ORB_HOME)/bin/omniidl
-IDLFLAGS	= -I$(ORB_HOME)/idl/omniORB -bcxx -Wba -Wbh=.h -Wbs=.cpp -DHAVE_NO_CORBA_2_4 -DHAVE_NO_FIXED_TYPE -DHAVE_NO_LONG_DOUBLE_TYPE
+IDLFLAGS	= -I$(ORB_HOME)/share/idl/omniORB -bcxx -Wba -Wbh=.h -Wbs=.cpp -Wbd=.cpp $(OPTION_FLAGS)
 IDL_PIFLAGS	=
-ORB_CPPFLAGS	= -DOMNIORB -I$(ORB_HOME)/include -D__x86__ -D__linux__ -D__OSVERSION__=2 -D_REENTRANT -DHAVE_NO_FIXED_TYPE -DHAVE_NO_LONG_DOUBLE_TYPE
+ORB_CPPFLAGS	= -DOMNIORB -I$(ORB_HOME)/include -D__x86__ -D__linux__ -D__OSVERSION__=2 -D_REENTRANT -DENABLE_CLIENT_IR_SUPPORT $(OPTION_FLAGS)
 ORB_LDFLAGS	= -L$(ORB_HOME)/lib
 ORB_LIBS	= -lomniORB4 -lomniDynamic4 -lomnithread
 
@@ -30,7 +41,6 @@ CXXFLAGS	= -Wall
 AR		= ar
 ARFLAGS		= cr
 LIBS		=
-
 
 # Don't change anything below this line
 

@@ -22,7 +22,9 @@ class TestOBV_impl : virtual public POA_TestOBV
     CORBA::ORB_var orb_;
     TestValue_var value_;
     TestValueSub_var valueSub_;
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     TestCustom_var custom_;
+#endif
     TestNode_var node_;
     TestAbstract_var absInterface_;
     TestAbstract_var absValue_;
@@ -31,7 +33,10 @@ class TestOBV_impl : virtual public POA_TestOBV
 public:
 
     TestOBV_impl(CORBA::ORB_ptr, TestValue_init*, TestValueSub_init*,
-                 TestCustom_init*, TestNode_init*, TestAbstract_ptr,
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+                 TestCustom_init*,
+#endif
+		 TestNode_init*, TestAbstract_ptr,
                  TestAbstract_ptr, TestValueInterface_init*);
     ~TestOBV_impl();
 
@@ -80,6 +85,7 @@ public:
     virtual void set_two_valuesubs_as_values(TestValue*, TestValue*)
         throw(CORBA::SystemException);
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     virtual TestCustom* get_custom()
         throw(CORBA::SystemException);
     virtual void set_custom(TestCustom*)
@@ -89,6 +95,7 @@ public:
         throw(CORBA::SystemException);
     virtual void set_abs_custom(TestAbsValue1*)
         throw(CORBA::SystemException);
+#endif
 
     virtual void get_node(TestNode_out, CORBA::ULong&)
         throw(CORBA::SystemException);
@@ -169,8 +176,10 @@ public:
     virtual CORBA::Any* get_valuesub_as_value_any()
         throw(CORBA::SystemException);
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     virtual CORBA::Any* get_custom_any()
         throw(CORBA::SystemException);
+#endif
 
     virtual CORBA::Any* get_trunc1_any()
         throw(CORBA::SystemException);

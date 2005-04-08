@@ -27,7 +27,11 @@ public:
     TestValueInterface_impl();
     ~TestValueInterface_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValueInterface* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 
     //
     // IDL:TestInterface/get_count:1.0

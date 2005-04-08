@@ -27,7 +27,11 @@ TestValueInterface_impl::~TestValueInterface_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestValueInterface*
+#else
 ValueBase*
+#endif
 TestValueInterface_impl::_copy_value()
 {
     TestValueInterface_impl* result = new TestValueInterface_impl;

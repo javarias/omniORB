@@ -27,7 +27,11 @@ TestNode_impl::~TestNode_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestNode*
+#else
 ValueBase*
+#endif
 TestNode_impl::_copy_value()
 {
     TestNode_impl* result = new TestNode_impl(count());

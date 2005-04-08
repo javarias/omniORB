@@ -49,8 +49,10 @@ ServerRun(ORB_ptr orb, int argc, char* argv[])
     TestTruncBaseFactory_impl::install(orb);
     TestTrunc1Factory_impl::install(orb);
     TestTrunc2Factory_impl::install(orb);
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     TestCustom_init* customFactory = TestCustomFactory_impl::install(orb);
     customFactory -> _remove_ref(); // orphan
+#endif
     TestNode_init* nodeFactory = TestNodeFactory_impl::install(orb);
     nodeFactory -> _remove_ref(); // orphan
     TestValueAI_init* valueAIFactory = TestValueAIFactory_impl::install(orb);
@@ -62,6 +64,9 @@ ServerRun(ORB_ptr orb, int argc, char* argv[])
     //
     // Install valuebox factories
     //
+#if 0
+    // DG: Nothing in the C++ mapping to say you need to register
+    // valuebox factories.
     ValueFactoryBase_var factory;
     factory = new TestStringBox_init;
     orb -> register_value_factory("IDL:TestStringBox:1.0", factory);
@@ -79,6 +84,7 @@ ServerRun(ORB_ptr orb, int argc, char* argv[])
     orb -> register_value_factory("IDL:TestAnonSeqBox:1.0", factory);
     factory = new TestStringSeqBox_init;
     orb -> register_value_factory("IDL:TestStringSeqBox:1.0", factory);
+#endif
 
     //
     // Create implementation objects
@@ -88,7 +94,10 @@ ServerRun(ORB_ptr orb, int argc, char* argv[])
     TestValueAI_var absValue = valueAIFactory -> create(12345);
 
     TestOBV_impl* i = new TestOBV_impl(orb, valueFactory, valueSubFactory,
-                                       customFactory, nodeFactory,
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+                                       customFactory,
+#endif
+				       nodeFactory,
                                        absInterface, absValue,
                                        valueInterfaceFactory);
     TestOBV_var p = i -> _this();

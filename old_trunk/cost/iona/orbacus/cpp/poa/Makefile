@@ -37,7 +37,6 @@ TARGETS		= $(LIB_NAME) \
 include $(top_srcdir)/config/Make.rules
 
 LIB_OBJS        = Test.o \
-		  Test_skel.o \
 		  TestUtil.o \
 		  Test_impl.o \
 		  TestServer_impl.o \
@@ -45,12 +44,14 @@ LIB_OBJS        = Test.o \
 		  TestDSIRef_impl.o \
 		  TestRef_impl.o \
 		  TestLocationForwardActivator.o \
-		  TestLocationForwardActivator_skel.o \
 		  TestLocationForwardActivator_impl.o \
 		  TestLocationForward_impl.o \
 		  POAManagerProxy.o \
-		  POAManagerProxy_skel.o \
 		  TestPOAManagerCommon.o
+
+OTHER_LIB_OBJS  = Test_skel.o \
+		  TestLocationForwardActivator_skel.o \
+		  POAManagerProxy_skel.o
 
 SRCS		= TestActivate.cpp \
 		  TestDeactivate.cpp \

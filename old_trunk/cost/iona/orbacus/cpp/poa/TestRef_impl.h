@@ -24,8 +24,12 @@ public:
                  CORBA::Boolean compare = false);
     ~TestRef_impl();
 
+#if 0
+    // DG: C++ 1.1 mapping moved _add_ref and _remove_ref put of
+    // RefCountServantBase. There is no need to override them here.
     virtual void _add_ref();
     virtual void _remove_ref();
+#endif
 
     virtual void aMethod()
 	throw(CORBA::SystemException);

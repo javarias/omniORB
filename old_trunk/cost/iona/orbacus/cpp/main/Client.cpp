@@ -60,7 +60,7 @@ ClientRun(
     //
     // Get the stringified IORs
     //
-    String_var impl;
+    char impl[8192];
     in >> impl;
 
     in.close(); // The explicit close is necessary to satisfy the Windows NT

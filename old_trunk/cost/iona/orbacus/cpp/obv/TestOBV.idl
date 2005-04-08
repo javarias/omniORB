@@ -52,6 +52,8 @@ valuetype TestTrunc2 : truncatable TestTruncBase
     public TestTruncBase b;
 };
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+
 custom valuetype TestCustom : TestAbsValue1
 {
     public short shortVal;
@@ -61,6 +63,8 @@ custom valuetype TestCustom : TestAbsValue1
 
     factory create(in short s, in long l, in string str, in double d);
 };
+
+#endif
 
 abstract interface TestAbstract
 {
@@ -207,6 +211,7 @@ interface TestOBV
     //
     // Test custom marshalling
     //
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     TestCustom get_custom();
     void set_custom(in TestCustom v);
 
@@ -215,6 +220,7 @@ interface TestOBV
     //
     TestAbsValue1 get_abs_custom();
     void set_abs_custom(in TestAbsValue1 v);
+#endif
 
     //
     // Test valuetype graph
@@ -306,7 +312,9 @@ interface TestOBV
     any get_value_any();
     any get_valuesub_any();
     any get_valuesub_as_value_any();
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     any get_custom_any();
+#endif
     any get_trunc1_any();
     any get_trunc1_as_base_any();
     any get_trunc2_any();

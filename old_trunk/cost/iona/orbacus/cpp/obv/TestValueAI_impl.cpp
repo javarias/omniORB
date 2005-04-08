@@ -26,7 +26,11 @@ TestValueAI_impl::~TestValueAI_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestValueAI*
+#else
 ValueBase*
+#endif
 TestValueAI_impl::_copy_value()
 {
     TestValueAI_impl* result = new TestValueAI_impl;

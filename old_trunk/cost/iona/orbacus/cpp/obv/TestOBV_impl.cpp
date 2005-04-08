@@ -24,7 +24,9 @@ using namespace CORBA;
 TestOBV_impl::TestOBV_impl(ORB_ptr orb,
                            TestValue_init* valueFactory,
                            TestValueSub_init* valueSubFactory,
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
                            TestCustom_init* customFactory,
+#endif
                            TestNode_init* nodeFactory,
                            TestAbstract_ptr absInterface,
                            TestAbstract_ptr absValue,
@@ -33,7 +35,9 @@ TestOBV_impl::TestOBV_impl(ORB_ptr orb,
 {
     value_ = valueFactory -> create(500);
     valueSub_ = valueSubFactory -> create_sub(501, "ValueSub");
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
     custom_ = customFactory -> create(-99, -123456, "CustomVal", 100.997);
+#endif
 
     TestNode_var left, right, ltmp, rtmp;
     ltmp = nodeFactory -> create(2);
@@ -237,6 +241,7 @@ TestOBV_impl::set_two_valuesubs_as_values(TestValue* v1, TestValue* v2)
     TEST(strcmp(s1 -> name(), s2 -> name()) == 0);
 }
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
 TestCustom*
 TestOBV_impl::get_custom()
     throw(SystemException)
@@ -278,6 +283,7 @@ TestOBV_impl::set_abs_custom(TestAbsValue1* v)
     TEST(c -> doubleVal() == custom_ -> doubleVal());
     TEST(strcmp(c -> stringVal(), custom_ -> stringVal()) == 0);
 }
+#endif
 
 void
 TestOBV_impl::get_node(TestNode_out v, ULong& count)
@@ -471,8 +477,11 @@ TestOBV_impl::set_ai_interface(TestAbstract_ptr a)
     if(!is_nil(a))
     {
         a -> abstract_op();
+#if 0
+	// DG: No requirement for base Object _narrow of abstract interface
         Object_var obj = Object::_narrow(a);
         TEST(!is_nil(obj));
+#endif
         TestAbstractSub_var sub = TestAbstractSub::_narrow(a);
         TEST(!is_nil(sub));
         sub -> sub_op();
@@ -533,8 +542,11 @@ TestOBV_impl::set_ai_value(TestAbstract_ptr a)
     if(!is_nil(a))
     {
         a -> abstract_op();
+#if 0
+	// DG: No requirement for ValueBase _downcast of abstract interface
         ValueBase* vb = ValueBase::_downcast(a);
         TEST(vb != 0);
+#endif
         TestValueAI* v = TestValueAI::_downcast(a);
         TEST(v != 0);
         v -> value_op();
@@ -683,6 +695,7 @@ TestOBV_impl::get_valuesub_as_value_any()
     return result;
 }
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
 Any*
 TestOBV_impl::get_custom_any()
     throw(SystemException)
@@ -692,6 +705,7 @@ TestOBV_impl::get_custom_any()
     *result <<= v;
     return result;
 }
+#endif
 
 Any*
 TestOBV_impl::get_trunc1_any()

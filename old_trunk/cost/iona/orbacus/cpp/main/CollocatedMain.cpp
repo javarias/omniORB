@@ -24,8 +24,7 @@ main(
 
     try
     {
-        orb = ORB_init(argc, argv);
-
+	orb = ORB_init(argc, argv);
         int ServerRun(ORB_ptr, bool, int, char*[]);
         status = ServerRun(orb, true, argc, argv);
 
@@ -48,6 +47,8 @@ main(
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
 	OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_FAILURE;
     }
@@ -62,6 +63,8 @@ main(
 	{
 #ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

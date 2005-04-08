@@ -36,7 +36,7 @@ TestUnion()
     arr[9][19][29] = 1.23E23;
     
     u.a(arr);
-    DoubleArray_slice* sl = u.a();
+    const DoubleArray_slice* sl = u.a();
     CHECK(sl[2][2][2] == 3.14);
     CHECK(sl[0][0][0] == 1234);
     CHECK(sl[9][19][29] == 1.23E23);
@@ -180,6 +180,8 @@ main(int argc, char* argv[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
         OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_SUCCESS;
     }
@@ -192,8 +194,10 @@ main(int argc, char* argv[])
         }
         catch(const Exception& ex)
         {
-#ifndef HAVE_NO_EXCEPTION_INSERTERS
+#ifdef HAVE_EXCEPTION_INSERTERS
             OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
             status = EXIT_FAILURE;
         }

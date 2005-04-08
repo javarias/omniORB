@@ -25,7 +25,11 @@ public:
     TestValue_impl();
     ~TestValue_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValue* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 
     //
     // IDL:TestAbsValue1/ping1:1.0
@@ -48,7 +52,11 @@ public:
     TestValueSub_impl();
     ~TestValueSub_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValueSub* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 
     //
     // IDL:TestAbsValue1/ping1:1.0

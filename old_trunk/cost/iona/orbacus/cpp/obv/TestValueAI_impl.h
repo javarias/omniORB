@@ -25,7 +25,11 @@ public:
     TestValueAI_impl();
     ~TestValueAI_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestValueAI* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 
     //
     // IDL:TestAbstract/abstract_op:1.0

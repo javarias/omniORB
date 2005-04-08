@@ -193,7 +193,11 @@ public:
             // Verify that POA allows activator to explicitly activate
             // a servant
             //
-            poa -> activate_object_with_id(oid, servant);
+#if 0
+	    // DG: This is an invalid test. The POA spec does not say
+	    // this should be allowed.
+	    poa -> activate_object_with_id(oid, servant);
+#endif
             return servant;
         }
 
@@ -368,6 +372,8 @@ main(int argc, char* argv[], char*[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
 	OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
         status = EXIT_FAILURE;
     }
@@ -382,6 +388,8 @@ main(int argc, char* argv[], char*[])
 	{
 #ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

@@ -111,6 +111,8 @@ TestTrunc2Factory_impl::install(ORB_ptr orb)
     old = orb -> register_value_factory("IDL:TestTrunc2:1.0", factory);
 }
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+
 ValueBase*
 TestCustomFactory_impl::create_for_unmarshal()
 {
@@ -136,6 +138,7 @@ TestCustomFactory_impl::create(Short s, Long l, const char* str, Double d)
     result -> doubleVal(d);
     return result;
 }
+#endif
 
 ValueBase*
 TestNodeFactory_impl::create_for_unmarshal()

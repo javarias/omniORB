@@ -25,7 +25,11 @@ public:
     TestTruncBase_impl();
     ~TestTruncBase_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestTruncBase* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 };
 
 //
@@ -42,7 +46,11 @@ public:
     TestTrunc1_impl();
     ~TestTrunc1_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestTrunc1* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 };
 
 //
@@ -59,7 +67,11 @@ public:
     TestTrunc2_impl();
     ~TestTrunc2_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestTrunc2* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 };
 
 #endif

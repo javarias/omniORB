@@ -40,9 +40,9 @@ SUBDIRS =  $(COMMON) \
 ifeq ($(CorbaImplementation),OMNIORB)
 SUBDIRS += $(OMNIORB_SPECIFIC_TESTS)
 
-ifdef OPEN_SSL_ROOT
-OMNIORB_SPECIFIC_TESTS += ssl_tests
-endif
+#ifdef OPEN_SSL_ROOT
+#OMNIORB_SPECIFIC_TESTS += ssl_tests
+#endif
 
 endif
 

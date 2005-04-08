@@ -16,6 +16,8 @@
 
 using namespace CORBA;
 
+#ifndef HAVE_NO_CUSTOM_VALUETYPE
+
 //
 // IDL:TestCustom:1.0
 //
@@ -27,7 +29,11 @@ TestCustom_impl::~TestCustom_impl()
 {
 }
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+TestCustom*
+#else
 ValueBase*
+#endif
 TestCustom_impl::_copy_value()
 {
     TestCustom_impl* result = new TestCustom_impl;
@@ -71,3 +77,5 @@ void
 TestCustom_impl::ping1()
 {
 }
+
+#endif

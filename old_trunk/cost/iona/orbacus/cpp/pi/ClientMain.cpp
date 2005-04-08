@@ -35,6 +35,8 @@ main(int argc, char* argv[], char*[])
     {
 #ifdef HAVE_EXCEPTION_INSERTERS
 	OB_ERROR(ex);
+#else
+	cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	status = EXIT_FAILURE;
     }
@@ -49,6 +51,8 @@ main(int argc, char* argv[], char*[])
 	{
 #ifdef HAVE_EXCEPTION_INSERTERS
 	    OB_ERROR(ex);
+#else
+	    cerr << "Exception: " << ex._rep_id() << endl;
 #endif
 	    status = EXIT_FAILURE;
 	}

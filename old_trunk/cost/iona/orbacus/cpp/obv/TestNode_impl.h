@@ -25,7 +25,11 @@ public:
     TestNode_impl(CORBA::ULong);
     ~TestNode_impl();
 
+#ifdef OMNI_HAVE_COVARIANT_RETURNS
+    virtual TestNode* _copy_value();
+#else
     virtual CORBA::ValueBase* _copy_value();
+#endif
 
     //
     // IDL:TestNode/compute_count:1.0
