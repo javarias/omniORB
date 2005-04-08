@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.42  2004/02/13 16:37:34  dgrisby
+  Bug with system id and default servant / servant managers.
+
   Revision 1.2.2.41  2004/02/11 11:53:51  dgrisby
   Robustness in the face of exceptions from _remove_ref().
 
@@ -3113,8 +3116,7 @@ omniEtherealiser::doit()
 		       pd_cleanup, !pd_is_last);
   }
   catch(...) {
-    if( omniORB::trace(5) )
-      omniORB::logf("Servant etherealisation raised an exception!");
+    omniORB::logs(5, "Servant etherealisation raised an exception!");
   }
   omni::internalLock->lock();
   pd_entry->setDead();
@@ -3502,10 +3504,11 @@ omniOrbPOA::attempt_to_activate_adapter(const char* name)
 
   poa_lock.unlock();
 
-  if( omniORB::trace(10) )
-    omniORB::logf("Attempting to activate POA '%s' using an AdapterActivator",
-		  name);
-
+  if( omniORB::trace(10) ) {
+    omniORB::logger l;
+    l << "Attempting to activate POA '" << name
+      << "' using an AdapterActivator\n";
+  }
   CORBA::Boolean ret = 0;
 
   try {

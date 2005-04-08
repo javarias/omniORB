@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.27  2005/01/04 18:09:29  dgrisby
+  SkipRequestBody did not call notifyWkPreUpCall, which meant requests
+  would be mislaid if they came in the same buffer as a skipped request.
+
   Revision 1.1.4.26  2004/10/17 21:48:38  dgrisby
   Support CancelRequest better.
 
@@ -336,9 +340,11 @@ GIOP_S::handleRequest() {
     // a location forward exception to re-direct the request
     // to another location.
 
-    if( omniORB::traceInvocations )
-      omniORB::logf("Implementation of \'%s\' generated LOCATION_FORWARD.",
-		    operation());
+    if( omniORB::traceInvocations ) {
+      omniORB::logger l;
+      l << "Implementation of '" << operation()
+	<< "' generated LOCATION_FORWARD.\n";
+    }
 
     CORBA::Object_var release_it(ex.get_obj());
     if (pd_state == RequestIsBeingProcessed) {

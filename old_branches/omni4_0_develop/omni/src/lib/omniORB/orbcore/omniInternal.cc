@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.2.2.37  2005/03/29 14:41:33  dgrisby
+  Use omniORB logger instead of logf. May avoid a compiler / platform
+  bug on VxWorks.
+
   Revision 1.2.2.36  2004/10/17 20:14:33  dgrisby
   Updated support for OpenVMS. Many thanks to Bruce Visscher.
 
@@ -382,10 +386,10 @@ omniObjTable::resize()
   }
   CORBA::ULong newsize = newsizei;
 
-  if( omniORB::trace(15) ) {
-    omniORB::logf("Object table resizing from %lu to %lu",
-		  (unsigned long) objectTableSize,
-		  (unsigned long) newsize);
+  if (omniORB::trace(15)) {
+    omniORB::logger l;
+    l << "Object table resizing from " << objectTableSize
+      << " to " << newsize << "\n";
   }
 
   // Create and initialise new object table.

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.7  2003/08/15 10:55:07  dgrisby
+  Rearrange code to avoid SGI compiler bug.
+
   Revision 1.2.2.6  2003/03/03 15:00:52  dgrisby
   Safe unloading of proxy object factories. Thanks Christian Perez.
 
@@ -104,8 +107,10 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
     else if( cmp > 0 )  bottom = middle + 1;
     else {
       ofl[middle] = this;
-      if( omniORB::trace(15) )
-	  omniORB::logf("Replaced proxyObjectFactory for %s.", repoId);
+      if(omniORB::trace(15)) {
+	omniORB::logger l;
+	l << "Replaced proxyObjectFactory for " << repoId << ".\n";
+      }
       return;
     }
   }
