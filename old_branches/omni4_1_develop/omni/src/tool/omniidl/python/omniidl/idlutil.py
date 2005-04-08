@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9.2.1  2003/03/23 21:01:38  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.5.2.6  2001/08/29 11:54:22  dpg1
 # Clean up const handling in IDL compiler.
 #
@@ -135,7 +138,7 @@ Return the given string with any non-printing characters escaped."""
     return string.join(l, "")
 
 
-def escapifyWString(l):
+def escapifyWString(l, escchar="u"):
     """escapifyWString(int list) -> string
 
 Take a list of integers representing Unicode characters and return an
@@ -149,7 +152,7 @@ escapes."""
         if l[i] in _valid_unichars:
             m[i] = chr(l[i])
         else:
-            m[i] = "\\u%04x" % l[i]
+            m[i] = "\\%s%04x" % (escchar, l[i])
     return string.join(m, "")
 
 

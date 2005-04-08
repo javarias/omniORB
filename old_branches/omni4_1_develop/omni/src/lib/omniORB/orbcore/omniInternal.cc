@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.4  2005/03/30 23:36:09  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.5.2.3  2005/01/06 23:10:36  dgrisby
   Big merge from omni4_0_develop.
 
@@ -370,10 +373,10 @@ omniObjTable::resize()
   }
   CORBA::ULong newsize = newsizei;
 
-  if( omniORB::trace(15) ) {
-    omniORB::logf("Object table resizing from %lu to %lu",
-		  (unsigned long) objectTableSize,
-		  (unsigned long) newsize);
+  if (omniORB::trace(15)) {
+    omniORB::logger l;
+    l << "Object table resizing from " << objectTableSize
+      << " to " << newsize << "\n";
   }
 
   // Create and initialise new object table.

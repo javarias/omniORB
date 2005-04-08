@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.3  2005/01/06 23:10:40  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.5.2.2  2003/09/26 16:12:55  dgrisby
   Start of valuetype support.
 
@@ -110,8 +113,10 @@ proxyObjectFactory::proxyObjectFactory(const char* repoId)
     else if( cmp > 0 )  bottom = middle + 1;
     else {
       ofl[middle] = this;
-      if( omniORB::trace(15) )
-	  omniORB::logf("Replaced proxyObjectFactory for %s.", repoId);
+      if(omniORB::trace(15)) {
+	omniORB::logger l;
+	l << "Replaced proxyObjectFactory for " << repoId << ".\n";
+      }
       return;
     }
   }

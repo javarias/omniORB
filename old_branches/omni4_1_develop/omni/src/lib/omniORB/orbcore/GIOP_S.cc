@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/01/06 23:10:11  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.6.3  2003/11/06 11:56:56  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -339,9 +342,11 @@ GIOP_S::handleRequest() {
     // a location forward exception to re-direct the request
     // to another location.
 
-    if( omniORB::traceInvocations )
-      omniORB::logf("Implementation of \'%s\' generated LOCATION_FORWARD.",
-		    operation());
+    if( omniORB::traceInvocations ) {
+      omniORB::logger l;
+      l << "Implementation of '" << operation()
+	<< "' generated LOCATION_FORWARD.\n";
+    }
 
     CORBA::Object_var release_it(ex.get_obj());
     if (pd_state == RequestIsBeingProcessed) {

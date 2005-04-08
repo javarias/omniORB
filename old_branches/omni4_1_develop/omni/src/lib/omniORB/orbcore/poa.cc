@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2005/01/13 21:55:56  dgrisby
+  Turn off -g debugging; suppress some compiler warnings.
+
   Revision 1.4.2.2  2005/01/06 23:10:37  dgrisby
   Big merge from omni4_0_develop.
 
@@ -3107,8 +3110,7 @@ omniEtherealiser::doit()
 		       pd_cleanup, !pd_is_last);
   }
   catch(...) {
-    if( omniORB::trace(5) )
-      omniORB::logf("Servant etherealisation raised an exception!");
+    omniORB::logs(5, "Servant etherealisation raised an exception!");
   }
   omni::internalLock->lock();
   pd_entry->setDead();
@@ -3496,10 +3498,11 @@ omniOrbPOA::attempt_to_activate_adapter(const char* name)
 
   poa_lock.unlock();
 
-  if( omniORB::trace(10) )
-    omniORB::logf("Attempting to activate POA '%s' using an AdapterActivator",
-		  name);
-
+  if( omniORB::trace(10) ) {
+    omniORB::logger l;
+    l << "Attempting to activate POA '" << name
+      << "' using an AdapterActivator\n";
+  }
   CORBA::Boolean ret = 0;
 
   try {
