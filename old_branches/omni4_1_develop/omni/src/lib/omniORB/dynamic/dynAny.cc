@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.13.2.6  2005/03/30 23:36:12  dgrisby
+   Another merge from omni4_0_develop.
+
    Revision 1.13.2.5  2005/01/06 23:09:45  dgrisby
    Big merge from omni4_0_develop.
 
@@ -2698,12 +2701,12 @@ DynStructImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
     if (daib->is_root()) {
       // Take ownership
       daib->_NP_incrRefCount();
-      daib->attach();
     }
     else {
       DynamicAny::DynAny_ptr newda = daib->copy();
       daib = ToDynAnyImplBase(newda);
     }
+    daib->attach();
     pd_components[i] = daib;
   }
   pd_curr_index = (pd_n_components == 0) ? -1 : 0;
@@ -4394,12 +4397,12 @@ DynSequenceImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
     if (daib->is_root()) {
       // Take ownership of the DynAny
       daib->_NP_incrRefCount();
-      daib->attach();
     }
     else {
       DynamicAny::DynAny_ptr newda = daib->copy();
       daib = ToDynAnyImplBase(newda);
     }
+    daib->attach();
     pd_components[i] = daib;
   }
 }
@@ -4669,12 +4672,12 @@ DynArrayImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
     if (daib->is_root()) {
       // Take ownership of the DynAny
       daib->_NP_incrRefCount();
-      daib->attach();
     }
     else {
       DynamicAny::DynAny_ptr newda = daib->copy();
       daib = ToDynAnyImplBase(newda);
     }
+    daib->attach();
     pd_components[i] = daib;
   }
 }
@@ -5016,12 +5019,12 @@ DynValueImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
     if (daib->is_root()) {
       // Take ownership
       daib->_NP_incrRefCount();
-      daib->attach();
     }
     else {
       DynamicAny::DynAny_ptr newda = daib->copy();
       daib = ToDynAnyImplBase(newda);
     }
+    daib->attach();
     pd_components[i] = daib;
   }
   pd_curr_index = (pd_n_components == 0) ? -1 : 0;
@@ -5337,12 +5340,12 @@ DynValueBoxImpl::set_boxed_value_as_dyn_any(DynamicAny::DynAny_ptr value)
   if (daib->is_root()) {
     // Take ownership
     daib->_NP_incrRefCount();
-    daib->attach();
   }
   else {
     DynamicAny::DynAny_ptr newda = daib->copy();
     daib = ToDynAnyImplBase(newda);
   }
+  daib->attach();
   pd_components[0] = daib;
 }
 
