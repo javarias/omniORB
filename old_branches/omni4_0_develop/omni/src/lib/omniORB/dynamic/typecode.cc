@@ -29,6 +29,9 @@
 
 /*
  * $Log$
+ * Revision 1.38.2.31  2004/10/17 22:29:06  dgrisby
+ * WChar TypeCode unmarshalling was missing. Thanks Luke Deller.
+ *
  * Revision 1.38.2.30  2003/03/10 11:13:52  dgrisby
  * BAD_PARAM with invalid fixed limits.
  *
@@ -2029,7 +2032,8 @@ TypeCode_sequence::NP_complete_recursive(TypeCode_base* tc, const char* repoId)
 {
   if (!pd_complete && !CORBA::is_nil(pd_content)) {
     pd_complete = ToTcBase(pd_content)->NP_complete_recursive(tc, repoId);
-    TypeCode_collector::markLoopMembers(tc);
+    if (pd_complete)
+      TypeCode_collector::markLoopMembers(tc);
   }
   return pd_complete;
 }
