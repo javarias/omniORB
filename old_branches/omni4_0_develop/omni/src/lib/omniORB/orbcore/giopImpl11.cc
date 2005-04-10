@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.23  2004/07/01 19:16:24  dgrisby
+  Client call interceptor oneway and response expected flipped. Thanks
+  John Fardo.
+
   Revision 1.1.4.22  2004/05/05 11:02:01  dgrisby
   Bug in system exception marshalling with GIOP 1.1. Thanks Paul Haesler.
 
@@ -228,6 +232,7 @@ giopImpl11::inputMessageBegin(giopStream* g,
       // This is a GIOP 1.0 message, switch to the implementation of giop 1.0
       // and dispatch again.
       GIOP::Version v = { 1, 0 };
+      ((giopStrand &)*g).version = v;
       g->impl(giopStreamImpl::matchVersion(v));
       OMNIORB_ASSERT(g->impl());
       g->impl()->inputMessageBegin(g,g->impl()->unmarshalWildCardRequestHeader);
@@ -296,9 +301,9 @@ giopImpl11::inputReplyBegin(giopStream* g,
     {
       CORBA::ULong minor;
       CORBA::Boolean retry;
+      g->pd_strand->orderly_closed = 1;
       g->notifyCommFailure(0,minor,retry);
       g->pd_strand->state(giopStrand::DYING);
-      g->pd_strand->orderly_closed = 1;
       giopStream::CommFailure::_raise(minor,
 				      CORBA::COMPLETED_NO,
 				      retry,__FILE__,__LINE__);

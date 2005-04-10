@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.23  2004/10/18 11:47:02  dgrisby
+  accept() error handling didn't work on MacOS X.
+
   Revision 1.1.2.22  2004/10/17 22:27:23  dgrisby
   Handle errors in accept() properly. Thanks Kamaldeep Singh Khanuja and
   Jeremy Van Grinsven.
@@ -326,8 +329,12 @@ sslEndpoint::Poke() {
 
   sslAddress* target = new sslAddress(pd_address,pd_ctx);
   giopActiveConnection* conn;
-  if ((conn = target->Connect()) == 0) {
-    if (omniORB::trace(1)) {
+
+  unsigned long timeout_sec, timeout_nsec;
+  omni_thread::get_time(&timeout_sec, &timeout_nsec, 1);
+
+  if ((conn = target->Connect(timeout_sec, timeout_nsec)) == 0) {
+    if (omniORB::trace(5)) {
       omniORB::logger log;
       log << "Warning: Fail to connect to myself (" 
 	  << (const char*) pd_address_string << ") via ssl!\n";

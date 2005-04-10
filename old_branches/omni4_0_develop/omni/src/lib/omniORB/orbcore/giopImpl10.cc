@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.21  2004/07/01 19:16:25  dgrisby
+  Client call interceptor oneway and response expected flipped. Thanks
+  John Fardo.
+
   Revision 1.1.4.20  2003/07/25 16:07:18  dgrisby
   Incorrect COMM_FAILURE with GIOP 1.2 CloseConnection.
 
@@ -283,9 +287,9 @@ giopImpl10::inputReplyBegin(giopStream* g,
     {
       CORBA::ULong minor;
       CORBA::Boolean retry;
+      g->pd_strand->orderly_closed = 1;
       g->notifyCommFailure(0,minor,retry);
       g->pd_strand->state(giopStrand::DYING);
-      g->pd_strand->orderly_closed = 1;
       giopStream::CommFailure::_raise(minor,
 				      CORBA::COMPLETED_NO,
 				      retry,__FILE__,__LINE__);

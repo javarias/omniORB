@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.36  2005/03/10 11:28:29  dgrisby
+  Race condition between setSelectable / clearSelectable.
+
   Revision 1.22.2.35  2005/02/23 12:27:31  dgrisby
   Another race in setSelectable with connection shutdown. Thanks Peter
   Klotz.
@@ -663,6 +666,7 @@ giopServer::csInsert(giopConnection* conn)
 
 
   giopStrand* s = new giopStrand(conn,this);
+  s->version.major = 1; s->version.minor = 0;
   {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
     omni_tracedmutex_lock sync(*omniTransportLock);
