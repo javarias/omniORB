@@ -28,7 +28,11 @@
 //    Main entry points for _omnipy Python module
 
 // $Id$
+
 // $Log$
+// Revision 1.1.4.7  2005/03/02 13:39:17  dgrisby
+// Another merge from omnipy2_develop.
+//
 // Revision 1.1.4.6  2005/01/07 00:22:32  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -311,10 +315,8 @@ extern "C" {
   static PyObject*
   omnipy_coreVersion(PyObject* self, PyObject* args)
   {
-    static char* cv = (char*)OMNIORB_VERSION_STRING;
-
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
-    return Py_BuildValue((char*)"s", cv);
+    return Py_BuildValue((char*)"s", omniORB::versionString());
   }
 
 #define OMNIPY_ATTR(x) \
