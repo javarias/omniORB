@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.6  2005/03/30 23:36:10  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.25.2.5  2005/03/02 12:39:17  dgrisby
   Merge from omni4_0_develop.
 
@@ -643,6 +646,7 @@ giopServer::csInsert(giopConnection* conn)
 
 
   giopStrand* s = new giopStrand(conn,this);
+  s->version.major = 1; s->version.minor = 0;
   {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
     omni_tracedmutex_lock sync(*omniTransportLock);

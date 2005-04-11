@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2005/03/30 23:36:10  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.1.6.2  2005/01/06 23:10:29  dgrisby
   Big merge from omni4_0_develop.
 
@@ -464,7 +467,10 @@ giopStrand::acquireServer(giopWorker* w)
 
   sp->state(IOP_S::Idle);
   if (!sp->impl()) {
-    sp->impl(giopStreamImpl::maxVersion());
+    giopStreamImpl *impl = giopStreamImpl::maxVersion();
+    sp->impl(impl);
+    if (version.major == 0)
+	version = impl->version();
   }
   // the codeset convertors are filled in by the codeset interceptor
   // before a request is unmarshalled.
@@ -726,10 +732,9 @@ Scavenger::execute()
 	}	
 	{
 	  // Send close connection message.
-	  GIOP::Version ver = giopStreamImpl::maxVersion()->version();
 	  char hdr[12];
 	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = ver.major;   hdr[5] = ver.minor;
+	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
 	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
 	  hdr[7] = (char)GIOP::CloseConnection;
 	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
@@ -1009,10 +1014,9 @@ public:
 	}	
 	{
 	  // Send close connection message.
-	  GIOP::Version ver = giopStreamImpl::maxVersion()->version();
 	  char hdr[12];
 	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = ver.major;   hdr[5] = ver.minor;
+	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
 	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
 	  hdr[7] = (char)GIOP::CloseConnection;
 	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;

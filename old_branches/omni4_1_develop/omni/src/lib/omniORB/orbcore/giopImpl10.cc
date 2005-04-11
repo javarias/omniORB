@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2005/01/06 23:10:15  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.6.2  2003/07/10 21:55:56  dgrisby
   Use re-entrant GIOP 1.0 size calc.
 
@@ -287,9 +290,9 @@ giopImpl10::inputReplyBegin(giopStream* g,
     {
       CORBA::ULong minor;
       CORBA::Boolean retry;
+      g->pd_strand->orderly_closed = 1;
       g->notifyCommFailure(0,minor,retry);
       g->pd_strand->state(giopStrand::DYING);
-      g->pd_strand->orderly_closed = 1;
       giopStream::CommFailure::_raise(minor,
 				      CORBA::COMPLETED_NO,
 				      retry,__FILE__,__LINE__);

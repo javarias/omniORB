@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/01/06 23:10:11  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.6.3  2003/11/06 11:56:56  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -280,18 +283,26 @@ GIOP_C::notifyCommFailure(CORBA::Boolean heldlock,
     else {
       currentaddr = pd_calldescriptor->currentAddress();
     }
-    currentaddr = pd_rope->notifyCommFailure(currentaddr,heldlock);
-    pd_calldescriptor->currentAddress(currentaddr);
 
-    if (currentaddr == firstaddr) {
-      // Run out of addresses to try.
-      retry = 0;
-      pd_calldescriptor->firstAddressUsed(0);
-      pd_calldescriptor->currentAddress(0);
+    if (pd_strand->orderly_closed) {
+      // Strand was closed before / during our request. Retry with the
+      // same address.
+      retry = 1;
     }
     else {
-      // Retry will use the next address in the list.
-      retry = 1;
+      currentaddr = pd_rope->notifyCommFailure(currentaddr,heldlock);
+      pd_calldescriptor->currentAddress(currentaddr);
+
+      if (currentaddr == firstaddr) {
+        // Run out of addresses to try.
+	retry = 0;
+	pd_calldescriptor->firstAddressUsed(0);
+	pd_calldescriptor->currentAddress(0);
+      }
+      else {
+	// Retry will use the next address in the list.
+	retry = 1;
+      }
     }
   }
   else if (pd_strand->biDir && 
