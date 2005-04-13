@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.5  2005/01/13 21:55:56  dgrisby
+// Turn off -g debugging; suppress some compiler warnings.
+//
 // Revision 1.1.2.4  2004/10/13 17:58:25  dgrisby
 // Abstract interfaces support; values support interfaces; value bug fixes.
 //
@@ -44,6 +47,15 @@
 
 
 #include <omniORB4/CORBA.h>
+
+#ifndef Swap32
+#define Swap32(l) ((((l) & 0xff000000) >> 24) | \
+		   (((l) & 0x00ff0000) >> 8)  | \
+		   (((l) & 0x0000ff00) << 8)  | \
+		   (((l) & 0x000000ff) << 24))
+#else
+#error "Swap32 has already been defined"
+#endif
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -784,7 +796,13 @@ peekChunkTag()
     pd_actual.fetchInputData(omni::ALIGN_4, 4);
   }
   copyStateFromActual();
-  return *((_CORBA_Long*)p1);
+
+  _CORBA_Long tag = *((_CORBA_Long*)p1);
+
+  if (pd_unmarshal_byte_swap)
+    return Swap32(tag);
+  else
+    return tag;
 }
 
 
