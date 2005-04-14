@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.4  2005/01/25 11:45:48  dgrisby
+// Merge from omnipy2_develop; set RPM version.
+//
 // Revision 1.1.4.3  2005/01/07 00:22:33  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -900,10 +903,11 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
   if (result)
     Py_DECREF(result);
   else {
-    if (omniORB::trace(5))
-      omniORB::logf("omniORBpy: Servant etherealization raised an exception!");
+    omniORB::logs(5, "omniORBpy: Servant etherealization "
+		  "raised an exception!");
+
     if (omniORB::trace(10)) {
-      omniORB::logf("omniORBpy: Traceback follows:");
+      omniORB::logs(10, "omniORBpy: Traceback follows:");
       PyErr_Print();
     }
     else
@@ -1166,11 +1170,11 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
     return result;
   }
   else {
-    if (omniORB::trace(5))
-      omniORB::logf("omniORBpy: AdapterActivator::unknown_adapter "
-		    "raised an exception!");
+    omniORB::logs(5, "omniORBpy: AdapterActivator::unknown_adapter "
+		  "raised an exception!");
+
     if (omniORB::trace(10)) {
-      omniORB::logf("omniORBpy: Traceback follows:");
+      omniORB::logs(10, "omniORBpy: Traceback follows:");
       PyErr_Print();
     }
     else

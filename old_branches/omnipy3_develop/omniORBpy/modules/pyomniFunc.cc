@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:56  dgrisby
 // New omnipy3_develop branch.
 //
@@ -103,7 +106,7 @@ static CORBA::Boolean transientEH(void* cookie, CORBA::ULong retries,
     
     if (!r) {
       if (omniORB::trace(1)) {
-	omniORB::logf("Python TRANSIENT exception handler failed. "
+	omniORB::logs(1, "Python TRANSIENT exception handler failed. "
 		      "Traceback follows:");
 	PyErr_Print();
       }
@@ -112,9 +115,8 @@ static CORBA::Boolean transientEH(void* cookie, CORBA::ULong retries,
       return 0;
     }
     if (!PyInt_Check(r)) {
-      if (omniORB::trace(1))
-	omniORB::logf("Python TRANSIENT exception handler returned an "
-		      "invalid object.");
+      omniORB::logs(1, "Python TRANSIENT exception handler returned an "
+		    "invalid object.");
       Py_DECREF(r);
       return 0;
     }
@@ -149,7 +151,7 @@ static CORBA::Boolean commFailureEH(void* cookie, CORBA::ULong retries,
     
     if (!r) {
       if (omniORB::trace(1)) {
-	omniORB::logf("Python COMM_FAILURE exception handler failed. "
+	omniORB::logs(1, "Python COMM_FAILURE exception handler failed. "
 		      "Traceback follows:");
 	PyErr_Print();
       }
@@ -158,9 +160,8 @@ static CORBA::Boolean commFailureEH(void* cookie, CORBA::ULong retries,
       return 0;
     }
     if (!PyInt_Check(r)) {
-      if (omniORB::trace(1))
-	omniORB::logf("Python COMM_FAILURE exception handler returned an "
-		      "invalid object.");
+      omniORB::logs(1, "Python COMM_FAILURE exception handler returned an "
+		    "invalid object.");
       Py_DECREF(r);
       return 0;
     }
@@ -194,7 +195,7 @@ static CORBA::Boolean systemEH(void* cookie, CORBA::ULong retries,
     
     if (!r) {
       if (omniORB::trace(1)) {
-	omniORB::logf("Python SystemException handler failed. "
+	omniORB::logs(1, "Python SystemException handler failed. "
 		      "Traceback follows:");
 	PyErr_Print();
       }
@@ -203,9 +204,8 @@ static CORBA::Boolean systemEH(void* cookie, CORBA::ULong retries,
       return 0;
     }
     if (!PyInt_Check(r)) {
-      if (omniORB::trace(1))
-	omniORB::logf("Python SystemException handler returned an "
-		      "invalid object.");
+      omniORB::logs(1, "Python SystemException handler returned an "
+		    "invalid object.");
       Py_DECREF(r);
       return 0;
     }
@@ -482,7 +482,7 @@ extern "C" {
   "traceInvocations(int) -> None\n"
   "traceInvocations()    -> int\n"
   "\n"
-  "Set or get the omniORB invocaton tracing flag.\n";
+  "Set or get the omniORB invocation tracing flag.\n";
 
   static PyObject* pyomni_traceInvocations(PyObject* self, PyObject* args)
   {
@@ -494,6 +494,31 @@ extern "C" {
 
       if (PyInt_Check(pytl)) {
 	omniORB::traceInvocations = PyInt_AS_LONG(pytl);
+	Py_INCREF(Py_None);
+	return Py_None;
+      }
+    }
+    PyErr_SetString(PyExc_TypeError,
+		    (char*)"Operation requires a single integer argument");
+    return 0;
+  }
+
+  static char traceInvocationReturns_doc [] =
+  "traceInvocationReturns(int) -> None\n"
+  "traceInvocationReturns()    -> int\n"
+  "\n"
+  "Set or get the omniORB invocation return tracing flag.\n";
+
+  static PyObject* pyomni_traceInvocationReturns(PyObject* self, PyObject* args)
+  {
+    if (PyTuple_GET_SIZE(args) == 0) {
+      return PyInt_FromLong(omniORB::traceInvocationReturns);
+    }
+    else if (PyTuple_GET_SIZE(args) == 1) {
+      PyObject* pytl = PyTuple_GET_ITEM(args, 0);
+
+      if (PyInt_Check(pytl)) {
+	omniORB::traceInvocationReturns = PyInt_AS_LONG(pytl);
 	Py_INCREF(Py_None);
 	return Py_None;
       }
@@ -519,6 +544,31 @@ extern "C" {
 
       if (PyInt_Check(pytl)) {
 	omniORB::traceThreadId = PyInt_AS_LONG(pytl);
+	Py_INCREF(Py_None);
+	return Py_None;
+      }
+    }
+    PyErr_SetString(PyExc_TypeError,
+		    (char*)"Operation requires a single integer argument");
+    return 0;
+  }
+
+  static char traceTime_doc [] =
+  "traceTime(int) -> None\n"
+  "traceTime()    -> int\n"
+  "\n"
+  "Set or get the omniORB time tracing flag.\n";
+
+  static PyObject* pyomni_traceTime(PyObject* self, PyObject* args)
+  {
+    if (PyTuple_GET_SIZE(args) == 0) {
+      return PyInt_FromLong(omniORB::traceTime);
+    }
+    else if (PyTuple_GET_SIZE(args) == 1) {
+      PyObject* pytl = PyTuple_GET_ITEM(args, 0);
+
+      if (PyInt_Check(pytl)) {
+	omniORB::traceTime = PyInt_AS_LONG(pytl);
 	Py_INCREF(Py_None);
 	return Py_None;
       }
@@ -800,9 +850,17 @@ extern "C" {
      pyomni_traceInvocations,
      METH_VARARGS, traceInvocations_doc},
 
+    {(char*)"traceInvocationReturns",
+     pyomni_traceInvocationReturns,
+     METH_VARARGS, traceInvocationReturns_doc},
+
     {(char*)"traceThreadId",
      pyomni_traceThreadId,
      METH_VARARGS, traceThreadId_doc},
+
+    {(char*)"traceTime",
+     pyomni_traceTime,
+     METH_VARARGS, traceTime_doc},
 
     {(char*)"log",
      pyomni_log,

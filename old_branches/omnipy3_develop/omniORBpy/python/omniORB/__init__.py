@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.7  2005/03/02 13:39:16  dgrisby
+# Another merge from omnipy2_develop.
+#
 # Revision 1.30.2.6  2005/01/25 11:45:48  dgrisby
 # Merge from omnipy2_develop; set RPM version.
 #
@@ -411,7 +414,9 @@ Make stubs for the Interface Repository appear in the CORBA module"""
 #   installSystemExceptionHandler()
 #   traceLevel
 #   traceInvocations
+#   traceInvocationReturns
 #   traceThreadId
+#   traceTime
 #   log
 #   nativeCharCodeSet
 #   fixed
