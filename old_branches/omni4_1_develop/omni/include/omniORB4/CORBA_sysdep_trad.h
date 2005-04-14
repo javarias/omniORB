@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/01/25 11:17:49  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.3  2005/01/13 21:09:57  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -104,6 +107,12 @@
 #  define HAVE_GETPID 1
 #endif
 // Unset if no getpid() function
+
+#define HAVE_LOCALTIME 1
+// Unset if no localtime() function
+
+#define HAVE_STRFTIME 1
+// Unset if no strftime() function
 
 #define HAVE_GETTIMEOFDAY 1
 // Unset if no gettimeofday() function

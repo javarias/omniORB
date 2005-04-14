@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:03  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.15  2002/07/03 15:49:51  dgrisby
   Correct debug flag, typos, bug report address.
 
@@ -169,17 +172,26 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
   iop_client->InitialiseRequest();
 
   // Wait for the reply.
-  GIOP::ReplyStatusType rc;
+  GIOP::ReplyStatusType rc = iop_client->ReceiveReply();
 
-  switch( (rc = iop_client->ReceiveReply()) ) {
+  switch (rc) {
   case GIOP::NO_EXCEPTION:
     // Unmarshal any result and out/inout arguments.
     call_desc.unmarshalReturnedValues(s);
     iop_client->RequestCompleted();
+
+    if (omniORB::traceInvocationReturns) {
+      omniORB::logger l;
+      l << "Return '" << call_desc.op() << "' on remote: " << this << '\n';
+    }
     break;
 
   case GIOP::USER_EXCEPTION:
     {
+      if (omniORB::traceInvocationReturns) {
+	omniORB::logger l;
+	l << "Finish '" << call_desc.op() << "' (user exception)\n";
+      }
       // Retrieve the Interface Repository ID of the exception.
       CORBA::String_var repoId(s.unmarshalRawString());
       call_desc.userException(iop_client->getStream(), &(IOP_C&)iop_client,
@@ -196,6 +208,10 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
     {
       CORBA::Object_var obj(CORBA::Object::_unmarshalObjRef(s));
       iop_client->RequestCompleted();
+      if (omniORB::traceInvocationReturns) {
+	omniORB::logger l;
+	l << "Finish '" << call_desc.op() << "' (location forward)\n";
+      }
       throw omniORB::LOCATION_FORWARD(obj._retn(),
 			       (rc == GIOP::LOCATION_FORWARD_PERM) ? 1 : 0);
     }
@@ -206,6 +222,10 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
       v <<= s;
       pd_ior->addr_mode(v);
       iop_client->RequestCompleted();
+      if (omniORB::traceInvocationReturns) {
+	omniORB::logger l;
+	l << "Finish '" << call_desc.op() << "' (needs addressing mode)\n";
+      }
       if (omniORB::trace(10)) {
 	omniORB::logger log;
 	log << "Remote invocation: GIOP::NEEDS_ADDRESSING_MODE: "

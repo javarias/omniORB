@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.3  2005/03/30 23:36:15  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.5.2.2  2005/01/06 23:08:10  dgrisby
   Big merge from omni4_0_develop.
 
@@ -255,12 +258,22 @@ _CORBA_MODULE_BEG
   //     variable.  If true, then each local and remote invocation     //
   //     will generate a trace message.                                //
   //                                                                   //
+  _CORBA_MODULE_VAR _core_attr _CORBA_Boolean traceInvocationReturns;  //
+  //                                                                   //
+  //     This value can be changed at runtime either by command-line   //
+  //     option: -ORBtraceInvocations, or by direct assignment to this //
+  //     variable.  If true, then the return of each invocation will   //
+  //     generate a trace message.                                     //
+  //                                                                   //
   _CORBA_MODULE_VAR _core_attr _CORBA_Boolean traceThreadId;           //
   //     This value can be changed at runtime either by command-line   //
   //     option: -ORBtraceThreadId, or by direct assignment to this    //
   //     variable.  If true, then the logging messages emmited due to  //
   //     the two options above will contain the thread id of the       //
   //     logging thread.                                               //
+  //                                                                   //
+  _CORBA_MODULE_VAR _core_attr _CORBA_Boolean traceTime;               //
+  //     If true, logging messages will include the current time.      //
   ///////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////
@@ -435,9 +448,6 @@ _CORBA_MODULE_BEG
     char*       pd_end;    // assert(pd_p < pd_end)
   };
 
-
-  _CORBA_MODULE_FN void logf(const char* fmt ...);
-  // Writes log message with prefix, and appends '\n'.
 
   _CORBA_MODULE_FN void do_logs(const char* msg);
   // internal

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.5  2005/04/11 12:09:42  dgrisby
+  Another merge.
+
   Revision 1.1.6.4  2005/01/06 23:10:11  dgrisby
   Big merge from omni4_0_develop.
 
@@ -175,6 +178,10 @@ GIOP_C::ReceiveReply() {
 
   GIOP::ReplyStatusType rc = replyStatus();
   if (rc == GIOP::SYSTEM_EXCEPTION) { 
+    if (omniORB::traceInvocationReturns) {
+      omniORB::logger l;
+      l << "Finish '" << calldescriptor()->op() << "' (system exception)\n";
+    }
     UnMarshallSystemException();
     // never reaches here
   }

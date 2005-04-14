@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.4  2005/04/08 00:35:46  dgrisby
+  Merging again.
+
   Revision 1.4.2.3  2005/01/13 21:55:56  dgrisby
   Turn off -g debugging; suppress some compiler warnings.
 
@@ -1763,6 +1766,12 @@ omniOrbPOA::dispatch(omniCallHandle& handle, omniLocalIdentity* id)
         _ptrToInterface(handle.call_desc()->objref()->_localServantTarget())) {
 
     handle.upcall(id->servant(), *handle.call_desc());
+
+    if( omniORB::traceInvocationReturns ) {
+      omniORB::logger l;
+      l << "Return from in process call '" << handle.operation_name()
+	<< "' to: " << id << '\n';
+    }
     return;
   }
 
@@ -1774,6 +1783,13 @@ omniOrbPOA::dispatch(omniCallHandle& handle, omniLocalIdentity* id)
 		    BAD_OPERATION_UnRecognisedOperationName,
 		    CORBA::COMPLETED_NO);
     }
+  }
+  if( omniORB::traceInvocationReturns ) {
+    omniORB::logger l;
+    l << "Return from "
+      << (handle.call_desc() ? "in process" : "remote")
+      << " call '" << handle.operation_name()
+      << "' to: " << id << '\n';
   }
 }
 
@@ -1859,6 +1875,11 @@ omniOrbPOA::dispatch(omniCallDescriptor& call_desc, omniLocalIdentity* id)
       handle.localId(id);
       handle.mainThread(pd_main_thread_sync.mu, pd_main_thread_sync.cond);
       handle.upcall(id->servant(), call_desc);
+      if( omniORB::traceInvocationReturns ) {
+	omniORB::logger l;
+	l << "Return from local call \'" << call_desc.op() << "\' to "
+	  << id << '\n';
+      }
       return;
     }
   }
@@ -1875,6 +1896,11 @@ omniOrbPOA::dispatch(omniCallDescriptor& call_desc, omniLocalIdentity* id)
   call_desc.poa(this);
   _OMNI_NS(poaCurrentStackInsert) insert(&call_desc);
   call_desc.doLocalCall(id->servant());
+  if( omniORB::traceInvocationReturns ) {
+    omniORB::logger l;
+    l << "Return from local call \'" << call_desc.op() << "\' to "
+      << id << '\n';
+  }
 }
 
 
