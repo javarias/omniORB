@@ -1,233 +1,173 @@
 <html>
-  <!--Automatically generated with XSLT-->
-  <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORB 3.0.3 bugs</title>
-    <link type='text/css' href='../styles.css' rel='stylesheet'>
-  </head>
-  <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
-    <table border='0' width='100%' cellpadding='10' cellspacing='5'>
-      <tr>
-        <td class='header' width='15%'>
-          <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
-        <td class='header'>
-          <h1 align='center'>omniORB 3.0.3 bugs</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='sidebar' valign='top' width='15%' align='left'>
-          <p align='center'>
-            <b>Destinations</b>
-          </p>
-          <a href='../index.html'>omniORB home</a>
-          <br>
-          <a href='../history.html'>History</a>
-          <br>
-          <a href='../features.html'>Features</a>
-          <br>
-          <a href='../download.html'>Download</a>
-          <br>
-          <a href='../docs.html'>Documentation</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi'>Wiki</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi/FrequentlyAskedQuestions'>FAQ</a>
-          <br>
-          <a href='../bugs.html'>Bugs</a>
-          <br>
-          <a href='../development.html'>Development</a>
-          <br>
-          <a href='../snapshots/'>CVS snapshots</a>
-          <br>
-          <a href='http://sourceforge.net/projects/omniorb/'>SF project</a>
-          <br>
-          <a href='../list.html'>Mailing list</a>
-          <br>
-          <a href='../links.html'>Links</a>
-          <br>
-          <a href='http://www.omniorb-support.com/'>Support</a>
-          <br>
-          <a href='../contact.html'>Contact</a>
-          <br>
-          <br>
-          <hr width='80%'>
-          <p align='center'>
-            <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.3' width='1' alt=''></p>
-        </td><td class='main' valign='top' align='left'>
-          <p>
-	  The following bugs in omniORB 3.0.3 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 3.0.3 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 3.0.3 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.3" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 3.0.3 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
-          <table width='95%' align='center'>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>System clock change causes the scavenger thread to consume lots of CPU cycles</b>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>System clock change causes the scavenger thread to consume lots of CPU cycles</b>
             (bug number 7)
-            <a name='bug7'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue May 29 12:14:54 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>sll</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Peter R&ouml;nnquist</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue May 29 12:14:54 BST 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Peter Rönnquist</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Scavenger now get the real time after each scan. This is to cope with
   the system clock set backward by a large amount. Seems to happen a lot to
   some system..
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Incorrect namespaces for MSVC++ constant
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Incorrect namespaces for MSVC++ constant
   work-around</b>
             (bug number 6)
-            <a name='bug6'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Apr 27 11:58:25 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Daniel Bell</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Apr 27 11:58:25 BST 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Daniel Bell</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The code generated to give constants external linkage on MSVC failed
   for nested modules.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Incorrect code generated for includes at non-file
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Incorrect code generated for includes at non-file
   scope</b>
             (bug number 5)
-            <a name='bug5'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Apr 25 17:49:17 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Olaf Meding</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Apr 25 17:49:17 BST 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Olaf Meding</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The IDL compiler C++ back-end would generate incorrect code for
   #includes at non-file scope. Now, declarations inside files #included
   at non-file scope are treated as if they appeared in the including
   file.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Bug in ORB core causes assertion failure</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Bug in ORB core causes assertion failure</b>
             (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Mar 27 17:56:31 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djr</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Roumen Ivanov</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Mar 27 17:56:31 BST 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Roumen Ivanov</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   A bug in the ORB core would causes an assertion failure when an object is
   deactivated.  The problem occurs if the object has local references whose
   c++ type disagrees with that of the object.
   <p></p>
   This may explain a problem with omniNames, given in the link above.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Incorrect TypeCode for union with multiple case
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Incorrect TypeCode for union with multiple case
   labels</b>
             (bug number 3)
-            <a name='bug3'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Mar 21 16:31:13 GMT 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Clemens Fischer</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Mar 21 16:31:13 GMT 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Clemens Fischer</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The generated TypeCode for a union with multiple case labels would
   have the wrong member count. e.g. the count for
   <p></p>
-                <pre>
+  <pre>
   union U switch (long) {
     case 1:
     case 2: long l;
@@ -236,85 +176,73 @@
   </pre>
   would be 2 instead of 3.
   </td>
-            </tr>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
 <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Incorrect DynSK stubs for some recursive types</b>
+<td>Summary:</td>
+<td>
+<b>Incorrect DynSK stubs for some recursive types</b>
             (bug number 2)
-            <a name='bug2'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Mar 20 16:55:07 GMT 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Lars Immisch</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Mar 20 16:55:07 GMT 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Lars Immisch</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The IDL compiler C++ back-end would generate incorrect TypeCode
   constants for IDL like <p></p>
-                <pre>
+  <pre>
     struct S {
-      sequence &lt;sequence &lt;S> > a;
+      sequence &lt;sequence &lt;S&gt; &gt; a;
     };
   </pre>
   </td>
-            </tr>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
 <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Memory corruption when initialising multiply-recursive
+<td>Summary:</td>
+<td>
+<b>Memory corruption when initialising multiply-recursive
   structures</b>
             (bug number 1)
-            <a name='bug1'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Mar 20 16:55:07 GMT 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Marcus Bullingham</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Mar 20 16:55:07 GMT 2001</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Marcus Bullingham</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   IDL types where there was more than one recursion to the same type
   would corrupt memory, sometimes leading to a crash.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
 </html>

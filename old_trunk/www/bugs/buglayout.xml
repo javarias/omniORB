@@ -91,7 +91,6 @@
     </tr>
 
     <tr><td>Date:      </td><td><xsl:value-of select="@date"/></td></tr>
-    <tr><td>Fixed by:  </td><td><xsl:value-of select="@user"/></td></tr>
 
     <xsl:apply-templates/>
 

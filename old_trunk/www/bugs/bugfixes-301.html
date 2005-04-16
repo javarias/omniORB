@@ -1,259 +1,193 @@
 <html>
-  <!--Automatically generated with XSLT-->
-  <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORB 3.0.1 bugs</title>
-    <link type='text/css' href='../styles.css' rel='stylesheet'>
-  </head>
-  <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
-    <table border='0' width='100%' cellpadding='10' cellspacing='5'>
-      <tr>
-        <td class='header' width='15%'>
-          <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
-        <td class='header'>
-          <h1 align='center'>omniORB 3.0.1 bugs</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='sidebar' valign='top' width='15%' align='left'>
-          <p align='center'>
-            <b>Destinations</b>
-          </p>
-          <a href='../index.html'>omniORB home</a>
-          <br>
-          <a href='../history.html'>History</a>
-          <br>
-          <a href='../features.html'>Features</a>
-          <br>
-          <a href='../download.html'>Download</a>
-          <br>
-          <a href='../docs.html'>Documentation</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi'>Wiki</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi/FrequentlyAskedQuestions'>FAQ</a>
-          <br>
-          <a href='../bugs.html'>Bugs</a>
-          <br>
-          <a href='../development.html'>Development</a>
-          <br>
-          <a href='../snapshots/'>CVS snapshots</a>
-          <br>
-          <a href='http://sourceforge.net/projects/omniorb/'>SF project</a>
-          <br>
-          <a href='../list.html'>Mailing list</a>
-          <br>
-          <a href='../links.html'>Links</a>
-          <br>
-          <a href='http://www.omniorb-support.com/'>Support</a>
-          <br>
-          <a href='../contact.html'>Contact</a>
-          <br>
-          <br>
-          <hr width='80%'>
-          <p align='center'>
-            <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.1' width='1' alt=''></p>
-        </td><td class='main' valign='top' align='left'>
-          <p>
-	  The following bugs in omniORB 3.0.1 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 3.0.1 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 3.0.1 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.1" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 3.0.1 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
-          <table width='95%' align='center'>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Clash with name _T</b>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Clash with name _T</b>
             (bug number 14)
-            <a name='bug14'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Sep 25 11:52:16 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>All sorts of people</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug14"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Sep 25 11:52:16 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>All sorts of people</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
   omniORB used <code>_T</code> as a template class name in various
   places. This causes problems with standard headers on some
   platforms, which <code>#define _T</code>. All uses of
   <code>_T</code> have been changed.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Workaround for the Sun C++ 5.0 or Forte WS 6.0 exception
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Workaround for the Sun C++ 5.0 or Forte WS 6.0 exception
   unwinding bug</b>
             (bug number 13)
-            <a name='bug13'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Sep 21 15:13:05 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>sll</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Sai-Lai Lo</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug13"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Sep 21 15:13:05 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Sai-Lai Lo</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
    Sun C++ 5.0 or Forte C++ 6.0 generated code will segv occasionally
    when concurrent threads throw an exception. The stack trace points
    to a problem in the exception unwinding. The workaround seems to be
    to install explicitly an uncaught exception handler.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>C++ backend reversed order of includes in .hh file</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>C++ backend reversed order of includes in .hh file</b>
             (bug number 12)
-            <a name='bug12'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Sep 19 14:50:05 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>NODA Itsuki</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  If an IDL source file #included &lt;a.idl> and &lt;b.idl> then the
-  resulting header would #include &lt;b.hh> before &lt;a.hh>.
+            <a name="bug12"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Sep 19 14:50:05 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>NODA Itsuki</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  If an IDL source file #included &lt;a.idl&gt; and &lt;b.idl&gt; then the
+  resulting header would #include &lt;b.hh&gt; before &lt;a.hh&gt;.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Bug when assigning a String_var to itself</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Bug when assigning a String_var to itself</b>
             (bug number 11)
-            <a name='bug11'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Sep 19 10:08:31 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Stefan Engelhardt</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug11"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Sep 19 10:08:31 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Stefan Engelhardt</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Assigning a String_var to itself would incorrectly delete the string
   contents.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl/C++ bug with unions with implicit default members</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl/C++ bug with unions with implicit default members</b>
             (bug number 10)
-            <a name='bug10'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Sep 13 10:09:43 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Chris Newbold</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug10"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Sep 13 10:09:43 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Chris Newbold</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The generated <code>_d(...)</code> method was incomplete, preventing
   the discriminant from being changed within the set of legal default
   values after calling <code>_default()</code> on a union with an implicit
   default member.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl produces no useful output on Windows 98</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl produces no useful output on Windows 98</b>
             (bug number 9)
-            <a name='bug9'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Sep 11 15:12:38 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Guangyu Gu, Mark Pumar, others</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug9"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Sep 11 15:12:38 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Guangyu Gu, Mark Pumar, others</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
   On some Windows 98 machines, but not others, the C pre-processor
   output is echoed to the screen, rather than forming the input to
   omniidl. omniidl therefore fails to generate any code. This fix adds
@@ -261,270 +195,233 @@
   rather than a pipe between the pre-processor and omniidl. It is
   reported that this works on affected Win98 machines.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Support for Python 1.6 and 2.0b1</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Support for Python 1.6 and 2.0b1</b>
             (bug number 8)
-            <a name='bug8'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Sep  6 12:13:30 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug8"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Sep  6 12:13:30 BST 2000</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   omniidl was hard-coded to require Python 1.5.2, just in case later
   versions were incompatible. 1.6 and 2.0b1 are compatible, so they
   are now supported.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>#includes of iostream.h left in omniORB headers</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>#includes of iostream.h left in omniORB headers</b>
             (bug number 7)
-            <a name='bug7'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Sep  4 10:02:41 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Paul Nader</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  Several files had <code>#include&lt;iostream.h></code> left
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Sep  4 10:02:41 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Paul Nader</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Several files had <code>#include&lt;iostream.h&gt;</code> left
   behind from debugging. This causes problems for code which does
-  <code>#include &lt;iostream></code> without the <code>.h</code>.
+  <code>#include &lt;iostream&gt;</code> without the <code>.h</code>.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>BOA constructor with object key broken</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>BOA constructor with object key broken</b>
             (bug number 6)
-            <a name='bug6'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Aug 30 10:43:34 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Paul Nader</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  The fix to <a href='bug300.html#bug8'>bug 8</a> in omniORB 3.0.0 did
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Aug 30 10:43:34 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Paul Nader</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  The fix to <a href="bug300.html#bug8">bug 8</a> in omniORB 3.0.0 did
   not actually work.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl loses all but the first comment with -K</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl loses all but the first comment with -K</b>
             (bug number 5)
-            <a name='bug5'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Aug 25 14:25:20 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Richard Gruet</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Aug 25 14:25:20 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Richard Gruet</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
   On some platforms, omniidl -K would lose all but the first comment
   attached to a node. The code used a construct whose evaluation order
   is undefined in C++, so it worked with some compilers, but not
   others.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>MSVC5/6 marshalling multidimensional arrays of basic types</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>MSVC5/6 marshalling multidimensional arrays of basic types</b>
             (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Aug 23 16:44:36 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>dme</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>MSVC5/6 fail to resolve the correct operator[] when marshalling
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Aug 23 16:44:36 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>dme</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>MSVC5/6 fail to resolve the correct operator[] when marshalling
         a multidimensional array of basic types, only in the return case
         (not when using an out type)
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>"Unexpected" exception at initialization</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>"Unexpected" exception at initialization</b>
             (bug number 3)
-            <a name='bug3'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Aug 22 15:48:11 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>sll</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Chris Newbold</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>When the port specified via -ORBpoa_iiop_port happens to be in use,
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Aug 22 15:48:11 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Chris Newbold</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>When the port specified via -ORBpoa_iiop_port happens to be in use,
         an internal omniORB exception is raised by resolve_initial_reference().
         Now a system exception CORBA::INITIALIZE is raised instead.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Missing make rules for GCC on Solaris</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Missing make rules for GCC on Solaris</b>
             (bug number 2)
-            <a name='bug2'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Aug 22 10:59:21 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Mark Borges</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>Make rules for the omniDynamic shared library were missing, so
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Aug 22 10:59:21 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Mark Borges</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>Make rules for the omniDynamic shared library were missing, so
   the new libCOS failed to link.</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Typo in omniidl.idltype.Declared.name()</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Typo in omniidl.idltype.Declared.name()</b>
             (bug number 1)
-            <a name='bug1'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Aug 21 10:11:51 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Richard Gruet</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Aug 21 10:11:51 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Richard Gruet</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The <code>name()</code> function of <code>idltype.Declared</code>
   accidentally returned a list containing a single string rather than
   just the string itself.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
 </html>

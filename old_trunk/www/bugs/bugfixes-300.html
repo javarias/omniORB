@@ -1,252 +1,199 @@
 <html>
-  <!--Automatically generated with XSLT-->
-  <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORB 3.0.0 bugs</title>
-    <link type='text/css' href='../styles.css' rel='stylesheet'>
-  </head>
-  <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
-    <table border='0' width='100%' cellpadding='10' cellspacing='5'>
-      <tr>
-        <td class='header' width='15%'>
-          <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
-        <td class='header'>
-          <h1 align='center'>omniORB 3.0.0 bugs</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='sidebar' valign='top' width='15%' align='left'>
-          <p align='center'>
-            <b>Destinations</b>
-          </p>
-          <a href='../index.html'>omniORB home</a>
-          <br>
-          <a href='../history.html'>History</a>
-          <br>
-          <a href='../features.html'>Features</a>
-          <br>
-          <a href='../download.html'>Download</a>
-          <br>
-          <a href='../docs.html'>Documentation</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi'>Wiki</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi/FrequentlyAskedQuestions'>FAQ</a>
-          <br>
-          <a href='../bugs.html'>Bugs</a>
-          <br>
-          <a href='../development.html'>Development</a>
-          <br>
-          <a href='../snapshots/'>CVS snapshots</a>
-          <br>
-          <a href='http://sourceforge.net/projects/omniorb/'>SF project</a>
-          <br>
-          <a href='../list.html'>Mailing list</a>
-          <br>
-          <a href='../links.html'>Links</a>
-          <br>
-          <a href='http://www.omniorb-support.com/'>Support</a>
-          <br>
-          <a href='../contact.html'>Contact</a>
-          <br>
-          <br>
-          <hr width='80%'>
-          <p align='center'>
-            <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.0' width='1' alt=''></p>
-        </td><td class='main' valign='top' align='left'>
-          <p>
-	  The following bugs in omniORB 3.0.0 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 3.0.0 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 3.0.0 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0.0" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 3.0.0 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
-          <table width='95%' align='center'>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniIDL/C++ backend generated incorrect DynSK.cc typecode
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniIDL/C++ backend generated incorrect DynSK.cc typecode
   data for some interfaces.</b>
             (bug number 21)
-            <a name='bug21'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Thu Aug 17 18:11:14 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>dme</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>Incorrect typecode data was generated for some interfaces eg:
+            <a name="bug21"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Aug 17 18:11:14 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>dme</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>Incorrect typecode data was generated for some interfaces eg:
   <pre>
   interface I{
-    typedef sequence&lt;I> t_I;
+    typedef sequence&lt;I&gt; t_I;
   };
   </pre>
   </td>
-            </tr>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
 <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Any insertion functions for PortableServer exceptions
+<td>Summary:</td>
+<td>
+<b>Any insertion functions for PortableServer exceptions
   missing</b>
             (bug number 20)
-            <a name='bug20'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Aug 15 14:11:37 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Jean Fran&ccedil;ois Poilpret</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniIDL C++ backend didn't always report unsupported IDL
+            <a name="bug20"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Aug 15 14:11:37 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Jean François Poilpret</td>
+</tr>
+
+  
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniIDL C++ backend didn't always report unsupported IDL
   constructs (eg wide strings) in the AST.
   </b>
             (bug number 19)
-            <a name='bug19'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Aug 14 20:29:57 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Andr&eacute; Bj&auml;rby</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>If the remote server is not present, a CORBA call on win32
+            <a name="bug19"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Aug 14 20:29:57 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>André Bjärby</td>
+</tr>
+
+  
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>If the remote server is not present, a CORBA call on win32
   platforms blocks for 30 seconds before raising a COMM_FAILURE exception.
   </b>
             (bug number 18)
-            <a name='bug18'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Jul 21 16:20:43 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>sll</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>sll</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <p> The ORB uses a select() after the connect() call. Win32 differs from
+            <a name="bug18"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 21 16:20:43 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>sll</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <p> The ORB uses a select() after the connect() call. Win32 differs from
   other platforms in that it reports a connect() failure to the select()
   via the exception fd_set. This was not tested by the ORB.
   </p>
-              </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>-ORBpoa_iiop_port overrides OMNIORB_USEHOSTNAME</b>
+  </td>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>-ORBpoa_iiop_port overrides OMNIORB_USEHOSTNAME</b>
             (bug number 17)
-            <a name='bug17'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Aug  8 15:55:35 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Beat Meier</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug17"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Aug  8 15:55:35 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Beat Meier</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
   -ORBpoa_iiop_port would override the OMNIORB_USEHOSTNAME environment
   variable, meaning that -ORBpoa_iiop_name_port had to be used.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>CORBA calls with large arguments on Win32 platforms may fail
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>CORBA calls with large arguments on Win32 platforms may fail
   because tcp socket was wrongly left in non-blocking state.
   </b>
             (bug number 16)
-            <a name='bug16'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Jul 21 16:20:43 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>sll</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>chm</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <p>The connect code in 3.0.0 now turns the socket to non-blocking
+            <a name="bug16"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 21 16:20:43 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>chm</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <p>The connect code in 3.0.0 now turns the socket to non-blocking
   and set a limit on the time it prepares to wait. Once connected, the
   socket is turned back to blocking. Unfortunately, the ioctlsocket
   call is passed the wrong argument which leaves the socket in
@@ -254,182 +201,166 @@
   large arguments, the call may fail mysteriously (because windows
   says the send call would block and the ORB thinks it is wrong
   because it thinks the socket is blocking).</p>
-              </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Fixes for AIX with xlC</b>
+  </td>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Fixes for AIX with xlC</b>
             (bug number 15)
-            <a name='bug15'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Aug  4 12:33:25 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Michael Donahue</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>Small updates to make rules and omniidl</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Fix to bug 4 broke escaped identifiers</b>
+            <a name="bug15"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Aug  4 12:33:25 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Michael Donahue</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>Small updates to make rules and omniidl</td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Fix to bug 4 broke escaped identifiers</b>
             (bug number 14)
-            <a name='bug14'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Aug  4 10:00:42 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>dme</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>The fix to <a href='#bug4'>bug 4</a> broke look-ups of escaped
+            <a name="bug14"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Aug  4 10:00:42 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>dme</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>The fix to <a href="#bug4">bug 4</a> broke look-ups of escaped
   identifiers. omniidl would complain about differences in case
   between the escaped identifier and the target.</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniIDL/C++ generated method signature mismatch when using 
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniIDL/C++ generated method signature mismatch when using 
            -Wbvirtual_objref</b>
             (bug number 13)
-            <a name='bug13'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Thu Aug  3 22:22:24 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>dme</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>omniIDL generated a method prototype in the .hh file which didn't
+            <a name="bug13"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Aug  3 22:22:24 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>dme</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>omniIDL generated a method prototype in the .hh file which didn't
   match up with the implementation in the SK.cc file due to a variable
   name typo in the C++ backend.</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Comments are incorrectly attached to struct
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Comments are incorrectly attached to struct
   members</b>
             (bug number 12)
-            <a name='bug12'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Aug  1 12:21:35 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Stefan Seefeld</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>omniidl attached comments which should have been attached to
+            <a name="bug12"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Aug  1 12:21:35 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Stefan Seefeld</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>omniidl attached comments which should have been attached to
   struct members to the wrong nodes.</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl C++ backend missed some forward declarations and
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl C++ backend missed some forward declarations and
            typedefs when in BOA compatibility mode</b>
             (bug number 11)
-            <a name='bug11'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 26 16:21:09 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Renzo Tomaselli</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl bug with inheriting typedef to forward declared
+            <a name="bug11"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 26 16:21:09 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Renzo Tomaselli</td>
+</tr>
+  
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl bug with inheriting typedef to forward declared
            interface</b>
             (bug number 10)
-            <a name='bug10'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 26 11:46:16 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug10"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 26 11:46:16 BST 2000</td>
+</tr>
+
+  
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The following IDL is valid, but omniidl flagged it as an error:
   <pre>
     interface I;
@@ -438,285 +369,257 @@
     interface K : J {};
   </pre>
   </td>
-            </tr>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
 
 <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Suppressed compiler warning when an operation with no arguments
+<td>Summary:</td>
+<td>
+<b>Suppressed compiler warning when an operation with no arguments
            and no return value is encountered.</b>
             (bug number 9)
-            <a name='bug9'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Jul 24 16:09:20 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Robert Stent</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Added missing constructor to BOA compatibility skeletons.</b>
+            <a name="bug9"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jul 24 16:09:20 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Robert Stent</td>
+</tr>
+
+  
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Added missing constructor to BOA compatibility skeletons.</b>
             (bug number 8)
-            <a name='bug8'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Jul 24 11:14:00 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Paul Nader</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug8"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jul 24 11:14:00 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Paul Nader</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
   For an interface I, the _sk_I::_sk_I(const omniOrbBoaKey&amp;) was missing.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Support for object references with unlikely repository
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Support for object references with unlikely repository
   ids.</b>
             (bug number 7)
-            <a name='bug7'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Jul 21 16:20:43 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>chm</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <p>In the case that omniORB receives an object reference claiming to
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 21 16:20:43 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>chm</td>
+</tr>
+
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <p>In the case that omniORB receives an object reference claiming to
   be type "A", and it requires type "B", but it has static knowledge
   that "A" is not derived from "B", it rejects the object reference.
   This is incorrect, since the object may actually have type "C",
   which is derived from both "A" and "B".</p>
-                <p>A special case of this is an object reference claiming to be a
+
+  <p>A special case of this is an object reference claiming to be a
   base type of the target type (such as CORBA::Object). Attempts to
   narrow such a reference would always fail.</p>
-              </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>String_var copy initialisations changed to direct
+  </td>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>String_var copy initialisations changed to direct
   initialisations</b>
             (bug number 6)
-            <a name='bug6'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri Jul 21 10:48:44 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Bruce Visscher</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Thread tracing accidentally left on</b>
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 21 10:48:44 BST 2000</td>
+</tr>
+
+  
+
+  <tr>
+<td>Reported by:</td>
+<td>Bruce Visscher</td>
+</tr>
+
+  
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Thread tracing accidentally left on</b>
             (bug number 5)
-            <a name='bug5'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 19 18:03:11 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <p>Tracing of mutexes and condition variables was accidentally left
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 19 18:03:11 BST 2000</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <p>Tracing of mutexes and condition variables was accidentally left
   turned on in include/omniORB3/tracedthread.h. Turning it off gives a
   significant performance improvement, especially for local calls.</p>
-                <p>All omniORB libraries need to be rebuilt to make this change; the
+
+  <p>All omniORB libraries need to be rebuilt to make this change; the
   make rules should do this automatically. The libraries remain
   compatible with user code, so it does not need to be recompiled. If
   you have omniORBpy installed, you must also recompile that.
   Unfortunately, its make rules do not realise that a recompile is
   necessary (I don't know why), so you must explicitly "<code>make
   clean</code>" before "<code>make export</code>".</p>
-              </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl name look-up is more strict</b>
+  </td>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl name look-up is more strict</b>
             (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 19 17:22:34 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 19 17:22:34 BST 2000</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   When looking-up a name, omniidl now raises an error if a name which
   differs only in case is found along the look-up path. Before, it
   would ignore the name and continue until an exact match was found.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>OpenVMS patches from Bruce Visscher</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>OpenVMS patches from Bruce Visscher</b>
             (bug number 3)
-            <a name='bug3'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Jul 17 15:20:18 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <p>This adds some missing makefiles for a directory that contains
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jul 17 15:20:18 BST 2000</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <p>This adds some missing makefiles for a directory that contains
   tools for building shareable images on the VAX platform. Also, some
   minor problems with the build of omniORBpy were fixed.</p>
-                <p>
-                  <em>Note:</em> This update is only available through CVS or the
+
+  <p><em>Note:</em> This update is only available through CVS or the
   FTP snapshots, not via the patch file.</p>
-              </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>String freeing bug in genior</b>
+
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>String freeing bug in genior</b>
             (bug number 2)
-            <a name='bug2'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Jul 17 14:22:25 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Jean Francois Poilpret</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>IDL compiler bug -- inheritance from typedef</b>
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jul 17 14:22:25 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Jean Francois Poilpret</td>
+</tr>
+  
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>IDL compiler bug -- inheritance from typedef</b>
             (bug number 1)
-            <a name='bug1'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Jul 17 10:30:00 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>djs</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Renzo Tomaselli</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jul 17 10:30:00 BST 2000</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Renzo Tomaselli</td>
+</tr>
+  
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
 </html>
