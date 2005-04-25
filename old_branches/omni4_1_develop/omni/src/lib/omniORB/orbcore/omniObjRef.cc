@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2003/11/06 11:56:57  dgrisby
+  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
   Revision 1.4.2.1  2003/03/23 21:02:09  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -694,7 +697,7 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
   omni::revertToOriginalProfile(this); \
   CORBA::TRANSIENT ex2(TRANSIENT_FailedOnForwarded, ex.completed()); \
   if( !_omni_callTransientExceptionHandler(this, retries++, ex2) ) \
-    throw ex2; \
+    throw; \
 } while(0)
 
 
