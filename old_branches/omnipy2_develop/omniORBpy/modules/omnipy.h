@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.23  2004/04/30 16:39:35  dgrisby
+// Log CORBA exceptions with Python tracebacks. Thanks Luke Deller.
+//
 // Revision 1.2.4.22  2003/12/15 12:10:52  dgrisby
 // Bug with omniORB.LOCATION_FORWARD handling.
 //
@@ -331,7 +334,8 @@ public:
 			   omniIOR*           ior,
 			   CORBA::Boolean     locked,
 			   omniIdentity*      id = 0,
-			   CORBA::Boolean     type_verified = 0);
+			   CORBA::Boolean     type_verified = 0,
+			   CORBA::Boolean     is_forwarded = 0);
 
   static
   omniObjRef* createLocalObjRef(const char*        mostDerivedRepoId,
