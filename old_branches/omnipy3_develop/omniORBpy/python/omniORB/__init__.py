@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.8  2005/04/14 13:50:45  dgrisby
+# New traceTime, traceInvocationReturns functions; removal of omniORB::logf.
+#
 # Revision 1.30.2.7  2005/03/02 13:39:16  dgrisby
 # Another merge from omnipy2_develop.
 #
@@ -899,6 +902,7 @@ BAD_PARAM_InvalidFixedPointLimits  = omniORBminorCode(109)
 BAD_TYPECODE_InvalidIndirection    = omniORBminorCode(108)
 INTF_REPOS_NotAvailable            = omniORBminorCode(39)
 NO_IMPLEMENT_Unsupported           = omniORBminorCode(36)
+TRANSIENT_FailedOnForwarded        = omniORBminorCode(1)
 
 
 # More public things, which depend on the CORBA module
