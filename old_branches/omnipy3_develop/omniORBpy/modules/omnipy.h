@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.3.2.4  2005/01/07 00:22:32  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.3.2.3  2003/07/10 22:13:25  dgrisby
 // Abstract interface support.
 //
@@ -350,7 +353,8 @@ public:
 			   omniIOR*           ior,
 			   CORBA::Boolean     locked,
 			   omniIdentity*      id = 0,
-			   CORBA::Boolean     type_verified = 0);
+			   CORBA::Boolean     type_verified = 0,
+			   CORBA::Boolean     is_forwarded = 0);
 
   static
   omniObjRef* createLocalObjRef(const char*        mostDerivedRepoId,
