@@ -31,6 +31,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.9  2005/02/23 18:58:30  dgrisby
+// Last fix did not cope with an omniORB thread having an id of a
+// previous Python thread.
+//
 // Revision 1.1.2.8  2005/01/24 17:28:59  dgrisby
 // Unbelievably unlikely race condition in thread cache / Python worker
 // thread creation. Of course it happened anyway.
@@ -264,7 +268,7 @@ threadExit(CacheNode* cn)
     PyObject* tmp = PyEval_CallObject(omniPy::pyWorkerThreadDel,
 				      argtuple);
     if (!tmp) {
-      if (omniORB::trace(1)) {
+      if (omniORB::trace(10)) {
 	{
 	  omniORB::logger l;
 	  l << "Exception trying to delete worker thread.\n";
