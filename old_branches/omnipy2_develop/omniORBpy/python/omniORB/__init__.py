@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.24  2005/03/02 11:32:44  dgrisby
+# New optional endian parameter to cdrMarshal / cdrUnmarshal.
+#
 # Revision 1.26.2.23  2005/01/24 17:28:57  dgrisby
 # Unbelievably unlikely race condition in thread cache / Python worker
 # thread creation. Of course it happened anyway.
@@ -886,6 +889,7 @@ BAD_PARAM_InvalidFixedPointLimits  = omniORBminorCode(109)
 BAD_TYPECODE_InvalidIndirection    = omniORBminorCode(108)
 INTF_REPOS_NotAvailable            = omniORBminorCode(39)
 NO_IMPLEMENT_Unsupported           = omniORBminorCode(36)
+TRANSIENT_FailedOnForwarded        = omniORBminorCode(1)
 
 
 # More public things, which depend on the CORBA module
