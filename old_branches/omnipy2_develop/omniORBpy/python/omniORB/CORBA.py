@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.18  2003/04/25 15:25:39  dgrisby
+# Implement missing bidir policy.
+#
 # Revision 1.28.2.17  2003/03/07 11:56:04  dgrisby
 # Missing TypeCode creation functions.
 #
@@ -661,7 +664,14 @@ class Object:
         return
 
     def _narrow(self, dest):
-        return _omnipy.narrow(self, dest._NP_RepositoryId)
+        repoId = dest._NP_RepositoryId
+        try:
+            dest_objref = omniORB.objrefMapping[repoId]
+            if isinstance(self, dest_objref):
+                return self
+        except KeyError:
+            pass
+        return _omnipy.narrow(self, repoId)
 
     __methods__ = ["_is_a", "_non_existent", "_is_equivalent",
                    "_get_interface", "_hash", "_narrow"]
