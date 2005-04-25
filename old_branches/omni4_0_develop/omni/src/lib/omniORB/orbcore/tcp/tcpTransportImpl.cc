@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.22  2004/07/26 09:57:28  dgrisby
+  Code using getifaddrs didn't cope with null ifa_addr member. Thanks
+  Dirk Siebnich.
+
   Revision 1.1.2.21  2004/02/11 17:01:13  dgrisby
   Use getifaddrs where available. Thanks Craig Rodrigues.
 
@@ -464,11 +468,10 @@ void vxworks_get_ifinfo(omnivector<const char*>& ifaddrs) {
 	s = tcpConnection::ip4ToString(iaddr->sin_addr.s_addr);
 	ifaddrs.push_back(s._retn());
       }
-      
-      // ifreq structures have variable lengths
-      entryLength -= offset;
-      ifr = (struct ifreq *)((char *)ifr + offset);
-    }
+    }      
+    // ifreq structures have variable lengths
+    entryLength -= offset;
+    ifr = (struct ifreq *)((char *)ifr + offset);
   }
   close (s);
 }
