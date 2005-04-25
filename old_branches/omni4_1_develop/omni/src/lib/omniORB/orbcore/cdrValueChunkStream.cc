@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.6  2005/04/13 09:11:04  dgrisby
+// peekChunkTag forgot to byteswap when it needed to.
+//
 // Revision 1.1.2.5  2005/01/13 21:55:56  dgrisby
 // Turn off -g debugging; suppress some compiler warnings.
 //
@@ -287,52 +290,53 @@ reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
 {
   omni::ptr_arith_t p1, p2;
 
-  if (pd_remaining) {
-    // Some pre-reserved octets to go before finishing a chunk
-    OMNIORB_ASSERT(!pd_inChunk);
-    OMNIORB_ASSERT(!pd_inHeader);
+  for (int i=0; i < 5; i++) {
 
-    p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
-    p2 = p1 + required;
-    if (p2 <= (omni::ptr_arith_t)pd_outb_end) {
-      // Not got to the end of the current buffer yet
+    if (pd_remaining) {
+      // Some pre-reserved octets to go before finishing a chunk
+      OMNIORB_ASSERT(!pd_inChunk);
+      OMNIORB_ASSERT(!pd_inHeader);
+
+      p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
+      p2 = p1 + required;
+      if (p2 <= (omni::ptr_arith_t)pd_outb_end) {
+	// Not got to the end of the current buffer yet
+	return 1;
+      }
+      copyStateToActual();
+      if (!pd_actual.reserveOutputSpaceForPrimitiveType(align, required))
+	OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
+		      (CORBA::CompletionStatus)completion());
+      copyStateFromActual();
+      p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
+      p2 = p1 + pd_remaining;
+      if (p2 > (omni::ptr_arith_t)pd_outb_end) {
+	pd_remaining = p2 - (omni::ptr_arith_t)pd_outb_end;
+      }
+      else {
+	pd_outb_end  = (void*)p2;
+	pd_remaining = 0;
+      }
       return 1;
     }
-    copyStateToActual();
-    if (!pd_actual.reserveOutputSpaceForPrimitiveType(align, required))
-      OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
-		    (CORBA::CompletionStatus)completion());
-    copyStateFromActual();
-    p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
-    p2 = p1 + pd_remaining;
-    if (p2 > (omni::ptr_arith_t)pd_outb_end) {
-      pd_remaining = p2 - (omni::ptr_arith_t)pd_outb_end;
+
+    if (pd_inHeader) {
+      OMNIORB_ASSERT(!pd_inChunk);
+      copyStateToActual();
+      if (!pd_actual.reserveOutputSpaceForPrimitiveType(align, required))
+	OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
+		      (CORBA::CompletionStatus)completion());
+      copyStateFromActual();
+      return 1;
     }
-    else {
-      pd_outb_end  = (void*)p2;
-      pd_remaining = 0;
+
+    if (!pd_inChunk) {
+      // Start a new chunk
+      OMNIORB_ASSERT(pd_nestLevel);
+      OMNIORB_ASSERT(pd_lengthPtr == 0);
+      startOutputChunk();
     }
-    return 1;
-  }
 
-  if (pd_inHeader) {
-    OMNIORB_ASSERT(!pd_inChunk);
-    copyStateToActual();
-    if (!pd_actual.reserveOutputSpaceForPrimitiveType(align, required))
-      OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
-		    (CORBA::CompletionStatus)completion());
-    copyStateFromActual();
-    return 1;
-  }
-
-  if (!pd_inChunk) {
-    // Start a new chunk
-    OMNIORB_ASSERT(pd_nestLevel);
-    OMNIORB_ASSERT(pd_lengthPtr == 0);
-    startOutputChunk();
-  }
-
-  for (int i=0; i < 5; i++) {
     p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
     p2 = p1 + required;
 
@@ -539,7 +543,12 @@ chunkStreamDeclareArrayLength(omni::alignment_t align, size_t size)
     start = (omni::ptr_arith_t)pd_lengthPtr + 4;
     OMNIORB_ASSERT(start < end);
     *pd_lengthPtr = (CORBA::Long)(end - start);
-    pd_remaining  = end - (omni::ptr_arith_t)pd_outb_end;
+
+    // Number of octets remainig is the number we required, minus the
+    // number we can fit into the current buffer with the required
+    // alignment.
+    omni::ptr_arith_t mask = ~((ptr_arith_t)align - 1);
+    pd_remaining = end - ((omni::ptr_arith_t)pd_outb_end & mask);
 
     if (omniORB::trace(25)) {
       omniORB::logger l;
