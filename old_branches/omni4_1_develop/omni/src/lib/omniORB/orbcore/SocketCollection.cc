@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/03/02 12:10:50  dgrisby
+  setSelectable / Peek fixes.
+
   Revision 1.1.4.5  2005/01/25 16:43:37  dgrisby
   Properly handle data_in_buffer indicator.
 
@@ -431,14 +434,6 @@ SocketCollection::Select() {
       if (revents)
 	count--;
 
-      if (revents & POLLERR) {
-	if (omniORB::trace(2)) {
-	  omniORB::logger l;
-	  l << "Error polling socket number " << (int)pd_pollfds[index].fd
-	    << "\n";
-	}
-	// *** HERE: what now?
-      }
       if (revents & POLLIN) {
 	SocketHolder* s = pd_pollsockets[index];
 
@@ -462,6 +457,16 @@ SocketCollection::Select() {
 #endif
 	}
       }
+      else {
+	if (omniORB::trace(20)) {
+	  omniORB::logger l;
+	  l << "Error polling socket number " << (int)pd_pollfds[index].fd
+	    << ".\n";
+	}
+	// Force a list scan next time
+	pd_changed = 1;
+	pd_abs_sec = pd_abs_nsec = 0;
+      }
       index++;
     }
   }
@@ -475,10 +480,13 @@ SocketCollection::Select() {
     // Negative return means error
     if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "poll() returned EBADF.");
-      pd_abs_sec = pd_abs_nsec = 0; // Force a list scan next time
+
+      // Force a list scan next time
+      pd_changed = 1;
+      pd_abs_sec = pd_abs_nsec = 0;
     }
     else if (ERRNO != RC_EINTR) {
-      if (omniORB::trace(1)) {
+      if (omniORB::trace(20)) {
 	omniORB::logger l;
 	l << "Error return from poll(). errno = " << (int)ERRNO << "\n";
       }
@@ -767,7 +775,10 @@ SocketCollection::Select() {
     // Negative return means error
     if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "select() returned EBADF.");
-      pd_abs_sec = pd_abs_nsec = 0; // Force a list scan next time
+
+      // Force a list scan next time
+      pd_changed = 1;
+      pd_abs_sec = pd_abs_nsec = 0;
     }
     else if (ERRNO != RC_EINTR) {
       if (omniORB::trace(1)) {
@@ -1046,7 +1057,10 @@ SocketCollection::Select() {
     // Negative return means error
     if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "select() returned EBADF.");
-      pd_abs_sec = pd_abs_nsec = 0; // Force a list scan next time
+
+      // Force a list scan next time
+      pd_changed = 1;
+      pd_abs_sec = pd_abs_nsec = 0;
     }
     else if (ERRNO != RC_EINTR) {
       if (omniORB::trace(1)) {
