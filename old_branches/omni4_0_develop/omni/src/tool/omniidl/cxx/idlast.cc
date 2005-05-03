@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.12  2002/04/30 14:59:37  dgrisby
+// omniidl segfault when checking a non-existent identifier is not a forward.
+//
 // Revision 1.16.2.11  2001/11/08 16:31:20  dpg1
 // Minor tweaks.
 //
@@ -337,6 +340,8 @@ process(FILE* f, const char* name)
   if (Config::keepComments && Config::commentsFirst)
     tree()->comments_ = Comment::grabSaved();
 
+  Prefix::endOuterFile();
+
   return IdlReportErrors();
 }
 
@@ -599,6 +604,7 @@ Interface(const char* file, int line, IDL_Boolean mainFile,
 
   if (se &&
       se->kind() == Scope::Entry::E_DECL &&
+      se->decl() &&
       se->decl()->kind() == Decl::D_FORWARD) {
 
     Forward* f = (Forward*)se->decl();

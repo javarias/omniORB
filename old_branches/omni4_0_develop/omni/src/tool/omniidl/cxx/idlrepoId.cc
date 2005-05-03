@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.5.2.7  2003/04/25 15:54:28  dgrisby
+// Remove unnecessary iostream.h include.
+//
 // Revision 1.5.2.6  2001/11/13 14:11:46  dpg1
 // Tweaks for CORBA 2.5 compliance.
 //
@@ -150,6 +153,17 @@ endFile()
   else
     IdlWarning(currentFile, yylineno,
 	       "Confused by pre-processor line directives");
+}
+
+void
+Prefix::
+endOuterFile()
+{
+  if (current_->parent_)
+    IdlWarning(currentFile, yylineno,
+	       "Confused by pre-processor line directives");
+  else
+    delete current_;
 }
 
 const char*
