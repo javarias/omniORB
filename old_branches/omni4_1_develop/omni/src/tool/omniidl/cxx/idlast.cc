@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.3  2004/02/16 10:10:33  dgrisby
+// More valuetype, including value boxes. C++ mapping updates.
+//
 // Revision 1.22.2.2  2003/09/04 14:00:24  dgrisby
 // ValueType IDL updates.
 //
@@ -346,6 +349,8 @@ process(FILE* f, const char* name)
   if (Config::keepComments && Config::commentsFirst)
     tree()->comments_ = Comment::grabSaved();
 
+  Prefix::endOuterFile();
+
   return IdlReportErrors();
 }
 
@@ -608,6 +613,7 @@ Interface(const char* file, int line, IDL_Boolean mainFile,
 
   if (se &&
       se->kind() == Scope::Entry::E_DECL &&
+      se->decl() &&
       se->decl()->kind() == Decl::D_FORWARD) {
 
     Forward* f = (Forward*)se->decl();

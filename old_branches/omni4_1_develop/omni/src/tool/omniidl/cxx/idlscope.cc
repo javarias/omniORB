@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18.2.4  2005/01/06 23:11:14  dgrisby
+// Big merge from omni4_0_develop.
+//
 // Revision 1.18.2.3  2004/10/13 17:58:25  dgrisby
 // Abstract interfaces support; values support interfaces; value bug fixes.
 //
@@ -121,12 +124,17 @@
 #include <idlerr.h>
 #include <idlutil.h>
 #include <idlconfig.h>
+#include <idlrepoId.h>
 
 #include <string.h>
 
 // Global Scope pointers
 Scope* Scope::global_  = 0;
 Scope* Scope::current_ = 0;
+
+int n_builtins = 0;
+static Decl** builtins = 0;
+
 
 // ScopedName implementation
 ScopedName::
@@ -365,14 +373,24 @@ init()
 
   assert(global_ == 0);
 
+  Prefix::newFile();
+
   global_  = new Scope(0, Scope::S_GLOBAL, 0, file, 0);
   Scope* s = global_->newModuleScope("CORBA", file, 1);
 
-  s->addDecl("TypeCode",  0, 0, BaseType::TypeCodeType,  file, 2);
-  s->addDecl("Principal", 0, 0, BaseType::PrincipalType, file, 3);
-
   global_->addModule("CORBA", s, 0, file, 1);
   current_ = global_;
+
+  n_builtins  = 2;
+  assert (builtins == 0);
+  builtins    = new Decl*[n_builtins];
+  builtins[0] = new Native(file, 2, 0, "TypeCode");
+  builtins[1] = new Native(file, 3, 0, "Principal");
+
+  s->addDecl("TypeCode",  0, builtins[0], BaseType::TypeCodeType,  file, 2);
+  s->addDecl("Principal", 0, builtins[1], BaseType::PrincipalType, file, 3);
+
+  Prefix::endOuterFile();
 }
 
 void
@@ -382,6 +400,12 @@ clear()
   assert(global_ != 0);
   delete global_;
   global_ = 0;
+
+  for (int i=0; i < n_builtins; i++)
+    delete builtins[i];
+
+  delete [] builtins;
+  builtins = 0;
 }
 
 void

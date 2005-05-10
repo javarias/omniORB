@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.1  2003/03/23 21:01:45  dgrisby
+// Start of omniORB 4.1.x development branch.
+//
 // Revision 1.4.2.2  2000/10/27 16:31:09  dpg1
 // Clean up of omniidl dependencies and types, from omni3_develop.
 //
@@ -66,6 +69,7 @@ public:
   // Finish with a scope or file, reverting to the previous prefix
   static void endScope();
   static void endFile();
+  static void endOuterFile();
 
 
 protected:
