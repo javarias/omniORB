@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.14  2004/02/11 18:02:26  dgrisby
+  Call base constructor for pedantic compilers.
+
   Revision 1.2.2.13  2003/07/26 22:52:22  dgrisby
   Avoid spurious gcc warnings when sizeof pointer > sizeof int.
 
@@ -706,7 +709,8 @@ _CORBA_MODULE_VAR _dyn_attr const CORBA::TypeCode_ptr _tc_ThreadPolicyValue;
 
   protected:
     inline RefCountServantBase() : pd_refCount(1) {}
-    inline RefCountServantBase(const RefCountServantBase& os) : ServantBase(os), pd_refCount(1) {}
+    inline RefCountServantBase(const RefCountServantBase& os)
+      : omniServant(os), ServantBase(os), pd_refCount(1) {}
     inline RefCountServantBase& operator = (const RefCountServantBase&)
       { return *this; }
 
