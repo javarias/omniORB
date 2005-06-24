@@ -28,6 +28,9 @@
 //    Abstract interface support
 
 // $Log$
+// Revision 1.1.2.1  2003/07/10 22:13:25  dgrisby
+// Abstract interface support.
+//
 
 #include <omnipy.h>
 
@@ -45,7 +48,7 @@ validateTypeAbstractInterface(PyObject* d_o, PyObject* a_o,
     return;
 
   // Object reference?
-  if (PyInstance_Check(a_o) && omniPy::getTwin(a_o, OBJREF_TWIN))
+  if (omniPy::getTwin(a_o, OBJREF_TWIN))
     return;
 
   // Value?
@@ -95,14 +98,12 @@ marshalPyObjectAbstractInterface(cdrStream& stream,
   }
 
   // Object reference?
-  if (PyInstance_Check(a_o)) {
-    CORBA::Object_ptr obj;
-    obj = (CORBA::Object_ptr)omniPy::getTwin(a_o, OBJREF_TWIN);
-    if (obj) {
-      stream.marshalBoolean(1);
-      CORBA::Object::_marshalObjRef(obj, stream);
-      return;
-    }
+  CORBA::Object_ptr obj;
+  obj = (CORBA::Object_ptr)omniPy::getTwin(a_o, OBJREF_TWIN);
+  if (obj) {
+    stream.marshalBoolean(1);
+    CORBA::Object::_marshalObjRef(obj, stream);
+    return;
   }
 
   // Valuetype
@@ -139,7 +140,7 @@ copyArgumentAbstractInterface(PyObject* d_o, PyObject* a_o,
     return Py_None;
   }
 
-  if (PyInstance_Check(a_o) && omniPy::getTwin(a_o, OBJREF_TWIN)) {
+  if (omniPy::getTwin(a_o, OBJREF_TWIN)) {
     return omniPy::copyObjRefArgument(PyTuple_GET_ITEM(d_o, 1),
 				      a_o, compstatus);
   }

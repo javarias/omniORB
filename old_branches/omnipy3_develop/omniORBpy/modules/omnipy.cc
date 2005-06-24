@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.9  2005/04/25 18:27:41  dgrisby
+// Maintain forwarded location when narrowing forwarded references.
+//
 // Revision 1.1.4.8  2005/04/11 13:02:38  dgrisby
 // Another merge.
 //
@@ -138,6 +141,7 @@ PyObject* omniPy::py_omnipymodule;	// The _omnipy extension
 PyObject* omniPy::pyCORBAmodule;	// The CORBA module
 PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
 PyObject* omniPy::pyCORBAAnyClass;	//  Any class
+PyObject* omniPy::pyCORBATypeCodeClass;	//  TypeCode class
 PyObject* omniPy::pyCORBAContextClass;	//  Context class
 PyObject* omniPy::pyCORBAValueBase;    	//  ValueBase class
 PyObject* omniPy::pyCORBAValueBaseDesc;	//  ValueBase descriptor
@@ -147,7 +151,10 @@ PyObject* omniPy::pyomniORBskeletonMap;	//  The skeleton class map
 PyObject* omniPy::pyomniORBtypeMap;     //  The repoId to descriptor mapping
 PyObject* omniPy::pyomniORBvalueMap;    //  The repoId to value factory mapping
 PyObject* omniPy::pyomniORBwordMap;     //  Reserved word map
-PyObject* omniPy::pyPortableServerModule; // Portable server module
+PyObject* omniPy::pyomniORBUnknownValueBase;
+                                        //  Base class for unknown valuetypes
+PyObject* omniPy::pyPortableServerModule;
+                                        // Portable server module
 PyObject* omniPy::pyServantClass;       // Servant class
 PyObject* omniPy::pyCreateTypeCode;	// Function to create a TypeCode object
 PyObject* omniPy::pyWorkerThreadClass;  // Worker thread class
@@ -349,6 +356,9 @@ extern "C" {
     omniPy::pyCORBAAnyClass =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Any");
 
+    omniPy::pyCORBATypeCodeClass =
+      PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"TypeCode");
+
     omniPy::pyCORBAContextClass =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"Context");
 
@@ -358,12 +368,13 @@ extern "C" {
     omniPy::pyCORBAValueBaseDesc =
       PyObject_GetAttrString(omniPy::pyCORBAmodule, (char*)"_d_ValueBase");
 
-    omniPy::pyomniORBobjrefMap     = OMNIPY_ATTR("objrefMapping");
-    omniPy::pyomniORBtypeMap       = OMNIPY_ATTR("typeMapping");
-    omniPy::pyomniORBwordMap       = OMNIPY_ATTR("keywordMapping");
-    omniPy::pyPortableServerModule = OMNIPY_ATTR("PortableServer");
-    omniPy::pyomniORBskeletonMap   = OMNIPY_ATTR("skeletonMapping");
-    omniPy::pyomniORBvalueMap      = OMNIPY_ATTR("valueFactoryMapping");
+    omniPy::pyomniORBobjrefMap        = OMNIPY_ATTR("objrefMapping");
+    omniPy::pyomniORBtypeMap          = OMNIPY_ATTR("typeMapping");
+    omniPy::pyomniORBwordMap          = OMNIPY_ATTR("keywordMapping");
+    omniPy::pyPortableServerModule    = OMNIPY_ATTR("PortableServer");
+    omniPy::pyomniORBskeletonMap      = OMNIPY_ATTR("skeletonMapping");
+    omniPy::pyomniORBvalueMap         = OMNIPY_ATTR("valueFactoryMapping");
+    omniPy::pyomniORBUnknownValueBase = OMNIPY_ATTR("UnknownValueBase");
 
     OMNIORB_ASSERT(omniPy::pyPortableServerModule);
     OMNIORB_ASSERT(PyModule_Check(omniPy::pyPortableServerModule));
@@ -387,6 +398,8 @@ extern "C" {
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyCORBAsysExcMap));
     OMNIORB_ASSERT(omniPy::pyCORBAAnyClass);
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAAnyClass));
+    OMNIORB_ASSERT(omniPy::pyCORBATypeCodeClass);
+    OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBATypeCodeClass));
     OMNIORB_ASSERT(omniPy::pyCORBAContextClass);
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyCORBAContextClass));
     OMNIORB_ASSERT(omniPy::pyCORBAValueBaseDesc);
@@ -403,6 +416,8 @@ extern "C" {
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBvalueMap));
     OMNIORB_ASSERT(omniPy::pyomniORBwordMap);
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBwordMap));
+    OMNIORB_ASSERT(omniPy::pyomniORBUnknownValueBase);
+    OMNIORB_ASSERT(PyClass_Check(omniPy::pyomniORBUnknownValueBase));
     OMNIORB_ASSERT(omniPy::pyServantClass);
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyServantClass));
     OMNIORB_ASSERT(omniPy::pyCreateTypeCode);
@@ -763,8 +778,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"O", &pyobjref))
       return 0;
 
-    OMNIORB_ASSERT(PyInstance_Check(pyobjref));
-
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
@@ -788,9 +801,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"Os", &pyobjref, &repoId))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
-
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
@@ -811,9 +821,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 
     if (!PyArg_ParseTuple(args, (char*)"O", &pyobjref))
       return 0;
-
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
@@ -836,10 +843,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 
     if (!PyArg_ParseTuple(args, (char*)"OO", &pyobjref1, &pyobjref2))
       return 0;
-
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref1) ||
-			  !PyInstance_Check(pyobjref2),
-			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxobjref1, cxxobjref2;
     cxxobjref1 = (CORBA::Object_ptr)omniPy::getTwin(pyobjref1, OBJREF_TWIN);
@@ -865,9 +868,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     if (!PyArg_ParseTuple(args, (char*)"Oi", &pyobjref, &max))
       return 0;
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
-
     CORBA::Object_ptr cxxobjref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
@@ -886,9 +886,6 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
 
     if (!PyArg_ParseTuple(args, (char*)"Os", &pysource, &repoId))
       return 0;
-
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pysource),
-			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr cxxsource =
       (CORBA::Object_ptr)omniPy::getTwin(pysource, OBJREF_TWIN);

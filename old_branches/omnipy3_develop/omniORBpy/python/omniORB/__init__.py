@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.9  2005/04/25 18:28:29  dgrisby
+# Minor code for TRANSIENT_FailedOnForwarded.
+#
 # Revision 1.30.2.8  2005/04/14 13:50:45  dgrisby
 # New traceTime, traceInvocationReturns functions; removal of omniORB::logf.
 #
@@ -699,6 +702,28 @@ def createUnknownUserException(repoId, members):
     UnknownUserException._NP_RepositoryId = repoId
     UnknownUserException._members         = members
     return UnknownUserException
+
+
+class UnknownValueBase (CORBA.ValueBase):
+    pass
+
+
+def createUnknownValue(repoId, members, base_desc):
+
+    if base_desc == tcInternal.tv_null:
+        class UnknownValue (UnknownValueBase):
+            pass
+    else:
+        base_cls = base_desc[1]
+        if isinstance(base_cls, UnknownValueBase):
+            class UnknownValue (base_cls):
+                pass
+        else:
+            class UnknownValue (UnknownValueBase, base_cls):
+                pass
+
+    UnknownValue._NP_RepositoryId = repoId
+    return UnknownValue
 
 
 # Function to coerce an Any value with a partially-specified

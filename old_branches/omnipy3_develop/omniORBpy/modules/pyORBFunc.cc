@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
+// New omnipy3_develop branch.
+//
 // Revision 1.1.2.9  2001/12/04 12:17:43  dpg1
 // Cope with null ORB.
 //
@@ -112,11 +115,6 @@ extern "C" {
       objref = CORBA::Object::_nil();
     }
     else {
-      if (!PyInstance_Check(pyobjref)) {
-	PyErr_SetString(PyExc_TypeError,
-			(char*)"Argument must be an object reference.");
-	return NULL;
-      }	
       objref = (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
     }
     RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);

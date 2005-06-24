@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.4  2005/01/07 00:22:32  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.4.3  2003/07/10 22:13:25  dgrisby
 // Abstract interface support.
 //
@@ -324,26 +327,34 @@ validateTypeAny(PyObject* d_o, PyObject* a_o,
 		CORBA::CompletionStatus compstatus,
 		PyObject* track)
 {
-  if (!PyInstance_Check(a_o))
+  if (!omniPy::isInstance(a_o, omniPy::pyCORBAAnyClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
   // Validate TypeCode
-  PyObject* t_o = PyDict_GetItemString(adict, (char*)"_t");
-  if (!(t_o && PyInstance_Check(t_o)))
+  PyObject* t_o = PyObject_GetAttrString(a_o, (char*)"_t");
+
+  if (!t_o) {
+    PyErr_Clear();
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
+  Py_DECREF(t_o);
+
+  if (!omniPy::isInstance(t_o, omniPy::pyCORBATypeCodeClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 
-  PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
-  PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
-  if (!desc)
+  PyObject* desc = PyObject_GetAttrString(t_o, (char*)"_d");
+  Py_XDECREF(desc);
+  if (!desc) {
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
 
   // Any's contents
-  t_o = PyDict_GetItemString(adict, (char*)"_v");
-  if (!t_o)
+  t_o = PyObject_GetAttrString(a_o, (char*)"_v");
+  if (!t_o) {
+    PyErr_Clear();
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
+  }
+  Py_DECREF(t_o);
   omniPy::validateType(desc, t_o, compstatus, track);
 }
 
@@ -352,11 +363,12 @@ validateTypeTypeCode(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus,
 		     PyObject* track)
 {
-  if (!PyInstance_Check(a_o))
+  if (!omniPy::isInstance(a_o, omniPy::pyCORBATypeCodeClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 
-  PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-  PyObject* t_o   = PyDict_GetItemString(tdict, (char*)"_d");
+  PyObject* t_o = PyObject_GetAttrString(a_o, (char*)"_d");
+
+  Py_XDECREF(t_o);
   if (!t_o)
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 }
@@ -375,9 +387,6 @@ validateTypeObjref(PyObject* d_o, PyObject* a_o,
 		   PyObject* track)
 { // repoId, name
   if (a_o != Py_None) {
-    if (!PyInstance_Check(a_o))
-      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
     CORBA::Object_ptr obj =
       (CORBA::Object_ptr)omniPy::getTwin(a_o, OBJREF_TWIN);
     if (!obj)
@@ -499,13 +508,13 @@ validateTypeEnum(PyObject* d_o, PyObject* a_o,
 		 PyObject* track)
 { // repoId, name, item list
 
-  if (!PyInstance_Check(a_o))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  PyObject* ev = PyObject_GetAttrString(a_o, (char*)"_v");
 
-  PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
-				      (char*)"_v");
-  if (!(ev && PyInt_Check(ev)))
+  if (!(ev && PyInt_Check(ev))) {
+    PyErr_Clear();
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
+  Py_DECREF(ev);
 
   PyObject* t_o = PyTuple_GET_ITEM(d_o, 3);
   long      e   = PyInt_AS_LONG(ev);
@@ -1365,27 +1374,25 @@ validateTypeExcept(PyObject* d_o, PyObject* a_o,
 		   PyObject* track)
 { // class, repoId, exc name, name, descriptor, ...
 
-  if (!PyInstance_Check(a_o))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
-
   // As with structs, the descriptor tuple has twice the number of
-  // struct members plus 4.
-  int       cnt   = (PyTuple_GET_SIZE(d_o) - 4) / 2;
+  // members plus 4.
+  int cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 
   PyObject* name;
   PyObject* value;
 
   int i, j;
   for (i=0,j=4; i < cnt; i++) {
-    name    = PyTuple_GET_ITEM(d_o, j++);
+    name = PyTuple_GET_ITEM(d_o, j++);
     OMNIORB_ASSERT(PyString_Check(name));
-    value   = PyDict_GetItem(sdict, name);
+
+    value = PyObject_GetAttr(a_o, name);
     if (!value)
       OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-    omniPy::validateType(PyTuple_GET_ITEM(d_o, j++), value,
-			 compstatus, track);
+
+    Py_DECREF(value);
+
+    omniPy::validateType(PyTuple_GET_ITEM(d_o, j++), value, compstatus, track);
   }
 }
 
@@ -1710,24 +1717,25 @@ marshalPyObjectOctet(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 static void
 marshalPyObjectAny(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 {
-  PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
-
   // TypeCode
-  PyObject* t_o   = PyDict_GetItemString(adict, (char*)"_t");
-  PyObject* tdict = ((PyInstanceObject*)t_o)->in_dict;
-  PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
+  PyObject* t_o  = PyObject_GetAttrString(a_o, (char*)"_t");
+  PyObject* desc = PyObject_GetAttrString(t_o, (char*)"_d");
+
+  Py_DECREF(t_o); Py_DECREF(desc);
+
   omniPy::marshalTypeCode(stream, desc);
 
   // Any's contents
-  t_o             = PyDict_GetItemString(adict, (char*)"_v");
+  t_o = PyObject_GetAttrString(a_o, (char*)"_v");
+  Py_DECREF(t_o);
   omniPy::marshalPyObject(stream, desc, t_o);
 }
 
 static void
 marshalPyObjectTypeCode(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 {
-  PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-  PyObject* t_o   = PyDict_GetItemString(tdict, (char*)"_d");
+  PyObject* t_o = PyObject_GetAttrString(a_o, (char*)"_d");
+  Py_DECREF(t_o);
   omniPy::marshalTypeCode(stream, t_o);
 }
 
@@ -1824,8 +1832,8 @@ static void
 marshalPyObjectEnum(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 { // repoId, name, item list
 
-  PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
-				      (char*)"_v");
+  PyObject* ev = PyObject_GetAttrString(a_o, (char*)"_v");
+  Py_DECREF(ev);
   CORBA::ULong e = PyInt_AS_LONG(ev);
   e >>= stream;
 }
@@ -2497,8 +2505,7 @@ marshalPyObjectExcept(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   char* str = PyString_AS_STRING(t_o);
   stream.put_octet_array((const CORBA::Octet*)((const char*)str), slen);
 
-  PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
-  int       cnt   = (PyTuple_GET_SIZE(d_o) - 4) / 2;
+  int cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 
   PyObject* name;
   PyObject* value;
@@ -2506,7 +2513,8 @@ marshalPyObjectExcept(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   int i, j;
   for (i=0,j=4; i < cnt; i++) {
     name  = PyTuple_GET_ITEM(d_o, j++);
-    value = PyDict_GetItem(sdict, name);
+    value = PyObject_GetAttr(a_o, name);
+    Py_DECREF(value);
     omniPy::marshalPyObject(stream, PyTuple_GET_ITEM(d_o, j++), value);
   }
 }
@@ -3718,26 +3726,35 @@ static PyObject*
 copyArgumentAny(PyObject* d_o, PyObject* a_o,
 		CORBA::CompletionStatus compstatus)
 {
-  if (!PyInstance_Check(a_o))
+  if (!omniPy::isInstance(a_o, omniPy::pyCORBAAnyClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  PyObject* adict = ((PyInstanceObject*)a_o)->in_dict;
 
   // TypeCode
-  PyObject* tc = PyDict_GetItemString(adict, (char*)"_t");
+  PyObject* tc = PyObject_GetAttrString(a_o, (char*)"_t");
 
-  if (!(tc && PyInstance_Check(tc)))
+  if (!tc) {
+    PyErr_Clear();
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
+  Py_DECREF(tc);
+
+  if (!omniPy::isInstance(tc, omniPy::pyCORBATypeCodeClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 
-  PyObject* tdict = ((PyInstanceObject*)tc)->in_dict;
-  PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
-  if (!desc)
+  PyObject* desc = PyObject_GetAttrString(tc, (char*)"_d");
+  Py_XDECREF(desc);
+  if (!desc) {
+    PyErr_Clear();
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
 
   // Any's contents
-  PyObject* val = PyDict_GetItemString(adict, (char*)"_v");
-  if (!val)
+  PyObject* val = PyObject_GetAttrString(a_o, (char*)"_v");
+  if (!val) {
+    PyErr_Clear();
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
+  Py_DECREF(val);
 
   // Copy contents
   PyObject* cval = omniPy::copyArgument(desc, val, compstatus);
@@ -3757,11 +3774,12 @@ static PyObject*
 copyArgumentTypeCode(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus)
 {
-  if (!PyInstance_Check(a_o))
+  if (!omniPy::isInstance(a_o, omniPy::pyCORBATypeCodeClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 
-  PyObject* tdict = ((PyInstanceObject*)a_o)->in_dict;
-  PyObject* desc  = PyDict_GetItemString(tdict, (char*)"_d");
+  PyObject* desc = PyObject_GetAttrString(a_o, (char*)"_d");
+  Py_XDECREF(desc);
+
   if (!desc)
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 
@@ -3793,7 +3811,7 @@ copyArgumentStruct(PyObject* d_o, PyObject* a_o,
   // The descriptor tuple has twice the number of struct members,
   // plus 4 -- the typecode kind, the Python class, the repoId,
   // and the struct name
-  int       cnt   = (PyTuple_GET_SIZE(d_o) - 4) / 2;
+  int cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 
   PyObject* t_o;
   PyObject* name;
@@ -3921,14 +3939,13 @@ copyArgumentEnum(PyObject* d_o, PyObject* a_o,
 		 CORBA::CompletionStatus compstatus)
 { // repoId, name, item list
 
-  if (!PyInstance_Check(a_o))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  PyObject* ev = PyObject_GetAttrString(a_o, (char*)"_v");
 
-  PyObject* ev = PyDict_GetItemString(((PyInstanceObject*)a_o)->in_dict,
-				      (char*)"_v");
-
-  if (!(ev && PyInt_Check(ev)))
+  if (!(ev && PyInt_Check(ev))) {
+    PyErr_Clear();
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
+  Py_DECREF(ev);
 
   PyObject* t_o = PyTuple_GET_ITEM(d_o, 3);
   long      e   = PyInt_AS_LONG(ev);
@@ -5094,14 +5111,9 @@ copyArgumentExcept(PyObject* d_o, PyObject* a_o,
 		   CORBA::CompletionStatus compstatus)
 { // class, repoId, exc name, name, descriptor, ...
 
-  if (!PyInstance_Check(a_o))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  PyObject* sdict = ((PyInstanceObject*)a_o)->in_dict;
-
   // As with structs, the descriptor tuple has twice the number of
-  // struct members plus 4.
-  int       cnt   = (PyTuple_GET_SIZE(d_o) - 4) / 2;
+  // members plus 4.
+  int cnt = (PyTuple_GET_SIZE(d_o) - 4) / 2;
 
   PyObject* t_o;
   PyObject* name;
@@ -5113,9 +5125,12 @@ copyArgumentExcept(PyObject* d_o, PyObject* a_o,
   for (i=0,j=4; i < cnt; i++) {
     name    = PyTuple_GET_ITEM(d_o, j++);
     OMNIORB_ASSERT(PyString_Check(name));
-    value   = PyDict_GetItem(sdict, name);
+
+    value = PyObject_GetAttr(a_o, name);
     if (!value)
       OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+
+    Py_DECREF(value);
 
     t_o = omniPy::copyArgument(PyTuple_GET_ITEM(d_o, j++), value, compstatus);
 

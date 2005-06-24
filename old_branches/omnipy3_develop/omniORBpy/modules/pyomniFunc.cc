@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.3  2005/04/14 13:50:59  dgrisby
+// New traceTime, traceInvocationReturns functions; removal of omniORB::logf.
+//
 // Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -306,8 +309,6 @@ extern "C" {
 
 
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
-    RAISE_PY_BAD_PARAM_IF(pyobjref && !PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
       CORBA::Object_ptr objref =
@@ -354,8 +355,6 @@ extern "C" {
       return 0;
 
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
-    RAISE_PY_BAD_PARAM_IF(pyobjref && !PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
       CORBA::Object_ptr objref =
@@ -403,8 +402,6 @@ extern "C" {
       return 0;
 
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
-    RAISE_PY_BAD_PARAM_IF(pyobjref && !PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
       CORBA::Object_ptr objref =
@@ -674,16 +671,20 @@ extern "C" {
   static PyObject* pyomni_minorCodeToString(PyObject* self, PyObject* args)
   {
     PyObject* pyexc;
-    PyObject* pyrepoId = 0;
-    PyObject* pyminor = 0;
+    PyObject* pyrepoId;
+    PyObject* pyminor;
 
     if (!PyArg_ParseTuple(args, (char*)"O", &pyexc))
       return 0;
 
-    if (PyInstance_Check(pyexc)) {
-      pyrepoId = PyObject_GetAttrString(pyexc, (char*)"_NP_RepositoryId");
-      pyminor  = PyObject_GetAttrString(pyexc, (char*)"minor");
-    }
+    pyrepoId = PyObject_GetAttrString(pyexc, (char*)"_NP_RepositoryId");
+    if (!pyrepoId)
+      PyErr_Clear();
+
+    pyminor  = PyObject_GetAttrString(pyexc, (char*)"minor");
+    if (!pyminor)
+      PyErr_Clear();
+
     if (!(pyrepoId && PyString_Check(pyrepoId) &&
 	  pyminor  && (PyInt_Check(pyminor) || PyLong_Check(pyminor)))) {
       Py_INCREF(Py_None);
@@ -736,8 +737,7 @@ extern "C" {
       PyObject* pyobjref;
       if (!PyArg_ParseTuple(args, (char*)"Oi", &pyobjref, &timeout))
 	return 0;
-      RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			    BAD_PARAM_WrongPythonType);
+
       CORBA::Object_ptr objref =
 	(CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 

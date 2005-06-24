@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -849,9 +852,6 @@ extern "C" {
       (PortableServer::POA_ptr)omniPy::getTwin(pyPOA, POA_TWIN);
     OMNIORB_ASSERT(poa);
 
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
-
     CORBA::Object_ptr objref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
@@ -905,9 +905,6 @@ extern "C" {
     PortableServer::POA_ptr poa =
       (PortableServer::POA_ptr)omniPy::getTwin(pyPOA, POA_TWIN);
     OMNIORB_ASSERT(poa);
-
-    RAISE_PY_BAD_PARAM_IF(!PyInstance_Check(pyobjref),
-			  BAD_PARAM_WrongPythonType);
 
     CORBA::Object_ptr objref =
       (CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);

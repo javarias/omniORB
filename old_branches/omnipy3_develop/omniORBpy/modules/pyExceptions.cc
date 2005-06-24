@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.4  2005/01/25 11:45:48  dgrisby
+// Merge from omnipy2_develop; set RPM version.
+//
 // Revision 1.1.4.3  2005/01/07 00:22:32  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -190,7 +193,7 @@ omniPy::handlePythonException()
   PyErr_NormalizeException(&etype, &evalue, &etraceback);
   OMNIORB_ASSERT(etype);
 
-  if (evalue && PyInstance_Check(evalue))
+  if (evalue)
     erepoId = PyObject_GetAttrString(evalue, (char*)"_NP_RepositoryId");
 
   if (!(erepoId && PyString_Check(erepoId))) {
@@ -378,8 +381,7 @@ PyUserException::operator>>=(cdrStream& stream) const
 
   PyUnlockingCdrStream pystream(stream);
 
-  PyObject* sdict = ((PyInstanceObject*)exc_)->in_dict;
-  int       cnt   = (PyTuple_GET_SIZE(desc_) - 4) / 2;
+  int cnt = (PyTuple_GET_SIZE(desc_) - 4) / 2;
 
   PyObject* name;
   PyObject* value;
@@ -387,7 +389,8 @@ PyUserException::operator>>=(cdrStream& stream) const
   int i, j;
   for (i=0,j=4; i < cnt; i++) {
     name  = PyTuple_GET_ITEM(desc_, j++);
-    value = PyDict_GetItem(sdict, name);
+    value = PyObject_GetAttr(exc_, name);
+    Py_DECREF(value); // Exception object still holds a reference.
     omniPy::marshalPyObject(pystream, PyTuple_GET_ITEM(desc_, j++), value);
   }
 }

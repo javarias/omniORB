@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.3  2005/04/25 18:27:41  dgrisby
+// Maintain forwarded location when narrowing forwarded references.
+//
 // Revision 1.1.4.2  2005/01/07 00:22:32  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -237,8 +240,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
 
   if (fullTypeUnknown) {
     PyObject* idstr = PyString_FromString(actualRepoId);
-    PyDict_SetItemString(((PyInstanceObject*)pyobjref)->in_dict,
-			 (char*)"_NP_RepositoryId", idstr);
+    PyObject_SetAttrString(pyobjref, (char*)"_NP_RepositoryId", idstr);
     Py_DECREF(idstr);
   }
   omniPy::setTwin(pyobjref, (CORBA::Object_ptr)objref, OBJREF_TWIN);
@@ -509,10 +511,6 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
     Py_INCREF(Py_None);
     return Py_None;
   }
-  if (!PyInstance_Check(pyobjref)) {
-    // Not an objref
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-  }
   CORBA::Object_ptr objref = (CORBA::Object_ptr)getTwin(pyobjref, OBJREF_TWIN);
   if (!objref) {
     // Not an objref
@@ -543,15 +541,13 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
   // so, we can just incref the existing Python objref and return it;
   // if not, we have to build a new C++ objref.
 
-  if (!PyDict_GetItemString(((PyInstanceObject*)pyobjref)->in_dict,
-			    (char*)"_NP_RepositoryId")) {
+  if (!PyObject_HasAttrString(pyobjref, (char*)"_NP_RepositoryId")) {
 
     PyObject* targetClass = PyDict_GetItem(pyomniORBobjrefMap,
 					   pytargetRepoId);
     OMNIORB_ASSERT(targetClass);
 
-    if (PyClass_IsSubclass((PyObject*)((PyInstanceObject*)pyobjref)->in_class,
-			   targetClass)) {
+    if (omniPy::isInstance(pyobjref, targetClass)) {
       Py_INCREF(pyobjref);
       return pyobjref;
     }

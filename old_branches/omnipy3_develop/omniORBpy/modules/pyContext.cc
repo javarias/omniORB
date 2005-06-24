@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2003/05/20 17:10:23  dgrisby
+// Preliminary valuetype support.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -47,17 +50,7 @@ OMNI_USING_NAMESPACE(omni)
 void
 omniPy::validateContext(PyObject* c_o, CORBA::CompletionStatus compstatus)
 {
-  if (!PyInstance_Check(c_o))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  PyObject* cdict = ((PyInstanceObject*)c_o)->in_dict;
-
-  PyObject* t_o = PyDict_GetItemString(cdict, (char*)"_NP_RepositoryId");
-  if (!(t_o && PyString_Check(t_o)))
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
-
-  if (!omni::strMatch(PyString_AS_STRING(t_o),
-		      "IDL:omg.org/CORBA/Context:1.0"))
+  if (!isInstance(c_o, pyCORBAContextClass))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
 }
 
