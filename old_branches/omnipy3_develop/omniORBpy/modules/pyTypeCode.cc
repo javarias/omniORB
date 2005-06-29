@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.5  2005/06/24 17:36:00  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.4  2005/01/07 00:22:33  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -1258,8 +1262,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	PyTuple_SET_ITEM(d_o, 5, Py_None); // Empty truncatable bases
 	PyTuple_SET_ITEM(d_o, 6, base);
 
-	PyObject* mems = PyTuple_New(cnt);
-
 	CORBA::ULong i, j;
 
 	PyObject* word;
@@ -1275,7 +1277,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	  }
 	  PyTuple_SET_ITEM(d_o, j++, t_o);
 	  Py_INCREF(t_o);
-	  PyTuple_SET_ITEM(mems, i, t_o);
 
 	  // member type
 	  t_o = r_unmarshalTypeCode(encap, eodm);
@@ -1291,10 +1292,8 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 				     (char*)"createUnknownValue");
 	OMNIORB_ASSERT(t_o && PyFunction_Check(t_o));
 
-	t_o = PyObject_CallFunction(t_o, (char*)"OOO", repoId, mems, base);
+	t_o = PyObject_CallFunction(t_o, (char*)"OO", repoId, base);
 	OMNIORB_ASSERT(t_o && PyClass_Check(t_o));
-
-	Py_DECREF(mems);
 
 	PyTuple_SET_ITEM(d_o, 1, t_o);
       }
@@ -1383,8 +1382,6 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
   }
   return d_o;
 }
-
-// *** HERE: unmarshal tk_value!!
 
 void
 omniPy::marshalTypeCode(cdrStream& stream, PyObject* d_o)
