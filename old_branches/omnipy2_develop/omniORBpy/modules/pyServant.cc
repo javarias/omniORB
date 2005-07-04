@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.18  2005/01/13 16:54:35  dgrisby
+// Fix possible deadlock in user exception deletion.
+//
 // Revision 1.1.2.17  2004/04/30 16:39:35  dgrisby
 // Log CORBA exceptions with Python tracebacks. Thanks Luke Deller.
 //
@@ -819,8 +822,6 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
       }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
 
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       PortableServer::ForwardRequest::_PD_repoId)) {
