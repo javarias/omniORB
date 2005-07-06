@@ -6,6 +6,9 @@
 // Notes:		 Munching strategy is imperative
 //////////////////////////////////////////////////////////////////////////////
 // $Log$
+// Revision 1.1.2.4  2005/04/25 18:16:24  dgrisby
+// Always release per thread data in the thread it belongs to.
+//
 // Revision 1.1.2.3  2004/04/30 15:01:25  dgrisby
 // Fix to dummy thread on vxWorks. Thanks Gary Block.
 //
@@ -588,6 +591,15 @@ void omni_thread::common_constructor(void* arg, priority_t pri, int det)
 omni_thread::~omni_thread(void)
 {
     DBG_TRACE(cout<<"omni_thread::~omni_thread for thread "<<id()<<endl);
+
+    if (_values) {
+        for (key_t i=0; i < _value_alloc; i++) {
+          if (_values[i]) {
+              delete _values[i];
+          }
+        }
+      delete [] _values;
+    }
 
     // glblock -- added this to prevent problem with unitialized running_cond
     if(running_cond)
