@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.15  2005/01/13 16:55:26  dgrisby
+// Normalize exceptions thrown from extensions. Thanks Scott Yang.
+//
 // Revision 1.1.2.14  2004/04/30 16:39:35  dgrisby
 // Log CORBA exceptions with Python tracebacks. Thanks Luke Deller.
 //
@@ -130,6 +133,8 @@ omniPy::produceSystemException(PyObject* eobj, PyObject* erepoId,
     }
     else if (PyLong_Check(m)) {
       minor = PyLong_AsUnsignedLong(m);
+      if (minor == (CORBA::ULong)-1 && PyErr_Occurred())
+	PyErr_Clear();
     }
     c = PyObject_GetAttrString(eobj, (char*)"completed");
 

@@ -29,6 +29,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.2  2003/07/26 23:17:43  dgrisby
+// Avoid spurious warning about lack of return value.
+//
 // Revision 1.1.2.1  2003/05/28 10:13:01  dgrisby
 // Preliminary interceptor support. General clean-up.
 //
@@ -65,7 +68,7 @@ pyNumberToULong(PyObject* obj, CORBA::CompletionStatus completion)
   }
   if (PyLong_Check(obj)) {
     CORBA::ULong r = PyLong_AsUnsignedLong(obj);
-    if (PyErr_Occurred())
+    if (r == (CORBA::ULong)-1 && PyErr_Occurred())
       PyErr_Clear();
     else
       return r;
