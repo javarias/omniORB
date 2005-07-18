@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.2.2.12  2004/03/30 09:40:54  dgrisby
+  Bug in _do_get_interface. Thanks Alex Tingle.
+
   Revision 1.2.2.11  2002/01/16 11:32:00  dpg1
   Race condition in use of registerNilCorbaObject/registerTrackedObject.
   (Reported by Teemu Torma).
@@ -255,6 +258,12 @@ void*
 PortableServer::ServantBase::_do_this(const char* repoId)
 {
   OMNIORB_ASSERT(repoId);
+
+  if (!omni::internalLock) {
+    // Not initalised yet
+    OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_POANotInitialised,
+		  CORBA::COMPLETED_NO);
+  }
 
   omniCurrent* current = omniCurrent::get();
   if (current) {
