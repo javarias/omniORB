@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.26  2004/10/17 20:14:28  dgrisby
+ Updated support for OpenVMS. Many thanks to Bruce Visscher.
+
  Revision 1.2.2.25  2004/07/01 19:08:11  dgrisby
  Support Windows build with mingw. Thanks Wolfgang Glas.
 
@@ -386,7 +389,7 @@
 #endif
 
 #ifndef _init_in_cldecl_
-#  if !defined(_MSC_VER)
+#  if !defined(_MSC_VER) || _MSC_VER >= 1310
 #    define _init_in_cldecl_(x) x
 #  else
 #    define _init_in_cldecl_(x) 
@@ -396,7 +399,7 @@
 #endif
 
 #ifndef _init_in_cldef_
-#  if !defined(_MSC_VER)
+#  if !defined(_MSC_VER) || _MSC_VER >= 1310
 #    define _init_in_cldef_(x)
 #  else
 #    define _init_in_cldef_(x) x 
