@@ -5,7 +5,7 @@
 //                            Author2   : James Weatherall (jnw)
 //                            Author3   : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2004 Apasphere Ltd.
+//    Copyright (C) 2004-2005 Apasphere Ltd.
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.21.2.5  2005/01/06 16:39:24  dgrisby
+ * DynValue and DynValueBox implementations; misc small fixes.
+ *
  * Revision 1.21.2.4  2004/10/13 17:58:20  dgrisby
  * Abstract interfaces support; values support interfaces; value bug fixes.
  *
@@ -362,8 +365,18 @@ CORBA::Any::operator>>= (cdrStream& s) const
     tcParser::copyMemStreamToStream_rdonly(pd_tc, *pd_mbuf, s);
   }
   else {
-    OMNIORB_ASSERT(pd_tc->kind() == CORBA::tk_void ||
-		   pd_tc->kind() == CORBA::tk_null);
+    CORBA::TCKind kind = pd_tc->kind();
+    if (kind == CORBA::tk_value ||
+	kind == CORBA::tk_value_box ||
+	kind == CORBA::tk_abstract_interface) {
+
+      // Nil value
+      OMNIORB_ASSERT(pd_marshal);
+      pd_marshal(s, pd_data);
+    }
+    else {
+      OMNIORB_ASSERT(kind == CORBA::tk_void || kind == CORBA::tk_null);
+    }
   }
 }
 
@@ -389,8 +402,18 @@ CORBA::Any::NP_marshalDataOnly(cdrStream& s) const
     tcParser::copyMemStreamToStream_rdonly(pd_tc, *pd_mbuf, s);
   }
   else {
-    OMNIORB_ASSERT(pd_tc->kind() == CORBA::tk_void ||
-		   pd_tc->kind() == CORBA::tk_null);
+    CORBA::TCKind kind = pd_tc->kind();
+    if (kind == CORBA::tk_value ||
+	kind == CORBA::tk_value_box ||
+	kind == CORBA::tk_abstract_interface) {
+
+      // Nil value
+      OMNIORB_ASSERT(pd_marshal);
+      pd_marshal(s, pd_data);
+    }
+    else {
+      OMNIORB_ASSERT(kind == CORBA::tk_void || kind == CORBA::tk_null);
+    }
   }
 }
 
@@ -1198,11 +1221,12 @@ CORBA::Any::operator>>=(to_value o) const
   if (kind == CORBA::tk_value || kind == CORBA::tk_value_box) {
     // When values are stored by pointer in pd_data, they are stored
     // as the most derived type. That means we can't use the pointer
-    // as ValueBase here. Instead, we use a temporar memory buffer.
+    // as ValueBase here. Instead, we use a temporary memory buffer.
     // That's not as inefficient as it might seem, because the
     // cdrAnyMemoryStream stores valuetypes by pointer anyway.
     if (pd_mbuf) {
       o.ref = CORBA::ValueBase::_NP_unmarshal(*pd_mbuf);
+      return 1;
     }
     else {
       OMNIORB_ASSERT(pd_data);
@@ -1210,6 +1234,7 @@ CORBA::Any::operator>>=(to_value o) const
       cdrAnyMemoryStream tmp;
       pd_marshal(tmp, pd_data);
       o.ref = CORBA::ValueBase::_NP_unmarshal(tmp);
+      return 1;
     }
   }
   else if (kind == CORBA::tk_abstract_interface) {
