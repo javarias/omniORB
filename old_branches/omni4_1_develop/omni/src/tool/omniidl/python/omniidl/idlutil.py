@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.9.2.2  2005/04/08 00:35:45  dgrisby
+# Merging again.
+#
 # Revision 1.9.2.1  2003/03/23 21:01:38  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -160,7 +163,7 @@ def reprFloat(f):
     """reprFloat(float) -> string
 
 Return the string representation of an IDL float type (float, double,
-long double), with enough precision to completely reconstuct the bit
+long double), with enough precision to completely reconstruct the bit
 pattern."""
     # *** Deal with long double
 
