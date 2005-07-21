@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.2.2.19  2004/09/13 09:43:11  dgrisby
+// Limited support for ssliop scheme in corbaloc. Thanks Martin Laporte.
+//
 // Revision 1.2.2.18  2003/11/20 13:39:59  dgrisby
 // corbaloc handler for Unix sockets. Uses omniunix scheme name.
 //
@@ -198,6 +201,8 @@ omniURI::uriSyntaxIsValid(const char* uri)
   if (handler) return handler->syntaxIsValid(uri);
   return 0;
 }
+
+omniURI::URIHandler::~URIHandler() {}
 
 
 /////////////////////////////////////////////////////////////////////////////

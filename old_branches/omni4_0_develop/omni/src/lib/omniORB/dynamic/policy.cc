@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1.2.7  2004/11/04 14:44:00  dgrisby
+  Fix VxWorks issues. Thanks Dirk Siebnich.
+
   Revision 1.1.2.6  2004/10/17 20:14:32  dgrisby
   Updated support for OpenVMS. Many thanks to Bruce Visscher.
 
@@ -165,7 +168,7 @@ _init_in_def_( const PolicyErrorCode CORBA::UNSUPPORTED_POLICY_VALUE = 4; )
 
 
 OMNIORB_DEFINE_USER_EX_COMMON_FNS(CORBA, PolicyError,
-				  "IDL:omg.org/CORBA/PolicyError:1.0");
+				  "IDL:omg.org/CORBA/PolicyError:1.0")
 
 
 CORBA::PolicyError::PolicyError(const CORBA::PolicyError& _s) : CORBA::UserException(_s)

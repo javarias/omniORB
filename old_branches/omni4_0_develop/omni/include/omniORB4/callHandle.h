@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.5  2003/01/14 11:48:15  dgrisby
+ Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+
  Revision 1.1.2.4  2001/08/15 10:26:07  dpg1
  New object table behaviour, correct POA semantics.
 
@@ -94,6 +97,7 @@ public:
   class PostInvokeHook {
   public:
     virtual void postinvoke() = 0;
+    virtual ~PostInvokeHook();
   };
 
   inline void postinvoke_hook(PostInvokeHook* hook) {

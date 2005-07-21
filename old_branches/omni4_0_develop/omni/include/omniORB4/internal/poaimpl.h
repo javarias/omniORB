@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2002/11/08 17:26:25  dgrisby
+  Hang on shutdown with servant locators.
+
   Revision 1.1.4.11  2002/10/14 15:14:54  dgrisby
   Fix create_POA / destroy deadlock, unique persistent system ids.
 
@@ -388,7 +391,9 @@ private:
 
     virtual void postinvoke();
 
-    virtual ~SLPostInvokeHook();
+    ~SLPostInvokeHook(); // Non-virtual because hook is created on the
+			 // stack and therefore always deleted by its
+			 // most derived type.
 
   private:
     omniOrbPOA*                            pd_poa;
