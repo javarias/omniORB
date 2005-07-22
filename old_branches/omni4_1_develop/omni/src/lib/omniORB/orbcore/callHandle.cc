@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.3  2003/11/06 11:56:56  dgrisby
+ Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
  Revision 1.1.4.2  2003/05/20 16:53:15  dgrisby
  Valuetype marshalling support.
 
@@ -123,7 +126,7 @@ namespace {
   };
 
 #ifdef HAS_Cplusplus_Namespace
-};
+}
 #endif
 
 
@@ -261,6 +264,8 @@ omniCallHandle::SkipRequestBody()
   if (pd_iop_s)
     pd_iop_s->SkipRequestBody();
 }
+
+omniCallHandle::PostInvokeHook::~PostInvokeHook() {}
 
 
 void

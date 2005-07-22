@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.3  2005/07/11 17:47:31  dgrisby
+ VMS changes from Bruce Visscher.
+
  Revision 1.5.2.2  2005/01/06 23:08:07  dgrisby
  Big merge from omni4_0_develop.
 
@@ -105,8 +108,10 @@
 //
 #ifdef HAS_Cplusplus_const_cast
 #  define OMNI_CONST_CAST(_t, _v) const_cast<_t>(_v)
+#  define OMNI_CONST_VOID_CAST(_v) const_cast<void*>(static_cast<const void*>(_v))
 #else
 #  define OMNI_CONST_CAST(_t, _v) (_t)(_v)
+#  define OMNI_CONST_VOID_CAST(_v) (void*)(_t)
 #endif
 
 #ifdef HAS_Cplusplus_reinterpret_cast
@@ -386,7 +391,7 @@
 #endif
 
 #ifndef _init_in_cldecl_
-#  if !defined(_MSC_VER)
+#  if !defined(_MSC_VER) || _MSC_VER >= 1310
 #    define _init_in_cldecl_(x) x
 #  else
 #    define _init_in_cldecl_(x) 
@@ -396,7 +401,7 @@
 #endif
 
 #ifndef _init_in_cldef_
-#  if !defined(_MSC_VER)
+#  if !defined(_MSC_VER) || _MSC_VER >= 1310
 #    define _init_in_cldef_(x)
 #  else
 #    define _init_in_cldef_(x) x 

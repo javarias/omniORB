@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:13  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.6  2002/09/11 20:40:15  dgrisby
   Call thread interceptors from etherealiser queue.
 
@@ -152,8 +155,11 @@ public:
 	  pd_task->deq();
 	}
 	else {
-	  pd_next = pd_pool->pd_idle_threads;
-	  pd_pool->pd_idle_threads = this;
+	  if (!pd_next) {
+	    // Add to the idle queue
+	    pd_next = pd_pool->pd_idle_threads;
+	    pd_pool->pd_idle_threads = this;
+	  }
 	  unsigned long abs_sec,abs_nanosec;
 	  omni_thread::get_time(&abs_sec,&abs_nanosec,
 				omniAsyncInvoker::idle_timeout);
@@ -169,7 +175,9 @@ public:
 	    pd_next = 0;
 	    break;
 	  }
-	  // Dequeue by omniAsyncInvoker.
+	  // If signalled, we have been dequeued by the
+	  // omniAsyncInvoker, and will have a task to process next
+	  // time around the while loop.
 	  continue;
 	}
       }

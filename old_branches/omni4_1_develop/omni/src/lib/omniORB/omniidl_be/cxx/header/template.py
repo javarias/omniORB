@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.9  2005/01/06 23:10:06  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.8.2.8  2005/01/06 16:35:18  dgrisby
 # Narrowing for abstract interfaces.
 #
@@ -1154,14 +1157,6 @@ void _default()
   _pd__d = @arbitraryDefault@;
   _pd__default = 1;
 }
-"""
-
-union_tcParser_friend = """\
-#if defined(__GNUG__) || defined(__DECCXX) && (__DECCXX_VER < 60000000)
-friend class @private_prefix@_tcParser_unionhelper_@name@;
-#else
-friend class ::@private_prefix@_tcParser_unionhelper_@name@;
-#endif
 """
 
 union_proxy_float = """

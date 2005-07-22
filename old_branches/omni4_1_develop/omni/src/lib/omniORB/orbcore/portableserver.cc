@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.3  2005/01/06 23:10:40  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.4.2.2  2004/02/16 10:10:32  dgrisby
   More valuetype, including value boxes. C++ mapping updates.
 
@@ -290,6 +293,12 @@ void*
 PortableServer::ServantBase::_do_this(const char* repoId)
 {
   OMNIORB_ASSERT(repoId);
+
+  if (!omni::internalLock) {
+    // Not initalised yet
+    OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_POANotInitialised,
+		  CORBA::COMPLETED_NO);
+  }
 
   omniCurrent* current = omniCurrent::get();
   if (current) {

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.1  2003/03/23 21:04:17  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.1.2.5  2003/01/14 11:48:15  dgrisby
  Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
 
@@ -97,6 +100,7 @@ public:
   class PostInvokeHook {
   public:
     virtual void postinvoke() = 0;
+    virtual ~PostInvokeHook();
   };
 
   inline void postinvoke_hook(PostInvokeHook* hook) {

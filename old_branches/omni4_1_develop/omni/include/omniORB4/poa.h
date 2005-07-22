@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.5  2005/01/06 23:08:11  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.4.2.4  2004/10/13 17:58:18  dgrisby
   Abstract interfaces support; values support interfaces; value bug fixes.
 
@@ -679,7 +682,7 @@ _CORBA_MODULE_BEG
       public virtual ServantBase
   {
   public:
-    ValueRefCountBase() {}
+    ValueRefCountBase() : CORBA::ValueBase(), omniServant(), ServantBase() {}
 
     virtual void  _add_ref();
     virtual void  _remove_ref();

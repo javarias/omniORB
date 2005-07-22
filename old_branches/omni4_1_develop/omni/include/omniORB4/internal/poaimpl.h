@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:43  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.12  2002/11/08 17:26:25  dgrisby
   Hang on shutdown with servant locators.
 
@@ -391,7 +394,9 @@ private:
 
     virtual void postinvoke();
 
-    virtual ~SLPostInvokeHook();
+    ~SLPostInvokeHook(); // Non-virtual because hook is created on the
+			 // stack and therefore always deleted by its
+			 // most derived type.
 
   private:
     omniOrbPOA*                            pd_poa;
