@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.27  2005/07/21 15:53:02  dgrisby
+ VC++ 7.1 supports constants in class declarations. Thanks Tim Theisen.
+
  Revision 1.2.2.26  2004/10/17 20:14:28  dgrisby
  Updated support for OpenVMS. Many thanks to Bruce Visscher.
 
@@ -108,8 +111,10 @@
 //
 #ifdef HAS_Cplusplus_const_cast
 #  define OMNI_CONST_CAST(_t, _v) const_cast<_t>(_v)
+#  define OMNI_CONST_VOID_CAST(_v) const_cast<void*>(static_cast<const void*>(_v))
 #else
 #  define OMNI_CONST_CAST(_t, _v) (_t)(_v)
+#  define OMNI_CONST_VOID_CAST(_v) (void*)(_t)
 #endif
 
 #ifdef HAS_Cplusplus_reinterpret_cast
