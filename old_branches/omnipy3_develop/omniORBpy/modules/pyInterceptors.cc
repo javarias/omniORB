@@ -27,8 +27,10 @@
 //    Python request interceptors
 
 // $Id$
-
 // $Log$
+// Revision 1.1.4.1  2005/01/07 00:22:32  dgrisby
+// Big merge from omnipy2_develop.
+//
 // Revision 1.1.2.2  2003/07/26 23:17:43  dgrisby
 // Avoid spurious warning about lack of return value.
 //
@@ -68,7 +70,7 @@ pyNumberToULong(PyObject* obj, CORBA::CompletionStatus completion)
   }
   if (PyLong_Check(obj)) {
     CORBA::ULong r = PyLong_AsUnsignedLong(obj);
-    if (PyErr_Occurred())
+    if (r == (CORBA::ULong)-1 && PyErr_Occurred())
       PyErr_Clear();
     else
       return r;

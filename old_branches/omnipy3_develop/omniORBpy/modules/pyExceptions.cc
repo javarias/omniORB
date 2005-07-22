@@ -28,7 +28,12 @@
 //    Exception handling functions
 
 // $Id$
+
 // $Log$
+// Revision 1.1.4.5  2005/06/24 17:36:08  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.4  2005/01/25 11:45:48  dgrisby
 // Merge from omnipy2_develop; set RPM version.
 //
@@ -123,6 +128,8 @@ omniPy::produceSystemException(PyObject* eobj, PyObject* erepoId,
     }
     else if (PyLong_Check(m)) {
       minor = PyLong_AsUnsignedLong(m);
+      if (minor == (CORBA::ULong)-1 && PyErr_Occurred())
+	PyErr_Clear();
     }
     c = PyObject_GetAttrString(eobj, (char*)"completed");
 

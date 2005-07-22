@@ -28,7 +28,12 @@
 //    Implementation of Python servant object
 
 // $Id$
+
 // $Log$
+// Revision 1.1.4.6  2005/06/24 17:36:00  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.5  2005/04/14 13:50:59  dgrisby
 // New traceTime, traceInvocationReturns functions; removal of omniORB::logf.
 //
@@ -820,8 +825,6 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
       }
       OMNIORB_THROW(UNKNOWN, UNKNOWN_PythonException, CORBA::COMPLETED_MAYBE);
     }
-    Py_DECREF(etype);
-    Py_XDECREF(etraceback);
 
     if (omni::strMatch(PyString_AS_STRING(erepoId),
 		       PortableServer::ForwardRequest::_PD_repoId)) {

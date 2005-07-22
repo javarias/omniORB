@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.5  2005/04/25 18:28:04  dgrisby
+// Minor log output changes.
+//
 // Revision 1.1.4.4  2005/03/02 13:39:16  dgrisby
 // Another merge from omnipy2_develop.
 //
@@ -263,7 +266,7 @@ threadExit(CacheNode* cn)
     PyObject* tmp = PyEval_CallObject(omniPy::pyWorkerThreadDel,
 				      argtuple);
     if (!tmp) {
-      if (omniORB::trace(1)) {
+      if (omniORB::trace(10)) {
 	{
 	  omniORB::logger l;
 	  l << "Exception trying to delete worker thread.\n";
