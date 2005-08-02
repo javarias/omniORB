@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.6  2005/07/22 17:18:39  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.4.2.5  2005/01/06 23:08:11  dgrisby
   Big merge from omni4_0_develop.
 
@@ -708,18 +711,22 @@ _CORBA_MODULE_BEG
     inline Servant_var() : pd_data(0) {}
     inline Servant_var(T* p) : pd_data(p) {}
     inline Servant_var(const Servant_var& v) : pd_data(v.pd_data)
-      { if( pd_data )  pd_data->_add_ref(); }
+      { if (pd_data) pd_data->_add_ref(); }
 
-    inline ~Servant_var() { if( pd_data )  pd_data->_remove_ref(); }
+    inline ~Servant_var() { if (pd_data) pd_data->_remove_ref(); }
 
     inline Servant_var& operator= (T* p) {
-      if( pd_data )  pd_data->_remove_ref();
-      pd_data = p;
+      if (pd_data != p) {
+	if (pd_data) pd_data->_remove_ref();
+	pd_data = p;
+      }
       return *this;
     }
     inline Servant_var& operator= (const Servant_var& v) {
-      if( pd_data )  pd_data->_remove_ref();
-      if( (pd_data = v.pd_data) )  pd_data->_add_ref();
+      if (v.pd_data != pd_data) {
+	if (pd_data) pd_data->_remove_ref();
+	if ((pd_data = v.pd_data)) pd_data->_add_ref();
+      }
       return *this;
     }
 
