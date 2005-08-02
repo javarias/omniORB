@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/06/24 14:31:31  dgrisby
+  Allow multiple threads to Peek() without clashing. Not yet tested on
+  Windows.
+
   Revision 1.1.4.5  2005/03/02 12:10:50  dgrisby
   setSelectable / Peek fixes.
 
@@ -230,7 +234,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-typedef int    SocketHandle_t;
+typedef int SocketHandle_t;
 
 OMNI_NAMESPACE_END(omni)
 
@@ -270,6 +274,7 @@ public:
       pd_data_in_buffer(0),
       pd_selected(0),
       pd_peeking(0),
+      pd_peek_go(0),
       pd_peek_cond(0),
 #ifdef __WIN32__
       pd_fd_index(-1),
@@ -321,6 +326,9 @@ private:
   CORBA::Boolean       	pd_selected;       // True if select thread is watching
   CORBA::Boolean       	pd_peeking;        // True if a thread is currently
 					   // peeking
+  CORBA::Boolean        pd_peek_go;        // True if the peeking thread
+					   // should return true, even if it
+					   // did not see data to read
   omni_tracedcondition* pd_peek_cond;      // Condition to signal a waiting
 					   // peeker
 #ifdef __WIN32__
