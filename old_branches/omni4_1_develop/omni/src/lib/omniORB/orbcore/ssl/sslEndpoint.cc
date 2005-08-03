@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/04/11 12:09:40  dgrisby
+  Another merge.
+
   Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -317,6 +320,9 @@ sslEndpoint::Bind() {
   sprintf((char*)pd_address_string,format,
 	  (const char*)pd_address.host,(int)pd_address.port);
 
+  // Never block in accept
+  SocketSetnonblocking(pd_socket);
+
   // Add the socket to our SocketCollection.
   addSocket(this);
 
@@ -438,8 +444,7 @@ again:
       }
 #ifdef UnixArchitecture
       else if (ERRNO == RC_EAGAIN) {
-        omniORB::logs(20, "accept() returned EAGAIN, trying again");
-        goto again;
+        omniORB::logs(20, "accept() returned EAGAIN, will try later");
       }
 #endif
       if (omniORB::trace(20)) {
@@ -456,6 +461,11 @@ again:
 	return 0;
       }
 #endif
+      // On some platforms, the new socket inherits the non-blocking
+      // setting from the listening socket, so we set it blocking here
+      // just to be sure.
+      SocketSetblocking(sock);
+
       pd_new_conn_socket = sock;
     }
     setSelectable(1,0,1);
