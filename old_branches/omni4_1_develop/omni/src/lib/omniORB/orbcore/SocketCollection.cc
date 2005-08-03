@@ -1,9 +1,11 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB
 // SocketCollection.cc        Created on: 23 Jul 2001
-//                            Author    : Sai Lai Lo (sll)
+//                            Author 1  : Sai Lai Lo (sll)
+//                            Author 2  : Duncan Grisby (dgrisby)
 //
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2005 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2005/08/02 09:42:53  dgrisby
+  Two threads could be dispatched for one call, one by Peek, one by Select.
+
   Revision 1.1.4.8  2005/06/24 14:31:30  dgrisby
   Allow multiple threads to Peek() without clashing. Not yet tested on
   Windows.
@@ -140,6 +145,12 @@ void
 SocketSetTimeOut(unsigned long abs_sec, unsigned long abs_nsec,
 		 struct timeval& t)
 {
+  if (abs_sec == 0 && abs_nsec == 0) {
+    // Avoid get_time call which is expensive on some platforms.
+    t.tv_sec = t.tv_usec = 0;
+    return;
+  }
+
   unsigned long now_sec, now_nsec;
   omni_thread::get_time(&now_sec,&now_nsec);
 
@@ -381,9 +392,10 @@ SocketCollection::Select() {
 
 	// Add our pipe
 	if (pd_pipe_read >= 0) {
-	  pd_pollfds[index].fd     = pd_pipe_read;
-	  pd_pollfds[index].events = POLLIN;
-	  pd_pollsockets[index]    = 0;
+	  pd_pollfds[index].fd      = pd_pipe_read;
+	  pd_pollfds[index].events  = POLLIN;
+	  pd_pollfds[index].revents = 0;
+	  pd_pollsockets[index]     = 0;
 	  index++;
 	}
 
@@ -403,6 +415,7 @@ SocketCollection::Select() {
 
 	      pd_pollfds[index].fd      = s->pd_socket;
 	      pd_pollfds[index].events  = POLLIN;
+	      pd_pollfds[index].revents = 0;
 	      pd_pollsockets[index]     = s;
 	      index++;
 	    }
@@ -537,6 +550,7 @@ SocketHolder::setSelectable(int            now,
 
     pd_belong_to->pd_pollfds[index].fd      = pd_socket;
     pd_belong_to->pd_pollfds[index].events  = POLLIN;
+    pd_belong_to->pd_pollfds[index].revents = 0;
     pd_belong_to->pd_pollsockets[index]     = this;
     pd_belong_to->pd_pollfd_n = index + 1;
   }
