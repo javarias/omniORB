@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.3.2.13  2005/07/22 09:52:56  dgrisby
+# Remove more gcc warnings. Thanks Matej Kenda.
+#
 # Revision 1.3.2.12  2001/10/29 17:42:39  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -440,7 +443,7 @@ CORBA::Boolean operator >>= (const CORBA::Any& _a, const @fqname@*& _s_out)
       _s_out = stmp;
       return 1;
     } else {
-      delete stmp;
+      delete OMNI_CONST_CAST(@fqname@*,stmp);
       return 0;
     }
   } else {
@@ -520,7 +523,7 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
       (OMNI_CONST_CAST(CORBA::Any *, &_a))->PR_setCachedData(OMNI_CONST_VOID_CAST(_sp), @private_prefix@_delete_@guard_name@);
       return 1;
     } else {
-      delete _sp; _sp = 0;
+      delete OMNI_CONST_CAST(@fqname@*,_sp); _sp = 0;
       return 0;
     }
   } else {
@@ -609,7 +612,7 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp) {
       (OMNI_CONST_CAST(CORBA::Any*, &_a))->PR_setCachedData(OMNI_CONST_VOID_CAST(_sp), @private_prefix@_delete_@guard_name@);
       return 1;
     } else {
-      delete _sp;
+      delete OMNI_CONST_CAST(@fqname@*,_sp);
       _sp = 0;
       return 0;
     }
@@ -642,7 +645,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@* _sp) {
   tcDescriptor @private_prefix@_tcdesc;
   @private_prefix@_buildDesc_c@guard_name@(@private_prefix@_tcdesc, *_sp);
   _a.PR_packFrom(@private_prefix@_tc_@guard_name@, &@private_prefix@_tcdesc);
-  delete _sp;
+  delete OMNI_CONST_CAST(@fqname@*,_sp);
 }
 
 CORBA::Boolean operator>>=(const CORBA::Any& _a,const @fqname@*& _sp) {
@@ -655,13 +658,13 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a,const @fqname@*& _sp) {
       (OMNI_CONST_CAST(CORBA::Any *, &_a))->PR_setCachedData(OMNI_CONST_VOID_CAST(_sp), @private_prefix@_delete_@guard_name@);
       return 1;
     } else {
-      delete _sp; _sp = 0;
+      delete OMNI_CONST_CAST(@fqname@*,_sp); _sp = 0;
       return 0;
     }
   } else {
     CORBA::TypeCode_var @private_prefix@_tctmp = _a.type();
     if (@private_prefix@_tctmp->equivalent(@private_prefix@_tc_@guard_name@)) return 1;
-    delete _sp; _sp = 0;
+    delete OMNI_CONST_CAST(@fqname@*,_sp); _sp = 0;
     return 0;
   }
 }
