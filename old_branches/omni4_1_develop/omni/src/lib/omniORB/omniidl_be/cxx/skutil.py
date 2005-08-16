@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.6  2005/01/06 23:09:50  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.20.2.5  2004/10/13 17:58:22  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #
@@ -270,12 +273,17 @@ else """,
     bounded = ""
     kind = d_type.type().kind()
     
-    if d_type.objref():
+    if d_type.objref() or d_type.abstract_interface():
         type_name = string.replace(type_name,"_ptr","")
         if isinstance(d_type.type().decl(),idlast.Forward):
             # hack to denote an interface forward declaration
             # kind is used to index the associative array below
             kind = idltype.tk_objref * 1000
+
+    elif d_type.value() or d_type.valuebox():
+        if isinstance(d_type.type().decl(),idlast.ValueForward):
+            kind = idltype.tk_value * 1000
+
     elif d_type.string() or d_type.wstring():
         bounded = str(d_type.type().bound())
 
@@ -305,6 +313,8 @@ else """,
       "@type@_Helper::marshalObjRef(@element_name@,@to_where@);",
       idltype.tk_value:
       "@type@::_NP_marshal(@element_name@,@to_where@);",
+      idltype.tk_value * 1000:
+      "@type@_Helper::marshal(@element_name@,@to_where@);",
       idltype.tk_value_box:
       "@type@::_NP_marshal(@element_name@,@to_where@);",
       idltype.tk_abstract_interface:
@@ -399,12 +409,17 @@ def unmarshall(to, environment, type, decl, name, from_where):
     bounded = ""
     kind = d_type.type().kind()
 
-    if d_type.objref():
+    if d_type.objref() or d_type.abstract_interface():
         type_name = string.replace(type_name,"_ptr","")
         if isinstance(d_type.type().decl(),idlast.Forward):
             # hack to denote an interface forward declaration
             # kind is used to index the associative array below
             kind = idltype.tk_objref * 1000
+
+    elif d_type.value() or d_type.valuebox():
+        if isinstance(d_type.type().decl(),idlast.ValueForward):
+            kind = idltype.tk_value * 1000
+
     elif d_type.string() or d_type.wstring():
         bounded = str(d_type.type().bound())
         
@@ -429,6 +444,8 @@ def unmarshall(to, environment, type, decl, name, from_where):
       "@element_name@ = @type@_Helper::unmarshalObjRef(@where@);",
       idltype.tk_value:
       "@element_name@ = @type@::_NP_unmarshal(@where@);",
+      idltype.tk_value * 1000:
+      "@element_name@ = @type@_Helper::unmarshal(@where@);",
       idltype.tk_value_box:
       "@element_name@ = @type@::_NP_unmarshal(@where@);",
       idltype.tk_abstract_interface:

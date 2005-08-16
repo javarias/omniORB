@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.5  2005/01/06 17:31:06  dgrisby
+  Changes (mainly from omni4_0_develop) to compile on gcc 3.4.
+
   Revision 1.1.2.4  2004/10/13 17:58:19  dgrisby
   Abstract interfaces support; values support interfaces; value bug fixes.
 
@@ -47,25 +50,25 @@
 #define __VALUETEMPLATEDECLS_H__
 
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_Member;
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_Element;
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_INOUT_arg;
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_OUT_arg;
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 class _CORBA_Sequence_Value;
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 class _CORBA_Unbounded_Sequence_Value;
 
-template <class T, class ElemT, int max>
+template <class T, class ElemT, class T_Helper, int max>
 class _CORBA_Bounded_Sequence_Value;
 
 
@@ -73,34 +76,34 @@ class _CORBA_Bounded_Sequence_Value;
 //////////////////////////// _CORBA_Value_Var ////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_Var {
 public:
-  typedef _CORBA_Value_Var<T>     T_var;
-  typedef _CORBA_Value_Member<T>  T_member;
-  typedef _CORBA_Value_Element<T> T_element;
+  typedef _CORBA_Value_Var<T, T_Helper>     T_var;
+  typedef _CORBA_Value_Member<T, T_Helper>  T_member;
+  typedef _CORBA_Value_Element<T, T_Helper> T_element;
 
   inline _CORBA_Value_Var() : _pd_val(0) {}
   inline _CORBA_Value_Var(T* p) { _pd_val = p; }
   inline _CORBA_Value_Var(const T_var& p) : _pd_val(p._pd_val) {
-    if (_pd_val) _pd_val->_add_ref();
+    T_Helper::add_ref(p);
   }
   inline _CORBA_Value_Var(const T_member& p);
   inline _CORBA_Value_Var(const T_element& p);
   inline ~_CORBA_Value_Var() {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
   }
 
   inline T_var& operator= (T* p) {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
     _pd_val = p;
     return *this;
   }
   inline T_var& operator= (const T_var& p) {
     if (_pd_val != p._pd_val) {
-      if (_pd_val) _pd_val->_remove_ref();
+      T_Helper::remove_ref(_pd_val);
       _pd_val = p._pd_val;
-      if (_pd_val) _pd_val->_add_ref();
+      T_Helper::add_ref(_pd_val);
     }
     return *this;
   }
@@ -114,7 +117,7 @@ public:
   inline T*  in() const { return _pd_val; }
   inline T*& inout()    { return _pd_val; }
   inline T*& out() {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
     _pd_val = 0;
     return _pd_val;
   }
@@ -124,10 +127,10 @@ public:
     return tmp;
   }
 
-  friend class _CORBA_Value_Member<T>;
-  friend class _CORBA_Value_Element<T>;
-  friend class _CORBA_Value_INOUT_arg<T>;
-  friend class _CORBA_Value_OUT_arg<T>;
+  friend class _CORBA_Value_Member   <T,T_Helper>;
+  friend class _CORBA_Value_Element  <T,T_Helper>;
+  friend class _CORBA_Value_INOUT_arg<T,T_Helper>;
+  friend class _CORBA_Value_OUT_arg  <T,T_Helper>;
 
 private:
   T* _pd_val;
@@ -137,40 +140,40 @@ private:
 //////////////////////////// ValueBase_Member ////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_Member {
 public:
-  typedef _CORBA_Value_Var<T>     T_var;
-  typedef _CORBA_Value_Member<T>  T_member;
-  typedef _CORBA_Value_Element<T> T_element;
+  typedef _CORBA_Value_Var    <T,T_Helper> T_var;
+  typedef _CORBA_Value_Member <T,T_Helper> T_member;
+  typedef _CORBA_Value_Element<T,T_Helper> T_element;
 
   inline _CORBA_Value_Member() : _pd_val(0) {}
   inline _CORBA_Value_Member(const T_member& p) : _pd_val(p._pd_val) {
-    if (_pd_val) _pd_val->_add_ref();
+    T_Helper::add_ref(_pd_val);
   }
   inline ~_CORBA_Value_Member() {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
   }
 
   inline T_member& operator= (T* p) {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
     _pd_val = p;
     return *this;
   }
   inline T_member& operator= (const T_member& p) {
     if (_pd_val != p._pd_val) {
-      if (_pd_val) _pd_val->_remove_ref();
+      T_Helper::remove_ref(_pd_val);
       _pd_val = p._pd_val;
-      if (_pd_val) _pd_val->_add_ref();
+      T_Helper::add_ref(_pd_val);
     }
     return *this;
   }
 
   inline T_member& operator= (const T_var& p) {
     if (_pd_val != p._pd_val) {
-      if (_pd_val) _pd_val->_remove_ref();
+      T_Helper::remove_ref(_pd_val);
       _pd_val = p._pd_val;
-      if (_pd_val) _pd_val->_add_ref();
+      T_Helper::add_ref(_pd_val);
     }
     return *this;
   }
@@ -178,11 +181,11 @@ public:
   inline T_member& operator= (const T_element& p);
 
   inline void operator>>= (cdrStream& s) const {
-    T::_NP_marshal(_pd_val, s);
+    T_Helper::marshal(_pd_val, s);
   }
   inline void operator<<= (cdrStream& s) {
-    T* _result = T::_NP_unmarshal(s);
-    if (_pd_val) _pd_val->_remove_ref();
+    T* _result = T_Helper::unmarshal(s);
+    T_Helper::remove_ref(_pd_val);
     _pd_val = _result;
   }
 
@@ -192,7 +195,7 @@ public:
   inline T*  in() const { return _pd_val; }
   inline T*& inout()    { return _pd_val; }
   inline T*& out() {
-    if (_pd_val) _pd_val->_remove_ref();
+    T_Helper::remove_ref(_pd_val);
     _pd_val = 0;
     return _pd_val;
   }
@@ -209,12 +212,12 @@ public:
 //////////////////////////// ValueBase_Element ///////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_Element {
 public:
-  typedef _CORBA_Value_Var<T>     T_var;
-  typedef _CORBA_Value_Member<T>  T_member;
-  typedef _CORBA_Value_Element<T> T_element;
+  typedef _CORBA_Value_Var    <T,T_Helper> T_var;
+  typedef _CORBA_Value_Member <T,T_Helper> T_member;
+  typedef _CORBA_Value_Element<T,T_Helper> T_element;
 
   inline _CORBA_Value_Element(T*& p, _CORBA_Boolean rel)
     : pd_rel(rel), _pd_val(p) {}
@@ -228,20 +231,16 @@ public:
 
   inline T_element& operator= (T* p) {
     if (pd_rel)
-      if (_pd_val)
-	_pd_val->_remove_ref();
+      T_Helper::remove_ref(_pd_val);
     _pd_val = p;
     return *this;
   }
 
   inline T_element& operator= (const T_element& p) {
     if (pd_rel) {
-      if (_pd_val)
-	_pd_val->_remove_ref();
-
+      T_Helper::remove_ref(_pd_val);
       _pd_val = p._pd_val;
-      if (_pd_val)
-	_pd_val->_add_ref();
+      T_Helper::add_ref(_pd_val);
     }
     else
       _pd_val = p._pd_val;
@@ -250,10 +249,8 @@ public:
 
   inline T_element& operator= (const T_member& p) {
     if (pd_rel) {
-      if (_pd_val)
-	_pd_val->_remove_ref();
-
-      if (p._pd_val) p._pd_val->_add_ref();
+      T_Helper::remove_ref(_pd_val);
+      T_Helper::add_ref(p._pd_val);
     }
     _pd_val = (T*) p;
     return *this;
@@ -261,10 +258,8 @@ public:
 
   inline T_element& operator= (const T_var& p) {
     if (pd_rel) {
-      if (_pd_val)
-	_pd_val->_remove_ref();
-
-      if (p._pd_val) p._pd_val->_add_ref();
+      T_Helper::remove_ref(_pd_val);
+      T_Helper::add_ref(p._pd_val);
     }
     _pd_val = (T*)p;
     return *this;
@@ -277,8 +272,7 @@ public:
   inline T*& inout()   { return _pd_val; }
   inline T*& out() {
     if (pd_rel) {
-      if (_pd_val)
-	_pd_val->_remove_ref();
+      T_Helper::remove_ref(_pd_val);
     }
     _pd_val = 0;
     return _pd_val;
@@ -287,8 +281,7 @@ public:
   inline T* _retn() {
     T* tmp = _pd_val;
     if (!pd_rel) {
-      if (_pd_val)
-	_pd_val->_add_ref();
+      T_Helper::add_ref(_pd_val);
     }
     _pd_val = 0;
     return tmp;
@@ -307,51 +300,51 @@ public:
 /////////////////////// operator= and copy ctors  ////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 inline
-_CORBA_Value_Var<T>::
-_CORBA_Value_Var(const _CORBA_Value_Member<T>& m)
+_CORBA_Value_Var<T,T_Helper>::
+_CORBA_Value_Var(const _CORBA_Value_Member<T,T_Helper>& m)
 {
-  if (m._pd_val) m._pd_val->_add_ref();
+  T_Helper::add_ref(m._pd_val);
   _pd_val = m._pd_val;
 }
 
-template <class T>
+template <class T, class T_Helper>
 inline
-_CORBA_Value_Var<T>::
-_CORBA_Value_Var(const _CORBA_Value_Element<T>& m)
+_CORBA_Value_Var<T,T_Helper>::
+_CORBA_Value_Var(const _CORBA_Value_Element<T,T_Helper>& m)
 {
-  if (m._pd_val) m._pd_val->_add_ref();
+  T_Helper::add_ref(m._pd_val);
   _pd_val = m._pd_val;
 }
 
 
-template <class T>
-inline _CORBA_Value_Var<T>&
-_CORBA_Value_Var<T>::operator= (const _CORBA_Value_Member<T>& p)
+template <class T, class T_Helper>
+inline _CORBA_Value_Var<T,T_Helper>&
+_CORBA_Value_Var<T,T_Helper>::operator= (const _CORBA_Value_Member<T,T_Helper>& p)
 {
-  if (_pd_val) _pd_val->_remove_ref();
-  if (p._pd_val) p._pd_val->_add_ref();
+  T_Helper::remove_ref(_pd_val);
+  T_Helper::add_ref(p._pd_val);
   _pd_val = p._pd_val;
   return *this;
 }
 
-template <class T>
-inline _CORBA_Value_Var<T>&
-_CORBA_Value_Var<T>::operator= (const _CORBA_Value_Element<T>& p)
+template <class T, class T_Helper>
+inline _CORBA_Value_Var<T,T_Helper>&
+_CORBA_Value_Var<T,T_Helper>::operator= (const _CORBA_Value_Element<T,T_Helper>& p)
 {
-  if (_pd_val) _pd_val->_remove_ref();
-  if (p._pd_val) p._pd_val->_add_ref();
+  T_Helper::remove_ref(_pd_val);
+  T_Helper::add_ref(p._pd_val);
   _pd_val = p._pd_val;
   return *this;
 }
 
-template <class T>
-inline _CORBA_Value_Member<T>&
-_CORBA_Value_Member<T>::operator= (const _CORBA_Value_Element<T>& p)
+template <class T, class T_Helper>
+inline _CORBA_Value_Member<T,T_Helper>&
+_CORBA_Value_Member<T,T_Helper>::operator= (const _CORBA_Value_Element<T,T_Helper>& p)
 {
-  if (_pd_val) _pd_val->_remove_ref();
-  if (p._pd_val) p._pd_val->_add_ref();
+  T_Helper::remove_ref(_pd_val);
+  T_Helper::add_ref(p._pd_val);
   _pd_val = p._pd_val;
   return *this;
 }
@@ -361,12 +354,12 @@ _CORBA_Value_Member<T>::operator= (const _CORBA_Value_Element<T>& p)
 ////////////////////////// Value_INOUT_arg ///////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_INOUT_arg {
 public:
-  typedef _CORBA_Value_Var<T>     T_var;
-  typedef _CORBA_Value_Member<T>  T_member;
-  typedef _CORBA_Value_Element<T> T_element;
+  typedef _CORBA_Value_Var    <T,T_Helper> T_var;
+  typedef _CORBA_Value_Member <T,T_Helper> T_member;
+  typedef _CORBA_Value_Element<T,T_Helper> T_element;
 
   inline _CORBA_Value_INOUT_arg(T*& p) :        _pd_val(p) {}
   inline _CORBA_Value_INOUT_arg(T_var& p) :     _pd_val(p._pd_val) {}
@@ -379,8 +372,7 @@ public:
     // result in a memory leak! This only occurs when there is a programming
     // error and cannot be trapped by the compiler.
     if( !p._NP_release() )
-      if (p._NP_val())
-	p._NP_val()->_add_ref();
+      T_Helper::add_ref(p._NP_val());
   }
   inline ~_CORBA_Value_INOUT_arg() {}
 
@@ -396,13 +388,13 @@ private:
 /////////////////////////// Value_OUT_arg ////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T, class T_Helper>
 class _CORBA_Value_OUT_arg {
 public:
-  typedef _CORBA_Value_Var<T>     T_var;
-  typedef _CORBA_Value_Member<T>  T_member;
-  typedef _CORBA_Value_Element<T> T_element;
-  typedef _CORBA_Value_OUT_arg<T> T_out;
+  typedef _CORBA_Value_Var    <T,T_Helper> T_var;
+  typedef _CORBA_Value_Member <T,T_Helper> T_member;
+  typedef _CORBA_Value_Element<T,T_Helper> T_element;
+  typedef _CORBA_Value_OUT_arg<T,T_Helper> T_out;
 
   inline _CORBA_Value_OUT_arg(T*& p) : _pd_val(p) { _pd_val = 0; }
   inline _CORBA_Value_OUT_arg(T_var& p) : _pd_val(p._pd_val) {
@@ -444,10 +436,10 @@ private:
 //////////////////////////// _CORBA_Sequence_Value ///////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T, class ElemT>
+template <class T, class ElemT, class T_Helper>
 class _CORBA_Sequence_Value {
 public:
-  typedef _CORBA_Sequence_Value<T,ElemT> T_seq;
+  typedef _CORBA_Sequence_Value<T,ElemT,T_Helper> T_seq;
 
   inline _CORBA_ULong maximum() const { return pd_max; }
   inline _CORBA_ULong length() const  { return pd_len; }
@@ -511,8 +503,7 @@ public:
     }
     ptr_arith_t l = (ptr_arith_t) b[1];
     for (_CORBA_ULong i = 0; i < (_CORBA_ULong) l; i++) {
-      if (buf[i])
-	buf[i]->_remove_ref();
+      T_Helper::remove_ref(buf[i]);
     }
     b[0] = (T*) 0;
     delete [] b;
@@ -638,8 +629,7 @@ protected:
       }
       else {
 	newdata[i_] = pd_data[i_];
-	if (newdata[i_])
-	  newdata[i_]->_add_ref();
+	T_Helper::add_ref(newdata[i_]);
       }
     }
     if (pd_rel && pd_data) {
@@ -664,11 +654,11 @@ protected:
 ///////////////// _CORBA_Unbounded_Sequence_Value ////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template <class T, class ElemT>
-class _CORBA_Unbounded_Sequence_Value : public _CORBA_Sequence_Value<T,ElemT> {
+template <class T, class ElemT, class T_Helper>
+class _CORBA_Unbounded_Sequence_Value : public _CORBA_Sequence_Value<T,ElemT,T_Helper> {
 public:
-  typedef _CORBA_Unbounded_Sequence_Value<T,ElemT> T_seq;
-  typedef _CORBA_Sequence_Value<T,ElemT>           Base_T_seq;
+  typedef _CORBA_Unbounded_Sequence_Value<T,ElemT,T_Helper> T_seq;
+  typedef _CORBA_Sequence_Value<T,ElemT,T_Helper>           Base_T_seq;
 
   inline _CORBA_Unbounded_Sequence_Value() {}
   inline _CORBA_Unbounded_Sequence_Value(_CORBA_ULong max) : 
@@ -700,11 +690,11 @@ public:
 ///////////////// _CORBA_Bounded_Sequence_Value //////////////////////
 //////////////////////////////////////////////////////////////////////
 
-template<class T, class ElemT, int max>
-class _CORBA_Bounded_Sequence_Value : public _CORBA_Sequence_Value<T,ElemT> {
+template<class T, class ElemT, class T_Helper, int max>
+class _CORBA_Bounded_Sequence_Value : public _CORBA_Sequence_Value<T,ElemT,T_Helper> {
 public:
-  typedef _CORBA_Bounded_Sequence_Value<T,ElemT,max> T_seq;
-  typedef _CORBA_Sequence_Value<T,ElemT>             Base_T_seq;
+  typedef _CORBA_Bounded_Sequence_Value<T,ElemT,T_Helper,max> T_seq;
+  typedef _CORBA_Sequence_Value<T,ElemT,T_Helper>             Base_T_seq;
 
   inline _CORBA_Bounded_Sequence_Value() : Base_T_seq(max,1){}
 

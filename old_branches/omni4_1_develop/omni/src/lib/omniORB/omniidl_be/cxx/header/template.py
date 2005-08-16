@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.10  2005/07/22 17:18:37  dgrisby
+# Another merge from omni4_0_develop.
+#
 # Revision 1.8.2.9  2005/01/06 23:10:06  dgrisby
 # Big merge from omni4_0_develop.
 #
@@ -493,13 +496,13 @@ public:
     }
   }
 
+  // Other IDL defined within this scope.
+  @Other_IDL@
+
   // Operations declared in this abstract interface
   @operations@  
 
   static _core_attr const char* _PD_repoId;
-
-  // Other IDL defined within this scope.
-  @Other_IDL@
 };
 """
 

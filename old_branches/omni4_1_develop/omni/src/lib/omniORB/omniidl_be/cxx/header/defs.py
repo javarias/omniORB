@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.8  2005/01/06 23:10:03  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.36.2.7  2004/10/13 17:58:23  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #
@@ -472,11 +475,17 @@ def visitForward(node):
         class_sk = "class _sk_" + name.unambiguous(environment) + ";"
 
     # output the definition
-    stream.out(template.interface_Helper,
-               guard = guard,
-               class_sk_name = class_sk,
-               name = name.unambiguous(environment))
-
+    if node.abstract():
+        stream.out(template.abstract_interface_Helper,
+                   guard = guard,
+                   class_sk_name = class_sk,
+                   name = name.unambiguous(environment))
+    else:
+        stream.out(template.interface_Helper,
+                   guard = guard,
+                   class_sk_name = class_sk,
+                   name = name.unambiguous(environment))
+        
 def visitConst(node):
     environment = id.lookup(node)
     scope = environment.scope()
@@ -614,8 +623,8 @@ def visitTypedef(node):
                            base = basicReferencedTypeID,
                            name = derivedName)
                     
-            # Non-array of objrect reference
-            elif d_type.objref():
+            # Non-array of object reference
+            elif d_type.objref() or d_type.abstract_interface():
                 derefTypeID = string.replace(derefTypeID,"_ptr","")
                 # Note that the base name is fully flattened
                 is_CORBA_Object = d_type.type().scopedName() ==\
@@ -703,10 +712,10 @@ def visitTypedef(node):
                         elif d_seqType.wstring():
                             element = "_CORBA_WString_element"
                             element_ptr = "CORBA::WChar*"
-                        elif d_seqType.objref():
+                        elif d_seqType.objref() or d_seqType.abstract_interface():
                             element = seqType.base(environment)
                             element_ptr = element
-                        elif d_seqType.value():
+                        elif d_seqType.value() or d_seqType.valuebox():
                             element = seqType.base(environment)
                             element_ptr = element + "*"
                         # only if an anonymous sequence
@@ -771,7 +780,7 @@ def visitTypedef(node):
                     elif d_seqType.wstring():
                         # special case alert
                         element_reference = element
-                    elif d_seqType.objref():
+                    elif d_seqType.objref() or d_seqType.abstract_interface():
                         element_reference = d_seqType.objRefTemplate("Element",
                                                                      environment)
                     elif d_seqType.value() or d_seqType.valuebox():
@@ -1497,7 +1506,7 @@ def visitUnion(node):
                                isDefault = str(c.isDefault),
                                discrimvalue = discrimvalue)
 
-                elif d_caseType.objref():
+                elif d_caseType.objref() or d_caseType.abstract_interface():
                     scopedName = d_caseType.type().decl().scopedName()
 
                     name = id.Name(scopedName)
