@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.17  2003/11/21 14:43:11  dgrisby
+ Clear endPoint options on ORB destroy, so they don't conflict if the
+ ORB is initialised again.
+
  Revision 1.2.2.16  2002/08/21 19:55:42  dgrisby
  Add endPointPublishAllIFs option.
 
@@ -771,7 +775,7 @@ public:
     orbOptions::Handler("endPointPublishAllIFs",
 			"endPointPublishAllIFs = 0 or 1",
 			1,
-			"-ORBendPublishAllIFs < 0 | 1 >") {}
+			"-ORBendPointPublishAllIFs < 0 | 1 >") {}
 
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
