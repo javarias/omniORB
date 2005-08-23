@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2005/02/13 20:53:08  dgrisby
+  Change threadPoolWatchConnection parameter to be an integer rather
+  than a boolean. Value is the count of threads that can be handling a
+  connection when one decides to watch it.
+
   Revision 1.1.2.5  2004/03/02 15:31:22  dgrisby
   Support for persistent server identifier.
 
@@ -103,6 +108,13 @@ _CORBA_MODULE_VAR _core_attr CORBA::ULong giopMaxMsgSize;
 //
 //   Valid values = (n >= 8192)
 //
+
+_CORBA_MODULE_VAR _core_attr size_t maxSocketSend;
+_CORBA_MODULE_VAR _core_attr size_t maxSocketRecv;
+//   These values set the maximum size that is used in an individual
+//   socket send() or recv() call.
+//
+//   Valid values = (n >= 8192)
 
 
 _CORBA_MODULE_VAR _core_attr omniCodeSet::NCS_C* nativeCharCodeSet;
