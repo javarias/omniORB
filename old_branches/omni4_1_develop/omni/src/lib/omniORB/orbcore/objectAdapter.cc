@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.2  2005/01/06 23:10:34  dgrisby
+ Big merge from omni4_0_develop.
+
  Revision 1.5.2.1  2003/03/23 21:02:12  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -774,7 +777,7 @@ public:
     orbOptions::Handler("endPointPublishAllIFs",
 			"endPointPublishAllIFs = 0 or 1",
 			1,
-			"-ORBendPublishAllIFs < 0 | 1 >") {}
+			"-ORBendPointPublishAllIFs < 0 | 1 >") {}
 
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
