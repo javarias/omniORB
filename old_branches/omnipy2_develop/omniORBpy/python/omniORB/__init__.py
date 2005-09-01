@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.25  2005/04/25 18:22:46  dgrisby
+# Minor code for TRANSIENT_FailedOnForwarded.
+#
 # Revision 1.26.2.24  2005/03/02 11:32:44  dgrisby
 # New optional endian parameter to cdrMarshal / cdrUnmarshal.
 #
@@ -879,17 +882,7 @@ def omniORBminorCode(c):
 def OMGminorCode(c):
     return 0x4f4d0000 | c
 
-BAD_INV_ORDER_ORBHasShutdown       = OMGminorCode(4)
-BAD_CONTEXT_NoMatchingProperty     = omniORBminorCode(75)
-BAD_CONTEXT_StartingScopeNotFound  = omniORBminorCode(76)
-BAD_PARAM_WrongPythonType          = omniORBminorCode(88)
-BAD_PARAM_PythonValueOutOfRange    = omniORBminorCode(95)
-BAD_PARAM_WrongUnionMemberSelected = omniORBminorCode(107)
-BAD_PARAM_InvalidFixedPointLimits  = omniORBminorCode(109)
-BAD_TYPECODE_InvalidIndirection    = omniORBminorCode(108)
-INTF_REPOS_NotAvailable            = omniORBminorCode(39)
-NO_IMPLEMENT_Unsupported           = omniORBminorCode(36)
-TRANSIENT_FailedOnForwarded        = omniORBminorCode(1)
+from omniORB.minorCodes import *
 
 
 # More public things, which depend on the CORBA module
