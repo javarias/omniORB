@@ -29,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:04:10  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.5  2001/08/15 10:26:08  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -150,6 +153,11 @@ public:
     return pd_activations;
   }
   // Must hold <omni::internalLock>.
+
+  virtual void _add_ref();
+  virtual void _remove_ref();
+  // Base omniServant versions do nothing; overridden in
+  // PortableServer::ServantBase to perform reference counting.
 
 private:
 

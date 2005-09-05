@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:08  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.8  2001/08/15 10:26:13  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -215,3 +218,7 @@ omniServant::_removeActivation(omniObjTableEntry* entry)
   }
   OMNIORB_ASSERT(activation_found);
 }
+
+
+void omniServant::_add_ref()    {}
+void omniServant::_remove_ref() {}
