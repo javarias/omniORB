@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/03/02 12:10:48  dgrisby
+  setSelectable / Peek fixes.
+
   Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -87,6 +90,8 @@ class sslConnection : public giopConnection, public SocketHolder {
 
   const char* peeraddress();
 
+  const char *peeridentity();
+
   void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
@@ -96,7 +101,7 @@ class sslConnection : public giopConnection, public SocketHolder {
   CORBA::Boolean Peek();
 
   SocketHandle_t handle() const { return pd_socket; }
-  ::SSL*            ssl_handle() const { return pd_ssl; }
+  ::SSL*         ssl_handle() const { return pd_ssl; }
 
   sslConnection(SocketHandle_t,::SSL*,SocketCollection*);
 
@@ -107,7 +112,7 @@ class sslConnection : public giopConnection, public SocketHolder {
   ::SSL*            pd_ssl;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;
-
+  CORBA::String_var pd_peeridentity;
 };
 
 

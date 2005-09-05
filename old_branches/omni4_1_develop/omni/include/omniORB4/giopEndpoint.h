@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/03/02 12:10:50  dgrisby
+  setSelectable / Peek fixes.
+
   Revision 1.1.6.3  2005/01/13 21:09:57  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -102,6 +105,10 @@ public:
   virtual const char* myaddress() = 0;
   virtual const char* peeraddress() = 0;
 
+  virtual const char* peeridentity();
+  // Return a string identifying the peer, if appropriate for the
+  // connection type. By default returns zero to indicate no peer
+  // identification is possible.
 
   virtual void setSelectable(int now = 0,
 			     _CORBA_Boolean data_in_buffer = 0) = 0;

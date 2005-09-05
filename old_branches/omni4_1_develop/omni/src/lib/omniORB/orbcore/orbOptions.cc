@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:37  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:02:08  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -261,7 +264,7 @@ orbOptions::getTraceLevel(int argc, char** argv)
     if (!strcmp(argv[i], "-ORBtraceLevel")) {
       if (i+1 == argc) {
 	throw orbOptions::BadParam(key, "<missing>",
-				   "Expected parameter missins");
+				   "Expected parameter missing");
       }
       CORBA::ULong v;
       if (!orbOptions::getULong(argv[i+1], v))

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:15  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:02:16  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -271,6 +274,12 @@ giopConnection::decrRefCount(CORBA::Boolean forced) {
   if (rc == 0)
     delete this;
   return rc;
+}
+
+////////////////////////////////////////////////////////////////////////
+const char*
+giopConnection::peeridentity() {
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////

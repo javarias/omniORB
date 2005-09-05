@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/09/01 14:52:12  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.5  2005/03/02 12:39:17  dgrisby
   Merge from omni4_0_develop.
 
@@ -326,6 +329,11 @@ sslConnection::peeraddress() {
   return (const char*)pd_peeraddress;
 }
 
+const char*
+sslConnection::peeridentity() {
+  return (const char *)pd_peeridentity;
+}
+
 /////////////////////////////////////////////////////////////////////////
 sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl, 
 			     SocketCollection* belong_to) : 
@@ -358,6 +366,22 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
   SocketSetCloseOnExec(sock);
 
   belong_to->addSocket(this);
+
+  // determine our peer identity, if there is one
+  X509 *peer_cert = SSL_get_peer_certificate(pd_ssl);
+
+  if (peer_cert) {
+    if (SSL_get_verify_result(pd_ssl) != X509_V_OK)
+      return;
+
+    char buf[1024];
+
+    X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert),
+			      NID_commonName, buf, sizeof(buf));
+
+    pd_peeridentity = CORBA::string_dup(buf);
+    X509_free(peer_cert);
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////
