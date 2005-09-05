@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2005/03/10 11:28:28  dgrisby
+  Race condition between setSelectable / clearSelectable.
+
   Revision 1.1.2.6  2004/04/08 10:02:21  dgrisby
   In thread pool mode, close connections that will not be selectable.
 
@@ -80,6 +83,8 @@ class sslConnection : public giopConnection, public SocketLink {
 
   const char* peeraddress();
 
+  const char *peeridentity();
+
   void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
   void clearSelectable();
@@ -89,7 +94,7 @@ class sslConnection : public giopConnection, public SocketLink {
   void Peek(giopConnection::notifyReadable_t func,void* cookie);
 
   SocketHandle_t handle() const { return pd_socket; }
-  ::SSL*            ssl_handle() const { return pd_ssl; }
+  ::SSL*         ssl_handle() const { return pd_ssl; }
 
   sslConnection(SocketHandle_t,::SSL*,SocketCollection*);
 
@@ -101,7 +106,7 @@ class sslConnection : public giopConnection, public SocketLink {
   SocketCollection* pd_belong_to;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;
-
+  CORBA::String_var pd_peeridentity;
 };
 
 

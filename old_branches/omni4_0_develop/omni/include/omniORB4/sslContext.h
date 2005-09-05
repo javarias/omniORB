@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2004/02/11 15:44:53  dgrisby
+  Hook to set SSL verify mode. Thanks Matthew Wood.
+
   Revision 1.1.2.6  2003/04/25 15:53:33  dgrisby
   Work around OpenSSL crypt() clash.
 
@@ -83,11 +86,12 @@ class sslContext {
 
   SSL_CTX* get_SSL_CTX() const { return pd_ctx; }
   
-  // These three parameters must be set or else the default way to
+  // These four parameters must be set or else the default way to
   // initialise a sslContext singleton will not be used.
   static _core_attr const char* certificate_authority_file; // In PEM format
   static _core_attr const char* key_file;                   // In PEM format
   static _core_attr const char* key_file_password;
+  static _core_attr int         verify_mode;
 
   static _core_attr sslContext* singleton;
 
@@ -114,7 +118,7 @@ class sslContext {
 
   virtual void set_privatekey();
   // Default to read the private key of this server from the file named
-  // by the statci member key_file. Notice that this file also contains
+  // by the static member key_file. Notice that this file also contains
   // the server's certificate.
 
   virtual void seed_PRNG();

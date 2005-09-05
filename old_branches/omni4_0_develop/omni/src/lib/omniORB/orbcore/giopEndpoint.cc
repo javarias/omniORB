@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.16  2004/02/11 18:33:20  dgrisby
+  Windows / MSVC 7 fixes.
+
   Revision 1.1.2.15  2003/11/06 10:19:19  dgrisby
   Remove transports from linked list when they are deleted.
 
@@ -275,6 +278,16 @@ giopConnection::decrRefCount(CORBA::Boolean forced) {
     delete this;
   return rc;
 }
+
+////////////////////////////////////////////////////////////////////////
+#if 0
+// Disabled for library binary compatibility.
+
+const char*
+giopConnection::peeridentity() {
+  return 0;
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 const omnivector<const char*>*
