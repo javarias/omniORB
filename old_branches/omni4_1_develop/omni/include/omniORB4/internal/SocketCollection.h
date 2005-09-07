@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2005/08/02 09:42:53  dgrisby
+  Two threads could be dispatched for one call, one by Peek, one by Select.
+
   Revision 1.1.4.6  2005/06/24 14:31:31  dgrisby
   Allow multiple threads to Peek() without clashing. Not yet tested on
   Windows.
@@ -119,6 +122,11 @@
 
 #ifdef HAVE_POLL
 #   define USE_POLL
+#endif
+
+#if defined(__darwin__)
+    // Darwin implementation of poll() is completely broken
+#   undef USE_POLL
 #endif
 
 #if defined(__hpux__)
