@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2005/09/05 14:31:08  dgrisby
+  SSL transport extensions from Jon Biggar; SSL command line options.
+
   Revision 1.1.2.10  2004/03/30 13:15:28  dgrisby
   Remove spurious empty lines in config dump.
 
@@ -280,6 +283,26 @@ orbOptions::getTraceLevel(int argc, char** argv)
       return;
     }
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////
+const char*
+orbOptions::getConfigFileName(int argc, char** argv, const char* fname)
+  throw (orbOptions::Unknown,orbOptions::BadParam) {
+
+  const char* key = "configFile";
+
+  for (int i=0; i<argc; i++) {
+    if (!strcmp(argv[i], "-ORBconfigFile")) {
+      if (i+1 == argc) {
+	throw orbOptions::BadParam(key, "<missing>",
+				   "Expected parameter missing");
+      }
+      return argv[i+1];
+    }
+  }
+  return fname;
 }
 
 

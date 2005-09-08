@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2003/08/21 14:57:38  dgrisby
+  Really silly bug broke registry reading on Windows.
+
   Revision 1.1.2.6  2002/03/18 15:13:07  dpg1
   Fix bug with old-style ORBInitRef in config file; look for
   -ORBtraceLevel arg before anything else; update Windows registry
@@ -208,6 +211,16 @@ class orbOptions {
   // Look for an -ORBtraceLevel argument very early on, so the trace
   // level can affect later option logging. Does not remove the
   // arguments -- that is done by extractInitOptions() later.
+  //
+  // Thread Safety preconditions:
+  //    Not thread safe
+
+  ////////////////////////////////////////////////////////////////////////
+  const char* getConfigFileName(int argc, char** argv, const char* fname)
+    throw (Unknown,BadParam);
+  // Look for an -ORBconfigFile argument before processing the config
+  // file. Does not remove the arguments -- that is done by
+  // extractInitOptions() later.
   //
   // Thread Safety preconditions:
   //    Not thread safe
