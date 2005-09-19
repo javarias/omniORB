@@ -6,6 +6,9 @@
 // Notes:		 Munching strategy is imperative
 //////////////////////////////////////////////////////////////////////////////
 // $Log$
+// Revision 1.1.4.4  2005/07/08 17:04:56  dgrisby
+// Merge from omni4_0_develop again.
+//
 // Revision 1.1.4.3  2005/04/25 18:24:23  dgrisby
 // Always release per thread data in the thread it belongs to.
 //
@@ -617,13 +620,13 @@ void omni_thread::start(void)
 
 	// Allocate memory for the task. (The returned id cannot be trusted by the task)
 	tid = taskSpawn(
-		NULL,								 // Task name
+		NULL,				// Task name
 		vxworks_priority(_priority),	// Priority
-		0,									 // Option
-		stack_size,						 // Stack size
-		(FUNCPTR)omni_thread_wrapper, // Priority
-		(int)this,							// First argument is this
-		0,0,0,0,0,0,0,0,0				 // Remaining unused args
+		VX_FP_TASK | VX_NO_STACK_FILL,	// Option
+		stack_size,			// Stack size
+		(FUNCPTR)omni_thread_wrapper,	// Entry point
+		(int)this,			// First argument is this
+		0,0,0,0,0,0,0,0,0		// Remaining unused args
 		);
 
 	DBG_ASSERT(assert(tid!=ERROR));

@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.6.5  2005/09/19 15:36:35  dgrisby
+  Refcount shortcut now throws INV_OBJREF when the servant is
+  deactivated, rather than deactivating the shortcut, which could lead
+  to a race condition.
+
   Revision 1.1.6.4  2005/01/06 23:08:09  dgrisby
   Big merge from omni4_0_develop.
 
@@ -219,6 +224,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_115 OMNIORBMinorCode(115)
 #define OMNIORBMinorCode_116 OMNIORBMinorCode(116)
 #define OMNIORBMinorCode_117 OMNIORBMinorCode(117)
+#define OMNIORBMinorCode_118 OMNIORBMinorCode(118)
 
 #define OMNI_COMMA ,
 #define DeclareValue(name,value) name = value
@@ -565,7 +571,8 @@ code( INITIALIZE_FailedPOAInit        , OMNIORBMinorCode_32 ) sep \
 code( INITIALIZE_FailedORBInit        , OMNIORBMinorCode_44 ) sep \
 code( INITIALIZE_FailedLoadLibrary    , OMNIORBMinorCode_45 ) sep \
 code( INITIALIZE_ConfigFileError      , OMNIORBMinorCode_50 ) sep \
-code( INITIALIZE_NotOmniThread        , OMNIORBMinorCode_56 )
+code( INITIALIZE_NotOmniThread        , OMNIORBMinorCode_56 ) sep \
+code( INITIALIZE_CannotOpenLogFile    , OMNIORBMinorCode_118 )
 
 
 enum INITIALIZE_minor {

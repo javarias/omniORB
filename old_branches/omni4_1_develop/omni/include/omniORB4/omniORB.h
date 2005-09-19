@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.4  2005/04/14 00:04:00  dgrisby
+  New traceInvocationReturns and traceTime options; remove logf function.
+
   Revision 1.5.2.3  2005/03/30 23:36:15  dgrisby
   Another merge from omni4_0_develop.
 
@@ -375,6 +378,19 @@ _CORBA_MODULE_BEG
   // provided function is called for all omniORB log messages.          //
   //                                                                    //
   _CORBA_MODULE_FN void setLogFunction(logFunction f);                  //
+  ////////////////////////////////////////////////////////////////////////
+
+
+  ////////////////////////////////////////////////////////////////////////
+  //                                                                    //
+  // setLogFilename()                                                   //
+  //                                                                    //
+  // Set a logging file to use instead of stderr. The file is opened    //
+  // for appending. If the file cannot be opened, CORBA::INITIALIZE is  //
+  // thrown.                                                            //
+  //                                                                    //
+  _CORBA_MODULE_FN void setLogFilename(const char* n);                  //
+  _CORBA_MODULE_FN const char* getLogFilename();                        //
   ////////////////////////////////////////////////////////////////////////
 
 

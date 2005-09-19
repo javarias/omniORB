@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.6  2005/04/14 00:03:58  dgrisby
+  New traceInvocationReturns and traceTime options; remove logf function.
+
   Revision 1.5.2.5  2005/04/08 00:35:46  dgrisby
   Merging again.
 
@@ -1460,6 +1463,29 @@ public:
 static traceTimeHandler traceTimeHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
+class traceFileHandler : public orbOptions::Handler {
+public:
+
+  traceFileHandler() :
+    orbOptions::Handler("traceFile",
+			"traceFile = <filename>",
+			1,
+			"-ORBtraceFile <filename>") {}
+
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+    omniORB::setLogFilename(value);
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    const char* n = omniORB::getLogFilename();
+    orbOptions::addKVString(key(), n ? n : "[stderr]", result);
+  }
+};
+
+static traceFileHandler traceFileHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
 class objectTableSizeHandler : public orbOptions::Handler {
 public:
 
@@ -1532,6 +1558,7 @@ public:
     orbOptions::singleton().registerHandler(traceInvocationReturnsHandler_);
     orbOptions::singleton().registerHandler(traceThreadIdHandler_);
     orbOptions::singleton().registerHandler(traceTimeHandler_);
+    orbOptions::singleton().registerHandler(traceFileHandler_);
     orbOptions::singleton().registerHandler(objectTableSizeHandler_);
     orbOptions::singleton().registerHandler(abortOnInternalErrorHandler_);
   }
