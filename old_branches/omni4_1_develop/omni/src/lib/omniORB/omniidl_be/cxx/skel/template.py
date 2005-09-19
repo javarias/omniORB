@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.7  2005/09/05 17:22:09  dgrisby
+# Reference counted local call shortcut.
+#
 # Revision 1.6.2.6  2005/03/30 23:36:11  dgrisby
 # Another merge from omni4_0_develop.
 #
@@ -584,6 +587,19 @@ if (_s) {
   else {
     _enableShortcut(0,0);
     // drop through to normal invoke
+  }
+}\
+"""
+
+interface_operation_shortcut_refcount = """\
+@impl_type@* _s = _shortcut;
+if (_s) {
+  if (!*_invalid) {
+    @callreturn@_s->@name@(@args@);@voidreturn@
+  }
+  else {
+    OMNIORB_THROW(INV_OBJREF, INV_OBJREF_ShortcutServantDeactivated,
+                  CORBA::COMPLETED_NO);
   }
 }\
 """

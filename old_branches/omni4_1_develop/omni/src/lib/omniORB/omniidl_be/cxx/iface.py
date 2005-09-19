@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.8  2005/09/05 17:22:09  dgrisby
+# Reference counted local call shortcut.
+#
 # Revision 1.1.6.7  2005/08/16 13:51:21  dgrisby
 # Problems with valuetype / abstract interface C++ mapping.
 #
@@ -563,8 +566,15 @@ class _objref_I(Class):
         objref_class = method.parent_class()
         interface = objref_class.interface()
         implname = interface.name().prefix("_impl_").unambiguous(self._environment)
+
+        if config.state['Shortcut'] == 2:
+          tmpl = omniidl_be.cxx.skel.template.\
+                 interface_operation_shortcut_refcount
+        else:
+          tmpl = omniidl_be.cxx.skel.template.\
+                 interface_operation_shortcut
         
-        body.out(omniidl_be.cxx.skel.template.interface_operation_shortcut,
+        body.out(tmpl,
                  impl_type = implname,
                  callreturn = callreturn,
                  voidreturn = voidreturn,
