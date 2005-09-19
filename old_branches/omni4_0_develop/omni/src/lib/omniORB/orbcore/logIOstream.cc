@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.12  2004/03/05 14:20:00  dgrisby
+  Better logging of object keys.
+
   Revision 1.8.2.11  2003/07/02 11:01:06  dgrisby
   Race condition in POA destruction.
 
@@ -122,7 +125,13 @@
 #endif
 #define INIT_BUF_SIZE  256
 
-#define PREFIX           "omniORB: "
+#define PREFIX "omniORB: "
+
+static FILE*             logfile = stderr;
+static CORBA::String_var logfilename;
+
+
+OMNI_USING_NAMESPACE(omni)
 
 
 static inline omniORB::logFunction& logfunc()
@@ -137,6 +146,38 @@ omniORB::setLogFunction(omniORB::logFunction f)
   logfunc() = f;
 }
 
+void
+omniORB::setLogFilename(const char* n)
+{
+  const char* existing = (const char*)logfilename;
+  if (existing && !strcmp(existing, n)) {
+    // Already using this file
+    return;
+  }
+  FILE* f = fopen(n, "a");
+  if (!f) {
+    // Output an error to the existing logger
+    if (omniORB::trace(1)) {
+      omniORB::logger l;
+      l << "Unable to open log file '" << n << "'.\n";
+    }
+    OMNIORB_THROW(INITIALIZE, INITIALIZE_CannotOpenLogFile,
+		  CORBA::COMPLETED_NO);
+  }
+  if ((const char*)logfilename) {
+    // Close existing file
+    fclose(logfile);
+  }
+  logfile = f;
+  logfilename = n;
+}
+
+const char*
+omniORB::getLogFilename()
+{
+  return (const char*)logfilename;
+}
+  
 
 omniORB::logger::logger(const char* prefix)
   : pd_prefix(prefix), pd_buf(new char[INIT_BUF_SIZE])
@@ -163,7 +204,7 @@ omniORB::logger::~logger()
     if (logfunc())
       logfunc()(pd_buf);
     else
-      fputs(pd_buf, stderr);
+      fputs(pd_buf, logfile);
   }
   delete[] pd_buf;
 }
@@ -357,7 +398,7 @@ omniORB::logger::flush()
     if (logfunc())
       logfunc()(pd_buf);
     else
-      fprintf(stderr, "%s", pd_buf);
+      fprintf(logfile, "%s", pd_buf);
   }
   pd_p = pd_buf + strlen(pd_prefix);
   *pd_p = '\0';
@@ -438,7 +479,7 @@ omniORB::logf(const char* fmt ...)
     if (obuf != oinline) delete [] obuf;
   }
   else {
-    vfprintf(stderr, buf, args);
+    vfprintf(logfile, buf, args);
   }
   va_end(args);
 
@@ -469,7 +510,7 @@ omniORB::do_logs(const char* mesg)
   if (logfunc())
     logfunc()(buf);
   else
-    fputs(buf, stderr);
+    fputs(buf, logfile);
 
   if( buf != inlinebuf )  delete[] buf;
 }

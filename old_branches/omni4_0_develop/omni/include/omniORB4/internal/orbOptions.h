@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2005/09/08 14:26:17  dgrisby
+  New -ORBconfigFile command line argument.
+
   Revision 1.1.2.7  2003/08/21 14:57:38  dgrisby
   Really silly bug broke registry reading on Windows.
 
@@ -208,9 +211,10 @@ class orbOptions {
 
   ////////////////////////////////////////////////////////////////////////
   void getTraceLevel(int argc, char** argv) throw (Unknown,BadParam);
-  // Look for an -ORBtraceLevel argument very early on, so the trace
-  // level can affect later option logging. Does not remove the
-  // arguments -- that is done by extractInitOptions() later.
+  // Look for -ORBtraceLevel and -ORBtraceFile arguments very early
+  // on, so the trace level can affect later option logging. Does not
+  // remove the arguments -- that is done by extractInitOptions()
+  // later.
   //
   // Thread Safety preconditions:
   //    Not thread safe
