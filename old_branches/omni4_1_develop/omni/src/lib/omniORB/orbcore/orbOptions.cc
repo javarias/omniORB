@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2005/09/19 18:26:33  dgrisby
+  Merge from omni4_0_develop again.
+
   Revision 1.1.4.4  2005/09/08 14:49:40  dgrisby
   Merge -ORBconfigFile argument.
 
@@ -264,7 +267,8 @@ void
 orbOptions::getTraceLevel(int argc, char** argv)
   throw (orbOptions::Unknown,orbOptions::BadParam) {
 
-  for (int i=0; i<argc; i++) {
+  int i;
+  for (i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBtraceLevel")) {
       if (i+1 == argc) {
 	throw orbOptions::BadParam("traceLevel", "<missing>",
@@ -282,7 +286,7 @@ orbOptions::getTraceLevel(int argc, char** argv)
     }
   }
   
-  for (int i=0; i<argc; i++) {
+  for (i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBtraceFile")) {
       if (i+1 == argc) {
 	throw orbOptions::BadParam("traceFile", "<missing>",
