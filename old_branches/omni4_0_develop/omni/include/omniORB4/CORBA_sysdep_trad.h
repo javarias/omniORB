@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.19  2005/10/11 13:17:01  dgrisby
+  Win64 support, thanks Peter Klotz. sizeof(long) < sizeof(void*) !!
+
   Revision 1.1.2.18  2005/01/24 18:29:53  dgrisby
   HPUX 11.23 support. Thanks Matej Kenda.
 
@@ -230,6 +233,7 @@
 #    if __SUNPRO_CC_COMPAT >= 5
 #      define HAS_Cplusplus_Namespace
 #      define HAS_Std_Namespace
+#      define HAS_Cplusplus_Bool
 #    endif
 #  endif
 
