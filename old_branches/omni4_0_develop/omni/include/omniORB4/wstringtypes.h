@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.13  2005/03/14 13:39:51  dgrisby
+  Avoid compiler warnings about empty for loop.
+
   Revision 1.1.2.12  2004/04/30 15:58:33  dgrisby
   Make ptr_arith_t unsigned.
 
@@ -624,6 +627,8 @@ public:
   typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
   typedef unsigned int ptr_arith_t;
+#elif defined (_WIN64)
+  typedef size_t ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif

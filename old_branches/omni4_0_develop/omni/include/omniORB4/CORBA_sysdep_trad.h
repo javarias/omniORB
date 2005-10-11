@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2005/01/24 18:29:53  dgrisby
+  HPUX 11.23 support. Thanks Matej Kenda.
+
   Revision 1.1.2.17  2004/11/04 14:43:59  dgrisby
   Fix VxWorks issues. Thanks Dirk Siebnich.
 
@@ -250,6 +253,10 @@
 #    ifndef HAVE_STD
 #        define HAVE_STD 1
 #    endif
+#  endif
+
+#  if defined(_WIN64)
+#    define SIZEOF_PTR  8
 #  endif
 
 #  define HAS_LongLong
