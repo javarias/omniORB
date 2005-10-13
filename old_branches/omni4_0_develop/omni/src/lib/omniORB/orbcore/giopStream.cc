@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.29  2005/03/03 12:55:55  dgrisby
+  Minor log output clean-up. Thanks Peter Klotz.
+
   Revision 1.1.4.28  2004/07/23 13:25:44  dgrisby
   New traceExceptions option.
 
@@ -125,8 +128,6 @@
 #include <stdio.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
-
-static void dumpbuf(unsigned char* buf, size_t sz);
 
 ////////////////////////////////////////////////////////////////////////
 CORBA::ULong giopStream::directSendCutOff = 16384;
@@ -1193,7 +1194,8 @@ static inline char printable_char(char c) {
 }
 
 /////////////////////////////////////////////////////////////////////////
-static void dumpbuf(unsigned char* buf, size_t sz)
+void 
+giopStream::dumpbuf(unsigned char* buf, size_t sz)
 {
   static omni_tracedmutex lock;
   omni_tracedmutex_lock sync(lock);

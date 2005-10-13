@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2001/10/17 16:44:05  dpg1
+  Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+
   Revision 1.1.4.6  2001/09/04 14:38:09  sll
   Added the boolean argument to notifyCommFailure to indicate if
   omniTransportLock is held by the caller.
@@ -289,6 +292,11 @@ public:
   };
   ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
+
+  static void dumpbuf(unsigned char* buf, size_t sz);
+  // Dump the buffer to the log. Logs just the first 128 bytes unless
+  // omniORB::traceLevel >= 40.
+
 
 protected:
   giopStrand*                pd_strand;
