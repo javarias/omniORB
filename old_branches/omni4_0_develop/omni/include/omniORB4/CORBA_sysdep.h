@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.28  2005/07/22 09:52:59  dgrisby
+ Remove more gcc warnings. Thanks Matej Kenda.
+
  Revision 1.2.2.27  2005/07/21 15:53:02  dgrisby
  VC++ 7.1 supports constants in class declarations. Thanks Tim Theisen.
 
@@ -209,7 +212,7 @@
 // VC.NET 2003 (v. 7.1) has problems recognizing inline friend
 // operators.
 
-#  if (_MSC_VER == 1310)
+#  if (_MSC_VER >= 1310)
 #    define OMNI_NO_INLINE_FRIENDS
 #  endif
 
