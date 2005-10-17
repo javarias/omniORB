@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.29  2005/04/10 22:17:19  dgrisby
+  Fixes to connection management. Thanks Jon Biggar.
+
   Revision 1.1.4.28  2005/02/02 00:21:07  dgrisby
   Memory leak with CloseConnection or error received in a queued message.
 
@@ -959,7 +962,7 @@ giopImpl12::unmarshalWildCardRequestHeader(giopStream* g) {
       if (omniORB::trace(30)) {
 	omniORB::logger l;
 	l << "Server has closed a bi-directional connection on strand "
-	  << (void*)g->pd_strand << ". Will scavenge it.";
+	  << (void*)g->pd_strand << ". Will scavenge it.\n";
       }
       g->pd_strand->startIdleCounter();
     }
