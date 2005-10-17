@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.27  2005/08/23 11:46:05  dgrisby
+  Race condition in strand selection could lead to an assertion failure.
+
   Revision 1.1.4.26  2004/12/20 20:13:21  dgrisby
   Log when switching addresses in a rope.
 
@@ -458,7 +461,7 @@ giopRope::releaseClient(IOP_C* iop_c) {
     giop_c->giopStreamList::insert(s->clients);
     // The strand is definitely idle from this point onwards, we
     // reset the idle counter so that it will be retired at the right time.
-    if ( s->isClient() && !s->biDir ) 
+    if ( s->isClient() && !s->biDir_has_callbacks ) 
       s->startIdleCounter();
   }
 
