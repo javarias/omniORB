@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2002/09/09 22:11:50  dgrisby
+  SSL transport cleanup even if certificates are wrong.
+
   Revision 1.1.4.5  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -116,9 +119,13 @@ giopRendezvouser::execute()
 
 void
 giopRendezvouser::terminate() {
+  if (omniORB::trace(25)) {
+    omniORB::logger l;
+    l << "giopRendezvouser for " << pd_endpoint->address()
+      << " terminate...\n";
+  }
   pd_endpoint->Poke();
 }
-
 
 
 OMNI_NAMESPACE_END(omni)
