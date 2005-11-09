@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.3  2005/06/24 17:36:00  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -398,15 +402,27 @@ extern "C" {
     OMNIORB_ASSERT(poa);
 
     try {
-      CORBA::Object_ptr lobjref;
+      PyObject*         pyobj   = 0;
+      CORBA::Object_ptr lobjref = 0;
       const char*       repoId;
       {
-	omniPy::InterpreterUnlocker _u;
+	omniPy::InterpreterUnlocker u;
 	{
 	  PortableServer::AdapterActivator_var act = poa->the_activator();
 
 	  if (CORBA::is_nil(act)) {
 	    lobjref = 0;
+	  }
+	  else if (act->_NP_is_pseudo()) {
+	    try {
+	      u.lock();
+	      pyobj = omniPy::getPyObjectForLocalObject(act);
+	      u.unlock();
+	    }
+	    catch (...) {
+	      u.unlock();
+	      throw;
+	    }
 	  }
 	  else {
 	    repoId  = act->_PR_getobj()->_mostDerivedRepoId();
@@ -414,7 +430,10 @@ extern "C" {
 	  }
 	}
       }
-      if (lobjref) {
+      if (pyobj) {
+	return pyobj;
+      }
+      else if (lobjref) {
 	return omniPy::createPyCorbaObjRef(0, lobjref);
       }
       else {
@@ -434,12 +453,25 @@ extern "C" {
       (PortableServer::POA_ptr)omniPy::getTwin(pyPOA, POA_TWIN);
     OMNIORB_ASSERT(poa);
 
+    CORBA::Boolean local = 0;
+
     CORBA::Object_ptr actobj = (CORBA::Object_ptr)omniPy::getTwin(pyact,
 								  OBJREF_TWIN);
+    if (!actobj) {
+      actobj = omniPy::getLocalObjectForPyObject(pyact);
+      local = 1;
+    }
+
     RAISE_PY_BAD_PARAM_IF(!actobj, BAD_PARAM_WrongPythonType);
 
     try {
       omniPy::InterpreterUnlocker _u;
+
+      // Ensure local object is released while interpreter lock is not held
+      CORBA::Object_var localobj;
+      if (local)
+	localobj = actobj;
+
       PortableServer::AdapterActivator_var act =
 	PortableServer::AdapterActivator::_narrow(actobj);
 
@@ -465,15 +497,27 @@ extern "C" {
     OMNIORB_ASSERT(poa);
 
     try {
-      CORBA::Object_ptr lobjref;
+      PyObject*         pyobj   = 0;
+      CORBA::Object_ptr lobjref = 0;
       const char*       repoId;
       {
-	omniPy::InterpreterUnlocker _u;
+	omniPy::InterpreterUnlocker u;
 	{
 	  PortableServer::ServantManager_var sm = poa->get_servant_manager();
 
 	  if (CORBA::is_nil(sm)) {
 	    lobjref = 0;
+	  }
+	  else if (sm->_NP_is_pseudo()) {
+	    try {
+	      u.lock();
+	      pyobj = omniPy::getPyObjectForLocalObject(sm);
+	      u.unlock();
+	    }
+	    catch (...) {
+	      u.unlock();
+	      throw;
+	    }
 	  }
 	  else {
 	    repoId  = sm->_PR_getobj()->_mostDerivedRepoId();
@@ -481,7 +525,10 @@ extern "C" {
 	  }
 	}
       }
-      if (lobjref) {
+      if (pyobj) {
+	return pyobj;
+      }
+      else if (lobjref) {
 	return omniPy::createPyCorbaObjRef(0, lobjref);
       }
       else {
@@ -504,12 +551,25 @@ extern "C" {
       (PortableServer::POA_ptr)omniPy::getTwin(pyPOA, POA_TWIN);
     OMNIORB_ASSERT(poa);
 
+    CORBA::Boolean local = 0;
+
     CORBA::Object_ptr mgrobj = (CORBA::Object_ptr)omniPy::getTwin(pymgr,
 								  OBJREF_TWIN);
+    if (!mgrobj) {
+      mgrobj = omniPy::getLocalObjectForPyObject(pymgr);
+      local = 1;
+    }
+
     RAISE_PY_BAD_PARAM_IF(!mgrobj, BAD_PARAM_WrongPythonType);
 
     try {
       omniPy::InterpreterUnlocker _u;
+
+      // Ensure local object is released while interpreter lock is not held
+      CORBA::Object_var localobj;
+      if (local)
+	localobj = mgrobj;
+
       PortableServer::ServantManager_var mgr =
 	PortableServer::ServantManager::_narrow(mgrobj);
 

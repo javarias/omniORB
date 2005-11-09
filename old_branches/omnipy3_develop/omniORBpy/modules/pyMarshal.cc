@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.7  2005/08/12 09:32:09  dgrisby
+// Use Python bool type where available.
+//
 // Revision 1.1.4.6  2005/07/22 17:41:08  dgrisby
 // Update from omnipy2_develop.
 //
@@ -1613,7 +1616,7 @@ validateTypeNative(PyObject* d_o, PyObject* a_o,
 		   CORBA::CompletionStatus compstatus,
 		   PyObject* track)
 {
-  OMNIORB_THROW(BAD_TYPECODE, NO_IMPLEMENT_Unsupported, compstatus);
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
 }
 
 // validateTypeAbstractInterface is in pyAbstractIntf.cc
@@ -1623,7 +1626,7 @@ validateTypeLocalInterface(PyObject* d_o, PyObject* a_o,
 			   CORBA::CompletionStatus compstatus,
 			   PyObject* track)
 {
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
+  OMNIORB_THROW(MARSHAL, MARSHAL_LocalObject, compstatus);
 }
 
 void
@@ -3511,7 +3514,7 @@ unmarshalPyObjectFixed(cdrStream& stream, PyObject* d_o)
 static PyObject*
 unmarshalPyObjectNative(cdrStream& stream, PyObject* d_o)
 {
-  OMNIORB_THROW(BAD_TYPECODE, NO_IMPLEMENT_Unsupported,
+  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported,
 		(CORBA::CompletionStatus)stream.completion());
   return 0;
 }
@@ -3521,7 +3524,7 @@ unmarshalPyObjectNative(cdrStream& stream, PyObject* d_o)
 static PyObject*
 unmarshalPyObjectLocalInterface(cdrStream& stream, PyObject* d_o)
 {
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported,
+  OMNIORB_THROW(MARSHAL, MARSHAL_LocalObject,
 		(CORBA::CompletionStatus)stream.completion());
   return 0;
 }
@@ -5446,8 +5449,8 @@ static PyObject*
 copyArgumentLocalInterface(PyObject* d_o, PyObject* a_o,
 			   CORBA::CompletionStatus compstatus)
 {
-  OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_Unsupported, compstatus);
-  return 0;
+  Py_INCREF(a_o);
+  return a_o;
 }
 
 PyObject*

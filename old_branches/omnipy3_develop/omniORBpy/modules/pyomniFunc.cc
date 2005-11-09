@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.5  2005/07/22 17:41:07  dgrisby
+// Update from omnipy2_develop.
+//
 // Revision 1.1.4.4  2005/06/24 17:36:00  dgrisby
 // Support for receiving valuetypes inside Anys; relax requirement for
 // old style classes in a lot of places.
@@ -833,6 +836,34 @@ extern "C" {
     return Py_None;
   }
 
+  static char locationForward_doc [] =
+  "locationForward(object_reference, new_location)\n"
+  "\n"
+  "Reconfigures the object reference to refer to the new location,\n"
+  "as if a GIOP location forward message had been received.\n";
+
+  static PyObject* pyomni_locationForward(PyObject* self, PyObject* args)
+  {
+    PyObject* pyold;
+    PyObject* pynew;
+    if (!PyArg_ParseTuple(args, (char*)"OO", &pyold, &pynew))
+      return 0;
+
+    CORBA::Object_ptr oldobj =
+      (CORBA::Object_ptr)omniPy::getTwin(pyold, OBJREF_TWIN);
+
+    RAISE_PY_BAD_PARAM_IF(!oldobj, BAD_PARAM_WrongPythonType);
+
+    CORBA::Object_ptr newobj =
+      (CORBA::Object_ptr)omniPy::getTwin(pynew, OBJREF_TWIN);
+
+    RAISE_PY_BAD_PARAM_IF(!newobj, BAD_PARAM_WrongPythonType);
+
+    omni::locationForward(oldobj->_PR_getobj(), newobj->_PR_getobj(), 0);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
 
   static PyMethodDef pyomni_methods[] = {
     {(char*)"installTransientExceptionHandler",
@@ -902,6 +933,10 @@ extern "C" {
     {(char*)"setPersistentServerIdentifier",
      pyomni_setPersistentServerIdentifier,
      METH_VARARGS, setPersistentServerIdentifier_doc},
+
+    {(char*)"locationForward",
+     pyomni_locationForward,
+     METH_VARARGS, locationForward_doc},
 
     {NULL,NULL}
   };
