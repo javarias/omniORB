@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2004/02/16 10:10:28  dgrisby
+  More valuetype, including value boxes. C++ mapping updates.
+
   Revision 1.1.4.1  2003/03/23 21:04:23  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -48,7 +51,6 @@ class Object_Member;
 class Object_Element;
 class Object_INOUT_arg;
 class Object_OUT_arg;
-class Object_tcDesc_arg;
 
 class Object_var {
 public:
@@ -102,7 +104,6 @@ public:
   friend class Object_Member;
   friend class Object_INOUT_arg;
   friend class Object_OUT_arg;
-  friend class Object_tcDesc_arg;
 
 private:
   T_ptr pd_ref;
@@ -349,33 +350,4 @@ private:
   // CORBA 2.3 p23-26 says that T_var assignment should be disallowed.
 };
 
-
 typedef Object_OUT_arg Object_out;
-
-//////////////////////////////////////////////////////////////////////
-/////////////////////// Object_tcDesc_arg        /////////////////////
-//////////////////////////////////////////////////////////////////////
-
-class Object_tcDesc_arg {
-public:
-  // The sole purpose of this class is for passing as an argument
-  // to the tc build descriptor function of an interface.
-  // It provides the necessary conversions from T_var, T_member,
-  // T_element so that only one tc build description function is needed.
-  // The alternative is to have 3 overloaded build description functions
-  // which makes the stub code even more bloated.
-  typedef Object_Member T_member;
-  typedef Object_Element T_element;
-  typedef Object_var     T_var;
-  inline Object_tcDesc_arg(T_var& p) : _data(p.pd_ref), _rel(1) {}
-  inline Object_tcDesc_arg(T_member& p) : _data(p._ptr), _rel(1) {}
-  inline Object_tcDesc_arg(T_element p) 
-    : _data(p._NP_ref()), _rel(p._NP_release()) {}
-  inline ~Object_tcDesc_arg() {}
-
-  Object_ptr& _data;
-  _CORBA_Boolean _rel;
-
-private:
-  Object_tcDesc_arg();
-};

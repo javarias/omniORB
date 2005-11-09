@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.3  2004/10/13 17:58:18  dgrisby
+  Abstract interfaces support; values support interfaces; value bug fixes.
+
   Revision 1.1.2.2  2003/11/06 11:56:55  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -45,7 +48,6 @@ class ValueBase_Member;
 class ValueBase_Element;
 class ValueBase_INOUT_arg;
 class ValueBase_OUT_arg;
-class ValueBase_tcDesc_arg;
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////// ValueBase_var ///////////////////////////
@@ -106,7 +108,6 @@ public:
   friend class ValueBase_Element;
   friend class ValueBase_INOUT_arg;
   friend class ValueBase_OUT_arg;
-  friend class ValueBase_tcDesc_arg;
 
 private:
   T* _pd_val;
