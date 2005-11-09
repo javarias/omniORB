@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.2  2005/01/13 21:55:55  dgrisby
+  Turn off -g debugging; suppress some compiler warnings.
+
   Revision 1.4.2.1  2003/03/23 21:02:06  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -180,7 +183,7 @@ void PortableServer::AdapterActivator_Helper::release(PortableServer::AdapterAct
 }
 
 void PortableServer::AdapterActivator_Helper::duplicate(PortableServer::AdapterActivator_ptr p) {
-  if( p && !p->_NP_is_nil() )  omni::duplicateObjRef(p);
+  if( p && !p->_NP_is_nil() )  p->_NP_incrRefCount();
 }
 
 void PortableServer::AdapterActivator_Helper::marshalObjRef(PortableServer::AdapterActivator_ptr obj, cdrStream& s) {
@@ -191,10 +194,29 @@ PortableServer::AdapterActivator_ptr PortableServer::AdapterActivator_Helper::un
   return PortableServer::AdapterActivator::_unmarshalObjRef(s);
 }
 
+
+void
+PortableServer::AdapterActivator::_NP_incrRefCount()
+{
+  if (_NP_is_pseudo())
+    _add_ref();
+  else
+    omni::duplicateObjRef(_PR_getobj());
+}
+
+void
+PortableServer::AdapterActivator::_NP_decrRefCount()
+{
+  if (_NP_is_pseudo())
+    _remove_ref();
+  else
+    omni::releaseObjRef(_PR_getobj());
+}
+
 PortableServer::AdapterActivator_ptr
 PortableServer::AdapterActivator::_duplicate(PortableServer::AdapterActivator_ptr obj)
 {
-  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
   return obj;
 }
 
@@ -202,9 +224,27 @@ PortableServer::AdapterActivator::_duplicate(PortableServer::AdapterActivator_pt
 PortableServer::AdapterActivator_ptr
 PortableServer::AdapterActivator::_narrow(CORBA::Object_ptr obj)
 {
-  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
-  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
-  return e ? e : _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  if( obj->_NP_is_pseudo() ) {
+    _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
+    if (e) {
+      e->_NP_incrRefCount();
+      return e;
+    }
+    else {
+      return _nil();
+    }
+  }
+  else {
+    _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+    return e ? e : _nil();
+  }
+}
+
+PortableServer::AdapterActivator_ptr
+PortableServer::AdapterActivator::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  return _narrow(obj);
 }
 
 
@@ -227,6 +267,13 @@ PortableServer::AdapterActivator::_nil()
 const char* PortableServer::AdapterActivator::_PD_repoId = "IDL:omg.org/PortableServer/AdapterActivator:1.0";
 
 
+PortableServer::AdapterActivator::AdapterActivator()
+{
+  _PR_setobj((omniObjRef*)1);
+}
+
+PortableServer::AdapterActivator::~AdapterActivator() {}
+
 PortableServer::_objref_AdapterActivator::~_objref_AdapterActivator() {}
 
 
@@ -239,15 +286,47 @@ PortableServer::_objref_AdapterActivator::_objref_AdapterActivator(omniIOR* ior,
 
 
 void*
-PortableServer::_objref_AdapterActivator::_ptrToObjRef(const char* id)
+PortableServer::AdapterActivator::_ptrToObjRef(const char* id)
 {
   if( id == PortableServer::AdapterActivator::_PD_repoId )
     return (PortableServer::AdapterActivator_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
   if( id == CORBA::Object::_PD_repoId )
     return (CORBA::Object_ptr) this;
 
   if( omni::strMatch(id, PortableServer::AdapterActivator::_PD_repoId) )
     return (PortableServer::AdapterActivator_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
+    return (CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+void*
+PortableServer::_objref_AdapterActivator::_ptrToObjRef(const char* id)
+{
+  if( id == PortableServer::AdapterActivator::_PD_repoId )
+    return (PortableServer::AdapterActivator_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( id == CORBA::Object::_PD_repoId )
+    return (CORBA::Object_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::AdapterActivator::_PD_repoId) )
+    return (PortableServer::AdapterActivator_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
   if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 
@@ -363,7 +442,7 @@ void PortableServer::ServantManager_Helper::release(PortableServer::ServantManag
 }
 
 void PortableServer::ServantManager_Helper::duplicate(PortableServer::ServantManager_ptr p) {
-  if( p && !p->_NP_is_nil() )  omni::duplicateObjRef(p);
+  if( p && !p->_NP_is_nil() )  p->_NP_incrRefCount();
 }
 
 void PortableServer::ServantManager_Helper::marshalObjRef(PortableServer::ServantManager_ptr obj, cdrStream& s) {
@@ -374,10 +453,29 @@ PortableServer::ServantManager_ptr PortableServer::ServantManager_Helper::unmars
   return PortableServer::ServantManager::_unmarshalObjRef(s);
 }
 
+void
+PortableServer::ServantManager::_NP_incrRefCount()
+{
+  if (_NP_is_pseudo())
+    _add_ref();
+  else
+    omni::duplicateObjRef(_PR_getobj());
+}
+
+void
+PortableServer::ServantManager::_NP_decrRefCount()
+{
+  if (_NP_is_pseudo())
+    _remove_ref();
+  else
+    omni::releaseObjRef(_PR_getobj());
+}
+
+
 PortableServer::ServantManager_ptr
 PortableServer::ServantManager::_duplicate(PortableServer::ServantManager_ptr obj)
 {
-  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
   return obj;
 }
 
@@ -385,11 +483,28 @@ PortableServer::ServantManager::_duplicate(PortableServer::ServantManager_ptr ob
 PortableServer::ServantManager_ptr
 PortableServer::ServantManager::_narrow(CORBA::Object_ptr obj)
 {
-  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
-  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
-  return e ? e : _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  if( obj->_NP_is_pseudo() ) {
+    _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
+    if (e) {
+      e->_NP_incrRefCount();
+      return e;
+    }
+    else {
+      return _nil();
+    }
+  }
+  else {
+    _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+    return e ? e : _nil();
+  }
 }
 
+PortableServer::ServantManager_ptr
+PortableServer::ServantManager::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  return _narrow(obj);
+}
 
 PortableServer::ServantManager_ptr
 PortableServer::ServantManager::_nil()
@@ -409,6 +524,12 @@ PortableServer::ServantManager::_nil()
 
 const char* PortableServer::ServantManager::_PD_repoId = "IDL:omg.org/PortableServer/ServantManager:1.0";
 
+PortableServer::ServantManager::ServantManager()
+{
+  _PR_setobj((omniObjRef*)1);
+}
+
+PortableServer::ServantManager::~ServantManager() {}
 
 PortableServer::_objref_ServantManager::~_objref_ServantManager() {}
 
@@ -422,15 +543,47 @@ PortableServer::_objref_ServantManager::_objref_ServantManager(omniIOR* ior,
 
 
 void*
-PortableServer::_objref_ServantManager::_ptrToObjRef(const char* id)
+PortableServer::ServantManager::_ptrToObjRef(const char* id)
 {
   if( id == PortableServer::ServantManager::_PD_repoId )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
   if( id == CORBA::Object::_PD_repoId )
     return (CORBA::Object_ptr) this;
 
   if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
+    return (CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+void*
+PortableServer::_objref_ServantManager::_ptrToObjRef(const char* id)
+{
+  if( id == PortableServer::ServantManager::_PD_repoId )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( id == CORBA::Object::_PD_repoId )
+    return (CORBA::Object_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
   if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 
@@ -508,7 +661,7 @@ void PortableServer::ServantActivator_Helper::release(PortableServer::ServantAct
 }
 
 void PortableServer::ServantActivator_Helper::duplicate(PortableServer::ServantActivator_ptr p) {
-  if( p && !p->_NP_is_nil() )  omni::duplicateObjRef(p);
+  if( p && !p->_NP_is_nil() )  p->_NP_incrRefCount();
 }
 
 void PortableServer::ServantActivator_Helper::marshalObjRef(PortableServer::ServantActivator_ptr obj, cdrStream& s) {
@@ -519,10 +672,11 @@ PortableServer::ServantActivator_ptr PortableServer::ServantActivator_Helper::un
   return PortableServer::ServantActivator::_unmarshalObjRef(s);
 }
 
+
 PortableServer::ServantActivator_ptr
 PortableServer::ServantActivator::_duplicate(PortableServer::ServantActivator_ptr obj)
 {
-  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
   return obj;
 }
 
@@ -530,11 +684,28 @@ PortableServer::ServantActivator::_duplicate(PortableServer::ServantActivator_pt
 PortableServer::ServantActivator_ptr
 PortableServer::ServantActivator::_narrow(CORBA::Object_ptr obj)
 {
-  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
-  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
-  return e ? e : _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  if( obj->_NP_is_pseudo() ) {
+    _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
+    if (e) {
+      e->_NP_incrRefCount();
+      return e;
+    }
+    else {
+      return _nil();
+    }
+  }
+  else {
+    _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+    return e ? e : _nil();
+  }
 }
 
+PortableServer::ServantActivator_ptr
+PortableServer::ServantActivator::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  return _narrow(obj);
+}
 
 PortableServer::ServantActivator_ptr
 PortableServer::ServantActivator::_nil()
@@ -554,6 +725,12 @@ PortableServer::ServantActivator::_nil()
 
 const char* PortableServer::ServantActivator::_PD_repoId = "IDL:omg.org/PortableServer/ServantActivator:1.0";
 
+PortableServer::ServantActivator::ServantActivator()
+{
+  _PR_setobj((omniObjRef*)1);
+}
+
+PortableServer::ServantActivator::~ServantActivator() {}
 
 PortableServer::_objref_ServantActivator::~_objref_ServantActivator() {}
 
@@ -569,19 +746,59 @@ PortableServer::_objref_ServantActivator::_objref_ServantActivator(omniIOR* ior,
 
 
 void*
-PortableServer::_objref_ServantActivator::_ptrToObjRef(const char* id)
+PortableServer::ServantActivator::_ptrToObjRef(const char* id)
 {
   if( id == PortableServer::ServantActivator::_PD_repoId )
     return (PortableServer::ServantActivator_ptr) this;
+
   if( id == PortableServer::ServantManager::_PD_repoId )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
   if( id == CORBA::Object::_PD_repoId )
     return (CORBA::Object_ptr) this;
 
   if( omni::strMatch(id, PortableServer::ServantActivator::_PD_repoId) )
     return (PortableServer::ServantActivator_ptr) this;
+
   if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
+    return (CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+void*
+PortableServer::_objref_ServantActivator::_ptrToObjRef(const char* id)
+{
+  if( id == PortableServer::ServantActivator::_PD_repoId )
+    return (PortableServer::ServantActivator_ptr) this;
+
+  if( id == PortableServer::ServantManager::_PD_repoId )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( id == CORBA::Object::_PD_repoId )
+    return (CORBA::Object_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::ServantActivator::_PD_repoId) )
+    return (PortableServer::ServantActivator_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
   if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 
@@ -775,7 +992,7 @@ void PortableServer::ServantLocator_Helper::release(PortableServer::ServantLocat
 }
 
 void PortableServer::ServantLocator_Helper::duplicate(PortableServer::ServantLocator_ptr p) {
-  if( p && !p->_NP_is_nil() )  omni::duplicateObjRef(p);
+  if( p && !p->_NP_is_nil() )  p->_NP_incrRefCount();
 }
 
 void PortableServer::ServantLocator_Helper::marshalObjRef(PortableServer::ServantLocator_ptr obj, cdrStream& s) {
@@ -786,10 +1003,11 @@ PortableServer::ServantLocator_ptr PortableServer::ServantLocator_Helper::unmars
   return PortableServer::ServantLocator::_unmarshalObjRef(s);
 }
 
+
 PortableServer::ServantLocator_ptr
 PortableServer::ServantLocator::_duplicate(PortableServer::ServantLocator_ptr obj)
 {
-  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
   return obj;
 }
 
@@ -797,9 +1015,27 @@ PortableServer::ServantLocator::_duplicate(PortableServer::ServantLocator_ptr ob
 PortableServer::ServantLocator_ptr
 PortableServer::ServantLocator::_narrow(CORBA::Object_ptr obj)
 {
-  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
-  _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
-  return e ? e : _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  if( obj->_NP_is_pseudo() ) {
+    _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
+    if (e) {
+      e->_NP_incrRefCount();
+      return e;
+    }
+    else {
+      return _nil();
+    }
+  }
+  else {
+    _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
+    return e ? e : _nil();
+  }
+}
+
+PortableServer::ServantLocator_ptr
+PortableServer::ServantLocator::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  return _narrow(obj);
 }
 
 
@@ -822,6 +1058,14 @@ PortableServer::ServantLocator::_nil()
 const char* PortableServer::ServantLocator::_PD_repoId = "IDL:omg.org/PortableServer/ServantLocator:1.0";
 
 
+PortableServer::ServantLocator::ServantLocator()
+{
+  _PR_setobj((omniObjRef*)1);
+}
+
+PortableServer::ServantLocator::~ServantLocator() {}
+
+
 PortableServer::_objref_ServantLocator::~_objref_ServantLocator() {}
 
 
@@ -836,19 +1080,59 @@ PortableServer::_objref_ServantLocator::_objref_ServantLocator(omniIOR* ior,
 
 
 void*
-PortableServer::_objref_ServantLocator::_ptrToObjRef(const char* id)
+PortableServer::ServantLocator::_ptrToObjRef(const char* id)
 {
   if( id == PortableServer::ServantLocator::_PD_repoId )
     return (PortableServer::ServantLocator_ptr) this;
+
   if( id == PortableServer::ServantManager::_PD_repoId )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
   if( id == CORBA::Object::_PD_repoId )
     return (CORBA::Object_ptr) this;
 
   if( omni::strMatch(id, PortableServer::ServantLocator::_PD_repoId) )
     return (PortableServer::ServantLocator_ptr) this;
+
   if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
     return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
+    return (CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+void*
+PortableServer::_objref_ServantLocator::_ptrToObjRef(const char* id)
+{
+  if( id == PortableServer::ServantLocator::_PD_repoId )
+    return (PortableServer::ServantLocator_ptr) this;
+
+  if( id == PortableServer::ServantManager::_PD_repoId )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( id == CORBA::LocalObject::_PD_repoId )
+    return (CORBA::LocalObject_ptr) this;
+
+  if( id == CORBA::Object::_PD_repoId )
+    return (CORBA::Object_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::ServantLocator::_PD_repoId) )
+    return (PortableServer::ServantLocator_ptr) this;
+
+  if( omni::strMatch(id, PortableServer::ServantManager::_PD_repoId) )
+    return (PortableServer::ServantManager_ptr) this;
+
+  if( omni::strMatch(id, CORBA::LocalObject::_PD_repoId) )
+    return (CORBA::LocalObject_ptr) this;
+
   if( omni::strMatch(id, CORBA::Object::_PD_repoId) )
     return (CORBA::Object_ptr) this;
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.6  2005/05/22 12:39:43  dgrisby
+  Merge Mac OS X and POA fixes.
+
   Revision 1.4.2.5  2005/04/14 00:03:56  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -904,10 +907,10 @@ omniOrbPOA::set_servant_manager(PortableServer::ServantManager_ptr imgr)
     OMNIORB_THROW(OBJ_ADAPTER,OBJ_ADAPTER_NoServantManager,
 		  CORBA::COMPLETED_NO);
 
-  {
-    // Check that <imgr> is a local object ...
+  // Check that <imgr> is a local object ...
+  if (!imgr->_NP_is_pseudo()) {
     omni::internalLock->lock();
-    int islocal = imgr->_identity()->inThisAddressSpace();
+    int islocal = imgr->_PR_getobj()->_identity()->inThisAddressSpace();
     omni::internalLock->unlock();
     if( !islocal )  OMNIORB_THROW(BAD_PARAM,BAD_PARAM_LocalObjectExpected,
 				  CORBA::COMPLETED_NO);

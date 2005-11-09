@@ -28,6 +28,11 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.8  2005/09/19 15:36:35  dgrisby
+# Refcount shortcut now throws INV_OBJREF when the servant is
+# deactivated, rather than deactivating the shortcut, which could lead
+# to a race condition.
+#
 # Revision 1.6.2.7  2005/09/05 17:22:09  dgrisby
 # Reference counted local call shortcut.
 #
@@ -331,6 +336,37 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
 }
 """
 
+local_interface_duplicate_narrow = """\
+void @name@_Helper::duplicate(::@name@_ptr obj) {
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
+}
+
+@name@_ptr
+@name@::_duplicate(::@name@_ptr obj)
+{
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
+  return obj;
+}
+
+@name@_ptr
+@name@::_narrow(CORBA::Object_ptr obj)
+{
+  if( !obj || obj->_NP_is_nil() ) return _nil();
+  _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
+  if (e) {
+    e->_NP_incrRefCount();
+    return e;
+  }
+  return _nil();
+}
+
+@name@_ptr
+@name@::_unchecked_narrow(CORBA::Object_ptr obj)
+{
+  return _narrow(obj);
+}
+"""
+
 
 interface_nil = """\
 @name@_ptr
@@ -442,6 +478,45 @@ void
 
 interface_shortcut_inh = """\
 @parent@::_enableShortcut(_svt, _inv);"""
+
+
+local_interface_objref = """\
+@name@::@sname@()
+{
+  _PR_setobj((omniObjRef*)1);
+}
+
+@name@::~@sname@() { }
+
+@fq_nil_name@::~@nil_name@() { }
+
+void*
+@name@::_ptrToObjRef(const char* id)
+{
+  if( id == ::@name@::_PD_repoId )
+    return (::@name@_ptr) this;
+  @_ptrToObjRef_ptr@
+  if( id == ::CORBA::Object::_PD_repoId )
+    return (::CORBA::Object_ptr) this;
+
+  if( omni::strMatch(id, ::@name@::_PD_repoId) )
+    return (::@name@_ptr) this;
+  @_ptrToObjRef_str@
+  if( omni::strMatch(id, ::CORBA::Object::_PD_repoId) )
+    return (::CORBA::Object_ptr) this;
+
+  return 0;
+}
+"""
+
+local_interface_nil_operation = """\
+OMNIORB_THROW(INV_OBJREF, INV_OBJREF_InvokeOnNilObjRef, CORBA::COMPLETED_NO);"""
+
+local_interface_nil_dummy_return = """
+#ifdef NEED_DUMMY_RETURN
+// Pretend recursive call to silence warnings about no return value
+return @method@(@args@);
+#endif"""
 
 
 interface_callback = """\

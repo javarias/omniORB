@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.4.2.3  2005/07/22 17:18:36  dgrisby
+// Another merge from omni4_0_develop.
+//
 // Revision 1.4.2.2  2005/01/06 23:10:41  dgrisby
 // Big merge from omni4_0_develop.
 //
@@ -133,7 +136,7 @@ char*
 omniURI::objectToString(CORBA::Object_ptr obj)
 {
   if (obj && obj->_NP_is_pseudo()) {
-    OMNIORB_THROW(MARSHAL,MARSHAL_InvalidIOR,CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL,MARSHAL_LocalObject,CORBA::COMPLETED_NO);
   }
 
   omniObjRef* objref = obj ? obj->_PR_getobj() : 0;

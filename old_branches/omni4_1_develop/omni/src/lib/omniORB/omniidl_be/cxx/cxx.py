@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
 # Revision 1.1.6.1  2003/03/23 21:02:42  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -196,7 +199,7 @@ class Method:
 }""", proto = proto, body = body)
         
 
-# dimsToStirng: takes a list of int dimensions (eg [1,2,3]) and a prefix string
+# dimsToString: takes a list of int dimensions (eg [1,2,3]) and a prefix string
 # returning a strings "[prefix1][prefix2]..."
 def dimsToString(dims, prefix = ""):
     new_dims = []

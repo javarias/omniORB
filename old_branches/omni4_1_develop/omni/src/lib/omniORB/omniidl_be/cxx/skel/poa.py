@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11.2.3  2003/11/06 11:56:56  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
 # Revision 1.11.2.2  2003/10/23 11:25:55  dgrisby
 # More valuetype support.
 #
@@ -125,6 +128,9 @@ def visitModule(node):
 
 
 def visitInterface(node):
+    if node.local():
+        return
+    
     name = id.mapID(node.identifier())
     fqname = id.Name(node.scopedName()).fullyQualify()
     stream.out(template.interface_POA,

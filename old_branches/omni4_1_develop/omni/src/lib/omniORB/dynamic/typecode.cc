@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.8  2005/01/06 23:09:46  dgrisby
+ * Big merge from omni4_0_develop.
+ *
  * Revision 1.40.2.7  2005/01/06 16:39:24  dgrisby
  * DynValue and DynValueBox implementations; misc small fixes.
  *
@@ -1009,6 +1012,21 @@ CORBA::TypeCode::PR_abstract_interface_tc(const char* id, const char* name,
   if (r) return r;
 
   r = new TypeCode_abstract_interface(id, name);
+  tracker->add(r);
+  the_typecodes->add(id, r);
+  return r;
+}
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode::PR_local_interface_tc(const char* id, const char* name,
+				       CORBA::TypeCode::_Tracker* tracker)
+{
+  check_static_data_is_initialised();
+
+  CORBA::TypeCode_ptr r = the_typecodes->find(id);
+  if (r) return r;
+
+  r = new TypeCode_local_interface(id, name);
   tracker->add(r);
   the_typecodes->add(id, r);
   return r;
@@ -4695,8 +4713,6 @@ NP_unmarshalComplexParams(cdrStream &s,
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////// TypeCode_indirect ///////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -5404,6 +5420,9 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
 
       case CORBA::tk_abstract_interface:
 	return TypeCode_abstract_interface::NP_unmarshalComplexParams(mbs, &tbl);
+
+      case CORBA::tk_local_interface:
+	return TypeCode_local_interface::NP_unmarshalComplexParams(mbs, &tbl);
 
       default:
 	OMNIORB_THROW(MARSHAL,

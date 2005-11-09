@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.3  2003/11/06 11:56:56  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
 # Revision 1.20.2.2  2003/10/23 11:25:55  dgrisby
 # More valuetype support.
 #
@@ -205,6 +208,10 @@ def visitModule(node):
     return
 
 def visitInterface(node):
+    if node.local():
+        # No POA class for local interfaces
+        return
+
     iname = id.mapID(node.identifier())
     environment = id.lookup(node)
     scopedName = id.Name(node.scopedName())
