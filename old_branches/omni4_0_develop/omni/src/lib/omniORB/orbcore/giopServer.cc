@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.40  2005/11/04 14:26:02  dgrisby
+  Open connections would prevent shutdown on Windows.
+
   Revision 1.22.2.39  2005/10/13 11:38:16  dgrisby
   Dump CloseConnection messages.
 
@@ -217,7 +220,9 @@ CORBA::ULong   orbParameters::threadPoolWatchConnection      = 1;
 
 ////////////////////////////////////////////////////////////////////////////
 giopServer::giopServer() : pd_state(IDLE), pd_nconnections(0),
-			   pd_cond(&pd_lock), pd_n_temporary_workers(0)
+			   pd_cond(&pd_lock),
+			   pd_n_temporary_workers(0),
+			   pd_n_dedicated_workers(0)
 {
   pd_thread_per_connection = orbParameters::threadPerConnectionPolicy;
   pd_connectionState = new connectionState*[connectionState::hashsize];
@@ -467,6 +472,7 @@ giopServer::activate()
       }
       task->insert(cs->workers);
       cs->connection->pd_n_workers++;
+      pd_n_dedicated_workers++;
     }
     else {
       pd_lock.unlock();
@@ -527,7 +533,8 @@ giopServer::deactivate()
   if (pd_nconnections) {
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "Close " << pd_nconnections << " connections...\n";
+      l << "Close " << pd_nconnections << " connection"
+	<< (pd_nconnections == 1 ? "" : "s") << "...\n";
     }
     for (CORBA::ULong i=0; i < connectionState::hashsize; i++) {
       connectionState** head = &(pd_connectionState[i]);
@@ -557,15 +564,23 @@ giopServer::deactivate()
 	head = &((*head)->next);
       }
     }
-    omniORB::logs(25, "Wait for connections to close...");
-    omni_thread::get_time(&s, &ns, timeout);
-    pd_cond.timedwait(s, ns);
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Finished waiting. " << pd_nconnections
-	<< " connections remaining.\n";
-    }
-  }  
+    if (pd_n_dedicated_workers) {
+      omniORB::logs(25, "Wait for connections to close...");
+      omni_thread::get_time(&s, &ns, timeout);
+
+      int go = 1;
+      while (go && pd_n_dedicated_workers) {
+	go = pd_cond.timedwait(s, ns);
+      }
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "Finished waiting. " << pd_nconnections
+	  << " connection" << (pd_nconnections == 1 ? "" : "s")
+	  << " and " << pd_n_dedicated_workers << " dedicated worker"
+	  << (pd_n_dedicated_workers == 1 ? "" : "s") << " remaining.\n";
+      }
+    }  
+  }
 
   // Stop rendezvousers
   Link* p = pd_rendezvousers.next;
@@ -812,8 +827,7 @@ giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
       connectionState* cs = csInsert(conn);
 
       if (conn->pd_has_dedicated_thread) {
-	giopWorker* task = new giopWorker(cs->strand,this,
-					  !conn->pd_has_dedicated_thread);
+	giopWorker* task = new giopWorker(cs->strand, this, 0);
 	if (!orbAsyncInvoker->insert(task)) {
 	  // Cannot start serving this new connection.
 	  if (omniORB::trace(1)) {
@@ -838,6 +852,7 @@ giopServer::notifyRzNewConnection(giopRendezvouser* r, giopConnection* conn)
 	}
 	task->insert(cs->workers);
 	conn->pd_n_workers++;
+	pd_n_dedicated_workers++;
       }
       else {
 	if (!conn->isSelectable()) {
@@ -1000,7 +1015,10 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     // is therefore safe to delete this record.
     pd_lock.lock();
 
-    if (w->singleshot()) pd_n_temporary_workers--;
+    if (w->singleshot())
+      pd_n_temporary_workers--;
+    else
+      pd_n_dedicated_workers--;
 
     w->remove();
     delete w;
@@ -1013,7 +1031,7 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     }
 
     if (pd_state == INFLUX) {
-      if (pd_nconnections == 0) {
+      if (pd_nconnections == 0 || pd_n_dedicated_workers == 0) {
 	pd_cond.broadcast();
       }
     }
