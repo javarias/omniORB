@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.9  2005/11/09 12:22:17  dgrisby
+# Local interfaces support.
+#
 # Revision 1.6.2.8  2005/09/19 15:36:35  dgrisby
 # Refcount shortcut now throws INV_OBJREF when the servant is
 # deactivated, rather than deactivating the shortcut, which could lead
@@ -712,6 +715,11 @@ interface_ALIAS = """\
 typedef @fqname@ @flat_fqname@;
 typedef @impl_fqname@ @impl_flat_fqname@;
 typedef @objref_fqname@ @objref_flat_fqname@;
+"""
+
+local_interface_ALIAS = """\
+typedef @fqname@ @flat_fqname@;
+typedef @nil_fqname@ @nil_flat_fqname@;
 """
 
 interface_impl = """\
