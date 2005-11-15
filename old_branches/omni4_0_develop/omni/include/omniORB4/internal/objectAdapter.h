@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.7  2002/08/21 19:55:42  dgrisby
+ Add endPointPublishAllIFs option.
+
  Revision 1.1.4.6  2001/09/20 09:27:43  dpg1
  Remove assertion failure on exit if not all POAs are deleted.
 
@@ -96,6 +99,7 @@ public:
   //  Must be called without any ORB locks held.
 
   static _CORBA_Boolean isInitialised();
+  static _CORBA_Boolean isDeactivating();
 
   static void initialise();
   // Initialises incoming rope factories.  May be called multiple

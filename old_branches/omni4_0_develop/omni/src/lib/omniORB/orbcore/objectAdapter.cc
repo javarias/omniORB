@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.19  2005/11/14 10:58:23  dgrisby
+ Better connection / thread shutdown behaviour.
+
  Revision 1.2.2.18  2005/08/18 12:54:44  dgrisby
  -ORBendPointPublishAllIFs incorrectly listed in help output.
 
@@ -190,6 +193,14 @@ omniObjAdapter::isInitialised()
   omni_tracedmutex_lock sync(oa_lock);
 
   return initialised;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+_CORBA_Boolean
+omniObjAdapter::isDeactivating()
+{
+  return !num_active_oas;
 }
 
 

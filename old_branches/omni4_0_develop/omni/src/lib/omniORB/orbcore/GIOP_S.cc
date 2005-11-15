@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.28  2005/04/08 00:06:15  dgrisby
+  Remove all remaining uses of logf.
+
   Revision 1.1.4.27  2005/01/04 18:09:29  dgrisby
   SkipRequestBody did not call notifyWkPreUpCall, which meant requests
   would be mislaid if they came in the same buffer as a skipped request.
@@ -330,9 +333,14 @@ GIOP_S::handleRequest() {
 
     // Oh dear.
 
-    OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch,
-		  CORBA::COMPLETED_NO);
-
+    if (omniObjAdapter::isDeactivating())
+      OMNIORB_THROW(OBJ_ADAPTER,
+		    OBJ_ADAPTER_POAUnknownAdapter,
+		    CORBA::COMPLETED_NO);
+    else
+      OMNIORB_THROW(OBJECT_NOT_EXIST,
+		    OBJECT_NOT_EXIST_NoMatch,
+		    CORBA::COMPLETED_NO);
   }
   catch(omniORB::LOCATION_FORWARD& ex) {
     // This is here to provide a convenient way to implement
