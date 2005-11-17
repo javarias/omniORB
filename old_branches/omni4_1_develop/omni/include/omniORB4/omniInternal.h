@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.5  2005/01/06 23:08:10  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.5.2.4  2005/01/06 17:31:06  dgrisby
   Changes (mainly from omni4_0_develop) to compile on gcc 3.4.
 
@@ -274,6 +277,8 @@ _CORBA_MODULE_BEG
   typedef unsigned long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
   typedef unsigned int ptr_arith_t;
+#elif defined (_WIN64)
+  typedef size_t ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2005/01/06 23:10:12  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.6.2  2004/07/31 23:47:11  dgrisby
   Properly set pd_clear_memory flag in all situations.
 
@@ -335,6 +338,8 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer)
   pd_inb_end = (void *) ULONG_MAX;
 #elif (SIZEOF_INT == SIZEOF_PTR)
   pd_inb_end = (void *) UINT_MAX;
+#elif defined (_WIN64)
+  pd_inb_end = (void *) _UI64_MAX;
 #else
 #error "No suitable integer type available to calculate maximum" \
   " pointer value from"

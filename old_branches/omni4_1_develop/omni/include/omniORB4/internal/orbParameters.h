@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2005/09/01 14:52:12  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.4  2005/03/02 12:39:23  dgrisby
   Merge from omni4_0_develop.
 
@@ -330,7 +333,7 @@ _CORBA_MODULE_VAR _core_attr timeValue clientCallTimeOutPeriod;
 //   than the timeout value, the ORB will shutdown the connection and
 //   raise a COMM_FAILURE.
 //
-//   Valid values = (n >= 0 in seconds) 
+//   Valid values = (n >= 0 in milliseconds) 
 //                   0 --> no timeout. Block till a reply comes back
 
 _CORBA_MODULE_VAR _core_attr CORBA::Boolean supportPerThreadTimeOut;
@@ -474,6 +477,11 @@ _CORBA_MODULE_VAR _core_attr CORBA::Boolean supportBootstrapAgent;
 _CORBA_MODULE_VAR _core_attr _CORBA_Unbounded_Sequence_Octet persistentId;
 //  Persistent identifier used to detect object references that should
 //  be considered to be in this process.
+
+_CORBA_MODULE_VAR _core_attr CORBA::Boolean connectionWatchImmediate;
+//  If true, connections are watched immediately while an upcall is
+//  handled; otherwise, they are not watched until the
+//  SocketCollection next scans the connection list.
 
 _CORBA_MODULE_END
 

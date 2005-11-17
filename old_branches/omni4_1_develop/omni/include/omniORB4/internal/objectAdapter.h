@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.6.1  2003/03/23 21:03:45  dgrisby
+ Start of omniORB 4.1.x development branch.
+
  Revision 1.1.4.7  2002/08/21 19:55:42  dgrisby
  Add endPointPublishAllIFs option.
 
@@ -99,6 +102,7 @@ public:
   //  Must be called without any ORB locks held.
 
   static _CORBA_Boolean isInitialised();
+  static _CORBA_Boolean isDeactivating();
 
   static void initialise();
   // Initialises incoming rope factories.  May be called multiple

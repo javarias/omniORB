@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/04/11 12:09:41  dgrisby
+  Another merge.
+
   Revision 1.1.6.3  2005/03/30 23:36:10  dgrisby
   Another merge from omni4_0_develop.
 
@@ -165,6 +168,30 @@ private:
 
   void removeIdle(StrandList& src,StrandList& dest, CORBA::Boolean skip_bidir);
 };
+
+////////////////////////////////////////////////////////////////////////
+static inline void
+sendCloseConnection(giopStrand* s)
+{
+  // Send close connection message.
+  char hdr[12];
+  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
+  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
+  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
+  hdr[7] = (char)GIOP::CloseConnection;
+  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
+
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "sendCloseConnection: to " << s->connection->peeraddress()
+	<< " 12 bytes\n";
+  }
+  if (omniORB::trace(30))
+    giopStream::dumpbuf((unsigned char*)hdr, 12);
+
+  s->connection->Send(hdr,12);
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 giopStrand::giopStrand(const giopAddress* addr) :
@@ -702,13 +729,7 @@ Scavenger::execute()
 	if ( s->version.minor >= 2 ) {
 	  // GIOP 1.2 or above requires the client send a closeconnection
 	  // message.
-	  char hdr[12];
-	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
-	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
-	  hdr[7] = (char)GIOP::CloseConnection;
-	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
-	  s->connection->Send(hdr,12);
+	  sendCloseConnection(s);
 	}
 	s->safeDelete(1);
       }
@@ -730,16 +751,7 @@ Scavenger::execute()
 	  log << "Scavenger close connection from " 
 	      << s->connection->peeraddress() << "\n";
 	}	
-	{
-	  // Send close connection message.
-	  char hdr[12];
-	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
-	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
-	  hdr[7] = (char)GIOP::CloseConnection;
-	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
-	  s->connection->Send(hdr,12);
-	}
+	sendCloseConnection(s);
 	s->connection->Shutdown();
       }
     }
@@ -939,9 +951,12 @@ public:
     Scavenger::initialise();
   }
   void detach() {
+    omniORB::logs(25, "Terminate strand scavenger.");
     Scavenger::terminate();
 
     omni_tracedmutex_lock sync(*omniTransportLock);
+
+    omniORB::logs(25, "Close remaining strands.");
 
     // Close client strands
     {
@@ -952,7 +967,7 @@ public:
 	s->StrandList::remove();
 	s->RopeLink::remove();
 	s->state(giopStrand::DYING);
-	if (omniORB::trace(30)) {
+	if (omniORB::trace(25)) {
 	  omniORB::logger log;
 	  log << "Shutdown close connection to "
 	      << s->address->address() << "\n";
@@ -960,13 +975,7 @@ public:
 	if ( s->version.minor >= 2 ) {
 	  // GIOP 1.2 or above requires the client send a closeconnection
 	  // message.
-	  char hdr[12];
-	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
-	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
-	  hdr[7] = (char)GIOP::CloseConnection;
-	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
-	  s->connection->Send(hdr,12);
+	  sendCloseConnection(s);
 	}
 	s->safeDelete(1);
       }
@@ -979,7 +988,7 @@ public:
 	s->StrandList::remove();
 	s->RopeLink::remove();
 	s->state(giopStrand::DYING);
-	if (omniORB::trace(30)) {
+	if (omniORB::trace(25)) {
 	  omniORB::logger log;
 	  log << "Shutdown close connection to "
 	      << s->address->address() << "\n";
@@ -987,13 +996,7 @@ public:
 	if ( s->version.minor >= 2 ) {
 	  // GIOP 1.2 or above requires the client send a closeconnection
 	  // message.
-	  char hdr[12];
-	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
-	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
-	  hdr[7] = (char)GIOP::CloseConnection;
-	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
-	  s->connection->Send(hdr,12);
+	  sendCloseConnection(s);
 	}
 	s->safeDelete(1);
       }
@@ -1007,21 +1010,12 @@ public:
 	s->StrandList::remove();
 	s->RopeLink::remove();
 	s->state(giopStrand::DYING);
-	if (omniORB::trace(30)) {
+	if (omniORB::trace(25)) {
 	  omniORB::logger log;
 	  log << "Shutdown close connection from " 
 	      << s->connection->peeraddress() << "\n";
 	}	
-	{
-	  // Send close connection message.
-	  char hdr[12];
-	  hdr[0] = 'G'; hdr[1] = 'I'; hdr[2] = 'O'; hdr[3] = 'P';
-	  hdr[4] = s->version.major;   hdr[5] = s->version.minor;
-	  hdr[6] = _OMNIORB_HOST_BYTE_ORDER_;
-	  hdr[7] = (char)GIOP::CloseConnection;
-	  hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
-	  s->connection->Send(hdr,12);
-	}
+	sendCloseConnection(s);
 	s->connection->Shutdown();
       }
     }

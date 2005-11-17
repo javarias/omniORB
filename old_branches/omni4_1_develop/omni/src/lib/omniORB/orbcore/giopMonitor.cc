@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:15  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -75,6 +78,7 @@ giopMonitor::execute()
   };
 
   pd_server->notifyMrDone(this,exit_on_error);
+  omniORB::logs(25, "giopMonitor task finish.");
 }
 
 

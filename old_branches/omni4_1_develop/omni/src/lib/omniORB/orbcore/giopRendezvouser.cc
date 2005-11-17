@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:02:15  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.6  2002/09/09 22:11:50  dgrisby
   SSL transport cleanup even if certificates are wrong.
 
@@ -119,9 +122,13 @@ giopRendezvouser::execute()
 
 void
 giopRendezvouser::terminate() {
+  if (omniORB::trace(25)) {
+    omniORB::logger l;
+    l << "giopRendezvouser for " << pd_endpoint->address()
+      << " terminate...\n";
+  }
   pd_endpoint->Poke();
 }
-
 
 
 OMNI_NAMESPACE_END(omni)

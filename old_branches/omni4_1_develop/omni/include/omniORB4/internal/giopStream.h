@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:46  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.7  2001/10/17 16:44:05  dpg1
   Update DynAny to CORBA 2.5 spec, const Any exception extraction.
 
@@ -292,6 +295,11 @@ public:
   };
   ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
+
+  static void dumpbuf(unsigned char* buf, size_t sz);
+  // Dump the buffer to the log. Logs just the first 128 bytes unless
+  // omniORB::traceLevel >= 40.
+
 
 protected:
   giopStrand*                pd_strand;

@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.4  2005/07/22 17:18:40  dgrisby
+ Another merge from omni4_0_develop.
+
  Revision 1.5.2.3  2005/07/11 17:47:31  dgrisby
  VMS changes from Bruce Visscher.
 
@@ -206,7 +209,7 @@
 // VC.NET 2003 (v. 7.1) has problems recognizing inline friend
 // operators.
 
-#  if (_MSC_VER == 1310)
+#  if (_MSC_VER >= 1310)
 #    define OMNI_NO_INLINE_FRIENDS
 #  endif
 

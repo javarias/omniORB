@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.3  2005/09/01 14:52:12  dgrisby
+ Merge from omni4_0_develop.
+
  Revision 1.5.2.2  2005/01/06 23:10:34  dgrisby
  Big merge from omni4_0_develop.
 
@@ -189,6 +192,14 @@ omniObjAdapter::isInitialised()
   omni_tracedmutex_lock sync(oa_lock);
 
   return initialised;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+_CORBA_Boolean
+omniObjAdapter::isDeactivating()
+{
+  return !num_active_oas;
 }
 
 
@@ -426,7 +437,8 @@ omniObjAdapter::adapterInactive()
   if( !pd_isActive )  return;
 
   if( --num_active_oas == 0 ) {
-    omniORB::logs(10, "Stopping serving incoming endpoints.");
+    omniORB::logs(10, "All object adapters inactive. "
+		  "Stopping serving incoming endpoints.");
 
     if ( !oa_servers.empty() ) {
 

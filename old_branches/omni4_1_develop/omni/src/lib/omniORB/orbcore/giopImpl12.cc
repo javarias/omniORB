@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/04/11 12:09:42  dgrisby
+  Another merge.
+
   Revision 1.1.6.3  2005/03/02 12:39:18  dgrisby
   Merge from omni4_0_develop.
 
@@ -943,7 +946,7 @@ giopImpl12::unmarshalWildCardRequestHeader(giopStream* g) {
       if (omniORB::trace(30)) {
 	omniORB::logger l;
 	l << "Server has closed a bi-directional connection on strand "
-	  << (void*)g->pd_strand << ". Will scavenge it.";
+	  << (void*)g->pd_strand << ". Will scavenge it.\n";
       }
       g->pd_strand->startIdleCounter();
     }
