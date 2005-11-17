@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.44  2005/11/16 17:35:25  dgrisby
+  New connectionWatchPeriod and connectionWatchImmediate parameters.
+
   Revision 1.22.2.43  2005/11/15 11:07:56  dgrisby
   More shutdown cleanup.
 
@@ -561,16 +564,16 @@ giopServer::deactivate()
   else
     timeout = 5;
 
-  if (pd_n_dedicated_workers) {
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Close " << pd_n_dedicated_workers << " dedicated worker connection"
-	<< plural(pd_n_dedicated_workers) << "...\n";
-    }
+  if (pd_nconnections) {
+    omniORB::logs(25, "Close connections with threads and monitors...");
+
+    CORBA::ULong closed_count = 0;
+
     for (CORBA::ULong i=0; i < connectionState::hashsize; i++) {
       connectionState** head = &(pd_connectionState[i]);
       while (*head) {
-	if ((*head)->connection->pd_has_dedicated_thread) {
+	if ((*head)->connection->pd_has_dedicated_thread ||
+	    (*head)->strand->biDir) {
 	  {
 	    // Send close connection message.
 	    GIOP::Version ver = giopStreamImpl::maxVersion()->version();
@@ -593,28 +596,40 @@ giopServer::deactivate()
 	    (*head)->connection->Send(hdr,12);
 	  }
 	  (*head)->connection->Shutdown();
+	  ++closed_count;
 	}
 	head = &((*head)->next);
       }
     }
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "Wait for " << pd_n_dedicated_workers
-	<< " dedicated thread" << plural(pd_n_dedicated_workers)
-	<< " to finish...\n";
+      l << "Closed " << closed_count << " connection" << plural(closed_count)
+	<< " out of " << pd_nconnections << ".\n";
     }
-    omni_thread::get_time(&s, &ns, timeout);
 
-    int go = 1;
-    while (go && pd_n_dedicated_workers) {
-      go = pd_cond.timedwait(s, ns);
-    }
-    if (omniORB::trace(25)) {
-      omniORB::logger l;
-      l << "Finished waiting. " << pd_nconnections
-	<< " connection" << plural(pd_nconnections)
-	<< " and " << pd_n_dedicated_workers << " dedicated worker"
-	<< plural(pd_n_dedicated_workers) << " remaining.\n";
+    if (pd_n_dedicated_workers) {
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "Wait for " << pd_n_dedicated_workers
+	  << " dedicated thread" << plural(pd_n_dedicated_workers)
+	  << " to finish...\n";
+      }
+
+      omni_thread::get_time(&s, &ns, timeout);
+
+      int go = 1;
+      while (go && pd_n_dedicated_workers) {
+	go = pd_cond.timedwait(s, ns);
+      }
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	if (!go)
+	  l << "Timed out. ";
+
+	l << pd_nconnections << " connection" << plural(pd_nconnections)
+	  << " and " << pd_n_dedicated_workers << " dedicated worker"
+	  << plural(pd_n_dedicated_workers) << " remaining.\n";
+      }
     }
   }
 
