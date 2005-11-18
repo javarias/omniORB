@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2005/09/07 16:15:03  dgrisby
+  poll() does not work on Mac OS X.
+
   Revision 1.1.4.7  2005/08/02 09:42:53  dgrisby
   Two threads could be dispatched for one call, one by Peek, one by Select.
 
@@ -280,13 +283,10 @@ public:
       pd_shutdown(0),
       pd_selectable(0),
       pd_data_in_buffer(0),
-      pd_selected(0),
       pd_peeking(0),
       pd_peek_go(0),
       pd_peek_cond(0),
-#ifdef __WIN32__
       pd_fd_index(-1),
-#endif
       pd_next(0),
       pd_prev(0) { }
 
@@ -331,7 +331,6 @@ protected:
 private:
   CORBA::Boolean       	pd_selectable;     // True if socket is selectable
   CORBA::Boolean       	pd_data_in_buffer; // True if data already available
-  CORBA::Boolean       	pd_selected;       // True if select thread is watching
   CORBA::Boolean       	pd_peeking;        // True if a thread is currently
 					   // peeking
   CORBA::Boolean        pd_peek_go;        // True if the peeking thread
@@ -339,9 +338,10 @@ private:
 					   // did not see data to read
   omni_tracedcondition* pd_peek_cond;      // Condition to signal a waiting
 					   // peeker
-#ifdef __WIN32__
-  int                  	pd_fd_index;
-#endif
+  int                  	pd_fd_index;       // -1 if select thread is not
+					   // watching; otherwise, index of
+					   // the fd within the poll / select
+					   // list.
   SocketHolder*        	pd_next;
   SocketHolder**       	pd_prev;
 };
