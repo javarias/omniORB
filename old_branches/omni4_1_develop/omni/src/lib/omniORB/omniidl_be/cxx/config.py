@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.17.2.3  2005/01/06 23:09:49  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.17.2.2  2003/10/23 11:25:54  dgrisby
 # More valuetype support.
 #
@@ -118,12 +121,12 @@ class ConfigurationState:
             # angled brackets (the default)
             'Use Quotes':            0,
             
-            # Output AMI ReplyHandlers, Pollers etc
-            #'AMI':                   0,
-            # Not ported yet.
-            
-            # Do we make all the objref methods virtual
+            # Do we make all the objref methods virtual?
             'Virtual Objref Methods':0,
+
+            # Do we use the impl mapping for objref methods?
+            'Impl Mapping':          0,
+
             # Are #included files output inline with the main output?
             'Inline Includes':       0,
 
