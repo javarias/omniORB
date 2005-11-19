@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2005/11/18 18:25:57  dgrisby
+  Race condition between connection deletion and Select.
+
   Revision 1.1.4.10  2005/08/03 09:43:13  dgrisby
   setSelectable could cause a readable socket to be handled twice.
 
@@ -463,9 +466,9 @@ SocketCollection::Select() {
 	  if (s) {
 	    // Remove from pollfds by swapping in the last item in the array
 	    pd_pollfd_n--;
+	    s->pd_fd_index                     = -1;
 	    pd_pollfds[index]     	       = pd_pollfds[pd_pollfd_n];
 	    pd_pollsockets[index] 	       = pd_pollsockets[pd_pollfd_n];
-	    s->pd_fd_index                     = -1;
 	    if (pd_pollsockets[index])
 	      pd_pollsockets[index]->pd_fd_index = index;
 
@@ -602,7 +605,7 @@ SocketHolder::clearSelectable()
   pd_selectable = 0;
 
   if (pd_fd_index >= 0) {
-    //pd_belong_to->pd_pollsockets[pd_fd_index] = 0;
+    pd_belong_to->pd_pollsockets[pd_fd_index] = 0;
     pd_fd_index = -1;
   }
 
