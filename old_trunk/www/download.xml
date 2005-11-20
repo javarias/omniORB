@@ -23,25 +23,8 @@ page</a>.
 </p>
 
 <p>
-For historical versions, and all sorts of weird and wonderful files,
-try the old <a
-href="http://www.uk.research.att.com/pub/omniORB/">AT&amp;T Labs
-Cambridge FTP site</a>, now hosted at the <a
-href="http://www-lce.eng.cam.ac.uk/">Laboratory for Communications
-Engineering</a>. Note that inconvenient firewall policies at the
-University mean that the server cannot support passive mode FTP. Use
-HTTP or non-passive FTP to access it.
-</p>
-
-<h2>Building omniORB on Windows</h2>
-
-<p>
-omniORB's build process on Windows requires <a
-href="http://www.cygwin.com/">Cygwin</a>, a Unix environment for
-Windows. If you do not wish to install the full version, you can use
-<a
-href="http://www.uk.research.att.com/pub/omniORB/gnu-win32-lite.zip">this
-minimal version</a>.
+Snapshots of the current CVS contents are available <a
+href="/snapshots/">here</a>.
 </p>
 
 </page>
