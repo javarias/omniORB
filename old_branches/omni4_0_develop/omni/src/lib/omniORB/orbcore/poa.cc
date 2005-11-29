@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.45  2005/11/15 11:07:56  dgrisby
+  More shutdown cleanup.
+
   Revision 1.2.2.44  2005/05/22 12:32:23  dgrisby
   Race condition in POA destroy.
 
@@ -2236,8 +2239,13 @@ omniOrbPOA::do_destroy(CORBA::Boolean etherealize_objects)
   if( pd_parent ) {
     pd_parent->lose_child(this);
     pd_parent = 0;
-    if (theINSPOA == this) theINSPOA = 0;
-  } else {
+    if (theINSPOA == this) {
+      if (theRootPOA)
+	theRootPOA->decrRefCount();
+      theINSPOA = 0;
+    }
+  }
+  else {
     OMNIORB_ASSERT(theRootPOA == this);
     theRootPOA = 0;
   }
