@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.30  2005/04/25 18:20:53  dgrisby
+// Maintain forwarded location when narrowing forwarded references.
+//
 // Revision 1.1.2.29  2005/03/15 09:41:08  dgrisby
 // Use new omniORB::versionString function; Mac OS X changes.
 //
@@ -146,6 +149,7 @@ PyObject* omniPy::pyomniORBmodule;	// The omniORB module
 PyObject* omniPy::pyomniORBobjrefMap;	//  The objref class map
 PyObject* omniPy::pyomniORBtypeMap;     //  The repoId to descriptor mapping
 PyObject* omniPy::pyomniORBwordMap;     //  Reserved word map
+PyObject* omniPy::pyomniORBpoaCache;    //  POA cache
 PyObject* omniPy::pyPortableServerModule; // Portable server module
 PyObject* omniPy::pyServantClass;       // Servant class
 PyObject* omniPy::pyCreateTypeCode;	// Function to create a TypeCode object
@@ -354,6 +358,7 @@ extern "C" {
     omniPy::pyomniORBobjrefMap     = OMNIPY_ATTR("objrefMapping");
     omniPy::pyomniORBtypeMap       = OMNIPY_ATTR("typeMapping");
     omniPy::pyomniORBwordMap       = OMNIPY_ATTR("keywordMapping");
+    omniPy::pyomniORBpoaCache      = OMNIPY_ATTR("poaCache");
     omniPy::pyPortableServerModule = OMNIPY_ATTR("PortableServer");
 
     OMNIORB_ASSERT(omniPy::pyPortableServerModule);
@@ -386,6 +391,8 @@ extern "C" {
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBtypeMap));
     OMNIORB_ASSERT(omniPy::pyomniORBwordMap);
     OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBwordMap));
+    OMNIORB_ASSERT(omniPy::pyomniORBpoaCache);
+    OMNIORB_ASSERT(PyDict_Check(omniPy::pyomniORBpoaCache));
     OMNIORB_ASSERT(omniPy::pyServantClass);
     OMNIORB_ASSERT(PyClass_Check(omniPy::pyServantClass));
     OMNIORB_ASSERT(omniPy::pyCreateTypeCode);

@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.2.4.24  2005/04/25 18:20:53  dgrisby
+// Maintain forwarded location when narrowing forwarded references.
+//
 // Revision 1.2.4.23  2004/04/30 16:39:35  dgrisby
 // Log CORBA exceptions with Python tracebacks. Thanks Luke Deller.
 //
@@ -160,6 +163,7 @@ public:
   static PyObject* pyomniORBobjrefMap; //  The objref class map
   static PyObject* pyomniORBtypeMap;   //  Type map
   static PyObject* pyomniORBwordMap;   //  Reserved word map
+  static PyObject* pyomniORBpoaCache;  //  POA cache
   static PyObject* pyPortableServerModule; // Portable server module
   static PyObject* pyServantClass;     // Servant class
   static PyObject* pyCreateTypeCode;   // Function to create a TypeCode object
@@ -213,6 +217,14 @@ public:
   {
     PyObject* ot = newTwin(twin);
 
+    PyDict_SetItem(((PyInstanceObject*)obj)->in_dict, name, ot);
+    Py_DECREF(ot);
+  }
+
+  static
+  inline void
+  setExistingTwin(PyObject* obj, PyObject* ot, PyObject* name)
+  {
     PyDict_SetItem(((PyInstanceObject*)obj)->in_dict, name, ot);
     Py_DECREF(ot);
   }

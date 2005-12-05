@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.28.2.19  2005/04/25 18:22:15  dgrisby
+# Implement narrow as a no-op if the Python classes have the right inheritance.
+#
 # Revision 1.28.2.18  2003/04/25 15:25:39  dgrisby
 # Implement missing bidir policy.
 #
@@ -448,6 +451,7 @@ else:
 
 def ORB_init(argv=[], orb_identifier = ORB_ID):
     if _omnipy.need_ORB_init():
+        omniORB.poaCache.clear()
         omniORB.orb = ORB(argv, orb_identifier)
         omniORB.rootPOA = None
 
@@ -507,9 +511,11 @@ class ORB:
             pass
 
     def shutdown(self, wait_for_completion):
+        omniORB.poaCache.clear()
         _omnipy.orb_func.shutdown(self, wait_for_completion)
 
     def destroy(self):
+        omniORB.poaCache.clear()
         _omnipy.orb_func.destroy(self)
 
 

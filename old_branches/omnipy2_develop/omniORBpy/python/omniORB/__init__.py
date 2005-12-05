@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.26.2.26  2005/09/01 10:26:43  dgrisby
+# Generate all exception minor codes rather than using a hand-written list.
+#
 # Revision 1.26.2.25  2005/04/25 18:22:46  dgrisby
 # Minor code for TRANSIENT_FailedOnForwarded.
 #
@@ -442,9 +445,10 @@ from _omnipy.omni_func import *
 # Private things
 
 # ORB:
-orb     = None
-rootPOA = None
-lock    = threading.Lock()
+orb      = None
+rootPOA  = None
+poaCache = {}
+lock     = threading.Lock()
 
 # Maps for object reference classes and IDL-defined types:
 objrefMapping   = {}

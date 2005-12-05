@@ -31,6 +31,9 @@
 # $Id$
 
 # $Log$
+# Revision 1.7.4.10  2003/04/25 15:25:40  dgrisby
+# Implement missing bidir policy.
+#
 # Revision 1.7.4.9  2003/01/27 11:58:51  dgrisby
 # Correct IfR scoping.
 #
@@ -190,8 +193,8 @@ class POA (CORBA.Object) :
         return _omnipy.poa_func.find_POA(self, adapter_name, activate_it)
 
     def destroy(self, etherialize_objects, wait_for_completion):
-        return _omnipy.poa_func.destroy(self, etherialize_objects,
-                                        wait_for_completion)
+        _omnipy.poa_func.destroy(self, etherialize_objects,wait_for_completion)
+        omniORB.poaCache.clear()
 
     def create_thread_policy(self, value):
         return ThreadPolicy(value)
