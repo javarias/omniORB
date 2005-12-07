@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.7  2005/04/03 13:35:31  dgrisby
+# Handle Unicode escapes properly.
+#
 # Revision 1.5.2.6  2001/08/29 11:54:22  dpg1
 # Clean up const handling in IDL compiler.
 #
@@ -118,7 +121,7 @@ with any prefix it shares with B removed.
     return tscope
 
 _valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" \
-               " _!$%^&*()-=+[]{};#:@~,./<>?|`"
+               " 0123456789_!$%^&*()-=+[]{};#:@~,./<>?|`"
 
 _valid_unichars = map(ord, list(_valid_chars))
 
