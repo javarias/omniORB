@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/03/30 23:36:10  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.1.4.5  2005/01/25 11:17:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -194,6 +197,23 @@ cdrStream::chunkStreamDeclareArrayLength(omni::alignment_t, size_t)
 {
   int not_a_chunked_stream = 0;
   OMNIORB_ASSERT(not_a_chunked_stream);
+}
+
+void
+cdrStream::put_small_octet_array(const _CORBA_Octet* b, int size)
+{
+  omni::ptr_arith_t p1 = (omni::ptr_arith_t)pd_outb_mkr;
+  omni::ptr_arith_t p2 = p1 + size;
+
+  if ((void*)p2 <= pd_outb_end) {
+    while (p1 < p2) {
+      *((_CORBA_Octet*)p1++) = *b++;
+    }
+    pd_outb_mkr = (void*)p2;
+  }
+  else {
+    put_octet_array(b, size);
+  }
 }
 
 
@@ -811,4 +831,3 @@ static omni_cdrStream_initialiser initialiser;
 omniInitialiser& omni_cdrStream_initialiser_ = initialiser;
 
 OMNI_NAMESPACE_END(omni)
-

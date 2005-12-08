@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:17  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.9  2003/03/03 12:32:32  dgrisby
   EBCDIC code sets. Thanks Coleman Corrigan.
 
@@ -130,7 +133,7 @@ class omniCodeSet {
 public:
 
   // Common code set id constants
-  static _core_attr const CONV_FRAME::CodeSetId ID_8859_1;  // ISO 8895
+  static _core_attr const CONV_FRAME::CodeSetId ID_8859_1;  // ISO 8859
   static _core_attr const CONV_FRAME::CodeSetId ID_8859_2;
   static _core_attr const CONV_FRAME::CodeSetId ID_8859_3;
   static _core_attr const CONV_FRAME::CodeSetId ID_8859_4;
@@ -230,6 +233,8 @@ public:
     virtual void marshalString(cdrStream& stream, TCS_C* tcs,
 			       _CORBA_ULong bound, _CORBA_ULong len,
 			       const char* s) = 0;
+    // Marshal string. len is the length of the string or zero to
+    // indicate that the length is not known (or actually zero).
 
     virtual _CORBA_Char unmarshalChar(cdrStream& stream, TCS_C* tcs) = 0;
 
@@ -247,8 +252,10 @@ public:
 
     // Unicode based marshalling
     virtual void marshalChar  (cdrStream& stream, UniChar uc) = 0;
-    virtual void marshalString(cdrStream& stream,
+    virtual void marshalString(cdrStream& stream, _CORBA_ULong bound,
 			       _CORBA_ULong len, const UniChar* us) = 0;
+    // len is the length of the unicode string in us. It may only be
+    // zero if the string is of zero length.
 
     virtual UniChar unmarshalChar(cdrStream& stream) = 0;
 
@@ -266,6 +273,7 @@ public:
 					       _CORBA_ULong  bound,
 					       _CORBA_ULong  len,
 					       const char*   s);
+    // len may be zero if length is not known.
 
     virtual _CORBA_Boolean fastUnmarshalChar  (cdrStream&    stream,
 					       NCS_C*        ncs,
@@ -312,7 +320,7 @@ public:
 
     // Unicode based marshalling
     virtual void marshalWChar  (cdrStream& stream, UniChar uc) = 0;
-    virtual void marshalWString(cdrStream& stream,
+    virtual void marshalWString(cdrStream& stream, _CORBA_ULong bound,
 				_CORBA_ULong len, const UniChar* us) = 0;
 
     virtual UniChar unmarshalWChar(cdrStream& stream) = 0;
@@ -415,7 +423,7 @@ public:
 
     // Inherited virtual functions
     virtual void marshalChar  (cdrStream& stream, UniChar uc);
-    virtual void marshalString(cdrStream& stream,
+    virtual void marshalString(cdrStream& stream, _CORBA_ULong bound,
 			       _CORBA_ULong len, const UniChar* us);
 
     virtual UniChar unmarshalChar(cdrStream& stream);
@@ -520,7 +528,7 @@ public:
 
     // Unicode based marshalling
     virtual void marshalWChar  (cdrStream& stream, UniChar uc);
-    virtual void marshalWString(cdrStream& stream,
+    virtual void marshalWString(cdrStream& stream, _CORBA_ULong bound,
 				_CORBA_ULong len, const UniChar* us);
 
     virtual UniChar unmarshalWChar(cdrStream& stream);

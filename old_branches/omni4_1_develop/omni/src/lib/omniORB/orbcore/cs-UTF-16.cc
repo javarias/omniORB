@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2003/05/20 16:53:16  dgrisby
+  Valuetype marshalling support.
+
   Revision 1.1.4.1  2003/03/23 21:02:20  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -113,6 +116,7 @@ public:
 
   virtual void marshalWChar  (cdrStream& stream, omniCodeSet::UniChar uc);
   virtual void marshalWString(cdrStream& stream,
+			      _CORBA_ULong bound,
 			      _CORBA_ULong len,
 			      const omniCodeSet::UniChar* us);
 
@@ -206,7 +210,7 @@ NCS_W_UTF_16::marshalWString(cdrStream&          stream,
 
     us[i] = wc;
   }
-  tcs->marshalWString(stream, len, us);
+  tcs->marshalWString(stream, bound, len, us);
 #endif
 }
 
@@ -273,6 +277,7 @@ TCS_W_UTF_16::marshalWChar(cdrStream& stream, omniCodeSet::UniChar uc)
 
 void
 TCS_W_UTF_16::marshalWString(cdrStream& stream,
+			     _CORBA_ULong bound,
 			     _CORBA_ULong len,
 			     const omniCodeSet::UniChar* us)
 {

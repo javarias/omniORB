@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2005/04/11 12:09:42  dgrisby
+  Another merge.
+
   Revision 1.1.6.2  2005/01/06 23:10:15  dgrisby
   Big merge from omni4_0_develop.
 
@@ -1180,11 +1183,11 @@ giopImpl11::marshalRequestHeader(giopStream* g) {
 
   // object key
   giop_c.keysize() >>= s;
-  s.put_octet_array(giop_c.key(),giop_c.keysize());
+  s.put_small_octet_array(giop_c.key(),giop_c.keysize());
 
   // operation
   operator>>= ((CORBA::ULong) calldesc.op_len(),s);
-  s.put_octet_array((CORBA::Octet*) calldesc.op(), calldesc.op_len());
+  s.put_small_octet_array((CORBA::Octet*) calldesc.op(), calldesc.op_len());
 
   // principal
   omni::myPrincipalID >>= s;
@@ -1219,7 +1222,7 @@ giopImpl11::sendLocateRequest(giopStream* g) {
   
   // object key
   giop_c.keysize() >>= s;
-  s.put_octet_array(giop_c.key(),giop_c.keysize());
+  s.put_small_octet_array(giop_c.key(),giop_c.keysize());
 
   outputMessageEnd(g);
 }
@@ -1325,7 +1328,7 @@ giopImpl11::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
 
   // system exception value
   CORBA::ULong(repoid_size) >>= s;
-  s.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
+  s.put_small_octet_array((const CORBA::Octet*) repoid, repoid_size);
   ex.minor() >>= s;
   CORBA::ULong(ex.completed()) >>= s;
 
@@ -1384,7 +1387,7 @@ giopImpl11::sendUserException(giopStream* g,const CORBA::UserException& ex) {
   rc >>= s;
 
   CORBA::ULong(repoid_size) >>= s;
-  s.put_octet_array((const CORBA::Octet*) repoid, repoid_size);
+  s.put_small_octet_array((const CORBA::Octet*) repoid, repoid_size);
   ex._NP_marshal(s);
 
   outputMessageEnd(g);

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/06 23:09:43  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.2  2003/05/20 16:53:14  dgrisby
   Valuetype marshalling support.
 
@@ -105,6 +108,7 @@ public:
 
   virtual void marshalWChar  (cdrStream& stream, omniCodeSet::UniChar uc);
   virtual void marshalWString(cdrStream& stream,
+			      _CORBA_ULong bound,
 			      _CORBA_ULong len,
 			      const omniCodeSet::UniChar* us);
 
@@ -196,7 +200,7 @@ NCS_W_UCS_4::marshalWString(cdrStream&          stream,
       OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_CannotMapChar,
 		    (CORBA::CompletionStatus)stream.completion());
   }
-  tcs->marshalWString(stream, len, ub.extract());
+  tcs->marshalWString(stream, bound, len, ub.extract());
 }
 
 
@@ -323,6 +327,7 @@ TCS_W_UCS_4::marshalWChar(cdrStream& stream,
 
 void
 TCS_W_UCS_4::marshalWString(cdrStream& stream,
+			    _CORBA_ULong bound,
 			    _CORBA_ULong len,
 			    const omniCodeSet::UniChar* us)
 {

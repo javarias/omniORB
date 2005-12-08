@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.7  2005/09/19 18:26:33  dgrisby
+  Merge from omni4_0_develop again.
+
   Revision 1.5.2.6  2005/04/14 00:03:58  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -429,19 +432,6 @@ omniObjTable::resize()
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////// omni ////////////////////////////////
 //////////////////////////////////////////////////////////////////////
-
-_CORBA_ULong
-omni::hash(const CORBA::Octet* key, int keysize)
-{
-  //?? This is from Knuth.  We may be able to do better!
-
-  _CORBA_ULong n = 0;
-
-  while( keysize-- )  n = ((n << 5) ^ (n >> 27)) ^ *key++;
-
-  return n;
-}
-
 
 omni_tracedmutex&
 omni::nilRefLock()
