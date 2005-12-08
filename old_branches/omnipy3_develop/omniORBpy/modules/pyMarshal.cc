@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.8  2005/11/09 12:33:32  dgrisby
+// Support POA LocalObjects.
+//
 // Revision 1.1.4.7  2005/08/12 09:32:09  dgrisby
 // Use Python bool type where available.
 //
@@ -2688,6 +2691,7 @@ marshalPyObjectWString(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 
 #  endif
   stream.TCS_W()->marshalWString(stream,
+				 0,
 				 PyUnicode_GET_SIZE(a_o),
 				 (const omniCodeSet::UniChar*)str);
 #else
