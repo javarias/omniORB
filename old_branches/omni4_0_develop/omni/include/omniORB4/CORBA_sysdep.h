@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.2.2.29  2005/10/13 11:37:07  dgrisby
+ VC++ 8 doesn't like inline friend functions.
+
  Revision 1.2.2.28  2005/07/22 09:52:59  dgrisby
  Remove more gcc warnings. Thanks Matej Kenda.
 
@@ -397,7 +400,7 @@
 #endif
 
 #ifndef _init_in_cldecl_
-#  if !defined(_MSC_VER) || _MSC_VER >= 1310
+#  if !defined(_MSC_VER)
 #    define _init_in_cldecl_(x) x
 #  else
 #    define _init_in_cldecl_(x) 
@@ -407,7 +410,7 @@
 #endif
 
 #ifndef _init_in_cldef_
-#  if !defined(_MSC_VER) || _MSC_VER >= 1310
+#  if !defined(_MSC_VER)
 #    define _init_in_cldef_(x)
 #  else
 #    define _init_in_cldef_(x) x 
