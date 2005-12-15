@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.18  2004/02/16 13:56:06  dgrisby
+# Operation names clashing with keywords were broken.
+#
 # Revision 1.29.2.17  2003/11/19 16:56:36  dgrisby
 # Extern package option to omniidl backend. Thanks Rene Jager.
 #
@@ -2110,7 +2113,7 @@ def fixupScopedName(scopedName, prefix="_0_"):
     """Add a prefix and _GlobalIDL to the front of a ScopedName if necessary"""
 
     if isinstance(idlast.findDecl([scopedName[0]]), idlast.Module):
-        scopedName = [prefix + scopedName[0]] + scopedName[1:]
+        scopedName = [prefix + mangle(scopedName[0])] + scopedName[1:]
     else:
         scopedName = [prefix + global_module] + scopedName
     return scopedName
