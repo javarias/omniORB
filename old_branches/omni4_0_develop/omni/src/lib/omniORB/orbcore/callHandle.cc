@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.2.7  2005/07/21 15:25:09  dgrisby
+ Silence some gcc 4 warnings / errors.
+
  Revision 1.1.2.6  2001/08/17 13:42:49  dpg1
  callDescriptor::userException() no longer has to throw an exception.
 
@@ -289,7 +292,7 @@ MainThreadTask::execute()
     // Wake up the dispatch thread
     omni_tracedmutex_lock l(*pd_mu);
     pd_done = 1;
-    pd_cond->signal();
+    pd_cond->broadcast();
   }
 }
 
