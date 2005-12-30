@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.31  2005/12/28 21:13:51  dgrisby
+ Intel compiler on Windows supports constants in headers. Thanks Tim
+ Theisen.
+
  Revision 1.2.2.30  2005/12/15 17:12:21  dgrisby
  VC++ 7.1 doesn't properly support constants inside class
  declarations after all.
@@ -331,6 +335,12 @@
 #error "Name conflict: _CORBA_MODULE_VAR is already defined."
 #endif
 
+#ifndef _CORBA_MODULE_INLINE
+#define _CORBA_MODULE_INLINE inline
+#else
+#error "Name conflict: _CORBA_MODULE_INLINE is already defined."
+#endif
+
 #ifndef _CORBA_GLOBAL_VAR
 #define _CORBA_GLOBAL_VAR extern
 #else
@@ -459,6 +469,12 @@
 #define _CORBA_MODULE_VAR static
 #else
 #error "Name conflict: _CORBA_MODULE_VAR is already defined."
+#endif
+
+#ifndef _CORBA_MODULE_INLINE
+#define _CORBA_MODULE_INLINE static inline
+#else
+#error "Name conflict: _CORBA_MODULE_INLINE is already defined."
 #endif
 
 #ifndef _CORBA_GLOBAL_VAR
