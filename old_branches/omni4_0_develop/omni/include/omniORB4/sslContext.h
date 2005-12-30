@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2005/09/05 14:32:04  dgrisby
+  SSL transport extensions from Jon Biggar; SSL command line options.
+
   Revision 1.1.2.7  2004/02/11 15:44:53  dgrisby
   Hook to set SSL verify mode. Thanks Matthew Wood.
 
@@ -151,5 +154,7 @@ class sslContext {
   SSL_CTX*    	    pd_ctx;
   omni_tracedmutex* pd_locks;
 };
+
+#undef _core_attr
 
 #endif // __SSLCONTEXT_H__
