@@ -21,7 +21,7 @@
 //
 //
 #include <common/omnitest.h>
-#include "ssi_impl.hh"
+#include "ssi_impl.h"
 #include <stdlib.h>
 #include <string.h>
 #include <iostream.h>

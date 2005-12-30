@@ -1,3 +1,14 @@
+Fri Dec 30 15:39:41 GMT 2005 dgrisby
+====================================
+
+- Necessary header file had .hh extension so got missed out.
+
+att/testsuite/dii/sngladdrsp.cc
+att/testsuite/dii/ssi.cc
+att/testsuite/dii/ssi_impl.cc
+att/testsuite/dii/ssi_impl.h     -- new
+
+
 Fri Apr  8 18:48:37 BST 2005 dgrisby
 ====================================
 

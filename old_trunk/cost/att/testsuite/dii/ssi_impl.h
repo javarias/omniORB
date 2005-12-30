@@ -20,9 +20,36 @@
 //    02111-1307, USA
 //
 //
-#include <common/omnitest.h>
-#include <stdlib.h>
-#include "ssi_impl.h"
+#ifndef __SSI_IMPL_HH__
+#define __SSI_IMPL_HH__
+
+#include "diitest.hh"
 
 
-OMNI_SIMPLE_SERVER(Foo_i)
+class Foo_i : public POA_Foo,
+	      public PortableServer::RefCountServantBase
+{
+public:
+  Foo_i() : pd_shortAttr(0) {}
+
+  virtual void nothing();
+  virtual void nothingOW();
+  virtual void nothingR1();
+  virtual void nothingR1or2();
+
+  virtual CORBA::Short testShort(CORBA::Short a, CORBA::Short& b,
+				 CORBA::Short& c);
+  virtual char* testString(const char* a, char*& b, CORBA::String_out c);
+  virtual Foo::FlStruct testFlStruct(const Foo::FlStruct& a, Foo::FlStruct& b, Foo::FlStruct& c);
+  virtual Foo::VlStruct* testVlStruct(const Foo::VlStruct& a, Foo::VlStruct& b, Foo::VlStruct_out c);
+
+  virtual CORBA::Short shortAttr();
+  virtual void shortAttr(CORBA::Short s);
+  virtual char* stringAttr();
+
+private:
+  CORBA::Short pd_shortAttr;
+};
+
+
+#endif  // __SSI_IMPL_HH__
