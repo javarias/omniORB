@@ -1,0 +1,194 @@
+<html>
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 4.0.6 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 4.0.6 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/4.0.6" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 4.0.6 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
+        </p>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Per-thread data could be released from a different thread</b>
+            (bug number 1)
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Apr 25 19:14:24 BST 2005</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  This caused problems in some situations. Per-thread data is now
+  always released from the thread it belongs to.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Segfault in omniidl</b>
+            (bug number 2)
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue May  3 11:08:59 BST 2005</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Trying to redefine built-in CORBA module types led to a segfault
+  instead of an error.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Race condition in POA destroy</b>
+            (bug number 3)
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Sun May 22 13:31:51 BST 2005</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Multiple threads creating and destroying POAs could conflict.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Async worker problem</b>
+            (bug number 4)
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 22 12:18:42 BST 2005</td>
+</tr>
+  
+  <tr>
+<td>Reported by:</td>
+<td>Hartmut Raschick</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  A problem with condition variable handling meant that a worker
+  thread could add itself to the idle list more than once, leading to
+  a later crash.
+  </td>
+</tr>
+  <tr>
+<td>Link for this bug:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2005-July/026938.html">http://www.omniorb-support.com/pipermail/omniorb-list/2005-July/026938.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Floating point marshalling</b>
+            (bug number 5)
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Jul 22 17:56:07 BST 2005</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Floating point values could become corrupted upon marshalling with
+  some compilers. This is due to strict aliasing interacting with the
+  optimiser.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Multiple shutdown issues</b>
+            (bug number 6)
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Sun Nov 20 15:31:36 GMT 2005</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Shutdown suffered from a number of problems, especially on Windows.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Main thread dispatch block</b>
+            (bug number 7)
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Dec 16 12:18:21 GMT 2005</td>
+</tr>
+  
+  <tr>
+<td>Reported by:</td>
+<td>Fabrice Ferrand</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Threads waiting for a main thread dispatch could block for ever.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
+</html>
