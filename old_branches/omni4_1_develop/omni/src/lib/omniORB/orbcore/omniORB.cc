@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2005/03/30 23:36:00  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.4.2.2  2005/01/06 23:10:37  dgrisby
   Big merge from omni4_0_develop.
 
@@ -188,6 +191,13 @@ omniORB::setClientThreadCallDeadline(unsigned long secs, unsigned long ns)
     OMNIORB_THROW(INITIALIZE, INITIALIZE_NotOmniThread, CORBA::COMPLETED_NO);
 
   current->setDeadline(secs, ns);
+}
+
+void
+omniORB::setClientConnectTimeout(CORBA::ULong v)
+{
+  orbParameters::clientConnectTimeOutPeriod.secs = v / 1000;
+  orbParameters::clientConnectTimeOutPeriod.nanosecs = (v % 1000) * 1000000;
 }
 
 

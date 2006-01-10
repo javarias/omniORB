@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.5  2005/09/19 18:26:33  dgrisby
+  Merge from omni4_0_develop again.
+
   Revision 1.5.2.4  2005/04/14 00:04:00  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -312,6 +315,7 @@ _CORBA_MODULE_BEG
   // setClientCallTimeout()                                             //
   // setClientThreadCallTimeout()                                       //
   // setClientThreadCallDeadline()                                      //
+  // setClientConnectTimeout()                                          //
   //                                                                    //
   // Functions to set call timeouts at runtime.                         //
   //                                                                    //
@@ -323,10 +327,13 @@ _CORBA_MODULE_BEG
   // thread to the specified number of milliseconds. If the calling     //
   // thread is not an omni_thread, it throws CORBA::INITIALIZE.         //
   //                                                                    //
-  // setClientThreadCall Deadline() sets an absolute deadline for all   //
+  // setClientThreadCallDeadline() sets an absolute deadline for all    //
   // calls in the calling thread. The seconds and nanoseconds should be //
   // acquired from omni_thread::get_time(). Again throws INITIALIZE if  //
   // the calling thread is not an omni_thread.                          //
+  //                                                                    //
+  // setClientConnectTimeout() sets the overriding timeout for calls    //
+  // that involve opening a new network connection.                     //
   //                                                                    //
   _CORBA_MODULE_FN void setClientCallTimeout(CORBA::ULong millisecs);   //
   _CORBA_MODULE_FN void setClientCallTimeout(CORBA::Object_ptr obj,     //
@@ -336,6 +343,7 @@ _CORBA_MODULE_BEG
                                                                         //
   _CORBA_MODULE_FN void setClientThreadCallDeadline(unsigned long secs, //
                                                     unsigned long ns);  //
+  _CORBA_MODULE_FN void setClientConnectTimeout(CORBA::ULong millisecs);//
                                                                         //
   ////////////////////////////////////////////////////////////////////////
 
