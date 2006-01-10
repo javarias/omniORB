@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.36.2.4  2005/09/08 14:49:40  dgrisby
+  Merge -ORBconfigFile argument.
+
   Revision 1.36.2.3  2005/03/30 23:36:10  dgrisby
   Another merge from omni4_0_develop.
 
@@ -624,10 +627,10 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     // among the modules.
     omni_giopEndpoint_initialiser_.attach();
     omni_transportRules_initialiser_.attach();
+    omni_interceptor_initialiser_.attach();
     omni_omniInternal_initialiser_.attach();
     omni_corbaOrb_initialiser_.attach();
     omni_objadpt_initialiser_.attach();
-    omni_interceptor_initialiser_.attach();
     omni_giopStreamImpl_initialiser_.attach();
     omni_omniIOR_initialiser_.attach();
     omni_ior_initialiser_.attach();
@@ -902,10 +905,10 @@ omniOrbORB::destroy()
     omni_ior_initialiser_.detach();
     omni_omniIOR_initialiser_.detach();
     omni_giopStreamImpl_initialiser_.detach();
-    omni_interceptor_initialiser_.detach();
     omni_objadpt_initialiser_.detach();
     omni_corbaOrb_initialiser_.detach();
     omni_omniInternal_initialiser_.detach();
+    omni_interceptor_initialiser_.detach();
     omni_transportRules_initialiser_.detach();
     omni_giopEndpoint_initialiser_.detach();
 

@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.4  2005/07/22 17:18:37  dgrisby
+ Another merge from omni4_0_develop.
+
  Revision 1.1.4.3  2003/11/06 11:56:56  dgrisby
  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -306,7 +309,7 @@ MainThreadTask::execute()
     // Wake up the dispatch thread
     omni_tracedmutex_lock l(*pd_mu);
     pd_done = 1;
-    pd_cond->signal();
+    pd_cond->broadcast();
   }
 }
 
