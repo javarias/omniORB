@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.6  2004/10/13 17:58:26  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.20.2.5  2003/11/06 11:56:57  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -199,6 +202,8 @@ Functions:
                      immediately followed this declaration.
   comments()      -- list of Comment objects containing comments which
                      immediately followed this declaration.
+  fullDecl()      -- the 'full' Decl for typedefs, forwards, etc.
+
   accept(visitor) -- visitor pattern accept. See idlvisitor.py."""
 
     def __init__(self, file, line, mainFile, pragmas, comments):
@@ -217,6 +222,7 @@ Functions:
     def builtIn(self):  return self.__builtIn
     def pragmas(self):  return self.__pragmas
     def comments(self): return self.__comments
+    def fullDecl(self): return self
 
 
 class DeclRepoId :
@@ -463,6 +469,14 @@ Functions:
 
     def sizes(self): return self.__sizes
     def alias(self): return self.__alias
+
+    def fullDecl(self):
+        if self.__alias is not None:
+            try:
+                return self.__alias.aliasType().decl()
+            except AttributeError:
+                pass
+        return self
 
 
 class Typedef (Decl):
