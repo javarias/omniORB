@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2005/11/19 17:33:28  dgrisby
+  Previous fix for the race condition was stupidly commented out...
+
   Revision 1.1.4.11  2005/11/18 18:25:57  dgrisby
   Race condition between connection deletion and Select.
 
@@ -926,7 +929,6 @@ SocketHolder::setSelectable(int            now,
     }
     else {
       OMNIORB_ASSERT(pd_fd_index == -1);
-      pd_selected = 1;
       pd_fd_index = pd_belong_to->pd_fd_set.fd_count;
       pd_belong_to->pd_fd_set.fd_array[pd_fd_index] = pd_socket;
       pd_belong_to->pd_fd_sockets[pd_fd_index] = this;
