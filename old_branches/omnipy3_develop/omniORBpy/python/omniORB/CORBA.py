@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.6  2005/11/09 12:33:31  dgrisby
+# Support POA LocalObjects.
+#
 # Revision 1.31.2.5  2005/04/25 18:28:16  dgrisby
 # Implement narrow as a no-op if the Python classes have the right inheritance.
 #
@@ -198,7 +201,7 @@ Main omniORB CORBA module
 import _omnipy
 import omniORB
 
-import threading, types, time, exceptions
+import threading, types, time, exceptions, string
 
 
 #############################################################################
@@ -242,27 +245,56 @@ class SystemException (Exception):
             self.completed = completed
         Exception.__init__(self, minor, self.completed)
 
-    def __str__(self):
+    def __repr__(self):
         minorName = omniORB.minorCodeToString(self)
         if minorName is None:
             minorName = hex(self.minor)
-        return "Minor: " + minorName + \
-               ", " + str(self.completed) + "."
+        else:
+            minorName = "omniORB." + minorName
+
+        return "CORBA.%s(%s, CORBA.%s)" % (self.__class__.__name__,
+                                           minorName,
+                                           self.completed)
+    def __str__(self):
+        return self.__repr__()
+
+
 
 class UserException (Exception):
+    _NP_RepositoryId = None
+    _NP_ClassName = None
+
     def __init__(self, *args):
         self.__args = args
 
+    def __repr__(self):
+        cname = self._NP_ClassName
+        if cname is None:
+            cname = "%s.%s" % (self.__module__, self.__class__.__name__)
+
+        desc = omniORB.findType(self._NP_RepositoryId)
+        if desc is None:
+            # Type is not properly registered
+            return "<%s instance at 0x%x>" % (cname, long(id(t)) & 0xffffffffL)
+        vals = []
+        for i in range(4, len(desc), 2):
+            attr = desc[i]
+            try:
+                val = getattr(self, attr)
+                vals.append("%s=%s" % (attr,repr(val)))
+            except AttributeError:
+                vals.append("%s=<not set>" % attr)
+
+        return "%s(%s)" % (cname, string.join(vals, ", "))
+
     def __str__(self):
-        if not self.__args:
-            return "User exception with no members"
-        elif len(self.__args) == 1:
-            return "User exception: " + str(self.__args[0])
-        else:
-            return "User exception: " + str(self.__args)
+        return self.__repr__()
 
     def __getitem__(self, i):
         return self.__args[i]
+
+    def _tuple(self):
+        return tuple(self)
 
 
 # All the standard system exceptions...
@@ -357,6 +389,7 @@ class TypeCode:
     def equivalent(self, tc):           return self._t.equivalent(tc)
     def get_compact_typecode(self):     return self._t.get_compact_typecode()
     def kind(self):                     return self._t.kind()
+    def __repr__(self):                 return self._t.__repr__()
     
     # Operations which are only available for some kinds:
     def id(self):                       return self._t.id()
@@ -449,6 +482,9 @@ class Any:
 
         return omniORB.coerceAny(self._v, self._t._d, coerce._d)
 
+    def __repr__(self):
+        return "CORBA.Any(%s, %s)" % (repr(self._t), repr(self._v))
+
     __methods__ = ["typecode", "value"]
 
 _d_any = tcInternal.tv_any
@@ -471,6 +507,7 @@ else:
 
 def ORB_init(argv=[], orb_identifier = ORB_ID):
     if _omnipy.need_ORB_init():
+        omniORB.poaCache.clear()
         omniORB.orb = ORB(argv, orb_identifier)
         omniORB.rootPOA = None
 
@@ -533,9 +570,11 @@ class ORB:
             pass
 
     def shutdown(self, wait_for_completion):
+        omniORB.poaCache.clear()
         _omnipy.orb_func.shutdown(self, wait_for_completion)
 
     def destroy(self):
+        omniORB.poaCache.clear()
         _omnipy.orb_func.destroy(self)
 
 

@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.6  2005/11/09 12:33:31  dgrisby
+# Support POA LocalObjects.
+#
 # Revision 1.13.2.5  2005/07/29 11:27:23  dgrisby
 # Static map of basic TypeCodes for speed.
 #
@@ -398,7 +401,7 @@ class TypeCode_base (CORBA.TypeCode):
 
     def kind(self):
         return self._k
-    
+
     # Operations which are only available for some kinds:
     def id(self):                       raise CORBA.TypeCode.BadKind()
     def name(self):                     raise CORBA.TypeCode.BadKind()
@@ -435,6 +438,8 @@ class TypeCode_empty (TypeCode_base):
         self._d = desc
         self._k = CORBA.TCKind._item(desc)
 
+    def __repr__(self):
+        return "CORBA.TC" + str(self._k)[8:]
 
 # string:
 class TypeCode_string (TypeCode_base):
@@ -448,6 +453,12 @@ class TypeCode_string (TypeCode_base):
     def length(self):
         return self._d[1]
 
+    def __repr__(self):
+        if self._d[1] == 0:
+	    return "CORBA.TC_string"
+	else:
+	    return "orb.create_string_tc(bound=%d)" % self._d[1]
+
 # wstring:
 class TypeCode_wstring (TypeCode_base):
     def __init__(self, desc):
@@ -459,6 +470,12 @@ class TypeCode_wstring (TypeCode_base):
 
     def length(self):
         return self._d[1]
+
+    def __repr__(self):
+        if self._d[1] == 0:
+	    return "CORBA.TC_wstring"
+	else:
+	    return "orb.create_wstring_tc(bound=%d)" % self._d[1]
 
 # fixed:
 class TypeCode_fixed (TypeCode_base):
@@ -475,6 +492,9 @@ class TypeCode_fixed (TypeCode_base):
     def fixed_scale(self):
         return self._d[2]
 
+    def __repr__(self):
+        return "orb.create_fixed_tc(digits=%d,scale=%d)" % (
+	    self.fixed_digits(), self.fixed_scale())
 
 # objref:
 class TypeCode_objref (TypeCode_base):
@@ -494,6 +514,9 @@ class TypeCode_objref (TypeCode_base):
             return ""
         
     def name(self): return self._d[2]
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
 
 
 # struct:
@@ -531,6 +554,10 @@ class TypeCode_struct (TypeCode_base):
             return createTypeCode(self._d[off], self)
         else:
             return createTypeCode(self._d[off], self._p)
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
+
     
 # union:
 class TypeCode_union (TypeCode_base):
@@ -578,6 +605,10 @@ class TypeCode_union (TypeCode_base):
         if self._d[5] >= 0: return self._d[5]
         return -1
 
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
+
+
 # enum:
 class TypeCode_enum (TypeCode_base):
     def __init__(self, desc):
@@ -600,6 +631,9 @@ class TypeCode_enum (TypeCode_base):
     def member_name(self, index):
         if index < 0 or index >= len(self._d[3]): raise CORBA.TypeCode.Bounds()
         return self._d[3][index]._n
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
 
 # sequence:
 class TypeCode_sequence (TypeCode_base):
@@ -628,6 +662,11 @@ class TypeCode_sequence (TypeCode_base):
         else:
             return createTypeCode(self._d[1], self._p)
 
+    def __repr__(self):
+        return "orb.create_sequence_tc(bound=%d, element_type=%s)" % (
+	    self.length(), repr(self.content_type()))
+
+
 # array:
 class TypeCode_array (TypeCode_base):
     def __init__(self, desc, parent):
@@ -650,6 +689,10 @@ class TypeCode_array (TypeCode_base):
 
     def length(self):       return self._d[2]
     def content_type(self): return createTypeCode(self._d[1])
+
+    def __repr__(self):
+        return "orb.create_array_tc(length=%d, element_type=%s)" % (
+	    self.length(), repr(self.content_type()))
 
 # alias:
 class TypeCode_alias (TypeCode_base):
@@ -674,6 +717,9 @@ class TypeCode_alias (TypeCode_base):
     def id(self):           return self._d[1]
     def name(self):         return self._d[2]
     def content_type(self): return createTypeCode(self._d[3])
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
 
 # except:
 class TypeCode_except (TypeCode_base):
@@ -710,6 +756,10 @@ class TypeCode_except (TypeCode_base):
             return createTypeCode(self._d[off], self)
         else:
             return createTypeCode(self._d[off], self._p)
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
+
 
 # value:
 class TypeCode_value (TypeCode_base):
@@ -761,6 +811,10 @@ class TypeCode_value (TypeCode_base):
         else:
             return createTypeCode(self._d[6], self._p)
 
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
+
+
 # valuebox:
 class TypeCode_value_box (TypeCode_base):
     def __init__(self, desc, parent):
@@ -784,6 +838,9 @@ class TypeCode_value_box (TypeCode_base):
     def id(self):           return self._d[2]
     def name(self):         return self._d[3]
     def content_type(self): return createTypeCode(self._d[4])
+
+    def __repr__(self):
+        return 'CORBA.TypeCode("%s")' % self.id()
 
 
 # Map of pre-created basic TypeCodes
@@ -810,8 +867,6 @@ basicTypeCodes = {
     (tv_string, 0): TypeCode_string ((tv_string,  0)),
     (tv_wstring,0): TypeCode_wstring((tv_wstring, 0)),
 }
-
-
 
 
 # Functions to test descriptor equivalence

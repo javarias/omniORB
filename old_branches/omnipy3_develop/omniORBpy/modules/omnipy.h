@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.3.2.7  2005/11/09 12:33:32  dgrisby
+// Support POA LocalObjects.
+//
 // Revision 1.3.2.6  2005/06/24 17:36:08  dgrisby
 // Support for receiving valuetypes inside Anys; relax requirement for
 // old style classes in a lot of places.
@@ -175,6 +178,7 @@ public:
   static PyObject* pyomniORBtypeMap;   	//  Type map
   static PyObject* pyomniORBvalueMap;  	//  Value factory map
   static PyObject* pyomniORBwordMap;   	//  Reserved word map
+  static PyObject* pyomniORBpoaCache;   //  POA cache
   static PyObject* pyomniORBUnknownValueBase;
                                         //  Base class for unknown valuetypes
   static PyObject* pyPortableServerModule;
@@ -234,6 +238,14 @@ public:
   {
     PyObject* ot = newTwin(twin);
     PyObject_SetAttr(obj, name, ot);
+    Py_DECREF(ot);
+  }
+
+  static
+  inline void
+  setExistingTwin(PyObject* obj, PyObject* ot, PyObject* name)
+  {
+    PyDict_SetItem(((PyInstanceObject*)obj)->in_dict, name, ot);
     Py_DECREF(ot);
   }
 
