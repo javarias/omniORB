@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2005/08/16 13:51:21  dgrisby
+  Problems with valuetype / abstract interface C++ mapping.
+
   Revision 1.1.2.5  2005/01/17 18:08:41  dgrisby
   Small tweaks to compile with Sun CC.
 
@@ -164,17 +167,17 @@ public:
   virtual ULong _refcount_value();
 
 protected:
-  inline DefaultValueRefCountBase() : _pd_refCount(1) {}
+  inline DefaultValueRefCountBase() : _pd__refCount(1) {}
   virtual ~DefaultValueRefCountBase();
 
   inline DefaultValueRefCountBase(const DefaultValueRefCountBase&)
-    : _pd_refCount(1) {}
+    : _pd__refCount(1) {}
 
 private:
   void operator=(const DefaultValueRefCountBase&);
   // Not implemented.
 
-  ULong _pd_refCount;
+  ULong _pd__refCount;
 };
 
 
