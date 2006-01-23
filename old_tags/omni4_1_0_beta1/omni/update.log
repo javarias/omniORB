@@ -1,0 +1,1957 @@
+Mon Jan 23 16:06:20 GMT 2006 dgrisby
+====================================
+
+- This is omniORB 4.1.0 beta 1.
+
+
+Mon Jan 23 16:05:06 GMT 2006 dgrisby
+====================================
+
+- Another merge from omni4_0_develop.
+
+src/lib/omniORB/orbcore/omniInternal.cc
+
+
+Mon Jan 23 15:36:56 GMT 2006 dgrisby
+====================================
+
+- Fix version number in new spec file.
+
+contrib/RPMs/omniORB_new.spec
+
+
+Thu Jan 19 22:46:23 GMT 2006 dgrisby
+====================================
+
+- Missing css file in documentation.
+
+doc/omniORB/omniORB.css  -- new
+
+
+Thu Jan 19 17:16:11 GMT 2006 dgrisby
+====================================
+
+- Avoid member name conflict in DefaultValueRefCountBase.
+
+include/omniORB4/CORBA_ValueBase.h
+src/lib/omniORB/dynamic/valueBase.cc
+
+- Updates for 4.1.0 beta 1.
+
+README.FIRST.txt
+README.unix
+README.win32.txt
+THIS_IS_ALPHA_CODE                   -- deleted
+THIS_IS_OMNIORB_4_1_0_BETA_1         -- new
+THIS_IS_OMNIORB_4_1_DEVELOPMENT_TREE -- deleted
+src/examples/dir.mk
+
+
+Thu Jan 19 16:43:25 GMT 2006 dgrisby
+====================================
+
+- Merge from omni4_0_develop.
+
+config/config.mk
+contrib/RPMs/omniORB_new.spec
+idl/anyExample.idl
+include/omniORB4/templatedecls.h
+mk/beforedir.mk
+mk/version.mk
+mk/win32.mk
+mk/platforms/x86_nt_4.0.mk
+mk/platforms/x86_nt_4.0_vs_7.mk
+mk/platforms/x86_nt_4.0_vs_8.mk
+src/examples/thread/diner.cc
+src/examples/thread/prio.cc
+src/examples/thread/prodcons.cc
+src/examples/thread/thrspecdata.cc
+
+
+Thu Jan 19 16:04:34 GMT 2006 dgrisby
+====================================
+
+- Windows build fixes.
+
+src/lib/omniORB/orbcore/SocketCollection.cc
+src/lib/omniORB/orbcore/cs-UTF-16.cc
+
+- Copy shared library .lib files to have a micro-version-independent
+  name.
+
+mk/win32.mk
+
+
+Thu Jan 19 13:08:45 GMT 2006 dgrisby
+====================================
+
+- Documentation updates.
+
+doc/omniORB.pdf
+doc/omniORB.ps
+doc/omniORB/index.html
+doc/omniORB/omniORB.html
+doc/omniORB/omniORB004.html
+doc/omniORB/omniORB008.html
+doc/omniORB/omniORB013.html
+doc/tex/omniORB.tex
+
+
+Wed Jan 18 19:21:28 GMT 2006 dgrisby
+====================================
+
+- Clarifying comment.
+
+src/lib/omniORB/dynamic/valueType.cc
+
+- Code generation problems with valuetype inheritance / typedefs.
+
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/tool/omniidl/python/omniidl/idlast.py
+
+
+Tue Jan 10 13:58:38 GMT 2006 dgrisby
+====================================
+
+- New clientConnectTimeOutPeriod configuration parameter.
+
+sample.cfg
+sample.reg
+include/omniORB4/omniORB.h
+include/omniORB4/internal/orbParameters.h
+src/lib/omniORB/orbcore/giopBiDir.cc
+src/lib/omniORB/orbcore/giopStream.cc
+src/lib/omniORB/orbcore/giopStreamImpl.cc
+src/lib/omniORB/orbcore/omniORB.cc
+src/lib/omniORB/orbcore/omniObjRef.cc
+
+
+Tue Jan 10 12:19:48 GMT 2006 dgrisby
+====================================
+
+- Merge from omni4_0_develop pre 4.0.7 release.
+
+README.win32.txt
+sample.cfg
+sample.reg
+bin/x86_win32/clwrapper.exe
+bin/x86_win32/libwrapper.exe
+bin/x86_win32/linkwrapper.exe
+bin/x86_win32/oidlwrapper.exe
+bin/x86_win32/omkdepend.exe
+contrib/RPMs/omniORB.spec
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/GNUmakefile.in
+include/omniORB4/sslContext.h
+include/omniORB4/templatedecls.h
+mk/beforeauto.mk.in
+mk/mingw.mk
+mk/unix.mk
+mk/version.mk
+mk/vxWorks.mk
+mk/win32.mk
+src/examples/dsi/dir.mak
+src/examples/ssl_echo/client.pem
+src/examples/ssl_echo/root.pem
+src/examples/ssl_echo/server.pem
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/orbcore/callHandle.cc
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/tool/omkdepend/gnuwin32.c
+src/tool/omniidl/cxx/dir.mk
+src/tool/omniidl/python/omniidl/idlutil.py
+
+
+Tue Jan 10 11:10:24 GMT 2006 dgrisby
+====================================
+
+- Use major.minor.micro versioning on ssl transport lib, not just
+  major.minor.
+
+mk/beforeauto.mk.in
+mk/mingw.mk
+mk/unix.mk
+mk/vxWorks.mk
+mk/win32.mk
+
+
+Thu Dec  8 13:49:51 GMT 2005 dgrisby
+====================================
+
+- Better string marshalling performance; other minor optimisations.
+
+include/omniORB4/cdrStream.h
+include/omniORB4/codeSets.h
+include/omniORB4/omniInternal.h
+src/lib/omniORB/codesets/cs-UCS-4.cc
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/corbaString.cc
+src/lib/omniORB/orbcore/cs-16bit.cc
+src/lib/omniORB/orbcore/cs-8bit.cc
+src/lib/omniORB/orbcore/cs-UTF-16.cc
+src/lib/omniORB/orbcore/cs-UTF-8.cc
+src/lib/omniORB/orbcore/giopImpl10.cc
+src/lib/omniORB/orbcore/giopImpl11.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+
+
+Tue Nov 29 13:31:38 GMT 2005 dgrisby
+====================================
+
+- INS POA leaked a reference to the Root POA. Thanks Dirk Siebnich.
+
+src/lib/omniORB/orbcore/poa.cc
+
+
+Mon Nov 21 11:02:27 GMT 2005 dgrisby
+====================================
+
+- Another merge.
+
+README.win32.txt
+src/lib/omniORB/orbcore/giopServer.cc
+
+
+Sat Nov 19 17:32:44 GMT 2005 dgrisby
+====================================
+
+- Previous fix for the race condition was stupidly commented out...
+
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Fri Nov 18 18:22:10 GMT 2005 dgrisby
+====================================
+
+- New -Wbimpl_mapping option.
+
+src/lib/omniORB/omniidl_be/cxx/__init__.py
+src/lib/omniORB/omniidl_be/cxx/config.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+
+- Race condition between connection deletion and Select.
+
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Thu Nov 17 17:02:16 GMT 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop.
+
+sample.cfg
+sample.reg
+bin/x86_win32/clwrapper.exe
+bin/x86_win32/libwrapper.exe
+bin/x86_win32/linkwrapper.exe
+bin/x86_win32/oidlwrapper.exe
+bin/x86_win32/omkdepend.exe
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/CORBA_sysdep_trad.h
+include/omniORB4/omniInternal.h
+include/omniORB4/seqTemplatedecls.h
+include/omniORB4/stringtypes.h
+include/omniORB4/wstringtypes.h
+include/omniORB4/internal/giopServer.h
+include/omniORB4/internal/giopStream.h
+include/omniORB4/internal/objectAdapter.h
+include/omniORB4/internal/orbParameters.h
+src/examples/bidir/bd_shutdown.cc
+src/lib/omniORB/orbcore/GIOP_S.cc
+src/lib/omniORB/orbcore/cdrMemoryStream.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+src/lib/omniORB/orbcore/giopMonitor.cc
+src/lib/omniORB/orbcore/giopRendezvouser.cc
+src/lib/omniORB/orbcore/giopRope.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStrand.cc
+src/lib/omniORB/orbcore/giopStream.cc
+src/lib/omniORB/orbcore/objectAdapter.cc
+src/lib/omniORB/orbcore/omniTransport.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/ssl/README.txt
+src/tool/win32/clwrapper.c
+src/tool/win32/libwrapper.c
+src/tool/win32/linkwrapper.c
+src/tool/win32/oidlwrapper.c
+
+
+Mon Nov 14 11:36:32 GMT 2005 dgrisby
+====================================
+
+- New release notes.
+
+ReleaseNotes.txt
+
+
+Mon Nov 14 10:56:16 GMT 2005 dgrisby
+====================================
+
+- Local interface fixes.
+
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+
+
+Wed Nov  9 12:11:05 GMT 2005 dgrisby
+====================================
+
+- Remove obsolete omniLifeCycle.idl.
+
+idl/omniLifeCycle.idl  -- deleted
+
+- Remove obsolete tcDesc helper classes.
+
+include/omniORB4/CORBA_Object_vartypes.h
+include/omniORB4/CORBA_ValueBase_vartypes.h
+include/omniORB4/templatedecls.h
+
+- Local interfaces support.
+
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_LocalObject.h               -- new
+include/omniORB4/CORBA_LocalObject_vartypes.h      -- new
+include/omniORB4/GNUmakefile.in
+include/omniORB4/omniObjRef.h
+include/omniORB4/poa.h
+include/omniORB4/poa_defs.h
+include/omniORB4/poa_operators.h
+src/examples/poa/servant_manager/servant_activator.cc
+src/examples/poa/servant_manager/servant_locator.cc
+src/lib/omniORB/dynamic/ir.cc
+src/lib/omniORB/dynamic/request.cc
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/cxx.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/marshal.py
+src/lib/omniORB/omniidl_be/cxx/header/poa.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/poa.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/dir.mk
+src/lib/omniORB/orbcore/localObject.cc             -- new
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/poastubs.cc
+src/lib/omniORB/orbcore/uri.cc
+
+
+Thu Sep 29 12:31:55 BST 2005 dgrisby
+====================================
+
+- For loop scoping problem.
+
+src/lib/omniORB/orbcore/orbOptions.cc
+
+
+Mon Sep 19 19:24:22 BST 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop again.
+
+include/omniORB4/minorCode.h
+include/omniORB4/omniORB.h
+include/omniORB4/internal/orbOptions.h
+src/lib/omniORB/orbcore/logIOstream.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+src/lib/omnithread/vxWorks.cc
+
+
+Mon Sep 19 16:10:25 BST 2005 dgrisby
+====================================
+
+- Refcount shortcut now throws INV_OBJREF when the servant is
+  deactivated, rather than deactivating the shortcut, which could lead
+  to a race condition.
+
+include/omniORB4/minorCode.h
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+
+
+Thu Sep  8 15:47:46 BST 2005 dgrisby
+====================================
+
+- Merge -ORBconfigFile argument.
+
+include/omniORB4/internal/orbOptions.h
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+
+
+Wed Sep  7 17:13:26 BST 2005 dgrisby
+=============================
+include/omniORB4/internal/orbOptions.h
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+
+
+Wed Sep  7 17:13:26 BST 2005 dgrisby
+====================================
+
+- poll() does not work on Mac OS X.
+
+include/omniORB4/internal/SocketCollection.h
+
+
+Mon Sep  5 18:15:12 BST 2005 dgrisby
+====================================
+
+- Reference counted local call shortcut.
+
+include/omniORB4/omniServant.h
+src/lib/omniORB/omniidl_be/cxx/__init__.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/omniServant.cc
+
+
+Mon Sep  5 18:09:59 BST 2005 dgrisby
+====================================
+
+- Merge again. Mainly SSL transport changes.
+
+sample.cfg
+sample.reg
+include/omniORB4/giopEndpoint.h
+include/omniORB4/sslContext.h
+src/appl/omniNames/omniNames.cc
+src/examples/ssl_echo/README
+src/examples/ssl_echo/client.pem
+src/examples/ssl_echo/root.pem
+src/examples/ssl_echo/server.pem
+src/lib/omniORB/orbcore/giopEndpoint.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+src/lib/omniORB/orbcore/ssl/README.txt           -- new
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.h
+src/lib/omniORB/orbcore/ssl/sslContext.cc
+src/lib/omniORB/orbcore/ssl/sslTransportImpl.cc
+
+
+Thu Sep  1 15:49:19 BST 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop.
+
+sample.cfg
+include/omniORB4/internal/orbParameters.h
+src/lib/omniORB/orbcore/giopRope.cc
+src/lib/omniORB/orbcore/objectAdapter.cc
+src/lib/omniORB/orbcore/omniTransport.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+
+
+Tue Aug 16 14:49:19 BST 2005 dgrisby
+====================================
+
+- Problems with valuetype / abstract interface C++ mapping.
+
+include/omniORB4/CORBA_ValueBase.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/valueTemplatedefns.h
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+
+
+Wed Aug  3 10:38:58 BST 2005 dgrisby
+====================================
+
+- setSelectable could cause a readable socket to be handled twice.
+
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+- Make sure accept() never blocks.
+
+src/lib/omniORB/orbcore/ssl/sslEndpoint.cc
+src/lib/omniORB/orbcore/tcp/tcpEndpoint.cc
+src/lib/omniORB/orbcore/unix/unixEndpoint.cc
+
+
+Tue Aug  2 10:37:03 BST 2005 dgrisby
+====================================
+
+- Bug in Servant_var if assigning to itself.
+
+include/omniORB4/poa.h
+
+- Two threads could be dispatched for one call, one by Peek, one by Select.
+
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Tue Jul 26 09:58:29 BST 2005 dgrisby
+====================================
+
+- Another minor merge.
+
+src/lib/omniORB/orbcore/invoker.cc
+
+
+Fri Jul 22 18:17:38 BST 2005 dgrisby
+====================================
+
+- Another merge from omni4_0_develop.
+
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/callHandle.h
+include/omniORB4/cdrStream.h
+include/omniORB4/omniURI.h
+include/omniORB4/poa.h
+include/omniORB4/internal/poaimpl.h
+src/lib/omniORB/dynamic/dynamicImplementation.cc
+src/lib/omniORB/dynamic/policy.cc
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/orbcore/callHandle.cc
+src/lib/omniORB/orbcore/invoker.cc
+src/lib/omniORB/orbcore/portableserver.cc
+src/lib/omniORB/orbcore/uri.cc
+src/tool/omniidl/cxx/idlrepoId.cc
+
+
+Thu Jul 21 10:51:55 BST 2005 dgrisby
+====================================
+
+- Typo in docstring.
+
+src/tool/omniidl/python/omniidl/idlutil.py
+
+- Bugs with valuetypes in Anys.
+
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/valueType.cc
+
+
+Thu Jul 21 10:08:39 BST 2005 dgrisby
+====================================
+
+- ORB::create_list misinterpreted the count parameter.
+
+src/lib/omniORB/dynamic/nvList.cc
+
+
+Tue Jul 19 11:31:45 BST 2005 dgrisby
+====================================
+
+- Documentation updates.
+
+doc/omniORB.pdf
+doc/omniORB.ps
+doc/omniidl.html
+doc/omniidl.pdf
+doc/omniidl.ps
+doc/omnithread.html
+doc/omnithread.pdf
+doc/omnithread.ps
+doc/utilities.html
+doc/utilities.pdf
+doc/utilities.ps
+doc/omniORB/contents_motif.gif
+doc/omniORB/index.html
+doc/omniORB/next_motif.gif
+doc/omniORB/omniORB.html
+doc/omniORB/omniORB001.html
+doc/omniORB/omniORB002.html
+doc/omniORB/omniORB003.html
+doc/omniORB/omniORB004.html
+doc/omniORB/omniORB005.html
+doc/omniORB/omniORB006.html
+doc/omniORB/omniORB007.html
+doc/omniORB/omniORB008.html
+doc/omniORB/omniORB009.html
+doc/omniORB/omniORB010.html
+doc/omniORB/omniORB011.html
+doc/omniORB/omniORB012.html
+doc/omniORB/omniORB013.html
+doc/omniORB/omniORB014.html
+doc/omniORB/omniORB015.html
+doc/omniORB/previous_motif.gif
+doc/tex/omniORB.bib
+doc/tex/omniORB.tex
+doc/tex/omniidl.tex
+
+
+Mon Jul 11 18:46:20 BST 2005 dgrisby
+====================================
+
+- VMS changes from Bruce Visscher.
+
+etc/openvms.zip
+include/omniORB4/CORBA_sysdep.h
+
+
+Fri Jul  8 18:01:50 BST 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop again.
+
+mk/platforms/hppa_hpux_11.23.mk
+mk/platforms/ia64_hpux_11.23.mk
+src/lib/omniORB/orbcore/rmutex.cc
+src/lib/omnithread/mach.cc
+src/lib/omnithread/nt.cc
+src/lib/omnithread/posix.cc
+src/lib/omnithread/solaris.cc
+src/lib/omnithread/vxWorks.cc
+
+
+Fri Jul  8 17:31:39 BST 2005 dgrisby
+====================================
+
+- get_octet_array in cdrValueChunkStream failed if called just after
+  the end of a nested value.
+
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+
+
+Fri Jul  8 17:24:56 BST 2005 dgrisby
+====================================
+
+- g++ 3.3 doesn't like array operators either.
+
+include/omniORB4/templatedecls.h
+
+
+Wed Jun 29 18:21:45 BST 2005 dgrisby
+====================================
+
+- Reformat some output in value example.
+
+src/examples/valuetype/simple/vserver.cc
+
+
+Fri Jun 24 15:29:33 BST 2005 dgrisby
+====================================
+
+- Minor documentation updates.
+
+doc/tex/omniORB.tex
+
+- Allow multiple threads to Peek() without clashing. Not yet tested on
+  Windows.
+
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Wed Jun  8 10:29:18 BST 2005 dgrisby
+====================================
+
+- Update documentation.
+
+doc/tex/omniORB.tex
+
+- Update examples / utils for cleanliness and use of new C++ mapping.
+
+src/appl/utils/nameclt/nameclt.cc
+src/examples/anyExample/anyExample_clt.cc
+src/examples/anyExample/anyExample_impl.cc
+src/examples/bidir/bd_client.cc
+src/examples/bidir/bd_server.cc
+src/examples/bidir/bd_shutdown.cc
+src/examples/boa/eg2_clt.cc
+src/examples/boa/eg2_impl.cc
+src/examples/call_back/cb_client.cc
+src/examples/call_back/cb_server.cc
+src/examples/call_back/cb_shutdown.cc
+src/examples/dii/echo_diiclt.cc
+src/examples/dsi/echo_dsiimpl.cc
+src/examples/echo/eg1.cc
+src/examples/echo/eg2_clt.cc
+src/examples/echo/eg2_impl.cc
+src/examples/echo/eg3_clt.cc
+src/examples/echo/eg3_impl.cc
+src/examples/echo/eg3_tieimpl.cc
+src/examples/poa/implicit_activation/eg1.cc
+src/examples/poa/persistent_objref/eg2_impl.cc
+src/examples/poa/servant_manager/servant_activator.cc
+src/examples/poa/servant_manager/servant_locator.cc
+src/examples/poa/threading/mainthread.cc
+src/examples/ssl_echo/eg2_clt.cc
+src/examples/ssl_echo/eg2_impl.cc
+src/examples/thread/diner.cc
+src/examples/thread/prodcons.cc
+src/examples/thread/thrspecdata.cc
+src/examples/valuetype/simple/valimpl.h
+src/examples/valuetype/simple/vclient.cc
+src/examples/valuetype/simple/vcoloc.cc
+src/examples/valuetype/simple/vserver.cc
+
+- Leak of a value reference if a factory made the wrong type of value.
+
+src/lib/omniORB/dynamic/valueType.cc
+
+- Update example code, IDL dumping.
+
+src/lib/omniORB/omniidl_be/cxx/impl/template.py
+src/tool/omniidl/cxx/idldump.cc
+src/tool/omniidl/python/omniidl_be/dump.py
+
+- Update comment.
+
+src/lib/omniORB/orbcore/giopServer.cc
+
+
+Sun May 22 13:38:56 BST 2005 dgrisby
+====================================
+
+- Merge Mac OS X and POA fixes.
+
+src/appl/utils/catior/catior.cc
+src/appl/utils/convertior/convertior.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omnithread/posix.cc
+
+
+Tue May 10 23:06:34 BST 2005 dgrisby
+====================================
+
+- Merge again.
+
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/tcp/tcpTransportImpl.cc
+src/tool/omkdepend/def.h
+src/tool/omniidl/cxx/idlast.cc
+src/tool/omniidl/cxx/idlrepoId.cc
+src/tool/omniidl/cxx/idlrepoId.h
+src/tool/omniidl/cxx/idlscope.cc
+
+- Update version numbers in Windows example makefiles.
+
+src/examples/anyExample/dir.mak
+src/examples/bidir/dir.mak
+src/examples/boa/dir.mak
+src/examples/call_back/dir.mak
+src/examples/dii/dir.mak
+src/examples/echo/dir.mak
+src/examples/poa/implicit_activation/dir.mak
+src/examples/poa/persistent_objref/dir.mak
+src/examples/poa/servant_manager/dir.mak
+
+
+Tue Apr 26 18:06:35 BST 2005 dgrisby
+====================================
+
+- Handle all error returns from poll().
+
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Mon Apr 25 19:22:47 BST 2005 dgrisby
+====================================
+
+- Always release per thread data in the thread it belongs to.
+
+mk/version.mk
+src/lib/omnithread/mach.cc
+src/lib/omnithread/nt.cc
+src/lib/omnithread/posix.cc
+src/lib/omnithread/solaris.cc
+src/lib/omnithread/vxWorks.cc
+
+- After handling a transient due to a failed forwarded reference,
+  rethrow the original exception, rather than the transient, if the
+  exception handler returns false.
+
+src/lib/omniORB/orbcore/omniObjRef.cc
+
+
+Mon Apr 25 18:41:00 BST 2005 dgrisby
+====================================
+
+- Bug in marshalling nested chunks on a buffer boundary.
+
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+
+
+Thu Apr 14 00:53:58 BST 2005 dgrisby
+====================================
+
+- New traceInvocationReturns and traceTime options; remove logf function.
+
+configure
+configure.ac
+sample.cfg
+sample.reg
+include/omniORB4/CORBA_sysdep_trad.h
+include/omniORB4/acconfig.h.in
+include/omniORB4/omniORB.h
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/logIOstream.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/remoteIdentity.cc
+
+
+Wed Apr 13 10:07:01 BST 2005 dgrisby
+====================================
+
+- peekChunkTag forgot to byteswap when it needed to.
+
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+
+
+Mon Apr 11 13:08:31 BST 2005 dgrisby
+====================================
+
+- Another merge.
+
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/giopImpl10.cc
+src/lib/omniORB/orbcore/giopImpl11.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStrand.cc
+src/lib/omniORB/orbcore/ssl/sslEndpoint.cc
+
+
+Fri Apr  8 16:04:53 BST 2005 dgrisby
+====================================
+
+- Attach child DynAnys properly.
+
+src/lib/omniORB/dynamic/dynAny.cc
+
+- Throw BAD_INV_ORDER if get_response() is called more than once.
+
+src/lib/omniORB/dynamic/request.cc
+
+- ValueBoxes containing anonymous sequences were not marshalled properly.
+
+src/lib/omniORB/omniidl_be/cxx/value.py
+
+
+Fri Apr  8 01:34:13 BST 2005 dgrisby
+====================================
+
+- Merging again.
+
+include/omniORB4/templatedecls.h
+src/lib/omniORB/dynamic/deferredRequest.cc
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/orbcore/GIOP_S.cc
+src/lib/omniORB/orbcore/exception.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/proxyFactory.cc
+src/tool/omniidl/python/omniidl/idlutil.py
+
+
+Thu Mar 31 00:34:29 BST 2005 dgrisby
+====================================
+
+- Another merge from omni4_0_develop.
+
+acinclude.m4
+configure
+configure.ac
+contrib/RPMs/omniORB.spec
+include/omniORB4/omniORB.h
+include/omniORB4/wstringtypes.h
+mk/beforeauto.mk.in
+mk/mingw.mk
+mk/rtems.mk
+mk/unix.mk
+mk/version.mk                    -- new
+mk/vxWorks.mk
+mk/win32.mk
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/corbaFixed.cc
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/dir.mk
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStrand.cc
+src/lib/omniORB/orbcore/giopStream.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/omniORB.cc
+src/lib/omniORB/orbcore/ssl/sslContext.cc
+src/lib/omniORB/orbcore/ssl/sslTransportImpl.cc
+src/lib/omnithread/posix.cc
+src/tool/omniidl/cxx/idlfixed.cc
+
+
+Wed Mar  2 13:31:11 GMT 2005 dgrisby
+====================================
+
+- Variable name clash.
+
+src/lib/omniORB/orbcore/giopBiDir.cc
+
+
+Wed Mar  2 12:35:11 GMT 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop.
+
+sample.cfg
+sample.reg
+etc/init.d/omniNames.in
+include/omniORB4/internal/giopBiDir.h
+include/omniORB4/internal/orbParameters.h
+src/examples/anyExample/anyExample_clt.cc
+src/examples/anyExample/anyExample_impl.cc
+src/examples/bidir/bd_client.cc
+src/examples/bidir/bd_server.cc
+src/examples/bidir/bd_shutdown.cc
+src/examples/boa/eg2_clt.cc
+src/examples/boa/eg2_impl.cc
+src/examples/call_back/cb_client.cc
+src/examples/call_back/cb_server.cc
+src/examples/call_back/cb_shutdown.cc
+src/examples/dii/echo_diiclt.cc
+src/examples/dsi/echo_dsiimpl.cc
+src/examples/echo/eg1.cc
+src/examples/echo/eg2_clt.cc
+src/examples/echo/eg2_impl.cc
+src/examples/echo/eg3_clt.cc
+src/examples/echo/eg3_impl.cc
+src/examples/echo/eg3_tieimpl.cc
+src/examples/poa/implicit_activation/eg1.cc
+src/examples/poa/persistent_objref/eg2_impl.cc
+src/examples/poa/servant_manager/servant_activator.cc
+src/examples/poa/servant_manager/servant_locator.cc
+src/examples/poa/threading/mainthread.cc
+src/examples/ssl_echo/eg2_clt.cc
+src/examples/ssl_echo/eg2_impl.cc
+src/lib/omniORB/orbcore/giopBiDir.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/tool/omkdepend/gnuwin32.c
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+
+
+Wed Mar  2 11:58:46 GMT 2005 dgrisby
+====================================
+
+- setSelectable / Peek fixes.
+
+include/omniORB4/giopEndpoint.h
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.h
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.h
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+src/lib/omniORB/orbcore/unix/unixConnection.h
+
+
+Tue Jan 25 16:41:11 GMT 2005 dgrisby
+====================================
+
+- Properly handle data_in_buffer indicator.
+
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+- pd_socket member was not removed as it should have been.
+
+src/lib/omniORB/orbcore/unix/unixEndpoint.h
+
+
+Tue Jan 25 12:23:42 GMT 2005 dgrisby
+====================================
+
+- Silly editing error.
+
+src/lib/omniORB/omniidl_be/cxx/support.py
+
+
+Tue Jan 25 11:14:41 GMT 2005 dgrisby
+====================================
+
+- Merge from omni4_0_develop.
+
+configure
+configure.ac
+include/omnithread.h
+include/omniORB4/CORBA_Policy.h
+include/omniORB4/CORBA_sysdep_trad.h
+include/omniORB4/poa_operators.h
+mk/beforeauto.mk.in
+mk/platforms/hppa_hpux_11.23.mk       -- new
+mk/platforms/ia64_hpux_11.23.mk       -- new
+src/lib/omniORB/omniidl_be/cxx/dir.mk
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/ssl/dir.mk
+src/lib/omnithread/posix.cc
+src/tool/omniidl/cxx/cccp/config-hpux.h
+src/tool/omniidl/cxx/cccp/config-linux.h
+
+- Set RPM version number.
+
+contrib/RPMs/omniORB.spec
+
+
+Fri Jan 21 12:13:51 GMT 2005 dgrisby
+====================================
+
+- Fix AttributeError with values inheriting from values in #included files.
+
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/support.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+
+
+Tue Jan 18 12:09:12 GMT 2005 dgrisby
+====================================
+
+- Include standard idl in orb.idl.
+
+idl/ir.idl
+idl/orb.idl
+
+
+Mon Jan 17 18:06:16 GMT 2005 dgrisby
+====================================
+
+- Small tweaks to compile with Sun CC.
+
+include/omniORB4/CORBA_ValueBase.h
+src/lib/omniORB/dynamic/dynException.cc
+
+
+Mon Jan 17 14:31:16 GMT 2005 dgrisby
+====================================
+
+- Standard StringValue and WStringValue typedefs.
+
+idl/GNUmakefile.in
+idl/boxes.idl                      -- new
+include/omniORB4/CORBA.h
+src/lib/omniORB/dir.mk
+src/lib/omniORB/dynamic/boxes.cc   -- new
+src/lib/omniORB/dynamic/dir.mk
+
+- Heap allocate value refcount lock so it is not deallocated too early.
+
+src/lib/omniORB/dynamic/valueBase.cc
+
+- Surprisingly few changes to compile on Windows.
+
+include/omniORB4/internal/unknownValue.h
+include/omniORB4/internal/valueTrackerImpl.h
+src/lib/omniORB/dynamic/abstractBase.cc
+src/lib/omniORB/dynamic/omniTypedefs.cc
+src/lib/omniORB/dynamic/valueTracker.cc
+
+- Windows SocketCollection implementation.
+
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+
+
+Thu Jan 13 21:50:54 GMT 2005 dgrisby
+====================================
+
+- Turn off -g debugging; suppress some compiler warnings.
+
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/valueFactory.cc
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+src/lib/omniORB/orbcore/dir.mk
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/poastubs.cc
+
+
+Thu Jan 13 20:56:09 GMT 2005 dgrisby
+====================================
+
+- New SocketCollection implementation, using poll() where available
+  and select() otherwise. Windows specific version to follow.
+
+configure
+configure.ac
+include/omniORB4/CORBA_sysdep_trad.h
+include/omniORB4/acconfig.h.in
+include/omniORB4/giopEndpoint.h
+include/omniORB4/internal/SocketCollection.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStream.cc
+src/lib/omniORB/orbcore/ssl/sslActive.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.h
+src/lib/omniORB/orbcore/ssl/sslEndpoint.cc
+src/lib/omniORB/orbcore/ssl/sslEndpoint.h
+src/lib/omniORB/orbcore/tcp/tcpActive.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.h
+src/lib/omniORB/orbcore/tcp/tcpEndpoint.cc
+src/lib/omniORB/orbcore/tcp/tcpEndpoint.h
+src/lib/omniORB/orbcore/unix/unixActive.cc
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+src/lib/omniORB/orbcore/unix/unixConnection.h
+src/lib/omniORB/orbcore/unix/unixEndpoint.cc
+src/lib/omniORB/orbcore/unix/unixEndpoint.h
+
+
+Fri Jan  7 00:15:43 GMT 2005 dgrisby
+====================================
+
+- Install valueTemplateDefns.h.
+
+include/omniORB4/GNUmakefile.in
+
+- Handle recursive structs/unions in containsValueType.
+
+src/tool/omniidl/python/omniidl/idltype.py
+
+
+Thu Jan  6 22:53:18 GMT 2005 dgrisby
+====================================
+
+- Big merge from omni4_0_develop.
+
+GNUmakefile.in
+README.FIRST				-- deleted
+README.FIRST.txt			-- new
+README.unix
+README.win32				-- deleted
+README.win32.txt			-- new
+acinclude.m4
+aclocal.m4
+configure
+configure.ac
+sample.cfg
+sample.reg
+bin/scripts/java_weatherman		-- deleted
+bin/scripts/makedeffile.py		-- new
+bin/scripts/obuildtree			-- deleted
+bin/scripts/ols				-- deleted
+bin/scripts/omake			-- deleted
+bin/scripts/omkdirhier
+bin/scripts/opriv			-- deleted
+bin/scripts/oshadow			-- deleted
+config/config.mk
+contrib/GNUmakefile.in			-- new
+contrib/RPMs/omniORB.spec		-- new
+contrib/pkgconfig/GNUmakefile.in	-- new
+contrib/pkgconfig/omniCOS4.pc.in	-- new
+contrib/pkgconfig/omniCOSDynamic4.pc.in	-- new
+contrib/pkgconfig/omniDynamic4.pc.in	-- new
+contrib/pkgconfig/omniORB4.pc.in	-- new
+contrib/pkgconfig/omnithread3.pc.in	-- new
+doc/omniORB/omniORB013.html		-- new
+doc/tex/omniORB.bib
+doc/tex/omniORB.tex
+etc/openvms.zip
+etc/init.d/omniNames.SuSE.in		-- new
+etc/init.d/omniNames.in			-- new
+idl/corbaidl.idl
+idl/ir.idl
+idl/poa_include.idl
+idl/COS/AttNotifyChannelAdmin.idl	-- deleted
+idl/COS/CosCollection.idl
+idl/COS/CosCompoundLifeCycle.idl
+idl/COS/CosConcurrencyControl.idl
+idl/COS/CosContainment.idl
+idl/COS/CosEventChannelAdmin.idl
+idl/COS/CosEventComm.idl
+idl/COS/CosExternalization.idl
+idl/COS/CosExternalizationContainment.idl
+idl/COS/CosExternalizationReference.idl
+idl/COS/CosGraphs.idl
+idl/COS/CosLicensingManager.idl
+idl/COS/CosLifeCycle.idl
+idl/COS/CosLifeCycleContainment.idl
+idl/COS/CosLifeCycleReference.idl
+idl/COS/CosNaming.idl
+idl/COS/CosNotification.idl
+idl/COS/CosNotifyChannelAdmin.idl
+idl/COS/CosNotifyComm.idl
+idl/COS/CosNotifyFilter.idl
+idl/COS/CosObjectIdentity.idl
+idl/COS/CosPersistenceDDO.idl
+idl/COS/CosPersistenceDS_CLI.idl
+idl/COS/CosPersistencePDS.idl
+idl/COS/CosPersistencePDS_DA.idl
+idl/COS/CosPersistencePID.idl
+idl/COS/CosPersistencePO.idl
+idl/COS/CosPersistencePOM.idl
+idl/COS/CosPropertyService.idl
+idl/COS/CosQuery.idl
+idl/COS/CosQueryCollection.idl
+idl/COS/CosReference.idl
+idl/COS/CosRelationships.idl
+idl/COS/CosStream.idl
+idl/COS/CosTSPortability.idl
+idl/COS/CosTime.idl
+idl/COS/CosTimerEvent.idl
+idl/COS/CosTrading.idl
+idl/COS/CosTradingDynamic.idl
+idl/COS/CosTradingRepos.idl
+idl/COS/CosTransactions.idl
+idl/COS/CosTypedEventChannelAdmin.idl
+idl/COS/CosTypedEventComm.idl
+idl/COS/CosTypedNotifyChannelAdmin.idl
+idl/COS/CosTypedNotifyComm.idl
+idl/COS/DCE_CIOPSecurity.idl
+idl/COS/GNUmakefile.in
+idl/COS/LifeCycleService.idl
+idl/COS/Lname-library.idl
+idl/COS/NRService.idl
+idl/COS/RDITestTypes.idl
+idl/COS/SECIOP.idl
+idl/COS/SSLIOP.idl
+idl/COS/Security.idl
+idl/COS/SecurityAdmin.idl
+idl/COS/SecurityLevel1.idl
+idl/COS/SecurityLevel2.idl
+idl/COS/SecurityReplaceable.idl
+idl/COS/TimeBase.idl
+include/omnithread.h
+include/omniORB4/CORBA_BOA.h
+include/omniORB4/CORBA_ORB.h
+include/omniORB4/CORBA_Policy.h
+include/omniORB4/CORBA_basetypes.h
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/CORBA_sysdep_auto.h
+include/omniORB4/CORBA_sysdep_trad.h
+include/omniORB4/IOP.h
+include/omniORB4/acconfig.h.in
+include/omniORB4/cdrStream.h
+include/omniORB4/dynAny.h
+include/omniORB4/giopEndpoint.h
+include/omniORB4/minorCode.h
+include/omniORB4/omniIOR.h
+include/omniORB4/omniInternal.h
+include/omniORB4/omniORB.h
+include/omniORB4/poa.h
+include/omniORB4/seqTemplatedecls.h
+include/omniORB4/sslContext.h
+include/omniORB4/stringtypes.h
+include/omniORB4/wstringtypes.h
+include/omniORB4/internal/GIOP_S.h
+include/omniORB4/internal/SocketCollection.h
+include/omniORB4/internal/invoker.h
+include/omniORB4/internal/libcWrapper.h
+include/omniORB4/internal/objectTable.h
+include/omniORB4/internal/omniCurrent.h
+include/omniORB4/internal/orbOptions.h
+include/omniORB4/internal/orbParameters.h
+include/omniORB4/internal/rmutex.h
+include/omnithread/VxThread.h
+include/omnithread/nt.h
+include/omnithread/posix.h
+man/man1/obuildtree.1			-- deleted
+man/man1/ols.1				-- deleted
+man/man1/omake.1			-- deleted
+man/man1/opriv.1			-- deleted
+man/man1/oshadow.1			-- deleted
+mk/beforeauto.mk.in
+mk/mingw.mk				-- new
+mk/mklib.mk
+mk/vxWorks.mk
+mk/win32.mk
+mk/platforms/hppa_hpux_11.00.mk
+mk/platforms/powerpc_vxWorks_5.3.mk	-- new
+mk/platforms/x86_nt_4.0.mk
+mk/platforms/x86_nt_4.0_mingw.mk	-- new
+mk/platforms/x86_nt_4.0_vs_7.mk		-- new
+patches/README
+patches/mingw_omnipython.patch		-- new
+readmes/README.openvms
+src/appl/omniMapper/omniMapper.cc
+src/appl/omniNames/NamingContext_i.cc
+src/appl/omniNames/log.cc
+src/appl/omniNames/log.h
+src/appl/omniNames/omniNames.cc
+src/appl/utils/catior/catior.cc
+src/appl/utils/convertior/convertior.cc
+src/appl/utils/genior/genior.cc
+src/appl/utils/nameclt/nameclt.cc
+src/examples/anyExample/anyExample_clt.cc
+src/examples/anyExample/anyExample_impl.cc
+src/examples/anyExample/dir.mak
+src/examples/bidir/dir.mak
+src/examples/boa/dir.mak
+src/examples/boa/eg2_clt.cc
+src/examples/boa/eg2_impl.cc
+src/examples/call_back/cb_client.cc
+src/examples/call_back/cb_server.cc
+src/examples/call_back/cb_shutdown.cc
+src/examples/call_back/dir.mak
+src/examples/dii/dir.mak
+src/examples/dii/echo_diiclt.cc
+src/examples/dsi/dir.mak
+src/examples/dsi/echo_dsiimpl.cc
+src/examples/echo/dir.mak
+src/examples/echo/echo.hh		-- deleted
+src/examples/echo/echoexamples.module	-- deleted
+src/examples/echo/eg1.cc
+src/examples/echo/eg2_clt.cc
+src/examples/echo/eg2_impl.cc
+src/examples/echo/eg3_clt.cc
+src/examples/echo/eg3_impl.cc
+src/examples/echo/eg3_tieimpl.cc
+src/examples/poa/implicit_activation/dir.mak
+src/examples/poa/implicit_activation/eg1.cc
+src/examples/poa/persistent_objref/dir.mak
+src/examples/poa/persistent_objref/eg2_impl.cc
+src/examples/poa/servant_manager/dir.mak
+src/examples/poa/servant_manager/servant_activator.cc
+src/examples/poa/servant_manager/servant_locator.cc
+src/examples/poa/threading/mainthread.cc
+src/examples/thread/diner.cc
+src/examples/thread/prio.cc
+src/examples/thread/prodcons.cc
+src/examples/thread/thrspecdata.cc
+src/lib/omniORB/dir.mk
+src/lib/omniORB/codesets/cs-UCS-4.cc
+src/lib/omniORB/codesets/dir.mk
+src/lib/omniORB/dynamic/deferredRequest.cc
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/policy.cc
+src/lib/omniORB/dynamic/request.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/omniidl_be/cxx/__init__.py
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/config.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/tcstring.py
+src/lib/omniORB/omniidl_be/cxx/header/__init__.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/impl/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/GIOP_S.cc
+src/lib/omniORB/orbcore/SocketCollection.cc
+src/lib/omniORB/orbcore/cdrMemoryStream.cc
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/cdrStreamAdapter.cc
+src/lib/omniORB/orbcore/constants.cc
+src/lib/omniORB/orbcore/corbaBoa.cc
+src/lib/omniORB/orbcore/corbaFixed.cc
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/cs-UTF-8.cc
+src/lib/omniORB/orbcore/current.cc
+src/lib/omniORB/orbcore/dir.mk
+src/lib/omniORB/orbcore/exceptn.cc
+src/lib/omniORB/orbcore/giopBiDir.cc
+src/lib/omniORB/orbcore/giopEndpoint.cc
+src/lib/omniORB/orbcore/giopImpl10.cc
+src/lib/omniORB/orbcore/giopImpl11.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+src/lib/omniORB/orbcore/giopRope.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStrand.cc
+src/lib/omniORB/orbcore/giopStream.cc
+src/lib/omniORB/orbcore/giopStreamImpl.cc
+src/lib/omniORB/orbcore/inProcessIdentity.cc
+src/lib/omniORB/orbcore/ior.cc
+src/lib/omniORB/orbcore/libcWrapper.cc
+src/lib/omniORB/orbcore/logIOstream.cc
+src/lib/omniORB/orbcore/minorCode.cc
+src/lib/omniORB/orbcore/objectAdapter.cc
+src/lib/omniORB/orbcore/objectStub.cc
+src/lib/omniORB/orbcore/omniIOR.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/omniORB.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+src/lib/omniORB/orbcore/orbOptionsFile.cc
+src/lib/omniORB/orbcore/orbOptionsReg.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/poamanager.cc
+src/lib/omniORB/orbcore/portableserver.cc
+src/lib/omniORB/orbcore/proxyFactory.cc
+src/lib/omniORB/orbcore/rmutex.cc
+src/lib/omniORB/orbcore/transportRules.cc
+src/lib/omniORB/orbcore/uri.cc
+src/lib/omniORB/orbcore/ssl/dir.mk
+src/lib/omniORB/orbcore/ssl/sslAddress.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/ssl/sslConnection.h
+src/lib/omniORB/orbcore/ssl/sslContext.cc
+src/lib/omniORB/orbcore/ssl/sslEndpoint.cc
+src/lib/omniORB/orbcore/tcp/tcpAddress.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.h
+src/lib/omniORB/orbcore/tcp/tcpEndpoint.cc
+src/lib/omniORB/orbcore/tcp/tcpEndpoint.h
+src/lib/omniORB/orbcore/tcp/tcpTransportImpl.cc
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+src/lib/omniORB/orbcore/unix/unixConnection.h
+src/lib/omniORB/orbcore/unix/unixEndpoint.cc
+src/lib/omnithread/dir.mk
+src/lib/omnithread/posix.cc
+src/lib/omnithread/vxWorks.cc
+src/services/mklib/COS_sysdep.h
+src/services/mklib/dir.mk
+src/tool/omkdepend/def.h
+src/tool/omkdepend/dir.mk
+src/tool/omkdepend/gnuwin32.c
+src/tool/omniidl/cxx/dir.mk
+src/tool/omniidl/cxx/idl.ll
+src/tool/omniidl/cxx/idlpython.cc
+src/tool/omniidl/cxx/idlrepoId.cc
+src/tool/omniidl/cxx/idlscope.cc
+src/tool/omniidl/cxx/idlsysdep.h
+src/tool/omniidl/cxx/lex.yy.cc
+src/tool/omniidl/cxx/cccp/cccp.c
+src/tool/omniidl/cxx/cccp/config-linux.h
+src/tool/omniidl/cxx/cccp/config-windows.h
+src/tool/omniidl/cxx/cccp/dir.mk
+src/tool/omniidl/python/omniidl/main.py
+
+
+Thu Jan  6 17:27:37 GMT 2005 dgrisby
+====================================
+
+- Changes (mainly from omni4_0_develop) to compile on gcc 3.4.
+
+include/omniORB4/cdrStream.h
+include/omniORB4/omniInternal.h
+include/omniORB4/seqTemplatedefns.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/valueTemplatedefns.h  -- new
+
+
+Thu Jan  6 16:34:16 GMT 2005 dgrisby
+====================================
+
+- Narrowing for abstract interfaces.
+
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+
+- DynValue and DynValueBox implementations; misc small fixes.
+
+idl/corbaidl.idl
+idl/omniTypedefs.idl
+idl/poa_enums.idl                        -- new
+include/omniORB4/CORBA_ValueBase.h
+include/omniORB4/dynAny.h
+include/omniORB4/internal/dynAnyImpl.h
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/dynAnyNil.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/valueBase.cc
+src/lib/omniORB/dynamic/valueFactory.cc
+
+
+Wed Oct 13 18:47:42 BST 2004 dgrisby
+====================================
+
+- Abstract interfaces support; values support interfaces; value bug
+  fixes. Still need to implement _narrow for abstract interfaces and
+  DynValue, etc.
+
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_AbstractBase.h
+include/omniORB4/CORBA_Any.h
+include/omniORB4/CORBA_Any_vartypes.h
+include/omniORB4/CORBA_ValueBase_vartypes.h
+include/omniORB4/omniORBcompat.h
+include/omniORB4/poa.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/valueType.h
+include/omniORB4/internal/unknownValue.h
+src/examples/anyExample/anyExample.idl
+src/examples/valuetype/simple/valimpl.h
+src/lib/omniORB/dynamic/abstractBase.cc
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/context.cc
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/unknownValue.cc
+src/lib/omniORB/dynamic/valueBase.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/support.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/marshal.py
+src/lib/omniORB/omniidl_be/cxx/header/obv.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+src/lib/omniORB/orbcore/dynamicLib.cc
+src/tool/omniidl/cxx/idlscope.cc
+src/tool/omniidl/python/omniidl/idlast.py
+src/tool/omniidl/python/omniidl/idltype.py
+
+
+
+Sun Aug  1 00:42:42 BST 2004 dgrisby
+====================================
+
+- Properly handle null and void Anys; store omniObjRef pointer for
+  objrefs in Anys.
+
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+
+- ifdef for forward declared union typecodes.
+
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+
+- Correct constness of exception Any insertion operator.
+
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+
+- Properly set pd_clear_memory flag in all situations.
+
+src/lib/omniORB/orbcore/cdrMemoryStream.cc
+
+
+Tue Jul 27 00:52:10 BST 2004 dgrisby
+====================================
+
+- Add missing include files to install rules.
+
+include/omniORB4/GNUmakefile.in
+
+
+Mon Jul 26 23:55:25 BST 2004 dgrisby
+====================================
+
+- Support valuetypes in Anys.
+
+include/omniORB4/valueType.h
+include/omniORB4/internal/unknownValue.h  -- new
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/unknownValue.cc   -- new
+src/lib/omniORB/dynamic/valueBase.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/omniidl_be/cxx/value.py
+
+
+Fri Jul 23 11:14:43 BST 2004 dgrisby
+====================================
+
+- Completely new, much simpler Any implementation.
+
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_Any.h
+include/omniORB4/CORBA_Any_vartypes.h
+include/omniORB4/CORBA_Context.h
+include/omniORB4/CORBA_NamedValue.h
+include/omniORB4/GNUmakefile.in
+include/omniORB4/anyStream.h                   -- new
+include/omniORB4/cdrStream.h
+include/omniORB4/minorCode.h
+include/omniORB4/poa.h
+include/omniORB4/poa_enums_defs.h              -- new
+include/omniORB4/poa_enums_operators.h         -- new
+include/omniORB4/tcDescriptor.h                -- deleted
+include/omniORB4/userexception.h
+include/omniORB4/internal/GNUmakefile.in
+include/omniORB4/internal/anyP.h       	       -- deleted
+include/omniORB4/internal/anyStream.h  	       -- deleted
+include/omniORB4/internal/dynAnyImpl.h
+include/omniORB4/internal/tcParser.h
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/anyP.cc                -- deleted
+src/lib/omniORB/dynamic/anyStream.cc
+src/lib/omniORB/dynamic/corbaidldynstub.cc
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/dynException.cc
+src/lib/omniORB/dynamic/irdynstub.cc
+src/lib/omniORB/dynamic/poastub.cc
+src/lib/omniORB/dynamic/policy.cc
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/unknownUserExn.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/forward.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+
+
+Mon Jul  5 01:04:09 BST 2004 dgrisby
+====================================
+
+- Set path to omniidl backend.
+
+src/lib/omniORB/dir.mk
+
+
+Mon Jul  5 00:44:14 BST 2004 dgrisby
+====================================
+
+- More ValueType TypeCode and Any support.
+
+idl/omniTypedefs.idl
+include/omniORB4/CORBA_ValueBase.h
+include/omniORB4/cdrStream.h
+include/omniORB4/omniInternal.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/valueType.h
+include/omniORB4/internal/anyP.h
+include/omniORB4/internal/anyStream.h         -- new
+include/omniORB4/internal/dynAnyImpl.h
+include/omniORB4/internal/tcParser.h
+include/omniORB4/internal/valueTrackerImpl.h
+src/lib/omniORB/dir.mk
+src/lib/omniORB/dynamic/anyP.cc
+src/lib/omniORB/dynamic/anyStream.cc          -- new
+src/lib/omniORB/dynamic/constants.cc
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/omniTypedefs.cc       -- new
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/valueBase.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/opers.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+
+
+Tue May 25 15:19:11 BST 2004 dgrisby
+====================================
+
+- ValueType TypeCode support.
+
+include/omniORB4/CORBA_TypeCode.h
+include/omniORB4/internal/typecode.h
+src/lib/omniORB/dynamic/typecode.cc
+
+
+Fri Apr  2 14:27:05 BST 2004 dgrisby
+====================================
+
+- Remove obsolete pragma.
+
+idl/echo.idl
+
+- Start refactoring TypeCode to support value TypeCodes, start of
+  abstract interfaces support.
+
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_AbstractBase.h        -- new
+include/omniORB4/CORBA_ORB.h
+include/omniORB4/CORBA_TypeCode.h
+include/omniORB4/internal/typecode.h
+include/omniORB4/internal/valueTrackerImpl.h
+src/lib/omniORB/dynamic/abstractBase.cc      -- new
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/dynException.cc
+src/lib/omniORB/dynamic/poastub.cc
+src/lib/omniORB/dynamic/policy.cc
+src/lib/omniORB/dynamic/typecode.cc
+src/lib/omniORB/dynamic/unknownUserExn.cc
+src/lib/omniORB/dynamic/valueFactory.cc
+src/lib/omniORB/omniidl_be/cxx/dynskel/__init__.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/tcstring.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/template.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+
+- Rearrange paths.
+
+src/tool/omniidl/python/scripts/omniidl.in
+
+
+Fri Feb 20 00:04:22 GMT 2004 dgrisby
+====================================
+
+- Suppress warning about EventType keyword.
+
+idl/COS/CosNotification.idl
+
+- Compilation fixes. Thanks Gary Duzan for pointing them out.
+
+src/appl/omniMapper/omniMapper.cc
+src/appl/omniNames/INSMapper.h
+src/lib/omniORB/omniidl_be/cxx/descriptor.py
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+
+
+Mon Feb 16 10:02:11 GMT 2004 dgrisby
+====================================
+
+- More valuetype, including value boxes. C++ mapping updates.
+
+sample.cfg
+sample.reg
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_Any.h
+include/omniORB4/CORBA_Object_vartypes.h
+include/omniORB4/poa.h
+include/omniORB4/templatedecls.h
+include/omniORB4/valueFactoryManager.h
+include/omniORB4/internal/GNUmakefile.in
+src/lib/omniORB/dynamic/valueFactory.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/orbcore/portableserver.cc
+src/tool/omniidl/cxx/idlast.cc
+src/tool/omniidl/cxx/idlast.h
+src/tool/omniidl/cxx/idlscope.cc
+src/tool/omniidl/python/omniidl/idltype.py
+
+
+Thu Nov  6 11:53:55 GMT 2003 dgrisby
+====================================
+
+- Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
+sample.cfg
+sample.reg
+include/omniORB4/CORBA_ValueBase.h
+include/omniORB4/CORBA_ValueBase_vartypes.h
+include/omniORB4/callDescriptor.h
+include/omniORB4/cdrStream.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/internal/orbParameters.h
+include/omniORB4/internal/valueTracker.h    -- deleted
+include/omniORB4/internal/valueTrackerImpl.h
+src/examples/valuetype/simple/dir.mk
+src/examples/valuetype/simple/valimpl.h     -- new
+src/examples/valuetype/simple/value.idl
+src/examples/valuetype/simple/vclient.cc
+src/examples/valuetype/simple/vcoloc.cc     -- new
+src/examples/valuetype/simple/vserver.cc
+src/lib/omniORB/dynamic/serverRequest.cc
+src/lib/omniORB/dynamic/valueBase.cc
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/value.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/forward.py
+src/lib/omniORB/omniidl_be/cxx/header/marshal.py
+src/lib/omniORB/omniidl_be/cxx/header/obv.py
+src/lib/omniORB/omniidl_be/cxx/header/opers.py
+src/lib/omniORB/omniidl_be/cxx/header/poa.py
+src/lib/omniORB/omniidl_be/cxx/header/tcstring.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/poa.py
+src/lib/omniORB/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/GIOP_S.cc
+src/lib/omniORB/orbcore/callHandle.cc
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+src/lib/omniORB/orbcore/localIdentity.cc
+src/lib/omniORB/orbcore/omniObjRef.cc
+src/tool/omniidl/python/omniidl/idlast.py
+src/tool/omniidl/python/omniidl/idltype.py
+
+
+Thu Oct 23 12:08:43 BST 2003 dgrisby
+====================================
+
+- More valuetype support.
+
+include/omniORB4/CORBA.h
+src/examples/valuetype/simple/dir.mk
+src/examples/valuetype/simple/value.idl
+src/examples/valuetype/simple/vclient.cc
+src/examples/valuetype/simple/vserver.cc
+src/lib/omniORB/dynamic/dynamicLib.cc
+src/lib/omniORB/dynamic/valueFactory.cc
+src/lib/omniORB/omniidl_be/cxx/__init__.py
+src/lib/omniORB/omniidl_be/cxx/call.py
+src/lib/omniORB/omniidl_be/cxx/config.py
+src/lib/omniORB/omniidl_be/cxx/cxx.py
+src/lib/omniORB/omniidl_be/cxx/descriptor.py
+src/lib/omniORB/omniidl_be/cxx/dir.mk
+src/lib/omniORB/omniidl_be/cxx/id.py
+src/lib/omniORB/omniidl_be/cxx/iface.py
+src/lib/omniORB/omniidl_be/cxx/mapping.py         -- new
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/omniidl_be/cxx/support.py
+src/lib/omniORB/omniidl_be/cxx/types.py
+src/lib/omniORB/omniidl_be/cxx/util.py
+src/lib/omniORB/omniidl_be/cxx/value.py           -- new
+src/lib/omniORB/omniidl_be/cxx/dynskel/main.py
+src/lib/omniORB/omniidl_be/cxx/dynskel/typecode.py
+src/lib/omniORB/omniidl_be/cxx/header/__init__.py
+src/lib/omniORB/omniidl_be/cxx/header/defs.py
+src/lib/omniORB/omniidl_be/cxx/header/dir.mk
+src/lib/omniORB/omniidl_be/cxx/header/forward.py
+src/lib/omniORB/omniidl_be/cxx/header/marshal.py
+src/lib/omniORB/omniidl_be/cxx/header/obv.py       -- new
+src/lib/omniORB/omniidl_be/cxx/header/opers.py
+src/lib/omniORB/omniidl_be/cxx/header/poa.py
+src/lib/omniORB/omniidl_be/cxx/header/tcstring.py
+src/lib/omniORB/omniidl_be/cxx/header/template.py
+src/lib/omniORB/omniidl_be/cxx/skel/main.py
+src/lib/omniORB/omniidl_be/cxx/skel/poa.py
+
+
+Fri Sep 26 17:08:34 BST 2003 dgrisby
+====================================
+
+- Start of valuetype support.
+
+acinclude.m4
+aclocal.m4
+configure
+configure.ac
+idl/corbaidl.idl
+idl/ir.idl
+include/omniORB4/CORBA.h
+include/omniORB4/CORBA_ORB.h
+include/omniORB4/CORBA_ValueBase.h            -- new
+include/omniORB4/CORBA_ValueBase_vartypes.h   -- new
+include/omniORB4/GNUmakefile.in
+include/omniORB4/acconfig.h.in
+include/omniORB4/omniInternal.h
+include/omniORB4/omniutilities.h
+include/omniORB4/templatedefns.h
+include/omniORB4/valueFactoryManager.h        -- new
+include/omniORB4/valueTemplatedecls.h         -- new
+include/omniORB4/valueType.h                  -- new
+include/omniORB4/internal/GNUmakefile.in
+include/omniORB4/internal/valueTrackerImpl.h  -- new
+src/examples/valuetype/GNUmakefile            -- new
+src/examples/valuetype/GNUmakefile.in         -- new
+src/examples/valuetype/dir.mk                 -- new
+src/examples/valuetype/simple/GNUmakefile     -- new
+src/examples/valuetype/simple/GNUmakefile.in  -- new
+src/examples/valuetype/simple/dir.mk          -- new
+src/examples/valuetype/simple/value.idl       -- new
+src/examples/valuetype/simple/vclient.cc      -- new
+src/examples/valuetype/simple/vserver.cc      -- new
+src/lib/omniORB/dynamic/constants.cc
+src/lib/omniORB/dynamic/dir.mk
+src/lib/omniORB/dynamic/poastub.cc
+src/lib/omniORB/dynamic/valueBase.cc          -- new
+src/lib/omniORB/dynamic/valueFactory.cc       -- new
+src/lib/omniORB/dynamic/valueTracker.cc       -- new
+src/lib/omniORB/dynamic/valueType.cc          -- new
+src/lib/omniORB/orbcore/constants.cc
+src/lib/omniORB/orbcore/proxyFactory.cc
+
+
+Thu Sep  4 14:56:05 BST 2003 dgrisby
+====================================
+
+- ValueType IDL updates.
+
+src/tool/omniidl/cxx/idl.yy
+src/tool/omniidl/cxx/idlast.cc
+src/tool/omniidl/cxx/idlast.h
+src/tool/omniidl/cxx/idldump.cc
+src/tool/omniidl/cxx/idlpython.cc
+src/tool/omniidl/cxx/y.tab.cc
+src/tool/omniidl/cxx/y.tab.h
+src/tool/omniidl/python/omniidl/idlast.py
+
+
+Thu Jul 10 22:44:36 BST 2003 dgrisby
+====================================
+
+- Value chunks should start after URL / repoids.
+
+include/omniORB4/cdrStream.h
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc
+
+- Missed methods in ValueAbs.
+
+src/tool/omniidl/python/omniidl/idlast.py
+
+- Use re-entrant GIOP 1.0 size calc.
+
+src/lib/omniORB/orbcore/giopImpl10.cc
+
+
+Tue May 20 17:35:21 BST 2003 dgrisby
+====================================
+
+- Valuetype marshalling support.
+
+configure
+configure.ac
+update.log
+include/omniORB4/CORBA_TypeCode.h
+include/omniORB4/cdrStream.h
+include/omniORB4/minorCode.h
+include/omniORB4/internal/GNUmakefile.in
+include/omniORB4/internal/valueTracker.h        -- new
+mk/beforeauto.mk.in
+src/lib/omniORB/codesets/cs-UCS-4.cc
+src/lib/omniORB/dynamic/serverRequest.cc
+src/lib/omniORB/omniidl_be/cxx/skutil.py
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/GIOP_S.cc
+src/lib/omniORB/orbcore/callHandle.cc
+src/lib/omniORB/orbcore/cdrStream.cc
+src/lib/omniORB/orbcore/cdrValueChunkStream.cc  -- new
+src/lib/omniORB/orbcore/constants.cc
+src/lib/omniORB/orbcore/cs-16bit.cc
+src/lib/omniORB/orbcore/cs-8bit.cc
+src/lib/omniORB/orbcore/cs-UTF-16.cc
+src/lib/omniORB/orbcore/dir.mk
+src/lib/omniORB/orbcore/omniInternal.cc
+src/tool/omniidl/python/omniidl/idlast.py
+
+
+Sun Mar 23 20:49:38 GMT 2003 dgrisby
+====================================
+
+- Start of omniORB 4.1.x development branch.
+- All files imported from 4.0 branch.
+- Version number set to 4.1.0.
