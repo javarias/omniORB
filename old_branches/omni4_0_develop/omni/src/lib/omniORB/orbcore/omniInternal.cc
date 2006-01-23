@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.2.2.41  2005/12/01 23:14:24  dgrisby
+  Remove unsafe log message from native exception handler.
+
   Revision 1.2.2.40  2005/11/28 14:57:51  dgrisby
   New abortOnNativeException parameter for Windows.
 
@@ -241,7 +244,11 @@
 #include <omniORB4/objTracker.h>
 #include <corbaOrb.h>
 
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__GNUC__)
+#  define WIN32_EXCEPTION_HANDLING
+#endif
+
+#ifdef WIN32_EXCEPTION_HANDLING
 #  include <eh.h>
 #endif
 
@@ -1530,7 +1537,7 @@ public:
 static abortOnNativeExceptionHandler abortOnNativeExceptionHandler_;
 
 
-#ifdef __WIN32__
+#ifdef WIN32_EXCEPTION_HANDLING
 extern "C" void omniORB_rethrow_exception(unsigned, EXCEPTION_POINTERS*)
 {
   throw;
@@ -1584,7 +1591,7 @@ public:
     objectTable = new omniObjTableEntry* [objectTableSize];
     for( CORBA::ULong i = 0; i < objectTableSize; i++ )  objectTable[i] = 0;
 
-#ifdef __WIN32__
+#ifdef WIN32_EXCEPTION_HANDLING
     if (abortOnNativeException) {
       omniInterceptors* interceptors = omniORB::getInterceptors();
       interceptors->createThread.add(abortOnNativeExceptionInterceptor);
