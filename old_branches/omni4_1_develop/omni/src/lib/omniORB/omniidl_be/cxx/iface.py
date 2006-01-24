@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.12  2005/11/18 18:23:06  dgrisby
+# New -Wbimpl_mapping option.
+#
 # Revision 1.1.6.11  2005/11/14 11:02:16  dgrisby
 # Local interface fixes.
 #
@@ -173,16 +176,16 @@ class Interface:
     return self._callables
 
   def inherits(self):
-    return map(lambda x:Interface(x), self._node.inherits())
+    return map(lambda x:Interface(x), self._node.fullDecl().inherits())
 
   def allInherits(self):
     return map(lambda x:Interface(x), ast.allInherits(self._node))
 
   def local(self):
-    return self._node.local()
+    return self._node.fullDecl().local()
 
   def abstract(self):
-    return self._node.abstract()
+    return self._node.fullDecl().abstract()
 
   def name(self):
     return self._node_name
