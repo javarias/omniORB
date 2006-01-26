@@ -5,7 +5,7 @@
 
 omniORB is a CORBA Object Request Broker (ORB) for C++ and Python.
 
-<h2>Stable release: omniORB 4.0.0</h2>
+<h2>Stable release: omniORB 4.0.7</h2>
 
 omniORB 4.0 adheres to version 2.6 of the CORBA specification. The
 technical highlights are:
@@ -52,18 +52,32 @@ technical highlights are:
     </ul>
   </li>
   <li>Fully interoperable with other CORBA ORBs.</li>
+  <li>A number of contributed CORBA service implementations. See the
+      <a href="links.html">links page</a>.</li>
 </ul>
 
 <p>
 There are a number of missing features, notably:
 
 <ul>
-  <li>Support for objects by value.</li>
+  <li>Support for objects by value and related features.</li>
   <li>Support for portable interceptors.</li>
 </ul>
-
-These features are planned for omniORB version 4.1.
 </p>
+
+<h2>Development release: omniORB 4.1.0 beta 1</h2>
+
+omniORB 4.1 supports all the features of omniORB 4.0, with the
+addition of:
+
+<ul>
+  <li>Objects by value support.</li>
+  <li>Abstract interfaces support.</li>
+  <li>Local interface support.</li>
+  <li>C++ mapping version 1.1.</li>
+</ul>
+
+<hr width="75%"/>
 
 <p>
 <small>Portions of this page are based on a features page Copyright

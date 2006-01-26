@@ -1,184 +1,140 @@
 <html>
-  <!--Automatically generated with XSLT-->
-  <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORBpy 1.0 bugs</title>
-    <link type='text/css' href='../styles.css' rel='stylesheet'>
-  </head>
-  <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
-    <table border='0' width='100%' cellpadding='10' cellspacing='5'>
-      <tr>
-        <td class='header' width='15%'>
-          <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
-        <td class='header'>
-          <h1 align='center'>omniORBpy 1.0 bugs</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='sidebar' valign='top' width='15%' align='left'>
-          <p align='center'>
-            <b>Destinations</b>
-          </p>
-          <a href='../index.html'>omniORB home</a>
-          <br>
-          <a href='../history.html'>History</a>
-          <br>
-          <a href='../features.html'>Features</a>
-          <br>
-          <a href='../download.html'>Download</a>
-          <br>
-          <a href='../docs.html'>Documentation</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi'>Wiki</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi/FrequentlyAskedQuestions'>FAQ</a>
-          <br>
-          <a href='../bugs.html'>Bugs</a>
-          <br>
-          <a href='../development.html'>Development</a>
-          <br>
-          <a href='../snapshots/'>CVS snapshots</a>
-          <br>
-          <a href='http://sourceforge.net/projects/omniorb/'>SF project</a>
-          <br>
-          <a href='../list.html'>Mailing list</a>
-          <br>
-          <a href='../links.html'>Links</a>
-          <br>
-          <a href='http://www.omniorb-support.com/'>Support</a>
-          <br>
-          <a href='../contact.html'>Contact</a>
-          <br>
-          <br>
-          <hr width='80%'>
-          <p align='center'>
-            <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/1.0' width='1' alt=''></p>
-        </td><td class='main' valign='top' align='left'>
-          <p>
-	  The following bugs in omniORBpy 1.0 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORBpy 1.0 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORBpy 1.0 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/1.0" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORBpy 1.0 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
-          <table width='95%' align='center'>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Possible segfault in invalid local calls</b>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Possible segfault in invalid local calls</b>
             (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 26 17:01:36 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 26 17:01:36 BST 2000</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Passing an invalid sequence or array of unsigned longs in a local
   call could lead to a segfault in the Python interpreter.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>ImportError due to undefined symbols</b>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>ImportError due to undefined symbols</b>
             (bug number 3)
-            <a name='bug3'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 19 18:03:11 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-  If you have patched omniORB 3.0.0 to fix <a href='../omniORBbug.html#bug5'>bug 5</a>, you will see undefined
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 19 18:03:11 BST 2000</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  If you have patched omniORB 3.0.0 to fix <a href="../omniORBbug.html#bug5">bug 5</a>, you will see undefined
   symbols for things to do with tracedmutex or tracedcondition when
   you try to import the omniORBpy modules. To fix this, make a clean
   build of omniORBpy, with "<code>make clean; make export</code>".
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>omniidl name look-up is more strict</b>
+</tr>
+
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniidl name look-up is more strict</b>
             (bug number 2)
-            <a name='bug2'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Wed Jul 19 17:22:34 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Jul 19 17:22:34 BST 2000</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   When looking-up a name, omniidl now raises an error if a name which
   differs only in case is found along the look-up path. Before, it
   would ignore the name and continue until an exact match was found.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>IDL compiler bug -- inheritance from typedef</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>IDL compiler bug -- inheritance from typedef</b>
             (bug number 1)
-            <a name='bug1'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Jul 18 16:19:27 BST 2000</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Renzo Tomaselli</td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Jul 18 16:19:27 BST 2000</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Renzo Tomaselli</td>
+</tr>
+  
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
 </html>

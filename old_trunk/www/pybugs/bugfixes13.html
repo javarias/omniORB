@@ -1,295 +1,254 @@
 <html>
-  <!--Automatically generated with XSLT-->
-  <head>
-    <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
-    <title>omniORBpy 1.3 bugs</title>
-    <link type='text/css' href='../styles.css' rel='stylesheet'>
-  </head>
-  <body alink='#ff0000' link='#0000ff' bgcolor='#ffffff' text='#000000' vlink='#000080'>
-    <table border='0' width='100%' cellpadding='10' cellspacing='5'>
-      <tr>
-        <td class='header' width='15%'>
-          <img width='122' height='92' src='../img/omniORBlogo.gif'></td>
-        <td class='header'>
-          <h1 align='center'>omniORBpy 1.3 bugs</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class='sidebar' valign='top' width='15%' align='left'>
-          <p align='center'>
-            <b>Destinations</b>
-          </p>
-          <a href='../index.html'>omniORB home</a>
-          <br>
-          <a href='../history.html'>History</a>
-          <br>
-          <a href='../features.html'>Features</a>
-          <br>
-          <a href='../download.html'>Download</a>
-          <br>
-          <a href='../docs.html'>Documentation</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi'>Wiki</a>
-          <br>
-          <a href='/cgi-bin/moin.cgi/FrequentlyAskedQuestions'>FAQ</a>
-          <br>
-          <a href='../bugs.html'>Bugs</a>
-          <br>
-          <a href='../development.html'>Development</a>
-          <br>
-          <a href='../snapshots/'>CVS snapshots</a>
-          <br>
-          <a href='http://sourceforge.net/projects/omniorb/'>SF project</a>
-          <br>
-          <a href='../list.html'>Mailing list</a>
-          <br>
-          <a href='../links.html'>Links</a>
-          <br>
-          <a href='http://www.omniorb-support.com/'>Support</a>
-          <br>
-          <a href='../contact.html'>Contact</a>
-          <br>
-          <br>
-          <hr width='80%'>
-          <p align='center'>
-            <a href='http://sourceforge.net'><img border='0' height='31' src='http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1' width='88' alt='SourceForge.net    Logo'></a><br>
-            <img height='1' src='http://grisby.dyndns.org/cgi-bin/count?omni/bugs/1.3' width='1' alt=''></p>
-        </td><td class='main' valign='top' align='left'>
-          <p>
-	  The following bugs in omniORBpy 1.3 have been fixed. Update from <a href='../development.html'>CVS</a> to get the fixes.
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORBpy 1.3 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORBpy 1.3 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/1.3" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORBpy 1.3 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
-          <table width='95%' align='center'>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Problems with omniORB.importIDL()</b>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Problems with omniORB.importIDL()</b>
             (bug number 7)
-            <a name='bug7'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Thu Jun 21 10:26:24 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Joshua Reynolds</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Jun 21 10:26:24 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+  
+  <tr>
+<td>Reported by:</td>
+<td>Joshua Reynolds</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Calling base class constructors in objref classes is unnecessary;
   removing the calls prevents the problem. importIDL() now has an
   "inline" flag, so unnecessary re-definitions can be avoided too.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Invalid generated code with complex IDL scoping</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Invalid generated code with complex IDL scoping</b>
             (bug number 6)
-            <a name='bug6'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Tue Jun 12 11:19:56 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>W. Eliot Kimber</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Jun 12 11:19:56 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>W. Eliot Kimber</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   The omniidl back-end would generate invalid code for some complex
   scoping cases.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>OverflowError with unsigned long / long long
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>OverflowError with unsigned long / long long
   constants</b>
             (bug number 5)
-            <a name='bug5'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri May 18 15:19:46 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Carl Bray</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri May 18 15:19:46 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Carl Bray</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Due to a change in str() between Python 1.5.2 and Python 2.x,
   constants mapped to Python long integers would be missing the 'L'
   suffix when using Python 2.x.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>TypeCode.get_compact_typecode() broken</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>TypeCode.get_compact_typecode() broken</b>
             (bug number 4)
-            <a name='bug4'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Fri May 11 17:22:00 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>David Konerding</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
-                <code>get_compact_typecode()</code> had not been kept up-to-date
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri May 11 17:22:00 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>David Konerding</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  <code>get_compact_typecode()</code> had not been kept up-to-date
   with the internal TypeCode interfaces.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Deadlock when releasing object references</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Deadlock when releasing object references</b>
             (bug number 3)
-            <a name='bug3'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Thu May  3 15:30:03 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>John Heintz</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu May  3 15:30:03 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>John Heintz</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   Releasing object references can lock
   <code>omni::internalLock</code>. Various places did this while
   holding the Python interpreter lock, which could lead to deadlock
   against threads holding <code>internalLock</code> and attempting to
   lock the interpreter lock.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>BAD_TYPECODE exception with good TypeCode</b>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>BAD_TYPECODE exception with good TypeCode</b>
             (bug number 2)
-            <a name='bug2'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Apr  9 12:40:02 BST 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Lars Immisch</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Apr  9 12:40:02 BST 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Lars Immisch</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   TypeCodes containing multiple references to a known enum could be
   unmarshalled incorrectly, leading to a BAD_TYPECODE exception.
   </td>
-            </tr>
-            <tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-            <tr>
-              <td>Summary:</td>
-              <td>
-                <b>Invalid stub code for typedef to struct/union inside
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Invalid stub code for typedef to struct/union inside
   interface</b>
             (bug number 1)
-            <a name='bug1'></a>
-              </td>
-            </tr>
-            <tr>
-              <td>Date:      </td>
-              <td>Mon Mar 19 11:33:37 GMT 2001</td>
-            </tr>
-            <tr>
-              <td>Fixed by:  </td>
-              <td>dpg1</td>
-            </tr>
-            <tr>
-              <td>Reported by:</td>
-              <td>Jimmy Wilson</td>
-            </tr>
-            <tr valign='top'>
-              <td>Description:</td>
-              <td>
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Mar 19 11:33:37 GMT 2001</td>
+</tr>
+<tr>
+<td>Fixed by:  </td>
+<td>dpg1</td>
+</tr>
+
+  
+  <tr>
+<td>Reported by:</td>
+<td>Jimmy Wilson</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
   omniidl -bpython would generate invalid stub code for IDL like the
   following:
   <p></p>
-                <pre>
+  <pre>
   interface I {
     struct S {
       long l;
@@ -298,15 +257,11 @@
   };
   </pre>
   </td>
-            </tr>
-<tr>
-              <td colspan='2'>
-                <hr>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
 </html>
