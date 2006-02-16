@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.7  2006/01/19 17:28:44  dgrisby
+# Merge from omnipy2_develop.
+#
 # Revision 1.13.2.6  2005/11/09 12:33:31  dgrisby
 # Support POA LocalObjects.
 #
@@ -142,15 +145,15 @@ tv_ulong              = 5
 tv_float              = 6
 tv_double             = 7
 tv_boolean            = 8
-tv_char	              = 9
+tv_char               = 9
 tv_octet              = 10
-tv_any	              = 11
+tv_any                = 11
 tv_TypeCode           = 12
 tv_Principal          = 13
 tv_objref             = 14
 tv_struct             = 15
 tv_union              = 16
-tv_enum	              = 17
+tv_enum               = 17
 tv_string             = 18
 tv_sequence           = 19
 tv_array              = 20
@@ -455,9 +458,9 @@ class TypeCode_string (TypeCode_base):
 
     def __repr__(self):
         if self._d[1] == 0:
-	    return "CORBA.TC_string"
-	else:
-	    return "orb.create_string_tc(bound=%d)" % self._d[1]
+            return "CORBA.TC_string"
+        else:
+            return "orb.create_string_tc(bound=%d)" % self._d[1]
 
 # wstring:
 class TypeCode_wstring (TypeCode_base):
@@ -473,9 +476,9 @@ class TypeCode_wstring (TypeCode_base):
 
     def __repr__(self):
         if self._d[1] == 0:
-	    return "CORBA.TC_wstring"
-	else:
-	    return "orb.create_wstring_tc(bound=%d)" % self._d[1]
+            return "CORBA.TC_wstring"
+        else:
+            return "orb.create_wstring_tc(bound=%d)" % self._d[1]
 
 # fixed:
 class TypeCode_fixed (TypeCode_base):
@@ -494,7 +497,7 @@ class TypeCode_fixed (TypeCode_base):
 
     def __repr__(self):
         return "orb.create_fixed_tc(digits=%d,scale=%d)" % (
-	    self.fixed_digits(), self.fixed_scale())
+            self.fixed_digits(), self.fixed_scale())
 
 # objref:
 class TypeCode_objref (TypeCode_base):
@@ -664,7 +667,7 @@ class TypeCode_sequence (TypeCode_base):
 
     def __repr__(self):
         return "orb.create_sequence_tc(bound=%d, element_type=%s)" % (
-	    self.length(), repr(self.content_type()))
+            self.length(), repr(self.content_type()))
 
 
 # array:
@@ -692,7 +695,7 @@ class TypeCode_array (TypeCode_base):
 
     def __repr__(self):
         return "orb.create_array_tc(length=%d, element_type=%s)" % (
-	    self.length(), repr(self.content_type()))
+            self.length(), repr(self.content_type()))
 
 # alias:
 class TypeCode_alias (TypeCode_base):
