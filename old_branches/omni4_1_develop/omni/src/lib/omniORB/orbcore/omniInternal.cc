@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.10  2006/01/23 16:05:41  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.5.2.9  2006/01/10 12:24:03  dgrisby
   Merge from omni4_0_develop pre 4.0.7 release.
 
@@ -953,13 +956,6 @@ omni::createInProcessIdentity(const _CORBA_Octet* key, int keysize) {
   return new omniInProcessIdentity(key,keysize);
 }
 
-
-omniIdentity*
-omni::createLoopBackIdentity(omniIOR* ior,const _CORBA_Octet* key,int keysize){
-  Rope* rope = omniObjAdapter::defaultLoopBack();
-  rope->incrRefCount();
-  return new omniRemoteIdentity(ior,key,keysize,rope);
-}
 
 omniObjRef*
 omni::createObjRef(const char* targetRepoId,

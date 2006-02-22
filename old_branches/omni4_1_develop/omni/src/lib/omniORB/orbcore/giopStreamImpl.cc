@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/01/10 13:59:37  dgrisby
+  New clientConnectTimeOutPeriod configuration parameter.
+
   Revision 1.1.6.2  2005/01/06 23:10:30  dgrisby
   Big merge from omni4_0_develop.
 
@@ -502,7 +505,7 @@ public:
     orbOptions::Handler("giopTargetAddressMode",
 			"giopTargetAddressMode = 0,1,2",
 			1,
-			"-ORBgiopTargetAddressMode < 0,1,2 >") {}
+			"-ORBgiopTargetAddressMode < 0 | 1 | 2 >") {}
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
