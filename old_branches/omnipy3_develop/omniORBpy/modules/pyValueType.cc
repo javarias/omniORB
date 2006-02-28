@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.10  2005/06/29 17:31:42  dgrisby
+// Update valuetype examples; fix values in Anys.
+//
 // Revision 1.1.2.9  2005/06/24 17:36:00  dgrisby
 // Support for receiving valuetypes inside Anys; relax requirement for
 // old style classes in a lot of places.
@@ -852,6 +855,23 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
       if (member_list) {
 	PyObject_SetAttrString(instance, (char*)"_values", member_list);
 	Py_DECREF(member_list);
+      }
+
+      // Allow the object to finish initialising itself after unmarshalling.
+      PyObject* postHook = PyObject_GetAttrString(instance,
+                                                  (char*)"_NP_postUnmarshal");
+      if (postHook) {
+        PyObject* hookResult = PyObject_CallObject(postHook, 0);
+        if (!hookResult) {
+          Py_DECREF(postHook);
+          omniPy::handlePythonException();
+        }
+        Py_DECREF(postHook);
+        Py_DECREF(instance);
+        instance = hookResult;
+      }
+      else {
+        PyErr_Clear();
       }
     }
     else if (dtype == CORBA::tk_value_box) {
