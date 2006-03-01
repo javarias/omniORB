@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.13.2.10  2005/05/03 10:12:34  dgrisby
+// Trying to redefine built in CORBA module types led to a segfault.
+//
 // Revision 1.13.2.9  2003/04/09 10:26:48  dgrisby
 // Silly variable reuse bug in new CORBA 3 keyword check.
 //
@@ -380,6 +383,9 @@ init()
 
   s->addDecl("TypeCode",  0, builtins[0], BaseType::TypeCodeType,  file, 2);
   s->addDecl("Principal", 0, builtins[1], BaseType::PrincipalType, file, 3);
+
+  // Creating the Decls sets the most recent decl pointer; clear it here.
+  Decl::clear();
 
   Prefix::endOuterFile();
 }
