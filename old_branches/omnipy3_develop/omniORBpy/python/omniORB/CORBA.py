@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.9  2006/02/28 12:41:59  dgrisby
+# New _NP_postUnmarshal hook on valuetypes.
+#
 # Revision 1.31.2.8  2006/02/22 13:05:15  dgrisby
 # __repr__ and _narrow methods for valuetypes.
 #
@@ -724,9 +727,9 @@ class Object:
             pass
 
         ir = omniORB.orb.resolve_initial_references("InterfaceRepository")
-        ir = ir._narrow(Repository)
+        ir = ir and ir._narrow(Repository)
         if ir is None:
-            raise INTF_REPOS(INTF_REPOS_NotAvailable, COMPLETED_NO)
+            raise INTF_REPOS(omniORB.INTF_REPOS_NotAvailable, COMPLETED_NO)
         interf = ir.lookup_id(self._NP_RepositoryId)
         return interf._narrow(InterfaceDef)
     
@@ -814,9 +817,9 @@ class ValueBase:
         omniORB.importIRStubs()
 
         ir = omniORB.orb.resolve_initial_references("InterfaceRepository")
-        ir = ir._narrow(Repository)
+        ir = ir and ir._narrow(Repository)
         if ir is None:
-            raise INTF_REPOS(INTF_REPOS_NotAvailable, COMPLETED_NO)
+            raise INTF_REPOS(omniORB.INTF_REPOS_NotAvailable, COMPLETED_NO)
         interf = ir.lookup_id(self._NP_RepositoryId)
         return interf._narrow(ValueDef)
 
