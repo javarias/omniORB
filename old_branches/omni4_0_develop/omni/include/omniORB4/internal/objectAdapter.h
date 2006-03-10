@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.8  2005/11/15 11:07:57  dgrisby
+ More shutdown cleanup.
+
  Revision 1.1.4.7  2002/08/21 19:55:42  dgrisby
  Add endPointPublishAllIFs option.
 
@@ -229,7 +232,7 @@ public:
   static const omnivector<const char*>& listMyEndpoints();
 
   struct Options {
-    inline Options() : publish_all(0) {}
+    inline Options() : publish_all(0), fail_if_multiple(0) {}
     ~Options();
 
     struct EndpointURI {
@@ -240,6 +243,7 @@ public:
     typedef omnivector<EndpointURI*> EndpointURIList;
     EndpointURIList   endpoints;
     CORBA::Boolean    publish_all;
+    CORBA::Boolean    fail_if_multiple;
   };
 
   static Options options;
