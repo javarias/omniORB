@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.30  2005/10/13 11:38:16  dgrisby
+  Dump CloseConnection messages.
+
   Revision 1.1.4.29  2005/03/03 12:55:55  dgrisby
   Minor log output clean-up. Thanks Peter Klotz.
 
@@ -1178,6 +1181,18 @@ giopStream::errorOnSend(int rc, const char* filename, CORBA::ULong lineno,
   else if (rc == TRANSIENT_ConnectFailed) {
     pd_strand->state(giopStrand::DYING);
     minor = rc;
+
+    if (pd_deadline_secs || pd_deadline_nanosecs) {
+      // Did we timeout?
+      unsigned long s, ns;
+      omni_thread::get_time(&s, &ns);
+      if (s > pd_deadline_secs ||
+          (s == pd_deadline_secs && ns > pd_deadline_nanosecs)) {
+        
+        retry = 0;
+        minor = TRANSIENT_CallTimedout;
+      }
+    }
   }
   else {
     pd_strand->state(giopStrand::DYING);

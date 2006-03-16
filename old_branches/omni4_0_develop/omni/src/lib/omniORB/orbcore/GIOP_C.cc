@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2005/04/10 22:17:19  dgrisby
+  Fixes to connection management. Thanks Jon Biggar.
+
   Revision 1.1.4.10  2004/04/07 17:37:31  dgrisby
   Fix bug with retries when location forwarding.
 
@@ -260,7 +263,8 @@ GIOP_C::notifyCommFailure(CORBA::Boolean heldlock,
   if (pd_strand->first_use) {
     const giopAddress* firstaddr = pd_calldescriptor->firstAddressUsed();
     const giopAddress* currentaddr; 
-    if (!firstaddr) {
+
+    if (!firstaddr || !pd_rope->hasAddress(firstaddr)) {
       firstaddr = pd_strand->address;
       pd_calldescriptor->firstAddressUsed(firstaddr);
       currentaddr = firstaddr;

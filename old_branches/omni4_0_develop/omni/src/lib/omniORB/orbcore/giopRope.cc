@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.28  2005/10/17 15:50:55  dgrisby
+  Permit clients to scavenge bidir connections if no object references
+  have been transmitted.
+
   Revision 1.1.4.27  2005/08/23 11:46:05  dgrisby
   Race condition in strand selection could lead to an assertion failure.
 
@@ -546,6 +550,20 @@ giopRope::decrRefCount() {
       }
     }
   }
+}
+
+
+////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+giopRope::hasAddress(const giopAddress* addr)
+{
+  giopAddressList::const_iterator ai;
+  for (ai = pd_addresses.begin(); ai != pd_addresses.end(); ++ai) {
+    if (*ai == addr) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
