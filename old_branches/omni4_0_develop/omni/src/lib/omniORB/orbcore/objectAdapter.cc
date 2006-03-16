@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.21  2006/03/10 16:21:36  dgrisby
+ New limited endPointPublish parameter, currently only supports
+ fail-if-multiple.
+
  Revision 1.2.2.20  2005/11/15 11:07:56  dgrisby
  More shutdown cleanup.
 
@@ -144,6 +148,7 @@
 #include <initialiser.h>
 #include <orbOptions.h>
 #include <orbParameters.h>
+#include <libcWrapper.h>
 
 #include <stdlib.h>
 #include <stdio.h>
