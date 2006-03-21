@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.24  2005/04/10 22:17:18  dgrisby
+  Fixes to connection management. Thanks Jon Biggar.
+
   Revision 1.1.2.23  2004/10/18 11:47:02  dgrisby
   accept() error handling didn't work on MacOS X.
 
@@ -112,6 +115,7 @@
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/sslContext.h>
 #include <SocketCollection.h>
+#include <objectAdapter.h>
 #include <ssl/sslConnection.h>
 #include <ssl/sslAddress.h>
 #include <ssl/sslEndpoint.h>
@@ -279,6 +283,25 @@ sslEndpoint::Bind() {
 	i = ifaddrs->begin();
       }
       pd_address.host = CORBA::string_dup(*i);
+
+      if (omniObjAdapter::options.fail_if_multiple &&
+          !omniObjAdapter::options.publish_all) {
+
+        // Fail if more than one non-loopback address.
+        CORBA::Boolean got_one = 0;
+        for (i = ifaddrs->begin(); i != ifaddrs->end(); i++) {
+          if (strcmp(*i, "127.0.0.1")) {
+            if (got_one) {
+              omniORB::logs(1, "More than one IP address available. You must "
+                            "specify at least one endPoint parameter.");
+              OMNIORB_THROW(INITIALIZE,
+                            INITIALIZE_TransportError,
+                            CORBA::COMPLETED_NO);
+            }
+            got_one = 1;
+          }
+        }
+      }
     }
     else {
       omniORB::logs(5, "No list of interface addresses; fall back to "
