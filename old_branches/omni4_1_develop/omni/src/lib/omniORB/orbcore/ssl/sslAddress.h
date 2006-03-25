@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2001/07/31 16:16:23  sll
   New transport interface to support the monitoring of active connections.
 
@@ -51,7 +54,6 @@ class sslAddress : public giopAddress {
  public:
 
   sslAddress(const IIOP::Address& address, sslContext* ctx);
-  sslAddress(const char* address, sslContext* ctx);
   const char* type() const;
   const char* address() const;
   giopAddress* duplicate() const;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:52  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -83,6 +86,7 @@
 #include <stdio.h>
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/omniURI.h>
 #include <orbParameters.h>
 #include <omniORB4/sslContext.h>
 #include <SocketCollection.h>
@@ -99,32 +103,8 @@ OMNI_NAMESPACE_BEGIN(omni)
 sslAddress::sslAddress(const IIOP::Address& address, sslContext* ctx) : 
   pd_address(address), pd_ctx(ctx) {
 
-  const char* format = "giop:ssl:%s:%d";
-  pd_address_string = CORBA::string_alloc(strlen(address.host)+
-					  strlen(format)+6);
-  sprintf((char*)pd_address_string,format,(const char*)address.host,
-	  address.port);
-}
-
-/////////////////////////////////////////////////////////////////////////
-sslAddress::sslAddress(const char* address, sslContext* ctx) : pd_ctx(ctx) {
-
-  pd_address_string = address;
-  // OMNIORB_ASSERT(strncmp(address,"giop:ssl:",9) == 0);
-  const char* host = strchr(address,':');
-  host = strchr(host+1,':') + 1;
-  const char* port = strchr(host,':') + 1;
-  CORBA::ULong hostlen = port - host - 1;
-  // OMNIORB_ASSERT(hostlen);
-  pd_address.host = CORBA::string_alloc(hostlen);
-  strncpy(pd_address.host,host,hostlen);
-  ((char*)pd_address.host)[hostlen] = '\0';
-  int rc;
-  unsigned int v;
-  rc = sscanf(port,"%u",&v);
-  // OMNIORB_ASSERT(rc == 1);
-  // OMNIORB_ASSERT(v > 0 && v < 65536);
-  pd_address.port = v;
+  pd_address_string = omniURI::buildURI("giop:ssl:",
+					address.host, address.port);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -244,7 +224,7 @@ sslAddress::Connect(unsigned long deadline_secs,
   if ((LibcWrapper::AddrInfo*)ai == 0)
     return 0;
 
-  if ((sock = socket(INETSOCKET,SOCK_STREAM,0)) == RC_INVALID_SOCKET)
+  if ((sock = socket(ai->addrFamily(), SOCK_STREAM,0)) == RC_INVALID_SOCKET)
     return 0;
 
   {
@@ -294,7 +274,7 @@ sslAddress::Connect(unsigned long deadline_secs,
     }
     if (rc != RC_SOCKET_ERROR) {
       // Check to make sure that the socket is connected.
-      struct sockaddr_in peer;
+      SOCKADDR_STORAGE peer;
       SOCKNAME_SIZE_T len = sizeof(peer);
       rc = getpeername(sock, (struct sockaddr*)&peer, &len);
     }

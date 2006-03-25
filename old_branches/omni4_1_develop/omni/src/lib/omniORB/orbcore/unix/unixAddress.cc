@@ -1,6 +1,6 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB
-// tcpAddress.cc              Created on: 6 Aug 2001
+// unixAddress.cc             Created on: 6 Aug 2001
 //                            Author    : Sai Lai Lo (sll)
 //
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.4  2002/01/15 16:38:14  dpg1
   On the road to autoconf. Dependencies refactored, configure.ac
   written. No makefiles yet.

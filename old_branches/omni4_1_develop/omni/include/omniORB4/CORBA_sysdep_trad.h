@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/11/17 17:03:27  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.5  2005/04/14 00:04:00  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -510,6 +513,13 @@
 #  undef HAVE_UNAME
 #  undef HAVE_GETHOSTNAME
 #  undef HAVE_POLL
+
+#if defined(_MSC_VER) && _MSC_VER >= 1300  // VC++ 7 or greater
+#  define HAVE_GETADDRINFO 1
+#  define HAVE_GETNAMEINFO 1
+#  define HAVE_STRUCT_SOCKADDR_IN6 1
+#  define HAVE_STRUCT_SOCKADDR_STORAGE 1
+#endif
 
 #ifdef __MINGW32__
 #  define HAVE_STRCASECMP

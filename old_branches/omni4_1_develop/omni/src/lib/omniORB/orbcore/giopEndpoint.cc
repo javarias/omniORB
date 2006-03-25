@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/09/05 17:12:20  dgrisby
+  Merge again. Mainly SSL transport changes.
+
   Revision 1.1.4.2  2005/01/06 23:10:15  dgrisby
   Big merge from omni4_0_develop.
 
@@ -82,6 +85,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/omniTransport.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/omniURI.h>
 #include <omniORB4/linkHacks.h>
 #include <initialiser.h>
 #include <orbOptions.h>
@@ -175,28 +179,18 @@ giopAddress::str2Address(const char* address) {
 ////////////////////////////////////////////////////////////////////////
 giopAddress*
 giopAddress::fromTcpAddress(const IIOP::Address& addr) {
-  const char* format = "giop:tcp:%s:%d";
 
-  CORBA::ULong len = strlen(addr.host);
-  if (len == 0) return 0;
-  len += strlen(format) + 6;
-  CORBA::String_var addrstr;
-  addrstr = CORBA::string_alloc(len);
-  sprintf(addrstr,format,(const char*)addr.host,addr.port);
+  CORBA::String_var addrstr = omniURI::buildURI("giop:tcp:",
+						addr.host, addr.port);
   return giopAddress::str2Address(addrstr);
 }
 
 ////////////////////////////////////////////////////////////////////////
 giopAddress*
 giopAddress::fromSslAddress(const IIOP::Address& addr) {
-  const char* format = "giop:ssl:%s:%d";
 
-  CORBA::ULong len = strlen(addr.host);
-  if (len == 0) return 0;
-  len += strlen(format) + 6;
-  CORBA::String_var addrstr;
-  addrstr = CORBA::string_alloc(len);
-  sprintf(addrstr,format,(const char*)addr.host,addr.port);
+  CORBA::String_var addrstr = omniURI::buildURI("giop:ssl:",
+						addr.host, addr.port);
   return giopAddress::str2Address(addrstr);
 }
 

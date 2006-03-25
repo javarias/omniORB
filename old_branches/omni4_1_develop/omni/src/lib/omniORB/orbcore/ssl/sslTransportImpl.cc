@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/09/05 17:12:20  dgrisby
+  Merge again. Mainly SSL transport changes.
+
   Revision 1.1.4.2  2005/03/30 23:35:58  dgrisby
   Another merge from omni4_0_develop.
 
@@ -70,6 +73,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/omniURI.h>
 #include <objectAdapter.h>
 #include <omniORB4/sslContext.h>
 #include <ssl/sslConnection.h>
@@ -108,40 +112,29 @@ sslTransportImpl::~sslTransportImpl() {
 giopEndpoint*
 sslTransportImpl::toEndpoint(const char* param) {
 
-  const char* p = strchr(param,':');
-  if (!p) return 0;
   IIOP::Address address;
-  if (param == p) {
+
+  char* host = omniURI::extractHostPort(param, address.port);
+  if (!host)
+    return 0;
+
+  if (*host == '\0') {
+    // No name in param -- try environment variable.
     const char* hostname = getenv(OMNIORB_USEHOSTNAME_VAR);
-    if (hostname) address.host = hostname;
+    if (hostname)
+      address.host = hostname;
   }
   else {
-    address.host = CORBA::string_alloc(p-param);
-    strncpy(address.host,param,p-param);
-    ((char*)address.host)[p-param] = '\0';
+    address.host = host;
   }
-  if (*(++p) != '\0') {
-    int v;
-    if (sscanf(p,"%d",&v) != 1) return 0;
-    if (v < 0 || v > 65536) return 0;
-    address.port = v;
-  }
-  else {
-    address.port = 0;
-  }
-  return (giopEndpoint*)(new sslEndpoint(address,pd_ctx));
+  return (giopEndpoint*)(new sslEndpoint(address, pd_ctx));
 }
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
 sslTransportImpl::isValid(const char* param) {
   
-  const char* p = strchr(param,':');
-  if (!p || param == p || *p == '\0') return 0;
-  int v;
-  if (sscanf(p+1,"%d",&v) != 1) return 0;
-  if (v < 0 || v > 65536) return 0;
-  return 1;
+  return omniURI::validHostPort(param);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -149,16 +142,11 @@ static
 CORBA::Boolean
 parseAddress(const char* param, IIOP::Address& address) {
 
-  const char* p = strchr(param,':');
-  if (!p || param == p || *p == '\0') return 0;
-  address.host = CORBA::string_alloc(p-param);
-  strncpy(address.host,param,p-param);
-  ((char*)address.host)[p-param] = '\0';
-  ++p;
-  int v;
-  if (sscanf(p,"%d",&v) != 1) return 0;
-  if (v < 0 || v > 65536) return 0;
-  address.port = v;
+  char* host = omniURI::extractHostPort(param, address.port);
+  if (!host)
+    return 0;
+
+  address.host = host;
   return 1;
 }
 
@@ -182,9 +170,10 @@ sslTransportImpl::addToIOR(const char* param) {
   IIOP::Address address;
   if (parseAddress(param,address)) {
     // XXX, hardwared security options to:
+    //       Integrity (0x02) Confidentiality (0x04) |
     //       EstablishTrustInTarget (0x20) | EstablishTrustInClient (0x40)
     // In future, this will be expanded configurable options.
-    omniIOR::add_TAG_SSL_SEC_TRANS(address,0x60,0x60);
+    omniIOR::add_TAG_SSL_SEC_TRANS(address,0x66,0x66);
     return 1;
   }
   return 0;

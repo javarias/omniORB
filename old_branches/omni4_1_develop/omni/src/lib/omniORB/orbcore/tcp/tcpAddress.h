@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2001/07/31 16:16:18  sll
   New transport interface to support the monitoring of active connections.
 
@@ -51,7 +54,6 @@ class tcpAddress : public giopAddress {
  public:
 
   tcpAddress(const IIOP::Address& address);
-  tcpAddress(const char* address);
   const char* type() const;
   const char* address() const;
   giopAddress* duplicate() const;

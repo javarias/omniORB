@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/02/22 14:56:37  dgrisby
+  New endPointPublishHostname and endPointResolveNames parameters.
+
   Revision 1.1.6.2  2005/01/06 23:08:25  dgrisby
   Big merge from omni4_0_develop.
 
@@ -98,8 +101,14 @@ class LibcWrapper {
 public:
   class AddrInfo;
 
-  static int isipaddr(const char* node);
+  static CORBA::Boolean isip4addr(const char* node);
   // True if node is an IPv4 address.
+
+  static CORBA::Boolean isip6addr(const char* node);
+  // True if node is an IPv6 address.
+
+  static CORBA::Boolean isipaddr(const char* node);
+  // True is node is an IPv4 or v6 address.
 
   static AddrInfo* getAddrInfo(const char* node, CORBA::UShort port);
   // Return an AddrInfo object for the specified node and port. If
@@ -121,6 +130,9 @@ public:
 
     virtual int addrSize() = 0;
     // size of sockaddr struct returned.
+
+    virtual int addrFamily() = 0;
+    // protocol / address family of the sockaddr.
 
     virtual char* asString() = 0;
     // String form of address. Free with CORBA::string_free().

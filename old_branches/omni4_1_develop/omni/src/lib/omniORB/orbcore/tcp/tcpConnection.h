@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/03/02 12:10:48  dgrisby
+  setSelectable / Peek fixes.
+
   Revision 1.1.4.3  2005/01/13 21:10:03  dgrisby
   New SocketCollection implementation, using poll() where available and
   select() otherwise. Windows specific version to follow.
@@ -104,8 +107,9 @@ public:
 
   ~tcpConnection();
 
-  static char* ip4ToString(CORBA::ULong);
-  static char* ip4ToString(CORBA::ULong,CORBA::UShort,const char* prefix=0);
+  static char* addrToString(sockaddr* addr);
+  static char* addrToURI(sockaddr* addr, const char* prefix);
+  static CORBA::UShort addrToPort(sockaddr* addr);
 
   friend class tcpEndpoint;
 

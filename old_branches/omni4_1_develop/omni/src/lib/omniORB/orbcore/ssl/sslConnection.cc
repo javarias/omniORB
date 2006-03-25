@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2005/09/05 17:12:20  dgrisby
+  Merge again. Mainly SSL transport changes.
+
   Revision 1.1.4.6  2005/09/01 14:52:12  dgrisby
   Merge from omni4_0_develop.
 
@@ -339,29 +342,25 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 			     SocketCollection* belong_to) : 
   SocketHolder(sock), pd_ssl(ssl) {
 
-  struct sockaddr_in addr;
+  SOCKADDR_STORAGE addr;
   SOCKNAME_SIZE_T l;
 
-  l = sizeof(struct sockaddr_in);
+  l = sizeof(SOCKADDR_STORAGE);
   if (getsockname(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_myaddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
   else {
-    pd_myaddress = tcpConnection::ip4ToString(
-			     (CORBA::ULong)addr.sin_addr.s_addr,
-			     (CORBA::UShort)addr.sin_port,"giop:ssl:");
+    pd_myaddress = tcpConnection::addrToURI((sockaddr*)&addr, "giop:ssl:");
   }
 
-  l = sizeof(struct sockaddr_in);
+  l = sizeof(SOCKADDR_STORAGE);
   if (getpeername(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_peeraddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
   else {
-    pd_peeraddress = tcpConnection::ip4ToString(
-			       (CORBA::ULong)addr.sin_addr.s_addr,
-			       (CORBA::UShort)addr.sin_port,"giop:ssl:");
+    pd_peeraddress = tcpConnection::addrToURI((sockaddr*)&addr, "giop:ssl:");
   }
   SocketSetCloseOnExec(sock);
 

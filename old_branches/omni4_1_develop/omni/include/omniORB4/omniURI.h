@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.4.2.2  2005/07/22 17:18:40  dgrisby
+// Another merge from omni4_0_develop.
+//
 // Revision 1.4.2.1  2003/03/23 21:04:07  dgrisby
 // Start of omniORB 4.1.x development branch.
 //
@@ -71,6 +74,24 @@ public:
 
   // The omniURI class contains all functions which manipulate object
   // URIs, and convert them to-and-from CORBA::Objects.
+
+  static char* buildURI(const char*   prefix,
+			const char*   host,
+			CORBA::UShort port);
+  // Build a URI with the prefix, containing the host and port,
+  // properly escaping the host if need be.
+
+  static char* extractHostPort(const char*    addr,
+			       CORBA::UShort& port,
+			       const char**   rest = 0);
+  // Extract host and port from the part of a URI containing the
+  // address. If rest is non-zero, the pointer is set to the address
+  // of the character following the port number. Returns zero if the
+  // address is invalid.
+
+  static CORBA::Boolean validHostPort(const char* addr);
+  // True if addr is a valid host:port; false otherwise.
+
 
   static char* objectToString(CORBA::Object_ptr obj);
   // Return a stringified IOR for the given object reference.
