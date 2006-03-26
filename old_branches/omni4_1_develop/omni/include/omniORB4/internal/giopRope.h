@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:48  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.7  2002/08/21 06:23:15  dgrisby
   Properly clean up bidir connections and ropes. Other small tweaks.
 
@@ -154,6 +157,13 @@ class giopRope : public Rope, public RopeLink {
   // Thread Safety preconditions:
   //    Caller must not hold omniTransportLock, it is used internally for
   //    synchronisation.
+
+  CORBA::Boolean hasAddress(const giopAddress*);
+  // Returns true if the address is in this rope's address list; false
+  // otherwise.
+  //
+  // Thread Safety preconditions:
+  //    None: the list of addresses is constant once set.
 
   virtual const giopAddress* notifyCommFailure(const giopAddress*,
 					       CORBA::Boolean heldlock);

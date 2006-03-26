@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.18.2.5  2005/05/10 22:07:31  dgrisby
+// Merge again.
+//
 // Revision 1.18.2.4  2005/01/06 23:11:14  dgrisby
 // Big merge from omni4_0_develop.
 //
@@ -389,6 +392,9 @@ init()
 
   s->addDecl("TypeCode",  0, builtins[0], BaseType::TypeCodeType,  file, 2);
   s->addDecl("Principal", 0, builtins[1], BaseType::PrincipalType, file, 3);
+
+  // Creating the Decls sets the most recent decl pointer; clear it here.
+  Decl::clear();
 
   Prefix::endOuterFile();
 }

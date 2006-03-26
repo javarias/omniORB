@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.6.3  2006/02/22 14:56:37  dgrisby
+ New endPointPublishHostname and endPointResolveNames parameters.
+
  Revision 1.1.6.2  2005/11/17 17:03:26  dgrisby
  Merge from omni4_0_develop.
 
@@ -84,6 +87,16 @@
 
 #ifndef OMNIORB_USEHOSTNAME_VAR
 #define OMNIORB_USEHOSTNAME_VAR "OMNIORB_USEHOSTNAME"
+#endif
+
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
 class omniCallDescriptor;
@@ -250,7 +263,7 @@ public:
     CORBA::ULong      publish_names;
   };
 
-  static Options options;
+  static _core_attr Options options;
 
 
 protected:
@@ -332,5 +345,7 @@ private:
 };
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif // __OMNI_OBJECTADAPTER_H__

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.6  2005/04/14 00:03:59  dgrisby
+  New traceInvocationReturns and traceTime options; remove logf function.
+
   Revision 1.1.6.5  2005/04/11 12:09:42  dgrisby
   Another merge.
 
@@ -281,7 +284,8 @@ GIOP_C::notifyCommFailure(CORBA::Boolean heldlock,
   if (pd_strand->first_use) {
     const giopAddress* firstaddr = pd_calldescriptor->firstAddressUsed();
     const giopAddress* currentaddr; 
-    if (!firstaddr) {
+
+    if (!firstaddr || !pd_rope->hasAddress(firstaddr)) {
       firstaddr = pd_strand->address;
       pd_calldescriptor->firstAddressUsed(firstaddr);
       currentaddr = firstaddr;
