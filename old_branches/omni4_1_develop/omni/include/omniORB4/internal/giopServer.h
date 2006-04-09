@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.2  2005/11/17 17:03:26  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.6.1  2003/03/23 21:03:47  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -83,10 +86,16 @@ public:
   static giopServer*& singleton();
   ~giopServer();
 
-  const char* instantiate(const char* endpoint_uri,
-			  CORBA::Boolean no_publish,
-			  CORBA::Boolean no_listen);
+  CORBA::Boolean instantiate(const char*    endpoint_uri,
+			     CORBA::Boolean no_publish,
+			     EndpointList&  listening_endpoints);
   // Implement orbServer::instantiate().
+
+  CORBA::Boolean publish(const PublishSpecs& publish_specs,
+			 CORBA::Boolean      all_specs,
+			 CORBA::Boolean      all_eps,
+			 EndpointList&       published_endpoints);
+  // Implement orbServer::publish().
 
   void start();
   // Implement orbServer::start().

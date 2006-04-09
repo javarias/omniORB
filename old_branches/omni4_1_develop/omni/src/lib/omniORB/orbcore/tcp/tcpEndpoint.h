@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/01/13 21:10:03  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.2  2005/01/06 23:10:56  dgrisby
   Big merge from omni4_0_develop.
 
@@ -58,6 +62,8 @@
 #ifndef __TCPENDPOINT_H__
 #define __TCPENDPOINT_H__
 
+#include <omniORB4/omniServer.h>
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 class tcpConnection;
@@ -68,11 +74,15 @@ class tcpEndpoint : public giopEndpoint,
 public:
 
   tcpEndpoint(const IIOP::Address& address);
-  tcpEndpoint(const char* address);
 
   // The following implement giopEndpoint abstract functions
   const char* type() const;
   const char* address() const;
+  const orbServer::EndpointList* addresses() const;
+  CORBA::Boolean publish(const orbServer::PublishSpecs& publish_specs,
+			 CORBA::Boolean 	  	all_specs,
+			 CORBA::Boolean 	  	all_eps,
+			 orbServer::EndpointList& 	published_eps);
   CORBA::Boolean Bind();
   giopConnection* AcceptAndMonitor(giopConnection::notifyReadable_t,void*);
   void Poke();
@@ -86,8 +96,8 @@ protected:
   
 
 private:
-  IIOP::Address        pd_address;
-  CORBA::String_var    pd_address_string;
+  IIOP::Address        		   pd_address;
+  orbServer::EndpointList          pd_addresses;
 
   SocketHandle_t                   pd_new_conn_socket;
   giopConnection::notifyReadable_t pd_callback_func;

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.8  2006/02/22 14:56:37  dgrisby
+  New endPointPublishHostname and endPointResolveNames parameters.
+
   Revision 1.5.2.7  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -468,6 +471,7 @@ _CORBA_MODULE_END
 #include <omniORB4/seqTemplatedefns.h>
 #include <omniORB4/valueTemplatedefns.h>
 #include <omniORB4/omniObjRef.h>
+#include <omniORB4/omniServer.h>
 #include <omniORB4/omniIOR.h>
 #include <omniORB4/proxyFactory.h>
 #include <omniORB4/omniServant.h>

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.4.3  2005/09/05 17:12:20  dgrisby
   Merge again. Mainly SSL transport changes.
 
@@ -245,6 +248,14 @@ giopTransportImpl::~giopTransportImpl() {
   while (*pp && *pp != this) pp = &((*pp)->next);
 
   if (*pp == this) *pp = this->next;
+}
+
+////////////////////////////////////////////////////////////////////////
+giopTransportImpl*
+giopTransportImpl::str2Transport(const char* endpoint) {
+
+  const char* param;
+  return matchType(endpoint,param,1);
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.6.3  2006/02/22 14:56:37  dgrisby
   New endPointPublishHostname and endPointResolveNames parameters.
 
@@ -164,6 +167,7 @@ public:
     }
     inline AddrInfo* operator->() const { return pd_ai; }
     inline operator AddrInfo*() const   { return pd_ai; }
+    inline AddrInfo* in() const         { return pd_ai; }
   private:
     AddrInfo* pd_ai;
   };

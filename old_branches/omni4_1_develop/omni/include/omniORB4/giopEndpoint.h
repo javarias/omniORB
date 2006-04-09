@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.5  2005/09/05 17:12:20  dgrisby
+  Merge again. Mainly SSL transport changes.
+
   Revision 1.1.6.4  2005/03/02 12:10:50  dgrisby
   setSelectable / Peek fixes.
 
@@ -255,7 +258,7 @@ public:
   //   giop:fd:<file no.>
   //
   // Note 1: if <hostname> is empty, the IP address of one of the host
-  //         network interface will be used.
+  //         network interfaces will be used.
   //         if <port no.> is not present, a port number is chosen by
   //         the operation system.
   //
@@ -273,8 +276,21 @@ public:
   // return the transport identifier
 
   virtual const char* address() const = 0;
-  // return the string that describe this endpoint.
+  // return the string that describes this endpoint.
   // The string format is described in str2Endpoint().
+
+  virtual const orbServer::EndpointList* addresses() const = 0;
+  // return all the addresses that can be used to contact this
+  // endpoint. There can be more than one in the case of multiple IP
+  // addresses, for example.
+
+  virtual _CORBA_Boolean
+          publish(const orbServer::PublishSpecs& publish_specs,
+                  _CORBA_Boolean                 all_specs,
+                  _CORBA_Boolean                 all_eps,
+                  orbServer::EndpointList&       published_eps) = 0;
+  // Publish endpoints according to the publish_specs. Returns true if
+  // the publish specs were understood and handled, false otherwise.
 
   virtual _CORBA_Boolean Bind() = 0;
   // Establish a binding to the this address.
@@ -296,12 +312,16 @@ public:
   virtual void Shutdown() = 0;
   // Remove the binding.
 
-  giopEndpoint() {}
+  void           set_no_publish() { pd_no_publish = 1; }
+  _CORBA_Boolean no_publish()     { return pd_no_publish; }
+  
+  giopEndpoint() : pd_no_publish(0) {}
   virtual ~giopEndpoint() {}
 
 private:
   giopEndpoint(const giopEndpoint&);
   giopEndpoint& operator=(const giopEndpoint&);
+  _CORBA_Boolean pd_no_publish;
 };
 
 typedef omnivector<giopEndpoint*>  giopEndpointList;
@@ -368,7 +388,7 @@ public:
   // Returns the endpoint object for this endpoint if it is recognised by
   // this transport.
 
-  virtual giopAddress*   toAddress(const char* param) = 0;
+  virtual giopAddress* toAddress(const char* param) = 0;
   // Returns the address object for this address if it is recognised by
   // this transport.
 
@@ -392,6 +412,9 @@ public:
   // e.g. type == "giop:tcp" causes the tcp transport implementation to
   // returns the IP address of all the network interfaces of this host.
   // If <type> does not match returns 0.
+
+  static giopTransportImpl* str2Transport(const char* endpoint);
+  // Return the giopTransportImpl that matches the given endpoint URI.
 
   const char*        type;
   giopTransportImpl* next;
