@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.1.6.5  2006/04/09 19:52:31  dgrisby
+ More IPv6, endPointPublish parameter.
+
  Revision 1.1.6.4  2006/03/26 20:59:28  dgrisby
  Merge from omni4_0_develop.
 
@@ -260,13 +263,15 @@ public:
     ~Options();
 
     struct EndpointURI {
-      _CORBA_String_var  uri;
-      _CORBA_Boolean     no_publish;
-      _CORBA_Boolean     no_listen;
+      _CORBA_String_var uri;
+      _CORBA_Boolean    no_publish;
     };
     typedef omnivector<EndpointURI*> EndpointURIList;
     EndpointURIList   endpoints;
     _CORBA_String_var publish;
+
+    // Backwards-compatibility:
+    EndpointURIList   no_listen;
     CORBA::Boolean    publish_all;
   };
 
