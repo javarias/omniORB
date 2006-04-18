@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2005/09/05 14:31:08  dgrisby
+  SSL transport extensions from Jon Biggar; SSL command line options.
+
   Revision 1.1.2.10  2005/03/14 13:37:09  dgrisby
   Reorder includes for compilers with pre-compiled headers.
 
@@ -181,7 +184,7 @@ sslTransportImpl::addToIOR(const char* param) {
     // XXX, hardwared security options to:
     //       EstablishTrustInTarget (0x20) | EstablishTrustInClient (0x40)
     // In future, this will be expanded configurable options.
-    omniIOR::add_TAG_SSL_SEC_TRANS(address,0x60,0x60);
+    omniIOR::add_TAG_SSL_SEC_TRANS(address,0x66,0x66);
     return 1;
   }
   return 0;
