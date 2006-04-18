@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.5.2.8  2006/04/10 12:50:35  dgrisby
+ More endPointPublish; support for deprecated endPointNoListen,
+ endPointPublishAllIFs.
+
  Revision 1.5.2.7  2006/04/09 19:52:31  dgrisby
  More IPv6, endPointPublish parameter.
 
@@ -880,6 +884,11 @@ public:
 	strlen(omniObjAdapter::options.publish) == 0) {
 
       omniObjAdapter::options.publish = (const char*)"addr";
+    }
+
+    if (omni::strMatch(omniObjAdapter::options.publish, "fail-if-multiple")) {
+      // Backwards compatibility with 4.0.x.
+      omniObjAdapter::options.publish = (const char*)"fail-if-multiple,addr";
     }
 
     // Handle deprecated endPointPublishAllIFs and endPointNoListen
