@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.22.2.46  2005/11/20 15:33:03  dgrisby
+  New connection cleanup meant some connection state was not completely
+  deleted.
+
   Revision 1.22.2.45  2005/11/17 11:35:52  dgrisby
   In thread pool mode, bidir workers become wedged waiting for incoming
   calls, so they must be closed in giopServer::deactivate.
@@ -1040,6 +1044,7 @@ giopServer::notifyRzDone(giopRendezvouser* r, CORBA::Boolean exit_on_error)
 
   if (pd_state == INFLUX) {
     if (Link::is_empty(pd_rendezvousers)) {
+      omniORB::logs(25, "No remaining rendezvousers.");
       pd_cond.broadcast();
     }
   }
@@ -1125,8 +1130,9 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     pd_lock.lock();
 
     int workers;
+    CORBA::Boolean singleshot = w->singleshot();
 
-    if (w->singleshot())
+    if (singleshot)
       workers = --pd_n_temporary_workers;
     else
       workers = --pd_n_dedicated_workers;
@@ -1142,6 +1148,12 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     }
 
     if (pd_state == INFLUX) {
+      if (omniORB::trace(25)) {
+	omniORB::logger l;
+	l << "removeConnectionAndWorker for "
+	  << (singleshot ? "temporary" : "dedicated")
+	  << " worker. " << workers << " remaining.\n";
+      }
       if (workers == 0) {
 	pd_cond.broadcast();
       }
@@ -1203,8 +1215,11 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
       delete w;
       conn->pd_n_workers--;
       pd_n_temporary_workers--;
-      if (pd_state == INFLUX && pd_n_temporary_workers == 0)
-	pd_cond.broadcast();
+      if (pd_state == INFLUX) {
+	omniORB::logs(25, "Temporary additional worker finishing.");
+	if (pd_n_temporary_workers == 0)
+	  pd_cond.broadcast();
+      }
       return 0;
     }
   }
@@ -1365,6 +1380,7 @@ giopServer::notifyMrDone(giopMonitor* m, CORBA::Boolean exit_on_error)
   delete m;
   if (pd_state == INFLUX) {
     if (Link::is_empty(pd_bidir_monitors)) {
+      omniORB::logs(25, "No remaining bidir monitors.");
       pd_cond.broadcast();
     }
   }
