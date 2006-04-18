@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2001/10/17 16:47:08  dpg1
+  New minor codes
+
   Revision 1.1.2.11  2001/08/24 10:10:44  dpg1
   Fix braindead bound check bug in string unmarshalling.
 
@@ -248,19 +251,16 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
 
   if (mlen == 0) {
     if (orbParameters::strictIIOP) {
-      if (omniORB::trace(1)) {
-	omniORB::logger l;
-	l << "Error: received an invalid zero length string.\n";
-      }
+      omniORB::logs(1, "Error: received an invalid zero length string.");
       OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
 		    (CORBA::CompletionStatus)stream.completion());
     }
     else {
-      if (omniORB::trace(1)) {
-	omniORB::logger l;
-	l << "Warning: received an invalid zero length string."
-	  << " Substituted with a proper empty string.\n";
-      }
+      omniORB::logs(1, "Warning: received an invalid zero length string. "
+		    "Substituted with a proper empty string.");
+      us = omniCodeSetUtil::allocU(1);
+      us[0] = 0;
+      return 0;
     }
   }
 
@@ -350,19 +350,16 @@ omniCodeSet::TCS_C_8bit::fastUnmarshalString(cdrStream&          stream,
 
     if (mlen == 0) {
       if (orbParameters::strictIIOP) {
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l << "Error: received an invalid zero length string.\n";
-	}
+	omniORB::logs(1, "Error: received an invalid zero length string.");
 	OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
 		      (CORBA::CompletionStatus)stream.completion());
       }
       else {
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l << "Warning: received an invalid zero length string."
-	    << " Substituted with a proper empty string.\n";
-	}
+	omniORB::logs(1, "Warning: received an invalid zero length string. "
+		      "Substituted with a proper empty string.");
+	s = omniCodeSetUtil::allocC(1);
+	s[0] = '\0';
+	return 0;
       }
     }
 

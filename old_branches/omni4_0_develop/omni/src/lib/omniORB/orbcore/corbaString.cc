@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.10  2002/01/02 18:15:42  dpg1
+  Platform fixes/additions.
+
   Revision 1.17.2.9  2001/10/17 16:47:08  dpg1
   New minor codes
 
@@ -169,6 +172,10 @@ CORBA::string_dup(const char* p)
 char*
 cdrStream::unmarshalRawString() {
   _CORBA_ULong len; len <<= *this;
+
+  if (len == 0)
+    OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
+		  (CORBA::CompletionStatus)completion());
 
   if (!checkInputOverrun(1, len))
     OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
