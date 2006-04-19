@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.2  2002/08/21 06:23:16  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
   Revision 1.1.2.1  2001/08/06 15:47:45  sll
   Added support to use the unix domain socket as the local transport.
 
@@ -69,6 +72,7 @@ private:
   SocketHandle_t                   pd_new_conn_socket;
   giopConnection::notifyReadable_t pd_callback_func;
   void*                            pd_callback_cookie;
+  CORBA::Boolean                   pd_poked;
 
   unixEndpoint();
   unixEndpoint(const unixEndpoint&);

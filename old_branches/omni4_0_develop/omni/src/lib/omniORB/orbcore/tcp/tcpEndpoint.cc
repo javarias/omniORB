@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.26  2006/03/10 16:21:36  dgrisby
+  New limited endPointPublish parameter, currently only supports
+  fail-if-multiple.
+
   Revision 1.1.2.25  2004/10/18 11:46:47  dgrisby
   accept() error handling didn't work on MacOS X.
 
@@ -350,17 +354,14 @@ void
 tcpEndpoint::Poke() {
 
   tcpAddress* target = new tcpAddress(pd_address);
-  giopActiveConnection* conn;
-  if ((conn = target->Connect()) == 0) {
+
+  pd_poked = 1;
+  if (!target->Poke()) {
     if (omniORB::trace(5)) {
       omniORB::logger log;
       log << "Warning: fail to connect to myself ("
 	  << (const char*) pd_address_string << ") via tcp.\n";
     }
-    pd_poked = 1;
-  }
-  else {
-    delete conn;
   }
   delete target;
 }

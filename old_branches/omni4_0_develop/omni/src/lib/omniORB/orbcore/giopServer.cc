@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.22.2.47  2006/04/18 10:03:14  dgrisby
+  Additional shutdown logging.
+
   Revision 1.22.2.46  2005/11/20 15:33:03  dgrisby
   New connection cleanup meant some connection state was not completely
   deleted.
@@ -655,6 +658,7 @@ giopServer::deactivate()
     }
 
     omni_thread::get_time(&s, &ns, timeout);
+
     int go = 1;
     while (go && pd_rendezvousers.next != & pd_rendezvousers) {
       go = pd_cond.timedwait(s, ns);
@@ -1027,7 +1031,7 @@ giopServer::notifyRzDone(giopRendezvouser* r, CORBA::Boolean exit_on_error)
 
   delete r;
 
-  if (exit_on_error) {
+  if (exit_on_error && pd_state != INFLUX) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "Unrecoverable error for this endpoint: ";

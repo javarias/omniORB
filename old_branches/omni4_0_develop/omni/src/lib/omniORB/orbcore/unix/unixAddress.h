@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.1  2001/08/06 15:47:44  sll
+  Added support to use the unix domain socket as the local transport.
+
 */
 
 #ifndef __UNIXADDRESS_H__
@@ -45,7 +48,7 @@ class unixAddress : public giopAddress {
   giopAddress* duplicate() const;
   giopActiveConnection* Connect(unsigned long deadline_secs = 0,
 				unsigned long deadline_nanosecs = 0) const;
-
+  CORBA::Boolean Poke() const;
   ~unixAddress() {}
 
  private:

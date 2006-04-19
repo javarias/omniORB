@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.12  2004/10/18 11:46:47  dgrisby
+  accept() error handling didn't work on MacOS X.
+
   Revision 1.1.2.11  2004/10/17 22:27:24  dgrisby
   Handle errors in accept() properly. Thanks Kamaldeep Singh Khanuja and
   Jeremy Van Grinsven.
@@ -100,8 +103,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 unixEndpoint::unixEndpoint(const char* filename) :
   pd_socket(RC_INVALID_SOCKET),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
-  pd_callback_cookie(0) {
-
+  pd_callback_cookie(0),
+  pd_poked(0)
+{
   pd_filename = filename;
   pd_address_string = unixConnection::unToString(filename);
 }
@@ -179,17 +183,13 @@ void
 unixEndpoint::Poke() {
 
   unixAddress* target = new unixAddress(pd_filename);
-  giopActiveConnection* conn;
-  if ((conn = target->Connect()) == 0) {
-    if (omniORB::trace(1)) {
+  pd_poked = 1;
+  if (!target->Poke()) {
+    if (omniORB::trace(5)) {
       omniORB::logger log;
-      log << "Warning: Fail to connect to myself ("
-	  << (const char*) pd_address_string << ") via tcp!\n";
-      log << "Warning: This is ignored but this may cause the ORB shutdown to hang.\n";
+      log << "Warning: fail to connect to myself ("
+	  << (const char*) pd_address_string << ") via unix socket.\n";
     }
-  }
-  else {
-    delete conn;
   }
   delete target;
 }
@@ -219,6 +219,8 @@ unixEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
       return  new unixConnection(pd_new_conn_socket,this,pd_filename,0);
     }
+    if (pd_poked)
+      return 0;
   }
   return 0;
 }

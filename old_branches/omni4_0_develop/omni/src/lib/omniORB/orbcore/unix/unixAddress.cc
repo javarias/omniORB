@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2002/01/15 16:38:14  dpg1
+  On the road to autoconf. Dependencies refactored, configure.ac
+  written. No makefiles yet.
+
   Revision 1.1.2.3  2001/08/23 10:11:15  sll
   Use AF_UNIX if AF_LOCAL is not defined.
 
@@ -108,6 +112,31 @@ unixAddress::Connect(unsigned long, unsigned long) const {
     return 0;
   }
   return new unixActiveConnection(sock,pd_filename);
+}
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+unixAddress::Poke() const {
+
+  struct sockaddr_un raddr;
+  int  rc;
+  SocketHandle_t sock;
+
+  if ((sock = socket(AF_LOCAL,SOCK_STREAM,0)) == RC_INVALID_SOCKET) {
+    return 0;
+  }
+
+  memset((void*)&raddr,0,sizeof(raddr));
+  raddr.sun_family = AF_LOCAL;
+  strncpy(raddr.sun_path, pd_filename, sizeof(raddr.sun_path) - 1);
+
+  if (::connect(sock,(struct sockaddr *)&raddr,
+                     sizeof(raddr)) == RC_SOCKET_ERROR) {
+    CLOSESOCKET(sock);
+    return 0;
+  }
+  CLOSESOCKET(sock);
+  return 1;
 }
 
 

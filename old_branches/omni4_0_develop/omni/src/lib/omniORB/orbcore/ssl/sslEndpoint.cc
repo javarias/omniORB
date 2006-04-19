@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.25  2006/03/21 12:08:41  dgrisby
+  fail-if-multiple was ignored by the ssl transport.
+
   Revision 1.1.2.24  2005/04/10 22:17:18  dgrisby
   Fixes to connection management. Thanks Jon Biggar.
 
@@ -351,24 +354,14 @@ void
 sslEndpoint::Poke() {
 
   sslAddress* target = new sslAddress(pd_address,pd_ctx);
-  giopActiveConnection* conn;
 
-  unsigned long timeout_sec, timeout_nsec;
-  omni_thread::get_time(&timeout_sec, &timeout_nsec, 1);
-
-  if ((conn = target->Connect(timeout_sec, timeout_nsec)) == 0) {
+  pd_go = 0;
+  if (!target->Poke()) {
     if (omniORB::trace(5)) {
       omniORB::logger log;
-      log << "Warning: Fail to connect to myself (" 
-	  << (const char*) pd_address_string << ") via ssl!\n";
+      log << "Warning: fail to connect to myself (" 
+	  << (const char*) pd_address_string << ") via ssl.\n";
     }
-    pd_go = 0;
-    // No concurrency control on pd_go, but it should be safe to set
-    // it to zero here. The worst that can happen is AcceptAndMonitor
-    // goes one extra time around its loop before spotting the change.
-  }
-  else {
-    delete conn;
   }
   delete target;
 }
@@ -401,7 +394,7 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
       SSL_set_fd(ssl, pd_new_conn_socket);
       SSL_set_accept_state(ssl);
 
-      int go = 1;
+      int go = pd_go;
       while(go) {
 	int result = SSL_accept(ssl);
 	int code = SSL_get_error(ssl, result);
