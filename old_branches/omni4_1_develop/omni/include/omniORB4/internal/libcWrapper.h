@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.5  2006/04/09 19:52:31  dgrisby
+  More IPv6, endPointPublish parameter.
+
   Revision 1.1.6.4  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 
@@ -111,7 +114,7 @@ public:
   // True if node is an IPv6 address.
 
   static CORBA::Boolean isipaddr(const char* node);
-  // True is node is an IPv4 or v6 address.
+  // True if node is an IPv4 or v6 address.
 
   static AddrInfo* getAddrInfo(const char* node, CORBA::UShort port);
   // Return an AddrInfo object for the specified node and port. If
