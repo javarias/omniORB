@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.8.2.13  2005/09/19 14:23:56  dgrisby
+  New traceFile configuration parameter.
+
   Revision 1.8.2.12  2004/03/05 14:20:00  dgrisby
   Better logging of object keys.
 
@@ -607,7 +610,7 @@ static char* pp_poa_key(const CORBA::Octet* key, int keysize)
     s += strlen(s);
   }
   else {
-    while( idsize-- )  { *s++ = isalnum(*k) ? *k : '.'; k++; }
+    while( idsize-- )  { *s++ = isalnum((unsigned char)*k) ? *k : '.'; k++; }
   }
 
   *s++ = '>';
@@ -654,7 +657,7 @@ static char* pp_key(const CORBA::Octet* key, int keysize)
   const char* k = (const char*) key;
 
   for( int i = 0; i < keysize; i++, k++ ) {
-    *s++ = isalnum(*k) ? *k : '.';
+    *s++ = isalnum((unsigned char)*k) ? *k : '.';
   }
   *s++ = '>';
   *s++ = '\0';
