@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2006/04/10 12:50:35  dgrisby
+  More endPointPublish; support for deprecated endPointNoListen,
+  endPointPublishAllIFs.
+
   Revision 1.1.4.7  2006/04/09 19:52:31  dgrisby
   More IPv6, endPointPublish parameter.
 
@@ -437,7 +441,8 @@ sslEndpoint::Bind() {
     if (ifaddrs && !ifaddrs->empty()) {
       // TCP transport successfully gave us a list of interface addresses
 
-      const char* loopback = 0;
+      const char* loopback4 = 0;
+      const char* loopback6 = 0;
 
       omnivector<const char*>::const_iterator i;
       for (i = ifaddrs->begin(); i != ifaddrs->end(); i++) {
@@ -448,8 +453,12 @@ sslEndpoint::Bind() {
 	if (passive_host == 3 && !LibcWrapper::isip6addr(*i))
 	  continue;
 
-	if (omni::strMatch(*i, "127.0.0.1") || omni::strMatch(*i, "::1")) {
-	  loopback = *i;
+	if (omni::strMatch(*i, "127.0.0.1")) {
+	  loopback4 = *i;
+	  continue;
+	}
+	if (omni::strMatch(*i, "::1")) {
+	  loopback6 = *i;
 	  continue;
 	}
 	pd_addresses.length(addrs_len + 1);
@@ -463,14 +472,25 @@ sslEndpoint::Bind() {
       }
       if (!set_host) {
 	// No suitable addresses other than the loopback.
-	if (loopback) {
+	if (loopback4) {
 	  pd_addresses.length(addrs_len + 1);
 	  pd_addresses[addrs_len++] = omniURI::buildURI("giop:ssl:",
-							loopback,
+							loopback4,
 							pd_address.port);
-	  pd_address.host = CORBA::string_dup(loopback);
+	  pd_address.host = CORBA::string_dup(loopback4);
+	  set_host = 1;
 	}
-	else {
+	if (loopback6) {
+	  pd_addresses.length(addrs_len + 1);
+	  pd_addresses[addrs_len++] = omniURI::buildURI("giop:ssl:",
+							loopback6,
+							pd_address.port);
+	  if (!set_host) {
+	    pd_address.host = CORBA::string_dup(loopback6);
+	    set_host = 1;
+	  }
+	}
+	if (!set_host) {
 	  omniORB::logs(1, "No suitable address in the list of "
 			"interface addresses.");
 	  CLOSESOCKET(pd_socket);
@@ -510,15 +530,12 @@ sslEndpoint::Bind() {
     }
     if (omniORB::trace(1) &&
 	(omni::strMatch(pd_address.host, "127.0.0.1") ||
-	 omni::strMatch(pd_address.host, "::1") ||
-	 omni::strMatch(pd_address.host, "localhost") ||
-	 omni::strMatch(pd_address.host, "localhost.localdomain"))) {
+	 omni::strMatch(pd_address.host, "::1"))) {
 
       omniORB::logger log;
       log << "Warning: the local loop back interface (" << pd_address.host
-	  << ") is used as\n"
-	  << "this server's address. Only clients on this machine can talk\n"
-	  << "to this server.\n";
+	  << ")\n"
+	  << "is the only address available for this server.\n";
     }
   }
   else {
