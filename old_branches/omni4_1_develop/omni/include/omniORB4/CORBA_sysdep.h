@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.6  2006/01/10 12:24:04  dgrisby
+ Merge from omni4_0_develop pre 4.0.7 release.
+
  Revision 1.5.2.5  2005/11/17 17:03:27  dgrisby
  Merge from omni4_0_develop.
 
@@ -108,6 +111,15 @@
 #else
 #  define UnixArchitecture 1
 #endif
+
+//
+// Processor dependencies
+//
+
+#if defined(__arm__)
+#  define OMNI_MIXED_ENDIAN_DOUBLE
+#endif
+
 
 //
 // Macro to provide const_cast functionality on all platforms.

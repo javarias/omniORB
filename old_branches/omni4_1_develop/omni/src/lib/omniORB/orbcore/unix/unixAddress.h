@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:01:57  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/08/06 15:47:44  sll
   Added support to use the unix domain socket as the local transport.
 
@@ -48,7 +51,7 @@ class unixAddress : public giopAddress {
   giopAddress* duplicate() const;
   giopActiveConnection* Connect(unsigned long deadline_secs = 0,
 				unsigned long deadline_nanosecs = 0) const;
-
+  CORBA::Boolean Poke() const;
   ~unixAddress() {}
 
  private:

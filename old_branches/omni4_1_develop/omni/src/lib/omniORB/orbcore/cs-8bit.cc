@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/12/08 14:22:31  dgrisby
+  Better string marshalling performance; other minor optimisations.
+
   Revision 1.1.4.2  2003/05/20 16:53:16  dgrisby
   Valuetype marshalling support.
 
@@ -263,19 +266,16 @@ omniCodeSet::TCS_C_8bit::unmarshalString(cdrStream& stream,
 
   if (mlen == 0) {
     if (orbParameters::strictIIOP) {
-      if (omniORB::trace(1)) {
-	omniORB::logger l;
-	l << "Error: received an invalid zero length string.\n";
-      }
+      omniORB::logs(1, "Error: received an invalid zero length string.");
       OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
 		    (CORBA::CompletionStatus)stream.completion());
     }
     else {
-      if (omniORB::trace(1)) {
-	omniORB::logger l;
-	l << "Warning: received an invalid zero length string."
-	  << " Substituted with a proper empty string.\n";
-      }
+      omniORB::logs(1, "Warning: received an invalid zero length string. "
+		    "Substituted with a proper empty string.");
+      us = omniCodeSetUtil::allocU(1);
+      us[0] = 0;
+      return 0;
     }
   }
 
@@ -373,19 +373,16 @@ omniCodeSet::TCS_C_8bit::fastUnmarshalString(cdrStream&          stream,
 
     if (mlen == 0) {
       if (orbParameters::strictIIOP) {
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l << "Error: received an invalid zero length string.\n";
-	}
+	omniORB::logs(1, "Error: received an invalid zero length string.");
 	OMNIORB_THROW(MARSHAL, MARSHAL_StringNotEndWithNull, 
 		      (CORBA::CompletionStatus)stream.completion());
       }
       else {
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l << "Warning: received an invalid zero length string."
-	    << " Substituted with a proper empty string.\n";
-	}
+	omniORB::logs(1, "Warning: received an invalid zero length string. "
+		      "Substituted with a proper empty string.");
+	s = omniCodeSetUtil::allocC(1);
+	s[0] = '\0';
+	return 0;
       }
     }
 

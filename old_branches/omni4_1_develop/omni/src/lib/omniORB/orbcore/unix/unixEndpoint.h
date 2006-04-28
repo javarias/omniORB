@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/04/09 19:52:29  dgrisby
+  More IPv6, endPointPublish parameter.
+
   Revision 1.1.4.3  2005/01/25 16:44:15  dgrisby
   pd_socket member was not removed as it should have been.
 
@@ -90,6 +93,7 @@ private:
   SocketHandle_t                   pd_new_conn_socket;
   giopConnection::notifyReadable_t pd_callback_func;
   void*                            pd_callback_cookie;
+  CORBA::Boolean                   pd_poked;
 
   unixEndpoint();
   unixEndpoint(const unixEndpoint&);

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -115,6 +118,31 @@ unixAddress::Connect(unsigned long, unsigned long) const {
     return 0;
   }
   return new unixActiveConnection(sock,pd_filename);
+}
+
+/////////////////////////////////////////////////////////////////////////
+CORBA::Boolean
+unixAddress::Poke() const {
+
+  struct sockaddr_un raddr;
+  int  rc;
+  SocketHandle_t sock;
+
+  if ((sock = socket(AF_LOCAL,SOCK_STREAM,0)) == RC_INVALID_SOCKET) {
+    return 0;
+  }
+
+  memset((void*)&raddr,0,sizeof(raddr));
+  raddr.sun_family = AF_LOCAL;
+  strncpy(raddr.sun_path, pd_filename, sizeof(raddr.sun_path) - 1);
+
+  if (::connect(sock,(struct sockaddr *)&raddr,
+                     sizeof(raddr)) == RC_SOCKET_ERROR) {
+    CLOSESOCKET(sock);
+    return 0;
+  }
+  CLOSESOCKET(sock);
+  return 1;
 }
 
 

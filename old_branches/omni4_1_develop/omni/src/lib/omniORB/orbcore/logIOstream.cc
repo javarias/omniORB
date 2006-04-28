@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.11.2.4  2005/09/19 18:26:33  dgrisby
+  Merge from omni4_0_develop again.
+
   Revision 1.11.2.3  2005/04/14 00:03:59  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -587,7 +590,7 @@ static char* pp_poa_key(const CORBA::Octet* key, int keysize)
     s += strlen(s);
   }
   else {
-    while( idsize-- )  { *s++ = isalnum(*k) ? *k : '.'; k++; }
+    while( idsize-- )  { *s++ = isalnum((unsigned char)*k) ? *k : '.'; k++; }
   }
 
   *s++ = '>';
@@ -634,7 +637,7 @@ static char* pp_key(const CORBA::Octet* key, int keysize)
   const char* k = (const char*) key;
 
   for( int i = 0; i < keysize; i++, k++ ) {
-    *s++ = isalnum(*k) ? *k : '.';
+    *s++ = isalnum((unsigned char)*k) ? *k : '.';
   }
   *s++ = '>';
   *s++ = '\0';

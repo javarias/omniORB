@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.8  2005/11/09 12:22:17  dgrisby
+# Local interfaces support.
+#
 # Revision 1.20.2.7  2005/08/16 13:51:21  dgrisby
 # Problems with valuetype / abstract interface C++ mapping.
 #
@@ -215,6 +218,11 @@ def marshall(to, environment, type, decl, argname, to_where,
         if array_marshal_helpers.has_key(d_type.type().kind()):
             (alignment,elmsize) = array_marshal_helpers[d_type.type().kind()]
             if alignment != "omni::ALIGN_1":
+                is_double = d_type.type().kind() == idltype.tk_double
+                if is_double:
+                    to.out("""
+#ifndef OMNI_MIXED_ENDIAN_DOUBLE""")
+
                 to.out("""\
 if (! @where@.marshal_byte_swap()) {
   @where@.put_octet_array((CORBA::Octet*)(@slice_cast@@name@),@num@,@align@);
@@ -225,6 +233,11 @@ else """,
                        slice_cast = slice_cast,
                        num = str(n_elements * elmsize),
                        align = alignment)
+
+                if is_double:
+                    to.out("""\
+#endif""")
+
                 # Do not return here.
                 # let the code below to deal with the else block.
             else:
