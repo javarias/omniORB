@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.2.2.32  2005/12/30 17:40:22  dgrisby
+ Previously extern inline functions are now just inline or static
+ inline when inside classes.
+
  Revision 1.2.2.31  2005/12/28 21:13:51  dgrisby
  Intel compiler on Windows supports constants in headers. Thanks Tim
  Theisen.
@@ -119,6 +123,15 @@
 #else
 #  define UnixArchitecture 1
 #endif
+
+//
+// Processor dependencies
+//
+
+#if defined(__arm__)
+#  define OMNI_MIXED_ENDIAN_DOUBLE
+#endif
+
 
 //
 // Macro to provide const_cast functionality on all platforms.

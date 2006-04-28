@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.23  2005/07/22 16:57:17  dgrisby
+  Avoid strict aliasing issues in floating point marshalling, but remain
+  compatible with VMS's proxy floats.
+
   Revision 1.1.2.22  2004/10/17 20:14:28  dgrisby
   Updated support for OpenVMS. Many thanks to Bruce Visscher.
 
@@ -424,6 +428,13 @@ public:
       m.l[1] = Swap32(l.l[0]);
       l = m;
     }
+#ifdef OMNI_MIXED_ENDIAN_DOUBLE
+    {
+      _CORBA_ULong v = l.l[0];
+      l.l[0] = l.l[1];
+      l.l[1] = v;
+    }
+#endif
     CdrMarshal(s,LongArray2,omni::ALIGN_8,l);
   }
 
@@ -436,6 +447,13 @@ public:
       m.l[1] = Swap32(l.l[0]);
       l = m;
     }
+#ifdef OMNI_MIXED_ENDIAN_DOUBLE
+    {
+      _CORBA_ULong v = l.l[0];
+      l.l[0] = l.l[1];
+      l.l[1] = v;
+    }
+#endif
     convertToFloat(_CORBA_Double, LongArray2);
   }
 #else
@@ -787,6 +805,19 @@ public:
         p[i] = l;
       }
     }
+#ifdef OMNI_MIXED_ENDIAN_DOUBLE
+    {
+      struct LongArray2 {
+        _CORBA_ULong l[2];
+      };
+      LongArray2* p=(LongArray2*)a;
+      for( int i = 0; i < length; i++ ) {
+        _CORBA_ULong v = p[i].l[0];
+	p[i].l[0] = p[i].l[1];
+	p[i].l[1] = v;
+      }
+    }
+#endif
   }
 #endif
 
@@ -953,6 +984,13 @@ inline void operator>>= (_CORBA_Double a, cdrStream& s) {
     m.l[1] = Swap32(l.l[0]);
     l = m;
   }
+#ifdef OMNI_MIXED_ENDIAN_DOUBLE
+  {
+    _CORBA_ULong v = l.l[0];
+    l.l[0] = l.l[1];
+    l.l[1] = v;
+  }
+#endif
   CdrMarshal(s,LongArray2,omni::ALIGN_8,l);
 }
 
@@ -965,6 +1003,13 @@ inline void operator<<= (_CORBA_Double& a, cdrStream& s) {
     m.l[1] = Swap32(l.l[0]);
     l = m;
   }
+#ifdef OMNI_MIXED_ENDIAN_DOUBLE
+  {
+    _CORBA_ULong v = l.l[0];
+    l.l[0] = l.l[1];
+    l.l[1] = v;
+  }
+#endif
   convertToFloat(_CORBA_Double, LongArray2);
 }
 
