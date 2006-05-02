@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/13 21:10:03  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
   Revision 1.1.4.1  2003/03/23 21:01:58  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -120,6 +124,7 @@ void
 unixActiveCollection::deactivate() {
   omni_tracedmutex_lock sync(pd_lock);
   pd_shutdown = 1;
+  wakeUp();
 }
 
 /////////////////////////////////////////////////////////////////////////

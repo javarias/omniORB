@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2006/01/19 16:05:02  dgrisby
+  Windows build fixes.
+
   Revision 1.1.4.12  2005/11/19 17:33:28  dgrisby
   Previous fix for the race condition was stupidly commented out...
 
@@ -328,7 +331,7 @@ SocketCollection::SocketCollection()
     pd_pollfd_n(0),
     pd_pollfd_len(INITIAL_POLLFD_LEN),
     pd_collection(0),
-    pd_changed(0)
+    pd_changed(1)
 {
   pd_pollfds     = new struct pollfd[pd_pollfd_len];
   pd_pollsockets = new SocketHolder*[pd_pollfd_len];
@@ -545,6 +548,18 @@ SocketCollection::Select() {
   return 1;
 }
 
+void SocketCollection::wakeUp()
+{
+  omni_tracedmutex_lock sync(pd_collection_lock);
+
+  if (pd_pipe_write >= 0 && !pd_pipe_full) {
+    char data = '\0';
+    pd_pipe_full = 1;
+    write(pd_pipe_write, &data, 1);
+  }
+}
+
+
 void
 SocketHolder::setSelectable(int            now,
 			    CORBA::Boolean data_in_buffer,
@@ -757,7 +772,7 @@ SocketCollection::SocketCollection()
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
     pd_collection(0),
-    pd_changed(0)
+    pd_changed(1)
 {
   FD_ZERO(&pd_fd_set);
 }
@@ -907,6 +922,12 @@ SocketCollection::Select() {
   }
   return 1;
 }
+
+void SocketCollection::wakeUp()
+{
+  // Not possible on Win32
+}
+
 
 void
 SocketHolder::setSelectable(int            now,
@@ -1088,7 +1109,7 @@ SocketCollection::SocketCollection()
     pd_idle_count(idle_scans),
     pd_fd_set_n(0),
     pd_collection(0),
-    pd_changed(0)
+    pd_changed(1)
 {
   FD_ZERO(&pd_fd_set);
   initPipe(pd_pipe_read, pd_pipe_write);
@@ -1258,6 +1279,17 @@ SocketCollection::Select() {
     }
   }
   return 1;
+}
+
+void SocketCollection::wakeUp()
+{
+  omni_tracedmutex_lock sync(pd_collection_lock);
+
+  if (pd_pipe_write >= 0 && !pd_pipe_full) {
+    char data = '\0';
+    pd_pipe_full = 1;
+    write(pd_pipe_write, &data, 1);
+  }
 }
 
 void

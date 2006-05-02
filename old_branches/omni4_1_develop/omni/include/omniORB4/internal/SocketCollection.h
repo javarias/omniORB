@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.4.9  2005/11/18 18:25:57  dgrisby
   Race condition between connection deletion and Select.
 
@@ -385,6 +388,10 @@ public:
   // For each of the sockets that has been marked watchable and indeed
   // has become readable, call notifyReadable() with the socket as the
   // argument.
+
+  void wakeUp();
+  // On platforms where is is possible, immediately wake up a thread
+  // blocked in Select().
 
   void incrRefCount();
   void decrRefCount();
