@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/07/26 08:58:54  dgrisby
+  Another minor merge.
+
   Revision 1.1.4.2  2005/07/22 17:18:37  dgrisby
   Another merge from omni4_0_develop.
 
@@ -84,6 +87,9 @@
 #include <omniORB4/omniInterceptors.h>
 #include <omniORB4/omniAsyncInvoker.h>
 #include <interceptors.h>
+#include <orbParameters.h>
+#include <orbOptions.h>
+#include <initialiser.h>
 #include <stdlib.h>
 
 OMNI_USING_NAMESPACE(omni)
@@ -282,9 +288,33 @@ omniAsyncInvoker::~omniAsyncInvoker() {
     t->pd_in_idle_queue = 0;
     t->pd_cond->signal();
   }
+
   // Wait for threads to exit
-  while (pd_totalthreads) {
-    pd_cond->wait();
+  if (pd_totalthreads) {
+    unsigned long timeout, s, ns;
+    if (orbParameters::scanGranularity)
+      timeout = orbParameters::scanGranularity;
+    else
+      timeout = 5;
+    
+    omni_thread::get_time(&s, &ns, timeout);
+
+    if (omniORB::trace(25)) {
+      omniORB::logger l;
+      l << "Wait for " << pd_totalthreads << " invoker threads to finish.\n";
+    }
+    int go = 1;
+    while (go && pd_totalthreads) {
+      go = pd_cond->timedwait(s, ns);
+    }
+    if (omniORB::trace(25)) {
+      omniORB::logger l;
+      if (go)
+	l << "Invoker threads finished.\n";
+      else
+	l << "Timed out. " << pd_totalthreads
+	  << " invoker threads remaining.\n";
+    }
   }
   pd_lock->unlock();
 
@@ -444,3 +474,59 @@ omniTaskLink::is_empty(omniTaskLink& head) {
   return (head.next == &head);
 }
 
+
+OMNI_NAMESPACE_BEGIN(omni)
+
+/////////////////////////////////////////////////////////////////////////////
+//            Handlers for Configuration Options                           //
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+class idleThreadTimeoutHandler : public orbOptions::Handler {
+public:
+
+  idleThreadTimeoutHandler() : 
+    orbOptions::Handler("idleThreadTimeout",
+			"idleThreadTimeout = n > 0 sec",
+			1,
+			"-ORBidleThreadTimeout < n > 0 sec >") {}
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::ULong v;
+    if (!orbOptions::getULong(value,v) || v == 0) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_greater_than_zero_ulong_msg);
+    }
+    omniAsyncInvoker::idle_timeout = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVULong(key(),omniAsyncInvoker::idle_timeout,
+			   result);
+  }
+};
+
+static idleThreadTimeoutHandler idleThreadTimeoutHandler_;
+
+
+////////////////////////////////////////////////////////////////////////
+// Module initialiser
+////////////////////////////////////////////////////////////////////////
+
+class omni_invoker_initialiser : public omniInitialiser {
+public:
+  omni_invoker_initialiser() {
+    orbOptions::singleton().registerHandler(idleThreadTimeoutHandler_);
+  }
+
+  void attach() { }
+  void detach() { }
+};
+
+static omni_invoker_initialiser initialiser;
+
+omniInitialiser& omni_invoker_initialiser_ = initialiser;
+
+
+OMNI_NAMESPACE_END(omni)

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.36.2.5  2006/01/10 12:24:03  dgrisby
+  Merge from omni4_0_develop pre 4.0.7 release.
+
   Revision 1.36.2.4  2005/09/08 14:49:40  dgrisby
   Merge -ORBconfigFile argument.
 
@@ -429,6 +432,7 @@ extern omniInitialiser& omni_ObjRef_initialiser_;
 extern omniInitialiser& omni_orbOptions_initialiser_;
 extern omniInitialiser& omni_poa_initialiser_;
 extern omniInitialiser& omni_uri_initialiser_;
+extern omniInitialiser& omni_invoker_initialiser_;
 
 OMNI_NAMESPACE_END(omni)
 
@@ -648,6 +652,7 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
     omni_orbOptions_initialiser_.attach();
     omni_poa_initialiser_.attach();
     omni_uri_initialiser_.attach();
+    omni_invoker_initialiser_.attach();
     omni_hooked_initialiser_.attach();
 
     if (orbParameters::lcdMode) {
@@ -888,6 +893,7 @@ omniOrbORB::destroy()
 
     // Call detach method of the initialisers in reverse order.
     omni_hooked_initialiser_.detach();
+    omni_invoker_initialiser_.detach();
     omni_uri_initialiser_.detach();
     omni_poa_initialiser_.detach();
     omni_orbOptions_initialiser_.detach();
