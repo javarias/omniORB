@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.10  2001/11/27 14:37:25  dpg1
+# long double TC descriptor.
+#
 # Revision 1.14.2.9  2001/10/29 17:42:38  dpg1
 # Support forward-declared structs/unions, ORB::create_recursive_tc().
 #
@@ -471,15 +474,30 @@ def visitSequenceType(type):
 
     elementDesc = output.StringStream()
     prefix = config.state['Private Prefix']
+
     # djr and jnw's "Super-Hacky Optimisation"
     # (amended by dpg1 to be even more hacky, since char/wchar now don't work)
-    if isinstance(d_seqType.type(), idltype.Base) and \
-       not d_seqType.variable() and \
-       not d_seqType.type().kind() in [idltype.tk_char, idltype.tk_wchar] and \
-       not is_array:
+    # (amended again to cope with mixed endian doubles)
+
+    is_double     = d_seqType.type().kind() == idltype.tk_double
+    is_contiguous = (isinstance(d_seqType.type(), idltype.Base) and
+                     not d_seqType.variable() and
+                     not d_seqType.type().kind() in [idltype.tk_char,
+                                                     idltype.tk_wchar] and
+                     not is_array)
+
+    if is_double:
+        elementDesc.out("""
+#ifndef OMNI_MIXED_ENDIAN_DOUBLE""")
+        
+    if is_contiguous:
         elementDesc.out(template.sequence_elementDesc_contiguous,
                         sequence = sequence_desc)
-    else:
+    if is_double:
+        elementDesc.out("""
+#else""")
+    
+    if is_double or not is_contiguous:
         # <---
         required_symbols = [ prefix + "_buildDesc" + seqType_cname ]
         assertDefined(required_symbols)
@@ -488,6 +506,10 @@ def visitSequenceType(type):
                         private_prefix = prefix,
                         thing_cname = seqType_cname,
                         thing = thing)
+
+    if is_double:
+        elementDesc.out("""
+#endif""")
 
     # <---
     cname = memberType_cname
