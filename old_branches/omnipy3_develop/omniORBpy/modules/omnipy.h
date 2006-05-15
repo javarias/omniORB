@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.3.2.8  2006/01/19 17:28:44  dgrisby
+// Merge from omnipy2_develop.
+//
 // Revision 1.3.2.7  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //
@@ -245,7 +248,7 @@ public:
   inline void
   setExistingTwin(PyObject* obj, PyObject* ot, PyObject* name)
   {
-    PyDict_SetItem(((PyInstanceObject*)obj)->in_dict, name, ot);
+    PyObject_SetAttr(obj, name, ot);
     Py_DECREF(ot);
   }
 
@@ -331,7 +334,17 @@ public:
     return PyClass_IsSubclass(acls, c);
 #endif
   }
-  
+
+  // IsSubclass function for all Python versions
+  static inline
+  CORBA::Boolean isSubclass(PyObject* o, PyObject* c)
+  {
+#if PY_VERSION_HEX >= 0x02010000
+    return PyObject_IsSubclass(o,c);
+#else
+    return PyClass_IsSubclass(o, c);
+#endif
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   // Fixed point                                                            //

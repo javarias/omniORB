@@ -30,6 +30,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.4  2005/06/24 17:36:01  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.3  2005/04/25 18:27:41  dgrisby
 // Maintain forwarded location when narrowing forwarded references.
 //
@@ -201,7 +205,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
       PyObject* targetClass = PyDict_GetItemString(pyomniORBobjrefMap,
 						   (char*)targetRepoId);
 
-      if (!PyClass_IsSubclass(objrefClass, targetClass)) {
+      if (!omniPy::isSubclass(objrefClass, targetClass)) {
 	// Actual type is not derived from the target. Surprisingly
 	// enough, this is valid -- the repoId in an object reference
 	// is not necessarily that of the most derived type for the

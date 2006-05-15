@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.9  2005/12/08 14:28:05  dgrisby
+// Track ORB core changes.
+//
 // Revision 1.1.4.8  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //
@@ -2940,8 +2943,6 @@ unmarshalPyObjectStruct(cdrStream& stream, PyObject* d_o)
 { // class, repoId, struct name, name, descriptor, ...
 
   PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-  OMNIORB_ASSERT(PyClass_Check(strclass));
-
   int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
   PyObject* strtuple = PyTuple_New(cnt);
 
@@ -2967,9 +2968,7 @@ unmarshalPyObjectUnion(cdrStream& stream, PyObject* d_o)
   // default (label, name, descr) or None,
   // {label: (label, name, descr), ...}
 
-  PyObject* unclass = PyTuple_GET_ITEM(d_o, 1);
-  OMNIORB_ASSERT(PyClass_Check(unclass));
-
+  PyObject* unclass      = PyTuple_GET_ITEM(d_o, 1);
   PyObject* t_o          = PyTuple_GET_ITEM(d_o, 4);
   PyObject* discriminant = omniPy::unmarshalPyObject(stream, t_o);
   PyObject* value;
@@ -3389,8 +3388,6 @@ unmarshalPyObjectExcept(cdrStream& stream, PyObject* d_o)
   stream.skipInput(len);
 
   PyObject* strclass = PyTuple_GET_ITEM(d_o, 1);
-  OMNIORB_ASSERT(PyClass_Check(strclass));
-
   int       cnt      = (PyTuple_GET_SIZE(d_o) - 4) / 2;
   PyObject* strtuple = PyTuple_New(cnt);
 

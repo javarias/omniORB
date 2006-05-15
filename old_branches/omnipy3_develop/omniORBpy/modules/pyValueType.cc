@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.11  2006/02/28 12:42:00  dgrisby
+// New _NP_postUnmarshal hook on valuetypes.
+//
 // Revision 1.1.2.10  2005/06/29 17:31:42  dgrisby
 // Update valuetype examples; fix values in Anys.
 //
@@ -813,7 +816,7 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
     if (!factory || factory == Py_None) {
       if (desc) {
 	PyObject* vclass = PyTuple_GET_ITEM(desc, 1);
-	if (PyClass_IsSubclass(vclass, omniPy::pyomniORBUnknownValueBase)) {
+	if (omniPy::isSubclass(vclass, omniPy::pyomniORBUnknownValueBase)) {
 	  // Value is inside an Any, and has a TypeCode for which we
 	  // have no static knowledge. We create an instance of the
 	  // class created as the TypeCode was unmarshalled.

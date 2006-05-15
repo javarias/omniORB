@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.6  2005/07/22 17:41:08  dgrisby
+// Update from omnipy2_develop.
+//
 // Revision 1.1.4.5  2005/06/24 17:36:08  dgrisby
 // Support for receiving valuetypes inside Anys; relax requirement for
 // old style classes in a lot of places.
@@ -349,7 +352,6 @@ PyUserException::setPyExceptionState()
   OMNIORB_ASSERT(exc_);
 
   PyObject* excclass = PyTuple_GET_ITEM(desc_, 1);
-  OMNIORB_ASSERT(PyClass_Check(excclass));
   
   if (omniORB::trace(25)) {
     omniORB::logger l;
@@ -415,7 +417,6 @@ PyUserException::operator<<=(cdrStream& stream)
   PyUnlockingCdrStream pystream(stream);
 
   PyObject* excclass = PyTuple_GET_ITEM(desc_, 1);
-  OMNIORB_ASSERT(PyClass_Check(excclass));
 
   int       cnt      = (PyTuple_GET_SIZE(desc_) - 4) / 2;
   PyObject* exctuple = PyTuple_New(cnt);
