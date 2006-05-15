@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2006/05/02 13:07:13  dgrisby
+  Idle giopMonitor SocketCollections would not exit at shutdown.
+
   Revision 1.1.4.13  2006/01/19 16:05:02  dgrisby
   Windows build fixes.
 
@@ -388,7 +391,8 @@ SocketCollection::Select() {
   // process the socket list.
   SocketSetTimeOut(pd_abs_sec,pd_abs_nsec,timeout);
 
-  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
+  if ((timeout.tv_sec == 0 && timeout.tv_usec == 0) ||
+      timeout.tv_sec > scan_interval_sec) {
 
     // Time to scan the socket list...
 
@@ -799,7 +803,8 @@ SocketCollection::Select() {
   // process the socket list.
   SocketSetTimeOut(pd_abs_sec,pd_abs_nsec,timeout);
 
-  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
+  if ((timeout.tv_sec == 0 && timeout.tv_usec == 0) ||
+      timeout.tv_sec > scan_interval_sec) {
 
     // Time to scan the socket list...
 
@@ -1150,7 +1155,8 @@ SocketCollection::Select() {
   // process the socket list.
   SocketSetTimeOut(pd_abs_sec,pd_abs_nsec,timeout);
 
-  if (timeout.tv_sec == 0 && timeout.tv_usec == 0) {
+  if ((timeout.tv_sec == 0 && timeout.tv_usec == 0) ||
+      timeout.tv_sec > scan_interval_sec) {
 
     // Time to scan the socket list...
 
