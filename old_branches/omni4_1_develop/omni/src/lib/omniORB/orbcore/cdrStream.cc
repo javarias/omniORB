@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2006/01/10 12:24:03  dgrisby
+  Merge from omni4_0_develop pre 4.0.7 release.
+
   Revision 1.1.4.7  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -196,10 +199,9 @@ cdrStream::copy_to(cdrStream& s,int size,omni::alignment_t align) {
 }
 
 void
-cdrStream::chunkStreamDeclareArrayLength(omni::alignment_t, size_t)
+cdrStream::declareArrayLength(omni::alignment_t, size_t)
 {
-  int not_a_chunked_stream = 0;
-  OMNIORB_ASSERT(not_a_chunked_stream);
+  // Nothing to do.
 }
 
 void

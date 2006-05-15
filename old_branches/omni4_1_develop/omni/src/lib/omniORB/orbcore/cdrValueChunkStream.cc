@@ -29,6 +29,10 @@
 //
 
 // $Log$
+// Revision 1.1.2.8  2005/07/08 16:39:36  dgrisby
+// get_octet_array in cdrValueChunkStream failed if called just after the
+// end of a nested value.
+//
 // Revision 1.1.2.7  2005/04/25 17:42:25  dgrisby
 // Bug in marshalling nested chunks on a buffer boundary.
 //
@@ -191,7 +195,7 @@ cdrValueChunkStream::maybeStartNewChunk(omni::alignment_t align, size_t size)
 	<< size << " octets.\n";
     }
     OMNIORB_ASSERT(size);
-    chunkStreamDeclareArrayLength(align, size);
+    declareArrayLength(align, size);
   }
 }
 
@@ -205,6 +209,8 @@ cdrValueChunkStream::startOutputValueHeader(_CORBA_Long valueTag)
 
   if (pd_inChunk)
     endOutputChunk();
+  else
+    copyStateToActual();
 
   omniORB::logs(25, "Start output value header.");
 
@@ -242,6 +248,8 @@ cdrValueChunkStream::endOutputValue()
 
   if (pd_inChunk)
     endOutputChunk();
+  else
+    copyStateToActual();
 
   if (pd_justEnded) {
     // Ending a nested value
@@ -311,6 +319,7 @@ reserveOutputSpaceForPrimitiveType(omni::alignment_t align, size_t required)
 	OMNIORB_THROW(MARSHAL, MARSHAL_CannotReserveOutputSpace,
 		      (CORBA::CompletionStatus)completion());
       copyStateFromActual();
+
       p1 = omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
       p2 = p1 + pd_remaining;
       if (p2 > (omni::ptr_arith_t)pd_outb_end) {
@@ -520,7 +529,7 @@ put_octet_array(const _CORBA_Octet* b, int size, omni::alignment_t align)
 
 void
 cdrValueChunkStream::
-chunkStreamDeclareArrayLength(omni::alignment_t align, size_t size)
+declareArrayLength(omni::alignment_t align, size_t size)
 {
   if (pd_inHeader)
     return;
@@ -547,7 +556,7 @@ chunkStreamDeclareArrayLength(omni::alignment_t align, size_t size)
     OMNIORB_ASSERT(start < end);
     *pd_lengthPtr = (CORBA::Long)(end - start);
 
-    // Number of octets remainig is the number we required, minus the
+    // Number of octets remaining is the number we required, minus the
     // number we can fit into the current buffer with the required
     // alignment.
     omni::ptr_arith_t mask = ~((ptr_arith_t)align - 1);

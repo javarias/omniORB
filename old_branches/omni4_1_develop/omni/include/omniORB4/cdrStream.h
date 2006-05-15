@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.10  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -755,10 +758,6 @@ protected:
   _CORBA_Boolean pd_chunked;
   // True if this is a chunked value stream.
 
-  virtual void chunkStreamDeclareArrayLength(omni::alignment_t align,
-					     size_t size);
-  // Only implemented in chunked streams. See declareArrayLength() below.
-
 public:
 
   // Access functions to the char and wchar code set convertors
@@ -781,20 +780,7 @@ public:
     }
   }
 
-  inline void declareArrayLength(omni::alignment_t align,
-				 size_t size)
-  {
-    if (pd_chunked)
-      chunkStreamDeclareArrayLength(align, size);
-  }
-  // The GIOP spec requires that arrays of primitive types, strings
-  // and wstrings are not split across valuetype chunk boundaries.
-  // This function is used to pre-declare the number of octets in an
-  // array, for use in cases where the array contents are marshalled
-  // in pieces. If the array contents are marshalled in one go with
-  // put_octet_array, even if preceded by a string/wstring length
-  // field, there is no need to call this function.
-
+  virtual void declareArrayLength(omni::alignment_t align, size_t size);
 
   inline void
   unmarshalArrayChar(_CORBA_Short* a, int length)
@@ -1491,8 +1477,7 @@ public:
 
   _CORBA_ULong completion();
 
-  virtual void chunkStreamDeclareArrayLength(omni::alignment_t align,
-					     size_t size);
+  virtual void declareArrayLength(omni::alignment_t align, size_t size);
 
   inline void copyStateFromActual()
   {
@@ -1523,8 +1508,8 @@ private:
   // Start a new chunk by doing the equivalent of endOutputChunk,
   // startOutputChunk, unless ending the chunk now would cause us to
   // output a zero length chunk. In that case, we use
-  // chunkStreamDeclareArrayLength to reserve space in the chunk for
-  // an element of the specified size.
+  // declareArrayLength to reserve space in the chunk for an element
+  // of the specified size.
 
   void startInputChunk();
   void endInputValue();
