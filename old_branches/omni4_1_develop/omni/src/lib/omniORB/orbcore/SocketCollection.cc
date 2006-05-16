@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2006/05/15 17:11:15  dgrisby
+  Limit select timeout in case time goes backwards.
+
   Revision 1.1.4.14  2006/05/02 13:07:13  dgrisby
   Idle giopMonitor SocketCollections would not exit at shutdown.
 
@@ -667,7 +670,7 @@ SocketHolder::Peek()
 	  pd_peek_cond =
 	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
-	if (s == ns == 0) {
+	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
 	  unsigned long rs, rns;
 	  rs  = SocketCollection::scan_interval_sec;
@@ -1015,7 +1018,7 @@ SocketHolder::Peek()
 	  pd_peek_cond =
 	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
-	if (s == ns == 0) {
+	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
 	  unsigned long rs, rns;
 	  rs  = SocketCollection::scan_interval_sec;
@@ -1393,7 +1396,7 @@ SocketHolder::Peek()
 	  pd_peek_cond =
 	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
-	if (s == ns == 0) {
+	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
 	  unsigned long rs, rns;
 	  rs  = SocketCollection::scan_interval_sec  / 2;
