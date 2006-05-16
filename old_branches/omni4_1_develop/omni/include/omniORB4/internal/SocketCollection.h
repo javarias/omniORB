@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2006/05/02 13:07:13  dgrisby
+  Idle giopMonitor SocketCollections would not exit at shutdown.
+
   Revision 1.1.4.10  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 
@@ -169,6 +172,10 @@
 
 #  include <sys/types.h>
 #  include <libcWrapper.h>
+
+#  if defined(OMNI_SUPPORT_IPV6)
+#    include <ws2tcpip.h>
+#  endif
 
 #  define RC_INADDR_NONE     INADDR_NONE
 #  define RC_INVALID_SOCKET  INVALID_SOCKET
