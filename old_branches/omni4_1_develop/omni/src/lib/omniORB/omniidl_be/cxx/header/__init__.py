@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.3  2005/01/06 23:10:01  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.17.2.2  2003/10/23 11:25:55  dgrisby
 # More valuetype support.
 #
@@ -235,9 +238,10 @@ def monolithic(stream, tree):
         # rather than taking suffix from the config.
         guardname = id.Name([filename]).guard() + "_hh"
 
-        cxx_include = filename + config.state['HH Suffix']
         if config.state['Keep Include Path']:
-            cxx_include = os.path.join(dirname, cxx_include)
+            filename = root
+
+        cxx_include = filename + config.state['HH Suffix']
 
         if config.state['Use Quotes']:
             cxx_include = "\"" + cxx_include + "\""
