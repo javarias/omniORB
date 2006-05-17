@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.14.2.7  2004/10/18 02:44:37  dgrisby
+# New -Wbdll_includes option.
+#
 # Revision 1.14.2.6  2003/01/22 12:10:55  dgrisby
 # Explicitly close files in C++ backend.
 #
@@ -228,9 +231,10 @@ def monolithic(stream, tree):
         # rather than taking suffix from the config.
         guardname = id.Name([filename]).guard() + "_hh"
 
-        cxx_include = filename + config.state['HH Suffix']
         if config.state['Keep Include Path']:
-            cxx_include = os.path.join(dirname, cxx_include)
+            filename = root
+
+        cxx_include = filename + config.state['HH Suffix']
 
         if config.state['Use Quotes']:
             cxx_include = "\"" + cxx_include + "\""
