@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2006/05/15 10:13:00  dgrisby
+  Data was overwritten when a chunk ended with an array; make
+  declareArrayLength() virtual.
+
   Revision 1.1.4.11  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -1186,8 +1190,9 @@ public:
 protected:
   _CORBA_Boolean pd_readonly_and_external_buffer;
   _CORBA_Boolean pd_clear_memory;
-  char  pd_inline_buffer[32];
   void* pd_bufp;
+  void* pd_bufp_8;
+  char  pd_inline_buffer[32];
 
 public:
   // The following implement the abstract functions defined in cdrStream

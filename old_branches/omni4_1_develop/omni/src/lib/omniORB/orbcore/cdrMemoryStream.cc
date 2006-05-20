@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/11/17 17:03:26  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.6.3  2005/01/06 23:10:12  dgrisby
   Big merge from omni4_0_develop.
 
@@ -95,6 +98,7 @@ cdrMemoryStream::cdrMemoryStream(CORBA::ULong initialBufsize,
   pd_readonly_and_external_buffer = 0;
   pd_clear_memory = clearMemory;
   pd_bufp     = pd_inline_buffer;
+  pd_bufp_8   = ensure_align_8(pd_bufp);
   pd_outb_end = (pd_inline_buffer + sizeof(pd_inline_buffer));
   rewindPtrs();
   if (initialBufsize > (CORBA::ULong)((omni::ptr_arith_t)pd_outb_end - 
@@ -214,40 +218,38 @@ cdrMemoryStream::reserveOutputSpace(omni::alignment_t align,size_t required)
     return 1;
 
   // Reach here only if we really need to expand the buffer
-  size_t datasize = bufSize();
+  size_t datasize = ((omni::ptr_arith_t)pd_outb_mkr -
+		     (omni::ptr_arith_t)pd_bufp_8);
 
+  // Grow the buffer exponentially, but not too fast
   newsize = datasize + required + (size_t) omni::ALIGN_8;
 
-  if( newsize < 1024 ) {
-    // Pick the closest 2^N bytes
-    size_t v = (1 << 9);  // start from 2 ^ 9 = 512
-    while (newsize < v) {
-      v = (v >> 1);
-    }
-    newsize = (v << 1);
-  }
-  else {
-    // Grow the buffer exponentially, but not too fast
-    newsize = newsize + datasize / 2;
-  }
+  if (newsize < 1024)
+    newsize += datasize;
+  else
+    newsize += datasize / 2;
 
-  void* oldbufp = pd_bufp;
-  pd_bufp = new char[newsize];
+  void* oldbufp   = pd_bufp;
+  void* oldbufp_8 = pd_bufp_8;
+
+  pd_bufp   = new char[newsize];
+  pd_bufp_8 = ensure_align_8(pd_bufp);
 
   if (pd_clear_memory) memset(pd_bufp,0,newsize);
 
   if (datasize)
-    memcpy(ensure_align_8(pd_bufp),ensure_align_8(oldbufp),datasize);
+    memcpy(pd_bufp_8,oldbufp_8,datasize);
+
   pd_outb_end = (void*)((omni::ptr_arith_t)pd_bufp + newsize);
-  pd_outb_mkr = (void*)((omni::ptr_arith_t)ensure_align_8(pd_bufp) +
+  pd_outb_mkr = (void*)((omni::ptr_arith_t)pd_bufp_8 +
 			((omni::ptr_arith_t)pd_outb_mkr -
-			 (omni::ptr_arith_t)ensure_align_8(oldbufp)));
-  pd_inb_mkr  = (void*)((omni::ptr_arith_t)ensure_align_8(pd_bufp) +
+			 (omni::ptr_arith_t)oldbufp_8));
+  pd_inb_mkr  = (void*)((omni::ptr_arith_t)pd_bufp_8 +
 			((omni::ptr_arith_t)pd_inb_mkr -
-			 (omni::ptr_arith_t)ensure_align_8(oldbufp)));
-  pd_inb_end  = (void*)((omni::ptr_arith_t)ensure_align_8(pd_bufp) +
+			 (omni::ptr_arith_t)oldbufp_8));
+  pd_inb_end  = (void*)((omni::ptr_arith_t)pd_bufp_8 +
 			((omni::ptr_arith_t)pd_inb_end -
-			 (omni::ptr_arith_t)ensure_align_8(oldbufp)));
+			 (omni::ptr_arith_t)oldbufp_8));
 
   if (oldbufp != pd_inline_buffer)
     delete [] (char*) oldbufp;
@@ -267,8 +269,7 @@ cdrMemoryStream::copy_to(cdrStream& s, int size, omni::alignment_t align) {
 void
 cdrMemoryStream::rewindInputPtr()
 {
-  pd_inb_mkr = (pd_readonly_and_external_buffer) ? 
-                   pd_bufp : ensure_align_8(pd_bufp);
+  pd_inb_mkr = pd_bufp_8;
   pd_inb_end = (pd_readonly_and_external_buffer) ? pd_inb_end : pd_outb_mkr;
 }
 
@@ -276,32 +277,25 @@ void
 cdrMemoryStream::rewindPtrs()
 {
   if (!pd_readonly_and_external_buffer) {
-    pd_outb_mkr = pd_inb_mkr = pd_inb_end = ensure_align_8(pd_bufp);
+    pd_outb_mkr = pd_inb_mkr = pd_inb_end = pd_bufp_8;
   }
   else {
     pd_outb_mkr = pd_outb_end = 0;
-    pd_inb_mkr = pd_bufp;
+    pd_inb_mkr  = pd_bufp;
   }
 }
   
 CORBA::ULong 
 cdrMemoryStream::bufSize() const
 {
-  if (!pd_readonly_and_external_buffer) {
-    return (CORBA::ULong)((omni::ptr_arith_t)pd_outb_mkr - 
-			  (omni::ptr_arith_t)ensure_align_8(pd_bufp));
-  }
-  else {
-    return (CORBA::ULong)((omni::ptr_arith_t)pd_inb_end - 
-			  (omni::ptr_arith_t)pd_bufp);
-  }
+  return (CORBA::ULong)((omni::ptr_arith_t)pd_outb_mkr - 
+			(omni::ptr_arith_t)pd_bufp_8);
 }
 
 void*
 cdrMemoryStream::bufPtr() const
 {
-  return (!pd_readonly_and_external_buffer) ? ensure_align_8(pd_bufp)
-                                            : pd_bufp;
+  return pd_bufp_8;
 }
 
 void
@@ -313,17 +307,13 @@ cdrMemoryStream::setByteSwapFlag(CORBA::Boolean littleendian)
 CORBA::ULong
 cdrMemoryStream::currentInputPtr() const
 {
-  void* begin = (pd_readonly_and_external_buffer) ? 
-                   pd_bufp : ensure_align_8(pd_bufp);
-  return ((omni::ptr_arith_t)pd_inb_mkr - (omni::ptr_arith_t)begin);
+  return ((omni::ptr_arith_t)pd_inb_mkr - (omni::ptr_arith_t)pd_bufp_8);
 }
 
 CORBA::ULong
 cdrMemoryStream::currentOutputPtr() const
 {
-  void* begin = (pd_readonly_and_external_buffer) ? 
-                   pd_bufp : ensure_align_8(pd_bufp);
-  return ((omni::ptr_arith_t)pd_outb_mkr - (omni::ptr_arith_t)begin);
+  return ((omni::ptr_arith_t)pd_outb_mkr - (omni::ptr_arith_t)pd_bufp_8);
 }
 
 cdrMemoryStream::cdrMemoryStream(void* databuffer)
@@ -334,6 +324,8 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer)
   pd_readonly_and_external_buffer = 1;
   pd_clear_memory = 0;
   pd_bufp = databuffer;
+  pd_bufp_8 = databuffer;
+
 #if (SIZEOF_LONG == SIZEOF_PTR)
   pd_inb_end = (void *) ULONG_MAX;
 #elif (SIZEOF_INT == SIZEOF_PTR)
@@ -354,7 +346,8 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer, size_t maxLen)
 
   pd_readonly_and_external_buffer = 1;
   pd_clear_memory = 0;
-  pd_bufp = databuffer;
+  pd_bufp   = databuffer;
+  pd_bufp_8 = databuffer;
   pd_inb_end = (void*)((omni::ptr_arith_t)pd_bufp + maxLen);
   rewindPtrs();
 }
@@ -376,6 +369,7 @@ cdrMemoryStream::cdrMemoryStream(const cdrMemoryStream& s,
     // assume that it will continue to exist for the lifetime of this
     // buffered stream, and just use the buffer directly.
     pd_bufp    = s.pd_bufp;
+    pd_bufp_8  = s.pd_bufp;
     pd_inb_end = s.pd_inb_end;
     rewindPtrs();
   }
@@ -383,13 +377,15 @@ cdrMemoryStream::cdrMemoryStream(const cdrMemoryStream& s,
     // Original MemoryStream is read/write.  We assume that the
     // original stream will exist at least as long as us, intact, so
     // that we can safely refer to its buffer directly.
-    pd_bufp = s.bufPtr();
+    pd_bufp   = s.bufPtr();
+    pd_bufp_8 = pd_bufp;
     pd_inb_end = (void*)((omni::ptr_arith_t)pd_bufp + s.bufSize());
     rewindPtrs();
   }
   else {
     // Copy the contents of the original stream
     pd_bufp     = pd_inline_buffer;
+    pd_bufp_8   = ensure_align_8(pd_inline_buffer);
     pd_outb_end = (pd_inline_buffer + sizeof(pd_inline_buffer));
     rewindPtrs();
     if (s.bufSize()) {
@@ -412,6 +408,7 @@ cdrMemoryStream::operator=(const cdrMemoryStream& s)
     if (pd_readonly_and_external_buffer) {
       pd_readonly_and_external_buffer = 0;
       pd_bufp     = pd_inline_buffer;
+      pd_bufp_8   = ensure_align_8(pd_inline_buffer);
       pd_outb_end = (pd_inline_buffer + sizeof(pd_inline_buffer));
     }
     rewindPtrs();
@@ -433,6 +430,7 @@ cdrMemoryStream::operator=(const cdrMemoryStream& s)
       }
     }
     pd_bufp     = s.pd_bufp;
+    pd_bufp_8   = s.pd_bufp;
     pd_inb_end  = s.pd_inb_end;
     rewindPtrs();
   }
@@ -471,6 +469,7 @@ cdrEncapsulationStream::cdrEncapsulationStream(const CORBA::Octet* databuffer,
       pd_readonly_and_external_buffer = 0;
       pd_clear_memory = 0;
       pd_bufp     = pd_inline_buffer;
+      pd_bufp_8   = ensure_align_8(pd_inline_buffer);
       pd_outb_end = (pd_inline_buffer + sizeof(pd_inline_buffer));
       rewindPtrs();
       put_octet_array((const CORBA::Char*)databuffer,bufsize);
@@ -525,7 +524,7 @@ cdrEncapsulationStream::getOctetStream(CORBA::Octet*& databuffer,
 		  (CORBA::CompletionStatus)completion());
 
 
-  void* begin = ensure_align_8(pd_bufp);
+  void* begin = pd_bufp_8;
   
   max = ((omni::ptr_arith_t) pd_outb_end - (omni::ptr_arith_t) begin);
   len = ((omni::ptr_arith_t) pd_outb_mkr - (omni::ptr_arith_t) begin);
