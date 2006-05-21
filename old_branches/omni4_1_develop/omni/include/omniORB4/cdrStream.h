@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2006/05/20 16:23:37  dgrisby
+  Minor cdrMemoryStream and TypeCode performance tweaks.
+
   Revision 1.1.4.12  2006/05/15 10:13:00  dgrisby
   Data was overwritten when a chunk ended with an array; make
   declareArrayLength() virtual.
@@ -759,9 +762,6 @@ protected:
   _OMNI_NS(ValueIndirectionTracker)* pd_valueTracker;
   // Object used to track offsets of indirections in valuetypes.
 
-  _CORBA_Boolean pd_chunked;
-  // True if this is a chunked value stream.
-
 public:
 
   // Access functions to the char and wchar code set convertors
@@ -1407,7 +1407,6 @@ public:
     pd_marshal_byte_swap   = pd_actual.pd_marshal_byte_swap;
     pd_tcs_c               = pd_actual.pd_tcs_c;
     pd_tcs_w               = pd_actual.pd_tcs_w;
-    pd_chunked             = 1;
 
     copyStateFromActual();
   }

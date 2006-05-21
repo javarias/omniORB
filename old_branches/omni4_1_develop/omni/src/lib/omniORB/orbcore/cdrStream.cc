@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2006/05/15 10:13:00  dgrisby
+  Data was overwritten when a chunk ended with an array; make
+  declareArrayLength() virtual.
+
   Revision 1.1.4.8  2006/01/10 12:24:03  dgrisby
   Merge from omni4_0_develop pre 4.0.7 release.
 
@@ -143,7 +147,7 @@ cdrStream::cdrStream() : pd_unmarshal_byte_swap(0), pd_marshal_byte_swap(0),
 			 pd_tcs_c(0), pd_tcs_w(0),
 			 pd_ncs_c(orbParameters::nativeCharCodeSet),
 			 pd_ncs_w(orbParameters::nativeWCharCodeSet),
-			 pd_valueTracker(0), pd_chunked(0)
+			 pd_valueTracker(0)
 {
 }
 
