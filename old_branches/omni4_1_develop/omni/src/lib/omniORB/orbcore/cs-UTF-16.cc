@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/01/19 16:05:02  dgrisby
+  Windows build fixes.
+
   Revision 1.1.4.3  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -301,9 +304,8 @@ TCS_W_UTF_16::marshalWString(cdrStream& stream,
   // Just to be different, wstring is marshalled without a terminating
   // null. Length is in octets.
   _CORBA_ULong mlen = (len+1) * 2;  // len + 1 for BOM
+  stream.declareArrayLength(omni::ALIGN_4, mlen+4);
   mlen >>= stream;
-
-  stream.declareArrayLength(omni::ALIGN_2, mlen);
 
   // Send a suitable BOM so that we can marshal with native endian,
   // even if the rest of the stream is byte-swapped.

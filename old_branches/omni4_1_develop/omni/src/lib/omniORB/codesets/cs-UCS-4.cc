@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/12/08 14:22:31  dgrisby
+  Better string marshalling performance; other minor optimisations.
+
   Revision 1.1.4.3  2005/01/06 23:09:43  dgrisby
   Big merge from omni4_0_develop.
 
@@ -334,13 +337,13 @@ TCS_W_UCS_4::marshalWString(cdrStream& stream,
   // Just to be different, wstring is marshalled without a terminating
   // null. Length is in octets.
   _CORBA_ULong mlen = len * 4;
+
+  stream.declareArrayLength(omni::ALIGN_4, mlen + 4);
   mlen >>= stream;
 
   _CORBA_ULong         tc;
   omniCodeSet::UniChar uc;
   
-  stream.declareArrayLength(omni::ALIGN_4, mlen);
-
   for (_CORBA_ULong i=0; i < len; i++) {
     uc = us[i];
 

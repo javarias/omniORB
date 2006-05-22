@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.3  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -228,12 +231,12 @@ omniCodeSet::TCS_C_8bit::marshalString(cdrStream& stream,
 		  (CORBA::CompletionStatus)stream.completion());
 
   len++;
+  stream.declareArrayLength(omni::ALIGN_4, len+4);
   len >>= stream;
 
   _CORBA_Char          c;
   omniCodeSet::UniChar uc;
 
-  stream.declareArrayLength(omni::ALIGN_1, len);
   for (_CORBA_ULong i=0; i<len; i++) {
     uc = us[i];
     c = pd_fromU[(uc & 0xff00) >> 8][uc & 0x00ff];
@@ -341,6 +344,7 @@ omniCodeSet::TCS_C_8bit::fastMarshalString(cdrStream&          stream,
 	OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, 
 		      (CORBA::CompletionStatus)stream.completion());
       len++;
+      stream.declareArrayLength(omni::ALIGN_4, len + 4);
       len >>= stream;
       stream.put_octet_array((const _CORBA_Octet*)s, len);
     }
