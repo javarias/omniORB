@@ -31,6 +31,9 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.3.2.9  2006/05/15 10:26:11  dgrisby
+// More relaxation of requirements for old-style classes, for Python 2.5.
+//
 // Revision 1.3.2.8  2006/01/19 17:28:44  dgrisby
 // Merge from omnipy2_develop.
 //
@@ -1016,6 +1019,23 @@ public:
     }
   private:
     PyThreadState* tstate_;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  // ValueTrackerClearer safely clears a ValueTracker                       //
+  ////////////////////////////////////////////////////////////////////////////
+
+  class ValueTrackerClearer {
+  public:
+    inline ValueTrackerClearer(cdrStream& s) : s_(s) {}
+    inline ~ValueTrackerClearer() {
+      if (s_.valueTracker()) {
+        InterpreterUnlocker u;
+        s_.clearValueTracker();
+      }
+    };
+  private:
+    cdrStream& s_;
   };
 
 

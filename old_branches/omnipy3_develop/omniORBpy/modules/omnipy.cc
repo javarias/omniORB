@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.13  2006/05/15 10:26:11  dgrisby
+// More relaxation of requirements for old-style classes, for Python 2.5.
+//
 // Revision 1.1.4.12  2006/01/19 17:28:44  dgrisby
 // Merge from omnipy2_develop.
 //
@@ -589,6 +592,8 @@ extern "C" {
       if (endian == -1) {
 	// Marshal into an encapsulation
 	cdrEncapsulationStream stream;
+        omniPy::ValueTrackerClearer vtc(stream);
+
 	omniPy::marshalPyObject(stream, desc, data);
 
 	return PyString_FromStringAndSize((char*)stream.bufPtr(),
@@ -597,6 +602,8 @@ extern "C" {
       else {
 	// Marshal into a raw buffer
 	cdrMemoryStream stream;
+        omniPy::ValueTrackerClearer vtc(stream);
+
 	if (endian != omni::myByteOrder)
 	  stream.setByteSwapFlag(endian);
 
@@ -642,6 +649,7 @@ extern "C" {
       if (endian == -1) {
 	// Encapsulation
 	cdrEncapsulationStream stream((CORBA::Octet*)encap, size);
+        omniPy::ValueTrackerClearer vtc(stream);
 	return do_cdrUnmarshal(stream, desc);
       }
       else {
@@ -650,6 +658,8 @@ extern "C" {
 	    omni::align_to((omni::ptr_arith_t)encap, omni::ALIGN_8)) {
 
 	  cdrMemoryStream stream((CORBA::Octet*)encap, size);
+          omniPy::ValueTrackerClearer vtc(stream);
+
 	  if (endian != omni::myByteOrder)
 	    stream.setByteSwapFlag(endian);
 
@@ -659,6 +669,8 @@ extern "C" {
 	  // Unfortunately, this is a common case, due to the way
 	  // Python string objects are laid out.
 	  cdrMemoryStream stream;
+          omniPy::ValueTrackerClearer vtc(stream);
+
 	  if (endian != omni::myByteOrder)
 	    stream.setByteSwapFlag(endian);
 
