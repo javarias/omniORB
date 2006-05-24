@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.7  2006/05/15 10:26:11  dgrisby
+// More relaxation of requirements for old-style classes, for Python 2.5.
+//
 // Revision 1.1.4.6  2005/06/29 17:31:43  dgrisby
 // Update valuetype examples; fix values in Anys.
 //
@@ -642,10 +645,10 @@ r_marshalTypeCode(cdrStream&           stream,
 	DescriptorOffsetMap edom(dom, tc_offset + 8);
 
 	// RepoId and name
-	t_o = PyTuple_GET_ITEM(d_o, 2); OMNIORB_ASSERT(PyString_Check(t_o));
+	t_o = PyTuple_GET_ITEM(d_o, 1); OMNIORB_ASSERT(PyString_Check(t_o));
 	omniPy::marshalRawPyString(encap, t_o);
 
-	t_o = PyTuple_GET_ITEM(d_o, 3); OMNIORB_ASSERT(PyString_Check(t_o));
+	t_o = PyTuple_GET_ITEM(d_o, 2); OMNIORB_ASSERT(PyString_Check(t_o));
 	omniPy::marshalRawPyString(encap, t_o);
 
 	// Send encapsulation
