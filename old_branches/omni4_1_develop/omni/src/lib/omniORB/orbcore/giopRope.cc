@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.5  2006/03/26 20:59:28  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.6.4  2005/11/17 17:03:26  dgrisby
   Merge from omni4_0_develop.
 
@@ -605,7 +608,8 @@ giopRope::selectRope(const giopAddressList& addrlist,
   omni_tracedmutex_lock sync(*omniTransportLock);
 
   // Check if we have to use a bidirectional connection.
-  if (BiDirServerRope::selectRope(addrlist,info,r)) {
+  if (orbParameters::acceptBiDirectionalGIOP &&
+      BiDirServerRope::selectRope(addrlist,info,r)) {
     loc = 0;
     return 1;
   }
