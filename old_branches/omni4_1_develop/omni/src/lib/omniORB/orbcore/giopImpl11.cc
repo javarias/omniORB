@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2005/12/08 14:22:31  dgrisby
+  Better string marshalling performance; other minor optimisations.
+
   Revision 1.1.6.3  2005/04/11 12:09:42  dgrisby
   Another merge.
 
@@ -1165,11 +1168,7 @@ giopImpl11::marshalRequestHeader(giopStream* g) {
   omniCallDescriptor& calldesc = *giop_c.calldescriptor();
   CORBA::Boolean response_expected = !calldesc.is_oneway();
 
-  omniInterceptors::clientSendRequest_T::info_T info(*g,
-				                     *(giop_c.ior()),
-						     calldesc.op(),
-						     !response_expected,
-						     response_expected);
+  omniInterceptors::clientSendRequest_T::info_T info(giop_c);
   omniInterceptorP::visit(info);
 
   // service context
