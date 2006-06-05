@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.2  2005/07/22 17:41:08  dgrisby
+// Update from omnipy2_develop.
+//
 // Revision 1.1.4.1  2005/01/07 00:22:32  dgrisby
 // Big merge from omnipy2_develop.
 //
@@ -213,10 +216,10 @@ pyClientSendRequestFn(omniInterceptors::clientSendRequest_T::info_T& info)
   omnipyThreadCache::lock _t;
 
   callInterceptorsAndSetContexts(clientSendRequestFns,
-				 info.opname, 0,
+				 info.giop_c.operation(),
+                                 0,
 				 info.service_contexts,
-				 (CORBA::CompletionStatus)
-				 info.giopstream.completion());
+				 CORBA::COMPLETED_NO);
 
   return 1;
 }
@@ -230,7 +233,7 @@ pyClientReceiveReplyFn(omniInterceptors::clientReceiveReply_T::info_T& info)
   omnipyThreadCache::lock _t;
 
   getContextsAndCallInterceptors(clientReceiveReplyFns,
-				 info.giop_c.calldescriptor()->op(),
+				 info.giop_c.operation(),
 				 info.service_contexts,
 				 (CORBA::CompletionStatus)
 				 info.giop_c.completion());
