@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.4.2.2  2003/11/06 11:56:55  dgrisby
+ Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
  Revision 1.4.2.1  2003/03/23 21:04:17  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -172,6 +175,9 @@ public:
   inline const char* op() const           { return pd_op;        }
   inline size_t op_len() const            { return pd_oplen;     }
   inline _CORBA_Boolean is_oneway() const { return pd_is_oneway; }
+
+  inline void set_oneway(_CORBA_Boolean o) { pd_is_oneway = o; }
+
   inline void doLocalCall(omniServant* servant) {
     pd_localCall(this, servant);
   }
