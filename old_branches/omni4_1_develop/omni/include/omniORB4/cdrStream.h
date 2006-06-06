@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2006/05/21 17:43:24  dgrisby
+  Remove obsolete pd_chunked flag.
+
   Revision 1.1.4.13  2006/05/20 16:23:37  dgrisby
   Minor cdrMemoryStream and TypeCode performance tweaks.
 
@@ -1133,14 +1136,6 @@ inline void operator<<= (_CORBA_LongDouble& a, cdrStream& s) {
  
 #endif
 
-#undef CdrMarshal
-#undef CdrUnMarshal
-#undef convertFromFloat
-#undef convertToFloat
-#undef Swap16
-#undef Swap32
-#undef Swap64
-
 class cdrMemoryStream : public cdrStream {
 public:
   cdrMemoryStream(_CORBA_ULong initialBufsize = 0,
@@ -1521,6 +1516,16 @@ private:
   _CORBA_Long peekChunkTag();
   // Retrieve a chunk tag from the stream without moving the pointers along.
 
+  inline void setLength(_CORBA_ULong len)
+  {
+    *pd_lengthPtr = pd_marshal_byte_swap ? Swap32(len) : len;
+  }
+
+  inline _CORBA_ULong getLength()
+  {
+    return pd_marshal_byte_swap ? Swap32(*pd_lengthPtr) : *pd_lengthPtr;
+  }
+
   cdrStream&     pd_actual;    // Stream being wrapped
   _CORBA_Long    pd_nestLevel; // The nesting level of chunks
   _CORBA_Long*   pd_lengthPtr; // Pointer to the chunk length field
@@ -1534,5 +1539,13 @@ private:
 			       // clean-up.
 };
 
+
+#undef CdrMarshal
+#undef CdrUnMarshal
+#undef convertFromFloat
+#undef convertToFloat
+#undef Swap16
+#undef Swap32
+#undef Swap64
 
 #endif /* __CDRSTREAM_H__ */

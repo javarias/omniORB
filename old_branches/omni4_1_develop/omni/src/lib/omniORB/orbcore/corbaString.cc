@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.19.2.4  2006/05/22 15:44:51  dgrisby
+  Make sure string length and body are never split across a chunk
+  boundary.
+
   Revision 1.19.2.3  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -201,6 +205,15 @@ cdrStream::unmarshalRawString() {
   return s;
 }
 
+#ifndef Swap32
+#define Swap32(l) ((((l) & 0xff000000) >> 24) | \
+		   (((l) & 0x00ff0000) >> 8)  | \
+		   (((l) & 0x0000ff00) << 8)  | \
+		   (((l) & 0x000000ff) << 24))
+#else
+#error "Swap32 has already been defined"
+#endif
+
 _CORBA_ULong
 cdrStream::marshalRawString(const char* s)
 {
@@ -241,7 +254,8 @@ cdrStream::marshalRawString(const char* s)
 
     len = (omni::ptr_arith_t)current - (omni::ptr_arith_t)pd_outb_mkr;
     pd_outb_mkr = (void*)current;
-    *lenp = len;
+
+    *lenp = pd_marshal_byte_swap ? Swap32(len) : len;
   }
   else {
     // Some of the string did not fit.
@@ -251,7 +265,8 @@ cdrStream::marshalRawString(const char* s)
 
     len += rest;
     if ((omni::ptr_arith_t)lenp < (omni::ptr_arith_t)pd_outb_end)
-      *lenp = len;
+      *lenp = pd_marshal_byte_swap ? Swap32(len) : len;
+
     put_octet_array((const _CORBA_Octet*)s, rest);
   }
   return len;

@@ -29,6 +29,10 @@
 //
 
 // $Log$
+// Revision 1.1.2.11  2006/05/22 15:44:51  dgrisby
+// Make sure string length and body are never split across a chunk
+// boundary.
+//
 // Revision 1.1.2.10  2006/05/21 17:45:11  dgrisby
 // get_octet_array could set chunk end pointer incorrectly.
 //
@@ -156,9 +160,10 @@ cdrValueChunkStream::endOutputChunk()
   omni::ptr_arith_t start = (omni::ptr_arith_t)pd_lengthPtr + 4;
   omni::ptr_arith_t end   = (omni::ptr_arith_t)pd_outb_mkr;
 
-  *pd_lengthPtr = (CORBA::Long)(end - start);
+  CORBA::ULong len = end - start;
+  OMNIORB_ASSERT(len > 0);
 
-  OMNIORB_ASSERT(*pd_lengthPtr > 0);
+  setLength(len);
 
   if (omniORB::trace(25)) {
     omniORB::logger l;
@@ -181,13 +186,13 @@ cdrValueChunkStream::maybeStartNewChunk(omni::alignment_t align, size_t size)
   omni::ptr_arith_t start = (omni::ptr_arith_t)pd_lengthPtr + 4;
   omni::ptr_arith_t end   = (omni::ptr_arith_t)pd_outb_mkr;
 
-  *pd_lengthPtr = (CORBA::Long)(end - start);
+  setLength(end - start);
 
   if (*pd_lengthPtr > 0) {
     // OK to end here
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "End writing value chunk. Length = " << *pd_lengthPtr << ".\n";
+      l << "End writing value chunk. Length = " << getLength() << ".\n";
     }
     pd_lengthPtr  = 0;
     pd_inChunk    = 0;
@@ -438,9 +443,9 @@ maybeReserveOutputSpace(omni::alignment_t align, size_t required)
   }
 
   omni::ptr_arith_t start = (omni::ptr_arith_t)pd_lengthPtr + 4;
-  *pd_lengthPtr = (CORBA::Long)(p2 - start);
-  pd_remaining  = required;
-  pd_outb_mkr   = pd_outb_end = (void*)p2;
+  setLength(p2 - start);
+  pd_remaining = required;
+  pd_outb_mkr  = pd_outb_end = (void*)p2;
 
   // The call to maybeReserveOutputSpace can either succeed, in which
   // case we set our pointers to allow the caller to fill the reserved
@@ -534,7 +539,7 @@ put_octet_array(const _CORBA_Octet* b, int size, omni::alignment_t align)
   // setting its length to include the octet array.
   p1 = (omni::ptr_arith_t)pd_lengthPtr + 4;
   OMNIORB_ASSERT(p1 < p2);
-  *pd_lengthPtr = (CORBA::Long)(p2 - p1);
+  setLength(p2 - p1);
 
   pd_lengthPtr = 0;
   pd_inChunk   = 0;
@@ -574,7 +579,7 @@ declareArrayLength(omni::alignment_t align, size_t size)
     pd_outb_mkr = (void*)cur;
     start = (omni::ptr_arith_t)pd_lengthPtr + 4;
     OMNIORB_ASSERT(start < end);
-    *pd_lengthPtr = (CORBA::Long)(end - start);
+    setLength(end - start);
 
     // Number of octets remaining is the number we required, minus the
     // number we can fit into the current buffer with the required
@@ -585,7 +590,7 @@ declareArrayLength(omni::alignment_t align, size_t size)
     if (omniORB::trace(25)) {
       omniORB::logger l;
       l << "End writing value chunk inside declareArrayLength. Length = "
-	<< *pd_lengthPtr << ", remaining = " << pd_remaining << ".\n";
+	<< getLength() << ", remaining = " << pd_remaining << ".\n";
     }
     pd_lengthPtr = 0;
     pd_inChunk   = 0;
