@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11.2.4  2004/07/04 23:53:38  dgrisby
+# More ValueType TypeCode and Any support.
+#
 # Revision 1.11.2.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #
@@ -184,7 +187,6 @@ def visitInterface(node):
     for d in node.declarations():
         d.accept(self)
 
-
     # Typecode and Any
     if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
@@ -242,6 +244,10 @@ def visitException(node):
 
 
 def visitValue(node):
+    # Nested declarations
+    for d in node.declarations():
+        d.accept(self)
+
     # Typecode and Any
     if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
@@ -253,6 +259,10 @@ def visitValueForward(node):
     pass
 
 def visitValueAbs(node):
+    # Nested declarations
+    for d in node.declarations():
+        d.accept(self)
+
     # Typecode and Any
     if config.state['Typecode']:
         fqname = id.Name(node.scopedName()).fullyQualify()
