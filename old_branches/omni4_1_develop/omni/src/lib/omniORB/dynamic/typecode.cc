@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.10  2006/05/20 16:23:36  dgrisby
+ * Minor cdrMemoryStream and TypeCode performance tweaks.
+ *
  * Revision 1.40.2.9  2005/11/09 12:22:18  dgrisby
  * Local interfaces support.
  *
@@ -6307,6 +6310,22 @@ CORBA::TypeCode_member::operator=(const CORBA::TypeCode_var& p)
   CORBA::release(_ptr);
   _ptr = CORBA::TypeCode::_duplicate(p.pd_ref);
   return *this;
+}
+
+CORBA::TypeCode_ptr&
+CORBA::TypeCode_member::out()
+{
+  CORBA::release(_ptr);
+  _ptr = CORBA::TypeCode::_nil();
+  return _ptr;
+}
+
+CORBA::TypeCode_ptr
+CORBA::TypeCode_member::_retn()
+{
+  CORBA::TypeCode_ptr tmp = _ptr;
+  _ptr = CORBA::TypeCode::_nil();
+  return tmp;
 }
 
 void

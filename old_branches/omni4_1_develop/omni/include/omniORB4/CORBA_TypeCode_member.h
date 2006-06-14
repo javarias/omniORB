@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:22  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/08/17 13:39:49  dpg1
   Split CORBA.h into separate bits.
 
@@ -57,6 +60,11 @@ public:
 
   inline TypeCode_ptr operator->() const { return _ptr; }
   inline operator TypeCode_ptr() const   { return _ptr; }
+
+  inline TypeCode_ptr  in() const { return _ptr; }
+  inline TypeCode_ptr& inout()    { return _ptr; }
+  TypeCode_ptr& out();
+  TypeCode_ptr _retn();
 
   TypeCode_ptr _ptr;
 
