@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.7  2006/01/18 19:23:17  dgrisby
+# Code generation problems with valuetype inheritance / typedefs.
+#
 # Revision 1.20.2.6  2004/10/13 17:58:26  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #
@@ -409,7 +412,7 @@ Functions:
     def accept(self, visitor): visitor.visitForward(self)
 
     def abstract(self): return self.__abstract
-    def local(self):    return self.__abstract
+    def local(self):    return self.__local
     def fullDecl(self): return self._fullDecl
 
 
