@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.2  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 
@@ -97,7 +100,7 @@ unixAddress::duplicate() const {
 
 /////////////////////////////////////////////////////////////////////////
 giopActiveConnection*
-unixAddress::Connect(unsigned long, unsigned long) const {
+unixAddress::Connect(unsigned long, unsigned long, CORBA::ULong) const {
 
 
   struct sockaddr_un raddr;

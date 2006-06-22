@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/04/09 19:52:31  dgrisby
+  More IPv6, endPointPublish parameter.
+
   Revision 1.1.6.2  2005/11/17 17:03:26  dgrisby
   Merge from omni4_0_develop.
 
@@ -154,8 +157,13 @@ private:
   CORBA::ULong                           pd_n_dedicated_workers;
 
   omnivector<giopStrand*>                pd_bidir_strands;
+  // Strands to start serving on activate().
+
   omnivector<giopActiveCollection*>      pd_bidir_collections;
+  // Collections to start monitoring on activate().
+
   Link                                   pd_bidir_monitors;
+  // Activated monitors.
 
   void activate();
   // Activate all endpoints in pd_endpoints. This involves instantiating a

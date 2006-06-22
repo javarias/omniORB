@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.2  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 
@@ -61,7 +64,8 @@ class sslAddress : public giopAddress {
   const char* address() const;
   giopAddress* duplicate() const;
   giopActiveConnection* Connect(unsigned long deadline_secs = 0,
-				unsigned long deadline_nanosecs = 0) const;
+				unsigned long deadline_nanosecs = 0,
+				CORBA::ULong  strand_flags = 0) const;
   CORBA::Boolean Poke() const;
   ~sslAddress() {}
 
