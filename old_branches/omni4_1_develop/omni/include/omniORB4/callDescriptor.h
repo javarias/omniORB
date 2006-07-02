@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.4.2.3  2006/06/05 11:27:01  dgrisby
+ Accessor method to change oneway-ness of a call descriptor.
+
  Revision 1.4.2.2  2003/11/06 11:56:55  dgrisby
  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -126,18 +129,13 @@ public:
       pd_contains_values(0),
       pd_first_address_used(0),
       pd_current_address(0),
-      pd_current(0),
-      pd_current_next(0),
       pd_objref(0),
       pd_poa(0),
       pd_localId(0),
       pd_deadline_secs(0),
       pd_deadline_nanosecs(0) {}
 
-  virtual ~omniCallDescriptor()
-  {
-    OMNIORB_ASSERT(!pd_current);
-  }
+  virtual ~omniCallDescriptor() {}
 
   //////////////////////////////////////////////////
   // Methods to implement call on the client side //
@@ -287,8 +285,6 @@ private:
   omniCallDescriptor(const omniCallDescriptor&);
   omniCallDescriptor& operator = (const omniCallDescriptor&);
   // Not implemented.
-
-  friend class omniCurrent;
 };
 
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.6  2005/11/17 17:03:26  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.6.5  2005/04/08 00:35:46  dgrisby
   Merging again.
 
@@ -298,7 +301,7 @@ GIOP_S::handleRequest() {
     }
 
     // Create a callHandle object
-    omniCallHandle call_handle(this);
+    omniCallHandle call_handle(this, pd_worker->selfThread());
 
     // Can we find the object in the local object table?
     if (keysize() < 0)

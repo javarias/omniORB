@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/05/02 13:08:26  dgrisby
+  Time out waiting for invoker threads to exit; allow configutation of
+  idle thread timeout.
+
   Revision 1.1.4.3  2005/07/26 08:58:54  dgrisby
   Another minor merge.
 
@@ -147,6 +151,8 @@ public:
 
   void real_run() {
 
+    omni_thread* self_thread = omni_thread::self();
+
     if (omniORB::trace(10)) {
       omni_tracedmutex_lock sync(*pd_pool->pd_lock);
       omniORB::logger l;
@@ -212,6 +218,7 @@ public:
 
       pd_pool->pd_lock->unlock();
       try {
+	pd_task->pd_selfThread = self_thread;
 	pd_task->execute();
       }
       catch(...) {

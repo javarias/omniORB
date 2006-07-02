@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.2  2005/07/22 17:18:40  dgrisby
+ Another merge from omni4_0_develop.
+
  Revision 1.1.4.1  2003/03/23 21:04:17  dgrisby
  Start of omniORB 4.1.x development branch.
 
@@ -64,7 +67,7 @@ class omniLocalIdentity;
 class omniCallHandle {
 public:
 
-  inline omniCallHandle(_OMNI_NS(IOP_S)* iop_s_)
+  inline omniCallHandle(_OMNI_NS(IOP_S)* iop_s_, omni_thread* self_thread)
     : pd_iop_s(iop_s_),
       pd_call_desc(0),
       pd_op(iop_s_->operation_name()),
@@ -72,6 +75,7 @@ public:
       pd_poa(0),
       pd_localId(0),
       pd_mainthread_mu(0),
+      pd_self_thread(self_thread),
       pd_try_direct(0)
   {}
 
@@ -84,6 +88,7 @@ public:
       pd_poa(0),
       pd_localId(0),
       pd_mainthread_mu(0),
+      pd_self_thread(0),
       pd_try_direct(try_direct_)
   {}
 
@@ -136,6 +141,7 @@ private:
   omniLocalIdentity*    pd_localId;
   omni_tracedmutex*     pd_mainthread_mu;
   omni_tracedcondition* pd_mainthread_cond;
+  omni_thread*          pd_self_thread;
   _CORBA_Boolean        pd_try_direct;
 
 private:

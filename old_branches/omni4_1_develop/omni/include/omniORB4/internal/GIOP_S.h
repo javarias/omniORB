@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/06/05 11:27:20  dgrisby
+  Comment tweak.
+
   Revision 1.1.6.2  2005/01/06 23:08:23  dgrisby
   Big merge from omni4_0_develop.
 
@@ -215,7 +218,8 @@ class GIOP_S : public IOP_S, public giopStream, public giopStreamList {
     ~terminateProcessing() {}
   };
 
-  void worker(giopWorker* w) { pd_worker = w; }
+  inline void worker(giopWorker* w) { pd_worker = w; }
+  inline giopWorker* worker() { return pd_worker; }
 
 private:
   IOP_S::State             pd_state;

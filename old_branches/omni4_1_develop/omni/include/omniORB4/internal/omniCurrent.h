@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:08:25  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:03:44  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -101,17 +104,9 @@ public:
   inline CORBA::Boolean timeout_absolute()    { return pd_timeout_absolute; }
 
   // Stack manipulation
-  inline void pushCallDescriptor(omniCallDescriptor* desc)
+  inline void setCallDescriptor(omniCallDescriptor* desc)
   {
-    desc->pd_current = this;
-    desc->pd_current_next = pd_callDescriptor;
     pd_callDescriptor = desc;
-  }
-
-  inline void popCallDescriptor()
-  {
-    pd_callDescriptor->pd_current = 0;
-    pd_callDescriptor = pd_callDescriptor->pd_current_next;
   }
 
   // Timeout setting

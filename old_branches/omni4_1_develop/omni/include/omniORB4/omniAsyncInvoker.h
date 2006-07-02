@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:04:15  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2002/11/08 17:31:51  dgrisby
   Another AIX patch.
 
@@ -108,6 +111,9 @@
 //   queue waiting for its turn to be executed.
 
 
+class omniAsyncWorker;
+
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 class omniTaskLink {
@@ -129,7 +135,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 class omniTask : public omniTaskLink {
- public:
+public:
 
   enum Category { AnyTime,
 		  ImmediateDispatch,
@@ -138,25 +144,29 @@ class omniTask : public omniTaskLink {
 
   virtual void execute() = 0;
 
-  omniTask(Category cat = AnyTime) : pd_category(cat) {}
+  inline omniTask(Category cat = AnyTime)
+    : pd_category(cat), pd_selfThread(0) {}
+
   virtual ~omniTask() {}
 
-  Category category() { return pd_category; }
-  void category(Category c) { pd_category = c; }
+  inline Category category() { return pd_category; }
+  inline void category(Category c) { pd_category = c; }
 
- private:
-  Category  pd_category;
+  inline omni_thread* selfThread() { return pd_selfThread; }
+  // The worker thread assigned to handle the task. Set by the worker.
+
+private:
+  Category     pd_category;
+  omni_thread* pd_selfThread;
 
   omniTask(const omniTask&);
   omniTask& operator=(const omniTask&);
+
+  friend class omniAsyncWorker;
 };
 
-class omniAsyncWorker;
-
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-
-class omniAsyncWorker;
 
 class omniAsyncInvoker {
  public:

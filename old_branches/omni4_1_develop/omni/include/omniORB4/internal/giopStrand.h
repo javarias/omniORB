@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.2  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.6.1  2003/03/23 21:03:46  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -101,14 +104,27 @@ public:
   giopStreamList* next;
   giopStreamList* prev;
 
-  giopStreamList() {
+  inline giopStreamList() {
     next = this;
     prev = this;
   }
 
-  void insert(giopStreamList& head);
-  void remove();
-  static CORBA::Boolean is_empty(giopStreamList& head);
+  inline void insert(giopStreamList& head) {
+    next = head.prev->next;
+    head.prev->next = this;
+    prev = head.prev;
+    head.prev = this;
+  }
+
+  inline void remove() {
+    prev->next = next;
+    next->prev = prev;
+    next = prev = this;
+  }
+
+  static inline CORBA::Boolean is_empty(giopStreamList& head) {
+    return (head.next == &head);
+  }
 
 private:
   giopStreamList(const giopStreamList&);

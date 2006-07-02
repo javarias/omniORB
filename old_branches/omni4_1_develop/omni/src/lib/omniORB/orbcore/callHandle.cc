@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.5  2006/01/10 12:24:03  dgrisby
+ Merge from omni4_0_develop pre 4.0.7 release.
+
  Revision 1.1.4.4  2005/07/22 17:18:37  dgrisby
  Another merge from omni4_0_develop.
 
@@ -146,7 +149,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
   else
     to_insert = &desc;
 
-  _OMNI_NS(poaCurrentStackInsert) insert(to_insert);
+  _OMNI_NS(poaCurrentStackInsert) insert(to_insert, pd_self_thread);
 
   if (pd_iop_s) { // Remote call
     pd_iop_s->ReceiveRequest(desc);
