@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.5  2006/04/09 19:52:29  dgrisby
   More IPv6, endPointPublish parameter.
 
@@ -284,6 +287,9 @@ unixEndpoint::Poke() {
       log << "Warning: fail to connect to myself ("
 	  << (const char*) pd_addresses[0] << ") via unix socket.\n";
     }
+    // Wake up the SocketCollection in case it is idle and blocked
+    // with no timeout.
+    wakeUp();
   }
   delete target;
 }
