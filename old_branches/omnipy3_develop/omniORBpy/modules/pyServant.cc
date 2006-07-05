@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.8  2005/11/09 12:33:32  dgrisby
+// Support POA LocalObjects.
+//
 // Revision 1.1.4.7  2005/07/22 17:41:07  dgrisby
 // Update from omnipy2_develop.
 //
@@ -354,30 +357,18 @@ Py_omniServant::_default_POA()
 	return PortableServer::POA::_duplicate(poa);
       }
       else {
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l <<
-	    "Python servant returned an invalid object from `_default_POA'.\n"
-	    "Returning Root POA\n";
-	}
+        omniORB::logs(1, "Python servant returned an invalid object from "
+                      "_default_POA.");
+        OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType,
+                      CORBA::COMPLETED_NO);
       }      
     }
     else {
-      if (omniORB::trace(1)) {
-	{
-	  omniORB::logger l;
-	  l <<
-	    "Exception while trying to call _default_POA(). "
-	    "Returning Root POA\n";
-	}
-	PyErr_Print();
-      }
-      else
-	PyErr_Clear();
+      // The call raised a Python exception
+      omniORB::logs(1, "Python servant raised an exception in _default_POA.");
+      omniPy::handlePythonException();
     }
   }
-  CORBA::Object_var obj = omniPy::orb->resolve_initial_references("RootPOA");
-  return PortableServer::POA::_narrow(obj);
 }
 
 CORBA::Boolean
