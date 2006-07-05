@@ -30,6 +30,10 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.2  2005/06/24 17:36:01  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //
@@ -140,10 +144,12 @@ extern "C" {
     OMNIORB_ASSERT(orb);
 
     CORBA::ORB::ObjectIdList_var ids;
-    {
+    try {
       omniPy::InterpreterUnlocker _u;
       ids = orb->list_initial_services();
     }
+    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
+
     PyObject* pyids = PyList_New(ids->length());
 
     for (CORBA::ULong i=0; i<ids->length(); i++) {
