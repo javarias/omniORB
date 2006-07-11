@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.10  2006/03/06 18:30:31  dgrisby
+# Missing module name in use of minor code.
+#
 # Revision 1.31.2.9  2006/02/28 12:41:59  dgrisby
 # New _NP_postUnmarshal hook on valuetypes.
 #
@@ -623,10 +626,20 @@ class ORB:
     def create_array_tc(self, length, element_type):
         return tcInternal.createArrayTC(length, element_type)
 
+    def create_value_tc(self, id, name, modifier, base, members):
+        return tcInternal.createValueTC(id, name, modifier, base, members)
+
+    def create_value_box_tc(self, id, name, boxed_type):
+        return tcInternal.createValueBoxTC(id, name, boxed_type)
+
     def create_recursive_tc(self, id):
         return tcInternal.createRecursiveTC(id)
 
-    # *** More tc operations here ***
+    def create_abstract_interface_tc(self, id, name):
+        return tcInternal.createAbstractInterfaceTC(id, name)
+
+    def create_local_interface_tc(self, id, name):
+        return tcInternal.createLocalInterfaceTC(id, name)
 
     # Context operation
     def get_default_context(self):
@@ -671,6 +684,8 @@ class ORB:
                    "create_exception_tc", "create_interface_tc",
                    "create_string_tc", "create_sequence_tc",
                    "create_array_tc", "create_recursive_tc",
+                   "create_value_tc", "create_value_box_tc",
+                   "create_abstract_interface_tc", "create_local_interface_tc",
                    "get_default_context", "register_value_factory",
                    "lookup_value_factory"]
 
