@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.13  2006/06/02 12:48:32  dgrisby
+  Small code cleanups.
+
   Revision 1.5.2.12  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -1070,8 +1073,9 @@ omni::createObjRef(const char* targetRepoId,
 	  {
 	    omni_optional_lock sync(*internalLock, locked, locked);
 
+	    // *** HERE
 	    omniIOR* new_ior = new omniIOR(ior->repositoryID(),
-					   id->key(), id->keysize());
+					   id->key(), id->keysize(), 0);
 
 	    new_objref = createObjRef(targetRepoId, new_ior, 1, 0);
 	  }
@@ -1088,7 +1092,8 @@ omni::createObjRef(const char* targetRepoId,
 omniObjRef*
 omni::createLocalObjRef(const char* mostDerivedRepoId,
 			const char* targetRepoId,
-			omniObjTableEntry* entry)
+			omniObjTableEntry* entry,
+			const omniIORHints& hints)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
   OMNIORB_ASSERT(targetRepoId);
@@ -1128,7 +1133,7 @@ omni::createLocalObjRef(const char* mostDerivedRepoId,
   }
   // Reach here if we have to create a new objref.
   omniIOR* ior = new omniIOR(mostDerivedRepoId,
-			     entry->key(), entry->keysize());
+			     entry->key(), entry->keysize(), hints);
 
   return createObjRef(targetRepoId,ior,1,entry);
 }
@@ -1136,7 +1141,8 @@ omni::createLocalObjRef(const char* mostDerivedRepoId,
 omniObjRef*
 omni::createLocalObjRef(const char* mostDerivedRepoId,
 			const char* targetRepoId,
-			const _CORBA_Octet* key, int keysize)
+			const _CORBA_Octet* key, int keysize,
+			const omniIORHints& hints)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(*internalLock, 1);
   OMNIORB_ASSERT(targetRepoId);
@@ -1149,9 +1155,9 @@ omni::createLocalObjRef(const char* mostDerivedRepoId,
 							hashv, 0);
 
   if (entry)
-    return createLocalObjRef(mostDerivedRepoId, targetRepoId, entry);
+    return createLocalObjRef(mostDerivedRepoId, targetRepoId, entry, hints);
 
-  omniIOR* ior = new omniIOR(mostDerivedRepoId, key, keysize);
+  omniIOR* ior = new omniIOR(mostDerivedRepoId, key, keysize, hints);
 
   return createObjRef(targetRepoId,ior,1,entry);
 }

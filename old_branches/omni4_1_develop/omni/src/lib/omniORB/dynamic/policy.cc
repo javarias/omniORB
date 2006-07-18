@@ -28,6 +28,9 @@
  
 /*
   $Log$
+  Revision 1.1.4.5  2005/07/22 17:18:38  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.1.4.4  2005/01/06 23:09:46  dgrisby
   Big merge from omni4_0_develop.
 
@@ -59,6 +62,8 @@
 */
 
 #include <omniORB4/CORBA.h>
+#include <omniORB4/omniInterceptors.h>
+#include <interceptors.h>
 #include <exceptiondefs.h>
 
 #ifdef HAS_pch
@@ -128,6 +133,15 @@ OMNI_USING_NAMESPACE(omni)
 CORBA::Policy_ptr
 CORBA::
 ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
+
+  // Try an interceptor
+  if (omniInterceptorP::createPolicy) {
+    CORBA::Policy_ptr policy = CORBA::Policy::_nil();
+    omniInterceptors::createPolicy_T::info_T info(t, value, policy);
+    omniInterceptorP::visit(info);
+    if (!CORBA::is_nil(policy))
+      return policy;
+  }
 
   switch (t) {
 

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:52  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.3  2001/08/15 10:26:09  dpg1
   New object table behaviour, correct POA semantics.
 
@@ -62,6 +65,16 @@
 
 #ifndef __OMNI_OBJECTADAPTER_H__
 #include <objectAdapter.h>
+#endif
+
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -114,6 +127,12 @@ public:
   virtual int   objectExists(const _CORBA_Octet* key, int keysize);
   virtual void  lastInvocationHasCompleted(omniLocalIdentity* id);
 
+  virtual void* _ptrToClass(int* cptr);
+  static inline omniOrbBOA* _downcast(omniObjAdapter* a) {
+    return a ? (omniOrbBOA*)a->_ptrToClass(&_classid) : 0;
+  }
+  static _core_attr int _classid;
+
   //////////////
   // Internal //
   //////////////
@@ -163,5 +182,7 @@ private:
 
 
 OMNI_NAMESPACE_END(omni)
+
+#undef _core_attr
 
 #endif  // __OMNIORB_BOA_H__

@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2005/11/09 12:22:18  dgrisby
+  Local interfaces support.
+
   Revision 1.4.2.1  2003/03/23 21:04:12  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -372,7 +375,8 @@ private:
 					_CORBA_Boolean,omniIdentity*);
 
   friend omniObjRef* omni::createLocalObjRef(const char*, const char*,
-					     omniObjTableEntry*);
+					     omniObjTableEntry*,
+					     const omniIORHints&);
 
   friend void omni::revertToOriginalProfile(omniObjRef*);
   friend void omni::locationForward(omniObjRef*,

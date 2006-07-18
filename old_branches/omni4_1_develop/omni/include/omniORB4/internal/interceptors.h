@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:03:46  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.3  2002/11/26 14:51:49  dgrisby
   Implement missing interceptors.
 
@@ -72,6 +75,7 @@ public:
   static _core_attr elmT* serverSendException;
   static _core_attr elmT* createIdentity;
   static _core_attr elmT* createORBServer;
+  static _core_attr elmT* createPolicy;
   static _core_attr elmT* createThread;
   static _core_attr elmT* assignUpcallThread;
 
@@ -92,6 +96,7 @@ public:
   VISIT_FUNCTION(serverSendException)
   VISIT_FUNCTION(createIdentity)
   VISIT_FUNCTION(createORBServer)
+  VISIT_FUNCTION(createPolicy)
 
 #undef VISIT_FUNCTION
 };

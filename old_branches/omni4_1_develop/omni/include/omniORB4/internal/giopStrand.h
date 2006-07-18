@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/07/02 22:52:05  dgrisby
+  Store self thread in task objects to avoid calls to self(), speeding
+  up Current. Other minor performance tweaks.
+
   Revision 1.1.6.2  2006/06/22 13:53:49  dgrisby
   Add flags to strand.
 
@@ -314,7 +318,13 @@ public:
 
   CORBA::Boolean      first_use;
   // only applies to active strand. TRUE(1) means this connection has
-  // not been used to carry an invocation before.
+  // not been used for any purpose before.
+  // This flag is set to 1 by ctor and reset to 0 by GIOP_C.
+
+  CORBA::Boolean      first_call;
+  // only applies to active strand. TRUE(1) means this connection has
+  // not yet been used to start a normal invocation. It may have been
+  // used for other purposes, e.g. a locate request.
   // This flag is set to 1 by ctor and reset to 0 by GIOP_C.
 
   CORBA::Boolean      orderly_closed;

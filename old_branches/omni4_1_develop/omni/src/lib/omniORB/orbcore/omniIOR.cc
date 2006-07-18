@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/01/06 23:10:36  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:02:11  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -112,7 +115,8 @@ omniIOR::omniIOR(char* repoId, IOP::TaggedProfile* iop, CORBA::ULong niops,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-omniIOR::omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize) :
+omniIOR::omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize,
+		 const omniIORHints& hints) :
   pd_iopProfiles(0),
   pd_addr_selected_profile_index(-1),
   pd_addr_mode(GIOP::KeyAddr), 
@@ -135,7 +139,7 @@ omniIOR::omniIOR(const char* repoId, const _CORBA_Octet* key, int keysize) :
 
   pd_iopProfiles = new IOP::TaggedProfileList();
   {
-    _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,0);
+    _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,hints,0);
     _OMNI_NS(omniInterceptorP)::visit(info);
   }
 
@@ -203,7 +207,8 @@ omniIOR::omniIOR(const char* repoId,
     }
   }
   if (callInterceptors != NoInterceptor) {
-    _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,
+    omniIORHints hints(0);
+    _OMNI_NS(omniInterceptors)::encodeIOR_T::info_T info(*this,iiop,hints,
 				(callInterceptors == DefaultInterceptors));
     _OMNI_NS(omniInterceptorP)::visit(info);
   }

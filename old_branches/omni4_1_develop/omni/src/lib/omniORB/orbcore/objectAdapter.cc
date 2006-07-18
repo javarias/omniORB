@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.9  2006/04/18 14:14:41  dgrisby
+ Compatibility with 4.0's fail-if-multiple option.
+
  Revision 1.5.2.8  2006/04/10 12:50:35  dgrisby
  More endPointPublish; support for deprecated endPointNoListen,
  endPointPublishAllIFs.
@@ -686,6 +689,16 @@ Options::~Options() {
     delete (*i);
   }
 }
+
+//////////////////////////////////////////////////////////////////////
+void*
+omniObjAdapter::
+_ptrToClass(int* cptr)
+{
+  if (cptr == &omniObjAdapter::_classid) return (omniObjAdapter*)this;
+  return 0;
+}
+int omniObjAdapter::_classid;
 
 
 /////////////////////////////////////////////////////////////////////////////

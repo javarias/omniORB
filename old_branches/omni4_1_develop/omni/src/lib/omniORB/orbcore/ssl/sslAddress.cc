@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.4.4  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -243,6 +246,9 @@ sslAddress::Connect(unsigned long deadline_secs,
       CLOSESOCKET(sock);
       return 0;
     }
+  }
+  else {
+    omniORB::logs(25, "New SSL connection without NO_DELAY option.");
   }
 
   if (SocketSetnonblocking(sock) == RC_INVALID_SOCKET) {

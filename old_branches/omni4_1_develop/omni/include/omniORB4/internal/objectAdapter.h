@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.1.6.6  2006/04/10 12:50:35  dgrisby
+ More endPointPublish; support for deprecated endPointNoListen,
+ endPointPublishAllIFs.
+
  Revision 1.1.6.5  2006/04/09 19:52:31  dgrisby
  More IPv6, endPointPublish parameter.
 
@@ -244,13 +248,16 @@ public:
   //  The caller must hold <omni::internalLock> on entry. It is
   //  released on exit.
 
+  virtual void* _ptrToClass(int* cptr);
+  static inline omniObjAdapter* _downcast(omniObjAdapter* a) {
+    return a ? (omniObjAdapter*)a->_ptrToClass(&_classid) : 0;
+  }
+  static _core_attr int _classid;
+
 
   ////////////////////
   // Incoming       //
   ////////////////////
-
-  static Rope* defaultLoopBack();
-  // Does not increment the reference count.
 
   static _CORBA_Boolean matchMyEndpoints(const char*);
   // Returns true(1) if the argument is the address of one of my endpoints

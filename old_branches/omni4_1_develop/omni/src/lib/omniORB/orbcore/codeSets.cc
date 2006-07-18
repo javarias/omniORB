@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/07/02 22:52:05  dgrisby
+  Store self thread in task objects to avoid calls to self(), speeding
+  up Current. Other minor performance tweaks.
+
   Revision 1.1.4.2  2006/06/05 11:25:30  dgrisby
   Move codeset initialisation code to a more logical source file.
 
@@ -684,6 +688,7 @@ setCodeSetServiceContext(omniInterceptors::clientSendRequest_T::info_T& info)
     if (!d.tcs_selected) {
       d.tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1,ver);
       d.tcs_w = 0;
+      d.tcs_selected = 1;
     }
     info.giop_c.TCS_C(d.tcs_c);
     info.giop_c.TCS_W(d.tcs_w);
@@ -716,13 +721,13 @@ setCodeSetServiceContext(omniInterceptors::clientSendRequest_T::info_T& info)
       d.tcs_c = tcs_c;
       d.tcs_w = tcs_w;
       d.version = ver;
-      d.tcs_selected = 1;
     }
     else {
       // The server has not supplied any code set information.
       // Use the default code set.
       tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1,ver);
     }
+    d.tcs_selected = 1;
   }
   info.giop_c.TCS_C(tcs_c);
   info.giop_c.TCS_W(tcs_w);

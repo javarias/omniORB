@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.7  2006/03/26 20:59:28  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.6.6  2005/04/14 00:03:59  dgrisby
   New traceInvocationReturns and traceTime options; remove logf function.
 
@@ -162,6 +165,7 @@ GIOP_C::InitialiseRequest() {
   impl()->outputMessageEnd(this);
   clearValueTracker();
   pd_state = IOP_C::WaitingForReply;
+  pd_strand->first_call = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////

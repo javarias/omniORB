@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.19.2.2  2005/01/06 23:10:12  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.19.2.1  2003/03/23 21:02:23  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -926,6 +929,18 @@ omniOrbBOA::synchronise_request()
 }
 
 //////////////////////////////////////////////////////////////////////
+void*
+omniOrbBOA::
+_ptrToClass(int* cptr)
+{
+  if (cptr == &omniObjAdapter::_classid) return (omniObjAdapter*)this;
+  if (cptr == &omniOrbBOA    ::_classid) return (omniOrbBOA*)    this;
+  return 0;
+}
+int omniOrbBOA::_classid;
+
+
+//////////////////////////////////////////////////////////////////////
 ////////////////////////// omniOrbBoaServant /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
@@ -1006,16 +1021,17 @@ omniOrbBoaServant::_this(const char* repoId)
   omni::internalLock->lock();
 
   omniObjRef* objref;
+  omniIORHints hints(0);
 
   if (_activations().size() > 0) {
     omniObjTableEntry* entry = _activations()[0];
     
-    objref = omni::createLocalObjRef(_mostDerivedRepoId(), repoId, entry);
+    objref = omni::createLocalObjRef(_mostDerivedRepoId(),repoId,entry,hints);
   }
   else {
     objref = omni::createLocalObjRef(_mostDerivedRepoId(), repoId,
 				     (const CORBA::Octet*)&pd_key,
-				     sizeof(omniOrbBoaKey));
+				     sizeof(omniOrbBoaKey), hints);
   }
   omni::internalLock->unlock();
 

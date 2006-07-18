@@ -29,6 +29,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.9  2005/11/09 12:22:18  dgrisby
+ Local interfaces support.
+
  Revision 1.5.2.8  2005/01/17 14:33:22  dgrisby
  Standard StringValue and WStringValue typedefs.
 
@@ -489,6 +492,7 @@ _omni_callSystemExceptionHandler(omniObjRef* obj, CORBA::ULong retries,
 
 extern void _omni_set_NameService(CORBA::Object_ptr);
 
+#include <omniORB4/omniIOR.h>
 #include <omniORB4/omniORB.h>
 #include <omniORB4/proxyFactory.h>
 #include <omniORB4/valueType.h>

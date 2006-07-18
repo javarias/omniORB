@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.2  2006/06/05 13:33:25  dgrisby
+  Inline declarations; operation() access function.
+
   Revision 1.1.6.1  2003/03/23 21:03:56  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -129,6 +132,8 @@ class GIOP_C : public IOP_C, public giopStream, public giopStreamList {
 
   inline CORBA::ULong  replyId() const { return pd_reply_id; }
   inline void replyId(CORBA::ULong v) { pd_reply_id = v; }
+
+  inline giopRope* rope() const { return pd_rope; }
 
 private:
   IOP_C::State            pd_state;
