@@ -31,6 +31,10 @@
 #define _omnipy_h_
 
 // $Log$
+// Revision 1.3.2.10  2006/05/24 18:33:04  dgrisby
+// Unlock interpreter lock before clearing value tracker in cdrMarshal /
+// cdrUnmarshal.
+//
 // Revision 1.3.2.9  2006/05/15 10:26:11  dgrisby
 // More relaxation of requirements for old-style classes, for Python 2.5.
 //
@@ -404,16 +408,18 @@ public:
 			   CORBA::Boolean     is_forwarded = 0);
 
   static
-  omniObjRef* createLocalObjRef(const char*        mostDerivedRepoId,
-				const char*        targetRepoId,
-				omniObjTableEntry* entry,
-				CORBA::Boolean     type_verified = 0);
+  omniObjRef* createLocalObjRef(const char*         mostDerivedRepoId,
+				const char*         targetRepoId,
+				omniObjTableEntry*  entry,
+				const omniIORHints& hints,
+				CORBA::Boolean      type_verified = 0);
 
   static
   omniObjRef* createLocalObjRef(const char* 	    mostDerivedRepoId,
 				const char* 	    targetRepoId,
 				const _CORBA_Octet* key,
 				int                 keysize,
+				const omniIORHints& hints,
 				CORBA::Boolean      type_verified = 0);
 
   // When a POA creates a reference to a Python servant, it does not
