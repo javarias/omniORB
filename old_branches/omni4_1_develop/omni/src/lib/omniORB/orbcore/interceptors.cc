@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:13  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.7  2002/11/26 14:51:52  dgrisby
   Implement missing interceptors.
 
@@ -76,6 +79,7 @@ omniInterceptorP::elmT* omniInterceptorP::serverSendReply        = 0;
 omniInterceptorP::elmT* omniInterceptorP::serverSendException    = 0;
 omniInterceptorP::elmT* omniInterceptorP::createIdentity         = 0;
 omniInterceptorP::elmT* omniInterceptorP::createORBServer        = 0;
+omniInterceptorP::elmT* omniInterceptorP::createPolicy           = 0;
 omniInterceptorP::elmT* omniInterceptorP::createThread           = 0;
 omniInterceptorP::elmT* omniInterceptorP::assignUpcallThread     = 0;
 
@@ -135,6 +139,7 @@ INTERCEPTOR_IMPLEMENTATION(serverSendReply)
 INTERCEPTOR_IMPLEMENTATION(serverSendException)
 INTERCEPTOR_IMPLEMENTATION(createIdentity)
 INTERCEPTOR_IMPLEMENTATION(createORBServer)
+INTERCEPTOR_IMPLEMENTATION(createPolicy)
 INTERCEPTOR_IMPLEMENTATION(createThread)
 INTERCEPTOR_IMPLEMENTATION(assignUpcallThread)
 
@@ -166,6 +171,7 @@ public:
       list_del(&omniInterceptorP::serverSendException);
       list_del(&omniInterceptorP::createIdentity);
       list_del(&omniInterceptorP::createORBServer);
+      list_del(&omniInterceptorP::createPolicy);
       list_del(&omniInterceptorP::createThread);
       list_del(&omniInterceptorP::assignUpcallThread);
     }
