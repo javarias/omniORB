@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.5.2.14  2006/07/18 16:21:21  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.5.2.13  2006/06/02 12:48:32  dgrisby
   Small code cleanups.
 
@@ -1070,12 +1074,12 @@ omni::createObjRef(const char* targetRepoId,
 	  omniORB::logs(15, "Re-write local persistent object reference.");
 
 	  omniObjRef* new_objref;
+	  omniIORHints hints(0);
 	  {
 	    omni_optional_lock sync(*internalLock, locked, locked);
 
-	    // *** HERE
 	    omniIOR* new_ior = new omniIOR(ior->repositoryID(),
-					   id->key(), id->keysize(), 0);
+					   id->key(), id->keysize(), hints);
 
 	    new_objref = createObjRef(targetRepoId, new_ior, 1, 0);
 	  }
