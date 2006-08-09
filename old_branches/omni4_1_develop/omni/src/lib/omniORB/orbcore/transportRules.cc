@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2006/04/24 14:26:00  dgrisby
+  Match IPv4-in-IPv6 addresses in IPv4 rules.
+
   Revision 1.1.4.4  2006/04/21 14:40:39  dgrisby
   IPv6 support in transport rules.
 
@@ -196,7 +199,15 @@ static char* extractHost(const char* endpoint) {
   if (p) {
     ++p;
     CORBA::UShort port;
-    return omniURI::extractHostPort(p, port, 0);
+    CORBA::String_var host = omniURI::extractHostPort(p, port, 0);
+
+    if (!LibcWrapper::isipaddr(host)) {
+      // Try to resolve name
+      LibcWrapper::AddrInfo_var ai(LibcWrapper::getAddrInfo(host,port));
+      if (ai.in())
+        return ai->asString();
+    }
+    return host._retn();
   }
   return 0;
 }
@@ -402,9 +413,29 @@ public:
 							 prefix);
     }
 #endif
-    else {
-      return 0;
+    // Try to resolve as a hostname
+    LibcWrapper::AddrInfo_var ai(LibcWrapper::getAddrInfo(address_mask,0));
+    if (ai.in()) {
+      CORBA::String_var addr = ai->asString();
+      if (omniORB::trace(20)) {
+        omniORB::logger log;
+        log << "Name '" << address_mask << "' in transport rule resolved to '"
+            << addr << "'.\n";
+      }
+      if ( parseIPv4AddressMask(addr,network,netmask) ) {
+        return (transportRules::Rule*) new builtinIPv4Rule(address_mask,
+                                                           network,
+                                                           netmask);
+      }
+#if defined(OMNI_SUPPORT_IPV6)
+      else if ( parseIPv6AddressMask(addr,ip6network,prefix) ) {
+        return (transportRules::Rule*) new builtinIPv6Rule(address_mask,
+                                                           ip6network,
+                                                           prefix);
+      }
+#endif
     }
+    return 0;
   }
 
   static CORBA::Boolean parseIPv4AddressMask(const char* address,
