@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.8  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.6.7  2006/03/26 20:59:28  dgrisby
   Merge from omni4_0_develop.
 
@@ -1277,7 +1280,7 @@ giopStream::dumpbuf(unsigned char* buf, size_t sz)
 
   const size_t dumplimit = 128;
   if (!omniORB::trace(40) && sz > dumplimit) {
-    l << dumplimit << " bytes out of " << sz << "\n";
+    l << (int)dumplimit << " bytes out of " << (int)sz << "\n";
     sz = dumplimit;
   }
   else {
