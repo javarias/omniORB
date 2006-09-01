@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.14  2005/09/29 11:31:51  dgrisby
+  For loop scoping problem.
+
   Revision 1.1.2.13  2005/09/19 14:23:56  dgrisby
   New traceFile configuration parameter.
 
@@ -177,8 +180,24 @@ orbOptions::addOption(const char* key,
   if (!pd_handlers_sorted) sortHandlers();
 
   orbOptions::Handler* handler = findHandler(key);
-  if (!handler) throw orbOptions::Unknown(key,value);
-  pd_values.push_back(new HandlerValuePair(handler,value,source));
+  if (handler) {
+    pd_values.push_back(new HandlerValuePair(handler,value,source));
+  }
+  else {
+    switch (source) {
+    case fromFile:
+    case fromEnvironment:
+    case fromRegistry:
+      if (omniORB::trace(2)) {
+	omniORB::logger log;
+	log << "Warning: ignoring unknown configuration option '"
+	    << key << "'.\n";
+      }
+      break;
+    default:
+      throw orbOptions::Unknown(key,value);
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
