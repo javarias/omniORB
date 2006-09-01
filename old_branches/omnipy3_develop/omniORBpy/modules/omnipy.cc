@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.15  2006/07/26 17:49:59  dgrisby
+// Support unchecked_narrow.
+//
 // Revision 1.1.4.14  2006/05/24 18:33:04  dgrisby
 // Unlock interpreter lock before clearing value tracker in cdrMarshal /
 // cdrUnmarshal.
@@ -327,7 +330,7 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"iis", &maj, &min, &mod))
       return 0;
 
-    if (maj > OMNIPY_MAJOR || maj == 0) {
+    if (maj > 3 || maj == 0) {
       if (omniORB::trace(1)) {
 	omniORB::logger l;
 	l << "omniORBpy: ***\n"
