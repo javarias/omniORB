@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2006/07/02 22:52:04  dgrisby
+  Store self thread in task objects to avoid calls to self(), speeding
+  up Current. Other minor performance tweaks.
+
   Revision 1.1.4.4  2006/05/02 13:08:26  dgrisby
   Time out waiting for invoker threads to exit; allow configutation of
   idle thread timeout.
@@ -283,6 +287,12 @@ omniAsyncInvoker::omniAsyncInvoker(unsigned int max) {
   pd_totalthreads = 0;
 }
 
+////////////////////////////////////////////////////////////////////////////
+static const char* plural(CORBA::ULong val)
+{
+  return val == 1 ? "" : "s";
+}
+
 ///////////////////////////////////////////////////////////////////////////
 omniAsyncInvoker::~omniAsyncInvoker() {
 
@@ -308,7 +318,8 @@ omniAsyncInvoker::~omniAsyncInvoker() {
 
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "Wait for " << pd_totalthreads << " invoker threads to finish.\n";
+      l << "Wait for " << pd_totalthreads << " invoker thread"
+	<< plural(pd_totalthreads) << " to finish.\n";
     }
     int go = 1;
     while (go && pd_totalthreads) {
