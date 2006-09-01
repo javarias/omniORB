@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.7  2006/06/05 11:28:04  dgrisby
+  Change clientSendRequest interceptor members to a single GIOP_C.
+
   Revision 1.1.6.6  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 
@@ -465,18 +468,21 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     CORBA::Boolean isfull = ((hdr[6] & 0x2) ? 0 : 1);
     if (mtype == GIOP::CancelRequest) isfull = 1;
     if (isfull) {
-      omni_tracedmutex_lock sync(*omniTransportLock);
-      matched_target->inputFullyBuffered(isfull);
+      {
+	omni_tracedmutex_lock sync(*omniTransportLock);
+	matched_target->inputFullyBuffered(isfull);
 
+	if (!matched_target_is_client)
+	  ((GIOP_S*)matched_target)->state(IOP_S::InputFullyBuffered);
+
+	giopStream::wakeUpRdLock(g->pd_strand);
+      }
       if (!matched_target_is_client) {
-
-	((GIOP_S*)matched_target)->state(IOP_S::InputFullyBuffered);
-	omniORB::logs(40, "Changed GIOP_S to InputFullyBuffered");
+	omniORB::logs(25, "Changed GIOP_S to InputFullyBuffered");
 	if (!g->pd_strand->isClient()) {
 	  g->pd_strand->server->notifyCallFullyBuffered(g->pd_strand->connection);
 	}
       }
-      giopStream::wakeUpRdLock(g->pd_strand);
     }
     return;
   }
