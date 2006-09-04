@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.14  2006/01/10 12:24:03  dgrisby
+# Merge from omni4_0_develop pre 4.0.7 release.
+#
 # Revision 1.8.2.13  2005/11/14 11:02:16  dgrisby
 # Local interface fixes.
 #
@@ -1551,11 +1554,10 @@ inline void operator >>=(@name@ _e, cdrStream& s) {
 inline void operator <<= (@name@& _e, cdrStream& s) {
   CORBA::ULong @private_prefix@_e;
   ::operator<<=(@private_prefix@_e,s);
-  switch (@private_prefix@_e) {
-    @cases@
+  if (@private_prefix@_e <= @last_item@) {
     _e = (@name@) @private_prefix@_e;
-    break;
-  default:
+  }
+  else {
     OMNIORB_THROW(MARSHAL,_OMNI_NS(MARSHAL_InvalidEnumValue),
                   (CORBA::CompletionStatus)s.completion());
   }
