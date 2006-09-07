@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.10  2006/06/21 14:46:26  dgrisby
+# Invalid generated code for structs nested inside valuetypes.
+#
 # Revision 1.33.2.9  2006/01/19 17:28:44  dgrisby
 # Merge from omnipy2_develop.
 #
@@ -241,11 +244,6 @@ from omniORB import CORBA, PortableServer
 _0_CORBA = CORBA
 
 _omnipy.checkVersion(3,0, __file__)
-
-try:
-    _omniORB_StructBase = omniORB.StructBase
-except AttributeError:
-    class _omniORB_StructBase: pass
 """
 
 file_end = """\
@@ -435,7 +433,7 @@ omniORB.typeMapping["@repoId@"] = _d_@sname@"""
 struct_class = """
 # struct @sname@
 _0_@scopedname@ = omniORB.newEmptyClass()
-class @sname@ (_omniORB_StructBase):
+class @sname@ (omniORB.StructBase):
     _NP_RepositoryId = "@repoId@"
 """
 
