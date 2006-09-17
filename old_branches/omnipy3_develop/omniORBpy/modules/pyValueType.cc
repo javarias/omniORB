@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.12  2006/05/15 10:26:11  dgrisby
+// More relaxation of requirements for old-style classes, for Python 2.5.
+//
 // Revision 1.1.2.11  2006/02/28 12:42:00  dgrisby
 // New _NP_postUnmarshal hook on valuetypes.
 //
@@ -373,7 +376,9 @@ marshalIndirection(cdrStream& stream, CORBA::Long pos)
   indirect >>= stream;
 
   CORBA::Long offset = pos - stream.currentOutputPtr();
-  OMNIORB_ASSERT(offset < -4);
+
+  OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
+  // In a counting stream, the currentOutputPtr is always zero.
 
   offset >>= stream;
 }
