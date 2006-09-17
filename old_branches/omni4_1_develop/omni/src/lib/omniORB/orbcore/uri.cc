@@ -29,6 +29,9 @@
 //      
 
 // $Log$
+// Revision 1.4.2.5  2006/03/25 18:54:03  dgrisby
+// Initial IPv6 support.
+//
 // Revision 1.4.2.4  2005/11/09 12:22:17  dgrisby
 // Local interfaces support.
 //
@@ -794,7 +797,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
     GIOP::Version ver;
     ver.major = 127; ver.minor = 127;
 
-    char  self[64];
+    char  self[OMNIORB_HOSTNAME_MAX];
     char* selfp = 0;
 
     ObjAddr* addr;
@@ -842,7 +845,9 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 	case ObjAddr::uiop:
 	  {
 	    if (!selfp) {
-	      if (gethostname(&self[0],64) == RC_SOCKET_ERROR) {
+	      if (gethostname(&self[0],
+			      OMNIORB_HOSTNAME_MAX) == RC_SOCKET_ERROR) {
+
 		omniORB::logs(1, "Cannot get the name of this host.");
 		self[0] = '\0';
 	      }
