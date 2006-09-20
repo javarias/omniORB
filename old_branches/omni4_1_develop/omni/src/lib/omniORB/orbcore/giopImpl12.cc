@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.9  2006/09/17 23:23:16  dgrisby
+  Wrong offsets with indirections spanning GIOP fragments.
+
   Revision 1.1.6.8  2006/09/01 14:11:52  dgrisby
   Avoid potential deadlock with call buffering; do not force worker
   creation when a request is fully buffered.
@@ -193,13 +196,14 @@ public:
   static void inputSkipWholeMessage(giopStream* g);
 
   static void inputTerminalProtocolError(giopStream* g,
-					 const char* file, int line);
+					 const char* file, int line,
+					 const char* message);
   // Helper function.  Call this function to indicate that a protocol
   // voilation was detected.  This function *always* raise a
   // giopStream::CommFailure exception.  Therefore the caller should not
   // expect this function to return.
 
-  static void inputRaiseCommFailure(giopStream* g);
+  static void inputRaiseCommFailure(giopStream* g, const char* message);
 
   static void outputNewMessage(giopStream* g);
 
@@ -251,7 +255,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     // We accept a CloseConnection message with any GIOP version.
     if ((GIOP::MsgType)hdr[7] != GIOP::CloseConnection) {
       giopStream_Buffer::deleteBuffer(b);
-      inputTerminalProtocolError(g, __FILE__, __LINE__);
+      inputTerminalProtocolError(g, __FILE__, __LINE__,
+				 "Invalid GIOP message version");
       // never reach here
     }
   }
@@ -272,7 +277,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
   }
   else if ( mtype == GIOP::MessageError) {
     giopStream_Buffer::deleteBuffer(b);
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Received a MessageError message");
     // never reach here
   }
   else if ( g->pd_strand->isClient() || g->pd_strand->biDir) {
@@ -285,12 +291,15 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     g->pd_strand->state(giopStrand::DYING);
     giopStream::CommFailure::_raise(minor,
 				    CORBA::COMPLETED_NO,
-				    retry,__FILE__,__LINE__);
+				    retry,__FILE__,__LINE__,
+				    "Orderly connection shutdown",
+				    g->pd_strand);
     // never reach here
   }
   else {
     giopStream_Buffer::deleteBuffer(b);
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Orderly connection shutdown on server");
     // never reach here
   }
 
@@ -306,7 +315,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
     if (!(g->pd_strand->isClient() || g->pd_strand->biDir)) {
       omniTransportLock->unlock();
       giopStream_Buffer::deleteBuffer(b);
-      inputTerminalProtocolError(g, __FILE__, __LINE__);
+      inputTerminalProtocolError(g, __FILE__, __LINE__,
+				 "Server received an invalid reply message");
       // never reach here
     }
     // falls through
@@ -327,7 +337,9 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	    // a reply has already been received!
 	    omniTransportLock->unlock();
 	    giopStream_Buffer::deleteBuffer(b);
-	    inputTerminalProtocolError(g, __FILE__, __LINE__);
+	    inputTerminalProtocolError(g, __FILE__, __LINE__,
+				       "Message claims to belong to a "
+				       "completed reply");
 	    // never reach here
 	  }
 
@@ -336,7 +348,9 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	      // already got the header
 	      omniTransportLock->unlock();
 	      giopStream_Buffer::deleteBuffer(b);
-	      inputTerminalProtocolError(g, __FILE__, __LINE__);
+	      inputTerminalProtocolError(g, __FILE__, __LINE__,
+					 "Reply header has already been "
+					 "received");
 	      // never reach here
 	    }
 	  }
@@ -344,7 +358,9 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	    // receive body before the header
 	    omniTransportLock->unlock();
 	    giopStream_Buffer::deleteBuffer(b);
-	    inputTerminalProtocolError(g, __FILE__, __LINE__);
+	    inputTerminalProtocolError(g, __FILE__, __LINE__,
+				       "Reply header not seen for message "
+				       "fragment");
 	    // never reach here
 	  }
 	  else {
@@ -370,7 +386,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	if (g->pd_strand->isClient() && !g->pd_strand->biDir) {
 	  omniTransportLock->unlock();
 	  giopStream_Buffer::deleteBuffer(b);
-	  inputTerminalProtocolError(g, __FILE__, __LINE__);
+	  inputTerminalProtocolError(g, __FILE__, __LINE__,
+				     "Request message received by client");
 	  // never reach here
 	}
 	// Make sure this request id has not been seen before
@@ -386,7 +403,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	    // already have a request with the same id.
 	    omniTransportLock->unlock();
 	    giopStream_Buffer::deleteBuffer(b);
-	    inputTerminalProtocolError(g, __FILE__, __LINE__);
+	    inputTerminalProtocolError(g, __FILE__, __LINE__,
+				       "Duplicate request id");
 	    // never reach here
 	  }
 	}
@@ -404,7 +422,8 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
       if (g->pd_strand->isClient() && !g->pd_strand->biDir) {
 	omniTransportLock->unlock();
 	giopStream_Buffer::deleteBuffer(b);
-	inputTerminalProtocolError(g, __FILE__, __LINE__);
+	inputTerminalProtocolError(g, __FILE__, __LINE__,
+				   "Client received a CancelRequest message");
 	// never reach here
       }
       // falls through
@@ -425,7 +444,9 @@ giopImpl12::inputQueueMessage(giopStream* g,giopStream_Buffer* b) {
 	      // a reply has already been received!
 	      omniTransportLock->unlock();
 	      giopStream_Buffer::deleteBuffer(b);
-	      inputTerminalProtocolError(g, __FILE__, __LINE__);
+	      inputTerminalProtocolError(g, __FILE__, __LINE__,
+					 "Message claims to belong to a "
+					 "completed request");
 	      // never reach here
 	    }
 
@@ -517,7 +538,8 @@ giopImpl12::inputNewServerMessage(giopStream* g) {
                                        g->pd_currentInputBuffer->start;
 
   if (hdr[4] != 1 || hdr[5] > 2 || hdr[7] > (unsigned char) GIOP::Fragment) {
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Invalid message version/type");
     // never reach here
   }
 
@@ -533,7 +555,8 @@ giopImpl12::inputNewServerMessage(giopStream* g) {
       break;
     }
     else {
-      inputTerminalProtocolError(g, __FILE__, __LINE__);
+      inputTerminalProtocolError(g, __FILE__, __LINE__,
+				 "Server received an invalid reply message");
       // Never reach here.
     }
   case GIOP::Fragment:
@@ -578,7 +601,8 @@ giopImpl12::inputNewFragment(giopStream* g) {
       throw GIOP_S::terminateProcessing();
     }
     else {
-      inputTerminalProtocolError(g, __FILE__, __LINE__);
+      inputTerminalProtocolError(g, __FILE__, __LINE__,
+				 "Client received a CancelRequest message");
       // never reach here.
     }
   }
@@ -587,7 +611,9 @@ giopImpl12::inputNewFragment(giopStream* g) {
 			  ? 0 : 1 );
 
   if (bswap != g->pd_unmarshal_byte_swap) {
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Fragment has different byte ordering to "
+			       "initial message");
     // never reach here
   }
 
@@ -644,7 +670,10 @@ giopImpl12::inputReplyBegin(giopStream* g,
 	giopStream::CommFailure::_raise(minor,
 					status,
 					retry,
-					__FILE__,__LINE__);
+					__FILE__,__LINE__,
+					"Connection closed while waiting for "
+					"a reply on a bidirectional "
+					"connection", g->pd_strand);
 	// never reaches here.
       }
     }
@@ -825,7 +854,8 @@ giopImpl12::inputMessageEnd(giopStream* g,CORBA::Boolean disgard) {
 	disgard = 1;
       }
       else {
-	inputTerminalProtocolError(g, __FILE__, __LINE__);
+	inputTerminalProtocolError(g, __FILE__, __LINE__,
+				   "Garbage left at end of input message");
 	// never reach here.
       }
     }
@@ -855,7 +885,9 @@ giopImpl12::unmarshalReplyHeader(giopStream* g) {
   if ((GIOP::MsgType)hdr[7] != GIOP::Reply) {
     // Unexpected reply. The other end is terribly confused. Drop the
     // connection and died.
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Incorrect message type when expecting a "
+			       "Reply");
     // Never reach here.
   }
 
@@ -879,7 +911,8 @@ giopImpl12::unmarshalReplyHeader(giopStream* g) {
   default:
     // Should never receive anything other that the above
     // Same treatment as wrong header
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Invalid status in Reply");
     // Never reach here.
   }
 
@@ -917,7 +950,9 @@ giopImpl12::unmarshalLocateReply(giopStream* g) {
   if ((GIOP::MsgType)hdr[7] != GIOP::LocateReply) {
     // Unexpected reply. The other end is terribly confused. Drop the
     // connection and died.
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Incorrect message type when expecting a "
+			       "LocateReply");
     // Never reach here.
   }
 
@@ -941,7 +976,8 @@ giopImpl12::unmarshalLocateReply(giopStream* g) {
   default:
     // Should never receive anything other that the above
     // Same treatment as wrong header
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Invalid status in LocateReply");
     // never reach here.
   }
   giop_c.locateStatus((GIOP::LocateStatusType)v);
@@ -975,10 +1011,11 @@ giopImpl12::unmarshalWildCardRequestHeader(giopStream* g) {
       }
       g->pd_strand->startIdleCounter();
     }
-    inputRaiseCommFailure(g);
+    inputRaiseCommFailure(g, "Orderly connection shutdown");
     break;
   default:
-    inputTerminalProtocolError(g, __FILE__, __LINE__);
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "Unknown GIOP message type");
     // Never reach here.
     break;
   }
@@ -1085,7 +1122,9 @@ giopImpl12::getInputData(giopStream* g,omni::alignment_t align,size_t sz) {
 
 	if (g->inputExpectAnotherFragment()) {
 	  // The incoming message is fragmented at the wrong boundary!!!
-	  inputTerminalProtocolError(g, __FILE__, __LINE__);
+	  inputTerminalProtocolError(g, __FILE__, __LINE__,
+				     "Message fragmented at incorrect "
+				     "boundary");
 	  // never reach here
 	}
 	// Very bad. Should never happen given our invariant.
@@ -1175,7 +1214,9 @@ giopImpl12::copyInputData(giopStream* g,void* b, size_t sz,
 
       if (g->inputExpectAnotherFragment()) {
 	// The incoming message is fragmented at the wrong boundary!!!
-	inputTerminalProtocolError(g, __FILE__, __LINE__);
+	inputTerminalProtocolError(g, __FILE__, __LINE__,
+				   "Message fragmented at incorrect "
+				   "boundary (bulk copy)");
 	// never reach here
       }
       // Very bad. Should never happen given our invariant.
@@ -1279,31 +1320,33 @@ giopImpl12::currentInputPtr(const giopStream* g) {
 ////////////////////////////////////////////////////////////////////////
 void
 giopImpl12::inputTerminalProtocolError(giopStream* g,
-				       const char* file, int line)
+				       const char* file, int line,
+				       const char* message)
 {
   // XXX We may choose to send a message error to the other end.
   if (omniORB::trace(1)) {
     omniORB::logger l;
     l << "From endpoint: " << g->pd_strand->connection->peeraddress()
       << ". Detected GIOP 1.2 protocol error in input message. "
-      << file << ":" << line
+      << omniExHelper::strip(file) << ":" << line
       << ". Connection is closed.\n";
   }
 
-  inputRaiseCommFailure(g);
+  inputRaiseCommFailure(g, message);
 }
 
 ////////////////////////////////////////////////////////////////////////
 void
-giopImpl12::inputRaiseCommFailure(giopStream* g) {
+giopImpl12::inputRaiseCommFailure(giopStream* g, const char* message) {
 
   CORBA::ULong minor;
   CORBA::Boolean retry;
   g->notifyCommFailure(0,minor,retry);
   g->pd_strand->state(giopStrand::DYING);
+
   giopStream::CommFailure::_raise(minor,
 				  (CORBA::CompletionStatus)g->completion(),
-				  0,__FILE__,__LINE__);
+				  0,__FILE__,__LINE__,message,g->pd_strand);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1627,7 +1670,10 @@ giopImpl12::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
     giop_s.notifyCommFailure(0,minor,retry);
     giopStream::CommFailure::_raise(minor,(CORBA::CompletionStatus)
 				    giop_s.completion(),
-				    retry,__FILE__,__LINE__);
+				    retry,__FILE__,__LINE__,
+				    "System Exception occurred while "
+				    "marshalling reply. Sending a "
+				    "MessageError", g->pd_strand);
   }
 
   int repoid_size;
