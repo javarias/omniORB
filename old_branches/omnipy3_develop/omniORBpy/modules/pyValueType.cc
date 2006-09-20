@@ -28,6 +28,9 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.13  2006/09/17 23:28:34  dgrisby
+// Invalid assertion with indirections in counting streams.
+//
 // Revision 1.1.2.12  2006/05/15 10:26:11  dgrisby
 // More relaxation of requirements for old-style classes, for Python 2.5.
 //
@@ -589,6 +592,8 @@ marshalPyObjectValueBox(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   pyOutputValueTracker* tracker = (pyOutputValueTracker*)stream.valueTracker();
   
   OMNIORB_ASSERT(tracker->valid());
+
+  stream.alignOutput(omni::ALIGN_4);
 
   CORBA::Long pos = tracker->addValue(a_o, stream.currentOutputPtr());
 
