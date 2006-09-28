@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2006/08/25 22:18:38  dgrisby
+  VxWorks support was broken by IPv6 changes.
+
   Revision 1.1.4.5  2006/03/25 19:18:28  dgrisby
   Only use interfaces that are up.
 
@@ -165,6 +168,8 @@ tcpTransportImpl::toEndpoint(const char* param) {
     const char* hostname = getenv(OMNIORB_USEHOSTNAME_VAR);
     if (hostname)
       address.host = hostname;
+
+    CORBA::string_free(host);
   }
   else {
     address.host = host;
