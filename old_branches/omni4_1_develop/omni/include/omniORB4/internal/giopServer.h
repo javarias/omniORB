@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.6.3  2006/04/09 19:52:31  dgrisby
   More IPv6, endPointPublish parameter.
 
@@ -87,8 +90,11 @@ class giopServer : public orbServer {
 public:
 
   static giopServer*& singleton();
+
+protected:
   ~giopServer();
 
+public:
   CORBA::Boolean instantiate(const char*    endpoint_uri,
 			     CORBA::Boolean no_publish,
 			     EndpointList&  listening_endpoints);
@@ -146,7 +152,8 @@ public:
   };
 
 private:
-  enum { IDLE, ACTIVE, ZOMBIE, INFLUX }  pd_state;
+  enum { IDLE, ACTIVE, ZOMBIE, INFLUX, TIMEDOUT }
+                                         pd_state;
   giopEndpointList                       pd_endpoints;
   Link                                   pd_rendezvousers;
   CORBA::ULong                           pd_nconnections;

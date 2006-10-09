@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.5.2.10  2006/07/18 16:21:21  dgrisby
+ New experimental connection management extension; ORB core support
+ for it.
+
  Revision 1.5.2.9  2006/04/18 14:14:41  dgrisby
  Compatibility with 4.0's fail-if-multiple option.
 
@@ -502,7 +506,6 @@ omniObjAdapter::shutdown()
     last = oa_servers.end();
     for ( ; j != last; j++ ) {
       (*j)->remove();
-      delete (*j);
     }
     oa_servers.erase(oa_servers.begin(),oa_servers.end());
   }
