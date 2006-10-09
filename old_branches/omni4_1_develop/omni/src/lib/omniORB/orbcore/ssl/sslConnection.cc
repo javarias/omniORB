@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.4.7  2005/09/05 17:12:20  dgrisby
   Merge again. Mainly SSL transport changes.
 
@@ -342,10 +345,10 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
 			     SocketCollection* belong_to) : 
   SocketHolder(sock), pd_ssl(ssl) {
 
-  SOCKADDR_STORAGE addr;
+  OMNI_SOCKADDR_STORAGE addr;
   SOCKNAME_SIZE_T l;
 
-  l = sizeof(SOCKADDR_STORAGE);
+  l = sizeof(OMNI_SOCKADDR_STORAGE);
   if (getsockname(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_myaddress = (const char*)"giop:ssl:255.255.255.255:65535";
@@ -354,7 +357,7 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
     pd_myaddress = tcpConnection::addrToURI((sockaddr*)&addr, "giop:ssl:");
   }
 
-  l = sizeof(SOCKADDR_STORAGE);
+  l = sizeof(OMNI_SOCKADDR_STORAGE);
   if (getpeername(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     pd_peeraddress = (const char*)"giop:ssl:255.255.255.255:65535";

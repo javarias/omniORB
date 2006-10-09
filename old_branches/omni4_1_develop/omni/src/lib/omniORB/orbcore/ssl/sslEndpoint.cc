@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.11  2006/07/03 11:18:57  dgrisby
+  If Poke() fails to connect to itself, wake up the SocketCollection in
+  case it is idle.
+
   Revision 1.1.4.10  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 
@@ -425,9 +429,9 @@ sslEndpoint::Bind() {
 
   // Now figure out the details to put in IORs
 
-  SOCKADDR_STORAGE addr;
+  OMNI_SOCKADDR_STORAGE addr;
   SOCKNAME_SIZE_T l;
-  l = sizeof(SOCKADDR_STORAGE);
+  l = sizeof(OMNI_SOCKADDR_STORAGE);
   if (getsockname(pd_socket,
 		  (struct sockaddr *)&addr,&l) == RC_SOCKET_ERROR) {
     CLOSESOCKET(pd_socket);

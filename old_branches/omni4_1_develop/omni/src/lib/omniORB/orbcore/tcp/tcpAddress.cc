@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2006/07/18 16:21:20  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.4.5  2006/06/22 13:53:49  dgrisby
   Add flags to strand.
 
@@ -246,7 +250,7 @@ tcpAddress::Connect(unsigned long deadline_secs,
     if (rc != RC_SOCKET_ERROR) {
       // Check to make sure that the socket is connected.
 
-      SOCKADDR_STORAGE peer;
+      OMNI_SOCKADDR_STORAGE peer;
       SOCKNAME_SIZE_T len = sizeof(peer);
       rc = getpeername(sock, (struct sockaddr*)&peer, &len);
     }

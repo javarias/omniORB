@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2006/05/16 15:43:52  dgrisby
+  Make sure IPv6 definitions are available on Win32.
+
   Revision 1.1.4.11  2006/05/02 13:07:13  dgrisby
   Idle giopMonitor SocketCollections would not exit at shutdown.
 
@@ -130,9 +133,9 @@
 
 #if !defined(OMNI_DISABLE_IPV6) && defined(HAVE_STRUCT_SOCKADDR_IN6) && defined(HAVE_STRUCT_SOCKADDR_STORAGE) && defined(HAVE_GETADDRINFO) && defined(HAVE_GETNAMEINFO)
 #  define OMNI_SUPPORT_IPV6
-#  define SOCKADDR_STORAGE sockaddr_storage
+#  define OMNI_SOCKADDR_STORAGE sockaddr_storage
 #else
-#  define SOCKADDR_STORAGE sockaddr_in
+#  define OMNI_SOCKADDR_STORAGE sockaddr_in
 #endif
 
 #define SOCKNAME_SIZE_T OMNI_SOCKNAME_SIZE_T
