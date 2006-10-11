@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.29.2.21  2006/01/01 19:07:51  dgrisby
+# More complete __repr__ support. New _tuple() method on structs.
+#
 # Revision 1.29.2.20  2005/12/30 22:26:13  dgrisby
 # __repr__ methods for most generated classes. Thanks (in part) to Luke
 # Deller.
@@ -2140,6 +2143,10 @@ def dotName(scopedName, our_scope=[]):
 
 def mangle(name):
     if keyword.iskeyword(name): return "_" + name
+
+    # None is a pseudo-keyword that cannot be assigned to.
+    if name == "None": return "_None"
+
     return name
 
 def fixupScopedName(scopedName, prefix="_0_"):

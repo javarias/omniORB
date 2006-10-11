@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.12  2006/09/29 16:48:03  dgrisby
+# Stub changes broke use of package prefix. Thanks Teemu Torma.
+#
 # Revision 1.33.2.11  2006/09/07 15:28:57  dgrisby
 # Remove obsolete check for presence of omniORB.StructBase.
 #
@@ -2481,6 +2484,10 @@ def dotName(scopedName, our_scope=[]):
 
 def mangle(name):
     if keyword.iskeyword(name): return "_" + name
+
+    # None is a pseudo-keyword that cannot be assigned to.
+    if name == "None": return "_None"
+
     return name
 
 def fixupScopedName(scopedName, prefix="_0_"):
