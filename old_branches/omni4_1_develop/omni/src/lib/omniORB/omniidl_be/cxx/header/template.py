@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.15  2006/09/04 11:40:06  dgrisby
+# Remove crazy switch code in enum marshalling.
+#
 # Revision 1.8.2.14  2006/01/10 12:24:03  dgrisby
 # Merge from omni4_0_develop pre 4.0.7 release.
 #
@@ -227,6 +230,9 @@ main = """\
 #include <omniORB4/CORBA.h>
 #endif
 
+#ifndef  USE_stub_in_nt_dll
+# define USE_stub_in_nt_dll_NOT_DEFINED_@guard@
+#endif
 #ifndef  USE_core_stub_in_nt_dll
 # define USE_core_stub_in_nt_dll_NOT_DEFINED_@guard@
 #endif
@@ -240,12 +246,12 @@ main = """\
 @sub_include_post@
 
 #ifdef USE_stub_in_nt_dll
-#ifndef USE_core_stub_in_nt_dll
-#define USE_core_stub_in_nt_dll
-#endif
-#ifndef USE_dyn_stub_in_nt_dll
-#define USE_dyn_stub_in_nt_dll
-#endif
+# ifndef USE_core_stub_in_nt_dll
+#  define USE_core_stub_in_nt_dll
+# endif
+# ifndef USE_dyn_stub_in_nt_dll
+#  define USE_dyn_stub_in_nt_dll
+# endif
 #endif
 
 #ifdef _core_attr
@@ -287,6 +293,10 @@ main = """\
 
 @marshalling@
 
+#ifdef   USE_stub_in_nt_dll_NOT_DEFINED_@guard@
+# undef  USE_stub_in_nt_dll
+# undef  USE_stub_in_nt_dll_NOT_DEFINED_@guard@
+#endif
 #ifdef   USE_core_stub_in_nt_dll_NOT_DEFINED_@guard@
 # undef  USE_core_stub_in_nt_dll
 # undef  USE_core_stub_in_nt_dll_NOT_DEFINED_@guard@
