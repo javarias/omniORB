@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2006/01/19 17:21:59  dgrisby
+  Avoid member name conflict in DefaultValueRefCountBase.
+
   Revision 1.1.2.6  2005/08/16 13:51:21  dgrisby
   Problems with valuetype / abstract interface C++ mapping.
 
@@ -170,8 +173,8 @@ protected:
   inline DefaultValueRefCountBase() : _pd__refCount(1) {}
   virtual ~DefaultValueRefCountBase();
 
-  inline DefaultValueRefCountBase(const DefaultValueRefCountBase&)
-    : _pd__refCount(1) {}
+  inline DefaultValueRefCountBase(const DefaultValueRefCountBase& _v)
+    : ValueBase(_v), _pd__refCount(1) {}
 
 private:
   void operator=(const DefaultValueRefCountBase&);
