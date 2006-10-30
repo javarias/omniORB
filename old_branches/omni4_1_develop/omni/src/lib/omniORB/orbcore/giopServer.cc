@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.16  2006/10/09 09:47:12  dgrisby
+  Only delete giopServer if all threads are successfully shut down.
+
   Revision 1.25.2.15  2006/09/01 14:11:52  dgrisby
   Avoid potential deadlock with call buffering; do not force worker
   creation when a request is fully buffered.
@@ -754,7 +757,7 @@ giopServer::deactivate()
   if (pd_bidir_strands.size()) {
     if (omniORB::trace(25)) {
       omniORB::logger l;
-      l << "Close " << pd_bidir_strands.size()
+      l << "Close " << (CORBA::ULong)pd_bidir_strands.size()
 	<< " bidirectional connections...\n";
     }
 
