@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.5  2006/05/24 18:30:53  dgrisby
+// Segfault with some uses of aliases to unknown types.
+//
 // Revision 1.22.2.4  2005/05/10 22:07:31  dgrisby
 // Merge again.
 //
@@ -580,7 +583,7 @@ void
 InheritSpec::
 append(InheritSpec* is, const char* file, int line)
 {
-  InheritSpec *i, *last;
+  InheritSpec *i, *last = 0;
 
   if (is->interface()) {
     for (i=this; i; i = i->next_) {
@@ -2612,7 +2615,7 @@ void
 ValueInheritSpec::
 append(ValueInheritSpec* is, const char* file, int line)
 {
-  ValueInheritSpec *i, *last;
+  ValueInheritSpec *i, *last = 0;
 
   for (i=this; i; i = i->next_) {
     last = i;
