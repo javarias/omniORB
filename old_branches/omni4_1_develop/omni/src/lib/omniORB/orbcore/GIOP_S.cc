@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.8  2006/08/07 13:49:13  dgrisby
+  Allow serverReceiveRequest interceptor to throw user exceptions.
+
   Revision 1.1.6.7  2006/07/02 22:52:05  dgrisby
   Store self thread in task objects to avoid calls to self(), speeding
   up Current. Other minor performance tweaks.
@@ -813,7 +816,7 @@ GIOP_S::unmarshalIORAddressingInfo() {
 
     IIOP::ProfileBody decodedBody;
     IIOP::unmarshalProfile(ta.ior.profiles[ta.selected_profile_index],
-			decodedBody);
+			   decodedBody);
 
 #if 0 // XXX Not finalise yet
     _OMNI_NS(giopAddressList) addresses;
