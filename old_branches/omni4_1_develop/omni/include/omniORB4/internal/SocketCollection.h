@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.13  2006/10/09 13:08:58  dgrisby
+  Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
+  clash on Win32 2003 SDK.
+
   Revision 1.1.4.12  2006/05/16 15:43:52  dgrisby
   Make sure IPv6 definitions are available on Win32.
 
@@ -163,6 +167,11 @@
 #   define USE_FAKE_INTERRUPTABLE_RECV
 #   undef OMNI_IPV6_SOCKETS_ACCEPT_IPV4_CONNECTIONS
 #endif
+
+#if defined(__freebsd__)
+#   undef OMNI_IPV6_SOCKETS_ACCEPT_IPV4_CONNECTIONS
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////
 
