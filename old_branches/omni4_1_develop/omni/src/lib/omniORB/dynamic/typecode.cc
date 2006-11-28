@@ -31,6 +31,9 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.11  2006/06/14 10:34:19  dgrisby
+ * Add missing TypeCode_member in(), inout(), out().
+ *
  * Revision 1.40.2.10  2006/05/20 16:23:36  dgrisby
  * Minor cdrMemoryStream and TypeCode performance tweaks.
  *
@@ -1624,6 +1627,12 @@ TypeCode_base::removeOptionalNames()
   return;
 }
 
+void
+TypeCode_base::NP_releaseChildren()
+{
+  return;
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_string //////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2220,6 +2229,17 @@ TypeCode_alias::removeOptionalNames()
   }
 }
 
+void
+TypeCode_alias::NP_releaseChildren()
+{
+  // We must set pd_content to void before releasing the child, in case
+  // the release causes a recursion back to this node.
+  CORBA::TypeCode_ptr ctc = pd_content._retn();
+  pd_content = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+  CORBA::release(ctc);
+}
+
+
 //////////////////////////////////////////////////////////////////////
 ////////////////////////// TypeCode_sequence /////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2466,6 +2486,14 @@ TypeCode_sequence::removeOptionalNames()
   }
 }
 
+void
+TypeCode_sequence::NP_releaseChildren()
+{
+  CORBA::TypeCode_ptr ctc = pd_content._retn();
+  pd_content = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+  CORBA::release(ctc);
+}
+
 
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_array ///////////////////////////
@@ -2659,6 +2687,14 @@ TypeCode_array::removeOptionalNames()
     pd_compactTc = this;
     ToTcBase(pd_content)->removeOptionalNames();
   }
+}
+
+void
+TypeCode_array::NP_releaseChildren()
+{
+  CORBA::TypeCode_ptr ctc = pd_content._retn();
+  pd_content = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+  CORBA::release(ctc);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3037,6 +3073,16 @@ TypeCode_struct::removeOptionalNames()
   }
 }
 
+void
+TypeCode_struct::NP_releaseChildren()
+{
+  for (CORBA::ULong i = 0; i < pd_nmembers; i++) {
+    CORBA::TypeCode_ptr ctc = pd_members[i].type;
+    pd_members[i].type = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+    CORBA::release(ctc);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_except //////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -3405,6 +3451,17 @@ TypeCode_except::removeOptionalNames()
       pd_members[i].name = CORBA::string_dup("");
       ToTcBase(pd_members[i].type)->removeOptionalNames();
     }
+  }
+}
+
+
+void
+TypeCode_except::NP_releaseChildren()
+{
+  for (CORBA::ULong i = 0; i < pd_nmembers; i++) {
+    CORBA::TypeCode_ptr ctc = pd_members[i].type;
+    pd_members[i].type = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+    CORBA::release(ctc);
   }
 }
 
@@ -4187,6 +4244,19 @@ TypeCode_union::removeOptionalNames()
   }
 }
 
+void
+TypeCode_union::NP_releaseChildren()
+{
+  CORBA::ULong memberCount = pd_members.length();
+
+  for (CORBA::ULong i = 0; i < memberCount; i++) {
+    CORBA::TypeCode_ptr ctc = pd_members[i].atype._retn();
+    pd_members[i].atype = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+    CORBA::release(ctc);
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_value ///////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -4495,6 +4565,16 @@ TypeCode_value::NP_paramListType() const
 }
 
 
+void
+TypeCode_value::NP_releaseChildren()
+{
+  for (CORBA::ULong i = 0; i < pd_nmembers; i++) {
+    CORBA::TypeCode_ptr ctc = pd_members[i].type;
+    pd_members[i].type = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+    CORBA::release(ctc);
+  }
+}
+
 
 //////////////////////////////////////////////////////////////////////
 /////////////////////////// TypeCode_value_box ///////////////////////
@@ -4637,6 +4717,14 @@ TypeCode_paramListType
 TypeCode_value_box::NP_paramListType() const
 {
   return plt_Complex;
+}
+
+void
+TypeCode_value_box::NP_releaseChildren()
+{
+  CORBA::TypeCode_ptr ctc = pd_boxed._retn();
+  pd_boxed = CORBA::TypeCode::_duplicate(CORBA::_tc_void);
+  CORBA::release(ctc);
 }
 
 
@@ -4925,6 +5013,18 @@ TypeCode_indirect::removeOptionalNames()
   CHECK_RESOLVED;
   pd_resolved->removeOptionalNames();
 }
+
+
+void
+TypeCode_indirect::NP_releaseChildren()
+{
+  if (pd_resolved) {
+    TypeCode_base* rtc = pd_resolved;
+    pd_resolved = ToTcBase(CORBA::TypeCode::_duplicate(CORBA::_tc_void));
+    TypeCode_collector::releaseRef(rtc);
+  }
+}
+
 
 
 #undef CHECK_RESOLVED
@@ -5476,6 +5576,7 @@ void
 TypeCode_collector::releaseRef(TypeCode_base* tc)
 {
   CORBA::Boolean node_can_be_freed = 0;
+  CORBA::Boolean children_can_be_freed = 0;
 
   {
     omni_tracedmutex_lock l(*refcount_lock);
@@ -5486,36 +5587,31 @@ TypeCode_collector::releaseRef(TypeCode_base* tc)
       return;
     }
     // If the reference count has hit 1 then we can delete the node
-    if (tc->pd_ref_count == 1)
-      {
-	node_can_be_freed = 1;
+    if (tc->pd_ref_count == 1) {
+      node_can_be_freed = 1;
+    }
+    else {
+      // Is this typecode part of a loop?
+      if (tc->pd_loop_member) {
+	// Yes, so are the references to it real or because of the loop?
+	countInternalRefs(tc);
+	
+	if (checkInternalRefs(tc, 0)) {
+	  children_can_be_freed = 1;
+	}
       }
-    else
-      {
-	// Is this typecode part of a loop?
-	if (tc->pd_loop_member)
-	  {
-	    // Yes, so are the references to it real or because of the loop?
-	    countInternalRefs(tc);
-
-	    if (checkInternalRefs(tc, 0))
-	      {
-		node_can_be_freed = 1;
-		tc->pd_ref_count = 0;
-	      }
-	    else
-	      tc->pd_ref_count--;
-	  }
-	else
-	  tc->pd_ref_count--;
-      }
+    }
+    tc->pd_ref_count--;
   }
 
   // Now delete the node's storage, if possible
-  if (node_can_be_freed)
-    {
-      delete tc;
-    }
+  if (node_can_be_freed) {
+    delete tc;
+  }
+
+  if (children_can_be_freed) {
+    tc->NP_releaseChildren();
+  }
 }
 
 // Marking typecodes that are part of one or more loops
@@ -5802,7 +5898,7 @@ TypeCode_collector::checkInternalRefs(TypeCode_base* tc, CORBA::ULong depth)
 	break;
       }
     }
-
+  
   // We ONLY return true if this node is part of a loop AND can be freed
   if (tc->pd_internal_depth <= depth)
     return loop_can_be_freed;
