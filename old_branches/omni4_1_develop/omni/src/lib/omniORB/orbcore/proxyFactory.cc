@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.4  2005/04/08 00:35:46  dgrisby
+  Merging again.
+
   Revision 1.5.2.3  2005/01/06 23:10:40  dgrisby
   Big merge from omni4_0_develop.
 
@@ -168,7 +171,7 @@ proxyObjectFactory::~proxyObjectFactory()
       if( omniORB::trace(2) ) {
 	omniORB::logger l;
 	l << "Could not find proxyObjectFactory " << pd_repoId
-	  << " within its desctructor at "
+	  << " within its destructor at "
 	  << __FILE__ << ": line " << __LINE__ << "\n";
       }
     }
