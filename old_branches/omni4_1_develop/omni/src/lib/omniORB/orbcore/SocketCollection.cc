@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2006/11/16 14:07:40  dgrisby
+  Peek failed to clear pd_fd_index, which could lead to a race condition
+  where the wrong socket was removed from the poll list.
+
   Revision 1.1.4.16  2006/05/16 13:32:04  dgrisby
   Silly bug in setting Peek timeouts with conflicting Peeks.
 
@@ -473,8 +477,14 @@ SocketCollection::Select() {
 
     index = 0;
     while (count) {
-      OMNIORB_ASSERT(index < pd_pollfd_n);
-
+      if (index == pd_pollfd_n) {
+	if (omniORB::trace(1)) {
+	  omniORB::logger log;
+	  log << "Warning: unable to find all fds reported by poll(). "
+	      << count << " remaining.\n";
+	}
+	break;
+      }
       short revents = pd_pollfds[index].revents;
 
       if (revents) {
