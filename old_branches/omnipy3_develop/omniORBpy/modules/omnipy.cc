@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.17  2006/09/05 11:30:22  dgrisby
+// Modify stub version check to be more specific.
+//
 // Revision 1.1.4.16  2006/09/01 13:44:06  dgrisby
 // Hard-code version check rather than using pre-processor defines.
 //
@@ -800,6 +803,14 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(DO_CALL_DESC_SYSTEM_EXCEPTON)
     catch (omniPy::PyUserException& ex) {
       call_desc.reacquireInterpreterLock();
       ex.setPyExceptionState();
+    }
+    catch (...) {
+      // This should not happen, but in case it does we reacquire the
+      // interpreter lock to avoid an assertion failure from the call
+      // descriptor's destructor.
+      omniORB::logs(1, "Unexpected C++ exception during Python invocation.");
+      call_desc.ensureInterpreterLock();
+      throw;
     }
     return 0;
   }
