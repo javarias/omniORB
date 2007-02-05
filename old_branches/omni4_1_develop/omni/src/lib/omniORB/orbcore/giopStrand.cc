@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.8  2006/07/18 16:21:21  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.6.7  2006/07/02 22:52:05  dgrisby
   Store self thread in task objects to avoid calls to self(), speeding
   up Current. Other minor performance tweaks.
@@ -738,15 +742,17 @@ Scavenger::execute()
 	p = p->next;
 	s->StrandList::remove();
 	s->state(giopStrand::DYING);
-	if (omniORB::trace(30)) {
+	if (omniORB::trace(25)) {
 	  omniORB::logger log;
-	  log << "Scavenger close connection to " << s->address->address() << "\n";
+          log << "Scavenger close "
+              << (s->connection ? "connection" : "unconnected strand")
+              << " to " << s->address->address() << "\n";
 	}
-	if ( s->version.minor >= 2 ) {
-	  // GIOP 1.2 or above requires the client send a closeconnection
-	  // message.
-	  sendCloseConnection(s);
-	}
+        if ( s->version.minor >= 2 && s->connection ) {
+          // GIOP 1.2 or above requires the client send a CloseConnection
+          // message.
+          sendCloseConnection(s);
+        }
 	s->safeDelete(1);
       }
     }
@@ -985,14 +991,16 @@ public:
 	s->state(giopStrand::DYING);
 	if (omniORB::trace(25)) {
 	  omniORB::logger log;
-	  log << "Shutdown close connection to "
+	  log << "Shutdown close "
+              << (s->connection ? "connection" : "unconnected strand")
+              << " to "
 	      << s->address->address() << "\n";
 	}
-	if ( s->version.minor >= 2 ) {
-	  // GIOP 1.2 or above requires the client send a closeconnection
-	  // message.
-	  sendCloseConnection(s);
-	}
+        if ( s->version.minor >= 2 && s->connection ) {
+          // GIOP 1.2 or above requires the client send a closeconnection
+          // message.
+          sendCloseConnection(s);
+        }
 	s->safeDelete(1);
       }
     }
