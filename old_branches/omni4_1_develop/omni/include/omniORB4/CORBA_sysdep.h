@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.8  2007/01/12 10:19:51  dgrisby
+ Support for MontaVista ARM Linux.
+
  Revision 1.5.2.7  2006/04/28 18:40:46  dgrisby
  Merge from omni4_0_develop.
 
@@ -176,9 +179,7 @@
 
 #if defined(__SUNPRO_CC) 
 // SUN C++ compiler
-#  if __SUNPRO_CC < 0x420
-#    define NEED_DUMMY_RETURN
-#  endif
+#  define NEED_DUMMY_RETURN
 
 // XXX
 // This is a hack to work around a bug in SUN C++ compiler (seen on 4.2).
