@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.1.2.17  2006/04/19 11:34:41  dgrisby
+  Poking an address created a new client-side connection object that
+  registered itself in the SocketCollection. Since it did this while
+  holding the giopServer's lock, that violated the partial lock order,
+  and could lead to a deadlock.
+
   Revision 1.1.2.16  2004/10/17 20:14:33  dgrisby
   Updated support for OpenVMS. Many thanks to Bruce Visscher.
 
@@ -229,7 +235,7 @@ tcpAddress::Connect(unsigned long deadline_secs,
     struct pollfd fds;
     fds.fd = sock;
     fds.events = POLLOUT;
-    int timeout = t.tv_sec*1000+(t.tv_usec/1000);
+    int timeout = t.tv_sec*1000+((t.tv_usec+999)/1000);
     if (timeout == 0) timeout = -1;
     int rc = poll(&fds,1,timeout);
     if (rc > 0 && fds.revents & POLLERR) {
