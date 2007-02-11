@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2006/06/06 16:39:37  dgrisby
+  marshalRawString and chunking stream did not byte-swap length fields
+  when required to.
+
   Revision 1.1.4.14  2006/05/21 17:43:24  dgrisby
   Remove obsolete pd_chunked flag.
 
@@ -1523,7 +1527,7 @@ private:
 
   inline _CORBA_ULong getLength()
   {
-    return pd_marshal_byte_swap ? Swap32(*pd_lengthPtr) : *pd_lengthPtr;
+    return pd_unmarshal_byte_swap ? Swap32(*pd_lengthPtr) : *pd_lengthPtr;
   }
 
   cdrStream&     pd_actual;    // Stream being wrapped
