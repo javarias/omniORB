@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2006/10/09 13:08:58  dgrisby
+  Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
+  clash on Win32 2003 SDK.
+
   Revision 1.1.4.11  2006/07/03 11:18:56  dgrisby
   If Poke() fails to connect to itself, wake up the SocketCollection in
   case it is idle.
@@ -390,6 +394,17 @@ tcpEndpoint::Bind() {
     if (setsockopt(pd_socket,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
 
+      CLOSESOCKET(pd_socket);
+      pd_socket = RC_INVALID_SOCKET;
+      return 0;
+    }
+  }
+
+  if (orbParameters::socketSendBuffer != -1) {
+    // Set the send buffer size
+    int bufsize = orbParameters::socketSendBuffer;
+    if (setsockopt(pd_socket, SOL_SOCKET, SO_SNDBUF,
+		   &bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
       CLOSESOCKET(pd_socket);
       pd_socket = RC_INVALID_SOCKET;
       return 0;

@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2005/11/16 17:35:25  dgrisby
+  New connectionWatchPeriod and connectionWatchImmediate parameters.
+
   Revision 1.1.4.7  2005/08/23 11:45:06  dgrisby
   New maxSocketSend and maxSocketRecv parameters.
 
@@ -70,18 +73,21 @@ omni_tracedmutex* omniTransportLock = 0;
 
 #if defined(__WIN32__)
 // Windows has a bug that sometimes means large sends fail
-size_t orbParameters::maxSocketSend = 131072;
-size_t orbParameters::maxSocketRecv = 131072;
+size_t orbParameters::maxSocketSend    = 131072;
+size_t orbParameters::maxSocketRecv    = 131072;
+int    orbParameters::socketSendBuffer = 16384;
 
 #elif defined(__VMS)
 // VMS has a hard limit
-size_t orbParameters::maxSocketSend = 65528;
-size_t orbParameters::maxSocketRecv = 65528;
+size_t orbParameters::maxSocketSend    = 65528;
+size_t orbParameters::maxSocketRecv    = 65528;
+int    orbParameters::socketSendBuffer = -1;
 
 #else
 // Other platforms have no limit
-size_t orbParameters::maxSocketSend = 0x7fffffff;
-size_t orbParameters::maxSocketRecv = 0x7fffffff;
+size_t orbParameters::maxSocketSend    = 0x7fffffff;
+size_t orbParameters::maxSocketRecv    = 0x7fffffff;
+int    orbParameters::socketSendBuffer = -1;
 #endif
 
 
@@ -168,16 +174,16 @@ public:
 
   maxSocketSendHandler() : 
     orbOptions::Handler("maxSocketSend",
-			"maxSocketSend = n >= 8192",
+			"maxSocketSend = n >= 1024",
 			1,
-			"-ORBmaxSocketSend < n >= 8192 >") {}
+			"-ORBmaxSocketSend < n >= 1024 >") {}
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
-    if (!orbOptions::getULong(value,v) || v < 8192) {
+    if (!orbOptions::getULong(value,v) || v < 1024) {
       throw orbOptions::BadParam(key(),value,
-				 "Invalid value, expect n >= 8192");
+				 "Invalid value, expect n >= 1024");
     }
     orbParameters::maxSocketSend = v;
   }
@@ -198,16 +204,16 @@ public:
 
   maxSocketRecvHandler() : 
     orbOptions::Handler("maxSocketRecv",
-			"maxSocketRecv = n >= 8192",
+			"maxSocketRecv = n >= 1024",
 			1,
-			"-ORBmaxSocketRecv < n >= 8192 >") {}
+			"-ORBmaxSocketRecv < n >= 1024 >") {}
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
     CORBA::ULong v;
-    if (!orbOptions::getULong(value,v) || v < 8192) {
+    if (!orbOptions::getULong(value,v) || v < 1024) {
       throw orbOptions::BadParam(key(),value,
-				 "Invalid value, expect n >= 8192");
+				 "Invalid value, expect n >= 1024");
     }
     orbParameters::maxSocketRecv = v;
   }
@@ -220,6 +226,36 @@ public:
 };
 
 static maxSocketRecvHandler maxSocketRecvHandler_;
+
+
+/////////////////////////////////////////////////////////////////////////////
+class socketSendBufferHandler : public orbOptions::Handler {
+public:
+
+  socketSendBufferHandler() : 
+    orbOptions::Handler("socketSendBuffer",
+			"socketSendBuffer = n >= -1",
+			1,
+			"-ORBsocketSendBuffer < n >= -1 >") {}
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::Long v;
+    if (!orbOptions::getLong(value,v) || v < -1) {
+      throw orbOptions::BadParam(key(),value,
+				 "Invalid value, expect n >= -1");
+    }
+    orbParameters::socketSendBuffer = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVLong(key(),orbParameters::socketSendBuffer,
+			  result);
+  }
+
+};
+
+static socketSendBufferHandler socketSendBufferHandler_;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -263,6 +299,7 @@ public:
   omni_omniTransport_initialiser() {
     orbOptions::singleton().registerHandler(maxSocketSendHandler_);
     orbOptions::singleton().registerHandler(maxSocketRecvHandler_);
+    orbOptions::singleton().registerHandler(socketSendBufferHandler_);
     orbOptions::singleton().registerHandler(connectionWatchPeriodHandler_);
   }
 

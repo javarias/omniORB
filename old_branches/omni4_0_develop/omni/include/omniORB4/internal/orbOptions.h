@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2005/09/19 14:23:56  dgrisby
+  New traceFile configuration parameter.
+
   Revision 1.1.2.8  2005/09/08 14:26:17  dgrisby
   New -ORBconfigFile command line argument.
 
@@ -299,8 +302,10 @@ class orbOptions {
   //
   static CORBA::Boolean getBoolean(const char* value, CORBA::Boolean& result);
   static CORBA::Boolean getULong(const char* value, CORBA::ULong& result);
+  static CORBA::Boolean getLong(const char* value, CORBA::Long& result);
   static void addKVBoolean(const char* key, CORBA::Boolean,sequenceString&);
   static void addKVULong(const char* key, CORBA::ULong,sequenceString&);
+  static void addKVLong(const char* key, CORBA::Long,sequenceString&);
   static void addKVString(const char* key, const char* value, sequenceString&);
 
   static void move_args(int& argc,char **argv,int idx,int nargs);

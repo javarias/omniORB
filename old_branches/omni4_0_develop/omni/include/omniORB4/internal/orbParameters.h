@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.9  2005/11/16 17:35:25  dgrisby
+  New connectionWatchPeriod and connectionWatchImmediate parameters.
+
   Revision 1.1.2.8  2005/11/14 10:57:18  dgrisby
   Minor comment fix.
 
@@ -122,6 +125,11 @@ _CORBA_MODULE_VAR _core_attr size_t maxSocketRecv;
 //
 //   Valid values = (n >= 8192)
 
+_CORBA_MODULE_VAR _core_attr int socketSendBuffer;
+//   Sets the socket send buffer size. -1 means leave the system
+//   default unchanged.
+//
+//   Valid values = (n >= -1)
 
 _CORBA_MODULE_VAR _core_attr omniCodeSet::NCS_C* nativeCharCodeSet;
 //  set the native code set for char and string

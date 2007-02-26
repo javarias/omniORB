@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2007/02/05 18:33:01  dgrisby
+  Rounding error in poll() timeout could lead to infinite timeout.
+  Thanks Richard Hirst.
+
   Revision 1.1.4.7  2006/10/09 13:08:58  dgrisby
   Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
   clash on Win32 2003 SDK.
@@ -174,6 +178,16 @@ tcpAddress::Connect(unsigned long deadline_secs,
   }
   else {
     omniORB::logs(25, "New TCP connection without NO_DELAY option.");
+  }
+
+  if (orbParameters::socketSendBuffer != -1) {
+    // Set the send buffer size
+    int bufsize = orbParameters::socketSendBuffer;
+    if (setsockopt(sock, SOL_SOCKET, SO_SNDBUF,
+		   &bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
+      CLOSESOCKET(sock);
+      return 0;
+    }
   }
 
 #if !defined(USE_NONBLOCKING_CONNECT)

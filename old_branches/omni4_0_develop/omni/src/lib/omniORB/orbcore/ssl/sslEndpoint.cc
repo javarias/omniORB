@@ -29,6 +29,12 @@
 
 /*
   $Log$
+  Revision 1.1.2.26  2006/04/19 11:34:42  dgrisby
+  Poking an address created a new client-side connection object that
+  registered itself in the SocketCollection. Since it did this while
+  holding the giopServer's lock, that violated the partial lock order,
+  and could lead to a deadlock.
+
   Revision 1.1.2.25  2006/03/21 12:08:41  dgrisby
   fail-if-multiple was ignored by the ssl transport.
 
@@ -119,6 +125,7 @@
 #include <omniORB4/sslContext.h>
 #include <SocketCollection.h>
 #include <objectAdapter.h>
+#include <orbParameters.h>
 #include <ssl/sslConnection.h>
 #include <ssl/sslAddress.h>
 #include <ssl/sslEndpoint.h>
@@ -199,6 +206,17 @@ sslEndpoint::Bind() {
     int valtrue = 1;
     if (setsockopt(pd_socket,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
+      CLOSESOCKET(pd_socket);
+      pd_socket = RC_INVALID_SOCKET;
+      return 0;
+    }
+  }
+
+  if (orbParameters::socketSendBuffer != -1) {
+    // Set the send buffer size
+    int bufsize = orbParameters::socketSendBuffer;
+    if (setsockopt(pd_socket, SOL_SOCKET, SO_SNDBUF,
+		   &bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
       CLOSESOCKET(pd_socket);
       pd_socket = RC_INVALID_SOCKET;
       return 0;

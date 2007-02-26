@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.2.18  2007/02/07 10:33:28  dgrisby
+  Rounding error in poll() timeout could lead to infinite timeout.
+  Thanks Richard Hirst.
+
   Revision 1.1.2.17  2006/04/19 11:34:42  dgrisby
   Poking an address created a new client-side connection object that
   registered itself in the SocketCollection. Since it did this while
@@ -261,6 +265,16 @@ sslAddress::Connect(unsigned long deadline_secs,
     int valtrue = 1;
     if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
+      CLOSESOCKET(sock);
+      return 0;
+    }
+  }
+
+  if (orbParameters::socketSendBuffer != -1) {
+    // Set the send buffer size
+    int bufsize = orbParameters::socketSendBuffer;
+    if (setsockopt(sock, SOL_SOCKET, SO_SNDBUF,
+		   &bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
       CLOSESOCKET(sock);
       return 0;
     }
