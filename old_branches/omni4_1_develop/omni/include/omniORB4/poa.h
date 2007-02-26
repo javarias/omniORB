@@ -28,6 +28,11 @@
 
 /*
   $Log$
+  Revision 1.4.2.10  2006/10/23 15:08:31  dgrisby
+  Suppress GCC warnings about missing base class constructor calls.
+  Thanks Tamas Kerecsen. Somehow, this patch works on VC++ 6, where
+  before a similar change failed.
+
   Revision 1.4.2.9  2006/03/22 15:55:14  dgrisby
   VC++ 6 doesn't like explicit calls to default base constructors.
 
@@ -367,7 +372,7 @@ _CORBA_MODULE_BEG
     REQUEST_PROCESSING_POLICY_ID _init_in_decl_( = 22 );
 
 
-#include <omniORB4/poa_enums_defs.h>
+#include <omniORB4/poa_enums_defs.hh>
 
 
   OMNIORB_DECLARE_POLICY_OBJECT(ThreadPolicy, THREAD_POLICY_ID)
@@ -811,8 +816,7 @@ _CORBA_MODULE_BEG
 _CORBA_MODULE_END  // PortableServer
 
 
-#include <omniORB4/poa_operators.h>
-#include <omniORB4/poa_enums_operators.h>
+#include <omniORB4/poa_enums_operators.hh>
 
 #include <omniORB4/poa_poa.h>
 // This brings in the skeletons for:
