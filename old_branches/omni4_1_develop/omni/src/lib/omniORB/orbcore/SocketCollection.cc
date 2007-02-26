@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.18  2006/12/28 18:24:28  dgrisby
+  Downgrade assertion about failing to find all readable sockets to be a
+  warning.
+
   Revision 1.1.4.17  2006/11/16 14:07:40  dgrisby
   Peek failed to clear pd_fd_index, which could lead to a race condition
   where the wrong socket was removed from the poll list.
@@ -308,6 +312,9 @@ static void initPipe(int& pipe_read, int& pipe_write)
   if (r != -1) {
     pipe_read  = filedes[0];
     pipe_write = filedes[1];
+
+    SocketSetCloseOnExec(pipe_read);
+    SocketSetCloseOnExec(pipe_write);
   }
   else {
     omniORB::logs(5, "Unable to create pipe for SocketCollection.");
