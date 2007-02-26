@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.10  2005/11/14 11:02:16  dgrisby
+# Local interface fixes.
+#
 # Revision 1.6.2.9  2005/11/09 12:22:17  dgrisby
 # Local interfaces support.
 #
@@ -525,7 +528,7 @@ return @method@(@args@);
 interface_callback = """\
 // Local call call-back function.
 static void
-@local_call_descriptor@(omniCallDescriptor* cd, omniServant* svnt)
+@local_call_descriptor@(omniCallDescriptor*@cd_arg@, omniServant* svnt)
 {
   @get_call_descriptor@
   @impl_fqname@* impl = (@impl_fqname@*) svnt->_ptrToInterface(@name@::_PD_repoId);
