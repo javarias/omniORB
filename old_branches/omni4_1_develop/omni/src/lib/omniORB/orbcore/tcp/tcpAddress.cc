@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2007/02/26 15:16:31  dgrisby
+  New socketSendBuffer parameter, defaulting to 16384 on Windows.
+  Avoids a bug in Windows where select() on send waits for all sent data
+  to be acknowledged.
+
   Revision 1.1.4.8  2007/02/05 18:33:01  dgrisby
   Rounding error in poll() timeout could lead to infinite timeout.
   Thanks Richard Hirst.
@@ -184,7 +189,7 @@ tcpAddress::Connect(unsigned long deadline_secs,
     // Set the send buffer size
     int bufsize = orbParameters::socketSendBuffer;
     if (setsockopt(sock, SOL_SOCKET, SO_SNDBUF,
-		   &bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
+		   (char*)&bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
       CLOSESOCKET(sock);
       return 0;
     }
