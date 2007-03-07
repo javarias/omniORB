@@ -31,6 +31,11 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.13  2006/12/28 18:10:24  dgrisby
+ * When releasing children of a struct, union or value TypeCode, a
+ * reference to the parent must be held to prevent its premature
+ * deletion.
+ *
  * Revision 1.40.2.12  2006/11/28 00:09:41  dgrisby
  * TypeCode collector could access deleted data when freeing TypeCodes
  * with multiple loops.
@@ -6036,7 +6041,8 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 			BAD_PARAM_IncompatibleDiscriminatorType,
 			CORBA::COMPLETED_NO);
 	CORBA::ULong c;
-	label >>= c;
+        cdrAnyMemoryStream& ms = label.PR_streamToRead();
+        c <<= ms;
 	lbl_value = c;
 	break;
       }
