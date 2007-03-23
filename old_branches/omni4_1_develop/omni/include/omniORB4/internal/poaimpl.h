@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.3  2006/07/18 16:21:23  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.6.2  2005/07/22 17:18:39  dgrisby
   Another merge from omni4_0_develop.
 
@@ -133,6 +137,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define PS_VERSION  ":2.4"
 
 class omniOrbPOAManager;
+class omniServantActivatorTaskQueue;
 
 
 class omniOrbPOA : public PortableServer::POA,
@@ -582,6 +587,9 @@ private:
   // Unique id to prefix object ids when using the PERSISTENT and
   // SYSTEM_ID policies.
   //  Immutable once allocated. No concurrency control.
+
+  omniServantActivatorTaskQueue*       pd_servant_activator_queue;
+  // Servant activator queue. 
 };
 
 OMNI_NAMESPACE_END(omni)
