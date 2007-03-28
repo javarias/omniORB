@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2007/02/28 15:55:57  dgrisby
+  setsockopt expects a char* on some platforms.
+
   Revision 1.1.4.13  2007/02/26 15:16:31  dgrisby
   New socketSendBuffer parameter, defaulting to 16384 on Windows.
   Avoids a bug in Windows where select() on send waits for all sent data
@@ -592,10 +595,11 @@ tcpEndpoint::Poke() {
       log << "Warning: fail to connect to myself ("
 	  << (const char*) pd_addresses[0] << ") via tcp.\n";
     }
-    // Wake up the SocketCollection in case it is idle and blocked
-    // with no timeout.
-    wakeUp();
   }
+  // Wake up the SocketCollection in case the connect did not work and
+  // it is idle and blocked with no timeout.
+  wakeUp();
+
   delete target;
 }
 
