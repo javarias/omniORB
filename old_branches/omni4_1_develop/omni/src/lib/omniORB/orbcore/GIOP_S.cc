@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.9  2006/11/09 15:36:17  dgrisby
+  Code formatting fix.
+
   Revision 1.1.6.8  2006/08/07 13:49:13  dgrisby
   Allow serverReceiveRequest interceptor to throw user exceptions.
 
@@ -233,6 +236,7 @@ GIOP_S::dispatcher() {
 
     pd_state = WaitForRequestHeader;
     calldescriptor(0);
+    requestId(0xffffffff);
 
     impl()->inputMessageBegin(this,impl()->unmarshalWildCardRequestHeader);
 
@@ -242,10 +246,7 @@ GIOP_S::dispatcher() {
       if (!pd_strand->stopIdleCounter()) {
 	// This strand has been expired by the scavenger. Don't
 	// process this call.
-	if (omniORB::trace(1)) {
-	  omniORB::logger l;
-	  l << "dispatcher cannot stop idle counter.\n";
-	}
+	omniORB::logs(1, "dispatcher cannot stop idle counter.\n");
 	pd_strand->state(giopStrand::DYING);
 	return 0;
       }
