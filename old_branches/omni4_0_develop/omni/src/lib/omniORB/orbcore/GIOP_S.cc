@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.29  2005/11/15 11:07:57  dgrisby
+  More shutdown cleanup.
+
   Revision 1.1.4.28  2005/04/08 00:06:15  dgrisby
   Remove all remaining uses of logf.
 
@@ -220,6 +223,8 @@ GIOP_S::dispatcher() {
   try {
 
     pd_state = WaitForRequestHeader;
+    calldescriptor(0);
+    requestId(0xffffffff);
 
     impl()->inputMessageBegin(this,impl()->unmarshalWildCardRequestHeader);
 
