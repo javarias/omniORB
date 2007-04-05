@@ -29,6 +29,10 @@
  
 /*
   $Log$
+  Revision 1.4.2.5  2006/07/18 16:21:21  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.4.2.4  2005/07/22 17:18:36  dgrisby
   Another merge from omni4_0_develop.
 
@@ -283,7 +287,12 @@ PortableServer::ServantBase::_remove_ref()
 
   omniORB::logs(15, "ServantBase has zero ref count -- deleted.");
 
-  delete this;
+  try {
+    delete this;
+  }
+  catch (...) {
+    omniORB::logs(1, "ERROR: Servant destructor threw an exception.");
+  }
 }
 
 CORBA::ULong
