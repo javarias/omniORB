@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.9  2006/04/28 18:40:46  dgrisby
+# Merge from omni4_0_develop.
+#
 # Revision 1.20.2.8  2005/11/09 12:22:17  dgrisby
 # Local interfaces support.
 #
@@ -215,11 +218,11 @@ def marshall(to, environment, type, decl, argname, to_where,
           idltype.tk_longlong:  ("omni::ALIGN_8",8),
           idltype.tk_ulonglong: ("omni::ALIGN_8",8)
         }
-        if array_marshal_helpers.has_key(d_type.type().kind()):
-            (alignment,elmsize) = array_marshal_helpers[d_type.type().kind()]
+        kind = d_type.type().kind()
+        if array_marshal_helpers.has_key(kind):
+            (alignment,elmsize) = array_marshal_helpers[kind]
             if alignment != "omni::ALIGN_1":
-                is_double = d_type.type().kind() == idltype.tk_double
-                if is_double:
+                if kind == idltype.tk_double:
                     to.out("""
 #ifndef OMNI_MIXED_ENDIAN_DOUBLE""")
 
@@ -234,19 +237,28 @@ else """,
                        num = str(n_elements * elmsize),
                        align = alignment)
 
-                if is_double:
+                if kind == idltype.tk_double:
                     to.out("""\
 #endif""")
 
                 # Do not return here.
                 # let the code below to deal with the else block.
             else:
+                if kind == idltype.tk_boolean:
+                    to.out("""
+#if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)""")
+
                 to.out("@where@.put_octet_array((CORBA::Octet*)(@slice_cast@@name@),@num@);",
                        where = to_where,
                        name = argname,
                        slice_cast = slice_cast,
                        num = str(n_elements))
-                return
+
+                if kind == idltype.tk_boolean:
+                    to.out("""\
+#else""")
+                else:
+                    return
 
         # No quick route, generate iteration loop
         block = cxx.Block(to)
@@ -353,6 +365,9 @@ else """,
 
     if dims != []:
         block.end()
+        if kind == idltype.tk_boolean:
+            to.out("""\
+#endif""")
 
 
         
@@ -388,7 +403,7 @@ def unmarshall(to, environment, type, decl, name, from_where):
         n_elements = reduce(lambda x,y:x*y, dims, 1)
         array_unmarshal_helpers = {
           idltype.tk_octet:  ("get_octet_array","(CORBA::Octet*)"),
-          idltype.tk_boolean: ("get_octet_array","(CORBA::Octet*)"),
+          idltype.tk_boolean:("unmarshalArrayBoolean","(CORBA::Boolean*)"),
           idltype.tk_short:  ("unmarshalArrayShort","(CORBA::Short*)"),
           idltype.tk_long:   ("unmarshalArrayLong","(CORBA::Long*)"),
           idltype.tk_ushort: ("unmarshalArrayUShort","(CORBA::UShort*)"),
@@ -398,8 +413,10 @@ def unmarshall(to, environment, type, decl, name, from_where):
           idltype.tk_longlong:("unmarshalArrayLongLong","(CORBA::LongLong*)"),
           idltype.tk_ulonglong:("unmarshalArrayULongLong","(CORBA::ULongLong*)")
           }
-        if array_unmarshal_helpers.has_key(d_type.type().kind()):
-            (helper,typecast) = array_unmarshal_helpers[d_type.type().kind()]
+        kind = d_type.type().kind()
+
+        if array_unmarshal_helpers.has_key(kind):
+            (helper,typecast) = array_unmarshal_helpers[kind]
             to.out("@where@.@helper@(@typecast@(@slice_cast@@name@), @num@);",
                    helper = helper,
                    where = from_where, typecast = typecast,
