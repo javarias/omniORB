@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.36.2.6  2006/05/02 13:08:26  dgrisby
+  Time out waiting for invoker threads to exit; allow configutation of
+  idle thread timeout.
+
   Revision 1.36.2.5  2006/01/10 12:24:03  dgrisby
   Merge from omni4_0_develop pre 4.0.7 release.
 
@@ -619,11 +623,8 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
 		  CORBA::COMPLETED_NO);
   }
 
-
-  if (omniORB::trace(2)) {
-    omniORB::logger l;
-    l << "Distribution date: " OMNIORB_DIST_DATE "\n";
-  }
+  omniORB::logs(2, "Version: " OMNIORB_VERSION_STRING);
+  omniORB::logs(2, "Distribution date: " OMNIORB_DIST_DATE);
 
   try {
     // Call attach method of each initialiser object.

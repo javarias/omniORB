@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.33.2.48  2005/11/28 14:57:51  dgrisby
+  New abortOnNativeException parameter for Windows.
+
   Revision 1.33.2.47  2005/09/08 14:26:17  dgrisby
   New -ORBconfigFile command line argument.
 
@@ -621,11 +624,8 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
 		  CORBA::COMPLETED_NO);
   }
 
-
-  if (omniORB::trace(2)) {
-    omniORB::logger l;
-    l << "Distribution date: " OMNIORB_DIST_DATE "\n";
-  }
+  omniORB::logs(2, "Version: " OMNIORB_VERSION_STRING);
+  omniORB::logs(2, "Distribution date: " OMNIORB_DIST_DATE);
 
   try {
     // Call attach method of each initialiser object.
