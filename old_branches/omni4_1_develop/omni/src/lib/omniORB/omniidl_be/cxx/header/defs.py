@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.13  2006/05/25 18:19:12  dgrisby
+# Incorrect code generated for valuebox containing sequence of value;
+# clean up class nesting tracking.
+#
 # Revision 1.36.2.12  2006/01/18 19:23:18  dgrisby
 # Code generation problems with valuetype inheritance / typedefs.
 #
@@ -1682,6 +1686,7 @@ def visitUnion(node):
                      idltype.tk_any,
                      idltype.tk_TypeCode,
                      idltype.tk_objref,
+                     idltype.tk_fixed,
                      idltype.tk_value,
                      idltype.tk_value_box,
                      idltype.tk_abstract_interface,
