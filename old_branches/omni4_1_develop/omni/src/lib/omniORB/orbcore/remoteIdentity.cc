@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2005/04/14 00:03:56  dgrisby
+  New traceInvocationReturns and traceTime options; remove logf function.
+
   Revision 1.4.2.1  2003/03/23 21:02:03  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -366,13 +369,15 @@ omniRemoteIdentity::inThisAddressSpace()
   return 0;
 }
 
+
+
+
 void*
-omniRemoteIdentity::thisClassCompare(omniIdentity* id, void* vfn)
+omniRemoteIdentity::ptrToClass(int* cptr)
 {
-  classCompare_fn fn = (classCompare_fn)vfn;
-
-  if (fn == omniRemoteIdentity::thisClassCompare)
-    return (omniRemoteIdentity*)id;
-
+  if (cptr == &omniRemoteIdentity::_classid) return (omniRemoteIdentity*)this;
+  if (cptr == &omniIdentity      ::_classid) return (omniIdentity*)      this;
   return 0;
 }
+
+int omniRemoteIdentity::_classid;

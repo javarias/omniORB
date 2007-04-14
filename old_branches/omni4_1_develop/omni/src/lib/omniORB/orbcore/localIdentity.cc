@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2003/11/06 11:56:57  dgrisby
+  Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
   Revision 1.4.2.1  2003/03/23 21:02:12  dgrisby
   Start of omniORB 4.1.x development branch.
 
@@ -271,13 +274,13 @@ omniLocalIdentity::inThisAddressSpace()
   return 1;
 }
 
+
 void*
-omniLocalIdentity::thisClassCompare(omniIdentity* id, void* vfn)
+omniLocalIdentity::ptrToClass(int* cptr)
 {
-  classCompare_fn fn = (classCompare_fn)vfn;
-
-  if (fn == omniLocalIdentity::thisClassCompare)
-    return (omniLocalIdentity*)id;
-
+  if (cptr == &omniLocalIdentity::_classid) return (omniLocalIdentity*)this;
+  if (cptr == &omniIdentity     ::_classid) return (omniIdentity*)     this;
   return 0;
 }
+
+int omniLocalIdentity::_classid;

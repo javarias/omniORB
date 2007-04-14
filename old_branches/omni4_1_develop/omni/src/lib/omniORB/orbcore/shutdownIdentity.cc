@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:02:03  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/09/19 17:26:53  dpg1
   Full clean-up after orb->destroy().
 
@@ -111,13 +114,17 @@ omniShutdownIdentity::real_is_equivalent(const omniIdentity* id1,
   return 0;
 }
 
-void*
-omniShutdownIdentity::thisClassCompare(omniIdentity* id, void* vfn)
-{
-  classCompare_fn fn = (classCompare_fn)vfn;
 
-  if (fn == omniShutdownIdentity::thisClassCompare)
-    return (omniShutdownIdentity*)id;
+void*
+omniShutdownIdentity::ptrToClass(int* cptr)
+{
+  if (cptr == &omniShutdownIdentity::_classid)
+    return (omniShutdownIdentity*)this;
+
+  if (cptr == &omniIdentity::_classid)
+    return (omniIdentity*)this;
 
   return 0;
 }
+
+int omniShutdownIdentity::_classid;

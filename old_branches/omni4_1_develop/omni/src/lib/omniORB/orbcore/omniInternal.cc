@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.15  2006/07/19 09:27:18  dgrisby
+  Properly pass hints when handling persistent id.
+
   Revision 1.5.2.14  2006/07/18 16:21:21  dgrisby
   New experimental connection management extension; ORB core support
   for it.
@@ -847,19 +850,17 @@ omniObjTableEntry::loseRef(omniObjRef* objref)
   delete this;
 }
 
+
 void*
-omniObjTableEntry::thisClassCompare(omniIdentity* id, void* vfn)
+omniObjTableEntry::ptrToClass(int* cptr)
 {
-  classCompare_fn fn = (classCompare_fn)vfn;
-
-  if (fn == omniObjTableEntry::thisClassCompare)
-    return (omniObjTableEntry*)id;
-
-  if (fn == omniLocalIdentity::thisClassCompare)
-    return (omniLocalIdentity*)id;
-
+  if (cptr == &omniObjTableEntry::_classid) return (omniObjTableEntry*)this;
+  if (cptr == &omniLocalIdentity::_classid) return (omniLocalIdentity*)this;
+  if (cptr == &omniIdentity     ::_classid) return (omniIdentity*)     this;
   return 0;
 }
+
+int omniObjTableEntry::_classid;
 
 
 

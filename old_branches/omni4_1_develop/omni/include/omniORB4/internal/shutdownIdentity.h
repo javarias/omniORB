@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.1  2003/03/23 21:03:42  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.2.1  2001/09/19 17:26:47  dpg1
   Full clean-up after orb->destroy().
 
@@ -39,6 +42,16 @@
 #define __OMNIORB_SHUTDOWNIDENTITY_H__
 
 #include <omniIdentity.h>
+
+#ifdef _core_attr
+# error "A local CPP macro _core_attr has already been defined."
+#endif
+
+#if defined(_OMNIORB_LIBRARY)
+#     define _core_attr
+#else
+#     define _core_attr _OMNIORB_NTDLL_IMPORT
+#endif
 
 
 class omniShutdownIdentity : public omniIdentity {
@@ -59,13 +72,14 @@ public:
   virtual _CORBA_Boolean inThisAddressSpace();
   // Returns false.
 
-  static void* thisClassCompare(omniIdentity*, void*);
 
-  static inline omniShutdownIdentity* downcast(omniIdentity* id)
-  {
-    return (omniShutdownIdentity*)(id->classCompare()
-				   (id, (void*)thisClassCompare));
+  virtual void* ptrToClass(int* cptr);
+  static inline omniShutdownIdentity* downcast(omniIdentity* i) {
+    return (omniShutdownIdentity*)i->ptrToClass(&_classid);
   }
+  static _core_attr int _classid;
+  // Dynamic casting mechanism.
+
 
   static omniShutdownIdentity* singleton();
   // Must hold <omni::internalLock>.
@@ -76,10 +90,12 @@ private:
   static _CORBA_Boolean real_is_equivalent(const omniIdentity*,
 					   const omniIdentity*);
 
-  inline omniShutdownIdentity(classCompare_fn compare = thisClassCompare)
-    : omniIdentity(compare),
+  inline omniShutdownIdentity()
+    : omniIdentity(),
       pd_refCount(0)
   {}
 };
+
+#undef _core_attr
 
 #endif // __OMNIORB_SHUTDOWNIDENTITY_H__
