@@ -29,6 +29,10 @@
 //
 
 // $Log$
+// Revision 1.1.2.12  2006/06/06 16:39:37  dgrisby
+// marshalRawString and chunking stream did not byte-swap length fields
+// when required to.
+//
 // Revision 1.1.2.11  2006/05/22 15:44:51  dgrisby
 // Make sure string length and body are never split across a chunk
 // boundary.
@@ -204,7 +208,7 @@ cdrValueChunkStream::maybeStartNewChunk(omni::alignment_t align, size_t size)
     if (omniORB::trace(25)) {
       omniORB::logger l;
       l << "Cannot end value chunk with zero length; extending to "
-	<< size << " octets.\n";
+	<< (int)size << " octets.\n";
     }
     OMNIORB_ASSERT(size);
     declareArrayLength(align, size);
