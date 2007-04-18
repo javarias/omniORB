@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.7  2006/05/25 18:17:18  dgrisby
+  Comment fixes.
+
   Revision 1.1.2.6  2005/08/16 13:51:21  dgrisby
   Problems with valuetype / abstract interface C++ mapping.
 
@@ -481,6 +484,8 @@ public:
   typedef long ptr_arith_t;
 #elif SIZEOF_PTR == SIZEOF_INT
   typedef int ptr_arith_t;
+#elif defined (_WIN64)
+  typedef size_t ptr_arith_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif
