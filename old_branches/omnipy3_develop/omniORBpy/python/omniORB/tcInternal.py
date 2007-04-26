@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.13.2.9  2006/07/11 13:53:09  dgrisby
+# Implement missing TypeCode creation functions.
+#
 # Revision 1.13.2.8  2006/02/16 22:55:45  dgrisby
 # Remove some tab characters that snuck in from a patch.
 #
@@ -550,7 +553,7 @@ class TypeCode_objref (TypeCode_base):
                             tv_local_interface ]:
             raise CORBA.INTERNAL()
         self._d = desc
-        self._k = desc[0]
+        self._k = CORBA.TCKind._items[desc[0]]
 
     def id(self):
         if self._d[1] is not None:
