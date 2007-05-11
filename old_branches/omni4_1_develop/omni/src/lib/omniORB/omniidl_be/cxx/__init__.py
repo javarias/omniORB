@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23.2.5  2005/11/18 18:23:06  dgrisby
+# New -Wbimpl_mapping option.
+#
 # Revision 1.23.2.4  2005/09/05 17:22:09  dgrisby
 # Reference counted local call shortcut.
 #
@@ -196,6 +199,7 @@ usage_string = """\
   -Wbkeep_inc_path  Preserve IDL #include path in header #includes
   -Wbuse_quotes     Use quotes in #includes: "foo" rather than <foo>
   -Wbdll_includes   Extra support for #included IDL in DLLs
+  -Wbguard_prefix   Prefix for include guards in generated headers
   -Wbvirtual_objref Use virtual functions in object references
   -Wbimpl_mapping   Use 'impl' mapping for object reference methods"""
 
@@ -255,6 +259,8 @@ def process_args(args):
                 util.fatalError('Unknown shortcut option "%s"' % arg[9:])
         elif arg == "dll_includes":
             config.state['DLLIncludes']       = 1
+        elif arg[:len('guard_prefix=')] == "guard_prefix=":
+            config.state['GuardPrefix']       = arg[len('guard_prefix='):]
         else:
             util.fatalError("Argument \"" + str(arg) + "\" is unknown")
 

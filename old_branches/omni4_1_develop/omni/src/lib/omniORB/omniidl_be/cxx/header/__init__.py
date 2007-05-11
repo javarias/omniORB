@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.4  2006/05/17 13:26:59  dgrisby
+# Preserve path from #include rather than reconstructing it.
+#
 # Revision 1.17.2.3  2005/01/06 23:10:01  dgrisby
 # Big merge from omni4_0_develop.
 #
@@ -140,9 +143,10 @@ import re, sys, os.path, string
 
 def header(stream, filename):
     stream.out(template.header,
-               program = config.state['Program Name'],
-               library = config.state['Library Version'],
-               guard   = filename)
+               program      = config.state['Program Name'],
+               library      = config.state['Library Version'],
+               guard_prefix = config.state['GuardPrefix'],
+               guard        = filename)
 
 def footer(stream):
     stream.out(template.footer)
@@ -249,7 +253,9 @@ def monolithic(stream, tree):
             cxx_include = "<" + cxx_include + ">"
             
         includes.out(template.main_include,
-                     guardname = guardname, filename = cxx_include)
+                     guardname    = guardname,
+                     guard_prefix = config.state['GuardPrefix'],
+                     filename     = cxx_include)
 
     # see o2be_root::produce_hdr and o2be_root::produce_hdr_defs
 

@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.17.2.4  2005/11/18 18:23:06  dgrisby
+# New -Wbimpl_mapping option.
+#
 # Revision 1.17.2.3  2005/01/06 23:09:49  dgrisby
 # Big merge from omni4_0_develop.
 #
@@ -135,6 +138,9 @@ class ConfigurationState:
 
             # Extra ifdefs for stubs in dlls?
             'DLLIncludes':           0,
+
+            # Prefix for include guard in generated header
+            'GuardPrefix':           '',
 
             # Are we in DEBUG mode?
             'Debug':                 0
