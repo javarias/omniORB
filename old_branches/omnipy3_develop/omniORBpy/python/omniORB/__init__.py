@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.18  2006/09/07 15:29:57  dgrisby
+# Use boxes.idl to build standard value boxes.
+#
 # Revision 1.30.2.17  2006/07/11 13:53:09  dgrisby
 # Implement missing TypeCode creation functions.
 #
@@ -628,7 +631,7 @@ class EnumItem:
             return cmp(id(self), id(other))
 
     def __hash__(self):
-        return id(self)
+        return hash(self._parent_id + "/" + self._n)
 
 class AnonymousEnumItem (EnumItem):
     def __init__(self, value):
