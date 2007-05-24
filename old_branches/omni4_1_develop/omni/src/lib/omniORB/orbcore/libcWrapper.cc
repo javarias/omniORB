@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.21.2.4  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.21.2.3  2006/02/22 14:56:36  dgrisby
   New endPointPublishHostname and endPointResolveNames parameters.
 
@@ -732,7 +735,7 @@ again:
   if ((hp = ::gethostbyname(node)) == NULL) {
     return 0;
   }
-  return new IP4AddrInfo(hostent_to_ip4(hp), port);
+  return new IP4AddrInfo(0, hostent_to_ip4(hp), port);
 
 # else
   // Use gethostbyname_r() on HPUX 10.20
