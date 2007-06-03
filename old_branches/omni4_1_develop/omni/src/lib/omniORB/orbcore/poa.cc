@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.11  2007/03/23 14:36:46  dgrisby
+  Use one etherealisation queue per POA, rather than one global one.
+  Thanks Teemu Torma.
+
   Revision 1.4.2.10  2006/07/18 16:21:21  dgrisby
   New experimental connection management extension; ORB core support
   for it.
@@ -2456,6 +2460,11 @@ omniOrbPOA::pm_deactivate(_CORBA_Boolean etherealize_objects)
   ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 0);
   ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock, 0);
 
+  if (omniORB::trace(10)) {
+    omniORB::logger l;
+    l << "Deactivating POAManager for POA(" << (char*)pd_name << ").\n";
+  }
+
   pd_lock.lock();
   if( pd_dying ) {
     // If being destroyed by another thread, then we just
@@ -2474,7 +2483,11 @@ omniOrbPOA::pm_deactivate(_CORBA_Boolean etherealize_objects)
   // We pretend to detach an object here, so that if some other
   // thread tries to destroy this POA, they will have to block
   // until we've finished etherealising these objects.
-  if( obj_list )  detached_object();
+  CORBA::Boolean did_detach = 0;
+  if( obj_list ) {
+    detached_object();
+    did_detach = 1;
+  }
   pd_lock.unlock();
 
   omni::internalLock->lock();
@@ -2489,7 +2502,14 @@ omniOrbPOA::pm_deactivate(_CORBA_Boolean etherealize_objects)
     met_detached_object();
     wait_for_detached_objects();
   }
-
+  else if (did_detach) {
+    // Earlier on we had some objects in the active object list, but
+    // they were all busy so the call to deactivate_objects removed
+    // them from the list. The list is now empty, but we must still
+    // remember to call met_detached_object, otherwise POA
+    // desctruction will hang.
+    met_detached_object();
+  }
 }
 
 

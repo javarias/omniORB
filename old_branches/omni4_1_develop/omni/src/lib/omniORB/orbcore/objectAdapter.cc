@@ -28,6 +28,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.11  2006/10/09 09:47:12  dgrisby
+ Only delete giopServer if all threads are successfully shut down.
+
  Revision 1.5.2.10  2006/07/18 16:21:21  dgrisby
  New experimental connection management extension; ORB core support
  for it.
@@ -619,6 +622,14 @@ omniObjAdapter::met_detached_object()
 
   int do_signal = --pd_nDetachedObjects == 0 && pd_signalOnZeroDetachedObjects;
 
+  if (omniORB::trace(20)) {
+    omniORB::logger log;
+    log << "Met detached object. " << pd_nDetachedObjects << " remaining.";
+    if (do_signal)
+      log << " Signalling.";
+    log << "\n";
+  }
+
   sd_detachedObjectLock.unlock();
 
   if( do_signal )  sd_detachedObjectSignal.broadcast();
@@ -632,6 +643,11 @@ omniObjAdapter::wait_for_detached_objects()
 
   sd_detachedObjectLock.lock();
   pd_signalOnZeroDetachedObjects++;
+
+  if (omniORB::trace(20)) {
+    omniORB::logger log;
+    log << "Wait for " << pd_nDetachedObjects << " detached objects.\n";
+  }
 
   OMNIORB_ASSERT(pd_nDetachedObjects >= 0);
 
