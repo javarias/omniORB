@@ -31,6 +31,10 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.16  2007/06/06 17:31:01  dgrisby
+ * Enum discriminators were returned as ulongs from
+ * TypeCode::member_label, rather than as the proper enums.
+ *
  * Revision 1.40.2.15  2007/03/08 09:17:11  dgrisby
  * Union discriminator bug is really fixed now.
  *
@@ -1735,7 +1739,8 @@ TypeCode_string::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -1829,7 +1834,8 @@ TypeCode_wstring::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -2048,7 +2054,8 @@ TypeCode_objref::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -2209,7 +2216,8 @@ TypeCode_alias::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -2436,7 +2444,8 @@ TypeCode_sequence::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -2624,7 +2633,8 @@ TypeCode_array::NP_parameter(CORBA::Long index) const
     default:
       throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -2640,7 +2650,8 @@ TypeCode_array::generateAlignmentTable()
 
   if( pd_length == 1 ) {
     pd_alignmentTable.set(eat);
-  } else if( eat.is_simple() ) {
+  }
+  else if( eat.is_simple() ) {
     // We can copy the whole array as a single block.
     pd_alignmentTable.setNumEntries(1);
     CORBA::ULong size_aligned = omni::align_to(eat[0].simple.size,
@@ -2648,7 +2659,8 @@ TypeCode_array::generateAlignmentTable()
     pd_alignmentTable.addSimple(eat[0].simple.alignment,
 				eat[0].simple.size +
 				(pd_length - 1) * size_aligned);
-  } else if( eat.has_only_simple() ) {
+  }
+  else if( eat.has_only_simple() ) {
     // We need to copy the first element separately, and then the
     // rest as a simple block. This is possible because a struct of
     // simple blocks will always finish with the same alignment
@@ -2667,7 +2679,8 @@ TypeCode_array::generateAlignmentTable()
     }
     pd_alignmentTable.addSimple(omni::ALIGN_1,
 				(pd_length - 1) * (end - start));
-  } else {
+  }
+  else {
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addNasty(this);
   }
@@ -2957,32 +2970,50 @@ TypeCode_struct::generateAlignmentTable()
   // Determine how many table entries we will need.
   for( CORBA::ULong i = 0; i < pd_nmembers; i++ ) {
     TypeCode_base* mtc = ToTcBase(pd_members[i].type);
-    const TypeCode_alignTable& mat = mtc->alignmentTable();
 
-    for( unsigned j = 0; j < mat.entries(); j++ ) {
-      switch( mat[j].type ) {
-      case TypeCode_alignTable::it_simple:
-	if( simple_size % mat[j].simple.alignment == 0 &&
-	    mat[j].simple.alignment <= simple_alignment ) {
-	  // If can, add onto existing simple ...
-	  if( simple_size == 0 )  simple_alignment = mat[j].simple.alignment;
-	  simple_size += mat[j].simple.size;
-	} else {
-	  simple_size = mat[j].simple.size;
-	  simple_alignment = mat[j].simple.alignment;
-	  num_entries++;
-	}
-	break;
+    if (mtc->complete()) {
 
-      default:
-	if( simple_size > 0 ) {
-	  simple_size = 0;
-	  simple_alignment = omni::ALIGN_8;
+      const TypeCode_alignTable& mat = mtc->alignmentTable();
+
+      for( unsigned j = 0; j < mat.entries(); j++ ) {
+
+	switch( mat[j].type ) {
+
+	case TypeCode_alignTable::it_simple:
+
+	  if( simple_size % mat[j].simple.alignment == 0 &&
+	      mat[j].simple.alignment <= simple_alignment ) {
+
+	    // If can, add onto existing simple ...
+	    if( simple_size == 0 )  simple_alignment = mat[j].simple.alignment;
+	    simple_size += mat[j].simple.size;
+	  }
+	  else {
+	    simple_size = mat[j].simple.size;
+	    simple_alignment = mat[j].simple.alignment;
+	    num_entries++;
+	  }
+	  break;
+
+	default:
+	  if( simple_size > 0 ) {
+	    simple_size = 0;
+	    simple_alignment = omni::ALIGN_8;
+	    num_entries++;
+	  }
 	  num_entries++;
+	  break;
 	}
-	num_entries++;
-	break;
       }
+    }
+    else {
+      // TypeCode incomplete. It must have nasty alignment.
+      if( simple_size > 0 ) {
+	simple_size = 0;
+	simple_alignment = omni::ALIGN_8;
+	num_entries++;
+      }
+      num_entries++;
     }
   }
   // And there may be an extra simple one at the end ...
@@ -2992,39 +3023,60 @@ TypeCode_struct::generateAlignmentTable()
   if( num_entries == 0 ) {
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_1, 0);
-  } else {
+  }
+  else {
     pd_alignmentTable.setNumEntries(num_entries);
     simple_size = 0;
     simple_alignment = omni::ALIGN_8;
 
     for( CORBA::ULong ii = 0; ii < pd_nmembers; ii++ ) {
+
       TypeCode_base* mtc = ToTcBase(pd_members[ii].type);
-      const TypeCode_alignTable& mat = mtc->alignmentTable();
+      
+      if (mtc->complete()) {
 
-      for( unsigned j = 0; j < mat.entries(); j++ ) {
-	switch( mat[j].type ) {
-	case TypeCode_alignTable::it_simple:
-	  if( simple_size % mat[j].simple.alignment == 0 &&
-	      mat[j].simple.alignment <= simple_alignment ) {
-	    // If can add onto existing simple ...
-	    if( simple_size == 0 )  simple_alignment = mat[j].simple.alignment;
-	    simple_size += mat[j].simple.size;
-	  } else {
-	    pd_alignmentTable.addSimple(simple_alignment, simple_size);
-	    simple_size = mat[j].simple.size;
-	    simple_alignment = mat[j].simple.alignment;
-	  }
-	  break;
+	const TypeCode_alignTable& mat = mtc->alignmentTable();
 
-	default:
-	  if( simple_size > 0 ) {
-	    pd_alignmentTable.addSimple(simple_alignment, simple_size);
-	    simple_size = 0;
-	    simple_alignment = omni::ALIGN_8;
+	for( unsigned j = 0; j < mat.entries(); j++ ) {
+
+	  switch( mat[j].type ) {
+
+	  case TypeCode_alignTable::it_simple:
+
+	    if( simple_size % mat[j].simple.alignment == 0 &&
+		mat[j].simple.alignment <= simple_alignment ) {
+
+	      // If can add onto existing simple ...
+	      if( simple_size == 0 )
+		simple_alignment = mat[j].simple.alignment;
+	      simple_size += mat[j].simple.size;
+	    }
+	    else {
+	      pd_alignmentTable.addSimple(simple_alignment, simple_size);
+	      simple_size = mat[j].simple.size;
+	      simple_alignment = mat[j].simple.alignment;
+	    }
+	    break;
+
+	  default:
+	    if( simple_size > 0 ) {
+	      pd_alignmentTable.addSimple(simple_alignment, simple_size);
+	      simple_size = 0;
+	      simple_alignment = omni::ALIGN_8;
+	    }
+	    pd_alignmentTable.add(mat, j);
+	    break;
 	  }
-	  pd_alignmentTable.add(mat, j);
-	  break;
 	}
+      }
+      else {
+	// Incomplete
+	if( simple_size > 0 ) {
+	  pd_alignmentTable.addSimple(simple_alignment, simple_size);
+	  simple_size = 0;
+	  simple_alignment = omni::ALIGN_8;
+	}
+	pd_alignmentTable.addNasty(mtc);
       }
     }
     // And there may be an extra simple one at the end ...
@@ -3355,7 +3407,8 @@ TypeCode_except::generateAlignmentTable()
 	  // If can add onto existing simple ...
 	  if( simple_size == 0 )  simple_alignment = mat[j].simple.alignment;
 	  simple_size += mat[j].simple.size;
-	} else {
+	}
+	else {
 	  simple_size = mat[j].simple.size;
 	  simple_alignment = mat[j].simple.alignment;
 	  num_entries++;
@@ -3380,7 +3433,8 @@ TypeCode_except::generateAlignmentTable()
   if( num_entries == 0 ) {
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_1, 0);
-  } else {
+  }
+  else {
     pd_alignmentTable.setNumEntries(num_entries);
     simple_size = 0;
     simple_alignment = omni::ALIGN_8;
@@ -3397,7 +3451,8 @@ TypeCode_except::generateAlignmentTable()
 	    // If can add onto existing simple ...
 	    if( simple_size == 0 )  simple_alignment = mat[j].simple.alignment;
 	    simple_size += mat[j].simple.size;
-	  } else {
+	  }
+	  else {
 	    pd_alignmentTable.addSimple(simple_alignment, simple_size);
 	    simple_size = mat[j].simple.size;
 	    simple_alignment = mat[j].simple.alignment;
@@ -3657,7 +3712,8 @@ TypeCode_enum::NP_parameter(CORBA::Long index) const
       else
 	throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
@@ -4030,7 +4086,8 @@ TypeCode_union::NP_member_label(CORBA::ULong i) const
 
   if (CORBA::Long(i) != pd_default) {
     TypeCode_union_helper::insertLabel(*a, pd_members[i].alabel, pd_discrim_tc);
-  } else {
+  }
+  else {
     (*a) <<= CORBA::Any::from_octet((CORBA::Octet)0);
   }
   return a;
@@ -4096,7 +4153,8 @@ TypeCode_union::NP_parameter(CORBA::Long index) const
       else
 	throw CORBA::TypeCode::Bounds();
     };
-  } catch (...) {
+  }
+  catch (...) {
     delete rv;
     throw;
   }
