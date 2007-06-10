@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2007/02/26 15:16:31  dgrisby
+  New socketSendBuffer parameter, defaulting to 16384 on Windows.
+  Avoids a bug in Windows where select() on send waits for all sent data
+  to be acknowledged.
+
   Revision 1.1.4.8  2006/09/01 16:03:47  dgrisby
   Merge minor updates from omni4_0_develop.
 
@@ -343,6 +348,8 @@ orbOptions::getConfigFileName(int argc, char** argv, const char* fname)
 void
 orbOptions::importFromEnv() throw (orbOptions::Unknown,orbOptions::BadParam) {
   
+  if (!pd_handlers_sorted) sortHandlers();
+
   omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
   omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
 
