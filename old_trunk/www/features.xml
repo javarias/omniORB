@@ -5,9 +5,9 @@
 
 omniORB is a CORBA Object Request Broker (ORB) for C++ and Python.
 
-<h2>Stable release: omniORB 4.0.7</h2>
+<h2>Stable release: omniORB 4.1.0</h2>
 
-omniORB 4.0 adheres to version 2.6 of the CORBA specification. The
+omniORB 4.1 adheres to version 2.6 of the CORBA specification. The
 technical highlights are:
 
 <ul>
@@ -17,6 +17,11 @@ technical highlights are:
   <li>Fully multithreaded runtime.</li>
   <li>TypeCode and type Any.</li>
   <li>CORBA 2.6 DynAny interfaces.</li>
+  <li>Objects by value support.</li>
+  <li>Abstract interfaces support.</li>
+  <li>Local interface support.</li>
+  <li>C++ mapping version 1.1.</li>
+  <li>IPv6 support.</li>
   <li>Dynamic Invocation and Dynamic Skeleton interfaces.</li>
   <li>Complete Naming Service, omniNames.</li>
   <li>Support for wchar, wstring and code set negotiation.</li>
@@ -30,52 +35,30 @@ technical highlights are:
   <li>The following platforms are supported (although some have only
       been tested with earlier releases):
     <ul>
-      <li>Windows NT / XP / 9x with Visual C++ version 5.0 and above</li>
-      <li>Linux / EGCS 2.91 or GCC 2.95 and above</li>
+      <li>Windows 32 and 64 bit with Visual C++ version 5.0 and above</li>
+      <li>Linux</li>
       <li>Solaris 2.{5,6,7,8} / Sun C++ version 4.2 and above, or
           GCC 2.95 and above</li>
+      <li>Mac OS X</li>
       <li>HPUX 11.00/ aC++</li>
+      <li>HPUX 10.20/ aC++ (B3910 A.01.04)</li>
       <li>SGI Irix 6.x/ SGI C++ compiler 7.2</li>
-      <li>Digital Unix 4.0D/ DEC C++ compiler version 6.0</li>
+      <li>Tru64 / Digital Unix 4.0D/ DEC C++ compiler version 6.0</li>
       <li>IBM AIX 4.2/ IBM C Set++ 3.1.4 and xlC 5.0 (Visual Age C++ 5.0)</li>
       <li>IBM AIX 4.3/ IBM C Set++ 3.6.6 and xlC 5.0 (Visual Age C++ 5.0)</li>
-      <li>HPUX 10.20/ aC++ (B3910 A.01.04)</li>
       <li>OpenVMS Alpha 6.2/ DEC C++ compiler 6.2/5.5 (UCX 4.1 ECO 8)</li>
       <li>OpenVMS Vax 6.1/ DEC C++ compiler 5.5 (UCX 4.0 ECO 1)</li>
       <li>NextStep 3.3/ gcc-2.7.2</li>
       <li>Reliant Unix 5.43/CDS++</li>
       <li>Phar Lap's Real Time ETS Kernel</li>
       <li>SCO Unixware 7</li>
-      <li>Mac OS X</li>
-      <li>Fujitsu Siemens BS2000 (with patch in the distribution)</li>
+      <li>Fujitsu Siemens BS2000</li>
       <li>...and many others.</li>
     </ul>
   </li>
   <li>Fully interoperable with other CORBA ORBs.</li>
   <li>A number of contributed CORBA service implementations. See the
       <a href="links.html">links page</a>.</li>
-</ul>
-
-<p>
-There are a number of missing features, notably:
-
-<ul>
-  <li>Support for objects by value and related features.</li>
-  <li>Support for portable interceptors.</li>
-</ul>
-</p>
-
-<h2>Development release: omniORB 4.1.0 beta 2</h2>
-
-omniORB 4.1 supports all the features of omniORB 4.0, with the
-addition of:
-
-<ul>
-  <li>Objects by value support.</li>
-  <li>Abstract interfaces support.</li>
-  <li>Local interface support.</li>
-  <li>C++ mapping version 1.1.</li>
-  <li>IPv6 support.</li>
 </ul>
 
 <hr width="75%"/>
