@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.10  2006/05/15 10:26:11  dgrisby
+// More relaxation of requirements for old-style classes, for Python 2.5.
+//
 // Revision 1.1.4.9  2005/12/08 14:28:05  dgrisby
 // Track ORB core changes.
 //
@@ -3056,17 +3059,26 @@ unmarshalPyObjectSequence(cdrStream& stream, PyObject* d_o)
   CORBA::ULong len;
   len <<= stream;
 
+  PyObject* elm_desc = PyTuple_GET_ITEM(d_o, 1);
+
   if (max_len > 0 && len > max_len)
     OMNIORB_THROW(MARSHAL, MARSHAL_SequenceIsTooLong,
 		  (CORBA::CompletionStatus)stream.completion());
 
   // If the sequence length field is greater than the number of
-  // octets left in the message, they're clearly lying.
-  if (!stream.checkInputOverrun(1, len))
-    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
-		  (CORBA::CompletionStatus)stream.completion());
+  // octets left in the message, the sequence length is invalid.
+  if (!stream.checkInputOverrun(1, len)) {
 
-  PyObject* elm_desc = PyTuple_GET_ITEM(d_o, 1);
+    if (PyInt_Check(elm_desc) && PyInt_AS_LONG(elm_desc) <= 1) {
+      // Sequence is a bizarre sequence of void or null, meaning that
+      // the data takes up no space!  The overrun is therefore not an
+      // error.
+    }
+    else {
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                    (CORBA::CompletionStatus)stream.completion());
+    }
+  }
 
   CORBA::ULong i;
 
