@@ -31,6 +31,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2007/07/31 14:23:43  dgrisby
+  If the platform does not accept IPv4 connections on IPv6 sockets by
+  default, try to enable it by turning the IPV6_V6ONLY socket option
+  off. Should work for BSDs and Windows Vista.
+
   Revision 1.1.4.14  2006/11/20 14:16:21  dgrisby
   FreeBSD doesn't listen for IPv4 on IPv6 sockets. Thanks Arno Klaassen.
 
@@ -190,6 +195,9 @@
 
 #  if defined(OMNI_SUPPORT_IPV6)
 #    include <ws2tcpip.h>
+#    if !defined(IPV6_V6ONLY)
+#      define IPV6_V6ONLY 27  // Defined to this on Vista
+#    endif
 #  endif
 
 #  define RC_INADDR_NONE     INADDR_NONE
