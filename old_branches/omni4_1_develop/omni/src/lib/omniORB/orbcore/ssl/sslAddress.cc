@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2007/02/28 15:55:57  dgrisby
+  setsockopt expects a char* on some platforms.
+
   Revision 1.1.4.9  2007/02/26 15:16:31  dgrisby
   New socketSendBuffer parameter, defaulting to 16384 on Windows.
   Avoids a bug in Windows where select() on send waits for all sent data
@@ -423,7 +426,7 @@ sslAddress::Poke() const {
   if ((LibcWrapper::AddrInfo*)ai == 0)
     return 0;
 
-  if ((sock = socket(INETSOCKET,SOCK_STREAM,0)) == RC_INVALID_SOCKET)
+  if ((sock = socket(ai->addrFamily(), SOCK_STREAM,0)) == RC_INVALID_SOCKET)
     return 0;
 
   if (SocketSetnonblocking(sock) == RC_INVALID_SOCKET) {
