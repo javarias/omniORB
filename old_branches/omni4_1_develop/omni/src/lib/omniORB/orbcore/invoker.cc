@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.7  2006/09/01 16:03:47  dgrisby
+  Merge minor updates from omni4_0_develop.
+
   Revision 1.1.4.5  2006/07/02 22:52:04  dgrisby
   Store self thread in task objects to avoid calls to self(), speeding
   up Current. Other minor performance tweaks.
@@ -367,11 +370,23 @@ omniAsyncInvoker::insert(omniTask* t) {
 	    omniAsyncWorker* w = new omniAsyncWorker(this,t);
 	    OMNIORB_ASSERT(w);
 	  }
+	  catch (const omni_thread_fatal &ex) {
+	    // Cannot start a new thread.
+	    pd_nthreads--;
+	    pd_totalthreads--;
+	    if (omniORB::trace(2)) {
+	      omniORB::logger log;
+	      log << "Exception trying to start new thread ("
+		  << ex.error << "). Task queued.\n";
+	    }
+	    t->enq(pd_anytime_tq);
+	  }
 	  catch (...) {
 	    // Cannot start a new thread.
 	    pd_nthreads--;
 	    pd_totalthreads--;
-	    omniORB::logs(5, "Exception trying to start new thread.");
+	    omniORB::logs(2, "Exception trying to start new thread. "
+			  "Task queued.");
 	    t->enq(pd_anytime_tq);
 	  }
 	}
@@ -400,10 +415,20 @@ omniAsyncInvoker::insert(omniTask* t) {
 	  pd_totalthreads++;
 	  omniAsyncWorker* w = new omniAsyncWorker(this,t);
 	}
+	catch (const omni_thread_fatal &ex) {
+	  // Cannot start a new thread.
+	  pd_totalthreads--;
+	  if (omniORB::trace(1)) {
+	    omniORB::logger log;
+	    log << "Exception trying to start new thread ("
+		<< ex.error << ").\n";
+	  }
+	  return 0;
+	}
 	catch(...) {
 	  // Cannot start a new thread.
 	  pd_totalthreads--;
-	  omniORB::logs(5, "Exception trying to start new thread.");
+	  omniORB::logs(1, "Exception trying to start new thread.");
 	  return 0;
 	}
       }
