@@ -28,6 +28,13 @@ Bugs fixed in:
 <tr valign="top"><td>
 <ul>
   <li>
+    omniORB 4.1.x:
+    <ul>
+      <li><a href="bugs/bugfixes-410.html">omniORB 4.1.0</a></li>
+    </ul>
+  </li>
+  <br/>
+  <li>
     omniORB 4.0.x:
     <ul>
       <li><a href="bugs/bugfixes-406.html">omniORB 4.0.6</a></li>
@@ -60,6 +67,13 @@ Bugs fixed in:
 </td>
 <td>
 <ul>
+  <li>
+    omniORBpy 3.x
+    <ul>
+      <li><a href="pybugs/bugfixes-30.html">omniORBpy 3.0</a></li>
+    </ul>
+  </li>
+  <br/>
   <li>
     omniORBpy 2.x
     <ul>

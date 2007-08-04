@@ -112,7 +112,7 @@
 </xsl:template>
 
 <xsl:template match="listlink">
-    <tr><td>Link for this bug:</td>
+    <tr><td>Link:</td>
         <td><a href="{@href}"><xsl:value-of select="@href"/></a>
         </td>
     </tr>

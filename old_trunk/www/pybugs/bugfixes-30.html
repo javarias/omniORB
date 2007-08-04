@@ -1,23 +1,23 @@
 <html>
 <!--Automatically generated with XSLT--><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>omniORBpy 2.3 bugs</title>
+<title>omniORBpy 3.0 bugs</title>
 <link rel="stylesheet" href="../styles.css" type="text/css">
 </head>
 <body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
 <tr>
 <td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
-<td class="header"><h1 align="center">omniORBpy 2.3 bugs</h1></td>
+<td class="header"><h1 align="center">omniORBpy 3.0 bugs</h1></td>
 </tr>
 <tr>
 <td width="15%" class="sidebar" valign="top" align="left">
 <p align="center"><b>Destinations</b></p>
 <a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
-<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/2.3" width="1" height="1" alt=""></p>
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/3.0" width="1" height="1" alt=""></p>
 </td>
 <td class="main" valign="top" align="left">
 <p>
-	  The following bugs in omniORBpy 2.3 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
+	  The following bugs in omniORBpy 3.0 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
         </p>
 <table align="center" width="95%">
 <tr><td colspan="2"><hr></td></tr>
@@ -25,86 +25,52 @@
 <tr>
 <td>Summary:</td>
 <td>
-<b>Bug in TypeCode equivalent check</b>
-            (bug number 4)
-            <a name="bug4"></a>
-</td>
-</tr>
-<tr>
-<td>Date:      </td>
-<td>Wed Jul 28 14:35:21 BST 2004</td>
-</tr>
-  
-  <tr valign="top">
-<td>Description:</td>
-<td>
-  The equivalent code sometimes blew up with aliases to basic types.
-  </td>
-</tr>
-<tr><td colspan="2"><hr></td></tr>
-
-<tr>
-<td>Summary:</td>
-<td>
-<b>Deadlock in get_reference</b>
-            (bug number 3)
-            <a name="bug3"></a>
-</td>
-</tr>
-<tr>
-<td>Date:      </td>
-<td>Mon Jun 14 12:56:43 BST 2004</td>
-</tr>
-  
-  <tr valign="top">
-<td>Description:</td>
-<td>
-  POA current get_reference did not obey the lock partial order, so it
-  could result in a deadlock.
-  </td>
-</tr>
-<tr><td colspan="2"><hr></td></tr>
-
-<tr>
-<td>Summary:</td>
-<td>
-<b>Operations clashing with keywords were broken</b>
-            (bug number 2)
-            <a name="bug2"></a>
-</td>
-</tr>
-<tr>
-<td>Date:      </td>
-<td>Mon Feb 16 13:55:02 GMT 2004</td>
-</tr>
-  
-  <tr valign="top">
-<td>Description:</td>
-<td>
-  The stub code used the escaped operation name on the wire, so the
-  remote end did not accept the operation.
-  </td>
-</tr>
-<tr><td colspan="2"><hr></td></tr>
-
-<tr>
-<td>Summary:</td>
-<td>
-<b>Bugs in LOCATION_FORWARD handling</b>
+<b>Incorrect TypeCode from to_any</b>
             (bug number 1)
             <a name="bug1"></a>
 </td>
 </tr>
 <tr>
 <td>Date:      </td>
-<td>Mon Dec 15 12:11:03 GMT 2003</td>
+<td>Thu Dec  7 11:48:01 GMT 2006</td>
 </tr>
   
   <tr valign="top">
 <td>Description:</td>
 <td>
-  Reference counting bugs could lead to crashes.
+  omniORB.any.to_any used the wrong TypeCode for large integers on 64
+  bit platforms.
   </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Incorrect kind() return for object reference TypeCodes</b>
+            (bug number 2)
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Apr 26 09:32:43 BST 2007</td>
+</tr>
+  
+  <tr>
+<td>Reported by:</td>
+<td>Andrew Edem</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Changes to support abstract and local interfaces broke the kind()
+  function for object reference TypeCodes.
+  </td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2007-April/028599.html">http://www.omniorb-support.com/pipermail/omniorb-list/2007-April/028599.html</a></td>
 </tr>
 <tr><td colspan="2"><hr></td></tr>
 

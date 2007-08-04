@@ -91,7 +91,6 @@
     </tr>
 
     <tr><td>Date:      </td><td><xsl:value-of select="@date"/></td></tr>
-    <tr><td>Fixed by:  </td><td><xsl:value-of select="@user"/></td></tr>
 
     <xsl:apply-templates/>
 
@@ -110,6 +109,13 @@
 <!--          <td><a href="{@href}"><xsl:value-of select="@href"/></a> -->
 <!--          </td> -->
 <!--      </tr> -->
+</xsl:template>
+
+<xsl:template match="listlink">
+    <tr><td>Link:</td>
+        <td><a href="{@href}"><xsl:value-of select="@href"/></a>
+        </td>
+    </tr>
 </xsl:template>
 
 <xsl:template match="text">
