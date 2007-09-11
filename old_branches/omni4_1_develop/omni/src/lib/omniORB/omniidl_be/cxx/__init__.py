@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23.2.6  2007/05/11 09:52:28  dgrisby
+# New -Wbguard_prefix option. Thanks Austin Bingham.
+#
 # Revision 1.23.2.5  2005/11/18 18:23:06  dgrisby
 # New -Wbimpl_mapping option.
 #
@@ -320,15 +323,18 @@ def run(tree, args):
         unsupported_visitors = map(lambda x:"visit" + x,
                                    AST_unsupported_nodes[:])
         if name in unsupported_visitors:
+            # delete all possibly partial output files
+            for file in output.listAllCreatedFiles():
+                os.unlink(file)
+
             util.unsupportedIDL()
             
-        util.fatalError("An AttributeError exception was caught")
+        raise
+
     except SystemExit, e:
         # fatalError function throws SystemExit exception
         # delete all possibly partial output files
         for file in output.listAllCreatedFiles():
             os.unlink(file)
         
-        raise e
-    except:
-        util.fatalError("An internal exception was caught")
+        raise
