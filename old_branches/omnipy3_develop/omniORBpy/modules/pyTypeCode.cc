@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.8  2006/05/24 18:33:42  dgrisby
+// Off by one error in abstract interface typecode marshalling.
+//
 // Revision 1.1.4.7  2006/05/15 10:26:11  dgrisby
 // More relaxation of requirements for old-style classes, for Python 2.5.
 //
@@ -1049,6 +1052,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 	  Py_DECREF(mname);
 
 	  OMNIORB_ASSERT(t_o);
+          PyObject_SetAttrString(t_o, (char*)"_parent_id", repoId);
 	  PyTuple_SET_ITEM(mems, i, t_o);
 	}
       }
