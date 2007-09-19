@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.6  2006/01/10 13:59:37  dgrisby
+  New clientConnectTimeOutPeriod configuration parameter.
+
   Revision 1.5.2.5  2005/09/19 18:26:33  dgrisby
   Merge from omni4_0_develop again.
 
@@ -725,7 +728,7 @@ OMNI_NAMESPACE_END(omni)
 
 
 #define OMNIORB_THROW(name, minor, completion) \
-  throw CORBA::name(minor, completion)
+  throw ::CORBA::name(minor, completion)
 
 #endif
 

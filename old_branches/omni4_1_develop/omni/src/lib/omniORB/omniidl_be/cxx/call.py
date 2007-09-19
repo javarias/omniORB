@@ -28,6 +28,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.9  2007/02/26 15:51:15  dgrisby
+# Suppress cd parameter when it is definitely unused, to avoid compiler
+# warnings.
+#
 # Revision 1.1.6.8  2005/11/09 12:22:18  dgrisby
 # Local interfaces support.
 #
@@ -432,7 +436,7 @@ class CallDescriptor:
 
         if self.__contexts:
             assign_context = "_call_desc.ctxt = "\
-                             "CORBA::Context::_duplicate(_ctxt);"
+                             "::CORBA::Context::_duplicate(_ctxt);"
         else:
             assign_context = ""
         
@@ -554,7 +558,7 @@ class CallDescriptor:
             data_members.append(storage + " " + storage_n + ";")
 
         if self.__contexts:
-            data_members.append("CORBA::Context_var ctxt;");
+            data_members.append("::CORBA::Context_var ctxt;");
 
         if containsValues:
             contains_values = "containsValues(1);"
@@ -749,7 +753,7 @@ class CallDescriptor:
                 if d_type.typecode():
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n"+ \
                                       "*" + arg_n + " = " + \
-                                      "CORBA::TypeCode::_nil();")
+                                      "::CORBA::TypeCode::_nil();")
                 elif d_type.interface():
                     nilobjref = string.replace(d_type.base(),"_ptr","::_nil()")
                     if isinstance(d_type.type().decl(),idlast.Forward):
@@ -766,7 +770,7 @@ class CallDescriptor:
                 elif d_type.wstring():
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n" + \
                                       "*" + arg_n + " = " + \
-                                      "(CORBA::WChar*) _CORBA_WString_helper::empty_wstring;")
+                                      "(::CORBA::WChar*) _CORBA_WString_helper::empty_wstring;")
                 arg_n = "*" + arg_n
             skutil.unmarshall(marshal_block, None,
                               argtype, None, arg_n, "_n")

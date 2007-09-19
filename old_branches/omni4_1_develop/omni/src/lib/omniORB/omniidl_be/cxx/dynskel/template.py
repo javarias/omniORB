@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.6  2004/10/13 17:58:23  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.5.2.5  2004/07/31 23:44:55  dgrisby
 # Properly handle null and void Anys; store omniObjRef pointer for
 # objrefs in Anys.
@@ -140,11 +143,11 @@ OMNI_USING_NAMESPACE(omni)
 
 static const char* @prefix@_dyn_library_version = @library@_dyn;
 
-static CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
+static ::CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
 """
 
 fragment_header = """\
-static CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
+static ::CORBA::TypeCode::_Tracker @prefix@_tcTrack(__FILE__);
 """
 
 
@@ -166,7 +169,7 @@ static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
     omni::releaseObjRef(_o);
 }
 
-void operator<<=(CORBA::Any& _a, @fqname@_ptr _o)
+void operator<<=(::CORBA::Any& _a, @fqname@_ptr _o)
 {
   @fqname@_ptr _no = @fqname@::_duplicate(_o);
   _a.PR_insert(@tc_name@,
@@ -174,7 +177,7 @@ void operator<<=(CORBA::Any& _a, @fqname@_ptr _o)
                @private_prefix@_@guard_name@_destructor_fn,
                _no->_PR_getobj());
 }
-void operator<<=(CORBA::Any& _a, @fqname@_ptr* _op)
+void operator<<=(::CORBA::Any& _a, @fqname@_ptr* _op)
 {
   _a.PR_insert(@tc_name@,
                @private_prefix@_@guard_name@_marshal_fn,
@@ -183,7 +186,7 @@ void operator<<=(CORBA::Any& _a, @fqname@_ptr* _op)
   *_op = @fqname@::_nil();
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _o)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@_ptr& _o)
 {
   void* _v;
   if (_a.PR_extract(@tc_name@,
@@ -205,15 +208,15 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _o)
 abstract_interface = """\
 static void @private_prefix@_@guard_name@_marshal_fn(cdrStream& _s, void* _v)
 {
-  CORBA::AbstractBase* _a = (CORBA::AbstractBase*)_v;
+  ::CORBA::AbstractBase* _a = (::CORBA::AbstractBase*)_v;
   if (_v) {
-    CORBA::ValueBase* _b = _a->_NP_to_value();
+    ::CORBA::ValueBase* _b = _a->_NP_to_value();
     if (_b) {
       _s.marshalBoolean(0);
-      CORBA::ValueBase::_NP_marshal(_b,_s);
+      ::CORBA::ValueBase::_NP_marshal(_b,_s);
       return;
     }
-    CORBA::Object_ptr _o = _a->_NP_to_object();
+    ::CORBA::Object_ptr _o = _a->_NP_to_object();
     if (_o) {
       _s.marshalBoolean(1);
       omniObjRef::_marshal(_o->_PR_getobj(),_s);
@@ -221,12 +224,12 @@ static void @private_prefix@_@guard_name@_marshal_fn(cdrStream& _s, void* _v)
     }
   }
   _s.marshalBoolean(0);
-  CORBA::ValueBase::_NP_marshal(0,_s);
+  ::CORBA::ValueBase::_NP_marshal(0,_s);
 }
 static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
 {
-  CORBA::AbstractBase* _a;
-  CORBA::Boolean _c = _s.unmarshalBoolean();
+  ::CORBA::AbstractBase* _a;
+  ::CORBA::Boolean _c = _s.unmarshalBoolean();
   if (_c) {
     omniObjRef* _o = omniObjRef::_unMarshal(@fqname@::_PD_repoId,_s);
     if (_o)
@@ -235,7 +238,7 @@ static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
       _a = @fqname@::_nil();
   }
   else {
-    CORBA::ValueBase* _b = CORBA::ValueBase::_NP_unmarshal(_s);
+    ::CORBA::ValueBase* _b = ::CORBA::ValueBase::_NP_unmarshal(_s);
     if (_b)
       _a = (@fqname@_ptr)_b->_ptrToValue(@fqname@::_PD_repoId);
     else
@@ -245,28 +248,28 @@ static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
 }
 static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
 {
-  CORBA::AbstractBase* _a = (CORBA::AbstractBase*)_v;
-  CORBA::release(_a);
+  ::CORBA::AbstractBase* _a = (::CORBA::AbstractBase*)_v;
+  ::CORBA::release(_a);
 }
 
-void operator<<=(CORBA::Any& _a, @fqname@_ptr _o)
+void operator<<=(::CORBA::Any& _a, @fqname@_ptr _o)
 {
   @fqname@_ptr _no = @fqname@::_duplicate(_o);
   _a.PR_insert(@tc_name@,
                @private_prefix@_@guard_name@_marshal_fn,
                @private_prefix@_@guard_name@_destructor_fn,
-               (CORBA::AbstractBase*)_no);
+               (::CORBA::AbstractBase*)_no);
 }
-void operator<<=(CORBA::Any& _a, @fqname@_ptr* _op)
+void operator<<=(::CORBA::Any& _a, @fqname@_ptr* _op)
 {
   _a.PR_insert(@tc_name@,
                @private_prefix@_@guard_name@_marshal_fn,
                @private_prefix@_@guard_name@_destructor_fn,
-               (CORBA::AbstractBase*)*_op);
+               (::CORBA::AbstractBase*)*_op);
   *_op = @fqname@::_nil();
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _o)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@_ptr& _o)
 {
   void* _v;
   if (_a.PR_extract(@tc_name@,
@@ -274,14 +277,14 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_ptr& _o)
                     @private_prefix@_@guard_name@_marshal_fn,
                     @private_prefix@_@guard_name@_destructor_fn,
                     _v)) {
-    CORBA::AbstractBase* _a = (CORBA::AbstractBase*)_v;
+    ::CORBA::AbstractBase* _a = (::CORBA::AbstractBase*)_v;
     if (_a) {
-      CORBA::ValueBase* _b = _a->_NP_to_value();
+      ::CORBA::ValueBase* _b = _a->_NP_to_value();
       if (_b) {
         _o = (@fqname@_ptr)_b->_ptrToValue(@fqname@::_PD_repoId);
         return 1;
       }
-      CORBA::Object_ptr _p = _a->_NP_to_object();
+      ::CORBA::Object_ptr _p = _a->_NP_to_object();
       if (_p) {
         _o = (@fqname@_ptr)_p->_ptrToObjRef(@fqname@::_PD_repoId);
         return 1;
@@ -307,14 +310,14 @@ static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
   *_p <<= _s;
 }
 
-void operator<<=(CORBA::Any& _a, @fqname@ _s)
+void operator<<=(::CORBA::Any& _a, @fqname@ _s)
 {
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
                &_s);
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@& _s)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@& _s)
 {
   return _a.PR_extract(@private_prefix@_tc_@guard_name@,
                        @private_prefix@_@guard_name@_unmarshal_fn,
@@ -340,7 +343,7 @@ static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
   delete _p;
 }
 
-void operator<<=(CORBA::Any& _a, const @fqname@& _s)
+void operator<<=(::CORBA::Any& _a, const @fqname@& _s)
 {
   @fqname@* _p = new @fqname@(_s);
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
@@ -348,7 +351,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@& _s)
                @private_prefix@_@guard_name@_destructor_fn,
                _p);
 }
-void operator<<=(CORBA::Any& _a, @fqname@* _sp)
+void operator<<=(::CORBA::Any& _a, @fqname@* _sp)
 {
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
@@ -356,11 +359,11 @@ void operator<<=(CORBA::Any& _a, @fqname@* _sp)
                _sp);
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@*& _sp)
 {
   return _a >>= (const @fqname@*&) _sp;
 }
-CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const @fqname@*& _sp)
 {
   void* _v;
   if (_a.PR_extract(@private_prefix@_tc_@guard_name@,
@@ -395,7 +398,7 @@ static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
   delete _p;
 }
 
-void operator<<=(CORBA::Any& _a, const @fqname@& _s)
+void operator<<=(::CORBA::Any& _a, const @fqname@& _s)
 {
   @fqname@* _p = new @fqname@(_s);
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
@@ -403,7 +406,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@& _s)
                @private_prefix@_@guard_name@_destructor_fn,
                _p);
 }
-void operator<<=(CORBA::Any& _a, const @fqname@* _sp)
+void operator<<=(::CORBA::Any& _a, const @fqname@* _sp)
 {
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
@@ -411,7 +414,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@* _sp)
                (@fqname@*)_sp);
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const @fqname@*& _sp)
 {
   void* _v;
   if (_a.PR_extract(@private_prefix@_tc_@guard_name@,
@@ -425,12 +428,12 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp)
   return 0;
 }
 
-static void @private_prefix@_insertToAny__c@guard_name@(CORBA::Any& _a, const CORBA::Exception& _e) {
+static void @private_prefix@_insertToAny__c@guard_name@(::CORBA::Any& _a, const ::CORBA::Exception& _e) {
   const @fqname@ & _ex = (const @fqname@ &) _e;
   operator<<=(_a,_ex);
 }
 
-static void @private_prefix@_insertToAnyNCP__c@guard_name@ (CORBA::Any& _a, const CORBA::Exception* _e) {
+static void @private_prefix@_insertToAnyNCP__c@guard_name@ (::CORBA::Any& _a, const ::CORBA::Exception* _e) {
   const @fqname@* _ex = (const @fqname@*) _e;
   operator<<=(_a,_ex);
 }
@@ -460,18 +463,18 @@ static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
 static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
 {
   @fqname@* _p = (@fqname@*)_v;
-  CORBA::remove_ref(_p);
+  ::CORBA::remove_ref(_p);
 }
 
-void operator<<=(CORBA::Any& _a, @fqname@* _v)
+void operator<<=(::CORBA::Any& _a, @fqname@* _v)
 {
-  CORBA::add_ref(_v);
+  ::CORBA::add_ref(_v);
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
                @private_prefix@_@guard_name@_destructor_fn,
                _v);
 }
-void operator<<=(CORBA::Any& _a, @fqname@** _vp)
+void operator<<=(::CORBA::Any& _a, @fqname@** _vp)
 {
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
@@ -480,7 +483,7 @@ void operator<<=(CORBA::Any& _a, @fqname@** _vp)
   *_vp = 0;
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@*& _sp)
 {
   void* _v;
   if (_a.PR_extract(@private_prefix@_tc_@guard_name@,
@@ -517,7 +520,7 @@ static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
   @fqname@_free(_a);
 }
 
-void operator<<=(CORBA::Any& _a, const @fqname@_forany& _s)
+void operator<<=(::CORBA::Any& _a, const @fqname@_forany& _s)
 {
   @fqname@_slice* _v;
   if (!_s.NP_nocopy())
@@ -530,7 +533,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@_forany& _s)
                @private_prefix@_@guard_name@_destructor_fn,
                _v);
 }
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@_forany& _s)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@_forany& _s)
 {
   void* _v;
   if (_a.PR_extract(@private_prefix@_tc_@guard_name@,
@@ -563,7 +566,7 @@ static void @private_prefix@_@guard_name@_destructor_fn(void* _v)
   delete _p;
 }
 
-void operator<<=(CORBA::Any& _a, const @fqname@& _s)
+void operator<<=(::CORBA::Any& _a, const @fqname@& _s)
 {
   @fqname@* _p = new @fqname@(_s);
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
@@ -571,7 +574,7 @@ void operator<<=(CORBA::Any& _a, const @fqname@& _s)
                @private_prefix@_@guard_name@_destructor_fn,
                _p);
 }
-void operator<<=(CORBA::Any& _a, @fqname@* _sp)
+void operator<<=(::CORBA::Any& _a, @fqname@* _sp)
 {
   _a.PR_insert(@private_prefix@_tc_@guard_name@,
                @private_prefix@_@guard_name@_marshal_fn,
@@ -579,11 +582,11 @@ void operator<<=(CORBA::Any& _a, @fqname@* _sp)
                _sp);
 }
 
-CORBA::Boolean operator>>=(const CORBA::Any& _a, @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, @fqname@*& _sp)
 {
   return _a >>= (const @fqname@*&) _sp;
 }
-CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp)
+::CORBA::Boolean operator>>=(const ::CORBA::Any& _a, const @fqname@*& _sp)
 {
   void* _v;
   if (_a.PR_extract(@private_prefix@_tc_@guard_name@,
@@ -605,14 +608,14 @@ CORBA::Boolean operator>>=(const CORBA::Any& _a, const @fqname@*& _sp)
 tc_string = """\
 #if !defined(___tc_string_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_String_TC)
 #define ___tc_string_@n@_value__
-const CORBA::TypeCode_ptr _tc_string_@n@ = CORBA::TypeCode::PR_string_tc(@n@, &@prefix@_tcTrack);
+const ::CORBA::TypeCode_ptr _tc_string_@n@ = ::CORBA::TypeCode::PR_string_tc(@n@, &@prefix@_tcTrack);
 #endif
 """
 
 tc_wstring = """\
 #if !defined(___tc_wstring_@n@_value__) && !defined(DISABLE_Unnamed_Bounded_WString_TC)
 #define ___tc_wstring_@n@_value__
-const CORBA::TypeCode_ptr _tc_wstring_@n@ = CORBA::TypeCode::PR_wstring_tc(@n@, &@prefix@_tcTrack);
+const ::CORBA::TypeCode_ptr _tc_wstring_@n@ = ::CORBA::TypeCode::PR_wstring_tc(@n@, &@prefix@_tcTrack);
 #endif
 """
 
@@ -620,9 +623,9 @@ external_linkage = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 @open_namespace@
-  const CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
+  const ::CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;
 @close_namespace@
 #else
-const CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
+const ::CORBA::TypeCode_ptr @tc_name@ = @mangled_name@;
 #endif
 """

@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.16.2.1  2003/03/23 21:02:36  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.13.2.4  2001/06/08 17:12:18  dpg1
 # Merge all the bug fixes from omni3_develop.
 #
@@ -181,7 +184,7 @@ def write_template(name, inherits, node, stream,
 
             # deal with call contextx
             if operation.contexts() != []:
-                signature.append("CORBA::Context_ptr _ctxt")
+                signature.append("::CORBA::Context_ptr _ctxt")
                 call.append("_ctxt")
 
             if has_return_value:

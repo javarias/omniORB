@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.32.2.11  2005/11/14 11:02:16  dgrisby
+# Local interface fixes.
+#
 # Revision 1.32.2.10  2005/11/09 12:22:17  dgrisby
 # Local interfaces support.
 #
@@ -647,7 +650,7 @@ def visitConst(node):
     if d_constType.string():
         type_string = "char *"
     elif d_constType.wstring():
-        type_string = "CORBA::WChar *"
+        type_string = "::CORBA::WChar *"
     elif d_constType.fixed():
         type_string = constType.base()
     else:
@@ -747,7 +750,7 @@ def visitException(node):
                 else:
                     memberType_name_arg = "const " + memberType.sequenceTemplate(environment)
             elif memberType.typecode():
-                memberType_name_arg = "CORBA::TypeCode_ptr"
+                memberType_name_arg = "::CORBA::TypeCode_ptr"
                 
             index = ""
 

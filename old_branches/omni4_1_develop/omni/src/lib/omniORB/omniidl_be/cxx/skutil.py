@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.10  2007/04/12 19:50:32  dgrisby
+# A few cases of sizeof(bool) > 1 were not handled correctly.
+#
 # Revision 1.20.2.9  2006/04/28 18:40:46  dgrisby
 # Merge from omni4_0_develop.
 #
@@ -228,7 +231,7 @@ def marshall(to, environment, type, decl, argname, to_where,
 
                 to.out("""\
 if (! @where@.marshal_byte_swap()) {
-  @where@.put_octet_array((CORBA::Octet*)(@slice_cast@@name@),@num@,@align@);
+  @where@.put_octet_array((_CORBA_Octet*)(@slice_cast@@name@),@num@,@align@);
 }
 else """,
                        where = to_where,
@@ -248,7 +251,7 @@ else """,
                     to.out("""
 #if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)""")
 
-                to.out("@where@.put_octet_array((CORBA::Octet*)(@slice_cast@@name@),@num@);",
+                to.out("@where@.put_octet_array((_CORBA_Octet*)(@slice_cast@@name@),@num@);",
                        where = to_where,
                        name = argname,
                        slice_cast = slice_cast,
@@ -336,7 +339,7 @@ else """,
       idltype.tk_objref:
       "@type@::_marshalObjRef(@element_name@,@to_where@);",
       idltype.tk_TypeCode:
-      "CORBA::TypeCode::marshalTypeCode(@element_name@,@to_where@);",
+      "::CORBA::TypeCode::marshalTypeCode(@element_name@,@to_where@);",
       idltype.tk_objref * 1000:
       "@type@_Helper::marshalObjRef(@element_name@,@to_where@);",
       idltype.tk_value:
@@ -402,16 +405,16 @@ def unmarshall(to, environment, type, decl, name, from_where):
 
         n_elements = reduce(lambda x,y:x*y, dims, 1)
         array_unmarshal_helpers = {
-          idltype.tk_octet:  ("get_octet_array","(CORBA::Octet*)"),
-          idltype.tk_boolean:("unmarshalArrayBoolean","(CORBA::Boolean*)"),
-          idltype.tk_short:  ("unmarshalArrayShort","(CORBA::Short*)"),
-          idltype.tk_long:   ("unmarshalArrayLong","(CORBA::Long*)"),
-          idltype.tk_ushort: ("unmarshalArrayUShort","(CORBA::UShort*)"),
-          idltype.tk_ulong:  ("unmarshalArrayULong","(CORBA::ULong*)"),
-          idltype.tk_float:  ("unmarshalArrayFloat","(CORBA::Float*)"),
-          idltype.tk_double: ("unmarshalArrayDouble","(CORBA::Double*)"),
-          idltype.tk_longlong:("unmarshalArrayLongLong","(CORBA::LongLong*)"),
-          idltype.tk_ulonglong:("unmarshalArrayULongLong","(CORBA::ULongLong*)")
+          idltype.tk_octet:  ("get_octet_array","(_CORBA_Octet*)"),
+          idltype.tk_boolean:("unmarshalArrayBoolean","(_CORBA_Boolean*)"),
+          idltype.tk_short:  ("unmarshalArrayShort","(_CORBA_Short*)"),
+          idltype.tk_long:   ("unmarshalArrayLong","(_CORBA_Long*)"),
+          idltype.tk_ushort: ("unmarshalArrayUShort","(_CORBA_UShort*)"),
+          idltype.tk_ulong:  ("unmarshalArrayULong","(_CORBA_ULong*)"),
+          idltype.tk_float:  ("unmarshalArrayFloat","(_CORBA_Float*)"),
+          idltype.tk_double: ("unmarshalArrayDouble","(_CORBA_Double*)"),
+          idltype.tk_longlong:("unmarshalArrayLongLong","(_CORBA_LongLong*)"),
+          idltype.tk_ulonglong:("unmarshalArrayULongLong","(_CORBA_ULongLong*)")
           }
         kind = d_type.type().kind()
 
@@ -474,7 +477,7 @@ def unmarshall(to, environment, type, decl, name, from_where):
       idltype.tk_objref:
       "@element_name@ = @type@::_unmarshalObjRef(@where@);",
       idltype.tk_TypeCode:
-      "@element_name@ = CORBA::TypeCode::unmarshalTypeCode(@where@);",
+      "@element_name@ = ::CORBA::TypeCode::unmarshalTypeCode(@where@);",
       idltype.tk_objref * 1000:
       "@element_name@ = @type@_Helper::unmarshalObjRef(@where@);",
       idltype.tk_value:
