@@ -390,6 +390,50 @@
 </tr>
 <tr><td colspan="2"><hr></td></tr>
 
+<tr>
+<td>Summary:</td>
+<td>
+<b>Value chunk reading error</b>
+            (bug number 17)
+            <a name="bug17"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Aug 31 10:43:11 BST 2007</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  When reading bulk data from value chunks, the reader could get out
+  of synchronisation with the chunk boundaries, leading to
+  unmarshalling of invalid data.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Avoid namespace clashes if IDL defines modules named CORBA</b>
+            (bug number 18)
+            <a name="bug18"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Sep 19 15:06:58 BST 2007</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  IDL that defined nested modules named CORBA would generate invalid C++.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
 </table>
 </td>
 </tr>
