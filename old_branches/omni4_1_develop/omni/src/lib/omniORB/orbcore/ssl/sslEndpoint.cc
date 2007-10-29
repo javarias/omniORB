@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2007/07/31 14:23:43  dgrisby
+  If the platform does not accept IPv4 connections on IPv6 sockets by
+  default, try to enable it by turning the IPV6_V6ONLY socket option
+  off. Should work for BSDs and Windows Vista.
+
   Revision 1.1.4.16  2007/03/28 16:29:04  dgrisby
   Always wake up SocketCollection in Poke in case connect seems to work
   but does not actually wake the thread.
@@ -687,6 +692,7 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 	  }
 	  // otherwise falls through
 	case SSL_ERROR_SSL:
+	case SSL_ERROR_ZERO_RETURN:
 	  {
 	    if (omniORB::trace(10)) {
 	      omniORB::logger log;
