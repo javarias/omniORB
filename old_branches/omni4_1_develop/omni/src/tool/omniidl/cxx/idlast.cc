@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.6  2006/11/02 14:00:54  dgrisby
+// Remove a few warnings.
+//
 // Revision 1.22.2.5  2006/05/24 18:30:53  dgrisby
 // Segfault with some uses of aliases to unknown types.
 //
@@ -1684,7 +1687,7 @@ UnionCase(const char* file, int line, IDL_Boolean mainFile,
       }
     }
   }
-  Scope::current()->addInstance(declarator->identifier(), declarator,
+  Scope::current()->addInstance(declarator->eidentifier(), declarator,
 				caseType, declarator->file(),
 				declarator->line());
 }
