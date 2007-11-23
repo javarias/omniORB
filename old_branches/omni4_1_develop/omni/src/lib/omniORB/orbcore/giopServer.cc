@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.17  2006/10/30 14:17:22  dgrisby
+  Cast in log message for 64 bit Windows.
+
   Revision 1.25.2.16  2006/10/09 09:47:12  dgrisby
   Only delete giopServer if all threads are successfully shut down.
 
@@ -1284,6 +1287,13 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
     // Worker is no longer needed.
     {
       omni_tracedmutex_lock sync(pd_lock);
+
+      if (conn->pd_n_workers == 1 && conn->pd_dying) {
+	// Connection is dying. Go round again so this thread spots
+	// the condition.
+	omniORB::logs(25, "Last pool worker sees connection is dying.");
+	return 1;
+      }
 
       w->remove();
       delete w;
