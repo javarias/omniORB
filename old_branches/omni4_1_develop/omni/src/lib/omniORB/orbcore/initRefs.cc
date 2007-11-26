@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.1  2003/03/23 21:02:13  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.2.2.15  2003/03/13 14:53:25  dgrisby
   Log DefaultInitRef properly. Thanks Matej Kenda.
 
@@ -656,7 +659,7 @@ resolveBootAgent(const char* id, unsigned int cycles)
       if (omniORB::trace(10)) {
 	omniORB::logger l;
 	l << "Caught exception trying to resolve `" << id
-	  << "' with boot agent.";
+	  << "' with boot agent.\n";
       }
     }
   }
