@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.17.2.5  2006/07/18 16:21:22  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.17.2.4  2005/01/06 23:10:12  dgrisby
   Big merge from omni4_0_develop.
 
@@ -162,6 +166,9 @@ const IOP::ComponentId IOP::TAG_GENERIC_SEC_MECH = 22;
 const IOP::ComponentId IOP::TAG_FIREWALL_TRANS = 23;
 const IOP::ComponentId IOP::TAG_SCCP_CONTACT_INFO = 24;
 const IOP::ComponentId IOP::TAG_JAVA_CODEBASE = 25;
+const IOP::ComponentId IOP::TAG_CSI_SEC_MECH_LIST = 33;
+const IOP::ComponentId IOP::TAG_NULL_TAG = 34;
+const IOP::ComponentId IOP::TAG_TLS_SEC_TRANS = 36;
 const IOP::ComponentId IOP::TAG_DCE_STRING_BINDING = 100;
 const IOP::ComponentId IOP::TAG_DCE_BINDING_NAME = 101;
 const IOP::ComponentId IOP::TAG_DCE_NO_PIPES = 102;

@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/07/18 16:21:24  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.4.2  2005/01/06 23:08:09  dgrisby
   Big merge from omni4_0_develop.
 
@@ -300,6 +304,12 @@ public:
   static void  add_TAG_SSL_SEC_TRANS(const IIOP::Address&,
 				     _CORBA_UShort supports,
 				     _CORBA_UShort requires);
+
+  ////
+  static void unmarshal_TAG_CSI_SEC_MECH_LIST(const IOP::TaggedComponent&,
+					      omniIOR&);
+  static char* dump_TAG_CSI_SEC_MECH_LIST(const IOP::TaggedComponent&);
+
 
   ////
   static void  unmarshal_TAG_OMNIORB_BIDIR(const IOP::TaggedComponent&,

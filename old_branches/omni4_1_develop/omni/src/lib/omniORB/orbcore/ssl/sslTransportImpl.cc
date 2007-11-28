@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
   Revision 1.1.4.3  2005/09/05 17:12:20  dgrisby
   Merge again. Mainly SSL transport changes.
 
@@ -169,10 +172,10 @@ sslTransportImpl::addToIOR(const char* param) {
 
   IIOP::Address address;
   if (parseAddress(param,address)) {
-    // XXX, hardwared security options to:
+    // XXX, hard-wired security options to:
     //       Integrity (0x02) Confidentiality (0x04) |
     //       EstablishTrustInTarget (0x20) | EstablishTrustInClient (0x40)
-    // In future, this will be expanded configurable options.
+    // In future, this should be expanded configurable options.
     omniIOR::add_TAG_SSL_SEC_TRANS(address,0x66,0x66);
     return 1;
   }

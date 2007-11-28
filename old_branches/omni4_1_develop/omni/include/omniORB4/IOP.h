@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2006/07/18 16:21:24  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.4.2.2  2005/01/06 23:08:09  dgrisby
   Big merge from omni4_0_develop.
 
@@ -215,6 +219,9 @@ public:
   static _core_attr const ComponentId TAG_FIREWALL_TRANS;
   static _core_attr const ComponentId TAG_SCCP_CONTACT_INFO;
   static _core_attr const ComponentId TAG_JAVA_CODEBASE;
+  static _core_attr const ComponentId TAG_CSI_SEC_MECH_LIST;
+  static _core_attr const ComponentId TAG_NULL_TAG;
+  static _core_attr const ComponentId TAG_TLS_SEC_TRANS;
   static _core_attr const ComponentId TAG_COMPLETE_OBJECT_KEY;
   static _core_attr const ComponentId TAG_ENDPOINT_ID_POSITION;
   static _core_attr const ComponentId TAG_LOCATION_POLICY;
