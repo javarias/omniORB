@@ -28,6 +28,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.7  2007/10/29 11:32:32  dgrisby
+// Error with escaped identifiers in union members.
+//
 // Revision 1.22.2.6  2006/11/02 14:00:54  dgrisby
 // Remove a few warnings.
 //
@@ -155,6 +158,8 @@
 // Revision 1.1  1999/10/27 14:05:59  dpg1
 // *** empty log message ***
 //
+
+#include <iostream>
 
 #include <idlast.h>
 #include <idlrepoId.h>
@@ -951,7 +956,7 @@ Forward(const char* file, int line, IDL_Boolean mainFile,
 Forward::
 ~Forward()
 {
-  delete thisType_;
+  if (thisType_) delete thisType_;
 }
 
 Interface*
@@ -1455,7 +1460,7 @@ StructForward(const char* file, int line, IDL_Boolean mainFile,
 StructForward::
 ~StructForward()
 {
-  delete thisType_;
+  if (thisType_) delete thisType_;
 }
 
 Struct*
@@ -1964,7 +1969,7 @@ UnionForward(const char* file, int line, IDL_Boolean mainFile,
 UnionForward::
 ~UnionForward()
 {
-  delete thisType_;
+  if (thisType_) delete thisType_;
 }
 
 Union*
@@ -2388,10 +2393,11 @@ ValueForward(const char* file, int line, IDL_Boolean mainFile,
   : ValueBase(D_VALUEFORWARD, file, line, mainFile, identifier),
     abstract_(abstract),
     definition_(0),
-    firstForward_(0)
+    firstForward_(0),
+    thisType_(0)
 {
-  Scope::Entry*  se  = Scope::current()->find(identifier);
-  IDL_Boolean reg = 1;
+  Scope::Entry* se  = Scope::current()->find(identifier);
+  IDL_Boolean   reg = 1;
 
   if (se && se->kind() == Scope::Entry::E_DECL) {
 
@@ -2486,7 +2492,7 @@ ValueForward(const char* file, int line, IDL_Boolean mainFile,
 ValueForward::
 ~ValueForward()
 {
-  delete thisType_;
+  if (thisType_) delete thisType_;
 }
 
 ValueBase*
