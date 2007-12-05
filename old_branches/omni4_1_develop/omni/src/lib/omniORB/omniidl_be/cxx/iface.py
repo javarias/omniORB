@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.14  2007/09/19 14:16:08  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.1.6.13  2006/01/24 11:46:03  dgrisby
 # Interfaces inheriting from a typedef caused an omniidl compiler error.
 # Thanks Renzo Tomaselli.
@@ -524,7 +527,7 @@ class _objref_I(Class):
 
       if has_abstract:
         stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_ptr,
-                   inherits_fqname = "::CORBA::AbstractBase")
+                   inherits_fqname = "CORBA::AbstractBase")
 
     def _ptrToObjRef_str(self = self, stream = stream):
       has_abstract = self.interface().abstract()
@@ -537,7 +540,7 @@ class _objref_I(Class):
 
       if has_abstract:
         stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_str,
-                   inherits_fqname = "::CORBA::AbstractBase")
+                   inherits_fqname = "CORBA::AbstractBase")
 
     # build the inherits list
     
@@ -729,11 +732,11 @@ class _nil_I(Class):
                    inherits_fqname = i.name().fullyQualify())
 
       stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_ptr,
-                 inherits_fqname = "::CORBA::LocalObject")
+                 inherits_fqname = "CORBA::LocalObject")
 
       if has_abstract:
         stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_ptr,
-                   inherits_fqname = "::CORBA::AbstractBase")
+                   inherits_fqname = "CORBA::AbstractBase")
 
     def _ptrToObjRef_str(self = self, stream = stream):
       has_abstract = 0
@@ -745,11 +748,11 @@ class _nil_I(Class):
                    inherits_fqname = i.name().fullyQualify())
 
       stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_str,
-                 inherits_fqname = "::CORBA::LocalObject")
+                 inherits_fqname = "CORBA::LocalObject")
 
       if has_abstract:
         stream.out(omniidl_be.cxx.skel.template.interface_objref_repoID_str,
-                   inherits_fqname = "::CORBA::AbstractBase")
+                   inherits_fqname = "CORBA::AbstractBase")
 
     stream.out(omniidl_be.cxx.skel.template.local_interface_objref,
                name = self.interface().name().fullyQualify(),
