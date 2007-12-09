@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.22  2007/07/04 09:13:32  dgrisby
+  Condition variable used in Peek() was leaked.
+
   Revision 1.1.4.21  2007/06/16 15:12:29  dgrisby
   Incorrect initialisation if pipe creation failed on VxWorks.
 
@@ -641,8 +644,8 @@ SocketHolder::setSelectable(int            now,
     }
   }
 
-  pd_selectable      = 1;
-  pd_data_in_buffer |= data_in_buffer;
+  pd_selectable     = 1;
+  pd_data_in_buffer = pd_data_in_buffer || data_in_buffer;
 
   pd_belong_to->pd_changed = 1;
 
@@ -653,7 +656,7 @@ SocketHolder::setSelectable(int            now,
 
 #ifdef UnixArchitecture
   if (!hold_lock &&
-      (now || pd_data_in_buffer || pd_belong_to->pd_idle_count == 0)) {
+      (now || pd_belong_to->pd_idle_count == 0)) {
 
     // Wake up the Select thread by writing to the pipe.
     if (pd_belong_to->pd_pipe_write >= 0 && !pd_belong_to->pd_pipe_full) {
@@ -1030,8 +1033,8 @@ SocketHolder::setSelectable(int            now,
     }
   }
 
-  pd_selectable      = 1;
-  pd_data_in_buffer |= data_in_buffer;
+  pd_selectable     = 1;
+  pd_data_in_buffer = pd_data_in_buffer || data_in_buffer;
 
   pd_belong_to->pd_changed = 1;
 
@@ -1391,8 +1394,8 @@ SocketHolder::setSelectable(int            now,
     }
   }
 
-  pd_selectable      = 1;
-  pd_data_in_buffer |= data_in_buffer;
+  pd_selectable     = 1;
+  pd_data_in_buffer = pd_data_in_buffer || data_in_buffer;
 
   pd_belong_to->pd_changed = 1;
 
@@ -1403,7 +1406,7 @@ SocketHolder::setSelectable(int            now,
 
 #ifdef UnixArchitecture
   if (!hold_lock &&
-      (now || pd_data_in_buffer || pd_belong_to->pd_idle_count == 0)) {
+      (now || pd_belong_to->pd_idle_count == 0)) {
 
     // Wake up the Select thread by writing to the pipe.
     if (pd_belong_to->pd_pipe_write >= 0 && !pd_belong_to->pd_pipe_full) {

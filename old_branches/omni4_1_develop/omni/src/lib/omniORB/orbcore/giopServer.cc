@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.18  2007/11/23 14:25:04  dgrisby
+  Leak of connections closed during upcall in thread pool mode.
+
   Revision 1.25.2.17  2006/10/30 14:17:22  dgrisby
   Cast in log message for 64 bit Windows.
 
@@ -1288,6 +1291,14 @@ giopServer::notifyWkDone(giopWorker* w, CORBA::Boolean exit_on_error)
     {
       omni_tracedmutex_lock sync(pd_lock);
 
+      // Test the workers limit again, in case data was noticed on the
+      // connection just after the previous check, but before the
+      // Peek().
+      if (conn->pd_has_hit_n_workers_limit) {
+	conn->pd_has_hit_n_workers_limit = 0;
+	return 1;
+      }
+
       if (conn->pd_n_workers == 1 && conn->pd_dying) {
 	// Connection is dying. Go round again so this thread spots
 	// the condition.
@@ -1348,8 +1359,8 @@ giopServer::notifyWkPreUpCall(giopWorker* w, CORBA::Boolean data_in_buffer) {
 	// If only one thread per connection is allowed, there is no
 	// need to setSelectable, since we won't be able to act on any
 	// interleaved calls that arrive.
-	conn->setSelectable(orbParameters::connectionWatchImmediate,
-			    data_in_buffer);
+	int now = orbParameters::connectionWatchImmediate || data_in_buffer;
+	conn->setSelectable(now, data_in_buffer);
       }
     }
     else {
@@ -1361,15 +1372,24 @@ giopServer::notifyWkPreUpCall(giopWorker* w, CORBA::Boolean data_in_buffer) {
 	n = conn->pd_dedicated_thread_in_upcall;
       }
       if (n) {
-	conn->setSelectable(orbParameters::connectionWatchImmediate,
-			    data_in_buffer);
+	int now = orbParameters::connectionWatchImmediate || data_in_buffer;
+	conn->setSelectable(now, data_in_buffer);
       }
     }
   }
   else {
     // This connection is managed with the thread-pool policy
-    conn->setSelectable(orbParameters::connectionWatchImmediate,
-			data_in_buffer);
+    int now = orbParameters::connectionWatchImmediate || data_in_buffer;
+    if (now) {
+      omni_tracedmutex_lock sync(pd_lock);
+      if (conn->pd_n_workers >= conn->pd_max_workers) {
+	// Maximum number of workers are already servicing the
+	// connection. Do not select immediately, since there is no
+	// thread to handle new calls.
+	now = 0;
+      }
+    }
+    conn->setSelectable(now, data_in_buffer);
   }
 }
 
