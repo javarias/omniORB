@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.13  2006/10/11 17:44:14  dgrisby
+# None is not a keyword, but it cannot be assigned to.
+#
 # Revision 1.33.2.12  2006/09/29 16:48:03  dgrisby
 # Stub changes broke use of package prefix. Thanks Teemu Torma.
 #
@@ -1210,10 +1213,11 @@ class PythonVisitor:
                                        ifid + '.' + '_d__set_' + attr)
 
             else: # Operation
-                opname = mangle(c.identifier())
+                opname   = c.identifier()
+                m_opname = mangle(opname)
                 
-                methodl.append('"' + opname + '": ' + '_0_' + self.modname + \
-                               '.' + ifid + '.' + '_d_' + opname)
+                methodl.append('"' + opname + '": ' + '_0_' + self.modname +
+                               '.' + ifid + '.' + '_d_' + m_opname)
 
         methodmap = "{" + string.join(methodl, ", ") + "}"
 

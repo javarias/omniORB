@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.9  2006/07/05 10:47:14  dgrisby
+// Propagate exceptions out of _default_POA.
+//
 // Revision 1.1.4.8  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //
@@ -534,19 +537,26 @@ Py_omniServant::remote_dispatch(Py_omniCallDescriptor* pycd)
   const char* op     = pycd->op();
   PyObject*   method = PyObject_GetAttrString(pyservant_, (char*)op);
 
-  if (!method && omni::strMatch(op, "_interface")) {
-    PyErr_Clear();
-    method = PyObject_GetAttrString(pyservant_, (char*)"_get_interface");
-  }
   if (!method) {
-    if (omniORB::trace(1)) {
-      omniORB::logger l;
-      l << "Python servant for `" << repoId_ << "' has no method named `"
-	<< op << "'.\n";
-    }
     PyErr_Clear();
-    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
-		  CORBA::COMPLETED_NO);
+    PyObject* word = PyDict_GetItemString(omniPy::pyomniORBwordMap, op);
+    if (word) {
+      // Keyword -- look up mangled name
+      method = PyObject_GetAttr(pyservant_, word);
+    }
+    else if (omni::strMatch(op, "_interface")) {
+      method = PyObject_GetAttrString(pyservant_, (char*)"_get_interface");
+    }
+    if (!method) {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Python servant for `" << repoId_ << "' has no method named `"
+	  << op << "'.\n";
+      }
+      PyErr_Clear();
+      OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		    CORBA::COMPLETED_NO);
+    }
   }
 
   PyObject* args   = pycd->args();
@@ -619,19 +629,26 @@ Py_omniServant::local_dispatch(Py_omniCallDescriptor* pycd)
   const char* op     = pycd->op();
   PyObject*   method = PyObject_GetAttrString(pyservant_, (char*)op);
 
-  if (!method && omni::strMatch(op, "_interface")) {
-    PyErr_Clear();
-    method = PyObject_GetAttrString(pyservant_, (char*)"_get_interface");
-  }
   if (!method) {
-    if (omniORB::trace(1)) {
-      omniORB::logger l;
-      l << "Python servant for `" << repoId_ << "' has no method named `"
-	<< op << "'.\n";
-    }
     PyErr_Clear();
-    OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
-		  CORBA::COMPLETED_NO);
+    PyObject* word = PyDict_GetItemString(omniPy::pyomniORBwordMap, op);
+    if (word) {
+      // Keyword -- look up mangled name
+      method = PyObject_GetAttr(pyservant_, word);
+    }
+    else if (omni::strMatch(op, "_interface")) {
+      method = PyObject_GetAttrString(pyservant_, (char*)"_get_interface");
+    }
+    if (!method) {
+      if (omniORB::trace(1)) {
+	omniORB::logger l;
+	l << "Python servant for `" << repoId_ << "' has no method named `"
+	  << op << "'.\n";
+      }
+      PyErr_Clear();
+      OMNIORB_THROW(NO_IMPLEMENT, NO_IMPLEMENT_NoPythonMethod,
+		    CORBA::COMPLETED_NO);
+    }
   }
 
   PyObject* in_d   = pycd->in_d_;

@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.20  2007/10/07 15:30:58  dgrisby
+# Problems with modules inside packages. Thanks Fabian Knittel.
+#
 # Revision 1.30.2.19  2007/05/11 09:37:23  dgrisby
 # Ensure hash value of unpickled enum items is the same as that of the
 # original item.
@@ -1047,6 +1050,9 @@ try:
     import keyword
     for word in keyword.kwlist:
         keywordMapping[word] = "_" + word
+
+    keywordMapping["None"] = "_None"
+
     del keyword
 except ImportError:
     pass
