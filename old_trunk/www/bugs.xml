@@ -71,6 +71,7 @@ Bugs fixed in:
   <li>
     omniORBpy 3.x
     <ul>
+      <li><a href="pybugs/bugfixes-31.html">omniORBpy 3.1</a></li>
       <li><a href="pybugs/bugfixes-30.html">omniORBpy 3.0</a></li>
     </ul>
   </li>
