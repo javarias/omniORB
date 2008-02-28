@@ -28,6 +28,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.8  2007/12/05 11:15:15  dgrisby
+// Segfault on omniidl exit with forward declaration to previously
+// fully-declared valuetype.
+//
 // Revision 1.22.2.7  2007/10/29 11:32:32  dgrisby
 // Error with escaped identifiers in union members.
 //
@@ -158,8 +162,6 @@
 // Revision 1.1  1999/10/27 14:05:59  dpg1
 // *** empty log message ***
 //
-
-#include <iostream>
 
 #include <idlast.h>
 #include <idlrepoId.h>
