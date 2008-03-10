@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.5  2007/07/31 16:38:31  dgrisby
+  New resetTimeOutOnRetries parameter.
+
   Revision 1.4.2.4  2006/01/10 13:59:37  dgrisby
   New clientConnectTimeOutPeriod configuration parameter.
 
@@ -730,6 +733,8 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
 
   while(1) {
 
+    CORBA::Boolean required_retry = 0;
+
     if( orbParameters::verifyObjectExistsAndType && do_assert )
       _assertExistsAndTypeVerified();
 
@@ -771,8 +776,10 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
       return;
     }
     catch(const giopStream::CommFailure& ex) {
-      if (ex.retry()) continue; // without resetting timeout
-      if( fwd ) {
+      if (ex.retry()) {
+	required_retry = 1;
+      }
+      else if( fwd ) {
 	RECOVER_FORWARD;
       }
       else if (is_COMM_FAILURE_minor(ex.minor())) {
@@ -822,7 +829,7 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
       omni::locationForward(this,ex.get_obj()->_PR_getobj(),ex.is_permanent());
     }
     
-    if (orbParameters::resetTimeOutOnRetries) {
+    if (!required_retry && orbParameters::resetTimeOutOnRetries) {
       abs_secs = 0;
       abs_nanosecs = 0;
     }
@@ -1069,6 +1076,8 @@ omniObjRef::_locateRequest()
   
   while(1) {
 
+    CORBA::Boolean required_retry = 0;
+
     try{
 
       omni::internalLock->lock();
@@ -1083,8 +1092,10 @@ omniObjRef::_locateRequest()
 
     }
     catch(const giopStream::CommFailure& ex) {
-      if (ex.retry()) continue; // without resetting timeout
-      if( fwd ) {
+      if (ex.retry()) {
+	required_retry = 1;
+      }
+      else if( fwd ) {
 	RECOVER_FORWARD;
       }
       else if (is_COMM_FAILURE_minor(ex.minor())) {
@@ -1134,7 +1145,7 @@ omniObjRef::_locateRequest()
       omni::locationForward(this,ex.get_obj()->_PR_getobj(),ex.is_permanent());
     }
 
-    if (orbParameters::resetTimeOutOnRetries) {
+    if (!required_retry && orbParameters::resetTimeOutOnRetries) {
       abs_secs = 0;
       abs_nanosecs = 0;
     }
