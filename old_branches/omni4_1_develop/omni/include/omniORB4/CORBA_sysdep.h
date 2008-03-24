@@ -32,6 +32,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.9  2007/02/05 17:39:17  dgrisby
+ Later Sun compilers require a dummy return.
+
  Revision 1.5.2.8  2007/01/12 10:19:51  dgrisby
  Support for MontaVista ARM Linux.
 
@@ -135,7 +138,7 @@
 // Macro to provide const_cast functionality on all platforms.
 //
 #ifdef HAS_Cplusplus_const_cast
-#  define OMNI_CONST_CAST(_t, _v) const_cast<_t>(_v)
+#  define OMNI_CONST_CAST(_t, _v) const_cast< _t >(_v)
 #  define OMNI_CONST_VOID_CAST(_v) const_cast<void*>(static_cast<const void*>(_v))
 #else
 #  define OMNI_CONST_CAST(_t, _v) (_t)(_v)
@@ -143,7 +146,7 @@
 #endif
 
 #ifdef HAS_Cplusplus_reinterpret_cast
-#  define OMNI_REINTERPRET_CAST(_t, _v) reinterpret_cast<_t const&>(_v)
+#  define OMNI_REINTERPRET_CAST(_t, _v) reinterpret_cast< _t const& >(_v)
 #else
 #  define OMNI_REINTERPRET_CAST(_t, _v) (*(_t*)(&_v))
 #endif
