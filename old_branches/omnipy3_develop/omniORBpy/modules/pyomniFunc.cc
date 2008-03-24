@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.7  2006/01/17 17:38:21  dgrisby
+// Expose omniORB.setClientConnectTimeout function.
+//
 // Revision 1.1.4.6  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //
@@ -688,10 +691,12 @@ extern "C" {
       return 0;
 
     pyrepoId = PyObject_GetAttrString(pyexc, (char*)"_NP_RepositoryId");
+    omniPy::PyRefHolder repoid_holder(pyrepoId);
     if (!pyrepoId)
       PyErr_Clear();
 
-    pyminor  = PyObject_GetAttrString(pyexc, (char*)"minor");
+    pyminor = PyObject_GetAttrString(pyexc, (char*)"minor");
+    omniPy::PyRefHolder minor_holder(pyminor);
     if (!pyminor)
       PyErr_Clear();
 
