@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.11  2006/10/28 15:48:23  dgrisby
+  Typo in indirection constant.
+
   Revision 1.1.2.10  2006/09/17 23:22:43  dgrisby
   Invalid assertion with indirections in counting streams.
 
@@ -157,7 +160,7 @@ marshal(CORBA::ValueBase* val, const char* repoId, cdrStream& stream)
   CORBA::ULong valRepoIdHash;
   const char* valRepoId = val->_NP_repositoryId(valRepoIdHash);
 
-  const _omni_ValueIds* valTruncIds;
+  const _omni_ValueIds* valTruncIds = 0;
 
   if (omni::ptrStrMatch(repoId, valRepoId)) {
     // Value matches IDL / TypeCode type
