@@ -29,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.5  2006/01/19 17:28:44  dgrisby
+// Merge from omnipy2_develop.
+//
 // Revision 1.1.4.4  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //
@@ -134,6 +137,7 @@ PyObject* raisePOAException(PyObject* pyPOA, const char* ename)
   OMNIORB_ASSERT(excc);
   PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
   PyErr_SetObject(excc, exci);
+  Py_DECREF(exci);
   return 0;
 }
 
@@ -291,6 +295,7 @@ extern "C" {
       OMNIORB_ASSERT(excc);
       PyObject* exci = PyObject_CallFunction(excc, (char*)"i", ex.index);
       PyErr_SetObject(excc, exci);
+      Py_DECREF(exci);
       return 0;
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS

@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
+// New omnipy3_develop branch.
+//
 // Revision 1.1.2.3  2001/06/11 13:07:27  dpg1
 // Unduplicate exception throwing code.
 //
@@ -73,6 +76,7 @@ raiseAdapterInactive(PyObject* pyPM)
   OMNIORB_ASSERT(excc);
   PyObject* exci = PyEval_CallObject(excc, omniPy::pyEmptyTuple);
   PyErr_SetObject(excc, exci);
+  Py_DECREF(exci);
   return 0;
 }
 
