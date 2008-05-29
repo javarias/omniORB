@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.23  2007/12/09 01:35:08  dgrisby
+  Race condition between Peek / select thread when data in buffer.
+
   Revision 1.1.4.22  2007/07/04 09:13:32  dgrisby
   Condition variable used in Peek() was leaked.
 
@@ -338,8 +341,8 @@ static void initPipe(int& pipe_read, int& pipe_write)
 }
 static void closePipe(int pipe_read, int pipe_write)
 {
-  if (pipe_read  > 0) close(pipe_read);
-  if (pipe_write > 0) close(pipe_write);
+  if (pipe_read  >= 0) close(pipe_read);
+  if (pipe_write >= 0) close(pipe_write);
 }
 #  endif
 #else
