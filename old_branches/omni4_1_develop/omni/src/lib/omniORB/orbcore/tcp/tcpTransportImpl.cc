@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2007/07/06 20:12:14  dgrisby
+  Better error handling getting IPv6 interfaces on Windows.
+
   Revision 1.1.4.9  2007/04/03 20:02:06  dgrisby
   Bug in VxWorks interface enumeration.
 
@@ -624,6 +627,13 @@ void win32_get_ifinfo6(omnivector<const char*>& ifaddrs)
 	continue;
 
       CORBA::String_var s = tcpConnection::addrToString(addr);
+
+      // Windows appends interface details to site local addresses.
+      // Strip anything starting with a % sign.
+      char* ppos = strchr((const char*)s, '%');
+      if (ppos)
+	*ppos = '\0';
+
       ifaddrs.push_back(s._retn());
     }
   }
