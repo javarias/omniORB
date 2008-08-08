@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.12  2008/07/15 10:59:39  dgrisby
+  Clarity of behaviour if inConScanPeriod / outConScanPeriod are <=
+  scanGranularity.
+
   Revision 1.1.6.11  2007/04/05 15:37:32  dgrisby
   Minor fix to log message formatting.
 
@@ -422,7 +426,7 @@ GIOP_S::handleRequest() {
 #define MARSHAL_SYSTEM_EXCEPTION() do { \
     if (pd_state == WaitForRequestHeader || \
 	pd_state == RequestHeaderIsBeingProcessed ) { \
-      impl()->sendMsgErrorMessage(this); \
+      impl()->sendMsgErrorMessage(this, &ex); \
       return 0; \
     } else if (response_expected()) { \
       impl()->sendSystemException(this,ex); \
@@ -557,7 +561,7 @@ GIOP_S::handleLocateRequest() {
 #define MARSHAL_SYSTEM_EXCEPTION() do { \
     if (pd_state == WaitForRequestHeader || \
         pd_state == RequestHeaderIsBeingProcessed) { \
-      impl()->sendMsgErrorMessage(this); \
+      impl()->sendMsgErrorMessage(this, &ex); \
       return 0; \
     } else if (response_expected()) { \
       impl()->sendSystemException(this,ex); \

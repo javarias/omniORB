@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.1  2003/03/23 21:03:46  dgrisby
+  Start of omniORB 4.1.x development branch.
+
   Revision 1.1.4.1  2001/04/18 17:18:59  sll
   Big checkin with the brand new internal APIs.
 
@@ -76,7 +79,7 @@ public:
 			  CORBA::Boolean disgard);
   // release rdlock
   //
-  void (*sendMsgErrorMessage)(giopStream*);
+  void (*sendMsgErrorMessage)(giopStream*, const CORBA::SystemException*);
   //////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////

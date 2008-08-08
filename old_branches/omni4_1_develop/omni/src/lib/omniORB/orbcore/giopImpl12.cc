@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.13  2007/12/21 11:39:29  dgrisby
+  Properly align after header in user exception messages. Thanks Jon Biggar.
+
   Revision 1.1.6.12  2007/04/05 15:06:45  dgrisby
   Handle CancelRequest without starting a new giopWorker.
 
@@ -166,7 +169,7 @@ public:
   static void inputMessageBegin(giopStream*,
 				void (*unmarshalHeader)(giopStream*));
   static void inputMessageEnd(giopStream*,CORBA::Boolean disgard = 0);
-  static void sendMsgErrorMessage(giopStream*);
+  static void sendMsgErrorMessage(giopStream*, const CORBA::SystemException*);
   static void marshalRequestHeader(giopStream*);
   static void sendLocateRequest(giopStream*);
   static void unmarshalReplyHeader(giopStream*);
@@ -1459,7 +1462,8 @@ giopImpl12::outputMessageEnd(giopStream* g) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-giopImpl12::sendMsgErrorMessage(giopStream* g) {
+giopImpl12::sendMsgErrorMessage(giopStream* g,
+				const CORBA::SystemException* ex) {
 
   if (!g->pd_wrlocked) {
     omni_tracedmutex_lock sync(*omniTransportLock);
@@ -1469,9 +1473,17 @@ giopImpl12::sendMsgErrorMessage(giopStream* g) {
 
   if (omniORB::trace(1)) {
     omniORB::logger l;
-    l << "To endpoint: " << g->pd_strand->connection->peeraddress()
-      <<". Send GIOP 1.2 MessageError because a protocol error has been detected. "
-      << "Connection is closed.\n";
+
+    l << "To endpoint: " << g->pd_strand->connection->peeraddress() << ". ";
+
+    if (ex) {
+      l << "System exception " << *ex << " while marshalling. "
+	<< "Send GIOP 1.2 MessageError.\n";
+    }
+    else {
+      l << "Send GIOP 1.2 MessageError because a protocol error has "
+	<< "been detected. Connection is closed.\n";
+    }
   }
 
   if (!g->pd_currentOutputBuffer) {
@@ -1681,7 +1693,7 @@ giopImpl12::sendSystemException(giopStream* g,const CORBA::SystemException& ex) 
     // This system exception is raised during the marshalling of the reply.
     // We cannot marshal the exception. Can only indicate that something
     // fatal about this request.
-    sendMsgErrorMessage(g);
+    sendMsgErrorMessage(g, &ex);
 
     CORBA::ULong minor;
     CORBA::Boolean retry;
