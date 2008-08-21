@@ -30,6 +30,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.21  2008/02/01 16:29:16  dgrisby
+# Error with implementation of operations with names clashing with
+# Python keywords.
+#
 # Revision 1.30.2.20  2007/10/07 15:30:58  dgrisby
 # Problems with modules inside packages. Thanks Fabian Knittel.
 #
@@ -1020,16 +1024,16 @@ class WorkerThread(threading.Thread):
 class omniThreadHook:
     def __init__(self, target):
         self.target            = target
-        self.target_del        = target._Thread__delete
-        target._Thread__delete = self.omni_thread_del
+        self.target_stop       = target._Thread__stop
+        target._Thread__stop   = self.omni_thread_stop
 
-    def omni_thread_del(self):
+    def omni_thread_stop(self):
         try:
             delattr(self.target, "__omni_thread")
-            del self.target._Thread__delete
+            del self.target._Thread__stop
         except AttributeError:
             pass
-        self.target_del()
+        self.target_stop()
 
 
 # System exception mapping.
