@@ -30,6 +30,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.7  2006/07/26 17:50:43  dgrisby
+// Reuse existing omniIOR object when converting C++ object reference to Python.
+//
 // Revision 1.1.4.6  2006/07/19 09:40:39  dgrisby
 // Track ORB core changes.
 //
@@ -587,6 +590,7 @@ omniPy::copyObjRefArgument(PyObject* pytargetRepoId, PyObject* pyobjref,
       }
       PyErr_Print();
     }
+    PyErr_Clear();
     OMNIORB_THROW(INTERNAL, 0, compstatus);
   }
   return r;

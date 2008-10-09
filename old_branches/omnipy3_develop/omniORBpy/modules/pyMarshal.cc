@@ -29,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.11  2007/07/25 15:00:10  dgrisby
+// Sequence unmarshalling could incorrecly complain about the lack of
+// data left in a sequence of null or void.
+//
 // Revision 1.1.4.10  2006/05/15 10:26:11  dgrisby
 // More relaxation of requirements for old-style classes, for Python 2.5.
 //
@@ -4033,7 +4037,6 @@ copyArgumentUnion(PyObject* d_o, PyObject* a_o,
   PyObject* t_o    = PyTuple_GET_ITEM(d_o, 4);
   PyObject* cdiscr = omniPy::copyArgument(t_o, discr, compstatus);
 
-  OMNIORB_ASSERT(cdiscr);
   omniPy::PyRefHolder cdiscr_holder(cdiscr);
 
   PyObject* cvalue = 0;
