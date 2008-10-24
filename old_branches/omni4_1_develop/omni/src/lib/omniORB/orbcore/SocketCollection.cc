@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.24  2008/05/29 13:08:35  dgrisby
+  Cope with fd 0 in pipe files. Thanks Wei Jiang.
+
   Revision 1.1.4.23  2007/12/09 01:35:08  dgrisby
   Race condition between Peek / select thread when data in buffer.
 
@@ -526,12 +529,14 @@ SocketCollection::Select() {
 	  if (s) {
 	    // Remove from pollfds by swapping in the last item in the array
 	    pd_pollfd_n--;
-	    s->pd_fd_index                     = -1;
-	    pd_pollfds[index]     	       = pd_pollfds[pd_pollfd_n];
-	    pd_pollsockets[index] 	       = pd_pollsockets[pd_pollfd_n];
-	    if (pd_pollsockets[index])
-	      pd_pollsockets[index]->pd_fd_index = index;
-
+	    s->pd_fd_index = -1;
+	    if (index < pd_pollfd_n) {
+	      pd_pollfds[index]     = pd_pollfds[pd_pollfd_n];
+	      pd_pollsockets[index] = pd_pollsockets[pd_pollfd_n];
+	      if (pd_pollsockets[index]) {
+		pd_pollsockets[index]->pd_fd_index = index;
+	      }
+	    }
 	    if (s->pd_peeking) {
 	      // A thread is monitoring the socket with Peek(). We do
 	      // not notify from this thread, otherwise a thread would
