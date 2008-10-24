@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2008/07/18 17:02:35  dgrisby
+  VC++ 8 plays interesting const tricks with strchr().
+
   Revision 1.1.4.11  2008/07/15 11:03:48  dgrisby
   Windows sometimes includes network adapter details in site local IPv6
   addresses.
@@ -287,7 +290,6 @@ tcpTransportImpl::getInterfaceAddress() {
 /////////////////////////////////////////////////////////////////////////
 const tcpTransportImpl _the_tcpTransportImpl;
 
-
 /////////////////////////////////////////////////////////////////////////
 #if defined(HAVE_IFADDRS_H)
 static
@@ -305,6 +307,23 @@ void ifaddrs_get_ifinfo(omnivector<const char*>& addrs)
   }
 
   struct ifaddrs *p;
+
+#if defined(OMNI_SUPPORT_IPV6)
+  // Work out which network interface is the loopback
+  CORBA::String_var ip6_loopback_if;
+
+  for (p = ifa_list; p != 0; p = p->ifa_next) {
+    if (p->ifa_addr && p->ifa_flags & IFF_UP) {
+      if (p->ifa_addr->sa_family == AF_INET6) {
+        if (IN6_IS_ADDR_LOOPBACK(&((sockaddr_in6*)p->ifa_addr)->sin6_addr)) {
+	  ip6_loopback_if = CORBA::string_dup(p->ifa_name);
+	  break;
+	}
+      }
+    }
+  }
+#endif
+
   for (p = ifa_list; p != 0; p = p->ifa_next) {
     if (p->ifa_addr && p->ifa_flags & IFF_UP) {
       if (p->ifa_addr->sa_family == AF_INET) {
@@ -313,9 +332,30 @@ void ifaddrs_get_ifinfo(omnivector<const char*>& addrs)
       }
 #if defined(OMNI_SUPPORT_IPV6)
       else if (p->ifa_addr->sa_family == AF_INET6) {
-        if (IN6_IS_ADDR_LINKLOCAL(&((sockaddr_in6*)p->ifa_addr)->sin6_addr))
-          continue;
 
+        if (IN6_IS_ADDR_LINKLOCAL(&((sockaddr_in6*)p->ifa_addr)->sin6_addr)) {
+	  if (orbParameters::dumpConfiguration || omniORB::trace(20)) {
+	    omniORB::logger log;
+	    CORBA::String_var ls = tcpConnection::addrToString(p->ifa_addr);
+	    log << "Skip link local address " << ls
+		<< " on interface " << p->ifa_name << ".\n";
+	  }
+          continue;
+	}
+
+	if ((const char*)ip6_loopback_if &&
+	    !strcmp((const char*)ip6_loopback_if, p->ifa_name)) {
+
+	  if (!IN6_IS_ADDR_LOOPBACK(&((sockaddr_in6*)p->ifa_addr)->sin6_addr)){
+	    if (orbParameters::dumpConfiguration || omniORB::trace(20)) {
+	      omniORB::logger log;
+	      CORBA::String_var ls = tcpConnection::addrToString(p->ifa_addr);
+	      log << "Skip address " << ls << " on loopback interface "
+		  << ip6_loopback_if << ".\n";
+	    }
+	    continue;
+	  }
+	}
         CORBA::String_var s = tcpConnection::addrToString(p->ifa_addr);
         addrs.push_back(s._retn());
       }
@@ -392,6 +432,23 @@ void unix_get_ifinfo(omnivector<const char*>& addrs)
 
   int total = ifc.ifc_len / sizeof(struct ifreq);
   struct ifreq* ifr = ifc.ifc_req;
+
+#if defined(OMNI_SUPPORT_IPV6)
+  // Work out which network interface is the loopback
+  CORBA::String_var ip6_loopback_if;
+
+  for (int i = 0; i < total; i++) {
+    if (ifr[i].ifr_addr.sa_family == AF_INET6) {
+      struct sockaddr_in6* iaddr6 = (struct sockaddr_in6*)&ifr[i].ifr_addr;
+
+      if (IN6_IS_ADDR_LOOPBACK(&iaddr6->sin6_addr)) {
+	ip6_loopback_if = CORBA::string_dup(ifr[i].ifr_name);
+	break;
+      }
+    }
+  }
+#endif
+
   for (int i = 0; i < total; i++) {
 
     if ( ifr[i].ifr_addr.sa_family == AF_INET ) {
@@ -405,10 +462,35 @@ void unix_get_ifinfo(omnivector<const char*>& addrs)
 #if defined(OMNI_SUPPORT_IPV6)
     else if ( ifr[i].ifr_addr.sa_family == AF_INET6 ) {
       struct sockaddr_in6* iaddr6 = (struct sockaddr_in6*)&ifr[i].ifr_addr;
-      if (IN6_IS_ADDR_UNSPECIFIED(&iaddr6->sin6_addr) ||
-	  IN6_IS_ADDR_LINKLOCAL(&iaddr6->sin6_addr))
+
+      if (IN6_IS_ADDR_UNSPECIFIED(&iaddr6->sin6_addr))
 	continue;
 
+      if (IN6_IS_ADDR_LINKLOCAL(&iaddr6->sin6_addr)) {
+	if (orbParameters::dumpConfiguration || omniORB::trace(20)) {
+	  omniORB::logger log;
+	  CORBA::String_var ls;
+	  ls = tcpConnection::addrToString((sockaddr*)iaddr6);
+	  log << "Skip link local address " << ls
+	      << " on interface " << ifr[i].ifr_name << ".\n";
+	}
+	continue;
+      }
+
+      if ((const char*)ip6_loopback_if &&
+	  !strcmp((const char*)ip6_loopback_if, ifr[i].ifr_name)) {
+
+	if (!IN6_IS_ADDR_LOOPBACK(&iaddr6->sin6_addr)) {
+	  if (orbParameters::dumpConfiguration || omniORB::trace(20)) {
+	    omniORB::logger log;
+	    CORBA::String_var ls;
+	    ls = tcpConnection::addrToString((sockaddr*)iaddr6);
+	    log << "Skip address " << ls << " on loopback interface "
+		<< ip6_loopback_if << ".\n";
+	  }
+	  continue;
+	}
+      }
       CORBA::String_var s = tcpConnection::addrToString((sockaddr*)iaddr6);
       addrs.push_back(s._retn());
     }
