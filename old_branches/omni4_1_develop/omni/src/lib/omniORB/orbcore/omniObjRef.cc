@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.6  2008/03/10 11:43:10  dgrisby
+  Work around VC++ 7.1 bug with using continue in an exception handler.
+  Thanks Werner Mausshardt.
+
   Revision 1.4.2.5  2007/07/31 16:38:31  dgrisby
   New resetTimeOutOnRetries parameter.
 
@@ -779,18 +783,27 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
       if (ex.retry()) {
 	required_retry = 1;
       }
-      else if( fwd ) {
-	RECOVER_FORWARD;
-      }
-      else if (is_COMM_FAILURE_minor(ex.minor())) {
-	CORBA::COMM_FAILURE ex2(ex.minor(), ex.completed());
-	if( !_omni_callCommFailureExceptionHandler(this, retries++, ex2) )
-	  OMNIORB_THROW(COMM_FAILURE,ex.minor(),ex.completed());
-      }
       else {
-	CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
-	if( !_omni_callTransientExceptionHandler(this, retries++, ex2) )
-	  OMNIORB_THROW(TRANSIENT,ex.minor(),ex.completed());
+	if (fwd) {
+	  omni::revertToOriginalProfile(this);
+	  CORBA::TRANSIENT ex2(TRANSIENT_FailedOnForwarded, ex.completed());
+	  if (!_omni_callTransientExceptionHandler(this, retries++, ex2)) {
+	    if (is_COMM_FAILURE_minor(ex.minor()))
+	      OMNIORB_THROW(COMM_FAILURE,ex.minor(),ex.completed());
+	    else
+	      OMNIORB_THROW(TRANSIENT,ex.minor(),ex.completed());
+	  }
+	}
+	else if (is_COMM_FAILURE_minor(ex.minor())) {
+	    CORBA::COMM_FAILURE ex2(ex.minor(), ex.completed());
+	    if (!_omni_callCommFailureExceptionHandler(this, retries++, ex2))
+	      OMNIORB_THROW(COMM_FAILURE,ex.minor(),ex.completed());
+	}
+	else {
+	  CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
+	  if (!_omni_callTransientExceptionHandler(this, retries++, ex2))
+	    OMNIORB_THROW(TRANSIENT,ex.minor(),ex.completed());
+	}
       }
     }
     catch(CORBA::COMM_FAILURE& ex) {
@@ -1095,18 +1108,25 @@ omniObjRef::_locateRequest()
       if (ex.retry()) {
 	required_retry = 1;
       }
-      else if( fwd ) {
-	RECOVER_FORWARD;
+      if (fwd) {
+	omni::revertToOriginalProfile(this);
+	CORBA::TRANSIENT ex2(TRANSIENT_FailedOnForwarded, ex.completed());
+	if (!_omni_callTransientExceptionHandler(this, retries++, ex2)) {
+	  if (is_COMM_FAILURE_minor(ex.minor()))
+	    OMNIORB_THROW(COMM_FAILURE,ex.minor(),ex.completed());
+	  else
+	    OMNIORB_THROW(TRANSIENT,ex.minor(),ex.completed());
+	}
       }
       else if (is_COMM_FAILURE_minor(ex.minor())) {
 	CORBA::COMM_FAILURE ex2(ex.minor(), ex.completed());
-	if( !_omni_callCommFailureExceptionHandler(this, retries++, ex2) )
-	  throw ex2;
+	if (!_omni_callCommFailureExceptionHandler(this, retries++, ex2))
+	  OMNIORB_THROW(COMM_FAILURE,ex.minor(),ex.completed());
       }
       else {
 	CORBA::TRANSIENT ex2(ex.minor(), ex.completed());
-	if( !_omni_callTransientExceptionHandler(this, retries++, ex2) )
-	  throw ex2;
+	if (!_omni_callTransientExceptionHandler(this, retries++, ex2))
+	  OMNIORB_THROW(TRANSIENT,ex.minor(),ex.completed());
       }
     }
     catch(CORBA::COMM_FAILURE& ex) {
