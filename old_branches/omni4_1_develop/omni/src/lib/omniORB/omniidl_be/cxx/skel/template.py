@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.12  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.6.2.11  2007/02/26 15:51:14  dgrisby
 # Suppress cd parameter when it is definitely unused, to avoid compiler
 # warnings.
@@ -583,6 +586,8 @@ public:
   @in_arguments_decl@
   @out_arguments_decl@  
   @user_exceptions_decl@
+  static const char* const _user_exns[];
+
   @member_data@
 };
 """
@@ -628,6 +633,11 @@ void @call_descriptor@::unmarshalReturnedValues(cdrStream& _n)
 }
 """
 
+
+interface_proxy_empty_exn = """\
+const char* const @call_descriptor@::_user_exns[] = {
+};
+"""
 
 interface_proxy_exn = """\
 const char* const @call_descriptor@::_user_exns[] = {

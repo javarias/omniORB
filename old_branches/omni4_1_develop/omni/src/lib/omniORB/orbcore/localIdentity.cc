@@ -28,6 +28,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2007/04/14 17:56:52  dgrisby
+  Identity downcasting mechanism was broken by VC++ 8's
+  over-enthusiastic optimiser.
+
   Revision 1.4.2.2  2003/11/06 11:56:57  dgrisby
   Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 
@@ -187,14 +191,18 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
 #else
   try { pd_adapter->dispatch(call_desc, this); }
 
-  catch(CORBA::Exception&) {
+  catch (CORBA::SystemException& ex) {
     throw;
   }
-  catch(omniORB::LOCATION_FORWARD&) {
+  catch (CORBA::UserException& ex) {
+    call_desc.validateUserException(ex);
+    throw;
+  }
+  catch (omniORB::LOCATION_FORWARD&) {
     throw;
   }
 
-  catch(...) {
+  catch (...) {
     if( omniORB::trace(2) ) {
       omniORB::logger l;
       l << "WARNING -- method \'" << call_desc.op() << "\' raised an unknown\n"

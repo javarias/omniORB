@@ -32,6 +32,10 @@
 
 /*
  $Log$
+ Revision 1.1.4.3  2007/04/14 17:56:52  dgrisby
+ Identity downcasting mechanism was broken by VC++ 8's
+ over-enthusiastic optimiser.
+
  Revision 1.1.4.2  2005/01/06 23:10:30  dgrisby
  Big merge from omni4_0_develop.
 
@@ -183,7 +187,11 @@ omniInProcessIdentity::dispatch(omniCallDescriptor& call_desc)
 
 #ifdef HAS_Cplusplus_catch_exception_by_base
   }
-  catch (CORBA::Exception&) {
+  catch (CORBA::SystemException& ex) {
+    throw;
+  }
+  catch (CORBA::UserException& ex) {
+    call_desc.validateUserException(ex);
     throw;
   }
   catch (omniORB::LOCATION_FORWARD&) {

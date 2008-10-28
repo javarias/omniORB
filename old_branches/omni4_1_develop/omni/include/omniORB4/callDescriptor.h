@@ -28,6 +28,10 @@
 
 /*
  $Log$
+ Revision 1.4.2.4  2006/07/02 22:52:05  dgrisby
+ Store self thread in task objects to avoid calls to self(), speeding
+ up Current. Other minor performance tweaks.
+
  Revision 1.4.2.3  2006/06/05 11:27:01  dgrisby
  Accessor method to change oneway-ness of a call descriptor.
 
@@ -151,11 +155,19 @@ public:
 
   virtual void userException(cdrStream& stream, _OMNI_NS(IOP_C)* iop_client,
 			     const char*);
-  // Defaults to no user exceptions, and thus throws CORBA::MARSHAL.
+  // Called on the client side to handle a user exception.
+  // Defaults to no user exceptions, and thus throws CORBA::UNKNOWN.
   // Most versions of this throw either a user exception or
-  // CORBA::MARSHAL, but it is permitted to return successfully. This
+  // CORBA::UNKNOWN, but it is permitted to return successfully. This
   // is done by DII, for example.
   // If iop_client is non-zero, must call iop_client->RequestCompleted().
+
+  void validateUserException(const CORBA::UserException& ex);
+  // Called to validate a user exception in a local call. If the call
+  // descriptor knows the exception is not valid for the call, throws
+  // CORBA::UNKNOWN. If the exception is valid, or the call descriptor
+  // does not know, returns.
+
 
   //////////////////////////////////////////////////
   // Methods to implement call on the server side //
