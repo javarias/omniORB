@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2007/10/29 11:33:39  dgrisby
+  Properly support IPv4 in IPv6 in localhost transport rule.
+
   Revision 1.1.4.7  2006/11/02 14:00:54  dgrisby
   Remove a few warnings.
 
@@ -281,14 +284,14 @@ public:
     ipv4 = extractHost(endpoint);
     if ((const char*)ipv4) {
       if (LibcWrapper::isip4addr(ipv4)) {
-	CORBA::ULong address = inet_addr((const char*)ipv4);
+	CORBA::ULong address = inet_addr((char*)ipv4);
 	return (network_ == (address & netmask_));
       }
       else if (strncasecmp(ipv4, "::ffff:", 7) == 0 &&
 	       LibcWrapper::isip4addr((const char*)ipv4 + 7)) {
 
 	// IPv4 in IPv6
-	CORBA::ULong address = inet_addr((const char*)ipv4 + 7);
+	CORBA::ULong address = inet_addr((char*)ipv4 + 7);
 	return (network_ == (address & netmask_));
       }
     }
@@ -304,7 +307,7 @@ public:
 	omnivector<const char*>::const_iterator last = ifaddrs->end();
 	while ( i != last ) {
 	  if (LibcWrapper::isip4addr(*i)) {
-	    CORBA::ULong address = inet_addr((*i));
+	    CORBA::ULong address = inet_addr((char*)(*i));
 	    if ( network_ == (address & netmask_) ) return 1;
 	  }
 	  i++;
@@ -470,7 +473,7 @@ public:
     }
 
     if ( ! LibcWrapper::isip4addr(cp) ) return 0;
-    network = inet_addr((const char*)cp);
+    network = inet_addr((char*)cp);
 
     if ( LibcWrapper::isip4addr(mask) ) {
       netmask = inet_addr(mask);
