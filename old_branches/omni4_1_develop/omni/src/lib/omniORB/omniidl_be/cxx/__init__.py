@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.23.2.7  2007/09/11 12:01:20  dgrisby
+# Do not mask exceptions in the C++ backend.
+#
 # Revision 1.23.2.6  2007/05/11 09:52:28  dgrisby
 # New -Wbguard_prefix option. Thanks Austin Bingham.
 #
@@ -319,7 +322,7 @@ def run(tree, args):
             impl.run(tree)
 
     except AttributeError, e:
-        name = e[0]
+        name = e.args[0]
         unsupported_visitors = map(lambda x:"visit" + x,
                                    AST_unsupported_nodes[:])
         if name in unsupported_visitors:

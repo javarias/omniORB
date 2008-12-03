@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.18  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.8.2.17  2007/05/11 09:52:27  dgrisby
 # New -Wbguard_prefix option. Thanks Austin Bingham.
 #
@@ -862,7 +865,7 @@ typedef @type@ @name@_slice@taildims@;
 }
 
 @inline_qualifier@ void @name@_free(@name@_slice* _s) {
-    delete [] _s;
+  delete [] _s;
 }
 """
 

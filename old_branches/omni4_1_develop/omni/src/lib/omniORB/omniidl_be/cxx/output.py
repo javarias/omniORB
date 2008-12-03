@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.1  2003/03/23 21:02:41  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
 # Revision 1.1.4.6  2002/11/25 21:10:08  dgrisby
 # Friendly error messages if can't create files.
 #
@@ -152,7 +155,7 @@ class Stream:
             elif type(expr) is FuncType:
                 oindent = self.indent
                 self.indent = pos
-                apply(expr)
+                expr()
                 self.indent = oindent
             else:
                 pos = self.olines(pos, pos, str(expr))
@@ -193,7 +196,7 @@ class Stream:
             elif type(expr) is FuncType:
                 oindent = self.indent
                 self.indent = pos
-                apply(expr)
+                expr()
                 self.indent = oindent
             else:
                 pos = self.olines(pos, pos, str(expr))

@@ -2,7 +2,7 @@
 # -*- python -*-
 #                           Package   : omniidl
 # main.py                   Created on: 1999/11/05
-#			    Author    : Duncan Grisby (dpg1)
+#                            Author    : Duncan Grisby (dpg1)
 #
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
@@ -29,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.21.2.2  2005/01/06 23:11:24  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.21.2.1  2003/03/23 21:01:37  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -79,7 +82,7 @@
 
 """IDL Compiler front-end main function"""
 
-import sys
+import sys, os
 
 if sys.hexversion < 0x10502f0:
     sys.stderr.write("\n\n")
@@ -92,9 +95,10 @@ if sys.hexversion < 0x10502f0:
     sys.stderr.flush()
 
 import _omniidl
-import getopt, os, os.path, string
+import getopt, os, os.path
 
-import idlast, idltype
+import idlast, idltype, idlstring
+string = idlstring
 
 cmdname = "omniidl"
 
@@ -167,7 +171,7 @@ if sys.platform != "OpenVMS":
             break
 
     preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
-			_omniidl.version
+                        _omniidl.version
 else:
     if hasattr(_omniidl, "__file__"):
         preprocessor_path = os.path.dirname(_omniidl.__file__)
@@ -176,8 +180,8 @@ else:
 
     names = string.split(preprocessor_path, "/")
     preprocessor_cmd = \
- 	'''mcr %s:[%s]omnicpp -lang-c++ -undef "-D__OMNIIDL__=%s"'''\
- 	% (names[1], string.join(names[2:],"."), _omniidl.version)
+         '''mcr %s:[%s]omnicpp -lang-c++ -undef "-D__OMNIIDL__=%s"'''\
+         % (names[1], string.join(names[2:],"."), _omniidl.version)
 
 no_preprocessor   = 0
 backends          = []
@@ -322,8 +326,8 @@ def genTempFileName():
         import tempfile
         return tempfile.mktemp(".idl")
     except ImportError:
-        # No tempfile module. Just use current directory and hope...
-        return "omniidl-tmp" + `os.getpid()` + ".idl"
+        # No tempfile module. Just use current directory...
+        return "omniidl-tmp%s.idl" % os.getpid()
 
 
 def my_import(name):
@@ -414,11 +418,11 @@ def main(argv=None):
                 sys.stderr.write(cmdname + ": '" + name + "' does not exist\n")
             sys.exit(1)
 
- 	if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
- 	    preproc_cmd = '%s %s "%s"' % (preprocessor_cmd,
+        if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
+            preproc_cmd = '%s %s "%s"' % (preprocessor_cmd,
                                           string.join(preprocessor_args, ' '),
                                           name)
- 	else:
+        else:
             preproc_cmd = '%s "%s" %s' % (preprocessor_cmd,
                                           string.join(preprocessor_args,'" "'),
                                           name)
@@ -464,12 +468,12 @@ def main(argv=None):
         if dump_only:
             if verbose:
                 sys.stderr.write(cmdname + ": Dumping\n")
-            _omniidl.dump(file)
+            _omniidl.dump(file, name)
             if not isinstance(file, StringType):
                 file.close()
             if temp_file: os.remove(temp_file)
         else:
-            tree = _omniidl.compile(file)
+            tree = _omniidl.compile(file, name)
 
             if not isinstance(file, StringType):
                 if file.close():

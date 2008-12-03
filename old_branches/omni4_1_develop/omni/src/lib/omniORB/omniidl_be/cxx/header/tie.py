@@ -28,6 +28,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.16.2.2  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.16.2.1  2003/03/23 21:02:36  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -224,6 +227,7 @@ void @attribute_name@(@attr_type_in_name@ _value) { pd_obj->@attribute_name@(_va
                               attr_type_in_name = attrType_name_IN)                    
         # do the recursive bit
         for i in interface.inherits():
+            i = i.fullDecl()
             continuation(i, where, continuation, defined_so_far)
 
         # done

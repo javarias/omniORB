@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.2  2003/10/23 11:25:55  dgrisby
+# More valuetype support.
+#
 # Revision 1.17.2.1  2003/03/23 21:02:40  dgrisby
 # Start of omniORB 4.1.x development branch.
 #
@@ -242,7 +245,7 @@ class Stack:
     def push(self, thing):
         self.__list.append(thing)
     def pop(self):
-        if self.__list == []: raise "Stack Empty"
+        assert self.__list
         thing = self.__list[-1]
         self.__list = self.__list[0:-1]
         return thing

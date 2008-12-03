@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.8  2006/06/22 13:01:50  dgrisby
+# Cut and paste error in local() method of Forward class.
+#
 # Revision 1.20.2.7  2006/01/18 19:23:17  dgrisby
 # Code generation problems with valuetype inheritance / typedefs.
 #
@@ -163,6 +166,8 @@ Classes:
 
 import idlutil
 import idlvisitor
+
+ExceptionBase = Exception
 
 class AST:
     """Class for top-level Abstract Syntax Tree.
@@ -476,7 +481,7 @@ Functions:
     def fullDecl(self):
         if self.__alias is not None:
             try:
-                return self.__alias.aliasType().decl()
+                return self.__alias.aliasType().decl().fullDecl()
             except AttributeError:
                 pass
         return self
@@ -1165,7 +1170,7 @@ def registerDecl(scopedName, decl):
     declMap[sname] = decl
 
 
-class DeclNotFound:
+class DeclNotFound (ExceptionBase):
 
     """Exception to indicate that findDecl() could not find the
     requested Decl object."""
