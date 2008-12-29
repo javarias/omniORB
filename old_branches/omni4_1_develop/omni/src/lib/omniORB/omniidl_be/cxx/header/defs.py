@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.36.2.15  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.36.2.14  2007/04/12 19:51:16  dgrisby
 # Fixed point member values should not go in a union's union.
 #
@@ -941,16 +944,22 @@ def visitTypedef(node):
                        inline_qualifier = inline_qualifier())
 
             # output the _copyHelper class
+            fqname = id.Name(d.scopedName()).fullyQualify()
+
             if types.variableDecl(node):
                 stream.out(template.typedef_array_copyHelper,
                            var_or_fix = "Variable",
-                           name = derivedName)
+                           name = derivedName,
+                           fqname = fqname)
+
                 stream.out(template.typedef_array_variable_out_type,
                            name = derivedName)
             else:
                 stream.out(template.typedef_array_copyHelper,
                            var_or_fix = "Fix",
-                           name = derivedName)
+                           name = derivedName,
+                           fqname = fqname)
+
                 stream.out(template.typedef_array_fix_out_type,
                            name = derivedName)
                
