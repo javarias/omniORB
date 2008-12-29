@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2008/07/15 11:02:15  dgrisby
+  Incorrect while loop if connection fails with EAGAIN. Thanks Dirk Siebnich.
+
   Revision 1.1.4.11  2007/07/31 14:23:43  dgrisby
   If the platform does not accept IPv4 connections on IPv6 sockets by
   default, try to enable it by turning the IPV6_V6ONLY socket option
@@ -257,7 +260,7 @@ tcpAddress::Connect(unsigned long deadline_secs,
     if (timeout == 0) timeout = -1;
     int rc = poll(&fds,1,timeout);
     if (rc > 0 && fds.revents & POLLERR) {
-      rc = 0;
+      rc = RC_SOCKET_ERROR;
     }
 #else
     fd_set fds, efds;
@@ -286,8 +289,9 @@ tcpAddress::Connect(unsigned long deadline_secs,
       rc = getpeername(sock, (struct sockaddr*)&peer, &len);
     }
     if (rc == RC_SOCKET_ERROR) {
-      if (ERRNO == RC_EINTR)
+      if (ERRNO == RC_EINTR) {
 	continue;
+      }
       else {
 	CLOSESOCKET(sock);
 	return 0;

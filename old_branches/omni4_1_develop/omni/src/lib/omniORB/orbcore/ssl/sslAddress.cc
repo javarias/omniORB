@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.12  2008/07/15 11:02:16  dgrisby
+  Incorrect while loop if connection fails with EAGAIN. Thanks Dirk Siebnich.
+
   Revision 1.1.4.11  2007/07/31 14:23:43  dgrisby
   If the platform does not accept IPv4 connections on IPv6 sockets by
   default, try to enable it by turning the IPV6_V6ONLY socket option
@@ -202,7 +205,7 @@ static inline int waitWrite(SocketHandle_t sock, struct timeval& t)
   if (timeout == 0) timeout = -1;
   rc = poll(&fds,1,timeout);
   if (rc > 0 && fds.revents & POLLERR) {
-    rc = 0;
+    rc = RC_SOCKET_ERROR;
   }
 #else
   fd_set fds, efds;
@@ -229,7 +232,7 @@ static inline int waitRead(SocketHandle_t sock, struct timeval& t)
   if (timeout == 0) timeout = -1;
   rc = poll(&fds,1,timeout);
   if (rc > 0 && fds.revents & POLLERR) {
-    rc = 0;
+    rc = RC_SOCKET_ERROR;
   }
 #else
   fd_set fds, efds;
