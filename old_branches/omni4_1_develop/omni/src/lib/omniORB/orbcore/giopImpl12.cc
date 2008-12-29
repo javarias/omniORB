@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.14  2008/08/08 16:52:56  dgrisby
+  Option to validate untransformed UTF-8; correct data conversion minor
+  codes; better logging for MessageErrors.
+
   Revision 1.1.6.13  2007/12/21 11:39:29  dgrisby
   Properly align after header in user exception messages. Thanks Jon Biggar.
 
@@ -1477,7 +1481,7 @@ giopImpl12::sendMsgErrorMessage(giopStream* g,
     l << "To endpoint: " << g->pd_strand->connection->peeraddress() << ". ";
 
     if (ex) {
-      l << "System exception " << *ex << " while marshalling. "
+      l << "System exception " << *ex << " while (un)marshalling. "
 	<< "Send GIOP 1.2 MessageError.\n";
     }
     else {

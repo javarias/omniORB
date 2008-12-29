@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.13  2008/08/08 16:52:56  dgrisby
+  Option to validate untransformed UTF-8; correct data conversion minor
+  codes; better logging for MessageErrors.
+
   Revision 1.1.6.12  2008/07/15 10:59:39  dgrisby
   Clarity of behaviour if inConScanPeriod / outConScanPeriod are <=
   scanGranularity.
@@ -283,8 +287,27 @@ GIOP_S::dispatcher() {
     }
   }
   catch(const giopStream::CommFailure&) {
+    // Connection has been closed.
     return 0;
   }
+
+#ifndef HAS_Cplusplus_catch_exception_by_base
+#  define CATCH_AND_HANDLE(name) \
+  catch(CORBA::name& ex) { \
+    impl()->sendMsgErrorMessage(this, &ex); \
+    return 0; \
+  }
+
+  OMNIORB_FOR_EACH_SYS_EXCEPTION(CATCH_AND_HANDLE)
+
+#  undef CATCH_AND_HANDLE
+#endif
+
+  catch(CORBA::SystemException& ex) {
+    impl()->sendMsgErrorMessage(this, &ex);
+    return 0;
+  }
+
   catch(const omniORB::fatalException& ex) {
     if( omniORB::trace(1) ) {
       omniORB::logger l;

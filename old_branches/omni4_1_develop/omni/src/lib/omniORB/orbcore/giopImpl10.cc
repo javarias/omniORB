@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.8  2008/08/08 16:52:56  dgrisby
+  Option to validate untransformed UTF-8; correct data conversion minor
+  codes; better logging for MessageErrors.
+
   Revision 1.1.6.7  2006/09/20 13:36:31  dgrisby
   Descriptive logging for connection and GIOP errors.
 
@@ -575,7 +579,9 @@ giopImpl10::unmarshalWildCardRequestHeader(giopStream* g) {
     if (g->inputMessageSize() <= orbParameters::giopMaxMsgSize) {
       break;
     }
-    // falls through if the message has exceeded the size limit.
+    inputTerminalProtocolError(g, __FILE__, __LINE__,
+			       "GIOP message size limit exceeded");
+    break;
   default:
     inputTerminalProtocolError(g, __FILE__, __LINE__,
 			       "Unknown GIOP message type");
@@ -1024,7 +1030,7 @@ giopImpl10::sendMsgErrorMessage(giopStream* g,
     l << "To endpoint: " << g->pd_strand->connection->peeraddress() << ". ";
 
     if (ex) {
-      l << "System exception " << *ex << " while marshalling. "
+      l << "System exception " << *ex << " while (un)marshalling. "
 	<< "Send GIOP 1.0 MessageError.\n";
     }
     else {

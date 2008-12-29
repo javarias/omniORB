@@ -29,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.8  2008/08/08 16:52:56  dgrisby
+  Option to validate untransformed UTF-8; correct data conversion minor
+  codes; better logging for MessageErrors.
+
   Revision 1.1.6.7  2006/09/20 13:36:31  dgrisby
   Descriptive logging for connection and GIOP errors.
 
@@ -1168,7 +1172,7 @@ giopImpl11::sendMsgErrorMessage(giopStream* g,
     l << "To endpoint: " << g->pd_strand->connection->peeraddress() << ". ";
 
     if (ex) {
-      l << "System exception " << *ex << " while marshalling. "
+      l << "System exception " << *ex << " while (un)marshalling. "
 	<< "Send GIOP 1.1 MessageError.\n";
     }
     else {
