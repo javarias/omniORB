@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.13  2008/10/28 15:33:42  dgrisby
+# Undeclared user exceptions not caught in local calls.
+#
 # Revision 1.6.2.12  2007/09/19 14:16:07  dgrisby
 # Avoid namespace clashes if IDL defines modules named CORBA.
 #
@@ -636,6 +639,7 @@ void @call_descriptor@::unmarshalReturnedValues(cdrStream& _n)
 
 interface_proxy_empty_exn = """\
 const char* const @call_descriptor@::_user_exns[] = {
+  0
 };
 """
 
