@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.32.2.13  2008/12/03 10:56:28  dgrisby
+# Struct scope incorrectly handled in marshalling code.
+#
 # Revision 1.32.2.12  2007/09/19 14:16:07  dgrisby
 # Avoid namespace clashes if IDL defines modules named CORBA.
 #
@@ -697,8 +700,7 @@ def visitConst(node):
                    type = type_string, name = name, value = value)
         
 
-    
-    pass
+
 def visitDeclarator(node):
     pass
 
