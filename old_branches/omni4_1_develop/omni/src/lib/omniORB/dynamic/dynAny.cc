@@ -29,6 +29,9 @@
 
 /*
    $Log$
+   Revision 1.13.2.9  2008/09/16 09:24:08  dgrisby
+   Support null types in DynAny; fix errors with exception handling.
+
    Revision 1.13.2.8  2006/05/31 10:17:04  dgrisby
    Allow creation of unknown values in DynAnys.
 
@@ -2691,21 +2694,29 @@ DynStructImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
   if( nvps.length() != pd_n_components )
     throw DynamicAny::DynAny::InvalidValue();
 
+  CORBA::TypeCode_var tc;
+  unsigned i;
+
+  for (i = 0; i < pd_n_components; i++) {
+
+    if (((const char*)(nvps[i].id))[0] != '\0' &&
+	strcmp((const char*)(nvps[i].id), actualTc()->NP_member_name(i))) {
+      
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+
+    tc = nvps[i].value->type();
+
+    if (!tc->equivalent(nthComponentTC(i))) {
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+  }
+
   pd_n_in_buf = 0;
   pd_first_in_comp = 0;
 
-  CORBA::TypeCode_var tc;
+  for (i = 0; i < pd_n_components; i++) {
 
-  for( unsigned i = 0; i < pd_n_components; i++ ) {
-    if( ((const char*)(nvps[i].id))[0] != '\0' &&
-	strcmp((const char*)(nvps[i].id), actualTc()->NP_member_name(i)) )
-      throw DynamicAny::DynAny::TypeMismatch();
-
-    tc = nvps[i].value->type();
-    if( !tc->equivalent(nthComponentTC(i)) ) {
-      pd_first_in_comp = pd_n_components;
-      throw DynamicAny::DynAny::TypeMismatch();
-    }
     DynAnyImplBase* daib = ToDynAnyImplBase(nvps[i].value);
     if (daib->is_root()) {
       // Take ownership
@@ -2716,6 +2727,11 @@ DynStructImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
       daib = ToDynAnyImplBase(newda);
     }
     daib->attach();
+
+    if (pd_components[i]) {
+      pd_components[i]->detach();
+      pd_components[i]->_NP_decrRefCount();
+    }
     pd_components[i] = daib;
   }
   pd_curr_index = (pd_n_components == 0) ? -1 : 0;
@@ -4380,13 +4396,24 @@ void
 DynSequenceImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
 {
   CHECK_NOT_DESTROYED;
-  if( pd_bound && as.length() > pd_bound )
+
+  CORBA::TypeCode_var tc;
+  unsigned i;
+
+  if (pd_bound && as.length() > pd_bound)
     throw DynamicAny::DynAny::InvalidValue();
 
-  if( as.length() != pd_n_components )
+  for (i=0; i < as.length(); i++) {
+    tc = as[i]->type();
+    if (!tc->equivalent(nthComponentTC(i))) {
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+  }
+
+  if (as.length() != pd_n_components)
     setNumComponents(as.length());
 
-  if( as.length() == 0 )
+  if (as.length() == 0)
     pd_curr_index = -1;
   else
     pd_curr_index = 0;
@@ -4394,14 +4421,7 @@ DynSequenceImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
   pd_n_in_buf = 0;
   pd_first_in_comp = 0;
 
-  CORBA::TypeCode_var tc;
-
-  for( unsigned i = 0; i < pd_n_components; i++ ) {
-    tc = as[i]->type();
-    if( !tc->equivalent(nthComponentTC(i)) ) {
-      pd_first_in_comp = pd_n_components;
-      throw DynamicAny::DynAny::TypeMismatch();
-    }
+  for (i = 0; i < pd_n_components; i++) {
     DynAnyImplBase* daib = ToDynAnyImplBase(as[i]);
     if (daib->is_root()) {
       // Take ownership of the DynAny
@@ -4412,6 +4432,11 @@ DynSequenceImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
       daib = ToDynAnyImplBase(newda);
     }
     daib->attach();
+
+    if (pd_components[i]) {
+      pd_components[i]->detach();
+      pd_components[i]->_NP_decrRefCount();
+    }
     pd_components[i] = daib;
   }
 }
@@ -4604,6 +4629,8 @@ DynArrayImpl::~DynArrayImpl()
 DynamicAny::DynAny_ptr
 DynArrayImpl::copy()
 {
+  CHECK_NOT_DESTROYED;
+
   DynArrayImpl* da = new DynArrayImpl(TypeCode_collector::duplicateRef(tc()),
 				      DYNANY_ROOT);
   try {
@@ -4620,6 +4647,8 @@ DynArrayImpl::copy()
 DynamicAny::AnySeq*
 DynArrayImpl::get_elements()
 {
+  CHECK_NOT_DESTROYED;
+
   DynamicAny::AnySeq* as = new DynamicAny::AnySeq();
   as->length(pd_n_components);
 
@@ -4637,6 +4666,8 @@ DynArrayImpl::get_elements()
 void
 DynArrayImpl::set_elements(const DynamicAny::AnySeq& as)
 {
+  CHECK_NOT_DESTROYED;
+
   if( as.length() != pd_n_components )
     throw DynamicAny::DynAny::InvalidValue();
 
@@ -4649,6 +4680,8 @@ DynArrayImpl::set_elements(const DynamicAny::AnySeq& as)
 DynamicAny::DynAnySeq*
 DynArrayImpl::get_elements_as_dyn_any()
 {
+  CHECK_NOT_DESTROYED;
+
   DynamicAny::DynAnySeq* as = new DynamicAny::DynAnySeq();
   as->length(pd_n_components);
 
@@ -4666,17 +4699,25 @@ DynArrayImpl::get_elements_as_dyn_any()
 void
 DynArrayImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
 {
+  CHECK_NOT_DESTROYED;
+
+  if (as.length() != pd_n_components)
+    throw DynamicAny::DynAny::InvalidValue();
+
+  CORBA::TypeCode_var tc;
+  unsigned i;
+
+  for (i=0; i < pd_n_components; i++) {
+    tc = as[i]->type();
+    if (!tc->equivalent(nthComponentTC(i))) {
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+  }
+
   pd_n_in_buf = 0;
   pd_first_in_comp = 0;
 
-  CORBA::TypeCode_var tc;
-
-  for( unsigned i = 0; i < pd_n_components; i++ ) {
-    tc = as[i]->type();
-    if( !tc->equivalent(nthComponentTC(i)) ) {
-      pd_first_in_comp = pd_n_components;
-      throw DynamicAny::DynAny::TypeMismatch();
-    }
+  for (i = 0; i < pd_n_components; i++ ) {
     DynAnyImplBase* daib = ToDynAnyImplBase(as[i]);
     if (daib->is_root()) {
       // Take ownership of the DynAny
@@ -4687,6 +4728,11 @@ DynArrayImpl::set_elements_as_dyn_any(const DynamicAny::DynAnySeq& as)
       daib = ToDynAnyImplBase(newda);
     }
     daib->attach();
+
+    if (pd_components[i]) {
+      pd_components[i]->detach();
+      pd_components[i]->_NP_decrRefCount();
+    }
     pd_components[i] = daib;
   }
 }
@@ -4871,6 +4917,9 @@ DynValueImpl::is_null()
 void
 DynValueImpl::set_to_null()
 {
+  if (!pd_null) {
+    setNumComponents(0);
+  }
   pd_null = 1;
   pd_curr_index = -1;
 }
@@ -5009,21 +5058,29 @@ DynValueImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
   if( nvps.length() != pd_n_components )
     throw DynamicAny::DynAny::InvalidValue();
 
+  CORBA::TypeCode_var tc;
+  unsigned i;
+
+  for (i = 0; i < pd_n_components; i++) {
+
+    if (((const char*)(nvps[i].id))[0] != '\0' &&
+	strcmp((const char*)(nvps[i].id), pd_componentNames[i])) {
+      
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+
+    tc = nvps[i].value->type();
+
+    if (!tc->equivalent(nthComponentTC(i))) {
+      throw DynamicAny::DynAny::TypeMismatch();
+    }
+  }
+
   pd_n_in_buf = 0;
   pd_first_in_comp = 0;
 
-  CORBA::TypeCode_var tc;
+  for (i = 0; i < pd_n_components; i++) {
 
-  for( unsigned i = 0; i < pd_n_components; i++ ) {
-    if( ((const char*)(nvps[i].id))[0] != '\0' &&
-	strcmp((const char*)(nvps[i].id), pd_componentNames[i]))
-      throw DynamicAny::DynAny::TypeMismatch();
-
-    tc = nvps[i].value->type();
-    if( !tc->equivalent(nthComponentTC(i)) ) {
-      pd_first_in_comp = pd_n_components;
-      throw DynamicAny::DynAny::TypeMismatch();
-    }
     DynAnyImplBase* daib = ToDynAnyImplBase(nvps[i].value);
     if (daib->is_root()) {
       // Take ownership
@@ -5034,6 +5091,11 @@ DynValueImpl::set_members_as_dyn_any(const DynamicAny::NameDynAnyPairSeq& nvps)
       daib = ToDynAnyImplBase(newda);
     }
     daib->attach();
+
+    if (pd_components[i]) {
+      pd_components[i]->detach();
+      pd_components[i]->_NP_decrRefCount();
+    }
     pd_components[i] = daib;
   }
   pd_curr_index = (pd_n_components == 0) ? -1 : 0;
@@ -5340,7 +5402,6 @@ DynValueBoxImpl::set_boxed_value_as_dyn_any(DynamicAny::DynAny_ptr value)
 
   CORBA::TypeCode_var tc = value->type();
   if (!tc->equivalent(nthComponentTC(0))) {
-    pd_first_in_comp = 1;
     pd_curr_index = -1;
     throw DynamicAny::DynAny::TypeMismatch();
   }
@@ -5355,6 +5416,12 @@ DynValueBoxImpl::set_boxed_value_as_dyn_any(DynamicAny::DynAny_ptr value)
     daib = ToDynAnyImplBase(newda);
   }
   daib->attach();
+
+  if (pd_components[0]) {
+    pd_components[0]->detach();
+    pd_components[0]->_NP_decrRefCount();
+  }
+
   pd_components[0] = daib;
 }
 
