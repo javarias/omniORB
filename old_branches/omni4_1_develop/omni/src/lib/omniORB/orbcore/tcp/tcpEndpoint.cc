@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2008/04/19 18:25:33  dgrisby
+  HPUX returns an invalid protocol from getaddrinfo() with PF_UNSPEC.
+
   Revision 1.1.4.16  2007/07/31 14:23:43  dgrisby
   If the platform does not accept IPv4 connections on IPv6 sockets by
   default, try to enable it by turning the IPV6_V6ONLY socket option
@@ -389,12 +392,28 @@ tcpEndpoint::Bind() {
 #endif
   }
 
-  LibcWrapper::AddrInfo_var ai;
+  LibcWrapper::AddrInfo_var aiv;
+  LibcWrapper::AddrInfo*    ai;
 
   do {
-    ai = LibcWrapper::getAddrInfo(host, pd_address.port);
+    aiv = LibcWrapper::getAddrInfo(host, pd_address.port);
+    ai  = aiv;
 
-    if ((LibcWrapper::AddrInfo*)ai == 0) {
+#if defined(OMNI_SUPPORT_IPV6)
+    if (passive_host == 1) {
+      // Search through addresses to find an IPv6 one
+      LibcWrapper::AddrInfo* aip = ai;
+      while (aip) {
+	if (aip->addrFamily() == PF_INET6) {
+	  ai = aip;
+	  break;
+	}
+	aip = aip->next();
+      }
+    }
+#endif
+
+    if (ai == 0) {
       if (omniORB::trace(1)) {
 	omniORB::logger log;
 	log << "Cannot get the address of host " << host << ".\n";
@@ -408,8 +427,8 @@ tcpEndpoint::Bind() {
     if (pd_socket == RC_INVALID_SOCKET) {
 
       if (passive_host == 1) {
-	omniORB::logs(2, "Unable to open socket for unspecified passive host "
-		      " -- fall back to IPv4.");
+	omniORB::logs(2, "Unable to open socket for unspecified passive host. "
+		      "Fall back to IPv4.");
 	host = "0.0.0.0";
 	passive_host = 2;
 	continue;
