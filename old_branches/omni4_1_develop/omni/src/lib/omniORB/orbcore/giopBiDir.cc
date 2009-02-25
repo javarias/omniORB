@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.4.8  2006/06/05 11:28:04  dgrisby
   Change clientSendRequest interceptor members to a single GIOP_C.
 
@@ -644,7 +647,7 @@ getBiDirServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 
       if (omniORB::trace(25)) {
 	omniORB::logger log;
-	log << " receive bidir IIOP service context: ( ";
+	log << "Receive bidir IIOP service context: ( ";
 
 	for (CORBA::ULong i = 0; i < l.length(); i++) {
 	  log << (const char*) l[i].host << ":" << l[i].port << " ";
