@@ -31,6 +31,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.17  2008/04/03 08:53:53  dgrisby
+  Define EBADF diferently for VxWorks. Thanks Ingo Thiele.
+
   Revision 1.1.4.16  2007/07/31 16:36:50  dgrisby
   Hard-code define of IPV6_V6ONLY on Windows.
 
@@ -198,6 +201,7 @@
 
 #  if defined(OMNI_SUPPORT_IPV6)
 #    include <ws2tcpip.h>
+#    include <Wspiapi.h>
 #    if !defined(IPV6_V6ONLY)
 #      define IPV6_V6ONLY 27  // Defined to this on Vista
 #    endif
