@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.13  2006/09/07 15:29:57  dgrisby
+# Use boxes.idl to build standard value boxes.
+#
 # Revision 1.31.2.12  2006/07/26 17:49:59  dgrisby
 # Support unchecked_narrow.
 #
@@ -556,6 +559,9 @@ class ORB:
     def object_to_string(self, obj):
         return _omnipy.orb_func.object_to_string(self, obj)
 
+    def register_initial_reference(self, identifier, obj):
+        return _omnipy.orb_func.register_initial_reference(self, identifier, obj)
+
     def list_initial_services(self):
         return _omnipy.orb_func.list_initial_services(self)
 
@@ -682,6 +688,7 @@ class ORB:
 
 
     __methods__ = ["string_to_object", "object_to_string",
+                   "register_initial_reference",
                    "list_initial_services", "resolve_initial_references",
                    "work_pending", "perform_work", "run",
                    "shutdown", "destroy",
