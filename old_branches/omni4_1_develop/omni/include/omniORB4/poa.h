@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.11  2007/02/26 12:41:00  dgrisby
+  Fix duplicated POA enum Any operators. Thanks Thomas Richter.
+
   Revision 1.4.2.10  2006/10/23 15:08:31  dgrisby
   Suppress GCC warnings about missing base class constructor calls.
   Thanks Tamas Kerecsen. Somehow, this patch works on VC++ 6, where
@@ -721,7 +724,7 @@ _CORBA_MODULE_BEG
   /////////////////////////// Servant_var //////////////////////////////
   //////////////////////////////////////////////////////////////////////
 
-  template <typename T>
+  template <class T>
   class Servant_var {
   public:
     inline Servant_var() : pd_data(0) {}
