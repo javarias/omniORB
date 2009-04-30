@@ -30,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.18  2009/02/17 14:32:17  dgrisby
+  Some platforms return the IPv4 wildcard address before the IPv6 one
+  when given PF_UNSPEC. Make sure the IPv6 one is used if available.
+
   Revision 1.1.4.17  2008/04/19 18:25:33  dgrisby
   HPUX returns an invalid protocol from getaddrinfo() with PF_UNSPEC.
 
@@ -560,6 +564,12 @@ tcpEndpoint::Bind() {
 
 	if (omni::strMatch(*i, "127.0.0.1")) {
 	  loopback4 = *i;
+	  continue;
+	}
+	if (strncmp(*i, "127.", 4) == 0) {
+	  // Anything else starting 127. is defined to be a loopback.
+	  if (!loopback4)
+	    loopback4 = *i;
 	  continue;
 	}
 	if (omni::strMatch(*i, "::1")) {
