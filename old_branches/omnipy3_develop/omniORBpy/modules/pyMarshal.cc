@@ -29,6 +29,11 @@
 
 // $Id$
 // $Log$
+// Revision 1.1.4.12  2008/10/09 15:04:36  dgrisby
+// Python exceptions occurring during unmarshalling were not properly
+// handled. Exception state left set when at traceLevel 0 (thanks
+// Morarenko Kirill).
+//
 // Revision 1.1.4.11  2007/07/25 15:00:10  dgrisby
 // Sequence unmarshalling could incorrecly complain about the lack of
 // data left in a sequence of null or void.
@@ -585,8 +590,15 @@ validateTypeEnum(PyObject* d_o, PyObject* a_o,
   if (e >= PyTuple_GET_SIZE(t_o))
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_EnumValueOutOfRange, compstatus);
 
-  if (PyTuple_GET_ITEM(t_o, e) != a_o)
-    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  if (PyTuple_GET_ITEM(t_o, e) != a_o) {
+    // EnumItem object is not the one we expected -- are they equivalent?
+    int cmp;
+    if (PyObject_Cmp(PyTuple_GET_ITEM(t_o, e), a_o, &cmp) == -1)
+      omniPy::handlePythonException();
+
+    if (cmp != 0)
+      OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WrongPythonType, compstatus);
+  }
 }
 
 static void
