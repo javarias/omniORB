@@ -28,6 +28,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.7  2007/01/19 10:57:21  dgrisby
+  Better logging if ropes fail unexpectedly.
+
   Revision 1.1.6.6  2006/06/02 12:48:32  dgrisby
   Small code cleanups.
 
@@ -181,7 +184,8 @@ giopRope::giopRope(const giopAddressList& addrlist,
   pd_maxStrands(orbParameters::maxGIOPConnectionPerServer),
   pd_oneCallPerConnection(orbParameters::oneCallPerConnection),
   pd_nwaiting(0),
-  pd_cond(omniTransportLock)
+  pd_cond(omniTransportLock),
+  pd_offerBiDir(orbParameters::offerBiDirectionalGIOP)
 {
   {
     giopAddressList::const_iterator i, last;
@@ -688,6 +692,7 @@ CORBA::Boolean
 giopRope::match(const giopAddressList& addrlist) const
 {
   if (addrlist.size() != pd_addresses.size()) return 0;
+  if (orbParameters::offerBiDirectionalGIOP != pd_offerBiDir) return 0;
 
   giopAddressList::const_iterator i, last, j;
   i    = addrlist.begin();
