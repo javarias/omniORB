@@ -30,6 +30,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.19  2007/09/18 20:03:34  dgrisby
+// Refcount error if cdrUnmarshal raised a Python exception.
+//
 // Revision 1.1.4.18  2007/01/19 11:11:09  dgrisby
 // Avoid assertion failure if an unexpected C++ exception occurs during
 // an invocation.
@@ -714,7 +717,7 @@ extern "C" {
     //  exc_desc is a dictionary containing a mapping from repoIds to
     //  tuples of the form (exception class, marshal desc., param count)
 
-    PyObject *pyobjref, *in_d, *out_d, *exc_d, *ctxt_d, *op_args, *result;
+    PyObject *pyobjref, *in_d, *out_d, *exc_d, *ctxt_d, *op_args;
     char*  op;
     size_t op_len;
 
