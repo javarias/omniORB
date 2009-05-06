@@ -3,7 +3,7 @@
 // pyValueType.cc             Created on: 2003/04/11
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2006 Apasphere Ltd.
 //
 //    This file is part of the omniORBpy library
 //
@@ -28,6 +28,10 @@
 //    ValueType support
 
 // $Log$
+// Revision 1.1.2.14  2006/09/20 14:10:13  dgrisby
+// Indirections could be wrong in valuebox marshalling, because alignment
+// was not set before position calculation.
+//
 // Revision 1.1.2.13  2006/09/17 23:28:34  dgrisby
 // Invalid assertion with indirections in counting streams.
 //

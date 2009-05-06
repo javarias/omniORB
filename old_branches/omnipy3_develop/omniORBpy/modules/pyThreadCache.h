@@ -3,6 +3,7 @@
 // pyThreadCache.h            Created on: 2000/05/26
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2005 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -31,6 +32,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.4  2005/03/02 13:39:16  dgrisby
+// Another merge from omnipy2_develop.
+//
 // Revision 1.1.4.3  2005/01/25 11:45:48  dgrisby
 // Merge from omnipy2_develop; set RPM version.
 //

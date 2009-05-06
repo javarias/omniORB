@@ -3,6 +3,7 @@
 # CORBA.py                   Created on: 1999/06/08
 #                            Author    : Duncan Grisby (dpg1)
 #
+#    Copyright (C) 2002-2006 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #    This file is part of the omniORBpy library
@@ -30,6 +31,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.31.2.14  2009/03/13 13:57:56  dgrisby
+# Bind orb.register_initial_reference. Thanks Wei Jiang.
+#
 # Revision 1.31.2.13  2006/09/07 15:29:57  dgrisby
 # Use boxes.idl to build standard value boxes.
 #

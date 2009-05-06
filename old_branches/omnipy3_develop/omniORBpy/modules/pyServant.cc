@@ -3,6 +3,7 @@
 // pyServant.cc               Created on: 1999/07/29
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2003-2008 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -30,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.11  2008/10/09 15:04:36  dgrisby
+// Python exceptions occurring during unmarshalling were not properly
+// handled. Exception state left set when at traceLevel 0 (thanks
+// Morarenko Kirill).
+//
 // Revision 1.1.4.10  2008/02/01 16:29:17  dgrisby
 // Error with implementation of operations with names clashing with
 // Python keywords.

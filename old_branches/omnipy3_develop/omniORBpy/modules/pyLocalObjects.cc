@@ -3,7 +3,7 @@
 // pyLocalObjects.cc          Created on: 2005/10/20
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2005 Apasphere Ltd.
+//    Copyright (C) 2005-2008 Apasphere Ltd.
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -31,6 +31,11 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.2.2  2008/10/09 15:04:36  dgrisby
+// Python exceptions occurring during unmarshalling were not properly
+// handled. Exception state left set when at traceLevel 0 (thanks
+// Morarenko Kirill).
+//
 // Revision 1.1.2.1  2005/11/09 12:33:32  dgrisby
 // Support POA LocalObjects.
 //

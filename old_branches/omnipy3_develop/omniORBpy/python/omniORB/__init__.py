@@ -3,6 +3,7 @@
 # __init__.py                Created on: 1999/07/19
 #                            Author    : Duncan Grisby (dpg1)
 #
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #    This file is part of the omniORBpy library
@@ -30,6 +31,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.22  2008/08/21 10:53:55  dgrisby
+# Hook Thread.__stop instead of __delete. Thanks Luke Deller.
+#
 # Revision 1.30.2.21  2008/02/01 16:29:16  dgrisby
 # Error with implementation of operations with names clashing with
 # Python keywords.

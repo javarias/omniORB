@@ -3,6 +3,7 @@
 // pyPOAManagerFunc.cc        Created on: 2000/02/04
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2008 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -30,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.2  2008/04/03 09:05:25  dgrisby
+// Leaks of some exception classes. Thanks Luke Deller.
+//
 // Revision 1.1.4.1  2003/03/23 21:51:57  dgrisby
 // New omnipy3_develop branch.
 //

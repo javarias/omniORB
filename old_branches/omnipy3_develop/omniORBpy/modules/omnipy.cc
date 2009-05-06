@@ -3,6 +3,7 @@
 // omnipy.cc                  Created on: 1999/06/01
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -30,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.20  2009/05/05 14:26:21  dgrisby
+// Remove unused variable.
+//
 // Revision 1.1.4.19  2007/09/18 20:03:34  dgrisby
 // Refcount error if cdrUnmarshal raised a Python exception.
 //

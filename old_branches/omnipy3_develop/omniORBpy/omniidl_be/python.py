@@ -3,6 +3,7 @@
 # python.py                 Created on: 1999/10/29
 #			    Author    : Duncan Grisby (dpg1)
 #
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.33.2.14  2008/02/01 16:29:17  dgrisby
+# Error with implementation of operations with names clashing with
+# Python keywords.
+#
 # Revision 1.33.2.13  2006/10/11 17:44:14  dgrisby
 # None is not a keyword, but it cannot be assigned to.
 #
