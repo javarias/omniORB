@@ -3,7 +3,8 @@
 // idldump.cc               Created on: 1999/10/26
 //			    Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 1999 AT&T Laboratories Cambridge
+//    Copyright (C) 2003-2005 Apasphere Ltd
+//    Copyright (C) 1999      AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
 //
@@ -28,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.16.2.3  2005/06/08 09:40:38  dgrisby
+// Update example code, IDL dumping.
+//
 // Revision 1.16.2.2  2003/09/04 14:00:28  dgrisby
 // ValueType IDL updates.
 //

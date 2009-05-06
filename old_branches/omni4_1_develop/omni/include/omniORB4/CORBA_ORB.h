@@ -3,7 +3,8 @@
 // CORBA_ORB.h                Created on: 2001/08/17
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2003-2005 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2005/01/06 23:08:06  dgrisby
+  Big merge from omni4_0_develop.
+
   Revision 1.1.4.3  2004/04/02 13:26:25  dgrisby
   Start refactoring TypeCode to support value TypeCodes, start of
   abstract interfaces support.

@@ -3,6 +3,7 @@
 // omniObjRef.cc              Created on: 26/2/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.7  2008/10/28 15:54:51  dgrisby
+  Internal CommFailure exception escapes after failed-on-forward call
+  that is not retried.
+
   Revision 1.4.2.6  2008/03/10 11:43:10  dgrisby
   Work around VC++ 7.1 bug with using continue in an exception handler.
   Thanks Werner Mausshardt.

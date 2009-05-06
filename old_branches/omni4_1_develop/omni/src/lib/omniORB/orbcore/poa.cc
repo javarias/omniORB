@@ -3,6 +3,7 @@
 // poa.cc                     Created on: 14/4/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2002-2009 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.13  2009/01/13 14:11:00  dgrisby
+  When deactivating an object in a main thread policy POA, call
+  _remove_ref from the main thread.
+
   Revision 1.4.2.12  2007/06/03 19:21:38  dgrisby
   POAManager deactivate would not meet its detached object if all
   objects were busy, leading to a hang in POA destruction.

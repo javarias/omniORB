@@ -3,6 +3,7 @@
 // corbaString.cc             Created on: 20/9/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2005-2006 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.19.2.5  2006/06/06 16:39:37  dgrisby
+  marshalRawString and chunking stream did not byte-swap length fields
+  when required to.
+
   Revision 1.19.2.4  2006/05/22 15:44:51  dgrisby
   Make sure string length and body are never split across a chunk
   boundary.

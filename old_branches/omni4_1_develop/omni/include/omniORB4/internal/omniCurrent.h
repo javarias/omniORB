@@ -3,7 +3,8 @@
 // omniCurrent.h              Created on: 2001/06/01
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2001 AT&T Research Cambridge
+//    Copyright (C) 2002-2006 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
 //
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/07/02 22:52:05  dgrisby
+  Store self thread in task objects to avoid calls to self(), speeding
+  up Current. Other minor performance tweaks.
+
   Revision 1.1.4.2  2005/01/06 23:08:25  dgrisby
   Big merge from omni4_0_develop.
 

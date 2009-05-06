@@ -3,6 +3,7 @@
 // sslContext.cc              Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2009 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2008/02/14 13:50:03  dgrisby
+  Initialise openssl only if necessary. Thanks Teemu Torma.
+
   Revision 1.1.4.4  2005/09/05 17:12:20  dgrisby
   Merge again. Mainly SSL transport changes.
 

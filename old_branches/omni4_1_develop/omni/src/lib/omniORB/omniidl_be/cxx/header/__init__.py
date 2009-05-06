@@ -3,6 +3,7 @@
 # __init__.py               Created on: 1999/11/3
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2007 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.17.2.5  2007/05/11 09:52:27  dgrisby
+# New -Wbguard_prefix option. Thanks Austin Bingham.
+#
 # Revision 1.17.2.4  2006/05/17 13:26:59  dgrisby
 # Preserve path from #include rather than reconstructing it.
 #

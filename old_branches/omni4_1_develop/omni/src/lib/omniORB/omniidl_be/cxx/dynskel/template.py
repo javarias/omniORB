@@ -4,7 +4,7 @@
 #			    Author1   : David Scott (djs)
 #                           Author2   : Duncan Grisby (dgrisby)
 #
-#  Copyright (C) 2004 Apasphere Ltd.
+#  Copyright (C) 2004-2007 Apasphere Ltd.
 #  Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -30,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.5.2.7  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.5.2.6  2004/10/13 17:58:23  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #

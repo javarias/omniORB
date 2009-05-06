@@ -3,7 +3,8 @@
 // omniInternal.cc            Created on: 25/2/99
 //                            Author    : David Riddoch (djr)
 //
-//    Copyright (C) 1996, 1999 AT&T Research Cambridge
+//    Copyright (C) 2002-2007 Apasphere Ltd
+//    Copyright (C) 1996,1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
 //
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.5.2.16  2007/04/14 17:56:52  dgrisby
+  Identity downcasting mechanism was broken by VC++ 8's
+  over-enthusiastic optimiser.
+
   Revision 1.5.2.15  2006/07/19 09:27:18  dgrisby
   Properly pass hints when handling persistent id.
 

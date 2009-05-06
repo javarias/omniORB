@@ -3,7 +3,7 @@
 // valueTrackerImpl.h         Created on: 2003/08/05
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2005 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +28,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.5  2005/01/17 14:44:46  dgrisby
+// Surprisingly few changes to compile on Windows.
+//
 // Revision 1.1.2.4  2004/07/04 23:53:35  dgrisby
 // More ValueType TypeCode and Any support.
 //

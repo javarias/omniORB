@@ -3,7 +3,7 @@
 // cdrValueChunkStream.cc     Created on: 2003/03/26
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2007 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.14  2007/08/31 09:45:57  dgrisby
+// Bug in handling pd_remaining within get_octet_array.
+//
 // Revision 1.1.2.13  2007/04/18 23:03:53  dgrisby
 // Another size_t that can't be logged on Win64.
 //

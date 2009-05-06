@@ -3,6 +3,7 @@
 // idlvalidate.cc           Created on: 1999/10/26
 //			    Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2006 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
@@ -28,6 +29,10 @@
 
 // $Id$
 // $Log$
+// Revision 1.7.2.2  2006/11/02 14:26:14  dgrisby
+// Suppress warning about unresolved forward delcared interfaces for
+// interfaces in the CORBA module.
+//
 // Revision 1.7.2.1  2003/03/23 21:01:43  dgrisby
 // Start of omniORB 4.1.x development branch.
 //

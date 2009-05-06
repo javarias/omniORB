@@ -3,6 +3,7 @@
 // omniIOR.h                  Created on: 11/8/99
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 1999-2000 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2007/11/28 12:24:26  dgrisby
+  Implement a tiny subset of CSIv2 to permit multiple SSL endpoints in IORs.
+
   Revision 1.1.4.3  2006/07/18 16:21:24  dgrisby
   New experimental connection management extension; ORB core support
   for it.

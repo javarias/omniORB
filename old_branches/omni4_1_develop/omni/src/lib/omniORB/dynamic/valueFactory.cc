@@ -3,7 +3,7 @@
 // valueFactory.cc            Created on: 2003/09/03
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2005 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.6  2005/01/13 21:55:58  dgrisby
+  Turn off -g debugging; suppress some compiler warnings.
+
   Revision 1.1.2.5  2005/01/06 16:39:25  dgrisby
   DynValue and DynValueBox implementations; misc small fixes.
 

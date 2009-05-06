@@ -3,7 +3,7 @@
 // CORBA_ValueBase.h          Created on: 2003/08/11
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2006 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2006/10/23 15:08:31  dgrisby
+  Suppress GCC warnings about missing base class constructor calls.
+  Thanks Tamas Kerecsen. Somehow, this patch works on VC++ 6, where
+  before a similar change failed.
+
   Revision 1.1.2.7  2006/01/19 17:21:59  dgrisby
   Avoid member name conflict in DefaultValueRefCountBase.
 

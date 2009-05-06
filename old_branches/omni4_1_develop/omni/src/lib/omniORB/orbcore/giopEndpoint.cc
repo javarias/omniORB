@@ -3,6 +3,7 @@
 // giopEndpoint.cc            Created on: 29 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2006 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2006/04/09 19:52:31  dgrisby
+  More IPv6, endPointPublish parameter.
+
   Revision 1.1.4.4  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 

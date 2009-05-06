@@ -3,8 +3,8 @@
 // sslConnection.cc           Created on: 19 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //    Copyright (C) 2005-2009 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -30,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.10  2009/05/05 17:18:58  dgrisby
+  Translate SSL peer identity to native code set; fix some minor leaks.
+  Thanks Wei Jiang.
+
   Revision 1.1.4.9  2006/10/09 13:08:58  dgrisby
   Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
   clash on Win32 2003 SDK.

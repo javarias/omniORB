@@ -3,6 +3,7 @@
 // serverRequest.cc           Created on: 9/1998
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2003 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.10.2.3  2003/11/06 11:56:55  dgrisby
+ Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+
  Revision 1.10.2.2  2003/05/20 16:53:14  dgrisby
  Valuetype marshalling support.
 

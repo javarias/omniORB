@@ -3,6 +3,7 @@
 // constants.cc               Created on: 15/3/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.17.2.6  2007/11/28 12:24:26  dgrisby
+  Implement a tiny subset of CSIv2 to permit multiple SSL endpoints in IORs.
+
   Revision 1.17.2.5  2006/07/18 16:21:22  dgrisby
   New experimental connection management extension; ORB core support
   for it.

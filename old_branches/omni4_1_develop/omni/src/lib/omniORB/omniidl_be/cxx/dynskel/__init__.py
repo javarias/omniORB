@@ -3,6 +3,7 @@
 # __init__.py               Created on: 1999/11/11
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2004 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,10 @@
 
 # $Id$
 # $Log$
+# Revision 1.10.2.2  2004/04/02 13:26:22  dgrisby
+# Start refactoring TypeCode to support value TypeCodes, start of
+# abstract interfaces support.
+#
 # Revision 1.10.2.1  2003/03/23 21:02:40  dgrisby
 # Start of omniORB 4.1.x development branch.
 #

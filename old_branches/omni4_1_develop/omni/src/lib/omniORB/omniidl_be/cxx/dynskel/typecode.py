@@ -3,6 +3,7 @@
 # typecode.py               Created on: 1999/12/2
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2006 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.19.2.10  2006/11/28 00:07:57  dgrisby
+# TypeCodes for nested structures / unions were not exported.
+#
 # Revision 1.19.2.9  2005/11/09 12:22:17  dgrisby
 # Local interfaces support.
 #

@@ -3,6 +3,7 @@
 // transportRule.cc           Created on: 21/08/2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2008 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.9  2008/11/04 12:13:22  dgrisby
+  inet_addr on vxWorks expects a char* argument. Thanks Yakov Gerlovin.
+
   Revision 1.1.4.8  2007/10/29 11:33:39  dgrisby
   Properly support IPv4 in IPv6 in localhost transport rule.
 

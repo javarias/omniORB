@@ -3,7 +3,8 @@
 // omniURI.h                  Created on: 2000/04/03
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2000 AT&T Laboratories Cambridge
+//    Copyright (C) 2005-2006 Apasphere Ltd
+//    Copyright (C) 2000      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,9 @@
 //
 
 // $Log$
+// Revision 1.4.2.3  2006/03/25 18:54:04  dgrisby
+// Initial IPv6 support.
+//
 // Revision 1.4.2.2  2005/07/22 17:18:40  dgrisby
 // Another merge from omni4_0_develop.
 //

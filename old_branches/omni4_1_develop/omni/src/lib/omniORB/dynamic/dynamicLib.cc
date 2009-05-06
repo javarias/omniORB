@@ -3,6 +3,7 @@
 // dynamicLib.cc              Created on: 15/9/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2003 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2003/10/23 11:25:54  dgrisby
+  More valuetype support.
+
   Revision 1.4.2.1  2003/03/23 21:02:49  dgrisby
   Start of omniORB 4.1.x development branch.
 

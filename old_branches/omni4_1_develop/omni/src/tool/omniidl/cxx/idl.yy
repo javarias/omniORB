@@ -3,6 +3,7 @@
 // idl.yy                   Created on: 1999/10/05
 //			    Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2003 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.15.2.2  2003/09/04 14:00:23  dgrisby
+// ValueType IDL updates.
+//
 // Revision 1.15.2.1  2003/03/23 21:01:48  dgrisby
 // Start of omniORB 4.1.x development branch.
 //

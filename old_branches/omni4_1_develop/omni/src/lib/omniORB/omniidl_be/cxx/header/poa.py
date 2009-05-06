@@ -3,6 +3,7 @@
 # poa.py                    Created on: 1999/11/4
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2007 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.5  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
 # Revision 1.20.2.4  2005/11/09 12:22:17  dgrisby
 # Local interfaces support.
 #

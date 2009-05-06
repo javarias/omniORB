@@ -3,6 +3,7 @@
 // idlfixed.h               Created on: 2001/01/31
 //			    Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2005 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2005/03/30 23:35:57  dgrisby
+  Another merge from omni4_0_develop.
+
   Revision 1.1.4.1  2003/03/23 21:01:45  dgrisby
   Start of omniORB 4.1.x development branch.
 

@@ -3,6 +3,7 @@
 // giopServer.cc              Created on: 20 Dec 2000
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.25.2.19  2007/12/09 01:35:08  dgrisby
+  Race condition between Peek / select thread when data in buffer.
+
   Revision 1.25.2.18  2007/11/23 14:25:04  dgrisby
   Leak of connections closed during upcall in thread pool mode.
 

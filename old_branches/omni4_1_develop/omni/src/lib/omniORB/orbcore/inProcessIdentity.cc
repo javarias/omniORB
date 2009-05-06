@@ -3,6 +3,7 @@
 // inProcessIdentity.cc       Created on: 16/05/2001
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2003-2008 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -32,6 +33,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.4  2008/10/28 15:33:42  dgrisby
+ Undeclared user exceptions not caught in local calls.
+
  Revision 1.1.4.3  2007/04/14 17:56:52  dgrisby
  Identity downcasting mechanism was broken by VC++ 8's
  over-enthusiastic optimiser.

@@ -3,7 +3,8 @@
 // objectAdapter.cc           Created on: 5/3/99
 //                            Author    : David Riddoch (djr)
 //
-//    Copyright (C) 1996, 1999 AT&T Research Cambridge
+//    Copyright (C) 2002-2007 Apasphere Ltd
+//    Copyright (C) 1996,1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.5.2.12  2007/06/03 19:21:39  dgrisby
+ POAManager deactivate would not meet its detached object if all
+ objects were busy, leading to a hang in POA destruction.
+
  Revision 1.5.2.11  2006/10/09 09:47:12  dgrisby
  Only delete giopServer if all threads are successfully shut down.
 

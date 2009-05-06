@@ -3,8 +3,8 @@
 // sslAddress.cc              Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //    Copyright (C) 2003-2009 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -30,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2009/05/05 16:15:00  dgrisby
+  Try all addresses if a name resolves to more than one; better
+  connection error logging.
+
   Revision 1.1.4.13  2008/12/29 15:11:48  dgrisby
   Infinite loop on socket error on platforms using fake interruptible recv.
 

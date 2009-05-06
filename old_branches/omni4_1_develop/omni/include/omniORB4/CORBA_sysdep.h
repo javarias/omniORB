@@ -3,6 +3,7 @@
 // CORBA_sysdep.h             Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2008 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -32,6 +33,9 @@
 
 /*
  $Log$
+ Revision 1.5.2.10  2008/03/24 20:17:20  dgrisby
+ Sun's compiler doesn't like the <: in const_cast<::CORBA...>.
+
  Revision 1.5.2.9  2007/02/05 17:39:17  dgrisby
  Later Sun compilers require a dummy return.
 

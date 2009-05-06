@@ -3,6 +3,7 @@
 # main.py                   Created on: 1999/11/12
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2009 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.32.2.14  2009/01/09 11:40:37  dgrisby
+# Remove unnecessary pass.
+#
 # Revision 1.32.2.13  2008/12/03 10:56:28  dgrisby
 # Struct scope incorrectly handled in marshalling code.
 #

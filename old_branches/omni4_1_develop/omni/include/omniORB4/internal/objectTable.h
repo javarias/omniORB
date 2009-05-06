@@ -3,7 +3,8 @@
 // objectTable.h              Created on: 2001/08/03
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2001 AT&T Research Cambridge
+//    Copyright (C) 2005-2007 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
 //
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2007/04/14 17:56:52  dgrisby
+  Identity downcasting mechanism was broken by VC++ 8's
+  over-enthusiastic optimiser.
+
   Revision 1.1.4.2  2005/01/06 23:08:25  dgrisby
   Big merge from omni4_0_develop.
 

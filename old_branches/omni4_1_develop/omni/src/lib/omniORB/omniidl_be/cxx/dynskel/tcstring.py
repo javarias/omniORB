@@ -3,6 +3,7 @@
 # tcstring.py               Created on: 2000/1/17
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2005 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.6.2.3  2005/01/06 23:09:50  dgrisby
+# Big merge from omni4_0_develop.
+#
 # Revision 1.6.2.2  2004/04/02 13:26:22  dgrisby
 # Start refactoring TypeCode to support value TypeCodes, start of
 # abstract interfaces support.

@@ -3,6 +3,7 @@
 // callDescriptor.cc          Created on: 18/6/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2008 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
@@ -29,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.4.2.2  2008/10/28 15:33:42  dgrisby
+ Undeclared user exceptions not caught in local calls.
+
  Revision 1.4.2.1  2003/03/23 21:02:30  dgrisby
  Start of omniORB 4.1.x development branch.
 

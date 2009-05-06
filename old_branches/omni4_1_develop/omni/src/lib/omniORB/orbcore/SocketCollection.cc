@@ -4,8 +4,8 @@
 //                            Author 1  : Sai Lai Lo (sll)
 //                            Author 2  : Duncan Grisby (dgrisby)
 //
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
-//    Copyright (C) 2005 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -31,6 +31,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.25  2008/10/24 16:45:29  dgrisby
+  Last socket in poll list incorrectly thought it was still in the list.
+  Thanks Serguei Kolos for the bug report.
+
   Revision 1.1.4.24  2008/05/29 13:08:35  dgrisby
   Cope with fd 0 in pipe files. Thanks Wei Jiang.
 

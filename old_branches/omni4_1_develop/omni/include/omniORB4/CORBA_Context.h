@@ -3,6 +3,7 @@
 // CORBA_Context.h            Created on: 2001/08/17
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2004 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2004/07/23 10:29:56  dgrisby
+  Completely new, much simpler Any implementation.
+
   Revision 1.1.4.1  2003/03/23 21:04:24  dgrisby
   Start of omniORB 4.1.x development branch.
 

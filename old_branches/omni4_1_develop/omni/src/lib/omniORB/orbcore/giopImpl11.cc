@@ -3,6 +3,7 @@
 // giopImpl11.cc              Created on: 14/02/2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.6.9  2008/12/29 17:31:16  dgrisby
+  Properly handle message size being exceeded in request header.
+
   Revision 1.1.6.8  2008/08/08 16:52:56  dgrisby
   Option to validate untransformed UTF-8; correct data conversion minor
   codes; better logging for MessageErrors.

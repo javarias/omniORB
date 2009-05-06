@@ -3,6 +3,7 @@
 // constants.cc               Created on: 26/9/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2003-2004 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.3  2004/07/04 23:53:36  dgrisby
+  More ValueType TypeCode and Any support.
+
   Revision 1.4.2.2  2003/09/26 16:12:54  dgrisby
   Start of valuetype support.
 

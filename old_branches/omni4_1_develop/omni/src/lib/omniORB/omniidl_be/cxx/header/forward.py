@@ -3,6 +3,7 @@
 # forward.py                Created on: 1999/12/1
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2004 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.10.2.4  2004/07/23 10:29:59  dgrisby
+# Completely new, much simpler Any implementation.
+#
 # Revision 1.10.2.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #

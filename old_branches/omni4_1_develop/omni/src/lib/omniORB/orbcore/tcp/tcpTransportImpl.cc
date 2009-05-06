@@ -3,6 +3,7 @@
 // tcpTransportImpl.cc        Created on: 29 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2009 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.14  2009/01/09 11:39:28  dgrisby
+  Log if OMNIORB_USEHOSTNAME environment variable is used.
+
   Revision 1.1.4.13  2008/10/24 16:52:22  dgrisby
   On Unix platforms, ignore IPv6 addresses on the loopback interface.
 

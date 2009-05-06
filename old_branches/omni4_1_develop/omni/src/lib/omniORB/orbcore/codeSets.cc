@@ -3,6 +3,7 @@
 // codeSets.cc                Created on: 18/10/2000
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2008/08/08 18:45:48  dgrisby
+  Add missing ISO-8859 and Windows code sets.
+
   Revision 1.1.4.5  2006/08/17 16:21:21  dgrisby
   Second call to server with no codeset information would fail.
 

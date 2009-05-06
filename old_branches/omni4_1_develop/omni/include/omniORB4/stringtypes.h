@@ -3,6 +3,7 @@
 // stringtypes.h              Created on: 16/4/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2003-2005 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library.
@@ -29,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.4.2.3  2005/11/17 17:03:27  dgrisby
+ Merge from omni4_0_develop.
+
  Revision 1.4.2.2  2005/01/06 23:08:22  dgrisby
  Big merge from omni4_0_develop.
 

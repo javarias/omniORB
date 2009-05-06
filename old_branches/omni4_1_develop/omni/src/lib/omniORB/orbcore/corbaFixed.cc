@@ -3,6 +3,7 @@
 // corbaFixed.cc              Created on: 07/02/2001
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2005 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,9 @@
 //    Implementation of the fixed point type
 
 // $Log$
+// Revision 1.1.4.3  2005/03/30 23:36:10  dgrisby
+// Another merge from omni4_0_develop.
+//
 // Revision 1.1.4.2  2005/01/06 23:10:12  dgrisby
 // Big merge from omni4_0_develop.
 //

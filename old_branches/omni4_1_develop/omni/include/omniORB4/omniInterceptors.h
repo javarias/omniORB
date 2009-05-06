@@ -3,6 +3,7 @@
 // omniInterceptors.h         Created on: 22/09/2000
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2006 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/07/18 16:21:24  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.4.2  2006/06/05 11:28:04  dgrisby
   Change clientSendRequest interceptor members to a single GIOP_C.
 

@@ -3,6 +3,7 @@
 // logIOstream.cc             Created on: 31/3/1998
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2009 Apasphere Ltd
 //    Copyright (C) 1998-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,9 @@
  
 /*
   $Log$
+  Revision 1.11.2.8  2009/02/17 14:32:48  dgrisby
+  Gracefully handle null string pointer in logger.
+
   Revision 1.11.2.7  2008/08/08 16:52:56  dgrisby
   Option to validate untransformed UTF-8; correct data conversion minor
   codes; better logging for MessageErrors.

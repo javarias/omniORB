@@ -3,6 +3,7 @@
 // corbaOrb.cc                Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.36.2.7  2007/04/12 14:53:31  dgrisby
+  Output omniORB version number in log.
+
   Revision 1.36.2.6  2006/05/02 13:08:26  dgrisby
   Time out waiting for invoker threads to exit; allow configutation of
   idle thread timeout.

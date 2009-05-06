@@ -3,6 +3,7 @@
 // seqTemplatedefns.h         Created on: 14/5/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library.
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2007/04/12 19:50:32  dgrisby
+  A few cases of sizeof(bool) > 1 were not handled correctly.
+
   Revision 1.1.4.3  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 

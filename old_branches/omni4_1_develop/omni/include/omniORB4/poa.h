@@ -3,6 +3,7 @@
 // poa.h                      Created on: 2/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2004-2009 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
@@ -28,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.4.2.12  2009/04/20 11:08:26  dgrisby
+  Use class instead of typename to make Sun compiler happy. Thanks
+  Paul Parlett.
+
   Revision 1.4.2.11  2007/02/26 12:41:00  dgrisby
   Fix duplicated POA enum Any operators. Thanks Thomas Richter.
 

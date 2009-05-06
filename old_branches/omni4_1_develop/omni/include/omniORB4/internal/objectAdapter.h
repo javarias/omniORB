@@ -3,7 +3,8 @@
 // objectAdapter.h            Created on: 5/3/99
 //                            Author    : David Riddoch (djr)
 //
-//    Copyright (C) 1996, 1999 AT&T Research Cambridge
+//    Copyright (C) 2002-2006 Apasphere Ltd
+//    Copyright (C) 1996,1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
 //
@@ -28,6 +29,10 @@
 
 /*
  $Log$
+ Revision 1.1.6.7  2006/07/18 16:21:23  dgrisby
+ New experimental connection management extension; ORB core support
+ for it.
+
  Revision 1.1.6.6  2006/04/10 12:50:35  dgrisby
  More endPointPublish; support for deprecated endPointNoListen,
  endPointPublishAllIFs.

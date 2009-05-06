@@ -3,7 +3,8 @@
 // CORBA_Object_vartypes.h    Created on: 2001/08/15
 //                            Author    : Duncan Grisby <dpg1>
 //
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2004-2005 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2005/11/09 12:16:46  dgrisby
+  Remove obsolete tcDesc helper classes.
+
   Revision 1.1.4.2  2004/02/16 10:10:28  dgrisby
   More valuetype, including value boxes. C++ mapping updates.
 

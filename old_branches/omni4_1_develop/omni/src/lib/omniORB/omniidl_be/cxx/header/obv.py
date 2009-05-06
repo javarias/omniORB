@@ -3,7 +3,7 @@
 # obv.py                    Created on: 2003/10/08
 #			    Author    : Duncan Grisby
 #
-#    Copyright (C) 2003 Apasphere Ltd.
+#    Copyright (C) 2003-2004 Apasphere Ltd.
 #
 #  This file is part of omniidl.
 #
@@ -28,6 +28,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.2.3  2004/10/13 17:58:24  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
 # Revision 1.1.2.2  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #

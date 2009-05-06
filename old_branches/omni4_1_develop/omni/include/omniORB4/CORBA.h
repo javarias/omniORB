@@ -3,6 +3,7 @@
 // CORBA.h                    Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2003-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,10 @@
 
 /*
  $Log$
+ Revision 1.5.2.11  2007/03/09 15:34:09  dgrisby
+ Define __CosNaming_hh__ to prevent application code from including a
+ clashing header.
+
  Revision 1.5.2.10  2006/07/18 16:21:24  dgrisby
  New experimental connection management extension; ORB core support
  for it.

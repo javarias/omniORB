@@ -3,6 +3,7 @@
 // omniTransport.cc           Created on: 16/01/2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,11 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2007/02/26 15:16:31  dgrisby
+  New socketSendBuffer parameter, defaulting to 16384 on Windows.
+  Avoids a bug in Windows where select() on send waits for all sent data
+  to be acknowledged.
+
   Revision 1.1.6.3  2005/11/17 17:03:26  dgrisby
   Merge from omni4_0_develop.
 

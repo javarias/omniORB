@@ -3,6 +3,7 @@
 # call.py                   Created on: 2000/08/03
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 2000 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.11  2008/10/28 15:33:42  dgrisby
+# Undeclared user exceptions not caught in local calls.
+#
 # Revision 1.1.6.10  2007/09/19 14:16:08  dgrisby
 # Avoid namespace clashes if IDL defines modules named CORBA.
 #

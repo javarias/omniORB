@@ -3,6 +3,7 @@
 // poa_defs.h                 Created on: 8/6/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2005      Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library.
@@ -28,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.4.2.2  2005/11/09 12:22:18  dgrisby
+  Local interfaces support.
+
   Revision 1.4.2.1  2003/03/23 21:04:04  dgrisby
   Start of omniORB 4.1.x development branch.
 

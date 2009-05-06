@@ -3,6 +3,7 @@
 # skutil.py                 Created on: 1999/11/15
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2008 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.12  2008/12/03 10:53:58  dgrisby
+# Tweaks leading to Python 3 support; other minor clean-ups.
+#
 # Revision 1.20.2.11  2007/09/19 14:16:08  dgrisby
 # Avoid namespace clashes if IDL defines modules named CORBA.
 #

@@ -5,7 +5,7 @@
 //                            Author2   : David Riddoch (djr)
 //                            Author3   : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2004 Apasphere Ltd.
+//    Copyright (C) 2004-2006 Apasphere Ltd.
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -32,6 +32,10 @@
 
 /*
  * $Log$
+ * Revision 1.1.4.5  2006/11/28 00:09:42  dgrisby
+ * TypeCode collector could access deleted data when freeing TypeCodes
+ * with multiple loops.
+ *
  * Revision 1.1.4.4  2006/05/20 16:23:37  dgrisby
  * Minor cdrMemoryStream and TypeCode performance tweaks.
  *

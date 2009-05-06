@@ -3,7 +3,8 @@
 // unixConnection.cc          Created on: 6 Aug 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2003-2005 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2005/09/01 14:52:12  dgrisby
+  Merge from omni4_0_develop.
+
   Revision 1.1.4.5  2005/03/02 12:39:16  dgrisby
   Merge from omni4_0_develop.
 

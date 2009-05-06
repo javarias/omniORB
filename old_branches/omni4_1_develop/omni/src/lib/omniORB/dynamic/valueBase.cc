@@ -3,7 +3,7 @@
 // valueBase.cc               Created on: 2003/08/20
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003-2005 Apasphere Ltd.
+//    Copyright (C) 2003-2006 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.8  2006/01/19 17:21:59  dgrisby
+  Avoid member name conflict in DefaultValueRefCountBase.
+
   Revision 1.1.2.7  2005/01/17 14:36:56  dgrisby
   Heap allocate value refcount lock so it is not deallocated too early.
 

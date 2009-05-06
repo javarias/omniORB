@@ -3,7 +3,7 @@
 // CORBA_ValueBase_vartypes.h Created on: 2003/08/11
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003 Apasphere Ltd.
+//    Copyright (C) 2003-2005 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +29,9 @@
 
 /*
   $Log$
+  Revision 1.1.2.4  2005/11/09 12:16:46  dgrisby
+  Remove obsolete tcDesc helper classes.
+
   Revision 1.1.2.3  2004/10/13 17:58:18  dgrisby
   Abstract interfaces support; values support interfaces; value bug fixes.
 

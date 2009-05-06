@@ -3,6 +3,7 @@
 // omniIOR.cc                 Created on: 19/09/2000
 //                            Author    : Sai-Lai Lo
 //
+//    Copyright (C) 2005-2006 Apasphere Ltd
 //    Copyright (C) 1999-2000 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2006/07/18 16:21:21  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.4.2  2005/01/06 23:10:36  dgrisby
   Big merge from omni4_0_develop.
 

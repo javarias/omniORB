@@ -3,7 +3,8 @@
 // idlpython.cc             Created on: 1999/10/27
 //			    Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 1999 AT&T Laboratories Cambridge
+//    Copyright (C) 2002-2008 Apasphere Ltd
+//    Copyright (C) 1999      AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
 //
@@ -28,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.4  2008/12/03 12:46:30  dgrisby
+// More Python 3 updates.
+//
 // Revision 1.22.2.3  2005/01/06 23:11:14  dgrisby
 // Big merge from omni4_0_develop.
 //

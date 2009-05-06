@@ -3,6 +3,7 @@
 # descriptor.py             Created on: 2000/08/23
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2004 Apasphere Ltd
 #    Copyright (C) 1999-2000 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.1.6.3  2004/02/20 00:03:35  dgrisby
+# Compilation fixes. Thanks Gary Duzan for pointing them out.
+#
 # Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
 # More valuetype support.
 #

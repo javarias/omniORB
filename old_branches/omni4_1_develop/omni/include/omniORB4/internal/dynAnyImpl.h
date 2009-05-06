@@ -3,6 +3,7 @@
 // dynAny.h                   Created on: 11/1998
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2003-2005 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
  $Log$
+ Revision 1.1.4.4  2005/01/06 16:39:23  dgrisby
+ DynValue and DynValueBox implementations; misc small fixes.
+
  Revision 1.1.4.3  2004/07/23 10:29:57  dgrisby
  Completely new, much simpler Any implementation.
 

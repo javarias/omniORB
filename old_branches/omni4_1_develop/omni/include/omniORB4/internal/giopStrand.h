@@ -3,7 +3,8 @@
 // giopStrand.h               Created on: 05/01/2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2002-2006 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.4  2006/07/18 16:21:23  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
   Revision 1.1.6.3  2006/07/02 22:52:05  dgrisby
   Store self thread in task objects to avoid calls to self(), speeding
   up Current. Other minor performance tweaks.

@@ -3,8 +3,8 @@
 // tcpEndpoint.cc             Created on: 19 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2009 Apasphere Ltd
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
-//    Copyright (C) 2002-2008 Apasphere Ltd
 //
 //    This file is part of the omniORB library
 //
@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.19  2009/04/30 14:53:52  dgrisby
+  Skip 127.* addresses.
+
   Revision 1.1.4.18  2009/02/17 14:32:17  dgrisby
   Some platforms return the IPv4 wildcard address before the IPv6 one
   when given PF_UNSPEC. Make sure the IPv6 one is used if available.

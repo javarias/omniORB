@@ -3,6 +3,7 @@
 # marshal.py                Created on: 1999/12/1
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2003-2005 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -29,6 +30,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.8.2.5  2005/11/09 12:22:17  dgrisby
+# Local interfaces support.
+#
 # Revision 1.8.2.4  2004/10/13 17:58:24  dgrisby
 # Abstract interfaces support; values support interfaces; value bug fixes.
 #

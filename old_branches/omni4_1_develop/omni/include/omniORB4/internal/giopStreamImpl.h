@@ -3,6 +3,7 @@
 // giopStreamImpl.h           Created on: 11/2/99
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2008 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.6.2  2008/08/08 16:52:56  dgrisby
+  Option to validate untransformed UTF-8; correct data conversion minor
+  codes; better logging for MessageErrors.
+
   Revision 1.1.6.1  2003/03/23 21:03:46  dgrisby
   Start of omniORB 4.1.x development branch.
 

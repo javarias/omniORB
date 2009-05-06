@@ -3,7 +3,8 @@
 // codeSets.h                 Created on: 18/10/2000
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2000 AT&T Laboratories, Cambridge
+//    Copyright (C) 2002-2008 Apasphere Ltd
+//    Copyright (C) 2000      AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.3  2008/08/08 18:45:49  dgrisby
+  Add missing ISO-8859 and Windows code sets.
+
   Revision 1.1.4.2  2005/12/08 14:22:31  dgrisby
   Better string marshalling performance; other minor optimisations.
 

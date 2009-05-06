@@ -3,7 +3,8 @@
 // idlast.cc                Created on: 1999/10/20
 //			    Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 1999 AT&T Laboratories Cambridge
+//    Copyright (C) 2002-2008 Apasphere Ltd
+//    Copyright (C) 1999      AT&T Laboratories Cambridge
 //
 //  This file is part of omniidl.
 //
@@ -28,6 +29,9 @@
 
 // $Id$
 // $Log$
+// Revision 1.22.2.10  2008/10/28 15:59:05  dgrisby
+// Pollution of global namespace with TypeCode and Principal.
+//
 // Revision 1.22.2.9  2008/02/28 17:40:38  dgrisby
 // iostream include left over from debugging caused mysterious failure of
 // omniidl on HP-UX.

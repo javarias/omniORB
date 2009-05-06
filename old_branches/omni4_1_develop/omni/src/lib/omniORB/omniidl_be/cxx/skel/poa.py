@@ -3,6 +3,7 @@
 # poa.py                    Created on: 1999/11/12
 #			    Author    : David Scott (djs)
 #
+#    Copyright (C) 2002-2005 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.11.2.4  2005/11/09 12:22:17  dgrisby
+# Local interfaces support.
+#
 # Revision 1.11.2.3  2003/11/06 11:56:56  dgrisby
 # Yet more valuetype. Plain valuetype and abstract valuetype are now working.
 #

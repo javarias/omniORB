@@ -4,7 +4,7 @@
 //                            Author1   : James Weatherall (jnw)
 //                            Author2   : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2004 Apasphere Ltd.
+//    Copyright (C) 2002-2008 Apasphere Ltd.
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -31,6 +31,10 @@
 
 /*
  * $Log$
+ * Revision 1.40.2.18  2007/10/15 14:07:19  dgrisby
+ * Enum TypeCodes not marked as complete, leading to an assertion
+ * failure receiving a struct containing an enum.
+ *
  * Revision 1.40.2.17  2007/06/10 18:43:08  dgrisby
  * Incorrect alignment table build for recursive struct.
  *

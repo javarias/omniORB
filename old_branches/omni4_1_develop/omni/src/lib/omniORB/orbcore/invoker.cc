@@ -3,6 +3,7 @@
 // invoker.h                  Created on: 11 Apr 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2007/08/04 14:48:49  dgrisby
+  Report failures to start threads better.
+
   Revision 1.1.4.7  2006/09/01 16:03:47  dgrisby
   Merge minor updates from omni4_0_develop.
 

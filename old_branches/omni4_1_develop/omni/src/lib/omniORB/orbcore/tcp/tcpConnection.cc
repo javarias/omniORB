@@ -3,7 +3,8 @@
 // tcpConnection.cc           Created on: 19 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2003-2005 Apasphere Ltd
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -29,6 +30,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.8  2006/10/09 13:08:58  dgrisby
+  Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
+  clash on Win32 2003 SDK.
+
   Revision 1.1.4.7  2006/03/25 18:54:03  dgrisby
   Initial IPv6 support.
 

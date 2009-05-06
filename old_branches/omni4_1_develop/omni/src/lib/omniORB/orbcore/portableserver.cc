@@ -3,6 +3,7 @@
 // portableserver.cc          Created on: 11/5/99
 //                            Author    : David Riddoch (djr)
 //
+//    Copyright (C) 2004-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Research Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
  
 /*
   $Log$
+  Revision 1.4.2.6  2007/04/05 15:38:02  dgrisby
+  Catch exceptions from servant destructor.
+
   Revision 1.4.2.5  2006/07/18 16:21:21  dgrisby
   New experimental connection management extension; ORB core support
   for it.

@@ -3,6 +3,7 @@
 // omniORB.h                  Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.5.2.7  2007/09/19 14:16:08  dgrisby
+  Avoid namespace clashes if IDL defines modules named CORBA.
+
   Revision 1.5.2.6  2006/01/10 13:59:37  dgrisby
   New clientConnectTimeOutPeriod configuration parameter.
 

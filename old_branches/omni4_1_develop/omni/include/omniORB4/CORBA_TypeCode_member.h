@@ -3,6 +3,7 @@
 // CORBA_TypeCode_member.h    Created on: 2001/08/17
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2006 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.2  2006/06/14 10:34:19  dgrisby
+  Add missing TypeCode_member in(), inout(), out().
+
   Revision 1.1.4.1  2003/03/23 21:04:22  dgrisby
   Start of omniORB 4.1.x development branch.
 

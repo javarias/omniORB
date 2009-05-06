@@ -3,6 +3,7 @@
 // unixAddress.cc             Created on: 6 Aug 2001
 //                            Author    : Sai Lai Lo (sll)
 //
+//    Copyright (C) 2006 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -29,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.4  2006/06/22 13:53:49  dgrisby
+  Add flags to strand.
+
   Revision 1.1.4.3  2006/04/28 18:40:46  dgrisby
   Merge from omni4_0_develop.
 

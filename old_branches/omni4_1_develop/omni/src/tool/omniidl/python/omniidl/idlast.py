@@ -3,7 +3,8 @@
 # idlast.py                 Created on: 1999/10/27
 #			    Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 1999 AT&T Laboratories Cambridge
+#    Copyright (C) 2003-2008 Apasphere Ltd
+#    Copyright (C) 1999      AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
 #
@@ -28,6 +29,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.20.2.9  2008/12/03 10:53:58  dgrisby
+# Tweaks leading to Python 3 support; other minor clean-ups.
+#
 # Revision 1.20.2.8  2006/06/22 13:01:50  dgrisby
 # Cut and paste error in local() method of Forward class.
 #

@@ -3,6 +3,7 @@
 // cs-UTF-16.cc               Created on: 25/10/2000
 //                            Author    : Duncan Grisby (dpg1)
 //
+//    Copyright (C) 2003-2006 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +29,10 @@
 
 /*
   $Log$
+  Revision 1.1.4.5  2006/05/22 15:44:51  dgrisby
+  Make sure string length and body are never split across a chunk
+  boundary.
+
   Revision 1.1.4.4  2006/01/19 16:05:02  dgrisby
   Windows build fixes.
 
