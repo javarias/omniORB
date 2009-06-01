@@ -29,6 +29,9 @@
 //
 
 // $Log$
+// Revision 1.1.2.15  2009/05/06 16:15:31  dgrisby
+// Update lots of copyright notices.
+//
 // Revision 1.1.2.14  2007/08/31 09:45:57  dgrisby
 // Bug in handling pd_remaining within get_octet_array.
 //
@@ -243,6 +246,7 @@ cdrValueChunkStream::startOutputValueHeader(_CORBA_Long valueTag)
   // virtual functions running if the buffer is full.
   valueTag >>= pd_actual;
   copyStateFromActual();
+  pd_justEnded = 0;
 }
 
 void
@@ -283,6 +287,7 @@ cdrValueChunkStream::endOutputValue()
     }
 
     CORBA::Long* endp = (CORBA::Long*)((omni::ptr_arith_t)pd_outb_mkr - 4);
+
     OMNIORB_ASSERT(*endp == -(pd_nestLevel + 1));
     *endp = -pd_nestLevel;
   }
@@ -776,11 +781,12 @@ startInputChunk()
 {
   CORBA::Long len = peekChunkTag();
 
-  if (len <= 0)
-    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidChunkedEncoding,
-		  (CORBA::CompletionStatus)completion());
-
-  if (len >= 0x7fffff00) {
+  if (len <= 0) {
+    // End of chunk -- chunk has zero length.
+    len = 0;
+    omniORB::logs(25, "Receive empty value chunk.");
+  }
+  else if (len >= 0x7fffff00) {
     // It's not the start of a chunk at all, but a nested value. Treat
     // it as if it was a zero-length chunk.
     len = 0;
