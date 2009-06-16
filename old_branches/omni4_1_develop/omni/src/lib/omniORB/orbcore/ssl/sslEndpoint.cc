@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.22  2009/05/06 16:14:50  dgrisby
+  Update lots of copyright notices.
+
   Revision 1.1.4.21  2009/04/30 14:53:52  dgrisby
   Skip 127.* addresses.
 
@@ -735,7 +738,7 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
       SSL_set_accept_state(ssl);
 
       int go = pd_go;
-      while(go) {
+      while(go && pd_go) {
 	int result = SSL_accept(ssl);
 	int code = SSL_get_error(ssl, result);
 
@@ -763,12 +766,12 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
 	      log << "openSSL error detected in sslEndpoint::accept.\n"
 		  << "Reason: " << (const char*) buf << "\n";
 	    }
-	    SSL_free(ssl);
-	    CLOSESOCKET(pd_new_conn_socket);
 	    go = 0;
 	  }
 	}
       }
+      SSL_free(ssl);
+      CLOSESOCKET(pd_new_conn_socket);
     }
   }
   return 0;
