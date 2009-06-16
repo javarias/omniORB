@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.15  2009/05/06 16:14:46  dgrisby
+  Update lots of copyright notices.
+
   Revision 1.1.4.14  2009/01/09 11:39:28  dgrisby
   Log if OMNIORB_USEHOSTNAME environment variable is used.
 
@@ -393,6 +396,7 @@ void ifaddrs_get_ifinfo(omnivector<const char*>& addrs)
 #    define ifc_buf  lifc_buf
 #    define ifc_req  lifc_req
 #    define ifr_addr lifr_addr
+#    define ifr_name lifr_name
 #  else
 #    ifdef __aix__
 #      define OMNI_SIOCGIFCONF OSIOCGIFCONF
