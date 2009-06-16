@@ -30,6 +30,9 @@
 
 /*
   $Log$
+  Revision 1.1.4.6  2009/05/06 16:14:49  dgrisby
+  Update lots of copyright notices.
+
   Revision 1.1.4.5  2007/11/28 12:24:26  dgrisby
   Implement a tiny subset of CSIv2 to permit multiple SSL endpoints in IORs.
 
@@ -130,6 +133,8 @@ sslTransportImpl::toEndpoint(const char* param) {
     const char* hostname = getenv(OMNIORB_USEHOSTNAME_VAR);
     if (hostname)
       address.host = hostname;
+
+    CORBA::string_free(host);
   }
   else {
     address.host = host;
