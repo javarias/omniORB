@@ -31,6 +31,9 @@
 
 # $Id$
 # $Log$
+# Revision 1.30.2.23  2009/05/06 16:50:23  dgrisby
+# Updated copyright.
+#
 # Revision 1.30.2.22  2008/08/21 10:53:55  dgrisby
 # Hook Thread.__stop instead of __delete. Thanks Luke Deller.
 #
@@ -995,7 +998,10 @@ class WorkerThread(threading.Thread):
     def __init__(self):
         id = _thr_id()
         _thr_init(self, name="omniORB-%d" % id)
-        self._Thread__started = 1
+        if hasattr(self._Thread__started, 'set'):
+            self._Thread__started.set()
+        else:
+            self._Thread__started = 1
         self.id = id
         _thr_acq()
         if _thr_act.has_key(id):
