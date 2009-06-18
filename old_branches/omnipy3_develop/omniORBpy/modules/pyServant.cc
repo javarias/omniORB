@@ -31,6 +31,9 @@
 // $Id$
 
 // $Log$
+// Revision 1.1.4.12  2009/05/06 16:50:28  dgrisby
+// Updated copyright.
+//
 // Revision 1.1.4.11  2008/10/09 15:04:36  dgrisby
 // Python exceptions occurring during unmarshalling were not properly
 // handled. Exception state left set when at traceLevel 0 (thanks
@@ -382,6 +385,7 @@ Py_omniServant::_default_POA()
       omniPy::handlePythonException();
     }
   }
+  return 0;
 }
 
 CORBA::Boolean
