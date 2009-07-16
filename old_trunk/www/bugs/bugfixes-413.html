@@ -1,0 +1,289 @@
+<html>
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 4.1.3 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 4.1.3 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">CVS snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/4.1.3" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 4.1.3 have been fixed. Update from <a href="../development.html">CVS</a> to get the fixes.
+        </p>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Delays in servicing calls with thread pool and no connection watching</b>
+            (bug number 1)
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Oct 24 17:43:33 BST 2008</td>
+</tr>
+  
+  <tr>
+<td>Reported by:</td>
+<td>Serguei Kolos</td>
+</tr>
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  The set of sockets to poll could be malformed, causing a socket to
+  be ignored for a while.
+  </td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2008-October/029739.html">http://www.omniorb-support.com/pipermail/omniorb-list/2008-October/029739.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Undeclared user exceptions in local calls are not caught</b>
+            (bug number 2)
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Oct 28 16:25:32 GMT 2008</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  If an operation implementation raised a CORBA user exception that
+  was not declared in the operation's raises clause, local callers
+  received the user exception, rather than CORBA::UNKNOWN as they
+  should.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Internal CommFailure exception escapes after
+  failed-on-forward call that is not retried.</b>
+            (bug number 3)
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Tue Oct 28 16:47:32 GMT 2008</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  When a call on an object reference that has been location-forwarded
+  fails, the transient exception handler is called. If the handler
+  returns false, in some circumstances an internal exception can be
+  thrown, rather than the proper CORBA system exception.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Jacob Feisley</td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Incorrect generated code for some float constants</b>
+            (bug number 4)
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Dec  3 10:50:44 GMT 2008</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Very small float constants led to invalid generated code.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Will Denissen</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029792.html">http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029792.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Scoping problem in code generated for struct marshalling</b>
+            (bug number 5)
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Dec  3 10:50:44 GMT 2008</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Ambiguous generated code with awkward nested type names.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Will Denissen</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029792.html">http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029792.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Infinite loop on socket error</b>
+            (bug number 6)
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Dec 29 15:10:23 GMT 2008</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  On platforms with recv() that cannot be interrupted, a socket error
+  would lead to an infinite loop.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Masaaki Sekiya</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029772.html">http://www.omniorb-support.com/pipermail/omniorb-list/2008-November/029772.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Memory leaks in DynAny</b>
+            (bug number 7)
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Feb  2 12:28:53 GMT 2009</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  Memory leaks setting members / elements with DynAnys.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Sampo Ahokas</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2009-January/029874.html">http://www.omniorb-support.com/pipermail/omniorb-list/2009-January/029874.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Assertion failure with empty valuetype in omniORBpy</b>
+            (bug number 8)
+            <a name="bug8"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Mon Jun  1 12:03:11 BST 2009</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  ORB core chunked encoding did not support empty chunks.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Stephane Bonniez</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2009-May/030102.html">http://www.omniorb-support.com/pipermail/omniorb-list/2009-May/030102.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Crash with unix transport when using transport rules</b>
+            (bug number 9)
+            <a name="bug9"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Jul  2 09:51:51 BST 2009</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  An object reference with just a unix endpoint would cause a crash if
+  using transport rules.
+  </td>
+</tr>
+  <tr>
+<td>Reported by:</td>
+<td>Serguei Kolos</td>
+</tr>
+  <tr>
+<td>Link:</td>
+<td><a href="http://www.omniorb-support.com/pipermail/omniorb-list/2009-June/030119.html">http://www.omniorb-support.com/pipermail/omniorb-list/2009-June/030119.html</a></td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+
+</table>
+</td>
+</tr>
+</table></body>
+</html>

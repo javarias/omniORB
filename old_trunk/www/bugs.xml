@@ -8,9 +8,7 @@ We try very hard to make omniORB releases free of bugs, but inevitably
 some are discovered. The pages linked below list the bugs fixed in the
 specified omniORB versions. If a bug in the most recent release is
 affecting you, you should get the current development version from <a
-href="development.html">CVS</a>. Make sure you use the correct branch
-tag (<code>omni4_0_develop</code> for omniORB 4.0.x;
-<code>omni3_develop</code> for omniORB 3.0.x).
+href="development.html">CVS</a>.
 </p>
 
 <p>
@@ -30,6 +28,7 @@ Bugs fixed in:
   <li>
     omniORB 4.1.x:
     <ul>
+      <li><a href="bugs/bugfixes-413.html">omniORB 4.1.3</a></li>
       <li><a href="bugs/bugfixes-412.html">omniORB 4.1.2</a></li>
       <li><a href="bugs/bugfixes-411.html">omniORB 4.1.1</a></li>
       <li><a href="bugs/bugfixes-410.html">omniORB 4.1.0</a></li>
@@ -72,6 +71,7 @@ Bugs fixed in:
   <li>
     omniORBpy 3.x
     <ul>
+      <li><a href="pybugs/bugfixes-33.html">omniORBpy 3.3</a></li>
       <li><a href="pybugs/bugfixes-32.html">omniORBpy 3.2</a></li>
       <li><a href="pybugs/bugfixes-31.html">omniORBpy 3.1</a></li>
       <li><a href="pybugs/bugfixes-30.html">omniORBpy 3.0</a></li>
