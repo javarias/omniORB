@@ -4,71 +4,87 @@
 <page title="omniORB development" head="omniORB development" id="development">
 
 <p>
-omniORB development happens in CVS. See the omniORB <a
-href="http://sourceforge.net/cvs/?group_id=51138">CVS page</a> for
-generic instructions, or <a
-href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/omniorb/">browse</a>
+omniORB development happens in Subversion. See the omniORB <a
+href="http://sourceforge.net/projects/omniorb/develop">SourceForge
+develop page</a> for generic instructions, or <a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/">browse</a>
 the repository.
 </p>
 
+<h2>Roadmap</h2>
+
 <p>
-<em>All</em> omniORB development happens in branches, so you must
-always specify a branch tag when you do a checkout. The trunk of the
-tree is now empty. (It used to contain the most recent stable release,
-but that confused people.)
+The repository contains the following directories:
+
+<ul>
+<li><a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/branches/trunk/">trunk</a>
+contains the current unstable development version. It is likely to
+become omniORB 4.2.0.
+</li>
+
+<li><a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/branches/">branches</a>
+contains stable branches of omniORB. omniORB and omniORBpy releases
+are synchronised with each other, so the branches are named after the
+omniORB release.
+</li>
+
+<li>
+<a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/branches/4_1/">branches/4_1</a>
+is the current stable branch, containing omniORB 4.1.x and omniORBpy
+3.x.
+</li>
+
+<li><a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/branches/">tags</a>
+contains tagged releases. omniORB and omniORBpy releases are
+synchronised with each other, so the tags are named after the omniORB
+release.
+</li>
+
+<li>
+<a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/tags/4_1_4/">tags/4_1_4</a>
+is the latest stable release, containing omniORB 4.1.4 and omniORBpy
+3.4.
+</li>
+
+<li>
+<a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/cost/">cost</a>
+contains testing code from the CORBA Open Source Testing project.
+</li>
+
+<li>
+<a
+href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/www/">www</a>
+contains these web pages.
+</li>
+
+<li>
+old_* contain old branches and tags resulting form the conversion from
+CVS.
+</li>
+
+</ul>
 </p>
 
 <p>
-If your local firewall blocks CVS access, you can download nightly
-snapshots of the main development branches from <a
+If you want the latest cut from Subversion without doing a checkout,
+you can download nightly snapshots of the main branches from <a
 href="snapshots/">this page</a>.
 </p>
 
-<h2>omniORB core</h2>
+
+<h2>Building</h2>
 
 <p>
-The omniORB core libraries and tools are in the <code>omni</code> CVS
-package. The branches are
-</p>
-
-  <table border="1" align="center" cellpadding="5">
-    <tr><td><code>omni4_1_develop</code></td><td>omniORB 4.1.x
-    development</td></tr>
-    <tr><td><code>omni4_0_develop</code></td><td>omniORB 4.0.x
-    bug fixes</td></tr>
-    <tr><td><code>omni3_develop</code></td><td>omniORB 3.0.x
-    bug fixes</td></tr>
-    <tr><td><code>omni2_8_develop</code></td><td>omniORB
-    2.8.0 bug fixes</td></tr>
-  </table>
-
-<h2>omniORBpy</h2>
-
-<p>
-omniORB for Python has its own CVS package, named
-<code>omniORBpy</code>. You must match the omniORBpy version you use
-with the core omniORB version you have. omniORBpy 3.x goes with
-omniORB 4.1.x; omniORBpy 2.x goes with omniORB 3.0.x; omniORBpy 1.x
-goes with omniORB 3.0.x.
-</p>
-
-<p>
-The branches in the <code>omniORBpy</code> package are
-</p>
-
-  <table border="1" align="center" cellpadding="5">
-    <tr><td><code>omnipy3_develop</code></td><td>omniORBpy 3.x
-    development</td></tr>
-    <tr><td><code>omnipy2_develop</code></td><td>omniORBpy 2.x
-    bug fixes</td></tr>
-    <tr><td><code>omnipy1_develop</code></td><td>omniORBpy 1.x
-    bug fixes</td></tr>
-  </table>
-
-<p>
-To build omniORBpy on Windows or other platforms using the traditional
-build system, you must checkout the <code>omniORBpy</code> package
-within the <code>src/lib</code> directory of an omniORB tree. With the
+Checkouts are built in the same way as a release. Note that to build
+omniORBpy on Windows or other platforms using the traditional build
+system, you must checkout the <code>omniORBpy</code> package within
+the <code>src/lib</code> directory of an omniORB tree. With the
 autoconf build on Unix platforms, it can be checked out anywhere.
 </p>
 
