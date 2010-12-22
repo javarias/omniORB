@@ -28,6 +28,7 @@ Bugs fixed in:
   <li>
     omniORB 4.1.x:
     <ul>
+      <li><a href="bugs/bugfixes-414.html">omniORB 4.1.4</a></li>
       <li><a href="bugs/bugfixes-413.html">omniORB 4.1.3</a></li>
       <li><a href="bugs/bugfixes-412.html">omniORB 4.1.2</a></li>
       <li><a href="bugs/bugfixes-411.html">omniORB 4.1.1</a></li>
@@ -71,6 +72,7 @@ Bugs fixed in:
   <li>
     omniORBpy 3.x
     <ul>
+      <li><a href="pybugs/bugfixes-34.html">omniORBpy 3.4</a></li>
       <li><a href="pybugs/bugfixes-33.html">omniORBpy 3.3</a></li>
       <li><a href="pybugs/bugfixes-32.html">omniORBpy 3.2</a></li>
       <li><a href="pybugs/bugfixes-31.html">omniORBpy 3.1</a></li>
