@@ -193,7 +193,7 @@ from omniidl_be.cxx import util, types, id, ast, output, cxx
 # Code for marshalling and unmarshalling various data types.
 
 def marshall(to, environment, type, decl, argname, to_where,
-             exception = "BAD_PARAM", is_union=0):
+             exception = "BAD_PARAM"):
     assert isinstance(type, types.Type)
 
     d_type = type.deref()
@@ -220,18 +220,7 @@ def marshall(to, environment, type, decl, argname, to_where,
         else:
             slice_cast = "(" + d_type.base(environment) + "*)"
 
-    if is_union and not dims:
-        if d_type.kind() in [ idltype.tk_any,
-                              idltype.tk_struct,
-                              idltype.tk_union,
-                              idltype.tk_sequence,
-                              idltype.tk_except,
-                              idltype.tk_fixed,
-                              ]:
-            argname = "(*" + argname + ")"
-
-
-    if dims:
+    if dims != []:
         n_elements = reduce(lambda x,y:x*y, dims, 1)
         array_marshal_helpers = {
           idltype.tk_octet:     ("omni::ALIGN_1",1),
@@ -332,7 +321,7 @@ else """,
         type_name = string.replace(type_name,"_ptr","")
         if isinstance(d_type.type().decl(),idlast.Forward):
             # hack to denote an interface forward declaration
-            # kind is used to index the dictionary below
+            # kind is used to index the associative array below
             kind = idltype.tk_objref * 1000
 
     elif d_type.value() or d_type.valuebox():
@@ -377,21 +366,17 @@ else """,
       idltype.tk_local_interface:
       "@type@::_marshalObjRef(@element_name@,@to_where@);",
       }
-
     if special_marshal_functions.has_key(kind):
         out_template = special_marshal_functions[kind]
-
     else:
         out_template = "@type_cast@@element_name@ >>= @to_where@;"
 
-
     to.out(out_template,
-           to_where     = to_where,
+           to_where = to_where,
            element_name = element_name,
-           bounded      = bounded,
-           type         = type_name,
-           type_cast    = type_cast,
-           dtype        = type.member(environment))
+           bounded = bounded,
+           type = type_name,
+           type_cast = type_cast)
     loop.end()
 
     if dims != []:
@@ -402,7 +387,7 @@ else """,
 
 
         
-def unmarshall(to, environment, type, decl, name, from_where, is_union=0):
+def unmarshall(to, environment, type, decl, name, from_where):
     assert isinstance(type, types.Type)
 
     d_type = type.deref()
@@ -429,17 +414,7 @@ def unmarshall(to, environment, type, decl, name, from_where, is_union=0):
         else:
             slice_cast = "(" + d_type.base(environment) + "*)"
 
-    if dims:
-
-        if is_union:
-            if decl.sizes():
-                # Anonymous array
-                slice_type = name[3:] + "_slice"
-            else:
-                slice_type = type.base(environment) + "_slice"
-
-            to.out("@name@ = new @slice_type@[@dim@];",
-                   name=name, slice_type=slice_type, dim = str(dims[0]))
+    if dims != []:
 
         n_elements = reduce(lambda x,y:x*y, dims, 1)
         array_unmarshal_helpers = {
@@ -533,25 +508,13 @@ def unmarshall(to, environment, type, decl, name, from_where, is_union=0):
     if special_unmarshal_functions.has_key(kind):
         out_template = special_unmarshal_functions[kind]
     else:
-        if not dims and is_union and kind in [ idltype.tk_any,
-                                               idltype.tk_struct,
-                                               idltype.tk_union,
-                                               idltype.tk_sequence,
-                                               idltype.tk_except,
-                                               idltype.tk_fixed ] :
-            out_template = """\
-@element_name@ = new @type@;
-(*@element_name@) <<= @where@;
-"""
-        else:
-            out_template = "(@type@&)@element_name@ <<= @where@;"
+        out_template = "(@type@&)@element_name@ <<= @where@;"
 
     to.out(out_template,
-           type         = type_name,
+           type = type_name,
            element_name = element_name,
-           where        = from_where,
-           bounded      = bounded,
-           dtype        = type.member(environment))
+           where = from_where,
+           bounded = bounded)
 
     loop.end()
 

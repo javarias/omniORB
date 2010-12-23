@@ -392,9 +392,7 @@ omniServantActivatorTaskQueue::~omniServantActivatorTaskQueue() {}
 
 
 omniServantActivatorTaskQueue::omniServantActivatorTaskQueue()
-  : pd_queue_lock("omniServantActivatorTaskQueue::pd_queue_lock"),
-    pd_task_lock("omniServantActivatorTaskQueue::pd_task_lock"),
-    pd_cond(&pd_queue_lock, "omniServantActivatorTaskQueue::pd_cond"),
+  : pd_cond(&pd_queue_lock),
     pd_taskq(0),
     pd_taskqtail(0),
     pd_dying(0)
@@ -650,10 +648,9 @@ static void transfer_and_check_policies(omniOrbPOA::Policies& pout,
 					const CORBA::PolicyList& pin);
 
 
-static omni_tracedmutex     poa_lock("poa_lock");
+static omni_tracedmutex     poa_lock;
 
-static omni_tracedcondition adapteractivator_signal(&poa_lock,
-						    "adapteractivator_signal");
+static omni_tracedcondition adapteractivator_signal(&poa_lock);
 // Used to signal between threads when using an AdapterActivator
 // to create a child POA.
 
@@ -933,7 +930,20 @@ omniOrbPOA::destroy(CORBA::Boolean etherealize_objects,
     void** args = new void* [2];
     args[0] = (omniOrbPOA*) this;
     args[1] = (void*) (unsigned long) etherealize_objects;
-    (new omni_thread(destroyer_thread_fn, args))->start();
+
+    try {
+      (new omni_thread(destroyer_thread_fn, args))->start();
+    }
+    catch (const omni_thread_fatal& ex) {
+      if (omniORB::trace(1)) {
+	omniORB::logger log;
+	log << "Unable to start POA destroyer thread (error "
+	    << ex.error << ").\n";
+      }
+      OMNIORB_THROW(NO_RESOURCES,
+		    NO_RESOURCES_UnableToStartThread,
+		    CORBA::COMPLETED_NO);
+    }
   }
 }
 
@@ -2105,8 +2115,7 @@ namespace {
     inline RemoveRefTask(PortableServer::Servant servant)
       : omniTask(omniTask::DedicatedThread),
 	pd_servant(servant),
-	pd_mu("RemoveRefTask::pd_mu"),
-	pd_cond(&pd_mu, "RemoveRefTask::pd_cond")
+	pd_cond(&pd_mu)
     {
       if (omniORB::trace(25)) {
 	omniORB::logger l;
@@ -2293,8 +2302,7 @@ omniOrbPOA::omniOrbPOA(const char* name,
     pd_defaultServant(0),
     pd_rq_state(PortableServer::POAManager::HOLDING),
     pd_policy_list(policy_list),
-    pd_lock("omniOrbPOA::pd_lock"),
-    pd_deathSignal(&pd_lock, "omniOrbPOA::pd_deathSignal"),
+    pd_deathSignal(&pd_lock),
     pd_oidIndex(0),
     pd_activeObjList(0),
     pd_oidPrefix(0),
@@ -2360,10 +2368,8 @@ omniOrbPOA::omniOrbPOA(const char* name,
     pd_call_lock = new omni_rmutex();
     break;
   case TP_MAIN_THREAD:
-    pd_main_thread_sync.mu  = new omni_tracedmutex(
-				"omniOrbPOA::pd_main_thread_sync.mu");
-    pd_main_thread_sync.cond= new omni_tracedcondition(pd_main_thread_sync.mu,
-				"omniOrbPOA::pd_main_thread_sync.cond");
+    pd_main_thread_sync.mu  = new omni_tracedmutex();
+    pd_main_thread_sync.cond= new omni_tracedcondition(pd_main_thread_sync.mu);
     break;
   }
 
@@ -2387,8 +2393,7 @@ omniOrbPOA::omniOrbPOA()  // nil constructor
     pd_defaultServant(0),
     pd_rq_state(PortableServer::POAManager::INACTIVE),
     pd_poaIdSize(0),
-    pd_lock("omniOrbPOA::pd_lock [nil]"),
-    pd_deathSignal(&pd_lock, "omniOrbPOA::pd_deathSignal [nil]"),
+    pd_deathSignal(&pd_lock),
     pd_oidIndex(0),
     pd_activeObjList(0),
     pd_oidPrefix(0),
@@ -2423,7 +2428,8 @@ omniOrbPOA::do_destroy(CORBA::Boolean etherealize_objects)
 	omni_thread::sleep(0, 100000000);
       }
       catch (...) {
-	omniORB::logs(2, "Unexpected exception in do_destroy.");
+	omniORB::logs(1, "Unexpected exception in omniOrbPOA::do_destroy.");
+	throw;
       }
     }
     else {
@@ -3976,12 +3982,12 @@ transfer_and_check_policies(omniOrbPOA::Policies& pout,
 	PortableServer::RequestProcessingPolicy_var p;
 	p = PortableServer::RequestProcessingPolicy::_narrow(pin[i]);
 	if( seen.req_processing ) {
-	  if( (pout.req_processing == omniOrbPOA::RPP_ACTIVE_OBJ_MAP &&
-	       p->value() != PortableServer::USE_ACTIVE_OBJECT_MAP_ONLY) ||
-	      (pout.req_processing == omniOrbPOA::RPP_DEFAULT_SERVANT &&
-	       p->value() != PortableServer::USE_DEFAULT_SERVANT) ||
-	      (pout.req_processing == omniOrbPOA::RPP_SERVANT_MANAGER &&
-	       p->value() != PortableServer::USE_SERVANT_MANAGER) )
+	  if( pout.req_processing == omniOrbPOA::RPP_ACTIVE_OBJ_MAP &&
+	      p->value() != PortableServer::USE_ACTIVE_OBJECT_MAP_ONLY ||
+	      pout.req_processing == omniOrbPOA::RPP_DEFAULT_SERVANT &&
+	      p->value() != PortableServer::USE_DEFAULT_SERVANT ||
+	      pout.req_processing == omniOrbPOA::RPP_SERVANT_MANAGER &&
+	      p->value() != PortableServer::USE_SERVANT_MANAGER )
 	    throw PortableServer::POA::InvalidPolicy(i);
 	}
 	switch( p->value() ) {
@@ -4071,7 +4077,7 @@ generateUniqueId(CORBA::Octet* k)
 {
   OMNIORB_ASSERT(k);
 
-  static omni_tracedmutex lock("generateUniqueId");
+  static omni_tracedmutex lock;
   omni_tracedmutex_lock sync(lock);
 
   static CORBA::ULong hi = 0;

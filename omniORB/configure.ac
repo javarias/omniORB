@@ -1,5 +1,5 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 4.2.0, bugs@omniorb-support.com)
+AC_INIT(omniORB, 4.1.5, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
@@ -10,6 +10,8 @@ AC_CANONICAL_HOST
 
 AC_CONFIG_HEADERS(include/omniORB4/acconfig.h)
 
+dnl to prevent error from autoreconf while crosscompiling
+m4_pattern_allow(PKG_CONFIG_LIBDIR)
 
 dnl ** CFLAGS / CXXFLAGS
 
@@ -114,7 +116,7 @@ dnl ** Functions
 AC_LANG(C)
 AC_CHECK_FUNCS(getaddrinfo gethostname getopt getpid gettimeofday)
 AC_CHECK_FUNCS(getnameinfo inet_ntop)
-AC_CHECK_FUNCS(isinf insinff isinfl localtime nanosleep poll rand_r sigaction)
+AC_CHECK_FUNCS(isinf insinff isinfl localtime nanosleep poll sigaction)
 AC_CHECK_FUNCS(sigvec snprintf strcasecmp strdup strerror strftime stricmp)
 AC_CHECK_FUNCS(strncasecmp strtoul strtoull strtouq uname vprintf vsnprintf)
 AC_FUNC_ALLOCA
@@ -134,6 +136,7 @@ OMNI_DISABLE_STATIC
 OMNI_DISABLE_THREAD_TRACING
 OMNI_DISABLE_IPV6_CHECK
 OMNI_DISABLE_ALLOCA
+OMNI_DISABLE_LONGDOUBLE
 
 
 dnl ** Compiler name
@@ -276,6 +279,8 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omnithread/GNUmakefile
                 src/services/GNUmakefile
                 src/services/mklib/GNUmakefile
+                src/services/mklib/stublib/GNUmakefile
+                src/services/mklib/dynstublib/GNUmakefile
                 src/services/mklib/mkBOAlib/GNUmakefile
                 src/tool/GNUmakefile
                 src/tool/omkdepend/GNUmakefile

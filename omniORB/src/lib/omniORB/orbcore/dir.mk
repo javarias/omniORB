@@ -24,7 +24,6 @@ GIOP_SRCS = \
             SocketCollection.cc
 
 TRANSPORT_SRCS = \
-            tcpSocket.cc \
             tcpTransportImpl.cc \
             tcpConnection.cc \
             tcpEndpoint.cc \
@@ -37,6 +36,14 @@ UNIXSOCK_SRCS = \
             unixEndpoint.cc \
             unixAddress.cc \
             unixActive.cc
+
+SSL_SRCS = \
+           sslActive.cc \
+           sslAddress.cc \
+           sslConnection.cc \
+           sslEndpoint.cc \
+           sslTransportImpl.cc \
+           sslContext.cc
 
 CODESET_SRCS = \
 	    codeSets.cc \
@@ -128,6 +135,17 @@ CXXVPATH = $(VPATH):$(VPATH:%=%/tcp)
 ifdef UnixPlatform
   ORB_SRCS += $(UNIXSOCK_SRCS)
   CXXVPATH += $(VPATH:%=%/unix)
+endif
+
+##########################################################################
+# Build SSL transport as part of core library if required
+ifdef OPEN_SSL_ROOT
+  ifdef SSL_TRANSPORT_IN_CORE
+    ORB_SRCS += $(SSL_SRCS)
+    CXXVPATH += $(VPATH:%=%/ssl)
+    DIR_CPPFLAGS += -D_OMNIORB_SSL_LIBRARY
+    DIR_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
+  endif
 endif
 
 ##########################################################################
@@ -237,9 +255,11 @@ endif
 
 #########################################################################
 ifdef OPEN_SSL_ROOT
+  ifndef SSL_TRANSPORT_IN_CORE
 
 SUBDIRS += ssl
 
+  endif
 endif
 
 all::

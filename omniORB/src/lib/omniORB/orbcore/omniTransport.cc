@@ -313,8 +313,7 @@ public:
   }
 
   void attach() {
-    if (!omniTransportLock) omniTransportLock = new omni_tracedmutex(
-							  "omniTransportLock");
+    if (!omniTransportLock) omniTransportLock = new omni_tracedmutex;
   }
 
   void detach() {

@@ -36,9 +36,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 DeferredRequest::DeferredRequest(RequestImpl* request)
-  : omniTask(omniTask::AnyTime),
-    pd_readyMutex("DeferredRequest::pd_readyMutex"),
-    pd_readyCondition(&pd_readyMutex, "DeferredRequest::pd_readyCondition")
+  : omniTask(omniTask::AnyTime), pd_readyCondition(&pd_readyMutex)
 {
   if( CORBA::is_nil(request) )
     throw omniORB::fatalException(__FILE__,__LINE__,

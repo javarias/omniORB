@@ -519,8 +519,7 @@ BiDirServerRope::realIncrRefCount() {
 ////////////////////////////////////////////////////////////////////////
 BiDirClientRope::BiDirClientRope(const giopAddressList& addrlist,
 				 const omnivector<CORBA::ULong>& preferred) :
-  giopRope(addrlist,preferred),
-  pd_lock("BiDirClientRope::pd_lock")
+  giopRope(addrlist,preferred)
 {
   pd_maxStrands = 1;
   pd_oneCallPerConnection = 0;

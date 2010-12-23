@@ -429,7 +429,7 @@ class omni_omniIOR_initialiser : public omniInitialiser {
 public:
 
   void attach() {
-    if (!omniIOR::lock) omniIOR::lock = new omni_tracedmutex("omniIOR::lock");
+    if (!omniIOR::lock) omniIOR::lock = new omni_tracedmutex;
   }
 
   void detach() {

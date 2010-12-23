@@ -370,7 +370,6 @@ static void closePipe(int pipe_read, int pipe_write)
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -730,8 +729,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
@@ -841,8 +839,7 @@ SocketHolder::Peek()
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
-    pd_select_cond(&pd_collection_lock, "SocketCollection::pd_select_cond"),
+    pd_select_cond(&pd_collection_lock),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -948,11 +945,10 @@ SocketCollection::Select() {
 	// the readable sockets, but that should usually be a
 	// reasonably small number, so it's probably OK.
 
-	if (FD_ISSET(s->pd_socket, &rfds)) {
+	if (s->pd_fd_index >= 0 && FD_ISSET(s->pd_socket, &rfds)) {
 	  // Remove socket from pd_fd_set by swapping last item.
 	  // We don't use FD_CLR since that is incredibly inefficient
 	  // with large sets.
-	  OMNIORB_ASSERT(s->pd_fd_index >= 0);
 	  int to_i   = s->pd_fd_index;
 	  int from_i = --pd_fd_set.fd_count;
 	  
@@ -1094,8 +1090,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
@@ -1191,7 +1186,6 @@ SocketHolder::Peek()
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -1480,8 +1474,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
