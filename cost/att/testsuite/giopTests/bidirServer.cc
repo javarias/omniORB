@@ -25,10 +25,10 @@ MyApp::set_args(int& argc, char**& argv) {
   if (argc) {
     memcpy(my_argv,argv,sizeof(char*)*argc);
   }
-  my_argv[my_argc - 4] = "-ORBacceptBiDirectionalGIOP";
-  my_argv[my_argc - 3] = "1";
-  my_argv[my_argc - 2] = "-ORBserverTransportRule";
-  my_argv[my_argc - 1] = "^* bidir,unix,ssl,tcp";
+  my_argv[my_argc - 4] = (char*)"-ORBacceptBiDirectionalGIOP";
+  my_argv[my_argc - 3] = (char*)"1";
+  my_argv[my_argc - 2] = (char*)"-ORBserverTransportRule";
+  my_argv[my_argc - 1] = (char*)"^* bidir,unix,ssl,tcp";
   argc = my_argc;
   argv = my_argv;
 

@@ -1,3 +1,19 @@
+Thu Feb 17 12:26:25 GMT 2011 dgrisby
+====================================
+
+- Update for modern compilers.
+
+att/testsuite/basic_tests/conclt.cc
+att/testsuite/common/omnitest.cc
+att/testsuite/dii/multidii.cc
+att/testsuite/giopTests/bidirServer.cc
+att/testsuite/giopTests/bidirServer2.cc
+att/testsuite/giopTests/nestedCallClient.cc
+att/testsuite/timeout_tests/client2.cc
+att/testsuite/timeout_tests/client3.cc
+att/testsuite/timeout_tests/client4.cc
+
+
 Thu Feb 17 10:39:40 GMT 2011 dgrisby
 ====================================
 

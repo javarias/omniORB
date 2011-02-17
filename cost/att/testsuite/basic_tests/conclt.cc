@@ -38,18 +38,18 @@ omni_mutex cerr_sync;
 
 static
 void
-contact(char* id, Echo_ptr e)
+contact(const char* id, Echo_ptr e)
 {
   int loopcount = 10;
   while (loopcount--) {
     try {
-      char * echostr;
-      echostr = e->echoString((char *)"abcde");
+      char* echostr;
+      echostr = e->echoString("abcde");
       {
 	omni_mutex_lock s(cerr_sync);
 	cerr << id << ": reply " << echostr << endl;
       }
-      if (strcmp((const char *)echostr,"abcde")) {
+      if (strcmp(echostr, "abcde")) {
 	cerr << loopcount << " : echo string differs ('" << "abcde', '" 
 	     << (char *)echostr << "')" << endl;
 	OMNI_FAILED("echo string differs");
@@ -64,17 +64,17 @@ contact(char* id, Echo_ptr e)
 
 class worker : public omni_thread {
 public:
-  worker(char* id,Echo_ptr e) : omni_thread(id) {
-    pd_e = e;
+  worker(const char* id, Echo_ptr e) : pd_id(id), pd_e(e) {
     start_undetached();
     return;
   }
-  virtual void* run_undetached(void*id) {
-    contact((char*)id,pd_e);
+  virtual void* run_undetached(void*) {
+    contact(pd_id, pd_e);
     return 0;
   };
   virtual ~worker() {}
 private:
+  const char* pd_id;
   Echo_var pd_e;
 };
 
@@ -109,25 +109,15 @@ MyApp::main(int argc, char** argv)
   int status = 0;
 
   worker1->join(&rc);
-  if (rc) status = (int)rc;
   worker2->join(&rc);
-  if (rc) status = (int)rc;
   worker3->join(&rc);
-  if (rc) status = (int)rc;
   worker4->join(&rc);
-  if (rc) status = (int)rc;
   worker5->join(&rc);
-  if (rc) status = (int)rc;
   worker6->join(&rc);
-  if (rc) status = (int)rc;
   worker7->join(&rc);
-  if (rc) status = (int)rc;
   worker8->join(&rc);
-  if (rc) status = (int)rc;
   worker9->join(&rc);
-  if (rc) status = (int)rc;
   worker10->join(&rc);
-  if (rc) status = (int)rc;
 
   if (!status) {
     test_complete();

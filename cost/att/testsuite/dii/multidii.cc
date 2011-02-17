@@ -51,9 +51,8 @@ createEchoStringRequest(CORBA::Object_ptr obj, const char* mesg)
 }
 
 
-static void request_producer(void* vid)
+static void request_producer(int id)
 {
-  int id = (int) vid;
   IO(cerr << "producer " << id << ": I'm alive!" << endl);
 
   while( 1 ) {
@@ -90,9 +89,8 @@ static void request_producer(void* vid)
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-static void reply_consumer(void* vid)
+static void reply_consumer(int id)
 {
-  int id = (int) vid;
   CORBA::Request_var req;
 
   IO(cerr << "consumer " << id << ": I'm alive!" << endl);
@@ -134,8 +132,8 @@ class undetached_thread
   : public omni_thread
 {
  public:
-  undetached_thread(void (*fn)(void*), void* arg = NULL)
-    : omni_thread(arg), fn(fn)
+  undetached_thread(void (*fn)(int), int id)
+    : fn(fn), id(id)
   { }
 
 
@@ -146,15 +144,16 @@ class undetached_thread
 
 
  private:
-  virtual void *run_undetached(void * arg)
+  virtual void *run_undetached(void *)
   {
-    (*fn)(arg);
+    (*fn)(id);
     return NULL;
   }
 
 
  private:
-  void (*fn)(void *);
+  void (*fn)(int);
+  int id;
 };
 
 typedef undetached_thread *undetached_thread_ptr;
@@ -205,14 +204,14 @@ MyApp::main(int argc, char* argv[])
   for( int i = 0; i < nconsumers; i++ )
   {
     //omni_thread::create(reply_consumer, (void*) i);
-    consumer_threads[i] = new undetached_thread(reply_consumer, (void *) i);
+    consumer_threads[i] = new undetached_thread(reply_consumer, i);
     consumer_threads[i]->start_undetached();
   }
 
   for( int j = 0; j < nproducers; j++ )
   {
     //omni_thread::create(request_producer, (void*) j);
-    producer_threads[j] = new undetached_thread(request_producer, (void *) j);
+    producer_threads[j] = new undetached_thread(request_producer, j);
     producer_threads[j]->start_undetached();
   }
 

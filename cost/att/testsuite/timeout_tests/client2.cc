@@ -11,13 +11,13 @@
 
 class worker : public omni_thread {
 public:
-  worker(char* id,Echo_ptr e) : omni_thread(id) {
+  worker(const char* name,Echo_ptr e) : pd_name(name) {
     pd_e = e;
     start_undetached();
     return;
   }
-  virtual void* run_undetached(void*id) {
-    const char* name = (const char*) id;
+  virtual void* run_undetached(void*) {
+    const char* name = pd_name;
 
     int loopcount = 10;
 
@@ -70,6 +70,7 @@ public:
 
   virtual ~worker() {}
 private:
+  const char* pd_name;
   Echo_var pd_e;
 };
 
@@ -94,8 +95,8 @@ MyApp::set_args(int& argc, char**& argv) {
   for (int i=0; i < argc; i++) {
     my_argv[i] = argv[i];
   }
-  my_argv[my_argc - 2] = "-ORBclientCallTimeOutPeriod";
-  my_argv[my_argc - 1] = "1500";  // timeout 1.5 seconds
+  my_argv[my_argc - 2] = (char*)"-ORBclientCallTimeOutPeriod";
+  my_argv[my_argc - 1] = (char*)"1500";  // timeout 1.5 seconds
   argc = my_argc;
   argv = my_argv;
 
@@ -131,26 +132,16 @@ MyApp::main(int argc, char** argv)
   int status;
 
   worker1->join(&rc);
-  if (rc) status = (int)rc;
   worker2->join(&rc);
-  if (rc) status = (int)rc;
   worker3->join(&rc);
-  if (rc) status = (int)rc;
 #if 0
   worker4->join(&rc);
-  if (rc) status = (int)rc;
   worker5->join(&rc);
-  if (rc) status = (int)rc;
   worker6->join(&rc);
-  if (rc) status = (int)rc;
   worker7->join(&rc);
-  if (rc) status = (int)rc;
   worker8->join(&rc);
-  if (rc) status = (int)rc;
   worker9->join(&rc);
-  if (rc) status = (int)rc;
   worker10->join(&rc);
-  if (rc) status = (int)rc;
 #endif
 
   if (!status) {

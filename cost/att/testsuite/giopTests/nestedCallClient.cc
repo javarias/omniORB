@@ -213,7 +213,6 @@ MyApp::main(int argc, char** argv)
       void* rc;
       for (i=0; i<nthreads_; i++) {
 	workers[i]->join(&rc);
-	if (rc) status = (int) rc;
       }
     }
     else {
@@ -282,10 +281,10 @@ MyApp::set_args(int& argc, char**& argv) {
 	   argv+test_option+1,
 	   sizeof(char*)*(argc-test_option-1));
   }
-  my_argv[my_argc - 4] = "-ORBofferBiDirectionalGIOP";
-  my_argv[my_argc - 3] = "1";
-  my_argv[my_argc - 2] = "-ORBclientTransportRule";
-  my_argv[my_argc - 1] = "^* bidir,unix,ssl,tcp";
+  my_argv[my_argc - 4] = (char*)"-ORBofferBiDirectionalGIOP";
+  my_argv[my_argc - 3] = (char*)"1";
+  my_argv[my_argc - 2] = (char*)"-ORBclientTransportRule";
+  my_argv[my_argc - 1] = (char*)"^* bidir,unix,ssl,tcp";
   argc = my_argc;
   argv = my_argv;
 

@@ -512,7 +512,6 @@ OmniServerApp::main(int argc, char* argv[])
 
   void* rc;
   om->join(&rc);
-  if (rc) return (int)rc;
 
   //term->join(NULL);
 
