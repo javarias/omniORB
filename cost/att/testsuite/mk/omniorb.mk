@@ -16,7 +16,7 @@ OMNIORB_IDL = $(OMNI_TOP_DIR)/bin/omniidl $(OMNIORB_IDL_FLAGS)
 OMNIORB_IDL_FLAGS = -I$(OMNI_TOP_DIR)/idl -bcxx -Wba -Wbtp
 
 OMNIORB_CPPFLAGS = $(IMPORT_CPPFLAGS) \
-                   -D__OMNIORB4__ -D__OMNIORB__ -DOMNI_CONFIG_TRADITIONAL \
+                   -D__OMNIORB4__ -D__OMNIORB__ \
                    $(OMNITHREAD_CPPFLAGS) \
                    -I$(OMNI_TOP_DIR)/include \
                    -DCORBA_HEADER="\"omniorb.h\"" -Wno-deprecated
