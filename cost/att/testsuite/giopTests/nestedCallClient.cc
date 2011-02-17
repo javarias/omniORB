@@ -4,6 +4,9 @@
 #include <fragtest_i.h>
 #include <omniORB4/minorCode.h>
 
+using namespace std;
+
+
 class MyApp : public OmniTestApp {
 public:
   virtual int main(int argc, char* argv[]);

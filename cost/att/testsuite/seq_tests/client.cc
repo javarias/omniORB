@@ -24,10 +24,12 @@
 //        client <COSNaming compound name (e.g. x/y/echo.obj)>
 
 #include <assert.h>
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <seq1.hh>
 #include <stdlib.h>
+
+using namespace std;
 
 
 void

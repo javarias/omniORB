@@ -6,6 +6,9 @@
 #include <testecho.hh>
 #include <common/omnitest.h>
 
+using namespace std;
+
+
 CORBA::ORB_var myorb;
 PortableServer::POA_var mypoa;
 PortableServer::ObjectId_var oid;

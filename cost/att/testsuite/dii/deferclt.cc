@@ -25,7 +25,9 @@
 //
 #include <common/omnitest.h>
 #include <deferredecho.hh>
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 
 OMNI_SIMPLE_CLIENT(MyApp, CORBA::Object)

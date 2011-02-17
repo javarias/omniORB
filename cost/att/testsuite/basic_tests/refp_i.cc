@@ -27,10 +27,13 @@
 // OmniORB 2 version
 
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <common/omnitest.h>
 #include <refp.hh>
+
+
+using namespace std;
 
 
 class refp_i : public POA_refp,

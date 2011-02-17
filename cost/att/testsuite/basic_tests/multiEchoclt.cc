@@ -39,9 +39,11 @@
 //         boolean echoBool(in boolean arg1);
 //   };
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <multiEcho.hh>
+
+using namespace std;
 
 
 void

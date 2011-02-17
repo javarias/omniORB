@@ -12,7 +12,7 @@ conf_verbose = 1
 # Before running a test, try to build the test executables on all the test
 # machines. Set this variable to 1 to enable, 0 to skip.
 # 
-conf_build_test = 1
+conf_build_test = 0
 
 ### conf_dump_program_output
 # Set to 1 to see all the output from the test programs. Set to 0 to

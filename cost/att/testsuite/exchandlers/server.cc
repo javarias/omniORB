@@ -1,9 +1,13 @@
 // usage: server <COSNaming compound name (e.g. x/y/test.obj)>
 
-#include <iostream.h>
+#include <iostream>
 #include "omnithread.h"
 #include <common/omnitest.h>
 #include <testecho.hh>
+#include <stdlib.h>
+
+using namespace std;
+
 
 class Echo_i : public POA_Echo {
 public:

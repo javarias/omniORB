@@ -41,10 +41,12 @@
 //
 // Implement this using tie template
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <common/omnitest.h>
 #include <multiEcho.hh>
+
+using namespace std;
 
 
 // implementation using tie template

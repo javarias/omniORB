@@ -27,9 +27,11 @@
 //   };
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <testecho.hh>
+
+using namespace std;
 
 
 OMNI_SIMPLE_CLIENT(MyApp, Echo)

@@ -23,7 +23,7 @@
 // testAnyClient.cc
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <stdlib.h>
 
@@ -33,6 +33,9 @@
 #include "anyParse.h"
 
 #include "anyUnionTest.hh"
+
+using namespace std;
+
 
 // Change the function below to display the type being tested.
 

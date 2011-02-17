@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include "uextest.hh"
 
+using namespace std;
+
 
 OMNI_SIMPLE_CLIENT(MyApp, Foo)
 

@@ -23,10 +23,12 @@
 // Testing code: client of seqEcho objects
 // 
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <common/omnitest.h>
 #include <seqEcho.hh>
+
+using namespace std;
 
 
 static double numbers[] = {

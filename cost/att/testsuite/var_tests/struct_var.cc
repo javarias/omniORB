@@ -32,9 +32,11 @@
 //          string s1;
 //       };
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include "varTest.hh"
+
+using namespace std;
 
 sFixed
 sFixed_fn (const sFixed& in, sFixed& inout, sFixed& out) {

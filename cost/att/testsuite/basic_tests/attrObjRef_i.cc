@@ -27,10 +27,12 @@
 // };
 
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <common/omnitest.h>
 #include <attrObjRef.hh>
+
+using namespace std;
 
 
 // implementation using inheritance skeleton

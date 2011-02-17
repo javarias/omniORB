@@ -34,7 +34,9 @@
 
 #include <common/omnitest.h>
 #include "varTest.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 uFixed
 uFixed_fn (const uFixed& in, uFixed& inout, uFixed& out) {

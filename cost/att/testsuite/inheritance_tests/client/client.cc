@@ -22,10 +22,12 @@
 //
 // usage: client -i <object reference>\n"
 //        client <COSNaming compound name (e.g. x/y/echo.obj)>
-#include <iostream.h>
+#include <iostream>
 #include <common/common.h>
 #include <common/omnitest.h>
 #include <inheritance_1.hh>
+
+using namespace std;
 
 
 CORBA::ORB_ptr orb;

@@ -25,7 +25,7 @@
 #define __OMNITEST_H__
 
 #include CORBA_HEADER
-#include <iostream.h>
+#include <iostream>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ private:
     OmniTestApp::unexpected_exception(ex, __FILE__, __LINE__); \
   } while(0)
 
-#define OMNI_ECHO(exp)  do{ exp; cerr << #exp << ';' << endl; }while(0)
+#define OMNI_ECHO(exp)  do{ exp; std::cerr << #exp << ';' << std::endl; }while(0)
 
 
 #define OMNI_SIMPLE_SERVER_DECL(APP_CLASS) \

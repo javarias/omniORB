@@ -22,9 +22,11 @@
 //
 // usage: server [<object COSnaming compound name (e.g. x/y/test.obj)>]
 //
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <inheritance_2.hh>
+
+using namespace std;
 
 
 class D_i : public POA_D,

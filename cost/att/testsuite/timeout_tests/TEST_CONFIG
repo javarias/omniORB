@@ -3,7 +3,7 @@
 
 client_timeout1 100 server1 client1
 client_timeout2 100 server1 client2
-client_timeout3 100 server1 "client2 -ORBoneCallPerConnection=1 -ORBmaxGIOPConnectionPerServer=1"
-client_timeout4 100 server1 "client2 -ORBoneCallPerConnection=0 -ORBmaxGIOPConnectionPerServer=1"
+client_timeout3 100 server1 "client2 -ORBoneCallPerConnection 1 -ORBmaxGIOPConnectionPerServer 1"
+client_timeout4 100 server1 "client2 -ORBoneCallPerConnection 0 -ORBmaxGIOPConnectionPerServer 1"
 
 

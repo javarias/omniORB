@@ -23,9 +23,11 @@
 // Usage:  client -i <stringified IOR>
 //         client <COSNaming compound name (e.g. x/y/echo.obj)>
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <testecho.hh>
+
+using namespace std;
 
 
 class Echo_i : public virtual POA_Echo,

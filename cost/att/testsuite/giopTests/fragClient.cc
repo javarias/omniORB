@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "fragtest.hh"
 
+using namespace std;
+
 
 class MyApp : public OmniTestApp {
 public:

@@ -2,11 +2,14 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <testecho.hh>
 #include <common/omnitest.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+using namespace std;
+
 
 class Echo_i : public virtual _sk_Echo {
 public:

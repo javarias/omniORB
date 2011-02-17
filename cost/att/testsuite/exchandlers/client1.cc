@@ -1,11 +1,13 @@
 // Usage: client1 <COSNaming compound name (e.g. x/y/test.obj)>
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include <common/common.h>
 #include <common/omnitest.h>
 #include <testecho.hh>
 #include <orbParameters.h>
+
+using namespace std;
 
 
 OMNI_SIMPLE_CLIENT(MyApp, Echo)

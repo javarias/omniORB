@@ -1,9 +1,11 @@
 // Usage: client3 <COSNaming compound name (e.g. x/y/echo.obj)>
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include <common/common.h>
 #include <echo.hh>
+
+using namespace std;
 
 
 static CORBA::ORB_ptr               orb;

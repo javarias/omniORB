@@ -23,7 +23,7 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#include <iostream.h>
+#include <iostream>
 #include <common/nameUtils.h>
 
 #endif

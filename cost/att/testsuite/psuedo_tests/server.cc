@@ -24,9 +24,11 @@
 //        names are COSNaming compound names (e.g. x/y/echo.obj)>]
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <derivedEcho.hh>
+
+using namespace std;
 
 
 class Echo_i : public virtual POA_Echo,

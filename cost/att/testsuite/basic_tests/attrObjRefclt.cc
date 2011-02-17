@@ -34,10 +34,12 @@
 //               Names are COSNaming compound names (e.g. x/y/test.obj
 // 
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <common/common.h>
 #include <attrObjRef.hh>
+
+using namespace std;
 
 
 char* x = "IOR:000000000000001349444c3a617474724f626a5265663a312e300001000000010000000000000028000100000000000d3139322e352e3233392e3631002089900000000c000000000000000000000009";

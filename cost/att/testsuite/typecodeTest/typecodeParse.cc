@@ -25,12 +25,15 @@
 
 // TypeCode Parser
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include <common/omnitest.h>
 
 #include "typecodeParse.h"
+
+using namespace std;
+
 
 void typecodeParse::parseCode(CORBA::TypeCode_ptr iTC,CORBA::TypeCode_ptr parentTC)
 {

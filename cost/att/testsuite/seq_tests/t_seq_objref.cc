@@ -50,7 +50,10 @@
 
 #include <common/omnitest.h>
 #include "seq1.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 static
 const char* test_ior1 = "IOR:000000000000000d49444c3a4563686f3a312e3000051160000000010000000000000028000100000000000d3139322e352e3233392e363100208fec0000000c000000000000000000000004";

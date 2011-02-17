@@ -20,11 +20,13 @@
 //    02111-1307, USA
 //
 //
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <common/omnitest.h>
 #include <refp.hh>
+
+using namespace std;
 
 
 class MyApp : public OmniTestApp {

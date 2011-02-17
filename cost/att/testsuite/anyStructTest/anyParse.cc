@@ -23,10 +23,13 @@
 // anyParse.cc
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 
 #include "anyParse.h"
+
+using namespace std;
+
 
 CORBA::Boolean
 anyParse::parse(const CORBA::Any& myAny)

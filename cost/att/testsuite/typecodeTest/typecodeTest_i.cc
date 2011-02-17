@@ -23,12 +23,14 @@
 // typecodeTest_i.cc
 //
 
-#include <iostream.h>
+#include <iostream>
 
 #include <common/omnitest.h>
 
 #include "typecodeParse.h"
 #include "typecodeTest_i.h"
+
+using namespace std;
 
 
 

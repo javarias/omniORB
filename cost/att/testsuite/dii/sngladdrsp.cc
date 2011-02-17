@@ -23,6 +23,8 @@
 #include <common/omnitest.h>
 #include "ssi_impl.h"
 
+using namespace std;
+
 
 class MyApp : public OmniTestApp {
 public:

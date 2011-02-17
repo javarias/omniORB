@@ -50,7 +50,10 @@
 
 #include <common/omnitest.h>
 #include "seq1.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 static
 void

@@ -22,12 +22,14 @@
 //
 // anyUnionTest_i.cc
 //
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include "anyParse.h"
 
 #include "anyUnionTest_i.h"
+
+using namespace std;
 
 
 static CORBA::Boolean viewUnion(const CORBA::Any& a)

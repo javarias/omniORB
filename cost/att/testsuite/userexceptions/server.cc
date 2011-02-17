@@ -24,9 +24,11 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <testecho.hh>
 #include <common/common.h>
+
+using namespace std;
 
 
 CORBA::BOA_ptr boa;

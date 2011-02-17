@@ -6,10 +6,12 @@
 // 
 
 
-#include <iostream.h>
+#include <iostream>
 #include <common/common.h>
 #include <common/omnitest.h>
 #include <attrObjRef.hh>
+
+using namespace std;
 
 
 OMNI_SIMPLE_CLIENT(MyApp, attrObjRef)

@@ -1,7 +1,10 @@
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <fragtest.hh>
 #include <fragtest_i.h>
+
+using namespace std;
+
 
 FragTest::Payloads*
 FragTest_i::bounce(const FragTest::Payloads& arg) {

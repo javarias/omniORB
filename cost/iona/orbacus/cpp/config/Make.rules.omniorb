@@ -10,7 +10,7 @@
 
 # User settings
 
-ORB_HOME	= $(HOME)/omni/41inst
+ORB_HOME	= $(HOME)/omni/42inst
 
 # Use these settings for omniORB 4.0.x
 #OPTION_FLAGS    = -DHAVE_NO_VALUETYPE

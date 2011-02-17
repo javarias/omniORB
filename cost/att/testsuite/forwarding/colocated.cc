@@ -1,7 +1,9 @@
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include "attrObjRef.hh"
 #include <testecho.hh>
+
+using namespace std;
 
 
 class Echo_i

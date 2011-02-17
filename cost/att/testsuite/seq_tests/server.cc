@@ -24,10 +24,12 @@
 //        names are COSNaming compound names (e.g. x/y/test.obj)>]
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <seq1.hh>
 #include <shutdown.hh>
+
+using namespace std;
 
 
 // All the operations below have similar signature: xxx dump_xxx (in xxx a1, inout xxx a2, out xxx a3) in IDL

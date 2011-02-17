@@ -23,13 +23,14 @@
 // anyStructTest_i.cc
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include "anyParse.h"
 
 #include "anyStructTest_i.h"
 
+using namespace std;
 
 
 static CORBA::Boolean viewStruct(const CORBA::Any& a)

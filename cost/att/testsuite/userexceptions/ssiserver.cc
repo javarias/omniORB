@@ -24,9 +24,11 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <uextest.hh>
+
+using namespace std;
 
 
 class Foo_i

@@ -23,13 +23,16 @@
 // tcClient.cc
 //
 
-#include <iostream.h>
+#include <iostream>
 
 #include <common/omnitest.h>
 
 #include "typecodeParse.h"
 
 #include "typecodeTest.hh"
+
+using namespace std;
+
 
 class MyApp : public OmniTestApp {
 public:

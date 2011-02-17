@@ -4,10 +4,13 @@
 
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <iostream.h>
+#include <iostream>
 #include <fragtest.hh>
 #include <common/omnitest.h>
 #include <omniORB4/sslContext.h>
+
+using namespace std;
+
 
 class FragTest_i : public POA_FragTest,
 		   public PortableServer::RefCountServantBase {

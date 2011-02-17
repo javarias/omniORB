@@ -57,8 +57,11 @@
 
   */
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
+
+using namespace std;
+
 
 // test_string_f
 //	This function's signature corresponds to the mapping of this

@@ -24,8 +24,11 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
+
+using namespace std;
+
 
 class MyDynImpl : public PortableServer::DynamicImplementation,
 		  public PortableServer::RefCountServantBase {

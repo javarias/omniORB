@@ -1,7 +1,10 @@
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <common/omnitest.h>
 #include "varTest2.hh"
+
+using namespace std;
+
 
 class I_i : public POA_I,
 	    public PortableServer::RefCountServantBase {

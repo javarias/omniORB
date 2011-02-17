@@ -7,6 +7,9 @@
 #include <common/omnitest.h>
 #include <fragtest_i.h>
 
+using namespace std;
+
+
 static const CORBA::ULong maxLength_  = 500;
 
 class worker : public omni_thread {

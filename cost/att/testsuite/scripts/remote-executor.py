@@ -199,10 +199,7 @@ for name, value in optlist:
     elif (name == '-v') or (name == '--verbose'):
         conf_verbose = 1
 
-if CORBA.ORB_ID == "omniORB3":
-    args = sys.argv + ['-ORBpoa_iiop_port',conf_executor_port]
-else:
-    args = sys.argv + ['-ORBendpoint',"giop:tcp::" + conf_executor_port]
+args = sys.argv + ['-ORBendPoint',"giop:tcp::" + conf_executor_port]
 comm = Executor_Comm()
 comm.client_init()
 

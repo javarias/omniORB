@@ -25,6 +25,8 @@
 #include <diitest.hh>
 #include <stdlib.h>
 
+using namespace std;
+
 
 static void print_opname(CORBA::ServerRequest_ptr request,
 			 CORBA::NVList_ptr args)

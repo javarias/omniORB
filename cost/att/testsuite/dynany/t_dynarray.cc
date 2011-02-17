@@ -22,10 +22,13 @@
 //
 // Testing code for the DynSequence interface
 
-#include <iostream.h>
+#include <iostream>
 #include "t_Type.hh"
 
 #define TR(x) //x
+
+using namespace std;
+
 
 static CORBA::ORB_var orb;
 static DynamicAny::DynAnyFactory_var factory;

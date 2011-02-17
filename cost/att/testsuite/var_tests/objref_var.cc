@@ -9,7 +9,10 @@
 
 #include <common/omnitest.h>
 #include "varTest.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 class obj_i : public POA_obj,
 	      public PortableServer::RefCountServantBase {

@@ -30,10 +30,12 @@
 //        long echoLong (in long arg1);
 //   };
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <common/omnitest.h>
 #include <derivedEcho.hh>
+
+using namespace std;
 
 
 class Echo_i : public virtual POA_Echo,

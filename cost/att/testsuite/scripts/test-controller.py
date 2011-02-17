@@ -63,6 +63,13 @@ TestSuite__POA = sys.modules["TestSuite__POA"]
 class TimeoutError(Exception):
     pass
 
+class RemoteExecutor_NOT_EXIST(Exception):
+    pass
+
+
+class BuildHasFailed(Exception):
+    pass
+
 
 class OutputListener_i(TestSuite__POA.TestOutputListener):
     def __init__(self, event=None):
@@ -215,7 +222,7 @@ class Executor_Cache:
                   '       ' + hostname + ', port ' + conf_executor_port+'.\n'+\
                   '       If you have not done so, please run remote-executor.py on\n'+\
                   '       the machine first.\n'
-            raise 'RemoteExecutor_NOT_EXIST'
+            raise RemoteExecutor_NOT_EXIST()
 
 
 # this function is a bit like string.split, but it returns only the
@@ -507,7 +514,7 @@ if conf_build_test:
                 try:
                     build_test(executors[host],host_configuration[host],
                                subdir)
-                except ('build_has_failed', 'RemoteExecutor_NOT_EXIST'):
+                except (BuildHasFailed, RemoteExecutor_NOT_EXIST):
                     # build stage has failed.
                     # Or cannot contact one or more RemoteExecutor
                     orb.shutdown(1)
@@ -530,7 +537,7 @@ for entry in entries:
         subdirs.append(entry)
 
 
-#subdirs.sort()
+subdirs.sort()
 
 while conf_iterations >= 0:
     # TODO: ...
@@ -562,7 +569,7 @@ while conf_iterations >= 0:
                 if res != 0:
                     # build has failed, skip this test.
                     conf_file.close()
-                    raise 'build_has_failed'
+                    raise BuildHasFailed()
             
 
             # read test configuration file
@@ -620,10 +627,10 @@ while conf_iterations >= 0:
         except IOError:
             # no config file here, so just ignore that directory...
             pass
-        except 'build_has_failed':
+        except BuildHasFailed:
             # build stage has failed.
             pass
-        except 'RemoteExecutor_NOT_EXIST':
+        except RemoteExecutor_NOT_EXIST:
             # Cannot contact one or more RemoteExecutor
             break
 

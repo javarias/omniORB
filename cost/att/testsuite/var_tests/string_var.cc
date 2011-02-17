@@ -24,7 +24,10 @@
 
 #include <common/omnitest.h>
 #include "varTest.hh"
-#include "iostream.h"
+#include <iostream>
+
+using namespace std;
+
 
 char*
 __string_fn (const char* in, char*& inout, char*& out) {

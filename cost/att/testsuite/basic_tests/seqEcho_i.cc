@@ -23,10 +23,12 @@
 // Testing code: implementation of seqEcho objects
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <common/omnitest.h>
 #include <seqEcho.hh>
+
+using namespace std;
 
 
 // implementation using inheritance skeleton

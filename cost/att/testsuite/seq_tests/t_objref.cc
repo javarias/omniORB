@@ -61,7 +61,10 @@
 
 #include <common/omnitest.h>
 #include <testecho.hh>
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 typedef _CORBA_ObjRef_Member<_objref_Echo,Echo_Helper> Echo_member;
 

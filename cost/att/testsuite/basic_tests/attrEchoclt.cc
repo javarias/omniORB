@@ -30,9 +30,11 @@
 // };
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <attrEcho.hh>
+
+using namespace std;
 
 
 class MyApp : public OmniTestApp {

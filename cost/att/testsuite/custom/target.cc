@@ -2,10 +2,13 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <echo.hh>
 #include <common/omnitest.h>
 #include <stdlib.h>
+
+using namespace std;
+
 
 CORBA::ORB_ptr orbp;
 

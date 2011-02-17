@@ -25,6 +25,8 @@
 #include "t_Type.hh"
 #include "anyEcho.hh"
 
+using namespace std;
+
 CORBA::ORB_ptr orbp;
 static DynamicAny::DynAnyFactory_var factory;
 

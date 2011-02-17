@@ -24,9 +24,11 @@
 //         client <COSNaming compound name (e.g. x/y/echo.obj)>
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 #include <testecho.hh>
+
+using namespace std;
 
 
 class MyApp : public OmniTestApp {

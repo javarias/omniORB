@@ -22,8 +22,11 @@
 //
 // Testing code for the DynAny interface
 
-#include <iostream.h>
+#include <iostream>
 #include "t_Type.hh"
+
+using namespace std;
+
 
 #define TR(x)  x
 

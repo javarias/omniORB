@@ -23,7 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <iostream.h>
+#include <iostream>
 
 #ifdef __WIN32__
 #include <sys/types.h>
@@ -44,6 +44,8 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <testecho.hh>
+
+using namespace std;
 
 
 class MyApp : public OmniTestApp {

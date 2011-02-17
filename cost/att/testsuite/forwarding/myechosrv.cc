@@ -1,6 +1,7 @@
 #include <common/omnitest.h>
 #include <testecho.hh>
 
+using namespace std;
 
 class Echo_i
   : public POA_Echo,

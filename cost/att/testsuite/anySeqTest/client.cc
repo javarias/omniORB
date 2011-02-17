@@ -25,6 +25,7 @@
 #include "anySeqTest1.hh"
 #include "anyEcho.hh"
 
+using namespace std;
 
 CORBA::ORB_ptr orbp;
 

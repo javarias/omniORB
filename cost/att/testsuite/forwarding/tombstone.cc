@@ -1,7 +1,9 @@
-#include <iostream.h>
+#include <iostream>
 #include <common/omnitest.h>
 
 #include "attrObjRef.hh"
+
+using namespace std;
 
 
 OMNI_SIMPLE_SERVER_DECL(MyApp);

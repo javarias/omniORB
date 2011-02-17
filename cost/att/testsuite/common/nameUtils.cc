@@ -51,8 +51,10 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include "nameUtils.h"
+
+using namespace std;
 
 void
 getNameFromEnv(const char *env_var, CosNaming::Name &name)

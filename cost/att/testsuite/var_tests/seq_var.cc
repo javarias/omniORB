@@ -28,7 +28,9 @@
 
 #include <common/omnitest.h>
 #include "varTest.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 seqFixed*
 __seqFixed_fn (const seqFixed& in, seqFixed& inout, seqFixed*& out) {

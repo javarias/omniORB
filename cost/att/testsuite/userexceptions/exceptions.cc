@@ -22,6 +22,9 @@
 //
 #include <common/omnitest.h>
 
+using namespace std;
+
+
 class MyApp : public OmniTestApp {
 public:
   MyApp() : count_(0) {}

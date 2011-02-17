@@ -2,11 +2,14 @@
 //        Names are COSNaming compound names (e.g. x/y/test.obj)
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <common/common.h>
 #include <common/omnitest.h>
 #include <testecho.hh>
 #include <attrObjRef.hh>
+
+using namespace std;
+
 
 class Echo_i : public POA_Echo,
 	       public PortableServer::RefCountServantBase

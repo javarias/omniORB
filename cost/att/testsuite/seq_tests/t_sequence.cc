@@ -47,7 +47,10 @@
 
 #include <assert.h>
 #include "seq1.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 static
 seq_long* test_seq_long_f(const seq_long& in,seq_long& inout,seq_long*& out)

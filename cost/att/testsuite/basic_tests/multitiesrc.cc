@@ -13,10 +13,13 @@
 //
 // Implement multiple interfaces using tie template
 
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <multiEcho.hh>
 #include <common/common.h>
+
+using namespace std;
+
 
 // implementation using tie template
 class multiEcho_i {

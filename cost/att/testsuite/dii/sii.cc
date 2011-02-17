@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include "diitest.hh"
 
+using namespace std;
+
 
 class MyApp : public OmniTestApp {
 public:

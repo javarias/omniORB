@@ -22,7 +22,7 @@
 //
 #include <common/omnitest.h>
 #include <common/common.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #ifdef __WIN32__
 #include <io.h>
@@ -33,6 +33,8 @@
 #ifdef minor
 #undef minor
 #endif
+
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -185,6 +187,14 @@ OmniTestApp::test_complete()
     if( (char*)pd_app_name )  log << (char*)pd_app_name << ": ";
     log << "TEST PASSED\n";
   }
+  try {
+    pd_orb->destroy();
+  }
+  catch (CORBA::Exception& ex) {
+    omniORB::logger log("");
+    log << "Exception calling orb->destroy: " << ex._name() << "\n";
+  }
+
   Exit(0);
 }
 
@@ -349,7 +359,15 @@ OmniTestApp::internal_main(int argc, char* argv[])
   try
   {
     // Call into descendant's version of main ...
-    return pd_theApp->main(argc, argv);
+    int r = pd_theApp->main(argc, argv);
+    try {
+      //pd_orb->destroy();
+    }
+    catch (CORBA::Exception& ex) {
+      omniORB::logger log("");
+      log << "Exception calling orb->destroy: " << ex._name() << "\n";
+    }
+    return r;
   }
   catch (CORBA::Exception &ex)
   {

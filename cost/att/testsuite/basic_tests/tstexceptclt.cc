@@ -34,6 +34,9 @@
 #include <tstexcept.hh>
 #include <stdlib.h>
 
+using namespace std;
+
+
 class MyApp : public OmniTestApp {
 public:
   virtual int main(int argc, char* argv[]);

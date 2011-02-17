@@ -27,9 +27,11 @@
 //   };
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <testecho.hh>
 #include <common/omnitest.h>
+
+using namespace std;
 
 
 omni_mutex cerr_sync;

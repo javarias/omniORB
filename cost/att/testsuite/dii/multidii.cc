@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+using namespace std;
 
 static CORBA::ORB_ptr the_orb;
 static CORBA::Object_ptr the_object;

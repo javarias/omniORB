@@ -29,7 +29,10 @@
 
 #include <common/omnitest.h>
 #include "varTest.hh"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
+
 
 arrFixed_slice*
 arrFixed_fn (const arrFixed in, arrFixed inout, arrFixed out) {
