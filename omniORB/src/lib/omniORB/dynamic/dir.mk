@@ -42,8 +42,6 @@ BUILTIN_STUB_SRCS = \
            irdynstub.cc \
            Namingdynstub.cc \
 	   boxes.cc \
-	   pollablestub.cc \
-	   messagingstub.cc \
            omniTypedefs.cc
 
 

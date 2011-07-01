@@ -105,9 +105,6 @@
 /* Define to 1 if you have the `poll' function. */
 #undef HAVE_POLL
 
-/* Define to 1 if you have the `rand_r' function. */
-#undef HAVE_RAND_R
-
 /* define if the compiler supports reinterpret_cast<> */
 #undef HAVE_REINTERPRET_CAST
 
@@ -224,9 +221,6 @@
 
 /* define if you want mutexes to be traced */
 #undef OMNIORB_ENABLE_LOCK_TRACES
-
-/* define if you want to disable atomic operations */
-#undef OMNI_DISABLE_ATOMIC_OPS
 
 /* define if you want to disable IPv6 support */
 #undef OMNI_DISABLE_IPV6

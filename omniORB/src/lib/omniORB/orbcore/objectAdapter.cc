@@ -182,16 +182,13 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 static char                             initialised = 0;
 static int                              num_active_oas = 0;
-static omni_tracedmutex                 oa_lock("oa_lock");
+static omni_tracedmutex                 oa_lock;
 static omnivector<_OMNI_NS(orbServer)*> oa_servers;
 static orbServer::EndpointList          oa_endpoints;
 
-omni_tracedmutex omniObjAdapter::sd_detachedObjectLock(
-  "omniObjAdapter::sd_detachedObjectLock");
-
+omni_tracedmutex     omniObjAdapter::sd_detachedObjectLock;
 omni_tracedcondition omniObjAdapter::sd_detachedObjectSignal(
-  &omniObjAdapter::sd_detachedObjectLock,
-  "omniObjAdapter::sd_detachedObjectSignal");
+				&omniObjAdapter::sd_detachedObjectLock);
 
 omniObjAdapter::Options omniObjAdapter::options;
 
@@ -421,7 +418,7 @@ omniObjAdapter::initialise()
       const char* hostname = getenv(OMNIORB_USEHOSTNAME_VAR);
       if( !hostname )  hostname = "";
 
-      CORBA::String_var estr = omniURI::buildURI("giop:tcp", hostname, 0);
+      CORBA::String_var estr = omniURI::buildURI("giop:tcp:", hostname, 0);
 
       CORBA::Boolean ok = instantiate_endpoint(estr, 0, listening_endpoints);
 
@@ -694,8 +691,7 @@ omniObjAdapter::omniObjAdapter(int nil)
     pd_signalOnZeroDetachedObjects(0),
     pd_isActive(0)
 {
-  if (!nil) pd_signal = new omni_tracedcondition(omni::internalLock,
-						 "omniObjAdapter::pd_signal");
+  if (!nil) pd_signal = new omni_tracedcondition(omni::internalLock);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -918,17 +914,6 @@ public:
   }
 
   void attach() { 
-
-    //
-    // Initialise random seed
-    {
-      unsigned long s, ns;
-      omni_thread::get_time(&s, &ns);
-      LibcWrapper::SRand(s);
-    }
-
-    //
-    // endPoint publishing options
 
     if ((const char*)omniObjAdapter::options.publish == 0 ||
 	strlen(omniObjAdapter::options.publish) == 0) {

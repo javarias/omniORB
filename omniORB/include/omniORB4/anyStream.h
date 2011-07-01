@@ -4,7 +4,7 @@
 //                            Author    : Duncan Grisby
 //
 //
-//    Copyright (C) 2004-2011 Apasphere Ltd.
+//    Copyright (C) 2004 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -53,8 +53,9 @@ public:
 
   virtual ~cdrAnyMemoryStream();
 
-  virtual void* ptrToClass(int* cptr);
+  cdrAnyMemoryStream& operator=(const cdrMemoryStream&);
 
+  virtual void* ptrToClass(int* cptr);
   static inline cdrAnyMemoryStream* downcast(cdrStream* s) {
     return (cdrAnyMemoryStream*)s->ptrToClass(&_classid);
   }
@@ -72,23 +73,6 @@ public:
     pd_values = 0;
   }
 
-  inline _CORBA_Boolean hasValues()
-  {
-    return pd_values.operator->() != 0;
-  }
-  
-  inline void add_ref()
-  {
-    pd_refCount.inc();
-  }
-
-  inline void remove_ref()
-  {
-    if (pd_refCount.dec() == 0)
-      delete this;
-  }
-
-
 private:
   // ValueTypes inside Anys cannot be stored inside the marshalled
   // stream like other types, because to do so would not have the
@@ -97,11 +81,6 @@ private:
   // representing an index into this sequence. The sequence is only
   // allocated if there are values inside the Any.
   omniTypedefs::ValueBaseSeq_var pd_values;
-
-  omni_refcount pd_refCount;
-
-  // Not implemented
-  cdrAnyMemoryStream& operator=(const cdrAnyMemoryStream&);
 };
 
 #undef _dyn_attr

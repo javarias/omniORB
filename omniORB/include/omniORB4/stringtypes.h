@@ -133,8 +133,6 @@ static inline char* alloc(int len) { return new char[len + 1]; }
 // we don't initialise to empty string.
 //  <len> does not include nul terminator.
 
-
-// *** HERE: rename to dealloc ***
 static inline void free(char* s) { 
   if (s && s != empty_string) delete[] s; 
 }

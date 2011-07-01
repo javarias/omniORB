@@ -123,7 +123,8 @@ public:
   GIOP::Version version();
   // No thread safety precondition
 
-  operator giopStrand& () { return *pd_strand; }
+  operator giopStrand& ()     { return *pd_strand; }
+  inline giopStrand& strand() { return *pd_strand; }
   // No thread safety precondition
 
   giopStreamImpl* impl() const { return pd_impl; }
@@ -374,8 +375,7 @@ public:
   //   static void deleteBuffer(inputBuffer*);
   // };
   giopStream_Buffer* newInputBuffer(CORBA::ULong sz=0);
-  // Return a giopStream_Buffer. Should be deleted by calling its
-  // deleteBuffer() method.
+  // Return a giopStream_Buffer. Should be deleted by calling
 private:
 
   // The following variables must be initialised to 0 by reset().

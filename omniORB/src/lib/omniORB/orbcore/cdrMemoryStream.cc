@@ -289,6 +289,19 @@ cdrMemoryStream::rewindPtrs()
   }
 }
   
+CORBA::ULong 
+cdrMemoryStream::bufSize() const
+{
+  return (CORBA::ULong)((omni::ptr_arith_t)pd_outb_mkr - 
+			(omni::ptr_arith_t)pd_bufp_8);
+}
+
+void*
+cdrMemoryStream::bufPtr() const
+{
+  return pd_bufp_8;
+}
+
 void
 cdrMemoryStream::setByteSwapFlag(CORBA::Boolean littleendian)
 {

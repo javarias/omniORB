@@ -1,7 +1,6 @@
-%define version_major 4
-%define version_minor 2
-%define version_micro 0
-%define version_full %{version_major}.%{version_minor}.%{version_micro}
+%define version_major 3
+%define version_minor 5
+%define version_full %{version_major}.%{version_minor}
 %define version_brief %{version_major}.%{version_minor}
 
 %define lib_name %{?mklibname:%mklibname %{name} %{version_brief}}%{!?mklibname:lib%{name}%{version_brief}}

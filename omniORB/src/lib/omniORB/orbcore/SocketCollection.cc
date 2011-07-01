@@ -370,7 +370,6 @@ static void closePipe(int pipe_read, int pipe_write)
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -594,6 +593,15 @@ SocketCollection::Select() {
   }
   else {
     // Negative return means error
+#ifdef __VMS
+    if (ERRNO == EVMSERR && vaxc$errno == 316) {
+      errno = EBADF;
+      if (omniORB::trace(1)) {
+	omniORB::logger log;
+	log << "vaxc$errno==" << vaxc$errno << "\n";
+      }
+    }
+#endif
     if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "poll() returned EBADF.");
 
@@ -603,8 +611,12 @@ SocketCollection::Select() {
     }
     else if (ERRNO != RC_EINTR) {
       if (omniORB::trace(20)) {
+#ifdef __VMS
+	perror("Error return from poll()");
+#else
 	omniORB::logger l;
 	l << "Error return from poll(). errno = " << (int)ERRNO << "\n";
+#endif
       }
       return 0;
     }
@@ -730,8 +742,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
@@ -841,8 +852,7 @@ SocketHolder::Peek()
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
-    pd_select_cond(&pd_collection_lock, "SocketCollection::pd_select_cond"),
+    pd_select_cond(&pd_collection_lock),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -1093,8 +1103,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait
@@ -1190,7 +1199,6 @@ SocketHolder::Peek()
 
 SocketCollection::SocketCollection()
   : pd_refcount(1),
-    pd_collection_lock("SocketCollection::pd_collection_lock"),
     pd_abs_sec(0), pd_abs_nsec(0),
     pd_pipe_full(0),
     pd_idle_count(idle_scans),
@@ -1313,10 +1321,12 @@ SocketCollection::Select() {
     pd_fd_set_n = 0;
 
 #ifdef UnixArchitecture
-    if (pd_pipe_read >= 0 && FD_ISSET(pd_pipe_read, &rfds)) {
-      char data;
-      read(pd_pipe_read, &data, 1);
-      pd_pipe_full = 0;
+    if (pd_pipe_read >= 0) {
+      if (FD_ISSET(pd_pipe_read, &rfds)) {
+	char data;
+	read(pd_pipe_read, &data, 1);
+	pd_pipe_full = 0;
+      }
       pd_fd_set_n = pd_pipe_read + 1;
     }
 #endif
@@ -1357,6 +1367,15 @@ SocketCollection::Select() {
   }
   else {
     // Negative return means error
+#ifdef __VMS
+    if (ERRNO == EVMSERR && vaxc$errno == 316) {
+      errno = EBADF;
+      if (omniORB::trace(1)) {
+	omniORB::logger log;
+	log << "vaxc$errno==" << vaxc$errno << "\n";
+      }
+    }
+#endif
     if (ERRNO == RC_EBADF) {
       omniORB::logs(20, "select() returned EBADF.");
 
@@ -1366,8 +1385,12 @@ SocketCollection::Select() {
     }
     else if (ERRNO != RC_EINTR) {
       if (omniORB::trace(1)) {
+#ifdef __VMS
+        perror("Error return from select()");
+#else
 	omniORB::logger l;
 	l << "Error return from select(). errno = " << (int)ERRNO << "\n";
+#endif
       }
       return 0;
     }
@@ -1479,8 +1502,7 @@ SocketHolder::Peek()
 	}
 	if (!pd_peek_cond)
 	  pd_peek_cond =
-	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock,
-				     "SocketHolder::pd_peek_cond");
+	    new omni_tracedcondition(&pd_belong_to->pd_collection_lock);
 	
 	if (s == 0 && ns == 0) {
 	  // Set timeout for condition wait

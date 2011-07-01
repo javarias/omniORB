@@ -192,7 +192,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
       }
     }
     else {
-      // Cannot call directly -- use a memory stream
+      // Cannot call directly -- use a memory stream for now
       if (omniORB::traceInvocations) {
 	omniORB::logger l;
 	l << "In process indirect call '" << desc.op() << "'\n";

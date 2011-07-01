@@ -1,5 +1,5 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 4.2.0, bugs@omniorb-support.com)
+AC_INIT(omniORB, 4.1.6, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
@@ -116,7 +116,7 @@ dnl ** Functions
 AC_LANG(C)
 AC_CHECK_FUNCS(getaddrinfo gethostname getopt getpid gettimeofday)
 AC_CHECK_FUNCS(getnameinfo inet_ntop)
-AC_CHECK_FUNCS(isinf insinff isinfl localtime nanosleep poll rand_r sigaction)
+AC_CHECK_FUNCS(isinf insinff isinfl localtime nanosleep poll sigaction)
 AC_CHECK_FUNCS(sigvec snprintf strcasecmp strdup strerror strftime stricmp)
 AC_CHECK_FUNCS(strncasecmp strtoul strtoull strtouq uname vprintf vsnprintf)
 AC_FUNC_ALLOCA
@@ -137,7 +137,6 @@ OMNI_DISABLE_THREAD_TRACING
 OMNI_DISABLE_IPV6_CHECK
 OMNI_DISABLE_ALLOCA
 OMNI_DISABLE_LONGDOUBLE
-OMNI_DISABLE_ATOMIC
 
 
 dnl ** Compiler name

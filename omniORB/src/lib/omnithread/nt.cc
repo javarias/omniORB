@@ -150,14 +150,14 @@ omni_mutex                   _internal_omni_thread_helper::cachelock;
 omni_condition::omni_condition(omni_mutex* m) : mutex(m)
 {
     InitializeCriticalSection(&crit);
-    waiting_head = waiting_tail = 0;
+    waiting_head = waiting_tail = NULL;
 }
 
 
 omni_condition::~omni_condition(void)
 {
     DeleteCriticalSection(&crit);
-    DB( if (waiting_head != 0) {
+    DB( if (waiting_head != NULL) {
 	cerr << "omni_condition::~omni_condition: list of waiting threads "
 	     << "is not empty\n";
     } )
@@ -171,9 +171,9 @@ omni_condition::wait(void)
 
     EnterCriticalSection(&crit);
 
-    me->cond_next = 0;
+    me->cond_next = NULL;
     me->cond_prev = waiting_tail;
-    if (waiting_head == 0)
+    if (waiting_head == NULL)
 	waiting_head = me;
     else
 	waiting_tail->cond_next = me;
@@ -200,9 +200,9 @@ omni_condition::timedwait(unsigned long abs_sec, unsigned long abs_nsec)
 
     EnterCriticalSection(&crit);
 
-    me->cond_next = 0;
+    me->cond_next = NULL;
     me->cond_prev = waiting_tail;
-    if (waiting_head == 0)
+    if (waiting_head == NULL)
 	waiting_head = me;
     else
 	waiting_tail->cond_next = me;
@@ -233,11 +233,11 @@ omni_condition::timedwait(unsigned long abs_sec, unsigned long abs_nsec)
 	EnterCriticalSection(&crit);
 
 	if (me->cond_waiting) {
-	    if (me->cond_prev != 0)
+	    if (me->cond_prev != NULL)
 		me->cond_prev->cond_next = me->cond_next;
 	    else
 		waiting_head = me->cond_next;
-	    if (me->cond_next != 0)
+	    if (me->cond_next != NULL)
 		me->cond_next->cond_prev = me->cond_prev;
 	    else
 		waiting_tail = me->cond_prev;
@@ -273,16 +273,16 @@ omni_condition::signal(void)
 {
     EnterCriticalSection(&crit);
 
-    if (waiting_head != 0) {
+    if (waiting_head != NULL) {
 	omni_thread* t = waiting_head;
 	waiting_head = t->cond_next;
-	if (waiting_head == 0)
-	    waiting_tail = 0;
+	if (waiting_head == NULL)
+	    waiting_tail = NULL;
 	else
-	    waiting_head->cond_prev = 0;
+	    waiting_head->cond_prev = NULL;
 	t->cond_waiting = FALSE;
 
-	if (!ReleaseSemaphore(t->cond_semaphore, 1, 0)) {
+	if (!ReleaseSemaphore(t->cond_semaphore, 1, NULL)) {
 	    int rc = GetLastError();
 	    LeaveCriticalSection(&crit);
 	    throw omni_thread_fatal(rc);
@@ -298,16 +298,16 @@ omni_condition::broadcast(void)
 {
     EnterCriticalSection(&crit);
 
-    while (waiting_head != 0) {
+    while (waiting_head != NULL) {
 	omni_thread* t = waiting_head;
 	waiting_head = t->cond_next;
-	if (waiting_head == 0)
-	    waiting_tail = 0;
+	if (waiting_head == NULL)
+	    waiting_tail = NULL;
 	else
-	    waiting_head->cond_prev = 0;
+	    waiting_head->cond_prev = NULL;
 	t->cond_waiting = FALSE;
 
-	if (!ReleaseSemaphore(t->cond_semaphore, 1, 0)) {
+	if (!ReleaseSemaphore(t->cond_semaphore, 1, NULL)) {
 	    int rc = GetLastError();
 	    LeaveCriticalSection(&crit);
 	    throw omni_thread_fatal(rc);
@@ -331,9 +331,9 @@ omni_condition::broadcast(void)
 
 omni_semaphore::omni_semaphore(unsigned int initial)
 {
-    nt_sem = CreateSemaphore(0, initial, SEMAPHORE_MAX, 0);
+    nt_sem = CreateSemaphore(NULL, initial, SEMAPHORE_MAX, NULL);
 
-    if (nt_sem == 0) {
+    if (nt_sem == NULL) {
       DB( cerr << "omni_semaphore::omni_semaphore: CreateSemaphore error "
 	     << GetLastError() << endl );
       throw omni_thread_fatal(GetLastError());
@@ -378,7 +378,7 @@ omni_semaphore::trywait(void)
 void
 omni_semaphore::post(void)
 {
-    if (!ReleaseSemaphore(nt_sem, 1, 0))
+    if (!ReleaseSemaphore(nt_sem, 1, NULL))
 	throw omni_thread_fatal(GetLastError());
 }
 
@@ -488,12 +488,12 @@ omni_thread_wrapper(void* ptr)
     // Now invoke the thread function with the given argument.
     //
 
-    if (me->fn_void != 0) {
+    if (me->fn_void != NULL) {
 	(*me->fn_void)(me->thread_arg);
 	omni_thread::exit();
     }
 
-    if (me->fn_ret != 0) {
+    if (me->fn_ret != NULL) {
 	void* return_value = (*me->fn_ret)(me->thread_arg);
 	omni_thread::exit(return_value);
     }
@@ -524,7 +524,7 @@ omni_thread::omni_thread(void (*fn)(void*), void* arg, priority_t pri)
 {
     common_constructor(arg, pri, 1);
     fn_void = fn;
-    fn_ret = 0;
+    fn_ret = NULL;
 }
 
 // construct an undetached thread running a given function.
@@ -532,7 +532,7 @@ omni_thread::omni_thread(void (*fn)(void*), void* arg, priority_t pri)
 omni_thread::omni_thread(void* (*fn)(void*), void* arg, priority_t pri)
 {
     common_constructor(arg, pri, 0);
-    fn_void = 0;
+    fn_void = NULL;
     fn_ret = fn;
 }
 
@@ -541,8 +541,8 @@ omni_thread::omni_thread(void* (*fn)(void*), void* arg, priority_t pri)
 omni_thread::omni_thread(void* arg, priority_t pri)
 {
     common_constructor(arg, pri, 1);
-    fn_void = 0;
-    fn_ret = 0;
+    fn_void = NULL;
+    fn_ret = NULL;
 }
 
 // common part of all constructors.
@@ -560,15 +560,15 @@ omni_thread::common_constructor(void* arg, priority_t pri, int det)
     thread_arg = arg;
     detached = det;	// may be altered in start_undetached()
 
-    cond_semaphore = CreateSemaphore(0, 0, SEMAPHORE_MAX, 0);
+    cond_semaphore = CreateSemaphore(NULL, 0, SEMAPHORE_MAX, NULL);
 
-    if (cond_semaphore == 0)
+    if (cond_semaphore == NULL)
 	throw omni_thread_fatal(GetLastError());
 
-    cond_next = cond_prev = 0;
+    cond_next = cond_prev = NULL;
     cond_waiting = FALSE;
 
-    handle = 0;
+    handle = NULL;
 
     _dummy       = 0;
     _values      = 0;
@@ -614,21 +614,21 @@ omni_thread::start(void)
     // MSVC++ or compatiable
     unsigned int t;
     handle = (HANDLE)_beginthreadex(
-                        0,
+                        NULL,
 			stack_size,
 			omni_thread_wrapper,
 			(LPVOID)this,
 			CREATE_SUSPENDED, 
 			&t);
     nt_id = t;
-    if (handle == 0)
+    if (handle == NULL)
       throw omni_thread_fatal(GetLastError());
 #else
     // Borland C++
     handle = (HANDLE)_beginthreadNT(omni_thread_wrapper,
 				    stack_size,
 				    (void*)this,
-				    0,
+				    NULL,
 				    CREATE_SUSPENDED,
 				    &nt_id);
     if (handle == INVALID_HANDLE_VALUE)
@@ -652,7 +652,7 @@ omni_thread::start(void)
 void
 omni_thread::start_undetached(void)
 {
-    if ((fn_void != 0) || (fn_ret != 0))
+    if ((fn_void != NULL) || (fn_ret != NULL))
 	throw omni_thread_invalid();
 
     detached = 0;
@@ -808,7 +808,7 @@ omni_thread::self(void)
 
     me = TlsGetValue(self_tls_index);
 
-    if (me == 0) {
+    if (me == NULL) {
       DB(cerr << "omni_thread::self: called with a non-ominthread. NULL is returned." << endl);
     }
     return (omni_thread*)me;
@@ -963,3 +963,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
   return TRUE;
 }
 #endif
+
+
+#define INSIDE_THREAD_IMPL_CC
+#include "threaddata.cc"
+#undef INSIDE_THREAD_IMPL_CC

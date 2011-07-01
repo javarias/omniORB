@@ -93,40 +93,8 @@ struct omniORBpyAPI {
   PyObject* (*unmarshalTypeDesc)(cdrStream& stream, CORBA::Boolean hold_lock);
   // Unmarshal a TypeCode from the stream, giving a type descriptor.
 
-  void* (*acquireGIL)();
-  // Acquire the Python Global Interpreter Lock in a way consistent
-  // with omniORB's threads. Returns an opaque pointer that must be
-  // given to releaseGIL to release the lock.
-
-  void (*releaseGIL)(void* ptr);
-  // Release the Python Global Interpreter Lock acquired with
-  // acquireGIL.
-
   omniORBpyAPI();
   // Constructor for the singleton. Sets up the function pointers.
-};
-
-
-// Python GIL acquisition class
-
-class omniORBpyLock {
-public:
-  inline omniORBpyLock(omniORBpyAPI* api, CORBA::Boolean do_it=1)
-    : api_(api), ptr_(0), do_it_(do_it)
-  {
-    if (do_it)
-      ptr_ = api->acquireGIL();
-  }
-
-  inline ~omniORBpyLock()
-  {
-    if (do_it_)
-      api_->releaseGIL(ptr_);
-  }
-private:
-  omniORBpyAPI*  api_;
-  void*          ptr_;
-  CORBA::Boolean do_it_;
 };
 
 

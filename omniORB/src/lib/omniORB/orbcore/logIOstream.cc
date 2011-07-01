@@ -237,7 +237,7 @@ omniORB::logger::~logger()
     if (logfunc())
       logfunc()(pd_buf);
     else {
-      fputs(pd_buf, logfile ? logfile : stderr);
+      fputs(pd_buf, logfile);
       if ((const char*)logfilename)
 	fflush(logfile);
     }
@@ -350,7 +350,7 @@ omniORB::logger::operator<<(const omniLocalIdentity* id)
                                            *this << " (deactivating OA)";break;
     case omniObjTableEntry::ETHEREALISING: *this << " (etherealising)";  break;
     case omniObjTableEntry::DEAD:          *this << " (dead)";           break;
-    default:                               *this << " (???)";
+    default:                               *this << " (???" ")";
     }
   }
   else
@@ -442,7 +442,7 @@ omniORB::logger::flush()
     if (logfunc())
       logfunc()(pd_buf);
     else
-      fprintf(logfile ? logfile : stderr, "%s", pd_buf);
+      fprintf(logfile, "%s", pd_buf);
   }
   pd_p = pd_buf + strlen(pd_prefix);
   *pd_p = '\0';
@@ -518,7 +518,7 @@ omniORB::do_logs(const char* mesg)
   if (logfunc())
     logfunc()(buf);
   else
-    fputs(buf, logfile ? logfile : stderr);
+    fputs(buf, logfile);
 
   if (buf != inlinebuf) delete[] buf;
 }

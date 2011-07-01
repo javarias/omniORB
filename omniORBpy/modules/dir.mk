@@ -75,9 +75,9 @@ ifdef UnixPlatform
 PYPREFIX  := $(shell $(PYTHON) -c 'import sys; print sys.exec_prefix')
 PYVERSION := $(shell $(PYTHON) -c 'import sys; print sys.version[:3]')
 PYINCDIR  := $(PYPREFIX)/include
-PYINCFILE := "<Python.h>"
-PYINCTHRD := "<pythread.h>"
-DIR_CPPFLAGS += -I$(PYINCDIR)/python$(PYVERSION) -I$(PYINCDIR) -DPYTHON_INCLUDE=$(PYINCFILE) -DPYTHON_THREAD_INC=$(PYINCTHRD)
+PYINCFILE := "<python$(PYVERSION)/Python.h>"
+PYINCTHRD := "<python$(PYVERSION)/pythread.h>"
+DIR_CPPFLAGS += -I$(PYINCDIR) -DPYTHON_INCLUDE=$(PYINCFILE) -DPYTHON_THREAD_INC=$(PYINCTHRD)
 DIR_CPPFLAGS += $(CORBA_CPPFLAGS)
 
 endif

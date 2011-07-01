@@ -3,7 +3,7 @@
 # output.py                 Created on: 2000/8/10
 #			    Author    : David Scott (djs)
 #
-#    Copyright (C) 2002-2011 Apasphere Ltd
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -27,7 +27,39 @@
 #   
 #   Routines for managing output
 
+# $Id$
+# $Log$
+# Revision 1.1.6.2  2008/12/03 10:53:58  dgrisby
+# Tweaks leading to Python 3 support; other minor clean-ups.
+#
+# Revision 1.1.6.1  2003/03/23 21:02:41  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.1.4.6  2002/11/25 21:10:08  dgrisby
+# Friendly error messages if can't create files.
+#
+# Revision 1.1.4.5  2001/08/15 10:29:53  dpg1
+# Update DSI to use Current, inProcessIdentity.
+#
+# Revision 1.1.4.4  2001/04/10 10:55:31  dpg1
+# Minor fix to new output routine.
+#
+# Revision 1.1.4.3  2001/03/26 11:11:54  dpg1
+# Python clean-ups. Output routine optimised.
+#
+# Revision 1.1.4.2  2001/03/13 10:34:01  dpg1
+# Minor Python clean-ups
+#
+# Revision 1.1.4.1  2000/10/12 15:37:48  sll
+# Updated from omni3_1_develop.
+#
+# Revision 1.1.2.1  2000/08/21 11:34:35  djs
+# Lots of omniidl/C++ backend changes
+#
+
 """Routines for managing output"""
+
+import string
 
 # Wrapper around the standard library file opening routines, keeps track of
 # which files have been created by the backend so they can be cleaned up on
@@ -42,7 +74,6 @@ def createFile(filename):
             file = open(filename, "w")
             createdFiles.append(filename)
         return file
-
     except IOError:
         import sys
         sys.stderr.write("omniidl: Cannot open file '%s' for writing.\n" %
@@ -102,7 +133,7 @@ class Stream:
         dict.update(ldict)
 
         pos    = 0
-        tlist  = text.split("@")
+        tlist  = string.split(text, "@")
         ltlist = len(tlist)
         i      = 0
         while i < ltlist:
@@ -116,8 +147,7 @@ class Stream:
             # Evaluate @ expression
             try:
                 expr = dict[tlist[i]]
-
-            except KeyError:
+            except:
                 # If a straight look-up failed, try evaluating it
                 if tlist[i] == "":
                     expr = "@"
@@ -126,7 +156,6 @@ class Stream:
 
             if type(expr) is StringType:
                 pos = self.olines(pos, pos, expr)
-                
             elif type(expr) is FuncType:
                 oindent = self.indent
                 self.indent = pos
@@ -145,7 +174,7 @@ class Stream:
         dict.update(ldict)
 
         pos    = 0
-        tlist  = text.split("@")
+        tlist  = string.split(text, "@")
         ltlist = len(tlist)
         i      = 0
         while i < ltlist:
@@ -159,8 +188,7 @@ class Stream:
             # Evaluate @ expression
             try:
                 expr = dict[tlist[i]]
-
-            except KeyError:
+            except:
                 # If a straight look-up failed, try evaluating it
                 if tlist[i] == "":
                     expr = "@"
@@ -169,7 +197,6 @@ class Stream:
 
             if type(expr) is StringType:
                 pos = self.olines(pos, pos, expr)
-                
             elif type(expr) is FuncType:
                 oindent = self.indent
                 self.indent = pos
@@ -186,7 +213,7 @@ class Stream:
         istr  = " " * indent
         write = self.file.write
 
-        stext = text.split("\n")
+        stext = string.split(text, "\n")
         lines = len(stext)
         line  = stext[0]
 
@@ -224,7 +251,6 @@ class Stream:
     def close(self):
         self.file.close()
 
-
 class StringStream(Stream):
     """Writes to a string buffer rather than a file."""
     def __init__(self, indent_size = 2):
@@ -235,4 +261,4 @@ class StringStream(Stream):
         self.buffer.append(text)
 
     def __str__(self):
-        return "".join(self.buffer)
+        return string.join(self.buffer, "")

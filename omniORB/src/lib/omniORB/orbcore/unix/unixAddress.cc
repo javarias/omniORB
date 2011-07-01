@@ -67,6 +67,10 @@
 #include <omniORB4/linkHacks.h>
 #include <sys/un.h>
 
+#if defined(USE_FAKE_INTERRUPTABLE_RECV)
+#  include <orbParameters.h>
+#endif
+
 OMNI_EXPORT_LINK_FORCE_SYMBOL(unixAddress);
 
 #ifndef AF_LOCAL
@@ -141,7 +145,7 @@ unixAddress::Connect(unsigned long deadline_secs,
                      sizeof(raddr)) == RC_SOCKET_ERROR) {
 
     int err = ERRNO;
-    if (err && err != EINPROGRESS) {
+    if (err && err != RC_EINPROGRESS) {
       omniORB::logs(25, "Failed to connect to Unix socket.");
       CLOSESOCKET(sock);
       return 0;

@@ -50,7 +50,7 @@ CORBA::Exception::~Exception() { pd_magic = 0; }
 
 
 CORBA::Exception*
-CORBA::Exception::_duplicate(const Exception* e)
+CORBA::Exception::_duplicate(Exception* e)
 {
   if( e )  return e->_NP_duplicate();
   else     return 0;
@@ -235,6 +235,12 @@ _OMNI_NS(omniExHelper)::strip(const char* fn)
   return p;
 }
 
+#ifdef OMNIORB_THROW_VISIBLE_THROW
+#  define THROW_IT(name)
+#else
+#  define THROW_IT(name) throw CORBA::name(minor,status);
+#endif
+
 
 #define STD_EXCEPTION(name) \
   void _OMNI_NS(omniExHelper)::name(const char* file, int line, \
@@ -252,6 +258,7 @@ _OMNI_NS(omniExHelper)::strip(const char* fn)
 	l << omniORB::logger::exceptionStatus(status,minor) << ")\n"; \
       } \
     } \
+    THROW_IT(name) \
   }
 
 OMNIORB_FOR_EACH_SYS_EXCEPTION(STD_EXCEPTION)

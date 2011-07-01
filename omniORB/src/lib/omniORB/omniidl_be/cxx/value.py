@@ -3,7 +3,7 @@
 # value.py                  Created on: 2003/09/29
 #			    Author    : Duncan Grisby
 #
-#    Copyright (C) 2003-2011 Apasphere Ltd.
+#    Copyright (C) 2003-2007 Apasphere Ltd.
 #
 #  This file is part of omniidl.
 #
@@ -26,6 +26,7 @@
 #  Implementation of ValueType / ValueBox mapping
 #
 
+import string
 from omniidl import idlast, idltype
 from omniidl_be.cxx import mapping, call, output, config, skutil
 from omniidl_be.cxx import id, types, iface, cxx, ast, util
@@ -2504,7 +2505,7 @@ class ValueType (mapping.Decl):
                     uname = iname.unambiguous(environment)
                     inheritl.append("public virtual " + uname)
 
-        inherits = ",\n".join(inheritl)
+        inherits = string.join(inheritl, ",\n")
 
         public_accessors  = output.StringStream()
         private_accessors = output.StringStream()
@@ -2525,8 +2526,7 @@ class ValueType (mapping.Decl):
 
         for intf in astdecl.supports():
             intf = intf.fullDecl()
-            if not intf.abstract():
-                callables.extend(intf.all_callables())
+            callables.extend(intf.all_callables())
 
         callables.extend(astdecl.callables())
 
@@ -2544,7 +2544,7 @@ class ValueType (mapping.Decl):
                     method = iface._impl_Method(op, self)
                     operationl.append(method.hh(1,1))
                 
-        operations = "\n".join(operationl)
+        operations = string.join(operationl, "\n")
 
         if supports_abstract:
             downcast_abstract = value_class_downcast_abstract
@@ -2586,7 +2586,7 @@ class ValueType (mapping.Decl):
 
             self._environment = save_env
                 
-            factory_funcs = "\n".join(funcs)
+            factory_funcs = string.join(funcs, "\n")
 
             stream.out(valuefactory_class_initialisers,
                        name=cxx_name, factory_funcs=factory_funcs)
@@ -2620,11 +2620,11 @@ class ValueType (mapping.Decl):
             irname   = id.Name(isname).relName(self._environment)
 
             if irname is None:
-                iname = "::POA_" + "::".join(isname)
+                iname = "::POA_" + string.join(isname, "::")
             elif irname == isname:
-                iname = "POA_" + "::".join(irname)
+                iname = "POA_" + string.join(irname, "::")
             else:
-                iname = "::".join(irname)
+                iname = string.join(irname, "::")
             
             stream.out(value_poa_class,
                        poa_name=poa_name, intf_poa=iname,
@@ -2653,11 +2653,11 @@ class ValueType (mapping.Decl):
                 isname = v.scopedName()
                 irname = id.Name(isname).relName(self._environment)
                 if irname is None:
-                    iname = "::OBV_" + "::".join(isname)
+                    iname = "::OBV_" + string.join(isname, "::")
                 elif irname == isname:
-                    iname = "OBV_" + "::".join(irname)
+                    iname = "OBV_" + string.join(irname, "::")
                 else:
-                    iname = "::".join(irname)
+                    iname = string.join(irname, "::")
 
                 inheritl.append("public virtual " + iname)
 
@@ -2680,7 +2680,7 @@ class ValueType (mapping.Decl):
 
             inheritl.append("public virtual ::CORBA::DefaultValueRefCountBase")
 
-        inherits = ",\n".join(inheritl)
+        inherits = string.join(inheritl, ",\n")
 
         for s in astdecl.statemembers():
             for d in s.declarators():
@@ -2696,7 +2696,7 @@ class ValueType (mapping.Decl):
         init_paraml  = astdecl._cxx_init_paraml
         statememberl = astdecl._cxx_statememberl
 
-        init_params = ", ".join(init_paraml)
+        init_params = string.join(init_paraml, ", ")
 
         if astdecl._cxx_has_callables:
             constructor_access = "protected"
@@ -2755,15 +2755,15 @@ class ValueType (mapping.Decl):
             isinstance(astdecl.inherits()[0].fullDecl(), idlast.Value)):
 
             v = astdecl.inherits()[0].fullDecl()
-            iname  = "::" + "::".join(v.scopedName())
-            ioname = "::OBV_" + "::".join(v.scopedName())
+            iname  = "::" + string.join(v.scopedName(), "::")
+            ioname = "::OBV_" + string.join(v.scopedName(), "::")
             sms = map(lambda s: "_" + s, v._cxx_statememberl)
             marshal_members.out("@iname@::_PR_marshal_state(_0s);",
                                 iname=iname)
             unmarshal_members.out("@iname@::_PR_unmarshal_state(_0s);",
                                   iname=iname)
             copy_members.out("@iname@::_PR_copy_state(_v);", iname=iname)
-            base_init = "  : " + ioname + "(" + ", ".join(sms) + ")"
+            base_init = "  : " + ioname + "(" + string.join(sms, ", ") + ")"
         else:
             base_init = ""
 
@@ -2775,7 +2775,7 @@ class ValueType (mapping.Decl):
                     unmarshal_members.out(d._cxx_unmarshal_impl)
                     member_initialisers.out(d._cxx_init_impl)
 
-            init_params = ", ".join(astdecl._cxx_init_paraml)
+            init_params = string.join(astdecl._cxx_init_paraml, ", ")
 
         stream.out(value_functions, fqname=value_name, name=cxx_name,
                    idhash=idhash, copy_members=copy_members,
@@ -2812,13 +2812,13 @@ class ValueType (mapping.Decl):
             stream.out(value_poa_functions, fqname=value_name, name=vname)
 
         if not self._abstract and astdecl.truncatable():
-            flatname  = "_".join(astdecl.scopedName())
+            flatname  = string.join(astdecl.scopedName(), "_")
             baseidl   = []
 
             v = astdecl
             idlist = []
             while v:
-                iname = "::" + "::".join(v.scopedName())
+                iname = "::" + string.join(v.scopedName(), "::")
                 hash = hashval(v.repoId())
                 idlist.append(v.repoId())
                 baseidl.append("{ %s::_PD_repoId, %sU }" % (iname, hash))
@@ -2827,7 +2827,7 @@ class ValueType (mapping.Decl):
                 else:
                     v = None
 
-            baseids = ",\n".join(baseidl)
+            baseids = string.join(baseidl, ",\n")
             baseshash = hashlist(idlist)
 
             stream.out(value_truncatable_bases, fqname=value_name,
@@ -2856,7 +2856,7 @@ class ValueType (mapping.Decl):
 def ptrToValueNames(decl, result, done):
     for v in decl.inherits():
         v = v.fullDecl()
-        iname = "::" + "::".join(v.scopedName())
+        iname = "::" + string.join(v.scopedName(), "::")
         if done.has_key(iname):
             return result
         done[iname] = None
@@ -2872,7 +2872,7 @@ def ptrToValueNames(decl, result, done):
     for i in supports:
         i = i.fullDecl()
         if i.abstract():
-            iname = "::" + "::".join(i.scopedName())
+            iname = "::" + string.join(i.scopedName(), "::")
             if done.has_key(iname):
                 return result
             done[iname] = None
@@ -3057,10 +3057,10 @@ class ValueBox (mapping.Decl):
             bounded      = d_boxedType.type().bound()
 
             if self._anonSeq:
-                if btype[:2] == "::":
-                    btype = btype[2:]
-                if boxed_member[:2] == "::":
-                    boxed_member = boxed_member[2:]
+                assert btype[:2] == "::"
+                assert boxed_member[:2] == "::"
+                btype = btype[2:]
+                boxed_member = boxed_member[2:]
 
             if seqType.array():
                 element = "INVALID"
@@ -3330,7 +3330,7 @@ class ValueBox (mapping.Decl):
         astdecl  = self._astdecl
         name     = astdecl.identifier()
         cxx_name = id.mapID(name)
-        flatname = "_".join(astdecl.scopedName())
+        flatname = string.join(astdecl.scopedName(), "_")
 
         value_name = self._fullname.fullyQualify()
 

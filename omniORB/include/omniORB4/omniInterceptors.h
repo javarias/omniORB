@@ -3,7 +3,7 @@
 // omniInterceptors.h         Created on: 22/09/2000
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2006-2010 Apasphere Ltd
+//    Copyright (C) 2006-2011 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -28,6 +28,48 @@
 //	*** PROPRIETARY INTERFACE ***
 //	
 
+/*
+  $Log$
+  Revision 1.1.4.3  2006/07/18 16:21:24  dgrisby
+  New experimental connection management extension; ORB core support
+  for it.
+
+  Revision 1.1.4.2  2006/06/05 11:28:04  dgrisby
+  Change clientSendRequest interceptor members to a single GIOP_C.
+
+  Revision 1.1.4.1  2003/03/23 21:04:14  dgrisby
+  Start of omniORB 4.1.x development branch.
+
+  Revision 1.1.2.9  2002/11/26 16:54:13  dgrisby
+  Fix exception interception.
+
+  Revision 1.1.2.8  2002/11/26 14:50:43  dgrisby
+  Implement missing interceptors.
+
+  Revision 1.1.2.7  2002/09/10 23:17:10  dgrisby
+  Thread interceptors.
+
+  Revision 1.1.2.6  2002/08/16 16:03:30  dgrisby
+  Interceptor tweaks.
+
+  Revision 1.1.2.5  2002/03/27 11:44:51  dpg1
+  Check in interceptors things left over from last week.
+
+  Revision 1.1.2.4  2001/08/15 10:26:08  dpg1
+  New object table behaviour, correct POA semantics.
+
+  Revision 1.1.2.3  2001/04/18 17:50:44  sll
+  Big checkin with the brand new internal APIs.
+  Scoped where appropriate with the omni namespace.
+
+  Revision 1.1.2.2  2000/11/15 17:05:39  sll
+  Added interceptors along the giop request processing path.
+
+  Revision 1.1.2.1  2000/09/27 16:54:08  sll
+  *** empty log message ***
+
+*/
+
 #ifndef __OMNIINTERCEPTORS_H__
 #define __OMNIINTERCEPTORS_H__
 
@@ -37,12 +79,11 @@
 
 class omniLocalIdentity;
 class omniCallDescriptor;
-class omniServant;
 
 OMNI_NAMESPACE_BEGIN(omni)
 
 class omniInterceptorP;
-class giopStream;
+class giopStrand;
 class GIOP_S;
 class GIOP_C;
 class orbServer;
@@ -89,6 +130,32 @@ public:
 
       info_T(const IIOP::ProfileBody& body, omniIOR& i, CORBA::Boolean b) :
          iiop(body), ior(i), has_iiop_body(b) {}
+
+    private:
+      info_T();
+      info_T(const info_T&);
+      info_T& operator=(const info_T&);
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
+
+    void add(interceptFunc);
+    void remove(interceptFunc);
+  };
+
+
+  //////////////////////////////////////////////////////////////////
+  class clientOpenConnection_T {
+  public:
+
+    class info_T {
+    public:
+      GIOP_C&        giop_c;
+      CORBA::Boolean reject;
+      const char*    why;
+
+      info_T(GIOP_C& c) :
+        giop_c(c), reject(0), why(0) {}
 
     private:
       info_T();
@@ -152,6 +219,33 @@ public:
     void remove(interceptFunc);
   };
 
+
+  //////////////////////////////////////////////////////////////////
+  class serverAcceptConnection_T {
+  public:
+
+    class info_T {
+    public:
+      giopStrand&    strand;
+      CORBA::Boolean reject;
+      const char*    why;
+
+      info_T(giopStrand& s) : 
+	strand(s), reject(0), why(0) {}
+
+    private:
+      info_T();
+      info_T(const info_T&);
+      info_T& operator=(const info_T&);
+    };
+
+    typedef CORBA::Boolean (*interceptFunc)(info_T& info);
+
+    void add(interceptFunc);
+    void remove(interceptFunc);
+  };
+
+
   //////////////////////////////////////////////////////////////////
   class serverReceiveRequest_T {
   public:
@@ -182,10 +276,11 @@ public:
 
     class info_T {
     public:
-      GIOP_S&                  giop_s;
+      GIOP_S& giop_s;
       
       info_T(GIOP_S& s) :
 	giop_s(s) {}
+
     private:
       info_T();
       info_T(const info_T&);
@@ -197,6 +292,7 @@ public:
     void add(interceptFunc);
     void remove(interceptFunc);
   };
+
 
   //////////////////////////////////////////////////////////////////
   class serverSendException_T {
@@ -221,6 +317,7 @@ public:
     void remove(interceptFunc);
   };
 
+
   //////////////////////////////////////////////////////////////////
   class createIdentity_T {
   public:
@@ -242,6 +339,7 @@ public:
     void remove(interceptFunc);
   };
 
+
   //////////////////////////////////////////////////////////////////
   class createORBServer_T {
   public:
@@ -258,6 +356,7 @@ public:
     void add(interceptFunc);
     void remove(interceptFunc);
   };
+
 
   //////////////////////////////////////////////////////////////////
   class createPolicy_T {
@@ -279,6 +378,7 @@ public:
     void remove(interceptFunc);
   };
 
+
   //////////////////////////////////////////////////////////////////
   class createThread_T {
   public:
@@ -293,6 +393,7 @@ public:
     void add(interceptFunc);
     void remove(interceptFunc);
   };
+
 
   //////////////////////////////////////////////////////////////////
   class assignUpcallThread_T {
@@ -311,21 +412,13 @@ public:
 
 
   //////////////////////////////////////////////////////////////////
-  class invokeLocalCall_T {
-  public:
-    typedef void (*interceptFunc)(omniCallDescriptor*, omniServant*);
-
-    void add(interceptFunc);
-    void remove(interceptFunc);
-  };
-
-
-  //////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////
   encodeIOR_T                encodeIOR;
   decodeIOR_T                decodeIOR;
+  clientOpenConnection_T     clientOpenConnection;
   clientSendRequest_T        clientSendRequest;
   clientReceiveReply_T       clientReceiveReply;
+  serverAcceptConnection_T   serverAcceptConnection;
   serverReceiveRequest_T     serverReceiveRequest;
   serverSendReply_T          serverSendReply;
   serverSendException_T      serverSendException;
@@ -334,7 +427,6 @@ public:
   createPolicy_T             createPolicy;
   createThread_T             createThread;
   assignUpcallThread_T       assignUpcallThread;
-  invokeLocalCall_T          invokeLocalCall;
 
   //////////////////////////////////////////////////////////////////
   friend class omni_interceptor_initialiser;

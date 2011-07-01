@@ -101,7 +101,8 @@ if sys.hexversion < 0x10502f0:
 import _omniidl
 import getopt, os, os.path
 
-import idlast, idltype
+import idlast, idltype, idlstring
+string = idlstring
 
 cmdname = "omniidl"
 
@@ -177,14 +178,21 @@ if sys.platform != "OpenVMS":
                         _omniidl.version
 else:
     if hasattr(_omniidl, "__file__"):
-        preprocessor_path = os.path.dirname(_omniidl.__file__)
+        preprocessor_path = os.path.dirname(os.path.abspath(_omniidl.__file__))
     else:
-        preprocessor_path = os.path.dirname(sys.argv[0])
+        preprocessor_path = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-    names = preprocessor_path.split("/")
-    preprocessor_cmd = \
-         '''mcr %s:[%s]omnicpp -lang-c++ -undef "-D__OMNIIDL__=%s"'''\
-         % (names[1], ".".join(names[2:]), _omniidl.version)
+    names=[]
+    for name in string.split(preprocessor_path, "/"):
+        names.append(string.replace(name, '.', '^.'))
+
+    preprocessor_options = ('-lang-c++ -undef "-D__OMNIIDL__=%s"' %
+                            _omniidl.version)
+    preprocessor_cmdfmt  = "mcr %s:[%s]%s %s"
+    preprocessor_cmd     = preprocessor_cmdfmt % (names[1],
+                                                  string.join(names[2:],"."),
+                                                  preprocessor_name,
+                                                  preprocessor_options)
 
 no_preprocessor   = 0
 backends          = []
@@ -239,14 +247,14 @@ def parseArgs(args):
 
         elif o == "-W":
             if a[0] == "p":
-                preprocessor_args.extend(a[1:].split(","))
+              preprocessor_args.extend(string.split(a[1:], ","))
             elif a[0] == "b":
                 if len(backends) == 0:
                     if not quiet:
                         sys.stderr.write(cmdname + ": Error in arguments: "
                                          "no back-ends selected\n")
                     sys.exit(1)
-                backends_args[-1].extend(a[1:].split(","))
+                backends_args[-1].extend(string.split(a[1:], ","))
             else:
                 if not quiet:
                     sys.stderr.write("Error in arguments: option " + o + \
@@ -335,7 +343,7 @@ def genTempFileName():
 
 def my_import(name):
     mod = __import__(name)
-    components = name.split(".")
+    components = string.split(name, ".")
     for comp in components[1:]:
         mod = getattr(mod, comp)
     return mod
@@ -423,11 +431,11 @@ def main(argv=None):
 
         if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
             preproc_cmd = '%s %s "%s"' % (preprocessor_cmd,
-                                          " ".join(preprocessor_args),
+                                          string.join(preprocessor_args, ' '),
                                           name)
         else:
             preproc_cmd = '%s "%s" %s' % (preprocessor_cmd,
-                                          '" "'.join(preprocessor_args),
+                                          string.join(preprocessor_args,'" "'),
                                           name)
         if not no_preprocessor:
             if verbose:

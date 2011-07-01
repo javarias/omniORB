@@ -24,7 +24,6 @@ GIOP_SRCS = \
             SocketCollection.cc
 
 TRANSPORT_SRCS = \
-            tcpSocket.cc \
             tcpTransportImpl.cc \
             tcpConnection.cc \
             tcpEndpoint.cc \

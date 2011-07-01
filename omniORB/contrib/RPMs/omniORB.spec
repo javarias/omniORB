@@ -4,8 +4,8 @@
 %define omnigid -1
 
 %define version_major 4
-%define version_minor 2
-%define version_micro 0
+%define version_minor 1
+%define version_micro 6
 %define version_full %{version_major}.%{version_minor}.%{version_micro}
 %define version_brief %{version_major}.%{version_minor}
 
@@ -330,7 +330,7 @@ fi
   start omniNames upon RPM install.
 
 * Thu Jul 22 2004 Thomas Lockhart <lockhart@fourpalms.org> 4.0.3-7
-- Incorporate additional SUSE features per Dirk O. Kaar <dok@dok-net.net>
+- Incorporate additional SUSE features per Dirk O. Siebnich <dok@dok-net.net>
 - Use additional standard RPM substitution parameters rather than
   hardcoded paths
 
