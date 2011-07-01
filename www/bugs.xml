@@ -8,7 +8,7 @@ We try very hard to make omniORB releases free of bugs, but inevitably
 some are discovered. The pages linked below list the bugs fixed in the
 specified omniORB versions. If a bug in the most recent release is
 affecting you, you should get the current development version from <a
-href="development.html">CVS</a>.
+href="development.html">Subversion</a>.
 </p>
 
 <p>
@@ -28,6 +28,7 @@ Bugs fixed in:
   <li>
     omniORB 4.1.x:
     <ul>
+      <li><a href="bugs/bugfixes-415.html">omniORB 4.1.5</a></li>
       <li><a href="bugs/bugfixes-414.html">omniORB 4.1.4</a></li>
       <li><a href="bugs/bugfixes-413.html">omniORB 4.1.3</a></li>
       <li><a href="bugs/bugfixes-412.html">omniORB 4.1.2</a></li>
