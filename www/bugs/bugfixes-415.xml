@@ -6,7 +6,7 @@
 
 <!-- Editors: make sure the content you add is well-formed XML.     -->
 
-<buglist version="4.1.4">
+<buglist version="4.1.5">
 
 <bug id="1" date="Mon Jan 31 23:55:16 GMT 2011" user="dgrisby">
   <summary>Stall in incoming call handling</summary>
