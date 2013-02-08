@@ -1,3 +1,23 @@
+Fri Feb  8 22:32:33 GMT 2013 dgrisby
+====================================
+
+- Remove local omnithread.
+
+att/testsuite/common/GNUmakefile
+att/testsuite/common/dir.mk
+att/testsuite/common/omnithread.h
+att/testsuite/common/omnithread
+att/testsuite/common/omnithread/nt.cc
+att/testsuite/common/omnithread/nt.h
+att/testsuite/common/omnithread/posix.cc
+att/testsuite/common/omnithread/posix.h
+att/testsuite/common/omnithread/threaddata.cc
+
+- Clear context after use.
+
+iona/orbacus/cpp/main/TestObjectContext.cpp
+
+
 Thu Feb 17 12:26:25 GMT 2011 dgrisby
 ====================================
 

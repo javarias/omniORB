@@ -165,6 +165,7 @@ TestObjectContext::test_SII(
 	        TEST(strcmp(seq[i + 1], "X1-1") == 0);
 	}
     }
+    ctx->delete_values("*");
 }
 
 void
@@ -316,4 +317,5 @@ TestObjectContext::test_DII(
 	TEST(strcmp((*seq)[0], "A") == 0 &&
 	     strcmp((*seq)[1], "A1") == 0);
     }
+    ctx->delete_values("*");
 }
