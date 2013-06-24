@@ -5,7 +5,7 @@
 
 omniORB is a CORBA Object Request Broker (ORB) for C++ and Python.
 
-<h2>Stable release: omniORB 4.1.6</h2>
+<h2>Stable release: omniORB 4.1.7</h2>
 
 omniORB 4.1 adheres to version 2.6 of the CORBA specification. The
 technical highlights are:
