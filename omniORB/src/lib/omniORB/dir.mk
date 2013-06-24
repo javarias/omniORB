@@ -27,20 +27,16 @@ EXPORTHEADERS = omniORB4/distdate.hh \
                 omniORB4/boxes_defs.hh \
                 omniORB4/boxes_operators.hh \
                 omniORB4/boxes_poa.hh \
-                omniORB4/pollable_defs.hh \
-                omniORB4/pollable_operators.hh \
-                omniORB4/pollable_poa.hh \
                 omniORB4/poa_enums_defs.hh \
                 omniORB4/poa_enums_operators.hh \
                 omniORB4/poa_enums_poa.hh \
 		omniORB4/omniTypedefs.hh \
                 omniORB4/bootstrap.hh \
-		omniORB4/omniConnectionData.hh \
-		omniORB4/messaging.hh
+		omniORB4/omniConnectionData.hh
 
 ifdef EnableZIOP
 EXPORTHEADERS += omniORB4/compression.hh \
-		 omniORB4/messaging_policy.hh \
+		 omniORB4/messaging.hh \
 		 omniORB4/ziop_defs.hh
 endif
 
@@ -87,8 +83,8 @@ ifdef DisableLongDouble
 UNDEFINES = -UHAS_LongDouble
 endif
 
-OMNIORB_IDL += -p$(BASE_OMNI_TREE)/src/lib/omniORB -I$(BASE_OMNI_TREE)/idl -Wbdebug
-OMNIORB_IDL_ONLY += -p$(BASE_OMNI_TREE)/src/lib/omniORB -I$(BASE_OMNI_TREE)/idl -Wbdebug
+OMNIORB_IDL += -p$(BASE_OMNI_TREE)/src/lib/omniORB -Wbdebug
+OMNIORB_IDL_ONLY += -p$(BASE_OMNI_TREE)/src/lib/omniORB -Wbdebug
 
 omniORB4/distdate.hh : $(BASE_OMNI_TREE)/update.log
 	@(dir=omniORB4; $(CreateDir))
@@ -114,17 +110,9 @@ omniORB4/boxes_defs.hh omniORB4/boxes_operators.hh omniORB4/boxes_poa.hh: boxes.
 	@(dir=omniORB4; $(CreateDir))
 	$(OMNIORB_IDL) -v -nf -P $(UNDEFINES) -WbF -ComniORB4 $<
 
-omniORB4/pollable_defs.hh omniORB4/pollable_operators.hh omniORB4/pollable_poa.hh: pollable.idl
-	@(dir=omniORB4; $(CreateDir))
-	$(OMNIORB_IDL) -v -nf -P $(UNDEFINES) -WbF -ComniORB4 $<
-
 omniORB4/poa_enums_defs.hh omniORB4/poa_enums_operators.hh omniORB4/poa_enums_poa.hh: poa_enums.idl
 	@(dir=omniORB4; $(CreateDir))
 	$(OMNIORB_IDL) -v -nf -P $(UNDEFINES) -WbF -ComniORB4 $<
-
-omniORB4/messaging.hh: messaging.idl
-	@(dir=omniORB4; $(CreateDir))
-	$(OMNIORB_IDL_ONLY) -v -ComniORB4 $<
 
 omniORB4/omniTypedefs.hh: omniTypedefs.idl
 	@(dir=omniORB4; $(CreateDir))
@@ -136,11 +124,11 @@ omniORB4/omniConnectionData.hh: omniConnectionData.idl
 
 ifdef EnableZIOP
 
-omniORB4/messaging_policy.hh: messaging_policy.idl
-	@(dir=omniORB4; $(CreateDir))
-	$(OMNIORB_IDL_ONLY) -v -ComniORB4 $<
-
 omniORB4/compression.hh : compression.idl
+	@(dir=omniORB4; $(CreateDir))
+	$(OMNIORB_IDL_ONLY) -v $(IMPORT_IDLFLAGS) -ComniORB4 $<
+
+omniORB4/messaging.hh : messaging.idl
 	@(dir=omniORB4; $(CreateDir))
 	$(OMNIORB_IDL_ONLY) -v $(IMPORT_IDLFLAGS) -ComniORB4 $<
 
@@ -149,3 +137,10 @@ omniORB4/ziop_defs.hh : ziop.idl
 	$(OMNIORB_IDL_ONLY) -v $(IMPORT_IDLFLAGS) -WbF -ComniORB4 $<
 
 endif
+
+
+ciao:: $(STUBHEADERS)
+	@$(MakeSubdirs)
+
+
+

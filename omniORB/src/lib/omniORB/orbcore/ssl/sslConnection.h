@@ -3,7 +3,6 @@
 // sslConnection.h            Created on: 19 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2005-2012 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -25,11 +24,47 @@
 //
 //
 // Description:
-//	*** PROPRIETARY INTERFACE ***
+//	*** PROPRIETORY INTERFACE ***
 // 
+
+/*
+  $Log$
+  Revision 1.1.4.4  2005/03/02 12:10:48  dgrisby
+  setSelectable / Peek fixes.
+
+  Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
+  Revision 1.1.4.2  2005/01/06 23:10:52  dgrisby
+  Big merge from omni4_0_develop.
+
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
+  Revision 1.1.2.5  2001/07/31 16:16:23  sll
+  New transport interface to support the monitoring of active connections.
+
+  Revision 1.1.2.4  2001/07/13 15:36:24  sll
+  Revised declaration to match the changes in giopConnection.
+
+  Revision 1.1.2.3  2001/06/20 18:35:16  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
+  Revision 1.1.2.2  2001/06/18 20:28:31  sll
+  Remove garbage after #endif
+
+  Revision 1.1.2.1  2001/06/11 18:11:06  sll
+  *** empty log message ***
+
+
+*/
 
 #ifndef __SSLCONNECTION_H__
 #define __SSLCONNECTION_H__
+
 
 #include <SocketCollection.h>
 #include <orbParameters.h>
@@ -40,13 +75,15 @@ OMNI_NAMESPACE_BEGIN(omni)
 class sslEndpoint;
 
 class sslConnection : public giopConnection, public SocketHolder {
-public:
+ public:
 
   int Send(void* buf, size_t sz,
-	   const omni_time_t& deadline);
+	   unsigned long deadline_secs = 0,
+	   unsigned long deadline_nanosecs = 0);
 
   int Recv(void* buf, size_t sz,
-	   const omni_time_t& deadline);
+	   unsigned long deadline_secs = 0,
+	   unsigned long deadline_nanosecs = 0);
 
   void Shutdown();
 
@@ -56,9 +93,9 @@ public:
 
   const char *peeridentity();
 
-  _CORBA_Boolean gatekeeperCheckSpecific(giopStrand* strand);
-
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
   void* peerdetails();
+#endif
 
   void setSelectable(int now = 0,CORBA::Boolean data_in_buffer = 0);
 
@@ -76,15 +113,15 @@ public:
   ~sslConnection();
 
 
-private:
+ private:
   ::SSL*            pd_ssl;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;
   CORBA::String_var pd_peeridentity;
 
-protected:
-  _CORBA_Boolean    pd_handshake_ok;
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
   X509*             pd_peercert;
+#endif
 };
 
 
@@ -102,6 +139,90 @@ private:
   sslActiveConnection(const sslActiveConnection&);
   sslActiveConnection& operator=(const sslActiveConnection&);
 };
+
+
+/////////////////////////////////////////////////////////////////////////
+
+static inline int setAndCheckTimeout(unsigned long deadline_secs,
+				     unsigned long deadline_nanosecs,
+				     struct timeval& t)
+{
+  if (deadline_secs || deadline_nanosecs) {
+    SocketSetTimeOut(deadline_secs,deadline_nanosecs,t);
+    if (t.tv_sec == 0 && t.tv_usec == 0) {
+      // Already timedout.
+      return 1;
+    }
+#if defined(USE_FAKE_INTERRUPTABLE_RECV)
+    if (t.tv_sec > orbParameters::scanGranularity) {
+      t.tv_sec = orbParameters::scanGranularity;
+    }
+#endif
+  }
+  else {
+#if defined(USE_FAKE_INTERRUPTABLE_RECV)
+    t.tv_sec = orbParameters::scanGranularity;
+    t.tv_usec = 0;
+#else
+    t.tv_sec = t.tv_usec = 0;
+#endif
+  }
+  return 0;
+}
+
+static inline int waitWrite(SocketHandle_t sock, struct timeval& t)
+{
+  int rc;
+
+#if defined(USE_POLL)
+  struct pollfd fds;
+  fds.fd = sock;
+  fds.events = POLLOUT;
+  int timeout = t.tv_sec*1000+((t.tv_usec+999)/1000);
+  if (timeout == 0) timeout = -1;
+  rc = poll(&fds,1,timeout);
+  if (rc > 0 && fds.revents & POLLERR) {
+    rc = RC_SOCKET_ERROR;
+  }
+#else
+  fd_set fds, efds;
+  FD_ZERO(&fds);
+  FD_ZERO(&efds);
+  FD_SET(sock,&fds);
+  FD_SET(sock,&efds);
+  struct timeval* tp = &t;
+  if (t.tv_sec == 0 && t.tv_usec == 0) tp = 0;
+  rc = select(sock+1,0,&fds,&efds,tp);
+#endif
+  return rc;
+}
+
+static inline int waitRead(SocketHandle_t sock, struct timeval& t)
+{
+  int rc;
+
+#if defined(USE_POLL)
+  struct pollfd fds;
+  fds.fd = sock;
+  fds.events = POLLIN;
+  int timeout = t.tv_sec*1000+((t.tv_usec+999)/1000);
+  if (timeout == 0) timeout = -1;
+  rc = poll(&fds,1,timeout);
+  if (rc > 0 && fds.revents & POLLERR) {
+    rc = RC_SOCKET_ERROR;
+  }
+#else
+  fd_set fds, efds;
+  FD_ZERO(&fds);
+  FD_ZERO(&efds);
+  FD_SET(sock,&fds);
+  FD_SET(sock,&efds);
+  struct timeval* tp = &t;
+  if (t.tv_sec == 0 && t.tv_usec == 0) tp = 0;
+  rc = select(sock+1,&fds,0,&efds,tp);
+#endif
+  return rc;
+}
 
 
 OMNI_NAMESPACE_END(omni)

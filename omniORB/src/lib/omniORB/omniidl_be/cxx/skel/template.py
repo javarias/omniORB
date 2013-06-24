@@ -3,7 +3,7 @@
 # template.py               Created on: 2000/01/19
 #			    Author    : David Scott (djs)
 #
-#    Copyright (C) 2003-2013 Apasphere Ltd
+#    Copyright (C) 2003-2009 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -22,6 +22,182 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 #  02111-1307, USA.
+#
+# Description:
+#   
+#   C++ templates for the SK.cc file
+
+# $Id$
+# $Log$
+# Revision 1.6.2.14  2009/01/07 12:30:33  dgrisby
+# Some compilers do not like empty static arrays.
+#
+# Revision 1.6.2.13  2008/10/28 15:33:42  dgrisby
+# Undeclared user exceptions not caught in local calls.
+#
+# Revision 1.6.2.12  2007/09/19 14:16:07  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
+# Revision 1.6.2.11  2007/02/26 15:51:14  dgrisby
+# Suppress cd parameter when it is definitely unused, to avoid compiler
+# warnings.
+#
+# Revision 1.6.2.10  2005/11/14 11:02:16  dgrisby
+# Local interface fixes.
+#
+# Revision 1.6.2.9  2005/11/09 12:22:17  dgrisby
+# Local interfaces support.
+#
+# Revision 1.6.2.8  2005/09/19 15:36:35  dgrisby
+# Refcount shortcut now throws INV_OBJREF when the servant is
+# deactivated, rather than deactivating the shortcut, which could lead
+# to a race condition.
+#
+# Revision 1.6.2.7  2005/09/05 17:22:09  dgrisby
+# Reference counted local call shortcut.
+#
+# Revision 1.6.2.6  2005/03/30 23:36:11  dgrisby
+# Another merge from omni4_0_develop.
+#
+# Revision 1.6.2.5  2005/01/06 23:10:10  dgrisby
+# Big merge from omni4_0_develop.
+#
+# Revision 1.6.2.4  2005/01/06 16:35:18  dgrisby
+# Narrowing for abstract interfaces.
+#
+# Revision 1.6.2.3  2004/10/13 17:58:25  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
+# Revision 1.6.2.2  2003/11/06 11:56:56  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
+# Revision 1.6.2.1  2003/03/23 21:02:34  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.3.2.23  2002/01/16 11:31:58  dpg1
+# Race condition in use of registerNilCorbaObject/registerTrackedObject.
+# (Reported by Teemu Torma).
+#
+# Revision 1.3.2.22  2001/11/27 14:35:09  dpg1
+# Context, DII fixes.
+#
+# Revision 1.3.2.21  2001/11/13 14:14:45  dpg1
+# Bug when no catch by base class.
+#
+# Revision 1.3.2.20  2001/11/12 13:46:07  dpg1
+# _unchecked_narrow, improved _narrow.
+#
+# Revision 1.3.2.19  2001/11/09 09:56:11  dpg1
+# Missed a file in yesterday's checkin.
+#
+# Revision 1.3.2.18  2001/11/07 15:45:53  dpg1
+# Faster _ptrToInterface/_ptrToObjRef in common cases.
+#
+# Revision 1.3.2.17  2001/11/06 15:41:37  dpg1
+# Reimplement Context. Remove CORBA::Status. Tidying up.
+#
+# Revision 1.3.2.16  2001/10/29 17:42:42  dpg1
+# Support forward-declared structs/unions, ORB::create_recursive_tc().
+#
+# Revision 1.3.2.15  2001/10/18 12:45:29  dpg1
+# IDL compiler tweaks.
+#
+# Revision 1.3.2.14  2001/10/17 16:44:06  dpg1
+# Update DynAny to CORBA 2.5 spec, const Any exception extraction.
+#
+# Revision 1.3.2.13  2001/09/19 17:26:47  dpg1
+# Full clean-up after orb->destroy().
+#
+# Revision 1.3.2.12  2001/08/15 10:26:11  dpg1
+# New object table behaviour, correct POA semantics.
+#
+# Revision 1.3.2.11  2001/08/03 17:41:17  sll
+# System exception minor code overhaul. When a system exeception is raised,
+# a meaning minor code is provided.
+#
+# Revision 1.3.2.10  2001/07/25 13:40:53  dpg1
+# Suppress compiler warning about unused variable in _dispatch() for
+# empty interfaces.
+#
+# Revision 1.3.2.9  2001/06/08 17:12:20  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
+# Revision 1.3.2.8  2001/05/31 16:18:12  dpg1
+# inline string matching functions, re-ordered string matching in
+# _ptrToInterface/_ptrToObjRef
+#
+# Revision 1.3.2.7  2001/05/29 17:03:50  dpg1
+# In process identity.
+#
+# Revision 1.3.2.6  2001/05/02 14:20:15  sll
+# Make sure that getStream() is used instead of casting to get a cdrStream
+# from a IOP_C and IOP_S.
+#
+# Revision 1.3.2.5  2001/04/19 09:30:11  sll
+#  Big checkin with the brand new internal APIs.
+# Scoped where appropriate with the omni namespace.
+#
+# Revision 1.3.2.4  2000/11/09 12:27:56  dpg1
+# Huge merge from omni3_develop, plus full long long from omni3_1_develop.
+#
+# Revision 1.3.2.3  2000/11/03 19:23:53  sll
+# Replace the old set of marshalling operators in the generated code with
+# a couple of unified operators for cdrStream. Changed template to correspond
+# to the new callDescriptor structure and the new way to dispatch a call on
+# the server side.
+#
+# Revision 1.3.2.2  2000/10/12 15:37:53  sll
+# Updated from omni3_1_develop.
+#
+# Revision 1.4.2.2  2000/08/21 11:35:34  djs
+# Lots of tidying
+#
+# Revision 1.4.2.1  2000/08/02 10:52:01  dpg1
+# New omni3_1_develop branch, merged from omni3_develop.
+#
+# Revision 1.4  2000/07/13 15:25:59  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
+# Revision 1.1.2.8  2000/07/24 16:32:19  djs
+# Fixed typo in previous BOA skeleton bugfix.
+# Suppressed compiler warning (from gcc -Wall) when encountering a call with
+# no arguments and no return value.
+#
+# Revision 1.1.2.7  2000/07/24 10:17:34  djs
+# Added missing BOA skeleton constructor
+#
+# Revision 1.1.2.6  2000/06/05 13:04:20  djs
+# Removed union member name clash (x & pd_x, pd__default, pd__d)
+# Removed name clash when a sequence is called "pd_seq"
+#
+# Revision 1.1.2.5  2000/05/31 18:03:40  djs
+# Better output indenting (and preprocessor directives now correctly output at
+# the beginning of lines)
+# Calling an exception "e" resulted in a name clash (and resultant C++
+# compile failure)
+#
+# Revision 1.1.2.4  2000/05/05 16:50:53  djs
+# Existing workaround for MSVC5 scoping problems extended to help with
+# base class initialisers. Instead of using the fully qualified or unambiguous
+# name, a flat typedef is generated at global scope and that is used instead.
+# This was a solution to a previous bug wrt operation dispatch()ing.
+# This does not affect the OMNI_BASE_CTOR powerpc/aix workaround.
+#
+# Revision 1.1.2.3  2000/04/26 18:22:57  djs
+# Rewrote type mapping code (now in types.py)
+# Rewrote identifier handling code (now in id.py)
+# Removed superfluous externs in front of function definitions
+#
+# Revision 1.1.2.2  2000/04/20 15:11:28  djr
+# Fixed bug when duplicating a nil object reference.
+#
+# Revision 1.1.2.1  2000/03/20 11:50:28  djs
+# Removed excess buffering- output templates have code attached which is
+# lazily evaluated when required.
+#
+# Revision 1.1  2000/01/19 17:05:16  djs
+# Modified to use an externally stored C++ output template.
+#
 
 """C++ templates for the SK.cc file"""
 
@@ -39,7 +215,7 @@ boilerplate = """\
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/callHandle.h>
 #include <omniORB4/objTracker.h>
-@ami_inc@
+@include_omniAMICallDescriptor@
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -52,7 +228,6 @@ static const char* @prefix@_library_version = @library@;
 ##
 ## Interface
 ##
-
 interface_POA = """\
 POA_@fqname@::~@POA_prefix@@name@() {}
 """
@@ -81,20 +256,20 @@ void @name@_Helper::marshalObjRef(::@name@_ptr obj, cdrStream& s) {
 
 interface_duplicate_narrow = """\
 void @name@_Helper::duplicate(::@name@_ptr obj) {
-  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
 }
 
 @name@_ptr
 @name@::_duplicate(::@name@_ptr obj)
 {
-  if (obj && !obj->_NP_is_nil())  omni::duplicateObjRef(obj);
+  if( obj && !obj->_NP_is_nil() )  omni::duplicateObjRef(obj);
   return obj;
 }
 
 @name@_ptr
 @name@::_narrow(::CORBA::Object_ptr obj)
 {
-  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
   _ptr_type e = (_ptr_type) obj->_PR_getobj()->_realNarrow(_PD_repoId);
   return e ? e : _nil();
 }
@@ -103,7 +278,7 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
 @name@_ptr
 @name@::_unchecked_narrow(::CORBA::Object_ptr obj)
 {
-  if (!obj || obj->_NP_is_nil() || obj->_NP_is_pseudo()) return _nil();
+  if( !obj || obj->_NP_is_nil() || obj->_NP_is_pseudo() ) return _nil();
   _ptr_type e = (_ptr_type) obj->_PR_getobj()->_uncheckedNarrow(_PD_repoId);
   return e ? e : _nil();
 }
@@ -145,7 +320,7 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
 @name@_ptr
 @name@::_narrow(::CORBA::AbstractBase_ptr obj)
 {
-  if (!obj || obj->_NP_is_nil()) return _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
   _ptr_type e = 0;
   
   ::CORBA::ValueBase* v = obj->_to_value();
@@ -164,7 +339,7 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
 @name@_ptr
 @name@::_unchecked_narrow(::CORBA::AbstractBase_ptr obj)
 {
-  if (!obj || obj->_NP_is_nil()) return _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
   _ptr_type e = 0;
   
   ::CORBA::ValueBase* v = obj->_to_value();
@@ -183,20 +358,20 @@ void @name@_Helper::duplicate(::@name@_ptr obj) {
 
 local_interface_duplicate_narrow = """\
 void @name@_Helper::duplicate(::@name@_ptr obj) {
-  if (obj && !obj->_NP_is_nil())  obj->_NP_incrRefCount();
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
 }
 
 @name@_ptr
 @name@::_duplicate(::@name@_ptr obj)
 {
-  if (obj && !obj->_NP_is_nil())  obj->_NP_incrRefCount();
+  if( obj && !obj->_NP_is_nil() )  obj->_NP_incrRefCount();
   return obj;
 }
 
 @name@_ptr
 @name@::_narrow(::CORBA::Object_ptr obj)
 {
-  if (!obj || obj->_NP_is_nil()) return _nil();
+  if( !obj || obj->_NP_is_nil() ) return _nil();
   _ptr_type e = (_ptr_type) obj->_ptrToObjRef(_PD_repoId);
   if (e) {
     e->_NP_incrRefCount();
@@ -222,9 +397,9 @@ interface_nil = """\
   return &_the_nil_obj;
 #else
   static @objref_name@* _the_nil_ptr = 0;
-  if (!_the_nil_ptr) {
+  if( !_the_nil_ptr ) {
     omni::nilRefLock().lock();
-    if (!_the_nil_ptr) {
+    if( !_the_nil_ptr ) {
       _the_nil_ptr = new @objref_name@;
       registerNilCorbaObject(_the_nil_ptr);
     }
@@ -256,16 +431,16 @@ interface_objref = """\
 void*
 @fq_objref_name@::_ptrToObjRef(const char* id)
 {
-  if (id == ::@name@::_PD_repoId)
+  if( id == ::@name@::_PD_repoId )
     return (::@name@_ptr) this;
   @_ptrToObjRef_ptr@
-  if (id == ::CORBA::Object::_PD_repoId)
+  if( id == ::CORBA::Object::_PD_repoId )
     return (::CORBA::Object_ptr) this;
 
-  if (omni::strMatch(id, ::@name@::_PD_repoId))
+  if( omni::strMatch(id, ::@name@::_PD_repoId) )
     return (::@name@_ptr) this;
   @_ptrToObjRef_str@
-  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+  if( omni::strMatch(id, ::CORBA::Object::_PD_repoId) )
     return (::CORBA::Object_ptr) this;
 
   return 0;
@@ -280,12 +455,12 @@ if (_shortcut) {
 """
 
 interface_objref_repoID_ptr = """\
-if (id == ::@inherits_fqname@::_PD_repoId)
+if( id == ::@inherits_fqname@::_PD_repoId )
   return (::@inherits_fqname@_ptr) this;
 """
 
 interface_objref_repoID_str = """\
-if (omni::strMatch(id, ::@inherits_fqname@::_PD_repoId))
+if( omni::strMatch(id, ::@inherits_fqname@::_PD_repoId) )
   return (::@inherits_fqname@_ptr) this;
 """
 
@@ -338,16 +513,16 @@ local_interface_objref = """\
 void*
 @name@::_ptrToObjRef(const char* id)
 {
-  if (id == ::@name@::_PD_repoId)
+  if( id == ::@name@::_PD_repoId )
     return (::@name@_ptr) this;
   @_ptrToObjRef_ptr@
-  if (id == ::CORBA::Object::_PD_repoId)
+  if( id == ::CORBA::Object::_PD_repoId )
     return (::CORBA::Object_ptr) this;
 
-  if (omni::strMatch(id, ::@name@::_PD_repoId))
+  if( omni::strMatch(id, ::@name@::_PD_repoId) )
     return (::@name@_ptr) this;
   @_ptrToObjRef_str@
-  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+  if( omni::strMatch(id, ::CORBA::Object::_PD_repoId) )
     return (::CORBA::Object_ptr) this;
 
   return 0;
@@ -409,8 +584,8 @@ class @call_descriptor@
   : public omniCallDescriptor
 {
 public:
-  inline @call_descriptor@(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall=0)
-    : omniCallDescriptor(lcfn, op_, oplen, @oneway@, _user_exns, @exn_len@, upcall)
+  inline @call_descriptor@(@ctor_args@):
+     @base_ctor@
   {
     @contains_values@
   }
@@ -423,35 +598,6 @@ public:
   @member_data@
 };
 """
-
-interface_proxy_class_ami = """\
-// Proxy call descriptor class. Mangled signature:
-//  @signature@
-class @call_descriptor@
-  : public omniAsyncCallDescriptor
-{
-public:
-  inline @call_descriptor@(LocalCallFn lcfn, const char* op_, size_t oplen, _CORBA_Boolean upcall)
-    : omniAsyncCallDescriptor(lcfn, op_, oplen, @oneway@, _user_exns, @exn_len@, upcall)
-  {
-    @contains_values@
-  }
-
-  inline @call_descriptor@(LocalCallFn lcfn, const char* op_, size_t oplen)
-    : omniAsyncCallDescriptor(lcfn, op_, oplen, @oneway@, _user_exns, @exn_len@)
-  {
-    @contains_values@
-  }
-  
-  @in_arguments_decl@
-  @out_arguments_decl@  
-  @user_exceptions_decl@
-  static const char* const _user_exns[];
-
-  @member_data@
-};
-"""
-
 
 interface_context_array = """\
 static const char*const @context_descriptor@[] = {
@@ -518,7 +664,7 @@ void @call_descriptor@::userException(cdrStream& s, _OMNI_NS(IOP_C)* iop_client,
 """
 
 interface_proxy_exn_handle = """\
-if (omni::strMatch(repoId, @repoID_str@)) {
+if ( omni::strMatch(repoId, @repoID_str@) ) {
   @exname@ _ex;
   _ex <<= s;
   if (iop_client) iop_client->RequestCompleted();
@@ -576,7 +722,7 @@ omniObjRef*
 ::CORBA::Boolean
 @pof_name@::is_a(const char* id) const
 {
-  if (omni::ptrStrMatch(id, ::@name@::_PD_repoId))
+  if( omni::ptrStrMatch(id, ::@name@::_PD_repoId) )
     return 1;
   @Other_repoIDs@
   return 0;
@@ -586,7 +732,7 @@ const @pof_name@ _the_pof_@idname@;
 """
 
 interface_pof_repoID = """\
-if (omni::ptrStrMatch(id, @inherited@::_PD_repoId))
+if( omni::ptrStrMatch(id, @inherited@::_PD_repoId) )
   return 1;
 """
 
@@ -617,16 +763,16 @@ interface_impl = """\
 void*
 @impl_fqname@::_ptrToInterface(const char* id)
 {
-  if (id == ::@name@::_PD_repoId)
+  if( id == ::@name@::_PD_repoId )
     return (::@impl_fqname@*) this;
   @_ptrToInterface_ptr@
-  if (id == ::CORBA::Object::_PD_repoId)
+  if( id == ::CORBA::Object::_PD_repoId )
     return (void*) 1;
 
-  if (omni::strMatch(id, ::@name@::_PD_repoId))
+  if( omni::strMatch(id, ::@name@::_PD_repoId) )
     return (::@impl_fqname@*) this;
   @_ptrToInterface_str@
-  if (omni::strMatch(id, ::CORBA::Object::_PD_repoId))
+  if( omni::strMatch(id, ::CORBA::Object::_PD_repoId) )
     return (void*) 1;
   return 0;
 }
@@ -641,13 +787,13 @@ const char*
 interface_impl_inherit_dispatch = """\
 
 #ifndef _MSC_VER
-if (@impl_inherited_name@::_dispatch(_handle)) {
+if( @impl_inherited_name@::_dispatch(_handle) ) {
   return 1;
 }
 #else
 // Work-around for incorrect MSVC code generation.
-if (((@impl_inherited_name@*)this)->
-    @impl_inherited_name@::_dispatch(_handle)) {
+if( ((@impl_inherited_name@*)this)->
+    @impl_inherited_name@::_dispatch(_handle) ) {
   return 1;
 }
 #endif
@@ -658,12 +804,12 @@ void @impl_fqname@::_interface_is_abstract() {}
 """
 
 interface_impl_repoID_ptr = """\
-if (id == ::@inherited_name@::_PD_repoId)
+if( id == ::@inherited_name@::_PD_repoId )
   return (::@impl_inherited_name@*) this;
 """
 
 interface_impl_repoID_str = """\
-if (omni::strMatch(id, ::@inherited_name@::_PD_repoId))
+if( omni::strMatch(id, ::@inherited_name@::_PD_repoId) )
   return (::@impl_inherited_name@*) this;
 """
 
@@ -685,7 +831,7 @@ _ctxt = ::CORBA::Context::unmarshalContext(iop_s);
 """
 
 interface_operation_dispatch = """\
-if (omni::strMatch(op, "@idl_operation_name@")) {
+if( omni::strMatch(op, "@idl_operation_name@") ) {
 
   @call_descriptor@ _call_desc(@call_desc_args@);
   @prepare_out_args@
@@ -694,177 +840,9 @@ if (omni::strMatch(op, "@idl_operation_name@")) {
 }
 """
 
-
-##
-## Interface -- AMI
-##
-
-interface_ami_poller_impl = """
-// Implementation class for @poller_name@
-class @poller_impl_name@
-  : public virtual @poller_name@,
-    public virtual omniAMI::PollerImpl
-{
-public:
-  @poller_impl_name@(omniAsyncCallDescriptor* _cd)
-    : omniAMI::PollerImpl(_cd) {}
-
-  void* _ptrToValue(const char* _id);
-
-  @method_decls@
-};
-
-void* @poller_impl_name@::_ptrToValue(const char* _id)
-{
-  if (_id == omniAMI::PollerImpl::_PD_repoId)
-    return (void*)(omniAMI::PollerImpl*)this;
-
-  return @poller_name@::_ptrToValue(_id);
-}
-"""
-
-interface_ami_call_descriptor = """
-// AMI proxy call descriptor class for callback:
-//  @if_name@::@op_name@
-class @call_descriptor_c@
-  : public @base_cd@
-{
-public:
-  static const char* ami_op;
-
-  inline @call_descriptor_c@(::@handler_cls@::_ptr_type handler)
-    : @base_cd@(@lcfn@, ami_op, @op_len@)
-  {
-    pd_handler = ::@handler_cls@::_duplicate(handler);
-  }
-
-  inline @call_descriptor_c@()
-    : @base_cd@(@lcfn@, ami_op, @op_len@)
-  {
-  }
-
-  void completeCallback();
-
-protected:
-  ::@handler_cls@::_var_type pd_handler;
-};
-
-const char* @call_descriptor_c@::ami_op = "@op_name@";
-
-
-void @call_descriptor_c@::completeCallback()
-{
-  try {
-    if (!::CORBA::is_nil(pd_handler)) {
-      if (!exceptionOccurred()) {
-        pd_handler->@handler_op_name@(@callback_args@);
-      }
-      else {
-        ::Messaging::ExceptionHolder_var eh(new omniAMI::ExceptionHolder(this));
-        pd_handler->@handler_ex_name@(eh);
-      }
-    }
-  }
-  catch (...) {
-    delete this;
-    throw;
-  }
-  delete this;
-}
-
-// AMI proxy call descriptor class for poller:
-//  @if_name@::@op_name@
-class @call_descriptor_p@
-  : public @call_descriptor_c@
-{
-public:
-  inline @call_descriptor_p@()
-    : @call_descriptor_c@(),
-      pd_poller(new @poller_impl_name@(this))
-  {
-  }
-
-  inline ::@poller_cls@* poller()
-  {
-    pd_poller->_add_ref();
-    return pd_poller.in();
-  }
-
-  void completeCallback();
-  void setHandler(omniObjRef* objref);
-  omniObjRef* getHandler();
-
-protected:
-  ::@poller_cls@::_var_type pd_poller;
-};
-
-void @call_descriptor_p@::completeCallback()
-{
-  ::@poller_cls@::_var_type poller_to_release(pd_poller._retn());
-
-  ::@handler_cls@::_var_type handler;
-  {
-    omni_tracedmutex_lock _l(sd_lock);
-    handler = ::@handler_cls@::_duplicate(pd_handler);
-  }
-  if (!::CORBA::is_nil(handler)) {
-    if (!exceptionOccurred()) {
-      handler->@handler_op_name@(@callback_args@);
-    }
-    else {
-      ::Messaging::ExceptionHolder_var eh(new omniAMI::ExceptionHolder(this));
-      handler->@handler_ex_name@(eh);
-    }
-  }
-}
-
-void @call_descriptor_p@::setHandler(omniObjRef* objref)
-{
-  omni_tracedmutex_lock _l(sd_lock);
-
-  if (objref) {
-    pd_handler = ::@handler_cls@::_narrow(::Messaging::ReplyHandler::_fromObjRef(objref));
-    if (::CORBA::is_nil(pd_handler))
-      OMNIORB_THROW(INV_OBJREF, INV_OBJREF_IncorrectReplyHandler, ::CORBA::COMPLETED_NO);
-  }
-  else {
-    pd_handler = ::@handler_cls@::_nil();
-  }
-}
-
-omniObjRef* @call_descriptor_p@::getHandler()
-{
-  omni_tracedmutex_lock _l(sd_lock);
-  return pd_handler->_PR_getobj();
-}
-"""
-
-interface_ami_sendc = """\
-@cd_name@* _call_desc = new @cd_name@(@ami_handler@);
-@assign_args@
-_invoke_async(_call_desc);"""
-
-interface_ami_sendp = """\
-@cd_name@* _call_desc = new @cd_name@();
-@assign_args@
-@poller_class@::_var_type _poller = _call_desc->poller();
-_invoke_async(_call_desc);
-return _poller._retn();"""
-
-interface_ami_poller_method = """\
-_checkResult(@cd_name_c@::ami_op, @timeout_arg@);
-
-@cd_name_p@* _call_desc = (@cd_name_p@*)_pd_cd;
-@assign_res@"""
-
-interface_ami_poller_method_empty = """\
-_checkResult(@cd_name_c@::ami_op, @timeout_arg@);"""
-
-
 ##
 ## Struct
 ##
-
 struct = """\
 void
 @name@::operator>>= (cdrStream &_n) const
@@ -898,17 +876,12 @@ void
 @name@::operator>>= (cdrStream& _n) const
 {
   @marshal_discriminator@
-
-  switch(_pd__d) {
-    @marshal_cases@
-  }
+  @marshal_cases@
 }
 
 void
 @name@::operator<<= (cdrStream& _n)
 {
-  _release_member();
-  
   @unmarshal_discriminator@
   switch(_pd__d) {
     @unmarshal_cases@
@@ -917,11 +890,27 @@ void
 }
 """
 
+union_operators_nonexhaustive = """\
+if (_pd__default) {
+  @default@
+}
+else {
+  switch(_pd__d) {
+    @cases@
+  }
+}
+"""
+
+union_operators_exhaustive = """\
+switch(_pd__d) {
+  @cases@
+}
+"""
+
 
 ##
 ## const
 ##
-
 const_namespace = """\
 #if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage othewise.
@@ -948,7 +937,6 @@ _init_in_def_( const @type@ @name@ = @value@; )
 ##
 ## Exception
 ##
-
 exception = """\
 ::CORBA::Exception::insertExceptionToAny @scoped_name@::insertToAnyFn = 0;
 ::CORBA::Exception::insertExceptionToAnyNCP @scoped_name@::insertToAnyFnNCP = 0;
@@ -1047,7 +1035,7 @@ void
     // never reach here
   }
   length(_l);
-  for (_CORBA_ULong _i = 0; _i < _l; _i++)
+  for( _CORBA_ULong _i = 0; _i < _l; _i++ )
     pd_buf[_i] <<= _s;
 }
 """
@@ -1072,7 +1060,7 @@ void
     // never reach here
   }
   length(_l);
-  for (_CORBA_ULong _i = 0; _i < _l; _i++)
+  for( _CORBA_ULong _i = 0; _i < _l; _i++ )
     pd_buf[_i] <<= _s;
 }
 """
@@ -1082,14 +1070,13 @@ void
 @fqname@::operator>>= (cdrStream& _s) const
 {
   ::operator>>=(_CORBA_ULong(pd_len), _s);
-  for (_CORBA_ULong _i = 0; _i < pd_len; _i++)
+  for( _CORBA_ULong _i = 0; _i < pd_len; _i++ )
     pd_buf[_i] >>= _s;
 }
 
 @fqname@&
 @fqname@::operator=(const ::@fqname@& _s)
 {
-  pd_len = 0;
   length(_s.pd_len);
   for (unsigned long _i=0; _i < pd_len; _i++) {
     pd_buf[_i] = _s.pd_buf[_i];

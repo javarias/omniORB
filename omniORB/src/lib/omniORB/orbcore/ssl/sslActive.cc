@@ -64,9 +64,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 static sslActiveCollection myCollection;
 
 /////////////////////////////////////////////////////////////////////////
-sslActiveCollection::sslActiveCollection()
-  : pd_n_sockets(0), pd_shutdown(0), pd_lock("sslActiveCollection::pd_lock")
-{}
+sslActiveCollection::sslActiveCollection() : pd_n_sockets(0), pd_shutdown(0) {}
 
 /////////////////////////////////////////////////////////////////////////
 sslActiveCollection::~sslActiveCollection() {}
@@ -132,9 +130,7 @@ sslActiveCollection::isEmpty() const {
 
 /////////////////////////////////////////////////////////////////////////
 sslActiveConnection::sslActiveConnection(SocketHandle_t sock, ::SSL* ssl) : 
-  sslConnection(sock,ssl,&myCollection), pd_registered(0)
-{
-  pd_handshake_ok = 1;
+  sslConnection(sock,ssl,&myCollection), pd_registered(0) {
 }
 
 /////////////////////////////////////////////////////////////////////////

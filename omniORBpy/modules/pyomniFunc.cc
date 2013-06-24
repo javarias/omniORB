@@ -3,7 +3,7 @@
 // pyomniFunc.cc              Created on: 2000/06/07
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2002-2013 Apasphere Ltd
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -28,6 +28,72 @@
 // Description:
 //    omniORB API functions
 
+// $Id$
+// $Log$
+// Revision 1.1.4.9  2008/10/09 15:04:36  dgrisby
+// Python exceptions occurring during unmarshalling were not properly
+// handled. Exception state left set when at traceLevel 0 (thanks
+// Morarenko Kirill).
+//
+// Revision 1.1.4.8  2008/03/24 20:06:30  dgrisby
+// Memory leak in minor code stringification.
+//
+// Revision 1.1.4.7  2006/01/17 17:38:21  dgrisby
+// Expose omniORB.setClientConnectTimeout function.
+//
+// Revision 1.1.4.6  2005/11/09 12:33:32  dgrisby
+// Support POA LocalObjects.
+//
+// Revision 1.1.4.5  2005/07/22 17:41:07  dgrisby
+// Update from omnipy2_develop.
+//
+// Revision 1.1.4.4  2005/06/24 17:36:00  dgrisby
+// Support for receiving valuetypes inside Anys; relax requirement for
+// old style classes in a lot of places.
+//
+// Revision 1.1.4.3  2005/04/14 13:50:59  dgrisby
+// New traceTime, traceInvocationReturns functions; removal of omniORB::logf.
+//
+// Revision 1.1.4.2  2005/01/07 00:22:33  dgrisby
+// Big merge from omnipy2_develop.
+//
+// Revision 1.1.4.1  2003/03/23 21:51:56  dgrisby
+// New omnipy3_develop branch.
+//
+// Revision 1.1.2.11  2002/11/27 00:18:25  dgrisby
+// Per thread / per objref timeouts.
+//
+// Revision 1.1.2.10  2002/08/16 19:27:36  dgrisby
+// Documentation update. Minor ORB updates to match docs.
+//
+// Revision 1.1.2.9  2002/05/26 00:56:22  dgrisby
+// traceInvocations() function.
+//
+// Revision 1.1.2.8  2002/02/25 15:33:50  dpg1
+// Expose omniORB logger to Python.
+//
+// Revision 1.1.2.7  2001/09/24 10:48:28  dpg1
+// Meaningful minor codes.
+//
+// Revision 1.1.2.6  2001/08/21 12:48:27  dpg1
+// Meaningful exception minor code strings.
+//
+// Revision 1.1.2.5  2001/08/21 10:52:42  dpg1
+// Update to new ORB core APIs.
+//
+// Revision 1.1.2.4  2001/04/09 15:22:16  dpg1
+// Fixed point support.
+//
+// Revision 1.1.2.3  2000/11/22 14:43:58  dpg1
+// Support code set conversion and wchar/wstring.
+//
+// Revision 1.1.2.2  2000/11/06 17:07:17  dpg1
+// maxTcpConnectionPerServer function
+//
+// Revision 1.1.2.1  2000/10/13 13:55:28  dpg1
+// Initial support for omniORB 4.
+//
+
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <omniORB4/giopEndpoint.h>
@@ -37,7 +103,6 @@ OMNI_USING_NAMESPACE(omni);
 
 
 static PyObject* transientEHtuple   = 0;
-static PyObject* timeoutEHtuple     = 0;
 static PyObject* commFailureEHtuple = 0;
 static PyObject* systemEHtuple      = 0;
 
@@ -76,51 +141,6 @@ static CORBA::Boolean transientEH(void* cookie, CORBA::ULong retries,
     }
     if (!PyInt_Check(r)) {
       omniORB::logs(1, "Python TRANSIENT exception handler returned an "
-		    "invalid object.");
-      Py_DECREF(r);
-      return 0;
-    }
-    ret = PyInt_AS_LONG(r);
-    Py_DECREF(r);
-  }
-  return ret;
-}
-
-
-static CORBA::Boolean timeoutEH(void* cookie, CORBA::ULong retries,
-				const CORBA::TIMEOUT& ex)
-{
-  PyObject* tuple;
-
-  if (cookie)
-    tuple = (PyObject*)cookie;
-  else
-    tuple = timeoutEHtuple;
-
-  OMNIORB_ASSERT(PyTuple_Check(tuple));
-
-  PyObject* pyfn     = PyTuple_GET_ITEM(tuple, 0);
-  PyObject* pycookie = PyTuple_GET_ITEM(tuple, 1);
-  PyObject* r;
-  CORBA::Boolean ret;
-
-  {
-    omnipyThreadCache::lock _t;
-    PyObject* pyex = omniPy::createPySystemException(ex);
-    r = PyObject_CallFunction(pyfn, (char*)"OiN", pycookie, retries, pyex);
-    
-    if (!r) {
-      if (omniORB::trace(1)) {
-	omniORB::logs(1, "Python TIMEOUT exception handler failed. "
-		      "Traceback follows:");
-	PyErr_Print();
-      }
-      else
-	PyErr_Clear();
-      return 0;
-    }
-    if (!PyInt_Check(r)) {
-      omniORB::logs(1, "Python TIMEOUT exception handler returned an "
 		    "invalid object.");
       Py_DECREF(r);
       return 0;
@@ -315,7 +335,8 @@ extern "C" {
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
-      CORBA::Object_ptr objref = omniPy::getObjRef(pyobjref);
+      CORBA::Object_ptr objref =
+	(CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
       RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
 
@@ -330,52 +351,6 @@ extern "C" {
       OMNIORB_ASSERT(transientEHtuple);
       omniORB::installTransientExceptionHandler((void*)transientEHtuple,
 						transientEH);
-    }
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-
-  static char timeout_doc [] =
-  "installTimeoutExceptionHandler(cookie, function [, object]) -> None\n"
-  "\n"
-  "Install a handler for TIMEOUT exceptions, for all objects or a\n"
-  "specified object. The function must have the signature:\n"
-  "\n"
-  "  function(cookie, retries, exc) -> boolean\n"
-  "\n"
-  "where cookie is the object passed on installation, retries is the\n"
-  "number of times this operation invocation has been retried, and exc is\n"
-  "the TIMEOUT exception object. If the function returns TRUE, the\n"
-  "operation invocation is retried; if it returns FALSE, the TIMEOUT\n"
-  "exception is thrown to the application.\n";
-
-  static PyObject* pyomni_installTimeoutExceptionHandler(PyObject* self,
-							   PyObject* args)
-  {
-    PyObject *pycookie, *pyfn, *pyobjref = 0;
-
-    if (!PyArg_ParseTuple(args, (char*)"OO|O", &pycookie, &pyfn, &pyobjref))
-      return 0;
-
-
-    RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
-
-    if (pyobjref) {
-      CORBA::Object_ptr objref = omniPy::getObjRef(pyobjref);
-
-      RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
-
-      PyObject* tuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
-      PyObject_SetAttrString(pyobjref, (char*)"__omni_timeout", tuple);
-      omniORB::installTimeoutExceptionHandler(objref, (void*)tuple,
-					      timeoutEH);
-    }
-    else {
-      Py_XDECREF(timeoutEHtuple);
-      timeoutEHtuple = Py_BuildValue((char*)"OO", pyfn, pycookie);
-      OMNIORB_ASSERT(timeoutEHtuple);
-      omniORB::installTimeoutExceptionHandler((void*)timeoutEHtuple,
-					      timeoutEH);
     }
     Py_INCREF(Py_None);
     return Py_None;
@@ -406,7 +381,8 @@ extern "C" {
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
-      CORBA::Object_ptr objref = omniPy::getObjRef(pyobjref);
+      CORBA::Object_ptr objref =
+	(CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
       RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
 
@@ -452,7 +428,8 @@ extern "C" {
     RAISE_PY_BAD_PARAM_IF(!PyCallable_Check(pyfn), BAD_PARAM_WrongPythonType);
 
     if (pyobjref) {
-      CORBA::Object_ptr objref = omniPy::getObjRef(pyobjref);
+      CORBA::Object_ptr objref =
+	(CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
       RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
 
@@ -792,7 +769,8 @@ extern "C" {
       if (!PyArg_ParseTuple(args, (char*)"Oi", &pyobjref, &timeout))
 	return 0;
 
-      CORBA::Object_ptr objref = omniPy::getObjRef(pyobjref);
+      CORBA::Object_ptr objref =
+	(CORBA::Object_ptr)omniPy::getTwin(pyobjref, OBJREF_TWIN);
 
       RAISE_PY_BAD_PARAM_IF(!objref, BAD_PARAM_WrongPythonType);
 
@@ -817,32 +795,6 @@ extern "C" {
     try {
       omniPy::ensureOmniThread();
       omniORB::setClientThreadCallTimeout(timeout);
-    }
-    OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
-
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-
-  static char setClientThreadCallDeadline_doc [] =
-  "setClientThreadCallDeadline(secs)\n"
-  "\n"
-  "Set the client call deadline for the calling thread.\n";
-
-  static PyObject* pyomni_setClientThreadCallDeadline(PyObject* self,
-                                                      PyObject* args)
-  {
-    double deadline;
-    if (!PyArg_ParseTuple(args, (char*)"d", &deadline))
-      return 0;
-
-    unsigned long s, ns;
-    s  = (unsigned long)deadline;
-    ns = (deadline - s) * 1000000000.0;
-
-    try {
-      omniPy::ensureOmniThread();
-      omniORB::setClientThreadCallDeadline(s, ns);
     }
     OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
 
@@ -934,10 +886,14 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"OO", &pyold, &pynew))
       return 0;
 
-    CORBA::Object_ptr oldobj = omniPy::getObjRef(pyold);
-    CORBA::Object_ptr newobj = omniPy::getObjRef(pynew);
+    CORBA::Object_ptr oldobj =
+      (CORBA::Object_ptr)omniPy::getTwin(pyold, OBJREF_TWIN);
 
     RAISE_PY_BAD_PARAM_IF(!oldobj, BAD_PARAM_WrongPythonType);
+
+    CORBA::Object_ptr newobj =
+      (CORBA::Object_ptr)omniPy::getTwin(pynew, OBJREF_TWIN);
+
     RAISE_PY_BAD_PARAM_IF(!newobj, BAD_PARAM_WrongPythonType);
 
     omni::locationForward(oldobj->_PR_getobj(), newobj->_PR_getobj(), 0);
@@ -950,10 +906,6 @@ extern "C" {
     {(char*)"installTransientExceptionHandler",
      pyomni_installTransientExceptionHandler,
      METH_VARARGS, transient_doc},
-
-    {(char*)"installTimeoutExceptionHandler",
-     pyomni_installTimeoutExceptionHandler,
-     METH_VARARGS, timeout_doc},
 
     {(char*)"installCommFailureExceptionHandler",
      pyomni_installCommFailureExceptionHandler,
@@ -1010,10 +962,6 @@ extern "C" {
     {(char*)"setClientThreadCallTimeout",
      pyomni_setClientThreadCallTimeout,
      METH_VARARGS, setClientThreadCallTimeout_doc},
-
-    {(char*)"setClientThreadCallDeadline",
-     pyomni_setClientThreadCallDeadline,
-     METH_VARARGS, setClientThreadCallDeadline_doc},
 
     {(char*)"setClientConnectTimeout",
      pyomni_setClientConnectTimeout,

@@ -3,7 +3,7 @@
 // giopBiDir.h                Created on: 17/7/2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2005-2013 Apasphere Ltd
+//    Copyright (C) 2005 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -25,8 +25,28 @@
 //
 //
 // Description:
-//	*** PROPRIETARY INTERFACE ***
+//	*** PROPRIETORY INTERFACE ***
 //
+
+/*
+  $Log$
+  Revision 1.1.4.2  2005/03/02 12:39:38  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.1.4.1  2003/03/23 21:03:49  dgrisby
+  Start of omniORB 4.1.x development branch.
+
+  Revision 1.1.2.3  2002/01/02 18:15:41  dpg1
+  Platform fixes/additions.
+
+  Revision 1.1.2.2  2001/08/03 17:43:19  sll
+  Make sure dll import spec for win32 is properly done.
+
+  Revision 1.1.2.1  2001/07/31 16:28:02  sll
+  Added GIOP BiDir support.
+
+  */
+
 
 #ifndef __GIOPBIDIR_H__
 #define __GIOPBIDIR_H__
@@ -48,7 +68,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 class BiDirInfo : public omniIOR::IORExtraInfo {
-public:
+ public:
   BiDirInfo(char* s) :
     OMNIORB_BASE_CTOR(omniIOR::)IORExtraInfo(IOP::TAG_OMNIORB_BIDIR),
     sendfrom(s) {}
@@ -57,7 +77,7 @@ public:
 
   ~BiDirInfo() {}
 
-private:
+ private:
   BiDirInfo();
   BiDirInfo(const BiDirInfo&);
   BiDirInfo& operator=(const BiDirInfo&);
@@ -66,9 +86,9 @@ private:
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 class BiDirServerRope : public giopRope {
-public:
+ public:
 
-  static int selectRope(const giopAddressList&, omniIOR::IORInfo*, Rope*&);
+  static int selectRope(const giopAddressList&,omniIOR::IORInfo*,Rope*&);
   // Look into the IORInfo, if bidirectional giop is suitable for this ior
   // (i.e. the IOP component TAG_OMNIORB_BIDIR exists and its GIOP version
   // is >= 1.2), search the list and return the BiDirServerRope whose
@@ -79,7 +99,7 @@ public:
   // Thread Safety preconditions:
   //    Caller *must* hold omniTransportLock.
 
-  static BiDirServerRope* addRope(giopStrand*, const giopAddressList&);
+  static BiDirServerRope* addRope(giopStrand*,const giopAddressList&);
   // Add a BiDirServerRope for the bidirectional strand if one has not
   // been created already. Add the list of redirection addresses to 
   // this rope. Return the rope instance. Notice that the reference
@@ -106,7 +126,7 @@ public:
  protected:
   virtual void realIncrRefCount();
 
-private:
+ private:
 
   CORBA::String_var pd_sendfrom;
   giopAddressList   pd_redirect_addresses;  
@@ -122,18 +142,17 @@ private:
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 class BiDirClientRope : public giopRope {
-public:
+ public:
 
-  BiDirClientRope(const giopAddressList& addrlist, omniIOR::IORInfo* info);
+  BiDirClientRope(const giopAddressList& addrlist,
+		  const omnivector<CORBA::ULong>& preferred);
 
-  IOP_C* acquireClient(const omniIOR*      ior,
+  IOP_C* acquireClient(const omniIOR*,
 		       const CORBA::Octet* key,
-		       CORBA::ULong        keysize,
-		       omniCallDescriptor* cd); // override giopRope
-protected:
-  void filterAndSortAddressList();
+		       CORBA::ULong keysize,
+		       omniCallDescriptor*);  // override giopRope
+ private:
 
-private:
   omni_tracedmutex pd_lock;
 
   BiDirClientRope();

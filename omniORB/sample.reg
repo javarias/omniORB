@@ -67,7 +67,7 @@ traceInvocationReturns = "0"
 ;
 ;     Valid values = 0 or 1
 ;
-traceThreadId = "1"
+traceThreadId = "0"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Trace time
@@ -75,7 +75,7 @@ traceThreadId = "1"
 ;
 ;     Valid values = 0 or 1
 ;
-traceTime = "1"
+traceTime = "0"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; dumpConfiguration

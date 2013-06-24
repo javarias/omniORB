@@ -1,10 +1,15 @@
+ifeq ($(ThreadSystem),Solaris)
+CXXSRCS = solaris.cc
+DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS)
+endif
+
 ifeq ($(ThreadSystem),Posix)
-CXXSRCS = posix.cc threaddata.cc
+CXXSRCS = posix.cc
 DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS) $(OMNITHREAD_POSIX_CPPFLAGS)
 endif
 
 ifeq ($(ThreadSystem),NT)
-CXXSRCS = nt.cc threaddata.cc
+CXXSRCS = nt.cc
 DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS)
 MSVC_STATICLIB_CXXNODEBUGFLAGS += -D_WINSTATIC
 MSVC_STATICLIB_CXXDEBUGFLAGS += -D_WINSTATIC
@@ -13,7 +18,7 @@ MSVC_DLL_CXXDEBUGFLAGS += -D_OMNITHREAD_DLL
 endif
 
 ifeq ($(ThreadSystem),NTPosix)
-CXXSRCS = posix.cc threaddata.cc
+CXXSRCS = posix.cc
 DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS)
 MSVC_STATICLIB_CXXNODEBUGFLAGS += -D_WINSTATIC
 MSVC_STATICLIB_CXXDEBUGFLAGS += -D_WINSTATIC
@@ -21,9 +26,14 @@ MSVC_DLL_CXXNODEBUGFLAGS += -D_OMNITHREAD_DLL
 MSVC_DLL_CXXDEBUGFLAGS += -D_OMNITHREAD_DLL
 endif
 
+ifeq ($(ThreadSystem),Mach)
+CXXSRCS = mach.cc
+DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS)
+endif
+
 ifeq ($(ThreadSystem),vxWorks)
-CXXSRCS = vxWorks.cc threaddata.cc
-OBJS = vxWorks.o threaddata.o
+CXXSRCS = vxWorks.cc
+OBJS = vxWorks.o
 DIR_CPPFLAGS = $(OMNITHREAD_CPPFLAGS)
 endif
 

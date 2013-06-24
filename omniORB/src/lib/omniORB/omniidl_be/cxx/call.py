@@ -3,7 +3,7 @@
 # call.py                   Created on: 2000/08/03
 #			    Author    : David Scott (djs)
 #
-#    Copyright (C) 2002-2013 Apasphere Ltd
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 2000 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -27,26 +27,112 @@
 #   Produce local callback functions
 #
 
+# $Id$
+# $Log$
+# Revision 1.1.6.11  2008/10/28 15:33:42  dgrisby
+# Undeclared user exceptions not caught in local calls.
+#
+# Revision 1.1.6.10  2007/09/19 14:16:08  dgrisby
+# Avoid namespace clashes if IDL defines modules named CORBA.
+#
+# Revision 1.1.6.9  2007/02/26 15:51:15  dgrisby
+# Suppress cd parameter when it is definitely unused, to avoid compiler
+# warnings.
+#
+# Revision 1.1.6.8  2005/11/09 12:22:18  dgrisby
+# Local interfaces support.
+#
+# Revision 1.1.6.7  2005/08/16 13:51:21  dgrisby
+# Problems with valuetype / abstract interface C++ mapping.
+#
+# Revision 1.1.6.6  2005/03/30 23:36:11  dgrisby
+# Another merge from omni4_0_develop.
+#
+# Revision 1.1.6.5  2005/01/06 23:09:49  dgrisby
+# Big merge from omni4_0_develop.
+#
+# Revision 1.1.6.4  2004/10/13 17:58:21  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
+# Revision 1.1.6.3  2003/11/06 11:56:56  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
+# Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
+# Revision 1.1.6.1  2003/03/23 21:02:42  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.1.4.13  2003/01/14 11:48:16  dgrisby
+# Remove warnings from gcc -Wshadow. Thanks Pablo Mejia.
+#
+# Revision 1.1.4.12  2002/11/21 16:12:34  dgrisby
+# Oneway call descriptor bug.
+#
+# Revision 1.1.4.11  2001/11/27 14:35:08  dpg1
+# Context, DII fixes.
+#
+# Revision 1.1.4.10  2001/11/06 15:41:37  dpg1
+# Reimplement Context. Remove CORBA::Status. Tidying up.
+#
+# Revision 1.1.4.9  2001/10/18 12:45:27  dpg1
+# IDL compiler tweaks.
+#
+# Revision 1.1.4.8  2001/10/17 16:50:25  dpg1
+# Incorrect code with multiple out arguments
+#
+# Revision 1.1.4.7  2001/08/15 10:26:10  dpg1
+# New object table behaviour, correct POA semantics.
+#
+# Revision 1.1.4.6  2001/05/31 16:18:11  dpg1
+# inline string matching functions, re-ordered string matching in
+# _ptrToInterface/_ptrToObjRef
+#
+# Revision 1.1.4.5  2001/05/02 14:20:15  sll
+# Make sure that getStream() is used instead of casting to get a cdrStream
+# from a IOP_C and IOP_S.
+#
+# Revision 1.1.4.4  2001/04/19 09:30:12  sll
+#  Big checkin with the brand new internal APIs.
+# Scoped where appropriate with the omni namespace.
+#
+# Revision 1.1.4.3  2000/11/07 18:27:31  sll
+# out_objrefcall now generates the correct unambiguous type name in its castings.
+#
+# Revision 1.1.4.2  2000/11/03 19:25:23  sll
+# A new class CallDescriptor. The class contains all the code to generate
+# the call descriptor for each operation. It also has functions to be called
+# by different parts of the stub that use the call descriptor.
+#
+# Revision 1.1.4.1  2000/10/12 15:37:46  sll
+# Updated from omni3_1_develop.
+#
+# Revision 1.1.2.2  2000/09/14 16:03:01  djs
+# Remodularised C++ descriptor name generator
+# Bug in listing all inherited interfaces if one is a forward
+# repoID munging function now handles #pragma ID in bootstrap.idl
+# Naming environments generating code now copes with new IDL AST types
+# Modified type utility functions
+# Minor tidying
+#
+# Revision 1.1.2.1  2000/08/21 11:34:32  djs
+# Lots of omniidl/C++ backend changes
+#
+
 """Produce call descriptors and local callback functions"""
 
 from omniidl import idlast, idltype
-from omniidl_be.cxx import types, id, skutil, output
-from omniidl_be.cxx import descriptor, mangler, config
+from omniidl_be.cxx import types, id, util, skutil, output, cxx, ast, descriptor
+from omniidl_be.cxx.skel import mangler, template
 
-template = None
-
-def init():
-    global template
-    import omniidl_be.cxx.skel.template
-    template = omniidl_be.cxx.skel.template
-
+import string
 
 # Callable- represents the notion of a callable entity (eg operation or
 # attribute accessor method). Note that a read/write attribute is really
 # two such entities paired together.
 #
 #  .interface():      get the associated Interface object
-#  .operation_name(): get the IIOP operation name (eg _get_colour)
+#  .operation_name(): get the IIOP operation name (eg get_colour)
 #  .method_name():    get the C++ mapped method name (eg colour)
 #  .returnType():     idltype
 #  .parameters():     idlast.Parameter
@@ -56,12 +142,9 @@ def init():
 #  .method(use_out):  C++ mapping
 #
 class Callable:
-    def __init__(self, interface, node, operation_name, method_name,
-                 returnType, parameters, oneway = 0,
-                 raises = [], contexts = []):
-
+    def __init__(self, interface, operation_name, method_name, returnType,
+                 parameters, oneway = 0, raises = [], contexts = []):
         self.__interface = interface
-        self.__node = node
         self.__operation_name = operation_name
         self.__method_name = method_name
         self.__returnType = returnType
@@ -69,25 +152,9 @@ class Callable:
         self.__oneway = oneway
         self.__raises = raises
         self.__contexts = contexts
-
-        self.__ami = 0
-
-        if not oneway:
-            try:
-                # interface may actually be a ValueType, not an Interface,
-                # and thus not have an ami_callables method.
-                if interface.ami_callables():
-                    self.__ami = 1
-
-            except AttributeError:
-                pass
-
         self.__signature = mangler.produce_signature(returnType, parameters,
-                                                     raises, oneway,
-                                                     self.__ami)
-
+                                                     raises, oneway)
     def interface(self):      return self.__interface
-    def node(self):           return self.__node
     def operation_name(self): return self.__operation_name
     def method_name(self):    return self.__method_name
     def returnType(self):     return self.__returnType
@@ -96,16 +163,12 @@ class Callable:
     def raises(self):         return self.__raises
     def contexts(self):       return self.__contexts
     def signature(self):      return self.__signature
-    def ami(self):            return self.__ami
-
 
 # Utility functions to build Callables #################################
 #
 def operation(interface, operation):
     assert isinstance(operation, idlast.Operation)
-
     return Callable(interface,
-                    operation,
                     operation.identifier(),
                     id.mapID(operation.identifier()),
                     operation.returnType(),
@@ -117,10 +180,8 @@ def operation(interface, operation):
 def read_attributes(interface, attribute):
     assert isinstance(attribute, idlast.Attribute)
     callables = []
-    for declarator in attribute.declarators():
-        identifier = declarator.identifier()
+    for identifier in attribute.identifiers():
         callables.append(Callable(interface,
-                                  declarator,
                                   "_get_" + identifier,
                                   id.mapID(identifier),
                                   attribute.attrType(),
@@ -134,11 +195,8 @@ def write_attributes(interface, attribute):
     param = idlast.Parameter(attribute.file(), attribute.line(),
                              attribute.mainFile(), [], [],
                              0, attribute.attrType(), "_v")
-
-    for declarator in attribute.declarators():
-        identifier = declarator.identifier()
+    for identifier in attribute.identifiers():
         callables.append(Callable(interface,
-                                  declarator,
                                   "_set_" + identifier,
                                   id.mapID(identifier),
                                   voidType, [param], 0, [], []))
@@ -208,7 +266,7 @@ class CallDescriptor:
 # All the member functions of this class generates code based on this tuple
 #
 
-    def __init__(self, signature, callable):
+    def __init__(self,signature,callable):
         self.__signature        = signature
         self.__name             = descriptor.call_descriptor(signature)
         self.__oneway           = callable.oneway()
@@ -233,13 +291,6 @@ class CallDescriptor:
             self.__context_name = descriptor.\
                                   context_descriptor(self.__signature)
 
-        self.__ami = callable.ami()
-
-
-    def name(self):
-        return self.__name
-
-
     def out_desc(self, stream):
         self.__out_declaration(stream)
         self.__out_contextDescriptor(stream)
@@ -256,7 +307,9 @@ class CallDescriptor:
 
         impl_args = []
 
-        for n, argument in enumerate(self.__arguments):
+        n = -1
+        for argument in self.__arguments:
+            n = n + 1
             arg_n = "tcd->arg_" + str(n)
             argtype = types.Type(argument.paramType())
             ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
@@ -318,13 +371,13 @@ class CallDescriptor:
             impl_call.out(template.interface_callback_tryblock,
                           result = result_string,
                           cxx_operation_name = operation,
-                          operation_arguments = ", ".join(impl_args),
+                          operation_arguments = string.join(impl_args, ", "),
                           catch = str(catch))
         else:
             impl_call.out(template.interface_callback_invoke,
                           result = result_string,
                           cxx_operation_name = operation,
-                          operation_arguments = ", ".join(impl_args))
+                          operation_arguments = string.join(impl_args, ", "))
 
         stream.out(template.interface_callback,
                    local_call_descriptor = function_name,
@@ -344,9 +397,10 @@ class CallDescriptor:
         assign_args = []
         assign_res = []
 
-        for n, argument in enumerate(self.__arguments):
-            arg_n = "_call_desc.arg_%d" % n
-
+        n = -1
+        for argument in self.__arguments:
+            n = n + 1
+            arg_n = "_call_desc.arg_" + str(n)
             argtype = types.Type(argument.paramType())
             ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
                          _arg_info(argtype,argument.direction())
@@ -395,11 +449,10 @@ class CallDescriptor:
         
         stream.out(template.interface_operation,
                    call_descriptor = self.__name,
-                   call_desc_args = ", ".join(ctor_args),
-                   assign_args = "\n".join(assign_args),
-                   assign_res = "\n".join(assign_res),
+                   call_desc_args = string.join(ctor_args, ", "),
+                   assign_args = string.join(assign_args,"\n"),
+                   assign_res = string.join(assign_res,"\n"),
                    assign_context = assign_context)
-
 
     def out_implcall(self,stream,operation,localcall_fn):
         assert isinstance(stream, output.Stream)
@@ -410,7 +463,9 @@ class CallDescriptor:
         prepare_out_args = []
         
         if self.__has_out_args: 
-            for n, argument in enumerate(self.__arguments):
+            n = -1
+            for argument in self.__arguments:
+                n = n + 1
                 if argument.is_out() and not argument.is_in():
                     arg_n = "_call_desc.arg_" + str(n)
                     argtype = types.Type(argument.paramType())
@@ -428,16 +483,21 @@ class CallDescriptor:
         stream.out(template.interface_operation_dispatch,
                    idl_operation_name = operation,
                    call_descriptor = self.__name,
-                   call_desc_args = ", ".join(ctor_args),
-                   prepare_out_args = "\n".join(prepare_out_args))
-
+                   call_desc_args = string.join(ctor_args, ", "),
+                   prepare_out_args = string.join(prepare_out_args,"\n"))
 
     def __out_declaration(self,stream):
         # build up the constructor argument list, the initialisation
         # list and the data members list
+        ctor_args = ["LocalCallFn lcfn", "const char* op_", "size_t oplen",
+                     "_CORBA_Boolean upcall=0" ]
+
+        base_ctor = ("omniCallDescriptor(lcfn, op_, oplen, %s, _user_exns, "
+                     "%d, upcall)" % (self.__oneway, len(self.__exceptions)))
+
         if self.__exceptions:
             user_exceptions_decl = \
-            "void userException(cdrStream&, _OMNI_NS(IOP_C)*, const char*);"
+            "void userException(cdrStream&,_OMNI_NS(IOP_C)*,const char*);"
         else:
             user_exceptions_decl = ""
 
@@ -451,20 +511,12 @@ class CallDescriptor:
                               "void unmarshalReturnedValues(cdrStream&);\n" + \
                               "void marshalReturnedValues(cdrStream&);\n"
         data_members = []
-
+        n = -1
         containsValues = 0
-        for n, argument in enumerate(self.__arguments):
-            ptype = argument.paramType()
-            if idltype.containsValueType(ptype):
-                if (isinstance(ptype, idltype.Declared) and
-                    ptype.scopedName() == ["Messaging", "ExceptionHolder"]):
-                    # We don't declare that Messaging::ExceptionHolder
-                    # is a valuetype, to prevent unnecessary
-                    # marshalling of it in _excep callbacks.
-                    pass
-                else:
-                    containsValues = 1
-
+        for argument in self.__arguments:
+            containsValues = (containsValues or
+                              idltype.containsValueType(argument.paramType()))
+            n = n + 1
             holder_n = "arg_" + str(n)
             argtype = types.Type(argument.paramType())
             ((h_is_const,h_is_ptr),\
@@ -519,22 +571,16 @@ class CallDescriptor:
             contains_values = ""
         
         # Write the proxy class definition
-        if self.__ami:
-            tmpl = template.interface_proxy_class_ami
-        else:
-            tmpl = template.interface_proxy_class
-
-        stream.out(tmpl,
+        stream.out(template.interface_proxy_class,
                    signature = self.__signature,
                    call_descriptor = self.__name,
-                   oneway = self.__oneway,
-                   exn_len = len(self.__exceptions),
+                   ctor_args = string.join(ctor_args,","),
+                   base_ctor = base_ctor,
                    contains_values = contains_values,
                    in_arguments_decl = in_arguments_decl,
                    out_arguments_decl = out_arguments_decl,
                    user_exceptions_decl = user_exceptions_decl,
-                   member_data = "\n".join(data_members))
-
+                   member_data = string.join(data_members,"\n"))
 
     def __out_contextDescriptor(self,stream):
         if self.__contexts:
@@ -559,7 +605,6 @@ class CallDescriptor:
         stream.out(template.interface_proxy_marshal_arguments,
                    call_descriptor = self.__name,
                    marshal_block = marshal_block)
-
         
     def __out_marshalReturnedValues(self,stream):
         if not (self.__has_out_args or self.__has_return_value): return
@@ -579,9 +624,10 @@ class CallDescriptor:
                    call_descriptor = self.__name,
                    marshal_block = marshal_block)
 
-
     def __out_marshalArgument_shared(self,stream,is_in):
-        for n, argument in enumerate(self.__arguments):
+        n = -1
+        for argument in self.__arguments:
+            n = n + 1
             if (is_in and not argument.is_in()) or \
                (not is_in and not argument.is_out()): continue
             arg_n = "arg_" + str(n)
@@ -592,20 +638,21 @@ class CallDescriptor:
                 arg_n = "*" + arg_n
             skutil.marshall(stream, None, argtype, None, arg_n, "_n")
 
-
     def __out_unmarshalArgument(self,stream):
         if not self.__has_in_args: return
 
         marshal_block = output.StringStream()
 
-        for n, argument in enumerate(self.__arguments):
+        n = -1
+        for argument in self.__arguments:
+            n = n + 1
             if not argument.is_in(): continue
 
             argtype = types.Type(argument.paramType())
             ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
                          _arg_info(argtype,argument.direction())
 
-            arg_n = "arg_%d" % n
+            arg_n = "arg_" + str(n)
             if s_is_holder:
                 storage_n = arg_n
             else:
@@ -681,7 +728,9 @@ class CallDescriptor:
             skutil.unmarshall(marshal_block, None,
                               argtype, None, argname, "_n")
 
-        for n, argument in enumerate(self.__arguments):
+        n = -1
+        for argument in self.__arguments:
+            n = n + 1
             if not argument.is_out(): continue
 
             argtype = types.Type(argument.paramType())
@@ -711,11 +760,11 @@ class CallDescriptor:
                                       "*" + arg_n + " = " + \
                                       "::CORBA::TypeCode::_nil();")
                 elif d_type.interface():
-                    nilobjref = d_type.base().replace("_ptr","::_nil()")
+                    nilobjref = string.replace(d_type.base(),"_ptr","::_nil()")
                     if isinstance(d_type.type().decl(),idlast.Forward):
-                        nilobjref = nilobjref.replace("::_nil()",
-                                                      "_Helper::_nil()")
-                    
+                        nilobjref = string.replace(nilobjref,\
+                                                   "::_nil()",\
+                                                   "_Helper::_nil()")
                     marshal_block.out(arg_n + "_ = *" + arg_n + ";\n" + \
                                       "*" + arg_n + " = " + \
                                       nilobjref + ";")
@@ -734,7 +783,8 @@ class CallDescriptor:
         stream.out(template.interface_proxy_unmarshal_returnedvalues,
                    call_descriptor = self.__name,
                    marshal_block = marshal_block)
-        
+
+
 
     def __out_userException(self, stream):
         if self.__exceptions:
@@ -754,238 +804,10 @@ class CallDescriptor:
             stream.out(template.interface_proxy_exn,
                        call_descriptor = self.__name,
                        exception_block = str(block),
-                       exception_namelist = ",\n".join(repoIDs))
+                       exception_namelist = string.join(repoIDs,",\n"))
         else:
             stream.out(template.interface_proxy_empty_exn,
                        call_descriptor = self.__name)
-
-
-    def out_ami_descriptor(self, stream, callable, node_name, lcfn,
-                           poller_impl_name):
-
-        handler_if = callable.interface().amiHandler()
-        poller_val = callable.interface().amiPoller()
-        
-        handler_cls = handler_if.name().fullyQualify()
-        poller_cls  = poller_val.name().fullyQualify()
-
-        cds = descriptor.ami_call_descriptor(node_name,
-                                             callable.operation_name(),
-                                             self.__signature)
-        ami_cd_name_c, ami_cd_name_p = cds
-
-        #
-        # Callback handler
-
-        op_name = callable.operation_name()
-        if op_name.startswith("_get_"):
-            handler_op = callable.node()._ami_get_handler
-            handler_ex = callable.node()._ami_get_handler_excep
-            
-        elif op_name.startswith("_set_"):
-            handler_op = callable.node()._ami_set_handler
-            handler_ex = callable.node()._ami_set_handler_excep
-            
-        else:
-            handler_op = callable.node()._ami_handler
-            handler_ex = callable.node()._ami_handler_excep
-
-        callback_args = []
-        if self.__has_return_value:
-            callback_args.append("result")
-
-        for idx, argument in enumerate(self.__arguments):
-            if argument.is_out():
-                argtype = types.Type(argument.paramType())
-                ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
-                             _arg_info(argtype,argument.direction())
-                if h_is_ptr:
-                    callback_args.append("*arg_%d" % idx)
-                else:
-                    callback_args.append("arg_%d" % idx)
-
-
-        if_name = callable.interface().name().fullyQualify()
-        
-        stream.out(template.interface_ami_call_descriptor,
-                   if_name           = if_name,
-                   call_descriptor_c = ami_cd_name_c,
-                   call_descriptor_p = ami_cd_name_p,
-                   base_cd           = self.__name,
-                   lcfn              = lcfn,
-                   op_name           = op_name,
-                   handler_op_name   = handler_op.identifier(),
-                   handler_ex_name   = handler_ex.identifier(),
-                   op_len            = len(op_name) + 1,
-                   handler_cls       = handler_cls,
-                   poller_cls        = poller_cls,
-                   poller_impl_name  = poller_impl_name,
-                   callback_args     = ", ".join(callback_args))
-
-        return ami_cd_name_c, ami_cd_name_p
-
-
-    def _ami_send_args(self, ami_args, environment):
-        assign_args = []
-
-        for n, argument in enumerate(self.__arguments):
-            if not argument.is_in():
-                continue
-
-            arg_ident = ami_args.next()
-
-            argtype = types.Type(argument.paramType())
-            ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
-                         _arg_info(argtype,argument.direction())
-
-            arg_n = "_call_desc->arg_%d" % n
-
-            if s_is_holder:
-                assign_args.append("%s = %s;" %
-                                   (arg_n, arg_ident))
-            else:
-                d_type = argtype.deref(1)
-
-                if s_is_var:
-                    if argtype.array():
-                        rhs = "%s_dup(%s)" % (argtype.base(environment),
-                                              arg_ident)
-
-                    elif d_type.typecode():
-                        pass
-
-                    elif d_type.string() or d_type.wstring():
-                        rhs = arg_ident
-
-                    elif d_type.interface():
-                        intf = argtype.base(environment)
-                        if intf.endswith("_ptr"):
-                            intf = intf[:-4]
-
-                        rhs = "%s::_duplicate(%s)" % (intf, arg_ident)
-
-                    elif d_type.value() or d_type.valuebox():
-                        assign_args.append("%s->_add_ref();" % arg_ident)
-                        rhs = arg_ident
-
-                    else:
-                        rhs = "new %s(%s)" % (argtype.base(environment),
-                                              arg_ident)
-
-                    assign_args.append("%s_ = %s;" % (arg_n, rhs))
-                    
-                    if argument.is_out():
-                        qual = "inout"
-                    else:
-                        qual = "in"
-
-                    if h_is_ptr:
-                        assign_args.append("%s = &%s_.%s();" %
-                                           (arg_n, arg_n, qual))
-                    else:
-                        assign_args.append("%s = %s_.%s();" %
-                                           (arg_n, arg_n, qual))
-
-                else:
-                    if argtype.array():
-                        assign_args.append("%s_copy(%s_, %s);" %
-                                           (argtype.base(environment),
-                                            arg_n, arg_ident))
-                    else:
-                        assign_args.append("%s_ = %s;" % (arg_n, arg_ident))
-
-                    if h_is_ptr:
-                        assign_args.append("%s = &%s_;" % (arg_n, arg_n))
-                    else:
-                        assign_args.append("%s = %s_;" % (arg_n, arg_n))
-        
-        return assign_args
-
-
-    def out_ami_sendc(self, stream, ami_method, cd_names, environment):
-
-        ami_args = iter(ami_method.arg_names())
-        ami_args.next() # Skip handler arg
-
-        assign_args = self._ami_send_args(ami_args, environment)
-
-        stream.out(template.interface_ami_sendc,
-                   assign_args = "\n".join(assign_args),
-                   cd_name     = cd_names[0],
-                   ami_handler = ami_method.arg_names()[0])
-
-
-    def out_ami_sendp(self, stream, ami_method, cd_names, environment):
-        
-        ami_args = iter(ami_method.arg_names())
-
-        assign_args = self._ami_send_args(ami_args, environment)
-
-        poller_cls = ami_method.return_type()
-
-        stream.out(template.interface_ami_sendp,
-                   assign_args  = "\n".join(assign_args),
-                   cd_name      = cd_names[1],
-                   poller_class = poller_cls.base(gscope=1))
-
-
-    def out_ami_poller(self, stream, ami_method, poller_method, cd_names):
-        assign_res = []
-        ami_args       = iter(poller_method.arg_names())
-        timeout_arg    = ami_args.next()
-
-        if self.__has_return_value:
-            argtype = types.Type(self.__returntype)
-            (h_is_const,h_is_ptr),(s_is_holder,s_is_var) = _arg_info(argtype, 3)
-
-            if s_is_var:
-                assign_res.append("%s = _call_desc->result._retn();" %
-                                  ami_args.next())
-            else:
-                assign_res.append("%s = _call_desc->result;" %
-                                  ami_args.next()) 
-
-
-        for n, argument in enumerate(self.__arguments):
-            if not argument.is_out():
-                continue
-
-            arg_ident = ami_args.next()
-            arg_n     = "_call_desc->arg_%d" % n
-
-            argtype = types.Type(argument.paramType())
-            ((h_is_const,h_is_ptr),(s_is_holder,s_is_var)) = \
-                         _arg_info(argtype,argument.direction())
-
-            if s_is_holder:
-                if s_is_var:
-                    assign_res.append("%s = %s._retn();" % (arg_ident, arg_n))
-                else:
-                    assign_res.append("%s = %s;" % (arg_ident, arg_n))
-
-            else:
-                if s_is_var:
-                    assign_res.append("%s = %s_._retn();" % (arg_ident, arg_n))
-
-                else:
-                    if argtype.array():
-                        assign_res.append("%s_copy(%s, %s_);" %
-                                          (argtype.base(), arg_ident, arg_n))
-                    else:
-                        assign_res.append("%s = %s_;" % (arg_ident, arg_n))
-
-        if assign_res:
-            tmpl = template.interface_ami_poller_method
-        else:
-            tmpl = template.interface_ami_poller_method_empty
-            
-        stream.out(tmpl,
-                   cd_name_c   = cd_names[0],
-                   cd_name_p   = cd_names[1],
-                   timeout_arg = timeout_arg,
-                   assign_res  = "\n".join(assign_res))
-
-
 
 
 

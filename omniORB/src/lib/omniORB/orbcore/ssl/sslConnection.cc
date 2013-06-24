@@ -3,7 +3,7 @@
 // sslConnection.cc           Created on: 19 Mar 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2013 Apasphere Ltd
+//    Copyright (C) 2005-2009 Apasphere Ltd
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -20,24 +20,100 @@
 //
 //    You should have received a copy of the GNU Library General Public
 //    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
 //    02111-1307, USA
 //
 //
 // Description:
-//	*** PROPRIETARY INTERFACE ***
-//
+//	*** PROPRIETORY INTERFACE ***
+// 
+
+/*
+  $Log$
+  Revision 1.1.4.10  2009/05/05 17:18:58  dgrisby
+  Translate SSL peer identity to native code set; fix some minor leaks.
+  Thanks Wei Jiang.
+
+  Revision 1.1.4.9  2006/10/09 13:08:58  dgrisby
+  Rename SOCKADDR_STORAGE define to OMNI_SOCKADDR_STORAGE, to avoid
+  clash on Win32 2003 SDK.
+
+  Revision 1.1.4.8  2006/03/25 18:54:03  dgrisby
+  Initial IPv6 support.
+
+  Revision 1.1.4.7  2005/09/05 17:12:20  dgrisby
+  Merge again. Mainly SSL transport changes.
+
+  Revision 1.1.4.6  2005/09/01 14:52:12  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.1.4.5  2005/03/02 12:39:17  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.1.4.4  2005/03/02 12:10:49  dgrisby
+  setSelectable / Peek fixes.
+
+  Revision 1.1.4.3  2005/01/13 21:10:01  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
+  Revision 1.1.4.2  2005/01/06 23:10:52  dgrisby
+  Big merge from omni4_0_develop.
+
+  Revision 1.1.4.1  2003/03/23 21:01:59  dgrisby
+  Start of omniORB 4.1.x development branch.
+
+  Revision 1.1.2.11  2001/12/03 13:39:55  dpg1
+  Explicit socket shutdown flag for Windows.
+
+  Revision 1.1.2.10  2001/11/26 10:51:04  dpg1
+  Wrong endpoint address when getsockname() fails.
+
+  Revision 1.1.2.9  2001/09/07 11:27:15  sll
+  Residual changes needed for the changeover to use orbParameters.
+
+  Revision 1.1.2.8  2001/08/24 15:56:44  sll
+  Fixed code which made the wrong assumption about the semantics of
+  do { ...; continue; } while(0)
+
+  Revision 1.1.2.7  2001/07/31 16:16:23  sll
+  New transport interface to support the monitoring of active connections.
+
+  Revision 1.1.2.6  2001/07/26 16:37:21  dpg1
+  Make sure static initialisers always run.
+
+  Revision 1.1.2.5  2001/07/13 15:35:57  sll
+  Enter a mapping from a socket to a giopConnection in the endpoint's hash
+  table.
+
+  Revision 1.1.2.4  2001/06/29 16:26:01  dpg1
+  Reinstate tracing messages for new connections and handling locate
+  requests.
+
+  Revision 1.1.2.3  2001/06/26 13:38:45  sll
+  Make ssl compiles with pre-0.9.6a OpenSSL
+
+  Revision 1.1.2.2  2001/06/20 18:35:16  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
+  Revision 1.1.2.1  2001/06/11 18:11:06  sll
+  *** empty log message ***
+
+  Revision 1.1.2.1  2001/04/18 18:10:44  sll
+  Big checkin with the brand new internal APIs.
+
+*/
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <orbParameters.h>
 #include <SocketCollection.h>
-#include <tcpSocket.h>
 #include <omniORB4/sslContext.h>
 #include <ssl/sslConnection.h>
 #include <ssl/sslEndpoint.h>
-#include <ssl/sslTransportImpl.h>
-#include <openssl/err.h>
+#include <tcp/tcpConnection.h>
 #include <stdio.h>
 #include <giopStreamImpl.h>
 #include <omniORB4/linkHacks.h>
@@ -46,16 +122,11 @@ OMNI_EXPORT_LINK_FORCE_SYMBOL(sslConnection);
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-
 /////////////////////////////////////////////////////////////////////////
 int
 sslConnection::Send(void* buf, size_t sz,
-		    const omni_time_t& deadline) {
-
-  if (!pd_handshake_ok) {
-    omniORB::logs(25, "Send failed because SSL handshake not yet completed.");
-    return -1;
-  }
+		    unsigned long deadline_secs,
+		    unsigned long deadline_nanosecs) {
 
   if (sz > orbParameters::maxSocketSend)
     sz = orbParameters::maxSocketSend;
@@ -64,34 +135,41 @@ sslConnection::Send(void* buf, size_t sz,
   int rc;
 
   do {
+
     struct timeval t;
 
-    if (deadline) {
-      if (tcpSocket::setTimeout(deadline, t)) {
-	// Already timed out.
+    if (deadline_secs || deadline_nanosecs) {
+      SocketSetTimeOut(deadline_secs,deadline_nanosecs,t);
+      if (t.tv_sec == 0 && t.tv_usec == 0) {
+	// Already timeout.
 	return 0;
       }
       else {
-        setNonBlocking();
-
-        tx = tcpSocket::waitWrite(pd_socket, t);
-
+#if defined(USE_POLL)
+	struct pollfd fds;
+	fds.fd = pd_socket;
+	fds.events = POLLOUT;
+	tx = poll(&fds,1,t.tv_sec*1000+(t.tv_usec/1000));
+#else
+	fd_set fds, efds;
+	FD_ZERO(&fds);
+	FD_ZERO(&efds);
+	FD_SET(pd_socket,&fds);
+	FD_SET(pd_socket,&efds);
+	tx = select(pd_socket+1,0,&fds,&efds,&t);
+#endif
 	if (tx == 0) {
-	  // Timed out
+	  // Time out!
 	  return 0;
 	}
 	else if (tx == RC_SOCKET_ERROR) {
-	  if (ERRNO == RC_EINTR) {
+	  if (ERRNO == RC_EINTR)
 	    continue;
-          }
 	  else {
 	    return -1;
 	  }
 	}
       }
-    }
-    else {
-      setBlocking();
     }
 
     // Reach here if we can write without blocking or we don't
@@ -117,13 +195,10 @@ sslConnection::Send(void* buf, size_t sz,
       continue;
 
     case SSL_ERROR_SYSCALL:
-      {
-        int err = ERRNO;
-        if (RC_TRY_AGAIN(err))
-          continue;
-        else
-          return -1;
-      }
+      if (ERRNO == RC_EINTR)
+	continue;
+      else
+	return -1;
     default:
       OMNIORB_ASSERT(0);
     }
@@ -140,12 +215,8 @@ sslConnection::Send(void* buf, size_t sz,
 /////////////////////////////////////////////////////////////////////////
 int
 sslConnection::Recv(void* buf, size_t sz,
-		    const omni_time_t& deadline) {
-
-  if (!pd_handshake_ok) {
-    omniORB::logs(25, "Send failed because SSL handshake not yet completed.");
-    return -1;
-  }
+		    unsigned long deadline_secs,
+		    unsigned long deadline_nanosecs) {
 
   if (sz > orbParameters::maxSocketRecv)
     sz = orbParameters::maxSocketRecv;
@@ -154,22 +225,50 @@ sslConnection::Recv(void* buf, size_t sz,
   int rc;
 
   do {
+
     if (pd_shutdown)
       return -1;
 
     struct timeval t;
 
-    if (tcpSocket::setAndCheckTimeout(deadline, t)) {
-      // Already timed out
-      return 0;
+    if (deadline_secs || deadline_nanosecs) {
+      SocketSetTimeOut(deadline_secs,deadline_nanosecs,t);
+      if (t.tv_sec == 0 && t.tv_usec == 0) {
+	// Already timeout.
+	return 0;
+      }
+#if defined(USE_FAKE_INTERRUPTABLE_RECV)
+      if (orbParameters::scanGranularity > 0 && 
+	  t.tv_sec > orbParameters::scanGranularity) {
+	t.tv_sec = orbParameters::scanGranularity;
+      }
+#endif
+    }
+    else {
+#if defined(USE_FAKE_INTERRUPTABLE_RECV)
+      t.tv_sec = orbParameters::scanGranularity;
+      t.tv_usec = 0;
+#else
+      t.tv_sec = t.tv_usec = 0;
+#endif
     }
 
-    if (t.tv_sec || t.tv_usec) {
-      setNonBlocking();
-      rx = tcpSocket::waitRead(pd_socket, t);
-
+    if ( (t.tv_sec || t.tv_usec) && SSL_pending(pd_ssl) <=0 ) {
+#if defined(USE_POLL)
+      struct pollfd fds;
+      fds.fd = pd_socket;
+      fds.events = POLLIN;
+      rx = poll(&fds,1,t.tv_sec*1000+(t.tv_usec/1000));
+#else
+      fd_set fds, efds;
+      FD_ZERO(&fds);
+      FD_ZERO(&efds);
+      FD_SET(pd_socket,&fds);
+      FD_SET(pd_socket,&efds);
+      rx = select(pd_socket+1,&fds,0,&efds,&t);
+#endif
       if (rx == 0) {
-	// Timed out
+	// Time out!
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
 	continue;
 #else
@@ -177,16 +276,12 @@ sslConnection::Recv(void* buf, size_t sz,
 #endif
       }
       else if (rx == RC_SOCKET_ERROR) {
-	if (ERRNO == RC_EINTR) {
+	if (ERRNO == RC_EINTR)
 	  continue;
-        }
 	else {
 	  return -1;
 	}
       }
-    }
-    else {
-      setBlocking();
     }
 
     // Reach here if we can read without blocking or we don't
@@ -212,13 +307,10 @@ sslConnection::Recv(void* buf, size_t sz,
       continue;
 
     case SSL_ERROR_SYSCALL:
-      {
-        int err = ERRNO;
-        if (RC_TRY_AGAIN(err))
-          continue;
-        else
-          return -1;
-      }
+      if (ERRNO == RC_EINTR)
+	continue;
+      else
+	return -1;
     default:
       OMNIORB_ASSERT(0);
     }
@@ -253,105 +345,27 @@ sslConnection::peeraddress() {
   return (const char*)pd_peeraddress;
 }
 
-/////////////////////////////////////////////////////////////////////////
 const char*
 sslConnection::peeridentity() {
   return (const char *)pd_peeridentity;
 }
 
-/////////////////////////////////////////////////////////////////////////
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
+
 void*
 sslConnection::peerdetails() {
   return (void*)pd_peercert;
 }
 
-/////////////////////////////////////////////////////////////////////////
-_CORBA_Boolean
-sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
-{
-  // Perform SSL accept
-
-  if (omniORB::trace(25)) {
-    omniORB::logger log;
-    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
-    log << "Perform SSL accept for new incoming connection " << peer << "\n";
-  }
-
-  omni_time_t deadline;
-  struct timeval tv;
-
-  if (sslTransportImpl::sslAcceptTimeOut) {
-
-    tcpSocket::setNonBlocking(pd_socket);
-    omni_thread::get_time(deadline, sslTransportImpl::sslAcceptTimeOut);
-  }
-
-  int timeout = 0;
-  int go = 1;
-
-  while (go && !pd_shutdown) {
-    if (tcpSocket::setAndCheckTimeout(deadline, tv)) {
-      // Timed out
-      timeout = 1;
-      break;
-    }
-
-    int result = SSL_accept(pd_ssl);
-    int code   = SSL_get_error(pd_ssl, result);
-
-    switch(code) {
-    case SSL_ERROR_NONE:
-      tcpSocket::setBlocking(pd_socket);
-      pd_handshake_ok = 1;
-      return 1;
-
-    case SSL_ERROR_WANT_READ:
-      if (tcpSocket::waitRead(pd_socket, tv) == 0) {
-	timeout = 1;
-	go = 0;
-      }
-      continue;
-
-    case SSL_ERROR_WANT_WRITE:
-      if (tcpSocket::waitWrite(pd_socket, tv) == 0) {
-	timeout = 1;
-	go = 0;
-      }
-      continue;
-
-    case SSL_ERROR_SYSCALL:
-      {
-	if (ERRNO == RC_EINTR)
-	  continue;
-      }
-      // otherwise falls through
-    case SSL_ERROR_SSL:
-    case SSL_ERROR_ZERO_RETURN:
-      {
-	if (omniORB::trace(10)) {
-	  omniORB::logger log;
-	  char buf[128];
-	  ERR_error_string_n(ERR_get_error(), buf, 128);
-	  CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
-	  log << "openSSL error detected in SSL accept from "
-	      << peer << " : " << (const char*) buf << "\n";
-	}
-	go = 0;
-      }
-    }
-  }
-  if (timeout && omniORB::trace(10)) {
-    omniORB::logger log;
-    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
-    log << "Timeout in SSL accept from " << peer << "\n";
-  }
-  return 0;
-}
+#endif
 
 /////////////////////////////////////////////////////////////////////////
 sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl, 
 			     SocketCollection* belong_to) : 
-  SocketHolder(sock), pd_ssl(ssl), pd_handshake_ok(0), pd_peercert(0)
+  SocketHolder(sock), pd_ssl(ssl)
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
+  , pd_peercert(0)
+#endif
 {
   OMNI_SOCKADDR_STORAGE addr;
   SOCKNAME_SIZE_T l;
@@ -362,7 +376,7 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
     pd_myaddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
   else {
-    pd_myaddress = tcpSocket::addrToURI((sockaddr*)&addr, "giop:ssl");
+    pd_myaddress = tcpConnection::addrToURI((sockaddr*)&addr, "giop:ssl:");
   }
 
   l = sizeof(OMNI_SOCKADDR_STORAGE);
@@ -371,9 +385,9 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
     pd_peeraddress = (const char*)"giop:ssl:255.255.255.255:65535";
   }
   else {
-    pd_peeraddress = tcpSocket::addrToURI((sockaddr*)&addr, "giop:ssl");
+    pd_peeraddress = tcpConnection::addrToURI((sockaddr*)&addr, "giop:ssl:");
   }
-  tcpSocket::setCloseOnExec(sock);
+  SocketSetCloseOnExec(sock);
 
   belong_to->addSocket(this);
 
@@ -423,7 +437,11 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
       stream.marshalOctet(0);
     }
 
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
     pd_peercert = peer_cert;
+#else
+    X509_free(peer_cert);
+#endif
 
     try {
       pd_peeridentity = stream.unmarshalString();
@@ -444,10 +462,12 @@ sslConnection::~sslConnection() {
   clearSelectable();
   pd_belong_to->removeSocket(this);
 
+#ifdef OMNIORB_ENABLE_CERT_ACCESS
   if (pd_peercert) {
     X509_free(pd_peercert);
     pd_peercert = 0;
   }
+#endif
 
   if (pd_ssl != 0) {
     if (SSL_get_shutdown(pd_ssl) == 0) {

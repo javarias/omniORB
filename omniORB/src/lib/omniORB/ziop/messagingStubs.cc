@@ -25,4 +25,4 @@
 // Description:
 //    Messaging stubs
 
-#include <omniORB4/messaging_policySK.cc>
+#include <omniORB4/messagingSK.cc>

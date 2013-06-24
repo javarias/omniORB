@@ -29,6 +29,11 @@
 #define _omniZIOP_h_
 
 #include <omniORB4/CORBA.h>
+
+#ifndef OMNIORB_ENABLE_ZIOP
+#  error "omniORB was not configured with ZIOP support."
+#endif
+
 #include <omniORB4/ziopStubs.h>
 
 

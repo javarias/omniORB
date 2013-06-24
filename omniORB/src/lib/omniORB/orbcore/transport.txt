@@ -170,10 +170,17 @@ of the giopEndpoint, giopAddress and giopConnection abstract classes.
   the DYING state or is in used.
 
 
-  Client side final shutdown
-  --------------------------
+  XXX Client side final shutdown
+  ------------------------------
+  This is not done yet. Which means that when CORBA::ORB::destroy() is
+  called, all existing connections will be left as they are.
 
-  *** Not documented yet!
+  When CORBA::ORB::destroy() is called, all the connections should be
+  cleaned up.
+  1. For those connections that are not in use, we just shut them down.
+  2. For those connections that have invocations in progress, 
+       Shall we shutdown the connections and wait for all the threads that
+       use these connections to release their GIOP_Cs???????
 
 
   Multiple client Addresses

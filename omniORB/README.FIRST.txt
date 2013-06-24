@@ -1,6 +1,6 @@
 READ ME FIRST!
 
-This is the omniORB 4.2 development branch.
+This is omniORB 4.1.7.
 
 omniORB is copyright Apasphere Ltd, AT&T Laboratories Cambridge and
 others. It is free software. The programs in omniORB are distributed
@@ -36,13 +36,14 @@ omniORB is an Object Request Broker (ORB) which implements
 specification 2.6 of the Common Object Request Broker Architecture
 (CORBA).
 
-- C++ and Python language bindings.
+- C++ language bindings are supported. The mapping conforms to the
+  latest revision of the CORBA specification.
 
-- Full support for the Portable Object Adapter (POA)
+- support for the Portable Object Adapter (POA)
 
-- Support for the Interoperable Naming Service (INS)
+- support for the Interoperable Naming Service (INS)
 
-- Internet Inter-ORB Protocol (IIOP 1.2) is used as the native
+- The Internet Inter-ORB Protocol (IIOP 1.2) is used as the native
   protocol.
 
 - The omniORB runtime is fully multithreaded. It uses native platform
@@ -57,9 +58,6 @@ specification 2.6 of the Common Object Request Broker Architecture
 
 - Valuetype and abstract interfaces are supported.
 
-- Asynchronous Method Invocation (AMI) supported, including both the
-  polling and callback models.
-
 - A COS Naming Service, omniNames, is provided.
 
 - Many platforms are supported, including most Unix platforms and
@@ -72,6 +70,16 @@ specification 2.6 of the Common Object Request Broker Architecture
 
 - It has been successfully tested for interoperability via IIOP with
   other ORBs.
+
+
+Work in progress
+================
+
+omniORB is not yet a complete implementation of the CORBA core. The
+following features are not supported in the current release.
+
+- Portable Interceptors.
+- Asynchronous Message Interface.
 
 
 Missing features
@@ -99,7 +107,8 @@ Documentation
 =============
 
 - omniORB user guides are located in the ./doc directory. They are
-  available in PDF and HTML formats, as well as LaTeX source.
+  available in Postscript, PDF and HTML formats, as well as LaTeX
+  source.
 
 - README files are provided throughout the distribution tree. They
   provide specific information about the directories and files, tools
@@ -141,3 +150,4 @@ Commercial support is available for omniORB. For details, see
 
 For general queries and discussion about CORBA, try the newsgroup
 comp.object.corba.
+

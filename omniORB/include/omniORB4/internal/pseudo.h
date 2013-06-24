@@ -3,7 +3,6 @@
 // pseudo.h                   Created on: 9/1998
 //                            Author    : David Riddoch (djr)
 //
-//    Copyright (C) 2012 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -45,14 +44,14 @@ public:
   PseudoObjBase() : pd_refCount(1) {}
   virtual ~PseudoObjBase();
 
-  inline void incrRefCount() { pd_refCount.inc(); }
+  void incrRefCount() { pd_refCount++; }
   void decrRefCount();
 
 private:
   PseudoObjBase(const PseudoObjBase&);             // not implemented
   PseudoObjBase& operator=(const PseudoObjBase&);  // not implemented
 
-  omni_refcount pd_refCount;
+  unsigned pd_refCount;
 };
 
 //////////////////////////////////////////////////////////////////////

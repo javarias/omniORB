@@ -1,7 +1,6 @@
 # dir.mk for omniORB dynamic library
 
 ORB_SRCS = \
-           ami.cc \
            valueBase.cc \
            valueFactory.cc \
            valueTracker.cc \
@@ -43,8 +42,6 @@ BUILTIN_STUB_SRCS = \
            irdynstub.cc \
            Namingdynstub.cc \
 	   boxes.cc \
-	   pollablestub.cc \
-	   messagingstub.cc \
            omniTypedefs.cc
 
 

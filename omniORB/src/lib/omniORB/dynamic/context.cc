@@ -137,7 +137,6 @@ OMNI_NAMESPACE_BEGIN(omni)
 static ContextImpl* default_context = 0;
 
 ContextImpl::ContextImpl(const char* name, CORBA::Context_ptr parent)
-  : pd_lock("ContextImpl::pd_lock")
 {
   if( !name )  name = "";
   else if( *name )  check_context_name(name);
@@ -384,10 +383,14 @@ ContextImpl::decrRefCount()
   {
     omni_tracedmutex_lock sync(pd_lock);
 
-    if (!pd_refCount) {
-      omniORB::logs(1, "Warning: CORBA::release() was called too many times "
-                    "for a CORBA::Context object - the object has already "
-                    "been destroyed.");
+    if( !pd_refCount ) {
+      if( omniORB::traceLevel > 0 ) {
+	omniORB::logger log;
+	log <<
+	  "omniORB: WARNING -- CORBA::release() was called too many times\n"
+	  " for a CORBA::Context object - the object has already been\n"
+	  " destroyed.\n";
+      }
       return;
     }
 

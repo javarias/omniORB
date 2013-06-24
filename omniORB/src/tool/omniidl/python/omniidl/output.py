@@ -3,7 +3,6 @@
 # output.py                 Created on: 1999/10/27
 #			    Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 2011 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -33,6 +32,9 @@ Class:
 
   Stream -- output stream which outputs templates, performing
             key/value substitution and indentation."""
+
+import idlstring
+string = idlstring
 
 def dummy(): pass
 
@@ -95,7 +97,7 @@ Functions:
         dict.update(ldict)
 
         pos    = 0
-        tlist  = text.split("@")
+        tlist  = string.split(text, "@")
         ltlist = len(tlist)
         i      = 0
         while i < ltlist:
@@ -136,7 +138,7 @@ Functions:
         dict.update(ldict)
 
         pos    = 0
-        tlist  = text.split("@")
+        tlist  = string.split(text, "@")
         ltlist = len(tlist)
         i      = 0
         while i < ltlist:
@@ -176,7 +178,7 @@ Functions:
         istr  = " " * indent
         write = self.file.write
 
-        stext = text.split("\n")
+        stext = string.split(text, "\n")
         lines = len(stext)
         line  = stext[0]
 
@@ -216,4 +218,4 @@ class StringStream(Stream):
         self.buffer.append(text)
 
     def __str__(self):
-        return "".join(self.buffer)
+        return string.join(self.buffer, "")

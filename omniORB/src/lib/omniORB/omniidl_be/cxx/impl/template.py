@@ -3,7 +3,7 @@
 # template.py               Created on: 2000/02/13
 #			    Author    : David Scott (djs)
 #
-#    Copyright (C) 2003-2011 Apasphere Ltd
+#    Copyright (C) 2003-2005 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -27,6 +27,37 @@
 #   
 #   Example interface implementation templates
 
+# $Id$
+# $Log$
+# Revision 1.5.2.3  2005/06/08 09:40:39  dgrisby
+# Update example code, IDL dumping.
+#
+# Revision 1.5.2.2  2005/01/06 23:10:07  dgrisby
+# Big merge from omni4_0_develop.
+#
+# Revision 1.5.2.1  2003/03/23 21:02:35  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.3.2.3  2002/10/20 20:17:11  dgrisby
+# Fix reference to omniORB 3.
+#
+# Revision 1.3.2.2  2000/10/12 15:37:52  sll
+# Updated from omni3_1_develop.
+#
+# Revision 1.4  2000/07/13 15:25:59  dpg1
+# Merge from omni3_develop for 3.0 release.
+#
+# Revision 1.1.2.2  2000/05/16 11:16:01  djs
+# Updated to simplify memory management, correct errors in function prototypes,
+# add missing attribute functions and generate #warnings which the user should
+# remove when they fill in the gaps in the output.
+#
+# Revision 1.1.2.1  2000/02/18 23:01:25  djs
+# Updated example implementation code generating module
+#
+# Revision 1.1  2000/02/13 15:54:15  djs
+# Beginnings of code to generate example interface implementations
+#
 
 ## Example code to actually implement an interface
 ##
@@ -34,12 +65,11 @@ interface_def = """\
 //
 // Example class implementing IDL interface @fq_name@
 //
-class @impl_fqname@ : public @fq_POA_name@ {
+class @impl_fqname@: public @fq_POA_name@ {
 private:
   // Make sure all instances are built on the heap by making the
   // destructor non-public
   //virtual ~@impl_name@();
-
 public:
   // standard constructor
   @impl_name@();
@@ -52,7 +82,7 @@ public:
 
 interface_code = """\
 //
-// Example implementation code for IDL interface '@fqname@'
+// Example implementational code for IDL interface @fqname@
 //
 @impl_fqname@::@impl_name@(){
   // add extra constructor code here
@@ -60,11 +90,10 @@ interface_code = """\
 @impl_fqname@::~@impl_name@(){
   // add extra destructor code here
 }
-
-// Methods corresponding to IDL attributes and operations
+//   Methods corresponding to IDL attributes and operations
 @operations@
 
-// End of example implementation code
+// End of example implementational code
 """
 
 interface_ior = """\
@@ -119,13 +148,19 @@ int main(int argc, char** argv)
   }
   catch(CORBA::TRANSIENT&) {
     std::cerr << "Caught system exception TRANSIENT -- unable to contact the "
-              << "server." << std::endl;
+              << "server." << endl;
   }
   catch(CORBA::SystemException& ex) {
-    std::cerr << "Caught a CORBA::" << ex._name() << std::endl;
+    std::cerr << "Caught a CORBA::" << ex._name() << endl;
   }
   catch(CORBA::Exception& ex) {
-    std::cerr << "Caught CORBA::Exception: " << ex._name() << std::endl;
+    std::cerr << "Caught CORBA::Exception: " << ex._name() << endl;
+  }
+  catch(omniORB::fatalException& fe) {
+    std::cerr << "Caught omniORB::fatalException:" << endl;
+    std::cerr << "  file: " << fe.file() << endl;
+    std::cerr << "  line: " << fe.line() << endl;
+    std::cerr << "  mesg: " << fe.errmsg() << endl;
   }
   return 0;
 }

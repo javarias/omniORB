@@ -27,7 +27,7 @@
 
 #include "omniZIOPImpl.h"
 #include <omniORB4/omniInterceptors.h>
-#include <omniORB4/messaging_policy.hh>
+#include <omniORB4/messaging.hh>
 #include <initialiser.h>
 #include <initRefs.h>
 #include <giopStrandFlags.h>
@@ -1007,13 +1007,13 @@ serverReceiveRequestInterceptor(omniInterceptors::
       // Check serverTransportRule to see if we should allow ziop from
       // this client.
       {
-	CORBA::StringSeq actions;
-	CORBA::ULong     matched_rule;
-	CORBA::Boolean   accept_ziop;
-	CORBA::Boolean   dump_rule = 0;
-	const char*      why;
+	transportRules::sequenceString actions;
+	CORBA::ULong   matched_rule;
+	CORBA::Boolean accept_ziop;
+	CORBA::Boolean dump_rule = 0;
+	const char*    why;
 
-        transportRules&  rules = transportRules::serverRules();
+        transportRules& rules = transportRules::serverRules();
 
 	if ((accept_ziop = rules.match(strand.connection->peeraddress(),
                                        actions, matched_rule))) {

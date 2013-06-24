@@ -55,11 +55,13 @@ int main(int argc, char** argv)
   CORBA::Object_var obj = orb->resolve_initial_references("RootPOA");
   PortableServer::POA_var poa = PortableServer::POA::_narrow(obj);
 
-  PortableServer::Servant_var<Test_i> servant = new Test_i();
+  Test_i* servant = new Test_i();
 
   obj = servant->_this();
   CORBA::String_var sior(orb->object_to_string(obj));
   cout << (char*)sior << endl;
+
+  servant->_remove_ref();
 
   PortableServer::POAManager_var pman = poa->the_POAManager();
   pman->activate();

@@ -183,7 +183,7 @@ static const char* boa_ids[] = { "omniORB4_BOA",
 				 0 };
 
 static omniOrbBOA*                       the_boa = 0;
-static omni_tracedmutex                  boa_lock("boa_lock");
+static omni_tracedmutex                  boa_lock;
 static omniORB::loader::mapKeyToObject_t MapKeyToObjectFunction = 0;
 
 
@@ -307,8 +307,7 @@ omniOrbBOA::omniOrbBOA(int nil)
     pd_state_signal(0)
 {
   if (!nil)
-    pd_state_signal = new omni_tracedcondition(omni::internalLock,
-					       "omniOrbBOA::pd_state_signal");
+    pd_state_signal = new omni_tracedcondition(omni::internalLock);
 
   // NB. If nil, then omni::internalLock may be zero, so we cannot use
   // it to initialise the condition variable. However, since the
@@ -1125,7 +1124,7 @@ parse_BOA_args(int& argc, char** argv, const char* boa_identifier)
     if( omniORB::trace(1) && strcmp(boa_identifier, myBoaId()) ) {
       if( omniORB::trace(1) ) {
 	omniORB::logger l;
-	l << "Warning: using BOAid " << boa_identifier 
+	l << "WARNING -- using BOAid " << boa_identifier 
 	  << " (should be " << myBoaId() << ")." << "\n";
       }
     }
@@ -1161,7 +1160,7 @@ parse_BOA_args(int& argc, char** argv, const char* boa_identifier)
 	if( strcmp(argv[idx + 1], myBoaId()) ) {
 	  if( omniORB::trace(1) ) {
 	    omniORB::logger l;
-	    l << "Warning: using BOAid " << boa_identifier 
+	    l << "WARNING -- using BOAid " << boa_identifier 
 	      << " (should be " << myBoaId() << ")." << "\n";
 	  }
 	}
@@ -1231,7 +1230,7 @@ omniORB::loader::set(omniORB::loader::mapKeyToObject_t NewMapKeyToObject)
 ///////////////////////// omniORB::objectKey /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-static omni_tracedmutex key_lock("key_lock");
+static omni_tracedmutex key_lock;
 static omniORB::objectKey omniORB_seed;
 
 

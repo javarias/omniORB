@@ -3,7 +3,7 @@
 // giopServer.cc              Created on: 20 Dec 2000
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2011 Apasphere Ltd
+//    Copyright (C) 2002-2007 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -25,8 +25,134 @@
 //
 //
 // Description:
-//	*** PROPRIETARY INTERFACE ***
+//	*** PROPRIETORY INTERFACE ***
 //
+
+/*
+  $Log$
+  Revision 1.25.2.19  2007/12/09 01:35:08  dgrisby
+  Race condition between Peek / select thread when data in buffer.
+
+  Revision 1.25.2.18  2007/11/23 14:25:04  dgrisby
+  Leak of connections closed during upcall in thread pool mode.
+
+  Revision 1.25.2.17  2006/10/30 14:17:22  dgrisby
+  Cast in log message for 64 bit Windows.
+
+  Revision 1.25.2.16  2006/10/09 09:47:12  dgrisby
+  Only delete giopServer if all threads are successfully shut down.
+
+  Revision 1.25.2.15  2006/09/01 14:11:52  dgrisby
+  Avoid potential deadlock with call buffering; do not force worker
+  creation when a request is fully buffered.
+
+  Revision 1.25.2.14  2006/06/05 13:34:31  dgrisby
+  Make connection thread limit a per-connection value.
+
+  Revision 1.25.2.13  2006/04/28 18:40:46  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.25.2.12  2006/04/09 19:52:31  dgrisby
+  More IPv6, endPointPublish parameter.
+
+  Revision 1.25.2.11  2005/11/21 11:02:57  dgrisby
+  Another merge.
+
+  Revision 1.25.2.10  2005/11/17 17:03:26  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.25.2.9  2005/06/08 09:41:06  dgrisby
+  Update comment.
+
+  Revision 1.25.2.8  2005/05/10 22:07:33  dgrisby
+  Merge again.
+
+  Revision 1.25.2.7  2005/04/11 12:09:41  dgrisby
+  Another merge.
+
+  Revision 1.25.2.6  2005/03/30 23:36:10  dgrisby
+  Another merge from omni4_0_develop.
+
+  Revision 1.25.2.5  2005/03/02 12:39:17  dgrisby
+  Merge from omni4_0_develop.
+
+  Revision 1.25.2.4  2005/03/02 12:10:49  dgrisby
+  setSelectable / Peek fixes.
+
+  Revision 1.25.2.3  2005/01/13 21:09:59  dgrisby
+  New SocketCollection implementation, using poll() where available and
+  select() otherwise. Windows specific version to follow.
+
+  Revision 1.25.2.2  2005/01/06 23:10:27  dgrisby
+  Big merge from omni4_0_develop.
+
+  Revision 1.25.2.1  2003/03/23 21:02:15  dgrisby
+  Start of omniORB 4.1.x development branch.
+
+  Revision 1.22.2.24  2003/02/17 01:46:23  dgrisby
+  Pipe to kick select thread (on Unix).
+
+  Revision 1.22.2.23  2002/09/09 22:11:50  dgrisby
+  SSL transport cleanup even if certificates are wrong.
+
+  Revision 1.22.2.22  2002/09/04 23:29:30  dgrisby
+  Avoid memory corruption with multiple list removals.
+
+  Revision 1.22.2.21  2002/08/21 06:23:15  dgrisby
+  Properly clean up bidir connections and ropes. Other small tweaks.
+
+  Revision 1.22.2.20  2002/03/18 16:50:18  dpg1
+  New threadPoolWatchConnection parameter.
+
+  Revision 1.22.2.19  2002/03/13 16:05:39  dpg1
+  Transport shutdown fixes. Reference count SocketCollections to avoid
+  connections using them after they are deleted. Properly close
+  connections when in thread pool mode.
+
+  Revision 1.22.2.18  2002/02/13 16:02:39  dpg1
+  Stability fixes thanks to Bastiaan Bakker, plus threading
+  optimisations inspired by investigating Bastiaan's bug reports.
+
+  Revision 1.22.2.17  2002/02/01 11:21:19  dpg1
+  Add a ^L to comments.
+
+  Revision 1.22.2.16  2001/09/20 13:26:14  dpg1
+  Allow ORB_init() after orb->destroy().
+
+  Revision 1.22.2.15  2001/09/19 17:26:49  dpg1
+  Full clean-up after orb->destroy().
+
+  Revision 1.22.2.14  2001/09/10 17:47:57  sll
+  startIdleCounter in csInsert.
+
+  Revision 1.22.2.13  2001/08/21 11:02:15  sll
+  orbOptions handlers are now told where an option comes from. This
+  is necessary to process DefaultInitRef and InitRef correctly.
+
+  Revision 1.22.2.12  2001/08/17 17:12:37  sll
+  Modularise ORB configuration parameters.
+
+  Revision 1.22.2.11  2001/07/31 16:28:00  sll
+  Added GIOP BiDir support.
+
+  Revision 1.22.2.10  2001/07/13 15:27:42  sll
+  Support for the thread-pool as well as the thread-per-connection policy
+  Support for serving multiple incoming calls on the same connection
+  simultaneously.
+
+  Revision 1.22.2.9  2001/06/20 18:35:17  sll
+  Upper case send,recv,connect,shutdown to avoid silly substutition by
+  macros defined in socket.h to rename these socket functions
+  to something else.
+
+  Revision 1.22.2.8  2001/06/11 18:00:52  sll
+  Fixed silly mistake in shutdown multiple endpoints.
+
+  Revision 1.22.2.7  2001/04/18 18:10:49  sll
+  Big checkin with the brand new internal APIs.
+
+
+*/
 
 #include <omniORB4/CORBA.h>
 #include <invoker.h>
@@ -76,6 +202,13 @@ CORBA::ULong   orbParameters::maxServerThreadPerConnection   = 100;
 //
 //   Valid values = (n >= 1) 
 
+CORBA::ULong   orbParameters::maxServerThreadPoolSize        = 100;
+//   The max. no. of threads the server will allocate to do various
+//   ORB tasks. This number does not include the dedicated thread
+//   per connection when the threadPerConnectionPolicy is in effect
+//
+//   Valid values = (n >= 1) 
+
 CORBA::ULong   orbParameters::threadPoolWatchConnection      = 1;
 //   After dispatching an upcall in thread pool mode, the thread that
 //   has just performed the call can watch the connection for a short
@@ -116,8 +249,7 @@ static const char* plural(CORBA::ULong val)
 
 ////////////////////////////////////////////////////////////////////////////
 giopServer::giopServer() : pd_state(IDLE), pd_nconnections(0),
-			   pd_lock("giopServer::pd_lock"),
-			   pd_cond(&pd_lock, "giopServer::pd_cond"),
+			   pd_cond(&pd_lock),
 			   pd_n_temporary_workers(0),
 			   pd_n_dedicated_workers(0)
 {
@@ -204,7 +336,7 @@ giopServer::publish(const orbServer::PublishSpecs& publish_specs,
 CORBA::Boolean
 giopServer::addBiDirStrand(giopStrand* s,giopActiveCollection* watcher) {
 
-  OMNIORB_ASSERT(s->isClient() && s->isBiDir() && s->connection);
+  OMNIORB_ASSERT(s->isClient() && s->biDir && s->connection);
   {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omniTransportLock,0);
     omni_tracedmutex_lock sync(*omniTransportLock);
@@ -442,22 +574,15 @@ sendCloseConnection(giopStrand* s)
   hdr[7] = (char)GIOP::CloseConnection;
   hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
 
-  omni_time_t timeout(orbParameters::scanGranularity);
-  omni_time_t deadline;
-
-  if (timeout.s < 5)
-    timeout.s = 5;
-
-  omni_thread::get_time(deadline, timeout);
-
-  int tx = s->connection->Send(hdr, 12, deadline);
-  if (tx <= 0 && omniORB::trace(25)) {
+  if (omniORB::trace(25)) {
     omniORB::logger log;
-    const char* err = (tx == 0 ? "Timed out" : "Error");
-
-    log << err << " sending CloseConnection to "
-	<< s->connection->peeraddress() << "\n";
+    log << "sendCloseConnection: to " << s->connection->peeraddress()
+	<< " 12 bytes\n";
   }
+  if (omniORB::trace(30))
+    giopStream::dumpbuf((unsigned char*)hdr, 12);
+
+  s->connection->Send(hdr,12);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -492,7 +617,7 @@ giopServer::deactivate()
       connectionState** head = &(pd_connectionState[i]);
       while (*head) {
 	if ((*head)->connection->pd_has_dedicated_thread ||
-	    (*head)->strand->isBiDir()) {
+	    (*head)->strand->biDir) {
 
 	  sendCloseConnection((*head)->strand);
 	  (*head)->connection->Shutdown();
@@ -594,7 +719,7 @@ giopServer::deactivate()
       connectionState** head = &(pd_connectionState[i]);
       while (*head) {
 	if (!((*head)->connection->pd_has_dedicated_thread ||
-	      (*head)->strand->isBiDir())) {
+	      (*head)->strand->biDir)) {
 
 	  sendCloseConnection((*head)->strand);
 	  (*head)->connection->Shutdown();
@@ -796,7 +921,7 @@ giopServer::csInsert(giopStrand* s)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(pd_lock,1);
 
-  OMNIORB_ASSERT(s->isBiDir() && s->isClient());
+  OMNIORB_ASSERT(s->biDir && s->isClient());
 
   giopConnection* conn = s->connection;
 
@@ -1473,6 +1598,34 @@ static maxServerThreadPerConnectionHandler maxServerThreadPerConnectionHandler_;
 
 
 /////////////////////////////////////////////////////////////////////////////
+class maxServerThreadPoolSizeHandler : public orbOptions::Handler {
+public:
+
+  maxServerThreadPoolSizeHandler() : 
+    orbOptions::Handler("maxServerThreadPoolSize",
+			"maxServerThreadPoolSize = n >= 1",
+			1,
+			"-ORBmaxServerThreadPoolSize < n >= 1 >") {}
+
+  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+
+    CORBA::ULong v;
+    if (!orbOptions::getULong(value,v) || v < 1) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_greater_than_zero_ulong_msg);
+    }
+    orbParameters::maxServerThreadPoolSize = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVULong(key(),orbParameters::maxServerThreadPoolSize,
+			   result);
+  }
+};
+
+static maxServerThreadPoolSizeHandler maxServerThreadPoolSizeHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
 class threadPoolWatchConnectionHandler : public orbOptions::Handler {
 public:
 
@@ -1531,6 +1684,8 @@ public:
 static connectionWatchImmediateHandler connectionWatchImmediateHandler_;
 
 
+
+
 /////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
@@ -1543,6 +1698,7 @@ public:
     orbOptions::singleton().registerHandler(threadPerConnectionUpperLimitHandler_);
     orbOptions::singleton().registerHandler(threadPerConnectionLowerLimitHandler_);
     orbOptions::singleton().registerHandler(maxServerThreadPerConnectionHandler_);
+    orbOptions::singleton().registerHandler(maxServerThreadPoolSizeHandler_);
     orbOptions::singleton().registerHandler(threadPoolWatchConnectionHandler_);
     orbOptions::singleton().registerHandler(connectionWatchImmediateHandler_);
   }

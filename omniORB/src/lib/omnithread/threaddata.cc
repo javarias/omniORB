@@ -1,7 +1,6 @@
 //				Package : omnithread
 // omnithread/threaddata.cc	Created : 10/2000 dpg1
 //
-//    Copyright (C) 2010 Apasphere Ltd
 //    Copyright (C) 2000 AT&T Laboratories Cambridge
 //
 //    This file is part of the omnithread library
@@ -24,7 +23,9 @@
 
 // Implementation of per-thread data
 
-#include <omnithread.h>
+#ifndef INSIDE_THREAD_IMPL_CC
+#error "threaddata.cc must be #included by a thread implementation."
+#endif
 
 
 static omni_thread::key_t allocated_keys = 0;
@@ -80,11 +81,3 @@ omni_thread::remove_value(key_t k)
   _values[k-1] = 0;
   return v;
 }
-
-
-#ifdef OMNI_REFCOUNT_DEFAULT
-
-omni_mutex omni_refcount::lock;
-
-
-#endif // OMNI_REFCOUNT_DEFAULT

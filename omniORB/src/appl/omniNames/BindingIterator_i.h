@@ -35,8 +35,10 @@
 #endif
 
 
-class BindingIterator_i : public POA_CosNaming::BindingIterator
+class BindingIterator_i : public POA_CosNaming::BindingIterator,
+			  public PortableServer::RefCountServantBase
 {
+
 public:
 
   BindingIterator_i(PortableServer::POA_ptr poa, CosNaming::BindingList* l)
@@ -45,25 +47,25 @@ public:
     PortableServer::ObjectId_var id = poa->activate_object(this);
   }
 
-  CORBA::Boolean next_one(CosNaming::Binding_out b)
-  {
-    CosNaming::BindingList_var bl;
-    CORBA::Boolean ret = next_n(1, bl);
+  CORBA::Boolean next_one(CosNaming::Binding_out b) {
 
+    CosNaming::BindingList* bl;
+    CORBA::Boolean ret = next_n(1, bl);
     b = new CosNaming::Binding;
     if (ret)
-      *b = bl[0];
+      *b = (*bl)[0];
     else
 #ifndef MIPSPRO_WORKAROUND
       b->binding_type = CosNaming::nobject;
 #else
       b.ptr()->binding_type = CosNaming::nobject;
 #endif
+    delete bl;
     return ret;
   }
 
-  CORBA::Boolean next_n(CORBA::ULong how_many, CosNaming::BindingList_out bl)
-  {
+  CORBA::Boolean next_n(CORBA::ULong how_many, CosNaming::BindingList_out bl) {
+
     //
     // What we do here is return the current list to the caller, shortening
     // it to the required length.  Before this however, we create a new list
@@ -73,13 +75,11 @@ public:
     if (list->length() < how_many) {
       how_many = list->length();
     }
-    bl = list._retn();
-
+    bl = list;
     list = new CosNaming::BindingList(bl->length() - how_many);
     list->length(bl->length() - how_many);
-
     for (unsigned int i = 0; i < list->length(); i++) {
-      list[i] = (*bl)[i + how_many];
+      (*list)[i] = (*bl)[i + how_many];
     }
 
     bl->length(how_many);
@@ -90,18 +90,19 @@ public:
       return 1;
   }
 
-  void destroy(void)
-  {
+  void destroy(void) {
+    // remember the destructor for an object should never be called explicitly.
     PortableServer::ObjectId_var id = names_poa->servant_to_id(this);
     names_poa->deactivate_object(id);
   }
 
 private:
 
-  CosNaming::BindingList_var list;
+  CosNaming::BindingList* list;
 
-  // The destructor for an object should never be called explicitly.
+  // remember the destructor for an object should never be called explicitly.
   ~BindingIterator_i() {
+    delete list;
   }
 };
 

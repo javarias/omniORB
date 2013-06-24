@@ -369,7 +369,12 @@ AC_SUBST(ENABLE_STATIC, $omni_cv_enable_static)
 ])
 
 
-dnl Lock tracing
+dnl This defaults to enabled, and is appropriate for development
+dnl For the release, the obvious chunk below should be replaced with:
+dnl               AC_HELP_STRING([--enable-thread-tracing],
+dnl                  [enable thread and mutex tracing (default disable-thread-tracing)]),
+dnl               omni_cv_enable_thread_tracing=$enableval)
+dnl               omni_cv_enable_thread_tracing=no)
 AC_DEFUN([OMNI_DISABLE_THREAD_TRACING],
 [AC_CACHE_CHECK(whether to trace threads and locking,
 omni_cv_enable_thread_tracing,
@@ -433,48 +438,34 @@ AC_SUBST(ENABLE_LONGDOUBLE, $omni_cv_enable_longdouble)
 
 dnl Enable ZIOP
 AC_DEFUN([OMNI_ENABLE_ZIOP],
-[AC_CHECK_LIB(z,compress2,omni_cv_enable_ziop=yes,omni_cv_enable_ziop=no)
-AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
-
-dnl Atomic operations
-
-AC_DEFUN([OMNI_SYNC_ADD_SUB_FETCH],
-[AC_CACHE_CHECK(whether __sync_add_and_fetch and __sync_sub_and_fetch are present,
-omni_cv_sync_add_and_fetch,
-[AC_LANG_PUSH(C++)
- AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[
-int a = 1;
-int b = __sync_add_and_fetch(&a, 1);
-int c = __sync_sub_and_fetch(&b, 1);
-]])],
- [omni_cv_sync_add_and_fetch=yes],
- [omni_cv_sync_add_and_fetch=no])
- AC_LANG_POP(C++)
+[AC_CACHE_CHECK(whether to enable ZIOP,
+omni_cv_enable_ziop,
+[AC_ARG_ENABLE(ziop,
+               AC_HELP_STRING([--enable-ziop],
+                  [enable ZIOP support (default disable-ziop)]),
+               omni_cv_enable_ziop=$enableval,
+               omni_cv_enable_ziop=no)
 ])
-if test "$omni_cv_sync_add_and_fetch" = yes; then
-  AC_DEFINE(OMNI_HAVE_SYNC_ADD_AND_FETCH,,
-            [define if __sync_add_and_fetch and __sync_sub_and_fetch are available])
+if test "$omni_cv_enable_ziop" = "yes"; then
+  AC_DEFINE(OMNIORB_ENABLE_ZIOP,,[define if you want ZIOP support])
+fi
+AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)
+])
+
+dnl Enable SSL peer certificate access
+AC_DEFUN([OMNI_ENABLE_CERT_ACCESS],
+[AC_CACHE_CHECK(whether to enable access to SSL peer certificate,
+omni_cv_enable_cert_access,
+[AC_ARG_ENABLE(cert-access,
+               AC_HELP_STRING([--enable-cert-access],
+                  [enable certificate access (default disable-cert-access)]),
+               omni_cv_enable_cert_access=$enableval,
+               omni_cv_enable_cert_access=no)
+])
+if test "$omni_cv_enable_cert_access" = "yes"; then
+  AC_DEFINE(OMNIORB_ENABLE_CERT_ACCESS,,[define if you want access to peer certificate])
 fi
 ])
-
-
-dnl Disable support for atomic operations even if they look like they
-dnl are available
-
-AC_DEFUN([OMNI_DISABLE_ATOMIC],
-[AC_CACHE_CHECK(whether to use atomic operations when possible,
-omni_cv_enable_atomic,
-[AC_ARG_ENABLE(atomic,
-               AC_HELP_STRING([--disable-atomic],
-                  [disable atomic operations (default enable-atomic)]),
-               omni_cv_enable_atomic=$enableval,
-               omni_cv_enable_atomic=yes)
-])
-if test "$omni_cv_enable_atomic" = "no"; then
-  AC_DEFINE(OMNI_DISABLE_ATOMIC_OPS,,[define if you want to disable atomic operations])
-fi
-])
-
 
 
 dnl

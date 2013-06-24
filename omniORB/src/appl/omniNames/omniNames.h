@@ -84,6 +84,11 @@ private:
   omni_condition cond_;
   CORBA::Boolean stop_;
   CORBA::Boolean running_;
+
+#ifdef __WIN32__
+  std::ofstream   errstream_;
+  std::streambuf* cerrbuf_;
+#endif
 };
 
 

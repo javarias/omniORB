@@ -28,7 +28,20 @@
 // Description:
 //    Implementation of Python servant object
 
+// $Id$
+
+// $Log$
+// Revision 1.1.2.2  2008/10/09 15:04:36  dgrisby
+// Python exceptions occurring during unmarshalling were not properly
+// handled. Exception state left set when at traceLevel 0 (thanks
+// Morarenko Kirill).
+//
+// Revision 1.1.2.1  2005/11/09 12:33:32  dgrisby
+// Support POA LocalObjects.
+//
+
 #include <omnipy.h>
+#include <pyThreadCache.h>
 
 
 //
@@ -433,7 +446,8 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
 					      (char*)"forward_reference");
       Py_DECREF(evalue);
       if (pyfr) {
-	CORBA::Object_ptr fr = omniPy::getObjRef(pyfr);
+	CORBA::Object_ptr fr = (CORBA::Object_ptr)omniPy::getTwin(pyfr,
+								  OBJREF_TWIN);
 	if (fr) {
 	  PortableServer::ForwardRequest ex(fr);
 	  Py_DECREF(pyfr);
@@ -605,7 +619,8 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
 					      (char*)"forward_reference");
       Py_DECREF(evalue);
       if (pyfr) {
-	CORBA::Object_ptr fr = omniPy::getObjRef(pyfr);
+	CORBA::Object_ptr fr = (CORBA::Object_ptr)omniPy::getTwin(pyfr,
+								  OBJREF_TWIN);
 	if (fr) {
 	  PortableServer::ForwardRequest ex(fr);
 	  Py_DECREF(pyfr);

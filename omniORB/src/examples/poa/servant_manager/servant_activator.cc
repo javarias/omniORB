@@ -33,10 +33,7 @@ public:
   char* echoString(const char* mesg)
   {
     cout << "Echo_i::echoString(\"" << mesg << "\")" << endl;
-
-    if (!strcmp(mesg, "shutdown"))
-      orb->shutdown(0);
-
+    if( !strcmp(mesg, "shutdown") )  orb->shutdown(0);
     return CORBA::string_dup(mesg);
   }
 };
@@ -86,7 +83,8 @@ int main(int argc, char** argv)
       // Create a new poa to hold our echo objects.
       CORBA::PolicyList pl;
       pl.length(1);
-      pl[0] = root_poa->create_request_processing_policy(PortableServer::USE_SERVANT_MANAGER);
+      pl[0] = root_poa->create_request_processing_policy(
+							 PortableServer::USE_SERVANT_MANAGER);
 
       PortableServer::POA_var poa = root_poa->create_POA("mypoa", poa_man, pl);
 
@@ -110,6 +108,12 @@ int main(int argc, char** argv)
   }
   catch(CORBA::Exception& ex) {
     cerr << "Caught CORBA::Exception: " << ex._name() << endl;
+  }
+  catch(omniORB::fatalException& fe) {
+    cerr << "Caught omniORB::fatalException:" << endl;
+    cerr << "  file: " << fe.file() << endl;
+    cerr << "  line: " << fe.line() << endl;
+    cerr << "  mesg: " << fe.errmsg() << endl;
   }
   return 0;
 }

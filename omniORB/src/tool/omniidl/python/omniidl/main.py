@@ -2,9 +2,9 @@
 # -*- python -*-
 #                           Package   : omniidl
 # main.py                   Created on: 1999/11/05
-#                           Author    : Duncan Grisby (dpg1)
+#                            Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 2002-2012 Apasphere Ltd
+#    Copyright (C) 2002-2008 Apasphere Ltd
 #    Copyright (C) 1999      AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,6 +28,62 @@
 #   
 #   IDL compiler main function
 
+# $Id$
+# $Log$
+# Revision 1.21.2.3  2008/12/03 10:53:58  dgrisby
+# Tweaks leading to Python 3 support; other minor clean-ups.
+#
+# Revision 1.21.2.2  2005/01/06 23:11:24  dgrisby
+# Big merge from omni4_0_develop.
+#
+# Revision 1.21.2.1  2003/03/23 21:01:37  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.17.2.13  2002/12/19 13:55:14  dgrisby
+# Don't try to delete non-existent file when no preprocessor.
+#
+# Revision 1.17.2.12  2002/10/28 12:20:45  dgrisby
+# Editing mishap.
+#
+# Revision 1.17.2.11  2002/10/28 11:56:50  dgrisby
+# Work around VC++ 7 problem with FILE* change.
+#
+# Revision 1.17.2.10  2002/06/05 22:26:32  dgrisby
+# Cope with spaces in paths to IDL files.
+#
+# Revision 1.17.2.9  2002/04/25 23:12:44  dgrisby
+# Bug with invalid omniidl option reporting.
+#
+# Revision 1.17.2.8  2002/04/25 20:33:20  dgrisby
+# Better job of looking for omnicpp.
+#
+# Revision 1.17.2.7  2002/03/13 17:41:42  dpg1
+# omniidl had problems finding omnicpp on Windows.
+#
+# Revision 1.17.2.6  2002/02/18 11:59:23  dpg1
+# Full autoconf support.
+#
+# Revision 1.17.2.5  2001/11/14 17:13:44  dpg1
+# Long double support.
+#
+# Revision 1.17.2.4  2001/10/17 16:48:35  dpg1
+# Minor error message tweaks
+#
+# Revision 1.17.2.3  2000/12/05 17:45:22  dpg1
+# omniidl case sensitivity updates from omni3_develop.
+#
+# Revision 1.17.2.2  2000/10/10 10:18:54  dpg1
+# Update omniidl front-end from omni3_develop.
+#
+# Revision 1.15.2.17  2000/09/11 14:36:50  dpg1
+# New -T option to work around Win98 pipe problems.
+#
+# Revision 1.15.2.16  2000/09/06 11:20:50  dpg1
+# Support for Python 1.6 and 2.0b1.
+#
+# [...truncated...]
+#
+
 """IDL Compiler front-end main function"""
 
 import sys, os
@@ -45,7 +101,8 @@ if sys.hexversion < 0x10502f0:
 import _omniidl
 import getopt, os, os.path
 
-import idlast, idltype
+import idlast, idltype, idlstring
+string = idlstring
 
 cmdname = "omniidl"
 
@@ -120,19 +177,20 @@ if sys.platform != "OpenVMS":
     preprocessor_cmd  = preprocessor + " -lang-c++ -undef -D__OMNIIDL__=" + \
                         _omniidl.version
 else:
-    # OpenVMS
     if hasattr(_omniidl, "__file__"):
         preprocessor_path = os.path.dirname(os.path.abspath(_omniidl.__file__))
     else:
         preprocessor_path = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-    names = preprocessor_path.replace('.', '^.').split("/")
+    names=[]
+    for name in string.split(preprocessor_path, "/"):
+        names.append(string.replace(name, '.', '^.'))
 
     preprocessor_options = ('-lang-c++ -undef "-D__OMNIIDL__=%s"' %
                             _omniidl.version)
     preprocessor_cmdfmt  = "mcr %s:[%s]%s %s"
     preprocessor_cmd     = preprocessor_cmdfmt % (names[1],
-                                                  ".".join(names[2:]),
+                                                  string.join(names[2:],"."),
                                                   preprocessor_name,
                                                   preprocessor_options)
 
@@ -189,14 +247,14 @@ def parseArgs(args):
 
         elif o == "-W":
             if a[0] == "p":
-                preprocessor_args.extend(a[1:].split(","))
+              preprocessor_args.extend(string.split(a[1:], ","))
             elif a[0] == "b":
                 if len(backends) == 0:
                     if not quiet:
                         sys.stderr.write(cmdname + ": Error in arguments: "
                                          "no back-ends selected\n")
                     sys.exit(1)
-                backends_args[-1].extend(a[1:].split(","))
+                backends_args[-1].extend(string.split(a[1:], ","))
             else:
                 if not quiet:
                     sys.stderr.write("Error in arguments: option " + o + \
@@ -285,7 +343,7 @@ def genTempFileName():
 
 def my_import(name):
     mod = __import__(name)
-    components = name.split(".")
+    components = string.split(name, ".")
     for comp in components[1:]:
         mod = getattr(mod, comp)
     return mod
@@ -373,11 +431,11 @@ def main(argv=None):
 
         if sys.platform != 'OpenVMS' or len(preprocessor_args)==0:
             preproc_cmd = '%s %s "%s"' % (preprocessor_cmd,
-                                          " ".join(preprocessor_args),
+                                          string.join(preprocessor_args, ' '),
                                           name)
         else:
             preproc_cmd = '%s "%s" %s' % (preprocessor_cmd,
-                                          '" "'.join(preprocessor_args),
+                                          string.join(preprocessor_args,'" "'),
                                           name)
         if not no_preprocessor:
             if verbose:

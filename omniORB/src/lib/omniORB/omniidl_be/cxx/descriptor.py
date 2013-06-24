@@ -3,7 +3,7 @@
 # descriptor.py             Created on: 2000/08/23
 #			    Author    : David Scott (djs)
 #
-#    Copyright (C) 2003-2011 Apasphere Ltd
+#    Copyright (C) 2003-2004 Apasphere Ltd
 #    Copyright (C) 1999-2000 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -27,8 +27,41 @@
 #   Produce internal descriptors
 #
 
+# $Id$
+# $Log$
+# Revision 1.1.6.3  2004/02/20 00:03:35  dgrisby
+# Compilation fixes. Thanks Gary Duzan for pointing them out.
+#
+# Revision 1.1.6.2  2003/10/23 11:25:54  dgrisby
+# More valuetype support.
+#
+# Revision 1.1.6.1  2003/03/23 21:02:42  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.1.4.4  2001/06/08 17:12:12  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
+# Revision 1.1.4.3  2001/03/26 11:11:54  dpg1
+# Python clean-ups. Output routine optimised.
+#
+# Revision 1.1.4.2  2001/03/13 10:34:01  dpg1
+# Minor Python clean-ups
+#
+# Revision 1.1.4.1  2000/10/12 15:37:47  sll
+# Updated from omni3_1_develop.
+#
+# Revision 1.1.2.1  2000/09/14 16:03:02  djs
+# Remodularised C++ descriptor name generator
+# Bug in listing all inherited interfaces if one is a forward
+# repoID munging function now handles #pragma ID in bootstrap.idl
+# Naming environments generating code now copes with new IDL AST types
+# Modified type utility functions
+# Minor tidying
+#
+
 from omniidl import idlvisitor, idlast
-from omniidl_be.cxx import id, config, ast
+from omniidl_be.cxx import config, id, ast
+import string
 
 # All descriptors are of the form:
 #  TAG _ PREFIX _ BASE
@@ -45,7 +78,6 @@ from omniidl_be.cxx import id, config, ast
 
 def __init__(ast):
     global prefix, counter, signature_descriptors, iface_descriptors
-    global poller_impls
 
     prefix  = ""
     counter = 0
@@ -53,38 +85,23 @@ def __init__(ast):
     # Descriptors keyed by signature alone
     signature_descriptors = {}
 
-    # Descriptors keyed by interface and operation name
+    # Descriptors keyed by interface and operation name (a two level
+    # hashtable)
     iface_descriptors = {}
-
-    # Poller implementation classes
-    poller_impls = {}
 
     # initialise the prefix
     HV = HashVisitor()
     ast.accept(HV)
 
-
 def call_descriptor(signature):
     return private_prefix + "_cd_" + get_signature_descriptor(signature)
-
 
 def context_descriptor(signature):
     return private_prefix + "_ctx_" + get_signature_descriptor(signature)
 
-
 def local_callback_fn(iname, operation_name, signature):
-    return private_prefix + "_lcfn_" + \
+    return private_prefix + "_lcfn_" +\
        get_interface_operation_descriptor(iname, operation_name, signature)
-
-
-def ami_poller_impl(pname):
-    return private_prefix + "_poll_" + get_poller_impl(pname)
-
-def ami_call_descriptor(iname, operation_name, signature):
-    desc = get_interface_operation_descriptor(iname, operation_name, signature)
-    return (private_prefix + "_amic_" + desc,
-            private_prefix + "_amip_" + desc)
-       
 
 
 ####################################################################
@@ -162,7 +179,7 @@ class HashVisitor(idlvisitor.AstVisitor):
         low.reverse()
         
         global prefix
-        prefix = "".join(high + low)
+        prefix = string.join(high + low, "")
 
 
 # Return a unique PREFIX + BASE
@@ -171,54 +188,46 @@ def unique():
     clist = list(hex_word(counter))
     clist.reverse()
 
-    name = prefix + "_" + "".join(clist)
+    name = prefix + "_" + string.join(clist, "")
     counter = counter + 1
     
     return name
 
 
 def get_signature_descriptor(signature):
-    try:
-        return signature_descriptors[signature]
+    global signature_descriptors
+    
+    if not signature_descriptors.has_key(signature):
+        signature_descriptors[signature] = unique()
 
-    except KeyError:
-        desc = unique()
-        signature_descriptors[signature] = desc
-        return desc
-
+    return signature_descriptors[signature]
 
 def get_interface_operation_descriptor(iname, operation_name, signature):
+    global iface_descriptors
+
     assert isinstance(iname, id.Name)
 
     key = iname.hash()
-    iface_table = iface_descriptors.setdefault(key, {})
+    if not iface_descriptors.has_key(key):
+        iface_descriptors[key] = {}
+
+    iface_table = iface_descriptors[key]
     
     key = signature + "/" + operation_name
-
-    try:
+    if iface_table.has_key(key):
         return iface_table[key]
-
-    except KeyError:
-        descriptor = unique()
-        iface_table[key] = descriptor
-        return descriptor
-
-
-def get_poller_impl(pname):
-    assert isinstance(pname, id.Name)
-
-    key = pname.hash()
-    try:
-        return poller_impls[key]
-
-    except KeyError:
-        impl_name = unique()
-        poller_impls[key] = impl_name
-        return impl_name
+    
+    descriptor = unique()
+    iface_table[key] = descriptor
+    return descriptor
 
 
 # Takes an int and returns the int in hex, without leading 0x and with
-# 0s padding.
+# 0s padding. Can't use %08x because Python 1.5.2 can't do it with
+# longs >= 2**31.
 
 def hex_word(x):
-    return "%08x" % x
+    s = hex(x)[2:]
+    if s[-1] == "L":
+        s = s[:-1]
+    return string.zfill(s, 8)

@@ -2,7 +2,7 @@
 //                          Package   : omniNames
 // log.cc                   Author    : Tristan Richardson (tjr)
 //
-//    Copyright (C) 2002-2013 Apasphere Ltd
+//    Copyright (C) 2002-2008 Apasphere Ltd
 //    Copyright (C) 1997-1999 AT&T Laboratories Cambridge
 //
 //  This file is part of omniNames.
@@ -112,6 +112,37 @@ extern void usage();
 
 
 //
+// This class can be used to generate timestamps.  The t() method normally
+// returns a timestamp string, but if the same timestamp (to the nearest
+// second) would be returned as last time then an empty string is returned
+// instead.
+//
+
+class timestamp {
+  char str[29];
+public:
+  timestamp(void) {
+    str[0] = '\n';
+    str[1] = str[28] = '\0';
+  }
+  char* t(void) {
+    time_t t = time(NULL);
+    char *p = ctime(&t);
+    if (strncmp(p, &str[1], 24) == 0) {
+      return &str[28];
+    }
+    strncpy(&str[1], p, 24);
+    str[25] = ':';
+    str[26] = '\n';
+    str[27] = '\n';
+    return str;
+  }
+};
+
+timestamp ts;
+
+
+//
 // Constructor for class omniNameslog.  There will normally be only one
 // instance of this class.  Unfortunately the initialisation of the class
 // cannot be completed in the constructor - the rest is done in the init()
@@ -138,10 +169,6 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
 #endif
 
   CORBA::String_var logdir;
-
-  if (!arg_logdir)
-    arg_logdir = getenv(DATADIR_ENV_VAR);
-  
   if (!arg_logdir)
     arg_logdir = getenv(LOGDIR_ENV_VAR);
   
@@ -169,7 +196,8 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
 
     struct utsname un;
     if (uname(&un) < 0) {
-      LOG(1, "Error: cannot get the name of this host.");
+      cerr << ts.t() << "Error: cannot get the name of this host." << endl;
+	
       exit(1);
     }
 
@@ -192,7 +220,8 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
     char hostname[MAXHOSTNAMELEN+1];
 
     if (gethostname(hostname, MAXHOSTNAMELEN) < 0) {
-      LOG(1, "Error: cannot get the name of this host.");
+      cerr << ts.t() << "Error: cannot get the name of this host." << endl;
+	
       exit(1);
     }
     logname = CORBA::string_alloc(strlen(logdir) + strlen("/omninames-") +
@@ -208,7 +237,7 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
     DWORD machineName_buflen = MAX_COMPUTERNAME_LENGTH+1;
     CORBA::String_var machineName = CORBA::string_alloc(machineName_buflen-1);
     if (!GetComputerName((LPTSTR)(char*)machineName, &machineName_buflen)) {
-      LOG(1, "Error: cannot get the name of this host.");
+      cerr << ts.t() << "Error: cannot get the name of this host." << endl;
       exit(1);
     }
 
@@ -220,14 +249,15 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
 #else // VMS
     char last(logdir[strlen(logdir)-1]);
     if (last != ':' && last != ']') {
-      LOG(1, "Error: " << LOGDIR_ENV_VAR << " (" << logdir <<
-          ") is not a directory name.");
+      cerr << ts.t() << "Error: " << LOGDIR_ENV_VAR << " (" << logdir
+	   << ") is not a directory name." << endl;
       exit(1);
     }
 
     struct utsname un;
     if (uname(&un) < 0) {
-      LOG(1, "Error: cannot get the name of this host.");
+      cerr << ts.t() << "Error: cannot get the name of this host." << endl;
+        
       exit(1);
     }
 
@@ -238,44 +268,21 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
   }
 
 #ifndef __VMS
-  active_new = CORBA::string_alloc(strlen(logname)+strlen(".dat"));
-  sprintf(active_new,"%s.dat", (const char*)logname);
-
-  active_old = CORBA::string_alloc(strlen(logname)+strlen(".log"));
-  sprintf(active_old,"%s.log", (const char*)logname);
-
+  active = CORBA::string_alloc(strlen(logname)+strlen(".log"));
+  sprintf(active,"%s.log", (const char*)logname);
   backup = CORBA::string_alloc(strlen(logname)+strlen(".bak"));
   sprintf(backup,"%s.bak", (const char*)logname);
-
   checkpt = CORBA::string_alloc(strlen(logname)+strlen(".ckp"));
   sprintf(checkpt,"%s.ckp", (const char*)logname);
 #else
   // specify latest version:
-  active_new = CORBA::string_alloc(strlen(logname)+strlen(".dat;"));
-  sprintf(active_new,"%s.dat;", (const char*)logname);
-
-  active_old = CORBA::string_alloc(strlen(logname)+strlen(".log;"));
-  sprintf(active_old,"%s.log;", (const char*)logname);
-
+  active = CORBA::string_alloc(strlen(logname)+strlen(".log;"));
+  sprintf(active,"%s.log;", (const char*)logname);
   backup = CORBA::string_alloc(strlen(logname)+strlen(".bak;"));
   sprintf(backup,"%s.bak;", (const char*)logname);
-
   checkpt = CORBA::string_alloc(strlen(logname)+strlen(".ckp;"));
   sprintf(checkpt,"%s.ckp;", (const char*)logname);
 #endif
-
-  if (stat(active_old,&sb) == 0) {
-    if (stat(active_new,&sb) == 0) {
-      LOG(1, "Data file '" << active_new << "' and old log file '" <<
-          active_old << "' both exist. Cannot start.");
-      exit(1);
-    }
-    LOG(1, "Using old data file name '" << active_old << "'.");
-    active = active_old;
-  }
-  else {
-    active = active_new;
-  }
 
   if (port == 0) {
     firstTime = 0;
@@ -295,24 +302,26 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
     }
   }
   if (firstTime) {
+
     //
     // Starting for the first time - make sure log file doesn't exist, and
     // for safety, that there is no backup file either.
     //
-  
+
     if (stat(active,&sb) == 0) {
-      LOG(1, "Error: data file '" << active <<
-          "' exists.  Can't use -start option.");
+      cerr << ts.t() << "Error: log file '" << active
+	   << "' exists.  Can't use -start option." << endl;
       exit(1);
     }
     if (stat(backup,&sb) == 0) {
-      LOG(1, "Error: backup file '" << backup <<
-          "' exists.  Can't use -start option.");
+      cerr << ts.t() << "Error: backup file '" << backup
+	   << "' exists.  Can't use -start option." << endl;
       exit(1);
     }
 
   }
   else {
+
     //
     // Restart - get port info from log file.
     //
@@ -323,29 +332,27 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
     ifstream initf(active);
 #endif
     if (!initf) {
-      LOG(1, "Error: cannot open data file '" << active << "': " <<
-          strerror(errno));
+      cerr << ts.t() << "Error: cannot open log file '" << active << "'."
+	   << endl;
 
       if (stat(backup,&sb) == 0) {
 	if (always) {
 	  if (unlink(backup) == 0) {
-	    LOG(1, "Info: backup file '" << backup << "' removed.");
+	    cerr << "Info: backup file '" << backup << "' removed." << endl;
 	  }
 	  else {
-	    LOG(1, "Backup file '" << backup <<
-                "' exists and cannot be removed.");
+	    cerr << "Backup file '" << backup
+		 << "' exists and cannot be removed." << endl;
 	    exit(1);
 	  }
 	}
 	else {
-	  LOG(1, "Backup file '" << backup <<
-              "' exists. Refusing to start. "
-              "Remove the backup file to start omniNames.");
+	  cerr << "Backup file '" << backup << "' exists." << endl
+	       << "Refusing to start. "
+	       << "Remove the backup file to start omniNames."
+	       << endl;
 	  exit(1);
 	}
-      }
-      else {
-        exit(1);
       }
     }
 
@@ -353,15 +360,18 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
       getPort(initf);
     }
     catch (IOError&) {
-      LOG(1, "Error: reading data file '" << active << "' failed: " <<
-          strerror(errno));
+
+      cerr << ts.t() << "Error: reading log file '" << active << "' failed: "
+	   << flush;
+      perror("");
       initf.close();
       exit(1);
 
     }
     catch (ParseError&) {
-      LOG(1, "Error: parse error in data file '" << active << "' at line " <<
-          line << ".");
+
+      cerr << ts.t() << "Error: parse error in log file '" << active
+	   << "' at line " << line << "." << endl;
       initf.close();
       exit(1);
     }
@@ -387,8 +397,6 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
   setlocale(LC_ALL, "");
 #endif
 
-  LOG(1, "Data file: '" << active << "'.");
-
   if (firstTime) {
 
     //
@@ -396,7 +404,7 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
     // port specification and the root context.
     //
 
-    LOG(1, "Starting omniNames for the first time.");
+    cerr << ts.t() << "Starting omniNames for the first time." << endl;
 
     try {
 #ifdef USE_STREAM_OPEN
@@ -446,18 +454,20 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
 	throw IOError();
 #endif
 
-    }
-    catch (IOError& ex) {
-      LOG(1, "Error: cannot create initial data file '" << active << "': " <<
-          strerror(errno));
-      LOG(1, "You can set the environment variable " << DATADIR_ENV_VAR <<
-          " to specify the directory where the data files are kept.");
+    } catch (IOError& ex) {
+
+      cerr << ts.t() << "Error: cannot create initial log file '" << active
+	   << "': " << endl;
+      perror("");
+      cerr << "\nYou can set the environment variable " << LOGDIR_ENV_VAR
+	   << " to specify the\ndirectory where the log files are kept.\n"
+	   << endl;
       logf.close();
       unlink(active);
       exit(1);
     }
 
-    LOG(1, "Wrote initial data file '" << active << "'.");
+    cerr << ts.t() << "Wrote initial log file." << endl;
   }
 
   // claim the global lock as a writer (ie exclusive).
@@ -467,7 +477,8 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
   ifstream initf(active);
 
   if (!initf) {
-    LOG(1, "Error: cannot open data file '" << active << "'.");
+    cerr << ts.t() << "Error: cannot open log file '" << active << "'."
+	 << endl;
     exit(1);
   }
 
@@ -483,48 +494,45 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
       if (strcmp(cmd, "port") == 0) {
 	while (initf && (initf.get() != '\n'));	// ignore rest of line
 	line++;
-      }
-      else if (strcmp(cmd, "persistent") == 0) {
+      } else if (strcmp(cmd, "persistent") == 0) {
 	getPersistent(initf);
-      }
-      else if (strcmp(cmd, "create") == 0) {
+      } else if (strcmp(cmd, "create") == 0) {
 	getCreate(initf);
-      }
-      else if (strcmp(cmd, "destroy") == 0) {
+      } else if (strcmp(cmd, "destroy") == 0) {
 	getDestroy(initf);
-      }
-      else if (strcmp(cmd, "bind") == 0) {
+      } else if (strcmp(cmd, "bind") == 0) {
 	getBind(initf);
-      }
-      else if (strcmp(cmd, "unbind") == 0) {
+      } else if (strcmp(cmd, "unbind") == 0) {
 	getUnbind(initf);
-      }
-      else {
-	LOG(1, "Error: unknown command '" << cmd << "' in data file '" <<
-            active << "'.");
+      } else {
+	cerr << ts.t() << "Error: unknown command '" << cmd
+	     << "' in log file '" << active << "'." << endl;
 	throw ParseError();
       }
 
       delete [] cmd;
     }
-    initf.close();
-  }
-  catch (IOError&) {
-    LOG(1, "Error: reading data file '" << active << "' failed: " <<
-        strerror(errno));
-    initf.close();
-    exit(1);
 
-  }
-  catch (ParseError&) {
-    LOG(1, "Error: parse error in data file '" << active << "' at line " <<
-        line << ".");
+    initf.close();
+
+  } catch (IOError&) {
+
+    cerr << ts.t() << "Error: reading log file '" << active << "' failed: "
+	 << flush;
+    perror("");
     initf.close();
     exit(1);
+
+  } catch (ParseError&) {
+
+    cerr << ts.t() << "Error: parse error in log file '" << active
+	 << "' at line " << line << "." << endl;
+    initf.close();
+    exit(1);
   }
 
 
-  LOG(1, "Read data file '" << active << "' successfully.");
+  cerr << ts.t() << "Read log file successfully." << endl;
 
   CosNaming::NamingContext_ptr rootContext
     = NamingContext_i::headContext->_this();
@@ -545,25 +553,26 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
 
     if (strncmp((const char*)iiop.object_key.get_buffer(),
 		"NameService", 11)) {
-      LOG(1, "Pre-INS data file.");
+      cerr << ts.t() << "(Pre-INS log file)" << endl;
       new INSMapper(the_ins_poa, rootContext);
     }
   }
 
-  CORBA::String_var p = orb->object_to_string(rootContext);
-  LOG(1, "Root context is " << p);
-
+  char* p = orb->object_to_string(rootContext);
+  cerr << ts.t() << "Root context is " << p << endl;
   // Now use the backdoor to tell the bootstrap agent in this
   // address space to return this root context in response to
   // CORBA::InitialReferences::get("NameService");
   _omni_set_NameService(rootContext);
+  delete p;
 
   CORBA::release(rootContext);	// dispose of the object reference
 
 #ifdef USE_STREAM_OPEN
   logf.OPEN(active,ios::out|ios::app,0666);
   if (!logf) {
-    LOG(1, "Error: cannot open data file '" << active << "' for writing.");
+    cerr << ts.t() << "Error: cannot open log file '" << active
+	 << "' for writing." << endl;
     exit(1);
   }
 #else
@@ -574,7 +583,8 @@ omniNameslog::init(CORBA::ORB_ptr          the_orb,
 #  endif
 
   if (fd < 0) {
-    LOG(1, "Error: cannot open data file '" << active << "' for writing.");
+    cerr << ts.t() << "Error: cannot open log file '" << active
+	 << "' for writing." << endl;
     exit(1);
   }
   logf.attach(fd);
@@ -599,9 +609,9 @@ omniNameslog::create(const PortableServer::ObjectId& id)
     try {
       putCreate(id, logf);
       reallyFlush(logf);
-    }
-    catch (IOError& ex) {
-      LOG(1, "I/O error writing data file: " << strerror(errno));
+    } catch (IOError& ex) {
+      cerr << ts.t() << flush;
+      perror("I/O error writing log file");
       logf.clear();
       throw CORBA::PERSIST_STORE();
     }
@@ -616,9 +626,9 @@ omniNameslog::destroy(CosNaming::NamingContext_ptr nc)
     try {
       putDestroy(nc, logf);
       reallyFlush(logf);
-    }
-    catch (IOError& ex) {
-      LOG(1, "I/O error writing data file: " << strerror(errno));
+    } catch (IOError& ex) {
+      cerr << ts.t() << flush;
+      perror("I/O error writing log file");
       logf.clear();
       throw CORBA::PERSIST_STORE();
     }
@@ -628,15 +638,15 @@ omniNameslog::destroy(CosNaming::NamingContext_ptr nc)
 
 void
 omniNameslog::bind(CosNaming::NamingContext_ptr nc, const CosNaming::Name& n,
-                   CORBA::Object_ptr obj, CosNaming::BindingType t)
+	  CORBA::Object_ptr obj, CosNaming::BindingType t)
 {
   if (!startingUp) {
     try {
       putBind(nc, n, obj, t, logf);
       reallyFlush(logf);
-    }
-    catch (IOError& ex) {
-      LOG(1, "I/O error writing data file: " << strerror(errno));
+    } catch (IOError& ex) {
+      cerr << ts.t() << flush;
+      perror("I/O error writing log file");
       logf.clear();
       throw CORBA::PERSIST_STORE();
     }
@@ -651,9 +661,9 @@ omniNameslog::unbind(CosNaming::NamingContext_ptr nc, const CosNaming::Name& n)
     try {
       putUnbind(nc, n, logf);
       reallyFlush(logf);
-    }
-    catch (IOError& ex) {
-      LOG(1, "I/O error writing data file: " << strerror(errno));
+    } catch (IOError& ex) {
+      cerr << ts.t() << flush;
+      perror("I/O error writing log file");
       logf.clear();
       throw CORBA::PERSIST_STORE();
     }
@@ -663,14 +673,14 @@ omniNameslog::unbind(CosNaming::NamingContext_ptr nc, const CosNaming::Name& n)
 
 
 void
-omniNameslog::checkpoint()
+omniNameslog::checkpoint(void)
 {
   if (!checkpointNeeded) {
-    LOG(5, "No checkpoint needed.");
+    // cerr << ts.t() << "No checkpoint needed." << endl;
     return;
   }
 
-  LOG(1, "Checkpointing Phase 1: Prepare.");
+  cerr << ts.t() << "Checkpointing Phase 1: Prepare." << endl;
 
   //
   // Get the global lock as a reader.  This means clients will still be able
@@ -686,10 +696,10 @@ omniNameslog::checkpoint()
   try {
 
 #ifdef USE_STREAM_OPEN
-    ckpf.OPEN(checkpt, ios::out|ios::trunc, 0666);
+    ckpf.OPEN(checkpt,ios::out|ios::trunc,0666);
     if (!ckpf) {
-      LOG(1, "Error: cannot open checkpoint file '" << checkpt <<
-          "' for writing.");
+      cerr << ts.t() << "Error: cannot open checkpoint file '"
+	   << checkpt << "' for writing." << endl;
       throw IOError();
     }
 #else
@@ -700,8 +710,8 @@ omniNameslog::checkpoint()
 #  endif
 
     if (fd < 0) {
-      LOG(1, "Error: cannot open checkpoint file '" << checkpt <<
-          "' for writing.");
+      cerr << ts.t() << "Error: cannot open checkpoint file '"
+	   << checkpt << "' for writing." << endl;
       throw IOError();
     }
 
@@ -736,12 +746,11 @@ omniNameslog::checkpoint()
       throw IOError();
 #endif
 
-  }
-  catch (IOError& ex) {
-    LOG(1, "I/O error writing checkpoint file: " << strerror(errno));
-    LOG(1, "Abandoning checkpoint");
+  } catch (IOError& ex) {
+    cerr << ts.t() << flush;
+    perror("I/O error writing checkpoint file");
+    cerr << "Abandoning checkpoint" << endl;
     ckpf.close();
-
 // a bug in sparcworks C++ means that the fd doesn't get closed.
 #if defined(__sunos__) && defined(__SUNPRO_CC) && __SUNPRO_CC < 0x500
     close(fd);
@@ -756,7 +765,7 @@ omniNameslog::checkpoint()
   // Now commit the checkpoint to become the active log.
   //
 
-  LOG(1, "Checkpointing Phase 2: Commit.");
+  cerr << ts.t() << "Checkpointing Phase 2: Commit." << endl;
 
 // a bug in sparcworks C++ means that the fd doesn't get closed.
 #if defined(__sunos__) && defined(__SUNPRO_CC) && __SUNPRO_CC < 0x500
@@ -775,20 +784,19 @@ omniNameslog::checkpoint()
   if (link(active,backup) < 0) {
 #endif
     // Failure here leaves old active and checkpoint file.
-    LOG(1, "Error: failed to link backup file '" << backup <<
-        "' to old data file '" << active << "'.");
+    cerr << ts.t() << "Error: failed to link backup file '" << backup
+	 << "' to old log file '" << active << "'." << endl;
     exit(1);
   }
 
 #ifndef __VMS
   if (unlink(active) < 0) {
     // Failure here leaves active and backup pointing to the same (old) file.
-    LOG(1, "Error: failed to unlink old data file '" << active << "'.");
+    cerr << ts.t() << "Error: failed to unlink old log file '" << active
+	 << "'." << endl;
     exit(1);
   }
 #endif
-
-  active = active_new;
 
 #if defined(__WIN32__)
   if (!CopyFile(checkpt,active,TRUE)) {
@@ -798,15 +806,16 @@ omniNameslog::checkpoint()
   if (link(checkpt,active) < 0) {
 #endif
     // Failure here leaves no active but backup points to the old file.
-    LOG(1, "Error: failed to link data file '" << active <<
-        "' to checkpoint file '" << checkpt << "'.");
+    cerr << ts.t() << "Error: failed to link log file '" << active
+	 << "' to checkpoint file '" << checkpt << "'." << endl;
     exit(1);
   }
 
 #ifndef __VMS
   if (unlink(checkpt) < 0) {
     // Failure here leaves active and checkpoint pointing to the same file.
-    LOG(1, "Error: failed to unlink checkpoint file '" << checkpt << "'.");
+    cerr << ts.t() << "Error: failed to unlink checkpoint file '" << checkpt
+	 << "'." << endl;
     exit(1);
   }
 #endif
@@ -814,7 +823,8 @@ omniNameslog::checkpoint()
 #ifdef USE_STREAM_OPEN
   logf.OPEN(active,ios::out|ios::app,0666);
   if (!logf) {
-    LOG(1, "Error: cannot open data file '" << active << "' for writing.");
+    cerr << ts.t() << "Error: cannot open log file '" << active
+	 << "' for writing." << endl;
     exit(1);
   }
 #else
@@ -825,7 +835,8 @@ omniNameslog::checkpoint()
 #  endif
 
   if (fd < 0) {
-    LOG(1, "Error: cannot open new data file '" << active << "' for writing.");
+    cerr << ts.t() << "Error: cannot open new log file '" << active
+	 << "' for writing." << endl;
     exit(1);
   }
   logf.attach(fd);
@@ -833,7 +844,8 @@ omniNameslog::checkpoint()
 
   NamingContext_i::lock.readerOut();
 
-  LOG(1, "Checkpointing completed.");
+  cerr << ts.t() << "Checkpointing completed." << endl;
+
   checkpointNeeded = 0;
 }
 
@@ -860,7 +872,7 @@ omniNameslog::getPort(istream& file)
   getNonfinalString(str, file);
 
   if (strcmp(str, "port") != 0) {
-    LOG(1, "Error: data file doesn't start with \"port\".");
+    cerr << ts.t() << "Error: log file doesn't start with \"port\"." << endl;
     throw ParseError();
   }
 
@@ -873,7 +885,7 @@ omniNameslog::getPort(istream& file)
   delete [] str;
 
   if (port == 0) {
-    LOG(1, "Error: invalid port specified in data file.");
+    cerr << ts.t() << "Error: invalid port specified in log file." << endl;
     throw ParseError();
   }
 }
@@ -951,9 +963,8 @@ omniNameslog::getDestroy(istream& file)
   CORBA::Object_var o;
   try {
     o = orb->string_to_object(str);
-  }
-  catch (...) {
-    LOG(1, "getDestroy: invalid IOR.");
+  } catch (...) {
+    cerr << ts.t() << "getDestroy: invalid IOR." << endl;
     delete [] str;
     throw ParseError();
   }
@@ -962,9 +973,10 @@ omniNameslog::getDestroy(istream& file)
 
   CosNaming::NamingContext_var nc = CosNaming::NamingContext::_narrow(o);
   if (CORBA::is_nil(nc)) {
-    LOG(1, "getDestroy: IOR not a NamingContext.");
+    cerr << ts.t() << "getDestroy: IOR not a NamingContext." << endl;
     throw ParseError();
   }
+
   nc->destroy();
 }
 
@@ -1003,9 +1015,8 @@ omniNameslog::getBind(istream& file)
   CORBA::Object_var o;
   try {
     o = orb->string_to_object(str);
-  }
-  catch (...) {
-    LOG(1, "getBind: invalid IOR.");
+  } catch (...) {
+    cerr << ts.t() << "getBind: invalid IOR." << endl;
     delete [] str;
     throw ParseError();
   }
@@ -1013,7 +1024,7 @@ omniNameslog::getBind(istream& file)
 
   CosNaming::NamingContext_var nc = CosNaming::NamingContext::_narrow(o);
   if (CORBA::is_nil(nc)) {
-    LOG(1, "getBind: IOR not a NamingContext.");
+    cerr << ts.t() << "getBind: IOR not a NamingContext." << endl;
     throw ParseError();
   }
 
@@ -1044,9 +1055,8 @@ omniNameslog::getBind(istream& file)
   getFinalString(str, file);
   try {
     o = orb->string_to_object(str);
-  }
-  catch (...) {
-    LOG(1, "getDestroy: invalid IOR.");
+  } catch (...) {
+    cerr << ts.t() << "getDestroy: invalid IOR." << endl;
     delete [] str;
     throw ParseError();
   }
@@ -1057,13 +1067,15 @@ omniNameslog::getBind(istream& file)
     CosNaming::NamingContext_var nc2
       = CosNaming::NamingContext::_narrow(o);
     if (CORBA::is_nil(nc2)) {
-      LOG(1, "bind: IOR not a NamingContext.");
+      cerr << ts.t() << "bind: IOR not a NamingContext." << endl;
       throw ParseError();
     }
     nc->rebind_context(name, nc2);
-  }
-  else {
+
+  } else {
+
     nc->rebind(name, o);
+
   }
 
   delete [] bindingType;
@@ -1099,9 +1111,8 @@ omniNameslog::getUnbind(istream& file)
   CORBA::Object_var o;
   try {
     o = orb->string_to_object(str);
-  }
-  catch (...) {
-    LOG(1, "getUnbind: invalid IOR.");
+  } catch (...) {
+    cerr << ts.t() << "getUnbind: invalid IOR." << endl;
     delete [] str;
     throw ParseError();
   }
@@ -1109,7 +1120,7 @@ omniNameslog::getUnbind(istream& file)
 
   CosNaming::NamingContext_var nc = CosNaming::NamingContext::_narrow(o);
   if (CORBA::is_nil(nc)) {
-    LOG(1, "getUnbind: IOR not a NamingContext.");
+    cerr << ts.t() << "getUnbind: IOR not a NamingContext." << endl;
     throw ParseError();
   }
 
@@ -1250,10 +1261,12 @@ omniNameslog::getString(char*& buf, istream& file)
 	*p++ = '\r';
 	break;
       default:
-        LOG(1, "Unknown character following '\\' in data file.");
+	cerr << ts.t() << "Unknown character following '\\' in log file"
+	     << endl;
       }
-    }
-    else {
+
+    } else {
+
       switch (c) {
       case '\\':
 	backslash = 1;

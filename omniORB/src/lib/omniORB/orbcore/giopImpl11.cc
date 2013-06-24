@@ -3,7 +3,7 @@
 // giopImpl11.cc              Created on: 14/02/2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2011 Apasphere Ltd
+//    Copyright (C) 2002-2013 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -151,7 +151,7 @@ giopImpl11::inputMessageBegin(giopStream* g,
       // This is a GIOP 1.0 message, switch to the implementation of giop 1.0
       // and dispatch again.
       GIOP::Version v = { 1, 0 };
-      g->strand().version = v;
+      ((giopStrand &)*g).version = v;
       g->impl(giopStreamImpl::matchVersion(v));
       OMNIORB_ASSERT(g->impl());
       g->impl()->inputMessageBegin(g,g->impl()->unmarshalWildCardRequestHeader);
@@ -1106,7 +1106,7 @@ giopImpl11::sendMsgErrorMessage(giopStream* g,
   hdr[7] = (char)GIOP::MessageError;
   hdr[8] = hdr[9] = hdr[10] = hdr[11] = 0;
 
-  (void)  g->pd_strand->connection->Send(hdr, 12, g->getDeadline());
+  (void)  g->pd_strand->connection->Send(hdr,12);
 
   g->pd_strand->state(giopStrand::DYING);
 
@@ -1691,7 +1691,17 @@ giopImpl11::currentOutputPtr(const giopStream* g) {
                      ((omni::ptr_arith_t) g->pd_currentOutputBuffer + 
 		      g->pd_currentOutputBuffer->start);
 
-  return g->outputMessageSize() + fsz - 12;
+  CORBA::Long msz = g->outputMessageSize();
+
+  if (msz && g->outputFragmentSize()) {
+    // Message is not being fragmented. Current pointer is just the
+    // current size plus the size sent so far.
+    return msz + fsz;
+  }
+  else {
+    // Pointer is the size sent so far minux the 12 byte GIOP header.
+    return msz + fsz - 12;
+  }
 }
 
 

@@ -3,7 +3,6 @@
 // sslTransportImpl.h         Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2011 Apasphere Ltd.
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -25,8 +24,18 @@
 //
 //
 // Description:
-//	*** PROPRIETARY INTERFACE ***
+//	*** PROPRIETORY INTERFACE ***
 // 
+
+/*
+  $Log$
+  Revision 1.1.2.2  2001/08/23 16:02:58  sll
+  Implement getInterfaceAddress().
+
+  Revision 1.1.2.1  2001/06/11 18:11:05  sll
+  *** empty log message ***
+
+*/
 
 #ifndef __SSLTRANSPORTIMPL_H__
 #define __SSLTRANSPORTIMPL_H__
@@ -48,7 +57,11 @@ class sslTransportImpl : public giopTransportImpl {
   sslTransportImpl(sslContext* ctx);
   ~sslTransportImpl();
 
-  static omni_time_t sslAcceptTimeOut;
+  struct timeValue {
+    unsigned long secs;
+    unsigned long nanosecs;
+  };
+  static timeValue sslAcceptTimeOut;
 
  private:
 

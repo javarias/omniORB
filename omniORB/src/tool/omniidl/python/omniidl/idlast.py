@@ -3,7 +3,7 @@
 # idlast.py                 Created on: 1999/10/27
 #			    Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 2003-2012 Apasphere Ltd
+#    Copyright (C) 2003-2008 Apasphere Ltd
 #    Copyright (C) 1999      AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -26,6 +26,107 @@
 # Description:
 #   
 #   Python definitions for abstract syntax tree classes
+
+# $Id$
+# $Log$
+# Revision 1.20.2.9  2008/12/03 10:53:58  dgrisby
+# Tweaks leading to Python 3 support; other minor clean-ups.
+#
+# Revision 1.20.2.8  2006/06/22 13:01:50  dgrisby
+# Cut and paste error in local() method of Forward class.
+#
+# Revision 1.20.2.7  2006/01/18 19:23:17  dgrisby
+# Code generation problems with valuetype inheritance / typedefs.
+#
+# Revision 1.20.2.6  2004/10/13 17:58:26  dgrisby
+# Abstract interfaces support; values support interfaces; value bug fixes.
+#
+# Revision 1.20.2.5  2003/11/06 11:56:57  dgrisby
+# Yet more valuetype. Plain valuetype and abstract valuetype are now working.
+#
+# Revision 1.20.2.4  2003/09/04 14:00:35  dgrisby
+# ValueType IDL updates.
+#
+# Revision 1.20.2.3  2003/07/10 21:54:47  dgrisby
+# Missed methods in ValueAbs.
+#
+# Revision 1.20.2.2  2003/05/20 16:53:17  dgrisby
+# Valuetype marshalling support.
+#
+# Revision 1.20.2.1  2003/03/23 21:01:39  dgrisby
+# Start of omniORB 4.1.x development branch.
+#
+# Revision 1.15.2.7  2002/09/21 21:07:51  dgrisby
+# Support ValueBase in omniidl. (No use to omniORB yet...)
+#
+# Revision 1.15.2.6  2001/08/29 11:55:23  dpg1
+# Enumerator nodes record their value.
+#
+# Revision 1.15.2.5  2001/06/08 17:12:25  dpg1
+# Merge all the bug fixes from omni3_develop.
+#
+# Revision 1.15.2.4  2000/11/01 15:57:03  dpg1
+# More updates for 2.4.
+#
+# Revision 1.15.2.3  2000/11/01 12:45:59  dpg1
+# Update to CORBA 2.4 specification.
+#
+# Revision 1.15.2.2  2000/10/10 10:18:54  dpg1
+# Update omniidl front-end from omni3_develop.
+#
+# Revision 1.13.2.4  2000/08/29 10:20:29  dpg1
+# Operations and attributes now have repository ids.
+#
+# Revision 1.13.2.3  2000/06/29 14:08:11  dpg1
+# Incorrect visitor method called for Value nodes.
+#
+# Revision 1.13.2.2  2000/06/08 14:36:21  dpg1
+# Comments and pragmas are now objects rather than plain strings, so
+# they can have file,line associated with them.
+#
+# Revision 1.13.2.1  2000/03/06 15:03:45  dpg1
+# Minor bug fixes to omniidl. New -nf and -k flags.
+#
+# Revision 1.13  1999/11/29 16:43:51  dpg1
+# Forgot a case in registerDecl().
+#
+# Revision 1.12  1999/11/29 15:04:47  dpg1
+# Fixed bug in clear().
+#
+# Revision 1.11  1999/11/25 11:20:33  dpg1
+# Tidy documentation changes.
+#
+# Revision 1.10  1999/11/23 09:52:11  dpg1
+# Dumb bug where maps weren't cleared between runs.
+#
+# Revision 1.9  1999/11/15 15:49:23  dpg1
+# Documentation strings.
+#
+# Revision 1.8  1999/11/11 15:55:30  dpg1
+# Python back-end interface now supports valuetype declarations.
+# Back-ends still don't support them, though.
+#
+# Revision 1.7  1999/11/02 17:07:24  dpg1
+# Changes to compile on Solaris.
+#
+# Revision 1.6  1999/11/02 10:01:46  dpg1
+# Minor fixes.
+#
+# Revision 1.5  1999/11/01 20:19:55  dpg1
+# Support for union switch types declared inside the switch statement.
+#
+# Revision 1.4  1999/11/01 16:39:01  dpg1
+# Small fixes and cosmetic changes.
+#
+# Revision 1.3  1999/11/01 10:05:01  dpg1
+# New file attribute to AST.
+#
+# Revision 1.2  1999/10/29 18:19:39  dpg1
+# Clean up
+#
+# Revision 1.1  1999/10/29 15:47:08  dpg1
+# First revision.
+#
 
 """Classes and functions for handling the IDL Abstract Syntax Tree
 
@@ -92,12 +193,6 @@ Functions:
         self.__declarations = declarations
         self.__pragmas      = pragmas
         self.__comments     = comments
-
-    def __repr__(self):
-        return "AST(%r, %r, %r, %r" % (self.__file,
-                                       self.__declarations,
-                                       self.__pragmas,
-                                       self.__comments)
 
     def file(self):            return self.__file
     def declarations(self):    return self.__declarations
@@ -180,14 +275,10 @@ Functions:
         self.__file = file
         self.__line = line
 
-    def __repr__(self):
-        return "Pragma(%r)" % self.__text
-
     def text(self)    : return self.__text
     def __str__(self) : return self.__text
     def file(self)    : return self.__file
     def line(self)    : return self.__line
-
 
 class Comment :
     """Class containing information about a comment
@@ -204,13 +295,11 @@ Functions:
         self.__file = file
         self.__line = line
 
-    def __repr__(self):
-        return "Comment(%r)" % self.__text
-
     def text(self)    : return self.__text
     def __str__(self) : return self.__text
     def file(self)    : return self.__file
     def line(self)    : return self.__line
+
 
 
 
@@ -240,10 +329,6 @@ Functions:
 
         self.__definitions  = definitions
         self._continuations = []
-
-    def __repr__(self):
-        return "Module(%s, %r)" % ("::".join(self.scopedName()),
-                                   self.definitions())
 
     def accept(self, visitor): visitor.visitModule(self)
 
@@ -281,10 +366,6 @@ Functions:
         self.__contents     = []
         self.__declarations = []
         self.__callables    = []
-
-    def __repr__(self):
-        return "Interface(%s, %r)" % ("::".join(self.scopedName()),
-                                      self.contents())
 
     def _setContents(self, contents):
         self.__contents     = contents
@@ -337,9 +418,6 @@ Functions:
         self._fullDecl  = None
         self._more      = []
 
-    def __repr__(self):
-        return "Forward(%s)" % "::".join(self.scopedName())
-
     def accept(self, visitor): visitor.visitForward(self)
 
     def abstract(self): return self.__abstract
@@ -368,10 +446,7 @@ Functions:
         self.__constType = constType
         self.__constKind = constKind
         self.__value     = value
-
-    def __repr__(self):
-        return "Const(%s, %r)" % ("::".join(self.scopedName()),
-                                  self.value())
+        #print line, "Const init:", constType, identifier, value
 
     def accept(self, visitor): visitor.visitConst(self)
 
@@ -399,10 +474,6 @@ Functions:
 
         self.__sizes = sizes
         self.__alias = None
-
-    def __repr__(self):
-        return "Declarator(%s, %s)" % ("::".join(self.scopedName()),
-                                       self.sizes())
 
     def _setAlias(self, alias): self.__alias = alias
 
@@ -439,10 +510,6 @@ Functions:
         self.__constrType  = constrType
         self.__declarators = declarators
 
-    def __repr__(self):
-        return "Typedef(%s, %r)" % (self.aliasType(),
-                                    self.declarators())
-
     def accept(self, visitor): visitor.visitTypedef(self)
 
     def aliasType(self):   return self.__aliasType
@@ -469,10 +536,6 @@ Functions:
         self.__constrType  = constrType
         self.__declarators = declarators
 
-    def __repr__(self):
-        return "Member(%s, %r)" % (self.memberType(),
-                                   self.declarators())
-
     def accept(self, visitor): visitor.visitMember(self)
 
     def memberType(self):  return self.__memberType
@@ -496,10 +559,6 @@ Functions:
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__recursive = recursive
-
-    def __repr__(self):
-        return "Struct(%s, %r)" % ("::".join(self.scopedName()),
-                                   self.members())
 
     def _setMembers(self, members):
         self.__members = members
@@ -526,9 +585,6 @@ Functions:
         self._fullDecl = None
         self._more     = []
 
-    def __repr__(self):
-        return "StructForward(%s)" % "::".join(self.scopedName())
-
     def accept(self, visitor): visitor.visitStructForward(self)
 
     def fullDecl(self): return self._fullDecl
@@ -549,10 +605,7 @@ Function:
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__members    = members
-
-    def __repr__(self):
-        return "Exception(%s, %r)" % ("::".join(self.scopedName()),
-                                      self.members())
+        #print line, "Exception init:", identifier, members
 
     def accept(self, visitor): visitor.visitException(self)
 
@@ -578,10 +631,6 @@ Functions:
         self.__default   = default
         self.__value     = value
         self.__labelKind = labelKind
-
-    def __repr__(self):
-        return "CaseLabel(%r, %r)" % (self.default(),
-                                      self.value())
 
     def accept(self, visitor): visitor.visitCaseLabel(self)
 
@@ -610,11 +659,6 @@ Functions:
         self.__caseType   = caseType
         self.__constrType = constrType
         self.__declarator = declarator
-
-    def __repr__(self):
-        return "UnionCase(%r, %r, %r)" % (self.labels(),
-                                          self.caseType(),
-                                          self.declarator())
 
     def accept(self, visitor): visitor.visitUnionCase(self)
 
@@ -647,11 +691,6 @@ Functions:
         self.__constrType = constrType
         self.__recursive  = recursive
 
-    def __repr__(self):
-        return "Union(%s, %r, %r)" % ("::".join(self.scopedName()),
-                                      self.switchType(),
-                                      self.cases())
-
     def _setCases(self, cases):
         self.__cases = cases
 
@@ -679,9 +718,6 @@ Functions:
         self._fullDecl = None
         self._more     = []
 
-    def __repr__(self):
-        return "UnionForward(%s)" % "::".join(self.scopedName())
-
     def accept(self, visitor): visitor.visitUnionForward(self)
 
     def fullDecl(self): return self._fullDecl
@@ -701,9 +737,6 @@ Function:
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__value = value
-
-    def __repr__(self):
-        return "Enumerator(%s)" % "::".join(self.scopedName())
 
     def accept(self, visitor): visitor.visitEnumerator(self)
 
@@ -725,10 +758,6 @@ Function:
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
 
         self.__enumerators = enumerators
-
-    def __repr__(self):
-        return "Enumerator(%s, %r)" % ("::".join(self.scopedName()),
-                                       self.enumerators())
 
     def accept(self, visitor): visitor.visitEnum(self)
 
@@ -754,13 +783,8 @@ Functions:
         self.__readonly    = readonly
         self.__attrType    = attrType
         self.__declarators = declarators
-        self.__identifiers = [ d.identifier() for d in declarators ]
+        self.__identifiers = map(lambda d: d.identifier(), declarators)
         #print line, "Attribute init:", readonly, identifiers
-
-    def __repr__(self):
-        return "Attribute(%r, %r, %r)" % (self.readonly(),
-                                          self.attrType(),
-                                          self.declarators())
 
     def accept(self, visitor): visitor.visitAttribute(self)
 
@@ -793,16 +817,9 @@ Functions:
         self.__identifier = identifier
         #print line, "Parameter init:", identifier
 
-    def __repr__(self):
-        return "Parameter(%s, %r, %r)" % (self.dirtext(),
-                                          self.paramType(),
-                                          self.identifier())
-
     def accept(self, visitor): visitor.visitParameter(self)
 
     def direction(self):  return self.__direction
-    def dirtext(self):    return ((self.__is_in and "in" or "") +
-                                  (self.__is_out and "out" or ""))
     def is_in(self):      return self.__is_in
     def is_out(self):     return self.__is_out
     def paramType(self):  return self.__paramType
@@ -834,13 +851,6 @@ Functions:
         self.__contexts   = contexts
         #print line, "Operation init:", identifier, raises, contexts
 
-    def __repr__(self):
-        return "Operation(%r %r, %r, %r, %r)" % (self.identifier(),
-                                                 self.oneway(),
-                                                 self.returnType(),
-                                                 self.parameters(),
-                                                 self.raises())
-
     def accept(self, visitor): visitor.visitOperation(self)
 
     def oneway(self):     return self.__oneway
@@ -862,9 +872,6 @@ No non-inherited functions."""
 
         Decl.__init__(self, file, line, mainFile, pragmas, comments)
         DeclRepoId.__init__(self, identifier, scopedName, repoId)
-
-    def __repr__(self):
-        return "Native(%s)" % "::".join(self.scopedName())
 
     def accept(self, visitor): visitor.visitNative(self)
 
@@ -889,12 +896,6 @@ Functions:
         self.__memberType   = memberType
         self.__constrType   = constrType
         self.__declarators  = declarators
-
-    def __repr__(self):
-        return "StateMember(%r, %r, %r)" % ((self.memberAccess()
-                                             and "private" or "public"),
-                                            self.memberType(),
-                                            self.declarators())
 
     def accept(self, visitor): visitor.visitStateMember(self)
 
@@ -922,11 +923,6 @@ Functions:
         self.__identifier = identifier
         self.__parameters = parameters
         self.__raises     = raises
-
-    def __repr__(self):
-        return "Factory(%r, %r, %r)" % (self.identifier(),
-                                        self.parameters(),
-                                        self.raises())
 
     def accept(self, visitor): visitor.visitFactory(self)
 
@@ -956,9 +952,6 @@ Function:
         self._fullDecl  = None
         self._more      = []
 
-    def __repr__(self):
-        return "ValueForward(%s)" % "::".join(self.scopedName())
-
     def accept(self, visitor): visitor.visitValueForward(self)
 
     def abstract(self): return self.__abstract
@@ -984,10 +977,6 @@ Functions:
         self.__boxedType  = boxedType
         self.__constrType = constrType
 
-    def __repr__(self):
-        return "ValueBox(%s, %r)" % ("::".join(self.scopedName()),
-                                     self.boxedType())
-
     def accept(self, visitor): visitor.visitValueBox(self)
 
     def boxedType(self):  return self.__boxedType
@@ -999,17 +988,16 @@ class ValueAbs (Decl, DeclRepoId):
 
 Functions:
 
-  inherits()      -- list of ValueAbs objects from which this inherits.
-  supports()      -- list of Interface objects which this supports.
-  contents()      -- list of Decl objects for declarations within this
-                     valuetype.
-  declarations()  -- subset of contents() containing types, constants
-                     and exceptions.
-  callables()     -- subset of contents() containing Operations and
-                     Attributes.
-  all_callables() -- Operations and attributes including inherited ones.
-  statemembers()  -- subset of contents() containing StateMembers.
-  factories()     -- subset of contents() containing Factory instances.
+  inherits()     -- list of ValueAbs objects from which this inherits.
+  supports()     -- list of Interface objects which this supports.
+  contents()     -- list of Decl objects for declarations within this
+                    valuetype.
+  declarations() -- subset of contents() containing types, constants
+                    and exceptions.
+  callables()    -- subset of contents() containing Operations and
+                    Attributes.
+  statemembers() -- subset of contents() containing StateMembers.
+  factories()    -- subset of contents() containing Factory instances.
   """
 
     def __init__(self, file, line, mainFile, pragmas, comments,
@@ -1026,10 +1014,6 @@ Functions:
         self.__callables    = []
         self.__statemembers = []
         self.__factories    = []
-
-    def __repr__(self):
-        return "ValueAbs(%s, %r)" % ("::".join(self.scopedName()),
-                                     self.contents())
 
     def _setContents(self, contents):
         self.__contents     = contents
@@ -1062,39 +1046,27 @@ Functions:
     def statemembers(self): return self.__statemembers
     def factories(self):    return self.__factories
 
-    def all_callables(self):
-        r = []
-        # This loop is very inefficient, but the lists should be quite
-        # short.
-        for b in self.__inherits:
-            for c in b.all_callables():
-                if c not in r:
-                    r.append(c)
-        r.extend(self.__callables)
-        return r
-
 
 class Value (Decl, DeclRepoId):
     """valuetype declaration (Decl, DeclRepoId)
 
 Functions:
 
-  custom()        -- boolean: true if declared custom.
-  inherits()      -- list of valuetypes from which this inherits. The
-                     first may be a Value object or a ValueAbs object;
-                     any others will be ValueAbs objects.
-  truncatable()   -- boolean: true if the inherited Value is declared
-                     truncatable.
-  supports()      -- list of Interface objects which this supports.
-  contents()      -- list of Decl objects for all items declared within
-                     this valuetype.
-  declarations()  -- subset of contents() containing types, constants
-                     and exceptions.
-  callables()     -- subset of contents() containing Operations and
-                     Attributes.
-  all_callables() -- Operations and attributes including inherited ones.
-  statemembers()  -- subset of contents() containing StateMembers.
-  factories()     -- subset of contents() containing Factory instances.
+  custom()       -- boolean: true if declared custom.
+  inherits()     -- list of valuetypes from which this inherits. The
+                    first may be a Value object or a ValueAbs object;
+                    any others will be ValueAbs objects.
+  truncatable()  -- boolean: true if the inherited Value is declared
+                    truncatable.
+  supports()     -- list of Interface objects which this supports.
+  contents()     -- list of Decl objects for all items declared within
+                    this valuetype.
+  declarations() -- subset of contents() containing types, constants
+                    and exceptions.
+  callables()    -- subset of contents() containing Operations and
+                    Attributes.
+  statemembers() -- subset of contents() containing StateMembers.
+  factories()    -- subset of contents() containing Factory instances.
   """
 
     def __init__(self, file, line, mainFile, pragmas, comments,
@@ -1113,10 +1085,6 @@ Functions:
         self.__callables    = []
         self.__statemembers = []
         self.__factories    = []
-
-    def __repr__(self):
-        return "Value(%s, %r)" % ("::".join(self.scopedName()),
-                                  self.contents())
 
     def _setContents(self, contents):
         self.__contents     = contents
@@ -1150,17 +1118,6 @@ Functions:
     def callables(self):    return self.__callables
     def statemembers(self): return self.__statemembers
     def factories(self):    return self.__factories
-
-    def all_callables(self):
-        r = []
-        # This loop is very inefficient, but the lists should be quite
-        # short.
-        for b in self.__inherits:
-            for c in b.all_callables():
-                if c not in r:
-                    r.append(c)
-        r.extend(self.__callables)
-        return r
 
 
 # Map of Decl objects, indexed by stringified scoped name, and

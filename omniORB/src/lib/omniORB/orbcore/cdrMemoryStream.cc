@@ -3,7 +3,7 @@
 // cdrMemoryStream.cc         Created on: 13/1/99
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2012 Apasphere Ltd
+//    Copyright (C) 2003-2006 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -269,6 +269,38 @@ cdrMemoryStream::copy_to(cdrStream& s, int size, omni::alignment_t align) {
   pd_inb_mkr = (void*)(p1+size);
 }
 
+
+void
+cdrMemoryStream::rewindInputPtr()
+{
+  pd_inb_mkr = pd_bufp_8;
+  pd_inb_end = (pd_readonly_and_external_buffer) ? pd_inb_end : pd_outb_mkr;
+}
+
+void
+cdrMemoryStream::rewindPtrs()
+{
+  if (!pd_readonly_and_external_buffer) {
+    pd_outb_mkr = pd_inb_mkr = pd_inb_end = pd_bufp_8;
+  }
+  else {
+    pd_outb_mkr = pd_outb_end = 0;
+    pd_inb_mkr  = pd_bufp;
+  }
+}
+  
+CORBA::ULong 
+cdrMemoryStream::bufSize() const
+{
+  return (CORBA::ULong)((omni::ptr_arith_t)pd_outb_mkr - 
+			(omni::ptr_arith_t)pd_bufp_8);
+}
+
+void*
+cdrMemoryStream::bufPtr() const
+{
+  return pd_bufp_8;
+}
 
 void
 cdrMemoryStream::setByteSwapFlag(CORBA::Boolean littleendian)
