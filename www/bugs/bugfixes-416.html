@@ -1,0 +1,185 @@
+<html>
+<!--Automatically generated with XSLT--><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>omniORB 4.1.6 bugs</title>
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body link="#0000ff" vlink="#000080" bgcolor="#ffffff" alink="#ff0000" text="#000000"><table border="0" width="100%" cellspacing="5" cellpadding="10">
+<tr>
+<td width="15%" class="header"><img src="../img/omniORBlogo.gif" width="122" height="92"></td>
+<td class="header"><h1 align="center">omniORB 4.1.6 bugs</h1></td>
+</tr>
+<tr>
+<td width="15%" class="sidebar" valign="top" align="left">
+<p align="center"><b>Destinations</b></p>
+<a href="../index.html">omniORB home</a><br><a href="../history.html">History</a><br><a href="../features.html">Features</a><br><a href="../download.html">Download</a><br><a href="../docs.html">Documentation</a><br><a href="/cgi-bin/moin.cgi">Wiki</a><br><a href="/cgi-bin/moin.cgi/FrequentlyAskedQuestions">FAQ</a><br><a href="../bugs.html">Bugs</a><br><a href="../development.html">Development</a><br><a href="../snapshots/">Snapshots</a><br><a href="http://sourceforge.net/projects/omniorb/">SF project</a><br><a href="../list.html">Mailing list</a><br><a href="../links.html">Links</a><br><a href="http://www.omniorb-support.com/">Support</a><br><a href="../contact.html">Contact</a><br><br><hr width="80%">
+<p align="center"><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=51138&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net    Logo"></a><br><img src="http://grisby.dyndns.org/cgi-bin/count?omni/bugs/4.1.6" width="1" height="1" alt=""></p>
+</td>
+<td class="main" valign="top" align="left">
+<p>
+	  The following bugs in omniORB 4.1.6 have been fixed. Update from <a href="../development.html">Subversion</a> to get the fixes.
+        </p>
+<table align="center" width="95%">
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Marshal error sending large exceptions containing valuetypes</b>
+            (bug number 7)
+            <a name="bug7"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu May 23 15:36:56 BST 2013</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  When an exception is sent, the message size is pre-calculated. If
+  the message spanned multiple buffers, the current output pointer
+  calculation was wrong, leading to incorrect marshalling of
+  indirections.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Bidirectional GIOP fails in MAIN_THREAD_POLICY POAs</b>
+            (bug number 6)
+            <a name="bug6"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu May 23 12:54:55 BST 2013</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  When an object reference that should have been subject to
+  bidirectional GIOP was unmarshalled on a call destined for a main
+  thread POA, it was not correctly marked for bidirectional.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Improper handling of transport rules containing names</b>
+            (bug number 5)
+            <a name="bug5"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu May 23 12:04:39 BST 2013</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  If a transport rule contains a name, it is resolved to an IP
+  address, but the rule was installed with the original name, rather
+  than the resolved address.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>omniNames service startup failure led to a crash</b>
+            (bug number 4)
+            <a name="bug4"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Wed Apr 10 18:13:58 BST 2013</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  If the omniNames Windows service failed to start, it would crash
+  rather than failing gracefully.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Invalid generated code for valuetypes with no members</b>
+            (bug number 3)
+            <a name="bug3"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Fri Dec 21 14:08:04 GMT 2012</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  TypeCodes generated for valuetypes with no members were invalid.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Valuetype chunked encoding errors</b>
+            (bug number 2)
+            <a name="bug2"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Thu Aug 23 15:43:07 BST 2012</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  The chunked encoding for valuetypes could sometimes be incorrect.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+<tr>
+<td>Summary:</td>
+<td>
+<b>Obtaining IP addresses could fail on Solaris</b>
+            (bug number 1)
+            <a name="bug1"></a>
+</td>
+</tr>
+<tr>
+<td>Date:      </td>
+<td>Sat Mar 17 20:34:10 GMT 2012</td>
+</tr>
+  
+  <tr valign="top">
+<td>Description:</td>
+<td>
+  The Solaris lifconf structure was incorrectly initialised, meaning
+  that the call to obtain IP addresses could fail.
+  </td>
+</tr>
+<tr><td colspan="2"><hr></td></tr>
+
+</table>
+</td>
+</tr>
+</table></body>
+</html>
