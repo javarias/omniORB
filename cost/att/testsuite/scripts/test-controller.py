@@ -170,6 +170,8 @@ class TestServerOutputListener_i(TestOutputListener_i):
     def on_stderr(self, l):
         TestOutputListener_i.on_stderr(self, l)
 
+        l = l.split(": ", 1)[-1]
+
         if l == 'SERVER READY\n':
             # tell the main application that the server is ready
             if not self._startup_event.isSet():

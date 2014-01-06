@@ -1,3 +1,26 @@
+Mon  6 Jan 11:31:24 GMT 2014 dgrisby
+====================================
+
+- Updates for omniORB 4.2.
+
+att/testsuite/GNUmakefile
+att/testsuite/colocated_tests/server.cc
+att/testsuite/mk/omniorb.mk
+att/testsuite/scripts/test-controller.py
+att/testsuite/ssl_tests/GNUmakefile
+att/testsuite/ssl_tests/TEST_CONFIG
+att/testsuite/ssl_tests/client.pem
+att/testsuite/ssl_tests/fragClient.cc
+att/testsuite/ssl_tests/fragClient2.cc
+att/testsuite/ssl_tests/limitClient1.cc
+att/testsuite/ssl_tests/root.pem
+att/testsuite/ssl_tests/server.pem
+att/testsuite/timeout_tests/client1.cc
+att/testsuite/timeout_tests/client2.cc
+iona/orbacus/cpp/config/Make.rules.all
+iona/orbacus/cpp/runtest
+
+
 Fri Feb  8 22:32:33 GMT 2013 dgrisby
 ====================================
 

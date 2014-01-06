@@ -16,7 +16,7 @@ LIB_EXT		= .a
 .SUFFIXES:      .cpp .o
 
 .cpp.o:
-	$(CXX) -c $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $<
+	$(CXX) -c -g $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) $<
 
 all:: $(SRCS) $(TARGETS)
 

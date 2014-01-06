@@ -8,6 +8,9 @@
 #undef minor
 #endif
 
+using namespace std;
+
+
 class MyApp : public OmniTestApp {
 public:
   virtual int main(int argc, char* argv[]);

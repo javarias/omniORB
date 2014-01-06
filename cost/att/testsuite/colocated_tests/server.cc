@@ -69,7 +69,6 @@ attrObjRef_i::obj (CORBA::Object_ptr  _value)
   if (!_value->_non_existent()) {
     cerr << "dispose Echo object....." << endl;
     the_poa->deactivate_object(echo_id);
-    echo_impl->_remove_ref();
 
     cerr << "create new Echo object....." << endl;
     echo_impl = new Echo_i();

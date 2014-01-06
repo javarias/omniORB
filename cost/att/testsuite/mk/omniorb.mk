@@ -25,6 +25,9 @@ OMNIORB_LIB = -L$(OMNI_TOP_DIR)/lib \
               -lomniORB4 -lomniDynamic4 \
               $(OMNITHREAD_LIB) $(SOCKET_LIB)
 
+OMNIORB_SSL_LIB = -L$(OMNI_TOP_DIR)/lib \
+              -lomnisslTP4
+
 CXXDEBUGFLAGS = -g
 
 OPEN_SSL_ROOT = /usr/lib

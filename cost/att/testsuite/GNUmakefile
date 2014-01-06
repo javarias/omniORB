@@ -30,7 +30,8 @@ OMNIORB_SPECIFIC_TESTS = \
              forwarding \
              exchandlers \
              giopTests \
-             timeout_tests
+             timeout_tests \
+             ssl_tests
 
 SUBDIRS =  $(COMMON) \
            $(CORE_TESTS) \

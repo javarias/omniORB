@@ -31,20 +31,20 @@ MyApp::test(Echo_ptr foo)
       }
 
       CORBA::String_var result = foo->echoString("Hello");
-      OMNI_FAILED("Expect to catch TRANSIENT exception but instead no exception was raised.");
+      OMNI_FAILED("Expect to catch TIMEOUT exception but instead no exception was raised.");
     }
-    catch(const CORBA::TRANSIENT& ex) {
-      if (ex.minor() != _OMNI_NS(TRANSIENT_CallTimedout)) {
+    catch(const CORBA::TIMEOUT& ex) {
+      if (ex.minor() != _OMNI_NS(TIMEOUT_CallTimedOutOnClient)) {
 	omniORB::logger log;
-	log << "Got TRANSIENT but not the expected minor code "
-	    << "(TRANSIENT_CallTimedout = " 
-	    << (CORBA::ULong)_OMNI_NS(TRANSIENT_CallTimedout)
+	log << "Got TIMEOUT but not the expected minor code "
+	    << "(TIMEOUT_CallTimedout = " 
+	    << (CORBA::ULong)_OMNI_NS(TIMEOUT_CallTimedOutOnClient)
 	    << " got " << ex.minor() << " instead.\n";
-	OMNI_FAILED("Wrong TRANSIENT minor code.");
+	OMNI_FAILED("Wrong TIMEOUT minor code.");
       }
       else {
 	omniORB::logger log;
-	log << "Got TRANSIENT as expected\n";
+	log << "Got TIMEOUT as expected\n";
       }
     }
   }

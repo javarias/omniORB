@@ -45,6 +45,6 @@ $echo
 $echo "*** Running tests in \"obv\" ***"
 sh obv/runtest $@ 2>&1 | tee -a alltests.log
 $echo
-$echo "*** Running tests in \"pi\" ***"
-sh pi/runtest $@ 2>&1 | tee -a alltests.log
+#$echo "*** Running tests in \"pi\" ***"
+#sh pi/runtest $@ 2>&1 | tee -a alltests.log
 

@@ -4,6 +4,8 @@
 #include "fragtest.hh"
 #include <omniORB4/sslContext.h>
 
+using namespace std;
+
 
 class MyApp : public OmniTestApp {
 public:
