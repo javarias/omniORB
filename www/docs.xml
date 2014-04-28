@@ -9,6 +9,59 @@
 <tr>
 <td width="50%">
 
+<h3 align="center">omniORB 4.2.x</h3>
+
+<ul>
+  <li>omniORB user's guide
+    <ul>
+      <li>
+        <a href="omni42/omniORB/">html</a>,
+        <a href="omni42/omniORB.pdf">pdf</a>
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omni thread abstraction
+    <ul>
+      <li>
+	<a href="omni42/omnithread.html">html</a>,
+	<a href="omni42/omnithread.pdf">pdf</a>
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniNames
+    <ul>
+      <li>
+	<a href="omni42/omniNames.html">html</a>,
+	<a href="omni42/omniNames.pdf">pdf</a>
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniORB utilities
+    <ul>
+      <li>
+	<a href="omni42/utilities.html">html</a>,
+	<a href="omni42/utilities.pdf">pdf</a>
+      </li>
+    </ul>
+    <br/>
+  </li>
+  <li>omniidl for back-end authors
+    <ul>
+      <li>
+	<a href="omni42/omniidl.html">html</a>,
+	<a href="omni42/omniidl.pdf">pdf</a>
+      </li>
+    </ul>
+    <br/>
+  </li>
+</ul>
+
+</td>
+<td width="50%">
+
 <h3 align="center">omniORB 4.1.x</h3>
 
 <ul>
@@ -60,59 +113,6 @@
 </ul>
 
 </td>
-<td width="50%">
-
-<h3 align="center">omniORB 4.0.x</h3>
-
-<ul>
-  <li>omniORB user's guide
-    <ul>
-      <li>
-        <a href="omni40/omniORB/">html</a>,
-        <a href="omni40/omniORB.pdf">pdf</a>
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omni thread abstraction
-    <ul>
-      <li>
-	<a href="omni40/omnithread.html">html</a>,
-	<a href="omni40/omnithread.pdf">pdf</a>
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniNames
-    <ul>
-      <li>
-	<a href="omni40/omniNames.html">html</a>,
-	<a href="omni40/omniNames.pdf">pdf</a>
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniORB utilities
-    <ul>
-      <li>
-	<a href="omni40/utilities.html">html</a>,
-	<a href="omni40/utilities.pdf">pdf</a>
-      </li>
-    </ul>
-    <br/>
-  </li>
-  <li>omniidl for back-end authors
-    <ul>
-      <li>
-	<a href="omni40/omniidl.html">html</a>,
-	<a href="omni40/omniidl.pdf">pdf</a>
-      </li>
-    </ul>
-    <br/>
-  </li>
-</ul>
-
-</td>
 </tr>
 </table>
 
@@ -122,14 +122,14 @@
 <tr>
 <td width="50%">
 
-<h3 align="center">omniORBpy 3.x</h3>
+<h3 align="center">omniORBpy 4.2.x</h3>
 
 <ul>
   <li>omniORBpy user's guide
     <ul>
       <li>
-	<a href="omnipy3/omniORBpy/">html</a>,
-	<a href="omnipy3/omniORBpy.pdf">pdf</a>
+	<a href="omnipy42/omniORBpy/">html</a>,
+	<a href="omnipy42/omniORBpy.pdf">pdf</a>
       </li>
     </ul>
   </li>
@@ -145,8 +145,8 @@
   <li>omniORBpy user's guide
     <ul>
       <li>
-	<a href="omnipy2/omniORBpy/">html</a>,
-	<a href="omnipy2/omniORBpy.pdf">pdf</a>
+	<a href="omnipy3/omniORBpy/">html</a>,
+	<a href="omnipy3/omniORBpy.pdf">pdf</a>
       </li>
     </ul>
   </li>
