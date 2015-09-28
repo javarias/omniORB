@@ -11,18 +11,12 @@ forms.
 </p>
 
 <p>
-RPMs for RedHat and Mandrake Linux are available courtesy of Thomas
-Lockhart, Sander Steffann and Dirk O Kaar. Download them from <a
-href="http://www.fourpalms.org/pub/omniORB/">here</a>.
-</p>
-
-<p>
 For development versions, see <a href="development.html">this
 page</a>.
 </p>
 
 <p>
-Snapshots of the current CVS contents are available <a
+Snapshots of the current Subversion contents are available <a
 href="/snapshots/">here</a>.
 </p>
 
