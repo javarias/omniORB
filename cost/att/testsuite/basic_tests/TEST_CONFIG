@@ -12,7 +12,7 @@ nullecho 60 echosrv nullechoclt
 refp 60 refpsrv refpclt
 seqEcho 60 seqEchosrv seqEchoclt
 tstexcept 60 "tstexceptsrv" "tstexceptclt"
-#"union discriminator" 5 bug200912
+"union discriminator" 5 bug200912_test
 attrEcho 60 attrEchosrv attrEchoclt
 attrObjRef 60 attrObjRefsrv attrObjRefclt
 con 300 consrv conclt
@@ -22,3 +22,4 @@ con 300 consrv conclt
 # IDL:Echo:1.0
 echoobjsrv 60 echoobjsrv echoclt
 
+"LibcWrapper::isipv6addr" 60 ipv6addr

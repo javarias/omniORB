@@ -152,7 +152,7 @@ OmniTestApp::server_object(CORBA::Object_ptr obj)
   {
     CORBA::String_var p = pd_orb->object_to_string(obj);
     omniORB::logger log("");
-    log << (const char *) p << "\n";
+    log << "\n" << (const char *) p << "\n";
   }
 }
 
@@ -498,7 +498,7 @@ OmniServerApp::main(int argc, char* argv[])
 
   {
     omniORB::logger log("");
-    log << "SERVER READY\n";
+    log << "\nSERVER READY\n";
   }
 
   orbmain* om = new orbmain(orb());

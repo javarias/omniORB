@@ -13,6 +13,7 @@ CXXSRCS = echo_i.cc echo_obj_i.cc echoclt.cc \
 	  seqEcho_i.cc seqEchoclt.cc \
           conclt.cc consrv.cc \
 	  bug200912_test.cc \
+	  ipv6addr.cc \
           tiesrv.cc echoLongclt.cc
 
 echoclt        = $(patsubst %,$(BinPattern),echoclt)
@@ -33,10 +34,11 @@ multiEchoclt   = $(patsubst %,$(BinPattern),multiEchoclt)
 multiEchosrv   = $(patsubst %,$(BinPattern),multiEchosrv)
 seqEchoclt     = $(patsubst %,$(BinPattern),seqEchoclt)
 seqEchosrv     = $(patsubst %,$(BinPattern),seqEchosrv)
-conclt     = $(patsubst %,$(BinPattern),conclt)
-consrv     = $(patsubst %,$(BinPattern),consrv)
-tiesrv     = $(patsubst %,$(BinPattern),tiesrv)
-bug200912_test  = $(patsubst %,$(BinPattern),bug200912_test)
+conclt         = $(patsubst %,$(BinPattern),conclt)
+consrv         = $(patsubst %,$(BinPattern),consrv)
+tiesrv         = $(patsubst %,$(BinPattern),tiesrv)
+bug200912_test = $(patsubst %,$(BinPattern),bug200912_test)
+ipv6addr       = $(patsubst %,$(BinPattern),ipv6addr)
 echoLongclt    = $(patsubst %,$(BinPattern),echoLongclt)
 
 all:: $(echoclt) $(echosrv) $(echoobjsrv) $(nullechoclt) $(tstexceptclt) \
@@ -45,7 +47,7 @@ all:: $(echoclt) $(echosrv) $(echoobjsrv) $(nullechoclt) $(tstexceptclt) \
       $(multiEchoclt) $(multiEchosrv) $(attrEchoclt) $(attrEchosrv) \
       $(attrObjRefclt) $(attrObjRefsrv) $(multiEchoclt) $(multiEchosrv) \
       $(conclt) $(consrv) $(nullechoclt) $(tiesrv) \
-      $(seqEchoclt) $(seqEchosrv) $(bug200912_test) $(echoLongclt)
+      $(seqEchoclt) $(seqEchosrv) $(bug200912_test) $(ipv6addr) $(echoLongclt)
 
 clean::
 	$(RM) $(echoclt) $(echosrv) $(echoobjsrv) $(tstexceptclt) \
@@ -54,7 +56,7 @@ clean::
         $(multiEchoclt) $(multiEchosrv) $(attrEchoclt) $(attrEchosrv) \
         $(attrObjRefclt) $(attrObjRefsrv) $(multiEchoclt) $(multiEchosrv) \
         $(seqEchoclt) $(seqEchosrv) $(conclt) $(consrv) $(nullechoclt) \
-        $(tiesrv)  $(bug200912_test) $(echoLongclt)
+        $(tiesrv)  $(bug200912_test) $(ipv6addr) $(echoLongclt)
 
 
 $(echoclt): $(INTF_OBJS)  echoclt.o $(OMNITEST_LIB) $(CORBA_LIB_DEPEND)
@@ -121,6 +123,9 @@ $(tiesrv): $(INTF_OBJS) tiesrv.o $(OMNITEST_LIB) $(CORBA_LIB_DEPEND)
 	@(libs="$(OMNITEST_LIB) $(CORBA_LIB)"; $(CXXExecutable))
 
 $(bug200912_test): $(INTF_OBJS) bug200912_test.o $(OMNITEST_LIB) $(CORBA_LIB_DEPEND)
+	@(libs="$(OMNITEST_LIB) $(CORBA_LIB)"; $(CXXExecutable))
+
+$(ipv6addr): $(INTF_OBJS) ipv6addr.o $(OMNITEST_LIB) $(CORBA_LIB_DEPEND)
 	@(libs="$(OMNITEST_LIB) $(CORBA_LIB)"; $(CXXExecutable))
 
 $(echoLongclt): $(INTF_OBJS) echoLongclt.o $(OMNITEST_LIB) $(CORBA_LIB_DEPEND)

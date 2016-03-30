@@ -1,3 +1,15 @@
+Wed Mar 30 11:56:48 BST 2016 dgrisby
+====================================
+
+- New isipv6addr tests.
+
+att/testsuite/basic_tests/GNUmakefile
+att/testsuite/basic_tests/TEST_CONFIG
+att/testsuite/basic_tests/dir.mk
+att/testsuite/basic_tests/ipv6addr.cc
+att/testsuite/common/omnitest.cc
+
+
 Mon  6 Jan 11:31:24 GMT 2014 dgrisby
 ====================================
 
