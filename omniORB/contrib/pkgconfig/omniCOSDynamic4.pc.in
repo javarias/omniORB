@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: omniCOSDynamic5
+Name: omniCOSDynamic4
 Description: CORBA Object Request Broker - CORBA Services dynamic stubs
 Version: @PACKAGE_VERSION@
-Requires: omniCOS5
-Libs: -L${libdir} -lCOSDynamic5
+Requires: omniCOS4
+Libs: -L${libdir} -lCOSDynamic4
 Cflags:

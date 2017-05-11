@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -220,13 +218,13 @@ cdrMemoryStream::setByteSwapFlag(CORBA::Boolean littleendian)
   pd_marshal_byte_swap = pd_unmarshal_byte_swap = (littleendian == ((CORBA::Boolean)omni::myByteOrder)) ? 0 : 1; 
 }
 
-size_t
+CORBA::ULong
 cdrMemoryStream::currentInputPtr() const
 {
   return ((omni::ptr_arith_t)pd_inb_mkr - (omni::ptr_arith_t)pd_bufp_8);
 }
 
-size_t
+CORBA::ULong
 cdrMemoryStream::currentOutputPtr() const
 {
   return ((omni::ptr_arith_t)pd_outb_mkr - (omni::ptr_arith_t)pd_bufp_8);
@@ -571,13 +569,13 @@ cdrCountingStream::fetchInputData(omni::alignment_t,size_t)
 {
 }
 
-size_t
+CORBA::ULong
 cdrCountingStream::currentInputPtr() const 
 {
-  return pd_total;
+  return (CORBA::ULong) pd_total;
 }
 
-size_t
+CORBA::ULong
 cdrCountingStream::currentOutputPtr() const 
 { 
   return 0;

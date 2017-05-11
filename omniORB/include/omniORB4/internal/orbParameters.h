@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -72,7 +70,7 @@ _CORBA_MODULE_VAR _core_attr GIOP::Version maxGIOPVersion;
 //
 //  Valid values = 1.0 | 1.1 | 1.2
 
-_CORBA_MODULE_VAR _core_attr size_t giopMaxMsgSize;
+_CORBA_MODULE_VAR _core_attr CORBA::ULong giopMaxMsgSize;
 //   This value defines the ORB-wide limit on the size of GIOP message 
 //   (excluding the header). If this limit is exceeded, the ORB will
 //   refuse to send or receive the message and raise a MARSHAL exception.
@@ -108,6 +106,15 @@ _CORBA_MODULE_VAR _core_attr omniCodeSet::TCS_C* anyCharCodeSet;
 _CORBA_MODULE_VAR _core_attr omniCodeSet::TCS_W* anyWCharCodeSet;
 //  set the preferred code set for wchar data inside anys
 //
+
+_CORBA_MODULE_VAR _core_attr omniCodeSet::TCS_C* defaultCharCodeSet;
+//  set the code set for char data sent to servers that have not specified one
+//
+
+_CORBA_MODULE_VAR _core_attr omniCodeSet::TCS_W* defaultWCharCodeSet;
+//  set the code set for wchar data sent to servers that have not specified one
+//
+
 
 _CORBA_MODULE_VAR _core_attr CORBA::Boolean      lcdMode;
 //  Set to 1 to enable 'Lowest Common Denominator' Mode.

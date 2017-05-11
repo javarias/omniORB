@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -52,7 +50,7 @@ GIOP::Version orbParameters::maxGIOPVersion = { 1, 2 };
 //
 //  Valid values = 1.0 | 1.1 | 1.2
 
-size_t orbParameters::giopMaxMsgSize = 2048 * 1024;
+CORBA::ULong orbParameters::giopMaxMsgSize = 2048 * 1024;
 //   This value defines the ORB-wide limit on the size of GIOP message 
 //   (excluding the header). If this limit is exceeded, the ORB will
 //   refuse to send or receive the message and raise a MARSHAL exception.
@@ -286,40 +284,22 @@ public:
 
   giopMaxMsgSizeHandler() : 
     orbOptions::Handler("giopMaxMsgSize",
-			"giopMaxMsgSize = n >= 8192 or n == 0",
+			"giopMaxMsgSize = n >= 8192",
 			1,
-			"-ORBgiopMaxMsgSize < n >= 8192 or n == 0 >") {}
+			"-ORBgiopMaxMsgSize < n >= 8192 >") {}
 
   void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
 
-    size_t v;
-    
-    if (!orbOptions::getSizeT(value,v) || (v && v < 8192)) {
+    CORBA::ULong v;
+    if (!orbOptions::getULong(value,v) || v < 8192) {
       throw orbOptions::BadParam(key(),value,
-				 "Invalid value, expect n >= 8192 or n == 0");
+				 "Invalid value, expect n >= 8192");
     }
-    if (v) {
-      orbParameters::giopMaxMsgSize = v;
-    }
-    else {
-      // Set to maximum signed value, to aid indirection code that
-      // calculates negative values.
-
-#if (SIZEOF_LONG == SIZEOF_PTR)
-      orbParameters::giopMaxMsgSize = LONG_MAX;
-#elif (SIZEOF_INT == SIZEOF_PTR)
-      orbParameters::giopMaxMsgSize = INT_MAX;
-#elif defined (_WIN64)
-      orbParameters::giopMaxMsgSize = _I64_MAX;
-#else
-#error "No suitable integer type available to calculate maximum" \
-  " message size"
-#endif
-    }
+    orbParameters::giopMaxMsgSize = v;
   }
 
   void dump(orbOptions::sequenceString& result) {
-    orbOptions::addKVSizeT(key(),orbParameters::giopMaxMsgSize,
+    orbOptions::addKVULong(key(),orbParameters::giopMaxMsgSize,
 			   result);
   }
 

@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -87,8 +85,8 @@ public:
   static size_t outputRemaining(const giopStream*);
   static void getReserveSpace(giopStream*,omni::alignment_t,size_t);
   static void copyOutputData(giopStream*,void*, size_t,omni::alignment_t);
-  static size_t currentInputPtr(const giopStream*);
-  static size_t currentOutputPtr(const giopStream*);
+  static CORBA::ULong currentInputPtr(const giopStream*);
+  static CORBA::ULong currentOutputPtr(const giopStream*);
 
   friend class nonexistence;  // Just to make gcc shut up.
 
@@ -109,7 +107,7 @@ public:
 
   static void outputFlush(giopStream* g);
 
-  static void outputSetMessageSize(giopStream*, size_t);
+  static void outputSetMessageSize(giopStream*,CORBA::ULong);
 
 private:
   giopImpl10();
@@ -767,7 +765,7 @@ giopImpl10::copyInputData(giopStream* g,void* b, size_t sz,
 
 	  if ( b && sz >= giopStream::directReceiveCutOff ) {
 	  
-	    size_t transz = g->inputFragmentToCome();
+	    CORBA::ULong transz = g->inputFragmentToCome();
 	    if (transz > sz) transz = sz;
 	    transz = (transz >> 3) << 3;
 	    g->inputCopyChunk(b,transz);
@@ -807,11 +805,13 @@ giopImpl10::copyInputData(giopStream* g,void* b, size_t sz,
 }
 
 ////////////////////////////////////////////////////////////////////////
-size_t
+CORBA::ULong
 giopImpl10::currentInputPtr(const giopStream* g) {
 
-  return (g->inputMessageSize() - g->inputFragmentToCome() -
-          (g->inEnd() - g->inMkr()));
+  return  g->inputMessageSize() - 
+          g->inputFragmentToCome() -
+         ((omni::ptr_arith_t) g->pd_inb_end - 
+	  (omni::ptr_arith_t) g->pd_inb_mkr);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1368,7 +1368,7 @@ giopImpl10::sendLocateReply(giopStream* g,GIOP::LocateStatusType rc,
 ////////////////////////////////////////////////////////////////////////
 size_t
 giopImpl10::outputRemaining(const giopStream* g) {
-  size_t total = g->outputMessageSize();
+  CORBA::ULong total = g->outputMessageSize();
   if (!total) {
     return orbParameters::giopMaxMsgSize - currentOutputPtr(g);
   }
@@ -1547,10 +1547,12 @@ giopImpl10::copyOutputData(giopStream* g,void* b, size_t sz,
 }
 
 ////////////////////////////////////////////////////////////////////////
-size_t
+CORBA::ULong
 giopImpl10::currentOutputPtr(const giopStream* g) {
 
-  size_t fsz = g->outMkr() - g->outputBufferStart();
+  CORBA::ULong fsz = (omni::ptr_arith_t) g->pd_outb_mkr - 
+                     ((omni::ptr_arith_t) g->pd_currentOutputBuffer + 
+		      g->pd_currentOutputBuffer->start);
 
   if (g->outputFragmentSize()) {
     return fsz + g->outputFragmentSize();
@@ -1563,7 +1565,7 @@ giopImpl10::currentOutputPtr(const giopStream* g) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-giopImpl10::outputSetMessageSize(giopStream* g, size_t msz) {
+giopImpl10::outputSetMessageSize(giopStream* g,CORBA::ULong msz) {
 
   if (msz > orbParameters::giopMaxMsgSize) {
     char* hdr = (char*)((omni::ptr_arith_t) g->pd_currentOutputBuffer + 

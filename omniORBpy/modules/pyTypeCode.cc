@@ -3,7 +3,7 @@
 // pyTypeCode.cc              Created on: 1999/07/19
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2003-2015 Apasphere Ltd
+//    Copyright (C) 2003-2014 Apasphere Ltd
 //    Copyright (C) 1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORBpy library
@@ -20,9 +20,7 @@
 //    GNU Lesser General Public License for more details.
 //
 //    You should have received a copy of the GNU Lesser General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-//    MA 02111-1307, USA
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -142,7 +140,7 @@ public:
   {
   }
 
-  DescriptorOffsetMap(DescriptorOffsetMap& dom, omni::s_size_t offset) :
+  DescriptorOffsetMap(DescriptorOffsetMap& dom, CORBA::Long offset) :
     dict_(dom.getDict()), base_(dom.getBase() + offset)
   {
   }
@@ -151,32 +149,32 @@ public:
     Py_DECREF(dict_);
   }
 
-  inline void add(PyObject* desc, omni::s_size_t offset) {
+  inline void add(PyObject* desc, CORBA::Long offset) {
     PyObject* desc_o = (PyObject*)PyPointerObj_alloc(desc);
-    PyObject* oo     = Int_FromSsize_t(offset + base_);
+    PyObject* oo     = Int_FromLong(offset + base_);
     PyDict_SetItem(dict_, desc_o, oo);
     Py_DECREF(desc_o);
     Py_DECREF(oo);
   }
 
-  inline CORBA::Boolean lookup(PyObject* desc, omni::s_size_t& offset) {
+  inline CORBA::Boolean lookup(PyObject* desc, CORBA::Long& offset) {
     PyObject* desc_o = (PyObject*)PyPointerObj_alloc(desc);
     PyObject* oo     = PyDict_GetItem(dict_, desc_o);
     Py_DECREF(desc_o);
     if (oo) {
-      offset = Int_AsSsize_t(oo) - base_;
+      offset = Int_AS_LONG(oo) - base_;
       return 1;
     }
     return 0;
   }
 
 protected:
-  inline PyObject*      getDict() { Py_INCREF(dict_); return dict_; }
-  inline omni::s_size_t getBase() { return base_; }
+  inline PyObject*   getDict() { Py_INCREF(dict_); return dict_; }
+  inline CORBA::Long getBase() { return base_; }
 
 private:
-  PyObject*      dict_;
-  omni::s_size_t base_;
+  PyObject*   dict_;
+  CORBA::Long base_;
 
   DescriptorOffsetMap(const DescriptorOffsetMap&);
   DescriptorOffsetMap& operator=(const DescriptorOffsetMap&);
@@ -189,7 +187,7 @@ public:
   {
   }
 
-  OffsetDescriptorMap(OffsetDescriptorMap& odm, omni::s_size_t offset) :
+  OffsetDescriptorMap(OffsetDescriptorMap& odm, CORBA::Long offset) :
     dict_(odm.getDict()), base_(odm.getBase() + offset)
   {
   }
@@ -198,14 +196,14 @@ public:
     Py_DECREF(dict_);
   }
 
-  inline void add(PyObject* desc, omni::s_size_t offset) {
-    PyObject* oo = Int_FromSsize_t(offset + base_);
+  inline void add(PyObject* desc, CORBA::Long offset) {
+    PyObject* oo = Int_FromLong(offset + base_);
     PyDict_SetItem(dict_, oo, desc);
     Py_DECREF(oo);
   }
 
-  inline CORBA::Boolean lookup(PyObject*& desc, omni::s_size_t offset) {
-    PyObject* oo = Int_FromSsize_t(offset + base_);
+  inline CORBA::Boolean lookup(PyObject*& desc, CORBA::Long offset) {
+    PyObject* oo = Int_FromLong(offset + base_);
     desc = PyDict_GetItem(dict_, oo);
     Py_DECREF(oo);
     if (desc) {
@@ -216,12 +214,12 @@ public:
   }
 
 protected:
-  inline PyObject*      getDict() { Py_INCREF(dict_); return dict_; }
-  inline omni::s_size_t getBase() { return base_; }
+  inline PyObject*   getDict() { Py_INCREF(dict_); return dict_; }
+  inline CORBA::Long getBase() { return base_; }
 
 private:
-  PyObject*      dict_;
-  omni::s_size_t base_;
+  PyObject*   dict_;
+  CORBA::Long base_;
 
   OffsetDescriptorMap(const OffsetDescriptorMap&);
   OffsetDescriptorMap& operator=(const OffsetDescriptorMap&);
@@ -234,7 +232,7 @@ r_marshalTypeCode(cdrStream&           stream,
 		  PyObject*            d_o,
 		  DescriptorOffsetMap& dom)
 {
-  omni::s_size_t tc_offset;
+  CORBA::Long tc_offset;
 
   // If this TypeCode has already been sent, use an indirection:
   if (orbParameters::useTypeCodeIndirections && dom.lookup(d_o, tc_offset)) {
@@ -242,7 +240,7 @@ r_marshalTypeCode(cdrStream&           stream,
     CORBA::ULong tk_ind = 0xffffffff;
     tk_ind >>= stream;
 
-    CORBA::Long  offset = (CORBA::Long)(tc_offset - stream.currentOutputPtr());
+    CORBA::Long  offset = tc_offset - stream.currentOutputPtr();
     offset >>= stream;
   }
   else {
@@ -705,12 +703,11 @@ r_marshalTypeCode(cdrStream&           stream,
 	  PyList_SetItem(l, 0, t_o);
 	}
 
-        omni::s_size_t position;
-        CORBA::Long    offset;
+	CORBA::Long position, offset;
 
 	if (dom.lookup(t_o, position)) {
 	  tk     >>= stream;
-	  offset   = (CORBA::Long)(position - stream.currentOutputPtr());
+	  offset   = position - stream.currentOutputPtr();
 	  offset >>= stream;
 	}
 	else {
@@ -751,7 +748,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
   CORBA::ULong tk; tk <<= stream;
 
   // Offset of current TypeCode
-  omni::s_size_t tc_offset = stream.currentInputPtr() - 4;
+  CORBA::Long tc_offset = stream.currentInputPtr() - 4;
 
   switch (tk) {
   case CORBA::tk_null:
@@ -1397,8 +1394,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 
   case 0xffffffff:
     {
-      omni::s_size_t position;
-      CORBA::Long    offset;
+      CORBA::Long position, offset;
 
       offset  <<= stream;
       position  = tc_offset + 4 + offset;

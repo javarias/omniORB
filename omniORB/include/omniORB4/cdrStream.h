@@ -3,25 +3,23 @@
 // cdrStream.h                Created on: 11/1/99
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2015 Apasphere Ltd
+//    Copyright (C) 2003-2013 Apasphere Ltd
 //    Copyright (C) 1999      AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -521,14 +519,14 @@ public:
   // <nitems> of size <itemSize>. The initial alignment of the data
   // starts at <align>. Return false otherwise.
 
-  virtual size_t currentInputPtr() const = 0;
+  virtual _CORBA_ULong currentInputPtr() const = 0;
   // Return a value that represents the position of the next byte in
   // the input stream. Later bytes in the stream has a higher return
   // value. The absolute value of the return value has no meaning.
   // The only use of this function is to compute the distance between
   // two bytes in the stream.
 
-  virtual size_t currentOutputPtr() const = 0;
+  virtual _CORBA_ULong currentOutputPtr() const = 0;
   // Return a value that represents the position of the next byte in
   // the output stream. Later bytes in the stream have a higher return
   // value.  The absolute value of the return value has no meaning.
@@ -760,17 +758,10 @@ protected:
   void* pd_inb_end;
   void* pd_inb_mkr;
 
-  inline omni::ptr_arith_t inEnd() const
-  {
-    return (omni::ptr_arith_t)pd_inb_end;
-  }
+  inline omni::ptr_arith_t inEnd() { return (omni::ptr_arith_t)pd_inb_end; }
+  inline omni::ptr_arith_t inMkr() { return (omni::ptr_arith_t)pd_inb_mkr; }
 
-  inline omni::ptr_arith_t inMkr() const
-  {
-    return (omni::ptr_arith_t)pd_inb_mkr;
-  }
-
-  inline omni::ptr_arith_t inMkr(omni::alignment_t align) const
+  inline omni::ptr_arith_t inMkr(omni::alignment_t align)
   {
     return omni::align_to((omni::ptr_arith_t)pd_inb_mkr, align);
   }
@@ -790,17 +781,10 @@ protected:
   void* pd_outb_end;
   void* pd_outb_mkr;
 
-  inline omni::ptr_arith_t outEnd() const
-  {
-    return (omni::ptr_arith_t)pd_outb_end;
-  }
+  inline omni::ptr_arith_t outEnd() { return (omni::ptr_arith_t)pd_outb_end; }
+  inline omni::ptr_arith_t outMkr() { return (omni::ptr_arith_t)pd_outb_mkr; }
 
-  inline omni::ptr_arith_t outMkr() const
-  {
-    return (omni::ptr_arith_t)pd_outb_mkr;
-  }
-
-  inline omni::ptr_arith_t outMkr(omni::alignment_t align) const
+  inline omni::ptr_arith_t outMkr(omni::alignment_t align)
   {
     return omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
   }
@@ -1078,8 +1062,8 @@ public:
   _CORBA_Boolean reserveOutputSpaceForPrimitiveType(omni::alignment_t,size_t);
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t,size_t);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
 private:
   _CORBA_Boolean reserveOutputSpace(omni::alignment_t,size_t);
@@ -1167,8 +1151,8 @@ public:
 
   void fetchInputData(omni::alignment_t,size_t);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   virtual void* ptrToClass(int* cptr);
   static inline cdrCountingStream* downcast(cdrStream* s) {
@@ -1239,8 +1223,8 @@ protected:
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t align,
 					 size_t required);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   _CORBA_ULong completion();
 
@@ -1365,8 +1349,8 @@ public:
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t align,
 					 size_t required);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   _CORBA_ULong completion();
 

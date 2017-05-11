@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -36,7 +34,6 @@
 #else
 #include <process.h>
 #endif
-#include <sys/stat.h>
 #include <omniORB4/minorCode.h>
 #include <omniORB4/sslContext.h>
 #include <exceptiondefs.h>
@@ -161,6 +158,19 @@ sslContext::set_CA() {
 
   if (!(SSL_CTX_load_verify_locations(pd_ctx, pd_cafile,
                                       certificate_authority_path))) {
+    if (omniORB::trace(1)) {
+      omniORB::logger log;
+      log << "Failed to set CA";
+
+      if (pd_cafile)
+        log << " file '" << pd_cafile << "'";
+
+      if (certificate_authority_path)
+        log << " path '" << certificate_authority_path << "'";
+
+      log << ".\n";
+    }
+      
     report_error();
     OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,CORBA::COMPLETED_NO);
   }
@@ -173,18 +183,20 @@ sslContext::set_CA() {
 void
 sslContext::set_certificate() {
   {
-    struct stat buf;
-    if (!pd_keyfile || stat(pd_keyfile,&buf) < 0) {
+    if (!pd_keyfile) {
       if (omniORB::trace(5)) {
 	omniORB::logger log;
-	log << "sslContext certificate file is not set "
-	    << "or cannot be found\n";
+	log << "sslContext certificate file is not set.\n";
       }
       return;
     }
   }
 
   if(!(SSL_CTX_use_certificate_chain_file(pd_ctx, pd_keyfile))) {
+    if (omniORB::trace(1)) {
+      omniORB::logger log;
+      log << "Failed to use certificate file '" << pd_keyfile << "'.\n";
+    }
     report_error();
     OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,CORBA::COMPLETED_NO);
   }
@@ -306,13 +318,20 @@ sslContext::set_DH() {
     0x02,
   };
 
-  dh->p = BN_bin2bn(dh2048_p, sizeof(dh2048_p), 0);
-  dh->g = BN_bin2bn(dh2048_g, sizeof(dh2048_g), 0);
-
-  if (!dh->p || !dh->g) {
+  BIGNUM* p = BN_bin2bn(dh2048_p, sizeof(dh2048_p), 0);
+  BIGNUM* g = BN_bin2bn(dh2048_g, sizeof(dh2048_g), 0);
+  
+  if (!p || !g) {
     OMNIORB_THROW(INITIALIZE,INITIALIZE_TransportError,CORBA::COMPLETED_NO);
   }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+  dh->p = p;
+  dh->g = g;
+#else
+  DH_set0_pqg(dh, p, 0, g);
+#endif
+  
   SSL_CTX_set_tmp_dh(pd_ctx, dh);
   DH_free(dh);
 }
@@ -400,7 +419,6 @@ static void report_error() {
     char buf[128];
     ERR_error_string_n(ERR_get_error(),buf,128);
     omniORB::logger log;
-    log << "sslContext.cc : " << (const char*) buf << "\n";
+    log << "OpenSSL: " << (const char*) buf << "\n";
   }
 }
-

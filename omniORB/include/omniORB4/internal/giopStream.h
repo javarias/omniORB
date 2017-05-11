@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -61,17 +59,17 @@ struct giopStream_Buffer {
   static void deleteBuffer(giopStream_Buffer*);
   static giopStream_Buffer* newBuffer(CORBA::ULong sz=0);
 
-  inline omni::ptr_arith_t bufStart() const
+  inline omni::ptr_arith_t bufStart()
   {
     return (omni::ptr_arith_t)this + start;
   }
 
-  inline omni::ptr_arith_t bufLast() const
+  inline omni::ptr_arith_t bufLast()
   {
     return (omni::ptr_arith_t)this + last;
   }
 
-  inline omni::ptr_arith_t bufEnd() const
+  inline omni::ptr_arith_t bufEnd()
   {
     return (omni::ptr_arith_t)this + end;
   }
@@ -81,7 +79,7 @@ struct giopStream_Buffer {
     last = (omni::ptr_arith_t)mkr - (omni::ptr_arith_t)this;
   }
 
-  inline CORBA::ULong dataSize() const
+  inline CORBA::ULong dataSize()
   {
     return last - start;
   }
@@ -381,9 +379,9 @@ public:
 
   _CORBA_Boolean is_giopStream();
 
-  size_t currentInputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
 
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
 
   friend class giopImpl10;
@@ -414,8 +412,8 @@ private:
   // The following variables can be left uninitialised and will be
   // written with a sensible value when used.
   CORBA::Boolean             pd_inputExpectAnotherFragment;
-  size_t                     pd_inputFragmentToCome;
-  size_t                     pd_inputMessageSize;
+  CORBA::ULong               pd_inputFragmentToCome;
+  CORBA::ULong               pd_inputMessageSize;
 
   inline CORBA::Boolean inputFullyBuffered() const { 
     return pd_inputFullyBuffered;
@@ -441,19 +439,19 @@ private:
     pd_inputMatchedId = yes;
   }
 
-  inline size_t inputMessageSize() const {
+  inline CORBA::ULong inputMessageSize() const {
     return pd_inputMessageSize;
   }
 
-  inline void inputMessageSize(size_t msgsz) {
+  inline void inputMessageSize(CORBA::ULong msgsz) {
     pd_inputMessageSize = msgsz;
   }
 
-  inline size_t inputFragmentToCome() const {
+  inline CORBA::ULong inputFragmentToCome() const {
     return pd_inputFragmentToCome;
   }
 
-  inline void inputFragmentToCome(size_t fsz) {
+  inline void inputFragmentToCome(CORBA::ULong fsz) {
     pd_inputFragmentToCome = fsz;
   }
 
@@ -501,7 +499,7 @@ private:
   // Thread Safety preconditions:
   //   Caller must have acquired the read lock on the strand.
 
-  void inputCopyChunk(void* dest, CORBA::ULong size);
+  void inputCopyChunk(void* dest,CORBA::ULong size);
   // Same as inputChunk except that data is copied directly into the
   // destination buffer.
   //
@@ -532,35 +530,35 @@ private:
 
   // The following variables can be left uninitialised and will be
   // written with a sensible value when used.
-  size_t                     pd_outputFragmentSize;
-  size_t                     pd_outputMessageSize;
+  CORBA::ULong               pd_outputFragmentSize;
+  CORBA::ULong               pd_outputMessageSize;
   CORBA::ULong               pd_request_id;
 
-  inline size_t outputMessageSize() const {
+  inline CORBA::ULong outputMessageSize() const {
     return pd_outputMessageSize;
   }
 
-  inline void outputMessageSize(size_t msgsz) {
+  inline void outputMessageSize(CORBA::ULong msgsz) {
     pd_outputMessageSize = msgsz;
   }
 
-  inline size_t outputFragmentSize() const {
+  inline CORBA::ULong outputFragmentSize() const {
     return pd_outputFragmentSize;
   }
 
-  inline void outputFragmentSize(size_t fsz) {
+  inline void outputFragmentSize(CORBA::ULong fsz) {
     pd_outputFragmentSize = fsz;
   }
 
-  inline omni::ptr_arith_t outputBufferStart() const {
+  inline omni::ptr_arith_t outputBufferStart() {
     return pd_currentOutputBuffer->bufStart();
   }
 
-  inline omni::ptr_arith_t outputBufferEnd() const {
+  inline omni::ptr_arith_t outputBufferEnd() {
     return pd_currentOutputBuffer->bufEnd();
   }
 
-  inline CORBA::ULong bufferedOutputSize() const {
+  inline CORBA::ULong bufferedOutputSize() {
     return (omni::ptr_arith_t)pd_outb_mkr - pd_currentOutputBuffer->bufStart();
   }
 

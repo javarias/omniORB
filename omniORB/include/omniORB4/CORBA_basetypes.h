@@ -1,27 +1,25 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB
+//                            Package   : omniORB2
 // CORBA_basetypes.h          Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2013-2017 Apasphere Ltd
+//    Copyright (C) 2013 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories - Cambridge Ltd
 //
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -351,5 +349,19 @@ typedef _CORBA_LONGDOUBLE_DECL    _CORBA_LongDouble;
 
 #endif   // VMS float test
 #endif   // !defined(NO_FLOAT)
+
+class cdrStream;
+
+extern void _CORBA_new_operator_return_null();
+extern void _CORBA_bound_check_error();
+extern void _CORBA_marshal_sequence_range_check_error(cdrStream&);
+extern _CORBA_Boolean _CORBA_use_nil_ptr_as_nil_objref();
+extern void _CORBA_null_string_ptr(_CORBA_Boolean);
+extern void _CORBA_invoked_nil_pseudo_ref();
+extern void _CORBA_invoked_nil_objref();
+extern _CORBA_Boolean
+_CORBA_use_nil_ptr_as_nil_pseudo_objref(const char* objType);
+extern void _CORBA_bad_param_freebuf();
+
 
 #endif // __CORBA_BASETYPES_H__

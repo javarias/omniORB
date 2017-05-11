@@ -3,24 +3,22 @@
 // valueType.cc               Created on: 2003/09/17
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2003-2015 Apasphere Ltd.
+//    Copyright (C) 2003-2008 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -47,26 +45,18 @@ OMNI_USING_NAMESPACE(omni)
 
 
 static inline void
-marshalIndirection(cdrStream& stream, omni::s_size_t pos)
+marshalIndirection(cdrStream& stream, CORBA::Long pos)
 {
   stream.declareArrayLength(omni::ALIGN_4, 8);
   CORBA::ULong indirect = 0xffffffff;
   indirect >>= stream;
 
-  omni::s_size_t offset = pos - stream.currentOutputPtr();
+  CORBA::Long offset = pos - stream.currentOutputPtr();
 
   OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
   // In a counting stream, the currentOutputPtr is always zero.
 
-#if (SIZEOF_PTR == 8)
-  if (offset < -0x7fffffff - 1) {
-    // Value is more than 2GB earlier in the stream!
-    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,
-                  (CORBA::CompletionStatus)stream.completion());
-  }
-#endif
-
-  stream.marshalLong((CORBA::Long)offset);
+  offset >>= stream;
 }
 
 
@@ -79,7 +69,7 @@ marshalHeaderAndBody(cdrStream& stream, cdrValueChunkStream* cstreamp,
 
 static CORBA::ValueBase*
 unmarshalHeaderAndBody(cdrStream& stream, cdrValueChunkStream* cstreamp,
-		       InputValueTracker* tracker, omni::s_size_t pos,
+		       InputValueTracker* tracker, CORBA::Long pos,
 		       CORBA::ULong tag, const char* targetId,
 		       CORBA::ULong targetHash, CORBA::TypeCode_ptr tc);
 
@@ -119,7 +109,7 @@ marshal(CORBA::ValueBase* val, const char* repoId, cdrStream& stream)
 
   stream.alignOutput(omni::ALIGN_4);
 
-  omni::s_size_t pos = tracker->addValue(val, stream.currentOutputPtr());
+  CORBA::Long pos = tracker->addValue(val, stream.currentOutputPtr());
 
   if (pos != -1) {
     marshalIndirection(stream, pos);
@@ -214,8 +204,8 @@ marshalHeaderAndBody(cdrStream& stream, cdrValueChunkStream* cstreamp,
   if (idflags == REPOID_LIST) {
     OMNIORB_ASSERT(valTruncIds);
 
-    omni::s_size_t pos = tracker->addRepoIds(valTruncIds,
-                                             stream.currentOutputPtr());
+    CORBA::Long pos = tracker->addRepoIds(valTruncIds,
+					  stream.currentOutputPtr());
 
     if (pos == -1) {
       valTruncIds->idcount >>= stream;
@@ -237,8 +227,8 @@ marshalHeaderAndBody(cdrStream& stream, cdrValueChunkStream* cstreamp,
   else if (idflags == REPOID_SINGLE) {
     OMNIORB_ASSERT(valRepoId);
 
-    omni::s_size_t pos = tracker->addRepoId(valRepoId, valRepoIdHash,
-                                            stream.currentOutputPtr());
+    CORBA::Long pos = tracker->addRepoId(valRepoId, valRepoIdHash,
+					 stream.currentOutputPtr());
     if (pos == -1)
       stream.marshalRawString(valRepoId);
     else
@@ -268,8 +258,7 @@ unmarshalRepoId(cdrStream& stream, InputValueTracker* tracker)
   // Unmarshal a raw string or an indirection to one
 
   CORBA::ULong len; len <<= stream;
-
-  omni::s_size_t pos = stream.currentInputPtr();
+  CORBA::Long  pos = stream.currentInputPtr();
 
   if (len == 0xffffffff) {
     CORBA::Long offset;
@@ -279,7 +268,7 @@ unmarshalRepoId(cdrStream& stream, InputValueTracker* tracker)
 		    (CORBA::CompletionStatus)stream.completion());
     }
     return tracker->lookupRepoId(pos + offset, pos - 4,
-                                 (CORBA::CompletionStatus)stream.completion());
+			   (CORBA::CompletionStatus)stream.completion());
   }
   if (!stream.checkInputOverrun(1, len))
     OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
@@ -329,7 +318,7 @@ unmarshal(const char* repoId, CORBA::ULong hashval,
   OMNIORB_ASSERT(tracker->valid());
 
   CORBA::ValueBase* result;
-  omni::s_size_t    pos = stream.currentInputPtr();
+  CORBA::Long pos = stream.currentInputPtr();
 
   if (tag == 0xffffffff) {
     // indirection
@@ -341,7 +330,7 @@ unmarshal(const char* repoId, CORBA::ULong hashval,
 		    (CORBA::CompletionStatus)stream.completion());
     }
     result = tracker->lookupValue(pos + offset, pos-4,
-                                  (CORBA::CompletionStatus)stream.completion());
+				 (CORBA::CompletionStatus)stream.completion());
     CORBA::add_ref(result);
     return result;
   }
@@ -390,7 +379,7 @@ CORBA::ValueBase*
 unmarshalHeaderAndBody(cdrStream&           stream,
 		       cdrValueChunkStream* cstreamp,
 		       InputValueTracker*   tracker,
-		       omni::s_size_t       pos,
+		       CORBA::Long          pos,
 		       CORBA::ULong         tag,
 		       const char*          targetId,
 		       CORBA::ULong         targetHash,
@@ -406,16 +395,15 @@ unmarshalHeaderAndBody(cdrStream&           stream,
   }
 
   CORBA::Boolean        truncating = 0;
-  const char*           repoId;
+  const char*           repoId     = 0;
   const _omni_ValueIds* repoIds    = 0;
-
   CORBA::ValueBase*     result;
 
   if ((tag & REPOID_MASK) == REPOID_LIST) {
     CORBA::ULong count;
     count <<= stream;
 
-    omni::s_size_t idpos = stream.currentInputPtr();
+    CORBA::Long idpos = stream.currentInputPtr();
 
     if (count == 0xffffffff) { // Indirection
       CORBA::Long offset;
@@ -434,7 +422,7 @@ unmarshalHeaderAndBody(cdrStream&           stream,
 		      (CORBA::CompletionStatus)stream.completion());
       }
       _omni_ValueIds* newIds = new _omni_ValueIds;
-      _omni_ValueId*  idList = new _omni_ValueId[count];
+      _omni_ValueId* idList  = new _omni_ValueId[count];
       for (CORBA::ULong i=0; i < count; i++) {
 	idList[i].repoId  = unmarshalRepoId(stream, tracker);
 	idList[i].hashval = omniValueType::hash_id(idList[i].repoId);

@@ -19,9 +19,7 @@
 //  General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//  02111-1307, USA.
+//  along with this program.  If not, see http://www.gnu.org/licenses/
 //
 // Description:
 //   
@@ -1018,7 +1016,7 @@ kindAsString() const
 {
   if (alias_)     return "typedef declarator";
   if (attribute_) return "attribute declarator";
-                  return "declarator";
+  return "declarator";
 }
 
 void
@@ -1641,7 +1639,7 @@ Union::
 // come up with a default label value. Loops are O(n^2), but n will
 // usually be quite small. ***
 #define UNION_SWITCH(lt, op, defstart, islastdef, nextdef) { \
-  lt label; \
+  lt label = defstart; \
   for (c = cases; c; c = (UnionCase*)c->next()) { \
     for (l = c->labels(); l; l = (CaseLabel*)l->next()) { \
       l->setType(t); \

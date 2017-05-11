@@ -133,7 +133,7 @@ int main() {
 }
 ],
  omni_cv_cxx_catch_by_base=yes, omni_cv_cxx_catch_by_base=no,
- omni_cv_cxx_catch_by_base=no)
+ omni_cv_cxx_catch_by_base=yes)
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_catch_by_base" = yes; then
@@ -472,23 +472,6 @@ omni_cv_enable_atomic,
 ])
 if test "$omni_cv_enable_atomic" = "no"; then
   AC_DEFINE(OMNI_DISABLE_ATOMIC_OPS,,[define if you want to disable atomic operations])
-fi
-])
-
-
-dnl Lock tracing
-AC_DEFUN([OMNI_ENABLE_CXX11],
-[AC_CACHE_CHECK(whether to support the C++11 mapping,
-omni_cv_enable_cxx11,
-[AC_ARG_ENABLE(cxx11,
-               AC_HELP_STRING([--enable-cxx11],
-                  [enable C++11 mapping (default disable-cxx11)]),
-               omni_cv_enable_cxx11=$enableval,
-               omni_cv_enable_cxx11=no)
-])
-AC_SUBST(ENABLE_CXX11, $omni_cv_enable_cxx11)
-if test "$omni_cv_enable_cxx11" = "yes"; then
-  AC_DEFINE(OMNIORB_ENABLE_CXX11,,[define if you want to support the C++11 mapping])
 fi
 ])
 

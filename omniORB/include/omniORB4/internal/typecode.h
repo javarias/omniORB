@@ -11,19 +11,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -1222,8 +1220,8 @@ private:
   friend class TypeCode_offsetTable;
 
   TypeCode_offsetEntry* pd_next;
-  size_t                pd_offset;
-  TypeCode_base*        pd_typecode;
+  CORBA::ULong pd_offset;
+  TypeCode_base* pd_typecode;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -1250,30 +1248,27 @@ public:
   //      i.e.  The offset passed to B->addEntry is relative to offset zero
   //            in table B.  The is automatically mapped to the corresponding
   //            offset in table A.
-  TypeCode_offsetTable(TypeCode_offsetTable* parent,
-                       omni::s_size_t        base_offset);
+  TypeCode_offsetTable(TypeCode_offsetTable* parent, CORBA::Long base_offset);
 
   // Routine to add an offset->typecode mapping
-  void addEntry(omni::s_size_t offset, TypeCode_base* typecode);
+  void addEntry(CORBA::Long offset, TypeCode_base* typecode);
 
   // Routines to retrieve typecode by offset or vica versa
-  TypeCode_base* lookupOffset(omni::s_size_t offset);
-
-  CORBA::Boolean lookupTypeCode(const TypeCode_base* tc,
-                                omni::s_size_t&      offset);
+  TypeCode_base* lookupOffset(CORBA::Long offset);
+  CORBA::Boolean lookupTypeCode(const TypeCode_base* tc, CORBA::Long& offset);
 
   // Routine to retrieve the current buffer offset
-  inline omni::s_size_t currentOffset()             { return pd_curr_offset; }
-  inline void           setOffset(omni::s_size_t i) { pd_curr_offset = i;    }
+  inline CORBA::Long currentOffset()   { return pd_curr_offset; }
+  inline void setOffset(CORBA::Long i) { pd_curr_offset = i;    }
 
 private:
   TypeCode_offsetEntry* pd_table;
-  omni::s_size_t        pd_curr_offset;
+  CORBA::Long pd_curr_offset;
 
   // Fields for use when this offsetTable is actually just a wrapper round
   // an existing offsetTable
   TypeCode_offsetTable* pd_parent_table;
-  omni::s_size_t        pd_parent_base_offset;
+  CORBA::Long pd_parent_base_offset;
 };
 
 //////////////////////////////////////////////////////////////////////
