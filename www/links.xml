@@ -7,19 +7,31 @@
 
 <ul>
   <li>omniORB's <a
-      href="http://sourceforge.net/projects/omniorb/">SourceForge
+      href="https://sourceforge.net/projects/omniorb/">SourceForge
       Project Page</a>.
   </li>
   <li>The <a
-  href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/">Subversion
+  href="http://svn.code.sf.net/p/omniorb/svn/">Subversion
   repository</a>.
   </li>
-  <li>omniORB <a href="http://www.omniorb-support.com/">commercial
+  <li>omniORB <a href="http://www.omniorb-support.com/support.html">commercial
       support</a>.
   </li>
 </ul>
 
 <h2>Services and tools</h2>
+
+<ul>
+  <li><a href="https://github.com/omniorb/omniifr">omniifr</a>,
+      an Interface Repository for omniORB.
+  </li>
+  <li><a href="https://www.wireshark.org/">Wireshark</a>, a network
+      protocol analyser that can decode GIOP traffic. It uses omniidl
+      to generate IDL-specific message decoders.
+  </li>
+</ul>
+
+<h2>Old, unmaintaned projects</h2>
 
 <ul>
   <li><a
@@ -30,14 +42,6 @@
       href="http://www.omnievents.org/">omniEvents</a>,
       an implementation of the CORBA Event Service.
   </li>
-  <li><a href="http://omniifr.sourceforge.net/">omniifr</a>,
-      an Interface Repository for omniORB.  Looking for developers to
-      maintain it.
-  </li>
-  <li><a href="http://www.ethereal.com/">Ethereal</a>, a network
-      protocol analyser that can decode GIOP traffic. It uses omniidl
-      to generate IDL-specific message decoders.
-  </li>
   <li><a href="http://rgruet.free.fr/ipy.html">ipy</a>, a tool to
       build Python implementation skeletons from IDL.
   </li>
@@ -47,22 +51,22 @@
   </li>
 </ul>
 
-<h2>CORBA and omniORB links</h2>
+<!-- <h2>CORBA and omniORB links</h2> -->
 
-<ul>
-  <li>The <a href="http://freegee.sourceforge.net/">FreeGee
-  Application Framework</a> bundles some useful packages including
-  omniORB.
-  </li>
-  <li>The <a href="http://nenya.ms.mff.cuni.cz/benchmark">Middleware
-  Benchmarking Project</a> has extensive performance measurements of
-  many CORBA ORBs including omniORB.
-  </li>
-  <li>The <a href="http://cost.omg.org/">CORBA Open Source Testing</a>
-      project has many ORB tests, including the extensive omniORB
-      testsuite.
-  </li>
-</ul>
+<!-- <ul> -->
+<!--   <li>The <a href="http://freegee.sourceforge.net/">FreeGee -->
+<!--   Application Framework</a> bundles some useful packages including -->
+<!--   omniORB. -->
+<!--   </li> -->
+<!--   <li>The <a href="http://nenya.ms.mff.cuni.cz/benchmark">Middleware -->
+<!--   Benchmarking Project</a> has extensive performance measurements of -->
+<!--   many CORBA ORBs including omniORB. -->
+<!--   </li> -->
+<!--   <li>The <a href="http://cost.omg.org/">CORBA Open Source Testing</a> -->
+<!--       project has many ORB tests, including the extensive omniORB -->
+<!--       testsuite. -->
+<!--   </li> -->
+<!-- </ul> -->
 
 
 <h2>Related links</h2>
@@ -88,9 +92,6 @@
       including the <a
       href="http://www.cl.cam.ac.uk/Research/DTG/attarchive/omniORB/omniORB.html">omniORB
       bits</a>. Hosted at the Computer Laboratory.
-  </li>
-  <li>Duncan Grisby is omniORB's lead developer. This is his <a
-      href="http://www.grisby.org/">home page</a>.
   </li>
 </ul>
 
