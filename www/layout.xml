@@ -34,8 +34,8 @@
 	<a href="features.html">Features</a><br/>
 	<a href="download.html">Download</a><br/>
 	<a href="docs.html">Documentation</a><br/>
-	<a href="http://www.omniorb.net/omniwiki">Wiki</a><br/>
-	<a href="http://www.omniorb.net/omniwiki/FrequentlyAskedQuestions">FAQ</a><br/>
+	<!-- <a href="http://www.omniorb.net/omniwiki">Wiki</a><br/> -->
+	<!-- <a href="http://www.omniorb.net/omniwiki/FrequentlyAskedQuestions">FAQ</a><br/> -->
 	<a href="development.html">Development</a><br/>
 	<a href="snapshots/">Snapshots</a><br/>
         <a href="https://sourceforge.net/projects/omniorb/">SF project</a><br/>
