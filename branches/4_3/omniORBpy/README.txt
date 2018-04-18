@@ -1,7 +1,7 @@
-omniORBpy 4.2
+omniORBpy 4.3
 =============
 
-This is omniORBpy 4.2.2.
+This is the omniORBpy 4.3.x development branch.
 
 omniORBpy is a robust high-performance CORBA ORB for Python.
 
@@ -12,7 +12,7 @@ may find at
 
 
 omniORBpy makes use of the C++ omniORB library. omniORBpy version
-4.2.x can only be used with omniORB 4.2.x.
+4.3.x can only be used with omniORB 4.3.x.
 
 omniORBpy is currently available for many Unix platforms and Windows.
 It has been ported to a number of other operating systems by outside
