@@ -915,7 +915,7 @@ public:
 			1) {}
 
 
-  void visit(const char*,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char*,orbOptions::Source) {
 
     orbOptions::sequenceString_var usage;
     usage = orbOptions::singleton().usageArgv();
@@ -945,7 +945,7 @@ public:
 			"-ORBid " ORB_ID_STRING " (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     if (!isValidId(value)) {
       throw orbOptions::BadParam(key(),value,"id is not " ORB_ID_STRING);
@@ -977,7 +977,7 @@ public:
 			"-ORBdumpConfiguration < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -1006,7 +1006,7 @@ public:
 			"-ORBlcdMode < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -1036,7 +1036,7 @@ public:
 			"-ORBprincipal <GIOP 1.0 principal string>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
     CORBA::ULong l = (CORBA::ULong)strlen(value) + 1;
     omni::myPrincipalID.length(l);
     for (CORBA::ULong i = 0; i < l; i++)
@@ -1071,7 +1071,7 @@ public:
 			"-ORBconfigFile <filename>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
     // Do nothing -- already handled before normal arguments are processed
   }
 

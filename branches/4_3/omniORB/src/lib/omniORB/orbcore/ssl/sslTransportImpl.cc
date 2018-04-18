@@ -147,7 +147,7 @@ public:
 			1,
 			"-ORBsslCAFile <certificate authority file>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
   {    
     sslContext::certificate_authority_file = CORBA::string_dup(value);
   }
@@ -174,7 +174,7 @@ public:
 			1,
 			"-ORBsslCAPath <certificate authority path>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
   {    
     sslContext::certificate_authority_path = CORBA::string_dup(value);
   }
@@ -201,7 +201,7 @@ public:
 			1,
 			"-ORBsslKeyFile <key file>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
   {    
     sslContext::key_file = CORBA::string_dup(value);
   }
@@ -228,7 +228,7 @@ public:
 			1,
 			"-ORBsslKeyPassword <key file password>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
   {    
     sslContext::key_file_password = CORBA::string_dup(value);
   }
@@ -255,7 +255,7 @@ public:
 			"-ORBsslVerifyMode < \"none\" | \"peer[,fail][,once]\" >")
   {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
   {    
     if (!strcmp(value, "none")) {
       sslContext::verify_mode = 0;
@@ -324,7 +324,7 @@ public:
 			1,
 			"-ORBsslAcceptTimeOut < n >= 0 in msecs >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {

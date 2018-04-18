@@ -3918,7 +3918,7 @@ public:
 			1,
 			"-ORBpoaHoldRequestTimeout < n >= 0 in msec >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -3946,7 +3946,7 @@ public:
 			1,
 			"-ORBpoaUniquePersistentSystemIds < 0 | 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

@@ -92,7 +92,7 @@ class orbOptions {
     CORBA::Boolean argvYes() const { return argvYes_; }
     CORBA::Boolean argvHasNoValue() const { return argvHasNoValue_; }
 
-    virtual void visit(const char* value,Source source) throw (BadParam) = 0;
+    virtual void visit(const char* value,Source source) = 0;
     virtual void dump(sequenceString& result) = 0;
 
   protected:
@@ -144,7 +144,7 @@ class orbOptions {
   // addOptions().
 
   ////////////////////////////////////////////////////////////////////////
-  void visit() throw(BadParam);
+  void visit();
   // Call this method will cause the object to walk through all the options
   // accumulated so far via addOption(). For each of these options, its
   // handler will be called.
@@ -154,7 +154,7 @@ class orbOptions {
 
   ////////////////////////////////////////////////////////////////////////
   void addOption(const char* key, const char* value, 
-		 Source source=fromInternal) throw (Unknown,BadParam);
+		 Source source=fromInternal);
   // Add to the internal option list a <key,value> tuple.
   // Both arguments are copied.
   //
@@ -162,7 +162,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void addOptions(const char* options[][2]) throw (Unknown,BadParam);
+  void addOptions(const char* options[][2]);
   // Add the option list. Each element of the variable size array is
   // a key, value pair. The array ends with a key, value pair that is both
   // nil(0) in value.
@@ -171,7 +171,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void extractInitOptions(int& argc, char** argv) throw (Unknown,BadParam);
+  void extractInitOptions(int& argc, char** argv);
   // Extract the ORB_init options from the argv list. Extract the arguments
   // from the argument list for those registered handlers that can accept
   // ORB_init arguments.
@@ -180,7 +180,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void getTraceLevel(int argc, char** argv) throw (Unknown,BadParam);
+  void getTraceLevel(int argc, char** argv);
   // Look for -ORBtraceLevel and -ORBtraceFile arguments very early
   // on, so the trace level can affect later option logging. Does not
   // remove the arguments -- that is done by extractInitOptions()
@@ -190,8 +190,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  const char* getConfigFileName(int argc, char** argv, const char* fname)
-    throw (Unknown,BadParam);
+  const char* getConfigFileName(int argc, char** argv, const char* fname);
   // Look for an -ORBconfigFile argument before processing the config
   // file. Does not remove the arguments -- that is done by
   // extractInitOptions() later.
@@ -200,15 +199,15 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  CORBA::Boolean importFromFile(const char* filename) throw (Unknown,BadParam);
+  CORBA::Boolean importFromFile(const char* filename);
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
   ////////////////////////////////////////////////////////////////////////
-  CORBA::Boolean importFromRegistry() throw (Unknown,BadParam);
+  CORBA::Boolean importFromRegistry();
 #endif
 
   ////////////////////////////////////////////////////////////////////////
-  void importFromEnv() throw (Unknown,BadParam);
+  void importFromEnv();
 
   ////////////////////////////////////////////////////////////////////////
   sequenceString* usage() const;
