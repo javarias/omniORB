@@ -858,7 +858,7 @@ public:
 			"-ORBvalidateUTF8 < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

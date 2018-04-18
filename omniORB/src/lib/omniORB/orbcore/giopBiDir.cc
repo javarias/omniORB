@@ -751,7 +751,7 @@ public:
 			1,
 			"-ORBacceptBiDirectionalGIOP < 0 | 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
@@ -780,7 +780,7 @@ public:
 			1,
 			"-ORBofferBiDirectionalGIOP < 0 | 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {

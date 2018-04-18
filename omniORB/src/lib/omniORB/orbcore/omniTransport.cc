@@ -148,7 +148,7 @@ public:
 			1,
 			"-ORBmaxSocketSend < n >= 1024 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1024) {
@@ -178,7 +178,7 @@ public:
 			1,
 			"-ORBmaxSocketRecv < n >= 1024 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1024) {
@@ -208,7 +208,7 @@ public:
 			1,
 			"-ORBsocketSendBuffer < n >= -1 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::Long v;
     if (!orbOptions::getLong(value,v) || v < -1) {
@@ -238,7 +238,7 @@ public:
 			1,
 			"-ORBconnectionWatchPeriod < n >= 0 in microsecs >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {

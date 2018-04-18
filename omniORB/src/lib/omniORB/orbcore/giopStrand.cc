@@ -807,7 +807,7 @@ public:
 			1,
 			"-ORBscanGranularity < n >= 0 sec >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -835,7 +835,7 @@ public:
 			1,
 			"-ORBoutConScanPeriod < n >= 0 sec >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
@@ -863,7 +863,7 @@ public:
 			1,
 			"-ORBinConScanPeriod < n >= 0 sec >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {

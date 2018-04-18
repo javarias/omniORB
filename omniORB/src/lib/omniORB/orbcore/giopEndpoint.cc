@@ -408,7 +408,7 @@ public:
 			"-ORBunixTransportDirectory <dir name>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
     orbParameters::unixTransportDirectory = value;
   }
 
@@ -442,7 +442,7 @@ public:
 			"-ORBunixTransportPermission <mode bits in octal radix>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source) {
 
     unsigned int v;
     if( sscanf(value,"%o",&v) != 1 ) {
