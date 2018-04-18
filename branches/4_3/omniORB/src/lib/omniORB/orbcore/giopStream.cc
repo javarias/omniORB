@@ -620,7 +620,7 @@ giopStream::maybeReserveOutputSpace(omni::alignment_t align,
 
 
 ////////////////////////////////////////////////////////////////////////
-CORBA::ULong
+size_t
 giopStream::currentInputPtr() const
 {
   OMNIORB_ASSERT(impl());
@@ -628,7 +628,7 @@ giopStream::currentInputPtr() const
 }
 
 ////////////////////////////////////////////////////////////////////////
-CORBA::ULong
+size_t
 giopStream::currentOutputPtr() const
 {
   OMNIORB_ASSERT(impl());
