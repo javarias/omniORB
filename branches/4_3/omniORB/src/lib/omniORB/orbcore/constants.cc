@@ -31,7 +31,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 // See the description of this variable in omniInternal.h
-const char* omniORB_4_2 = "omniORB version 4.2.x";
+const char* omniORB_4_3 = "omniORB version 4.3.x";
 
 const CORBA::ULong omniORB_TAG_ORB_TYPE = 0x41545400; // ATT\x00
 

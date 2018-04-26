@@ -1,3 +1,17 @@
+Thu 26 Apr 15:59:08 BST 2018
+============================
+
+- Update library version symbols.
+
+include/omniORB4/omniInternal.h
+src/lib/omniORB/dynamic/constants.cc
+src/lib/omniORB/orbcore/constants.cc
+src/lib/omniORB/python/omniidl_be/cxx/config.py
+src/lib/omniORB/python/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/python3/omniidl_be/cxx/config.py
+src/lib/omniORB/python3/omniidl_be/cxx/skel/template.py
+
+
 Wed 18 Apr 18:46:35 BST 2018
 ============================
 

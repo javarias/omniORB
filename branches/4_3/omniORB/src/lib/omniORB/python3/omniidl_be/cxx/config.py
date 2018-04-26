@@ -29,7 +29,7 @@ state = {
     # Name of this program
     'Program Name':          'omniidl (C++ backend)',
     # Relevant omniORB C++ library version
-    'Library Version':       'omniORB_4_2',
+    'Library Version':       'omniORB_4_3',
     # Suffix of generated header file
     'HH Suffix':             '.hh',
     # Suffix of generated Skeleton file
