@@ -35,7 +35,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 // See the description of this variable in omniInternal.h
-const char* omniORB_4_2_dyn = "omniORB dynamic library version 4.2.x";
+const char* omniORB_4_3_dyn = "omniORB dynamic library version 4.3.x";
 
 OMNI_NAMESPACE_END(omni)
 

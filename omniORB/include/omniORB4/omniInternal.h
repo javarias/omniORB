@@ -79,8 +79,8 @@ class omniObjAdapter;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern _core_attr const char* omniORB_4_2;
-extern _dyn_attr  const char* omniORB_4_2_dyn;
+extern _core_attr const char* omniORB_4_3;
+extern _dyn_attr  const char* omniORB_4_3_dyn;
 extern _core_attr const _CORBA_ULong omniORB_TAG_ORB_TYPE; // ATT\x00
 
 class Strand;
