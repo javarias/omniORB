@@ -85,7 +85,16 @@ public:
   static inline CacheNode* acquire()
   {
     CacheNode* cn;
-#if PY_VERSION_HEX >= 0x02030000
+
+#if defined(PYPY_VERSION)
+    // PyPy does not have PyGILState_GetThisThreadState, but also gets
+    // unhappy id we switch states, so we just use PyGILState_Ensure.
+    cn = new CacheNode;
+    cn->gilstate = PyGILState_Ensure();
+    return cn;
+
+#elif PY_VERSION_HEX >= 0x02030000
+
     PyThreadState* tstate = PyGILState_GetThisThreadState();
     if (tstate) {
       cn = 0;
@@ -104,9 +113,14 @@ public:
   // Release the global interpreter lock
   static inline void release(CacheNode* cn)
   {
+#if defined(PYPY_VERSION)
+    PyGILState_Release(cn->gilstate);
+    delete cn;
+#else
     PyEval_SaveThread();
     if (cn)
       releaseNode(cn);
+#endif
   }
 
 

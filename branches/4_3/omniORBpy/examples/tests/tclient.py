@@ -400,12 +400,13 @@ def doTests(orb, poa, io):
         tresult("+")
 
     try:
+        # This is ok
         io._set_sattr7("hello")
-        ok = 0
-        tresult("-")
+        tresult("+")
     except CORBA.BAD_PARAM, ex:
         exc(ex)
-        tresult("+")
+        ok = 0
+        tresult("-")
 
     try:
         io._set_sattr8("hello")
@@ -588,12 +589,13 @@ def doTests(orb, poa, io):
         tresult("+")
 
     try:
+        # This is ok
         io.sattr7 = "hello"
-        ok = 0
-        tresult("-")
-    except CORBA.BAD_PARAM, ex:
-        exc(ex)
         tresult("+")
+    except CORBA.BAD_PARAM, ex:
+        ok = 0
+        exc(ex)
+        tresult("-")
 
     try:
         io.sattr8 = "hello"
@@ -1111,11 +1113,11 @@ def doTests(orb, poa, io):
     s = (1, 0, 1, 1.2, 0, 3, 1, 1, 1)
     try:
         r = io.complex15(s)
-        ok = 0
         tresult("-")
     except CORBA.BAD_PARAM, ex:
+        ok = 0
         exc(ex)
-        tresult("+")
+        tresult("-")
 
     s = [1, 2, 3, 4, 5]
     try:
@@ -1281,11 +1283,11 @@ def doTests(orb, poa, io):
     s = (1, 0, 1, 1.2, 0, 3, 1, 1, 1)
     try:
         r = io.complex24(s)
-        ok = 0
-        tresult("-")
-    except CORBA.BAD_PARAM, ex:
-        exc(ex)
         tresult("+")
+    except CORBA.BAD_PARAM, ex:
+        ok = 0
+        exc(ex)
+        tresult("-")
 
     s = "This is a long sequence<char>"
     try:

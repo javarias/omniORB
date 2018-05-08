@@ -298,7 +298,6 @@ public:
   static void initFixed          (PyObject* d);
   static void initCallDescriptor (PyObject* d);
   static void initServant        (PyObject* d);
-  static void initTypeCode       (PyObject* d);
 
 
   ////////////////////////////////////////////////////////////////////////////
@@ -376,6 +375,11 @@ public:
 
     // Pointer operator used in some Python macros like PyInt_Check.
     inline PyObject* operator->()      { return obj_; }
+
+#ifdef PYPY_VERSION
+    // PyPy defines macros taking a void* rather than a PyObject*
+    inline operator void*()            { return obj_; }
+#endif
 
   private:
     PyObject* obj_;

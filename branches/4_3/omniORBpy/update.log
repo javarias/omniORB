@@ -1,3 +1,15 @@
+Tue  8 May 18:13:36 BST 2018
+============================
+
+- PyPy support.
+
+examples/tests/tclient.py
+mk/python.mk
+modules/omnipy.h
+modules/pyThreadCache.h
+modules/pyTypeCode.cc
+
+
 Wed 18 Apr 18:26:27 BST 2018
 ============================
 
