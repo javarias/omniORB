@@ -1,3 +1,12 @@
+Tue  8 May 18:13:36 BST 2018
+============================
+
+- PyPy support.
+
+mk/python.mk
+src/tool/omniidl/cxx/idlpython.cc
+
+
 Thu 26 Apr 15:59:08 BST 2018
 ============================
 
