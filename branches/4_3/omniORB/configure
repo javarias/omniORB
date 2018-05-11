@@ -6736,7 +6736,7 @@ _ACEOF
 fi
 done
 
-for ac_func in getnameinfo inet_ntop
+for ac_func in getnameinfo gmtime gmtime_r inet_ntop
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6748,7 +6748,7 @@ _ACEOF
 fi
 done
 
-for ac_func in isinf insinff isinfl localtime nanosleep poll rand_r sigaction
+for ac_func in isinf insinff isinfl localtime localtime_r nanosleep poll
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6760,7 +6760,7 @@ _ACEOF
 fi
 done
 
-for ac_func in sigvec snprintf strcasecmp strdup strerror strftime stricmp
+for ac_func in rand_r sigaction sigvec snprintf strcasecmp strdup
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6772,7 +6772,19 @@ _ACEOF
 fi
 done
 
-for ac_func in strncasecmp strtoul strtoull strtouq uname vprintf vsnprintf
+for ac_func in strerror strftime stricmp strncasecmp strtoul strtoull
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in strtouq uname vprintf vsnprintf
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

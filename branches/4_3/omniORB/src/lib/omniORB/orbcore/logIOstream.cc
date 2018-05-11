@@ -126,7 +126,12 @@ omniORB::logger::logger(const char* prefix)
     unsigned long s, ns;
     omni_thread::get_time(&s, &ns);
     time_t ts = s;
+#if defined(HAVE_LOCALTIME_R)
+    struct tm tmr;
+    strftime(tbuf, 39, "%Y-%m-%d %H:%M:%S", localtime_r(&ts, &tmr));
+#else
     strftime(tbuf, 39, "%Y-%m-%d %H:%M:%S", localtime(&ts));
+#endif
     *this << tbuf;
     sprintf(tbuf, ".%06d: ", (int)ns / 1000);
     *this << tbuf;
@@ -169,6 +174,31 @@ omniORB::logger::operator<<(const char *s)
   reserve(len);
   strcpy(pd_p, s);
   pd_p += len;
+  return *this;
+}
+
+
+omniORB::logger&
+omniORB::logger::operator<<(const omniORB::logger::unsafe& us)
+{
+  const char* s = us.s;
+  if (!s) s = "(null)";
+
+  size_t len = 0;
+  for (const char* t = s; *t; ++t)
+    len += isprint(*t) ? 1 : 4;
+  
+  reserve(len);
+
+  for (; *s; ++s) {
+    if (isprint(*s)) {
+      *pd_p++ = *s;
+    }
+    else {
+      sprintf(pd_p, "\\x%02x", *s);
+      pd_p += 4;
+    }
+  }
   return *this;
 }
 
@@ -413,8 +443,14 @@ omniORB::do_logs(const char* mesg)
     unsigned long s, ns;
     omni_thread::get_time(&s, &ns);
     time_t ts = s;
+#if defined(HAVE_LOCALTIME_R)
+    struct tm tmr;
+    cbuf += strftime(cbuf, fmtlen - (cbuf-buf),
+		     "%Y-%m-%d %H:%M:%S", localtime_r(&ts, &tmr));
+#else
     cbuf += strftime(cbuf, fmtlen - (cbuf-buf),
 		     "%Y-%m-%d %H:%M:%S", localtime(&ts));
+#endif
     cbuf += sprintf(cbuf, ".%06d: ", (int)ns / 1000);
   }
 #endif

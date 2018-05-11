@@ -317,11 +317,14 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     if (!Select()) break;
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
 
-      ::SSL* ssl = SSL_new(pd_ctx->get_SSL_CTX());
+      ::SSL* ssl = pd_ctx->ssl_new();
+      
+      pd_ctx->set_incoming_verify(ssl);
+      
       SSL_set_fd(ssl, pd_new_conn_socket);
       SSL_set_accept_state(ssl);
 
-      return new sslConnection(pd_new_conn_socket,ssl,this);
+      return new sslConnection(pd_new_conn_socket, ssl, this);
     }
   }
   return 0;
