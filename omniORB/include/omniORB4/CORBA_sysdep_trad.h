@@ -60,7 +60,14 @@
 #endif
 // Unset if no getpid() function
 
-#define HAVE_LOCALTIME 1
+#ifndef HAVE_GMTIME
+#  define HAVE_GMTIME 1
+#endif
+// Unset if no gmtime() function
+
+#ifndef HAVE_LOCALTIME
+#  define HAVE_LOCALTIME 1
+#endif
 // Unset if no localtime() function
 
 #ifndef HAVE_STRFTIME

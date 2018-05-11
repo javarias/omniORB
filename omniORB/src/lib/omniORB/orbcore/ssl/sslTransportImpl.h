@@ -34,7 +34,7 @@ class sslContext;
 OMNI_NAMESPACE_BEGIN(omni)
 
 class sslTransportImpl : public giopTransportImpl {
- public:
+public:
 
   giopEndpoint*  toEndpoint(const char* param);
   giopAddress*   toAddress(const char* param);
@@ -48,10 +48,8 @@ class sslTransportImpl : public giopTransportImpl {
 
   static omni_time_t sslAcceptTimeOut;
 
- private:
-
-  sslContext*  pd_ctx;
-
+private:
+  sslContext* pd_ctx;
 
   sslTransportImpl();
   sslTransportImpl(const sslTransportImpl&);

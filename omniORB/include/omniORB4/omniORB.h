@@ -248,6 +248,12 @@ _CORBA_MODULE_BEG
     ~logger();
     // The destructor flushes the message.
 
+    struct unsafe {
+      // "unsafe" string that may contain non-printable characters
+      inline unsafe(const char* str) : s(str) {}
+      const char* s;
+    };
+    
     logger& operator<<(char c);
     logger& operator<<(unsigned char c) { return (*this) << (char)c; }
     logger& operator<<(signed char c) { return (*this) << (char)c; }
@@ -258,6 +264,7 @@ _CORBA_MODULE_BEG
     logger& operator<<(const signed char *s) {
       return (*this) << (const char*)s;
     }
+    logger& operator<<(const unsafe& us);
     logger& operator<<(const void *p);
     logger& operator<<(int n);
     logger& operator<<(unsigned int n);

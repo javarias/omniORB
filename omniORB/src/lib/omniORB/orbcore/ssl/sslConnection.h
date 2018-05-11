@@ -30,7 +30,6 @@
 #define __SSLCONNECTION_H__
 
 #include <SocketCollection.h>
-#include <orbParameters.h>
 #include <openssl/ssl.h>
 
 OMNI_NAMESPACE_BEGIN(omni)

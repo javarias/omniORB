@@ -310,7 +310,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
   if (omniORB::trace(25)) {
     omniORB::logger log;
     CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
-    log << "Perform SSL accept for new incoming connection " << peer << "\n";
+    log << "Perform TLS accept for new incoming connection " << peer << "\n";
   }
 
   omni_time_t deadline;
@@ -497,6 +497,11 @@ sslConnection::setPeerDetails() {
 
     try {
       pd_peeridentity = stream.unmarshalString();
+
+      if (omniORB::trace(25)) {
+        omniORB::logger log;
+        log << "TLS peer identity: " << pd_peeridentity << "\n";
+      }
     }
     catch (CORBA::SystemException &ex) {
       if (omniORB::trace(2)) {

@@ -1,3 +1,13 @@
+Fri 11 May 12:51:29 BST 2018
+============================
+
+- Cleaner SSL context.
+
+modules/sslTP/pysslTP.cc
+python/omniORB/sslTP.py
+python3/omniORB/sslTP.py
+
+
 Fri 11 May 12:18:05 BST 2018
 ============================
 

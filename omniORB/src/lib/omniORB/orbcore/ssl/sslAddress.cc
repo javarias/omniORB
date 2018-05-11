@@ -107,7 +107,7 @@ sslAddress::Connect(const omni_time_t& deadline,
     return 0;
   }
 
-  ::SSL* ssl = SSL_new(pd_ctx->get_SSL_CTX());
+  ::SSL* ssl = pd_ctx->ssl_new();
   SSL_set_fd(ssl, sock);
   SSL_set_connect_state(ssl);
 
@@ -115,6 +115,12 @@ sslAddress::Connect(const omni_time_t& deadline,
   int rc;
 
   // Do the SSL handshake...
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "TLS connect to " << pd_address.host << ":" << pd_address.port
+        << "\n";
+  }
+  
   while (1) {
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
@@ -190,7 +196,7 @@ sslAddress::Connect(const omni_time_t& deadline,
 	  char buf[128];
 	  ERR_error_string_n(ERR_get_error(),buf,128);
 	  log << "OpenSSL error connecting to " << pd_address.host
-	      << ": " << (const char*) buf << "\n";
+              << ":" << pd_address.port << " : " << (const char*) buf << "\n";
 	}
 	SSL_free(ssl);
 	CLOSESOCKET(sock);
