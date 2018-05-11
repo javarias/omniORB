@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.30">
+<meta name="generator" content="hevea 2.31">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>C++ language mapping</title>
 </head>
@@ -80,7 +80,7 @@ between CORBA 2.2 and CORBA 2.3; omniORB 3.0 supported the old CORBA
 2.2 interfaces; omniORB 4 uses the new mapping. The changes are
 largely syntax changes, rather than semantic differences.</p>
 <h2 id="sec50" class="section">3.3&#XA0;&#XA0;omniORB 4.0 compatibility</h2>
-<p>omniORB 4.2 is source-code compatible with omniORB 4.0, with four
+<p>omniORB 4.3 is source-code compatible with omniORB 4.0, with four
 exceptions:</p><ol class="enumerate" type=1><li class="li-enumerate">As required by the 1.1 version of the CORBA C++ mapping
 specification, the <span style="font-family:monospace">RefCountServantBase</span> class has been
 deprecated, and the reference counting functionality moved into
@@ -111,13 +111,13 @@ accessing deleted data. To avoid this situation, use the alternative
 Any insertion operator using a const reference, which copies the
 sequence.</p></li></ol>
 <h2 id="sec51" class="section">3.4&#XA0;&#XA0;omniORB 4.1 compatibility</h2>
-<p>omniORB 4.2 is source-code compatible with omniORB 4.1 with one
+<p>omniORB 4.3 is source-code compatible with omniORB 4.1 with one
 exception:</p><ol class="enumerate" type=1><li class="li-enumerate">When omniORB 4.1 and earlier detected a timeout condition, they
 would throw the <span style="font-family:monospace">CORBA::TRANSIENT</span> system exception. omniORB
-4.2 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> system exception that was
-introduced with the CORBA Messaging specification. Application code
-that caught <span style="font-family:monospace">CORBA::TRANSIENT</span> to handle timeout situations
-should be updated to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
+4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> system exception
+that was introduced with the CORBA Messaging specification.
+Application code that caught <span style="font-family:monospace">CORBA::TRANSIENT</span> to handle
+timeout situations should be updated to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
 instead. Alternatively, to avoid code changes, omniORB can be
 configured to throw <span style="font-family:monospace">CORBA::TRANSIENT</span> for timeouts, by setting
 the <span style="font-family:monospace">throwTransientOnTimeout</span> parameter to <span style="font-family:monospace">1</span>. See
