@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.30">
+<meta name="generator" content="hevea 2.31">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>omniORB configuration and API</title>
 </head>
@@ -178,8 +178,8 @@ default.</p><p><span style="font-family:monospace">resetTimeoutOnRetries</span> 
 causes a call to be retried. If <span style="font-family:monospace">false</span>, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeout</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
-<span style="font-family:monospace">0</span></p><p>omniORB 4.2 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
-of the CORBA Messaging specification. By default, that is the
+<span style="font-family:monospace">0</span></p><p>omniORB 4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that
+is part of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception, and instead used
 <span style="font-family:monospace">CORBA::TRANSIENT</span>. If this parameter is set <span style="font-family:monospace">true</span>, omniORB
@@ -448,7 +448,7 @@ handlers. There is no default handler, do <span style="font-family:monospace">TI
 are propagated to application code by default.</p><p>omniORB version 4.1 and earlier did not have the <span style="font-family:monospace">CORBA.TIMEOUT</span>
 exception, and threw <span style="font-family:monospace">CORBA.TRANSIENT</span> instead. If the
 <span style="font-family:monospace">throwTransientOnTimeout</span> configuration parameter is set to
-<span style="font-family:monospace">1</span>, omniORB 4.2 reverts to this behaviour, and calls the
+<span style="font-family:monospace">1</span>, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.</p><p>The timeout exception handler is used when a CORBA call times out. It
 is <em>not</em> called when an AMI poller operation throws
 <span style="font-family:monospace">CORBA.TIMEOUT</span>. In that situation, the exception is always
@@ -521,9 +521,10 @@ to convert object references between their Python representation and
 their C++ representation. For extensions to omniORBpy itself, it has a
 mechanism for adding pseudo object types to omniORBpy.</p><p>The definitions used by the C++ API are in the <span style="font-family:monospace">omniORBpy.h</span>
 header. An example of its use is in <span style="font-family:monospace">examples/embed/</span>.</p><p>The API is accessed through a singleton structure containing function
-pointers. A pointer to the API struct is stored as a <span style="font-family:monospace">PyCObject</span>
-in the <span style="font-family:monospace">_omnipy</span> module with the name <span style="font-family:monospace">API</span>. It can be
-accessed with code like:</p><div class="lstlisting"><span style="font-size:small">PyObject</span><span style="font-size:small">*     </span><span style="font-size:small">omnipy</span><span style="font-size:small"> = </span><span style="font-size:small">PyImport_ImportModule</span><span style="font-size:small">((</span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*)</span><span style="font-size:small"><span style="font-size:small">"_omnipy"</span></span><span style="font-size:small">);</span><span style="font-size:small">
+pointers. In Python 3.x, a pointer to the API struct is stored in a
+<span style="font-family:monospace">PyCapsule</span> named <span style="font-family:monospace">_omnipy.API</span>. Access it with code like:</p><div class="lstlisting"><span style="font-size:small">omniORBpyAPI</span><span style="font-size:small">* </span><span style="font-size:small">api</span><span style="font-size:small"> = (</span><span style="font-size:small">omniORBpyAPI</span><span style="font-size:small">*)</span><span style="font-size:small">PyCapsule_Import</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"_omnipy.API"</span></span><span style="font-size:small">, 0);</span></div><p>In Python 2.x, a pointer to the API struct is stored as a
+<span style="font-family:monospace">PyCObject</span> in the <span style="font-family:monospace">_omnipy</span> module with the name
+<span style="font-family:monospace">API</span>. It can be accessed with code like:</p><div class="lstlisting"><span style="font-size:small">PyObject</span><span style="font-size:small">*     </span><span style="font-size:small">omnipy</span><span style="font-size:small"> = </span><span style="font-size:small">PyImport_ImportModule</span><span style="font-size:small">((</span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*)</span><span style="font-size:small"><span style="font-size:small">"_omnipy"</span></span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">PyObject</span><span style="font-size:small">*     </span><span style="font-size:small">pyapi</span><span style="font-size:small">  = </span><span style="font-size:small">PyObject_GetAttrString</span><span style="font-size:small">(</span><span style="font-size:small">omnipy</span><span style="font-size:small">, (</span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*)</span><span style="font-size:small"><span style="font-size:small">"API"</span></span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">omniORBpyAPI</span><span style="font-size:small">* </span><span style="font-size:small">api</span><span style="font-size:small">    = (</span><span style="font-size:small">omniORBpyAPI</span><span style="font-size:small">*)</span><span style="font-size:small">PyCObject_AsVoidPtr</span><span style="font-size:small">(</span><span style="font-size:small">pyapi</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">Py_DECREF</span><span style="font-size:small">(</span><span style="font-size:small">pyapi</span><span style="font-size:small">);</span></div><p>See the structure definition in <span style="font-family:monospace">omniORBpy.h</span> for

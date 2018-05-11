@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.30">
+<meta name="generator" content="hevea 2.31">
 <style type="text/css">
 .li-itemize{margin:1ex 0ex;}
 .li-enumerate{margin:1ex 0ex;}
@@ -54,7 +54,7 @@ td p{margin:0px;}
 </head>
 <body >
 <!--HEVEA command line is: hevea omniORB -->
-<!--CUT STYLE book--><!--CUT DEF chapter 1 --><div class="center"><p> <span style="font-size:xx-large"><span style="font-size:150%">The omniORB version 4.2<br>
+<!--CUT STYLE book--><!--CUT DEF chapter 1 --><div class="center"><p> <span style="font-size:xx-large"><span style="font-size:150%">The omniORB version 4.3<br>
 Users&#X2019; Guide
 </span></span></p><p> <span style="font-size:x-large">Duncan Grisby<br>
 </span><span style="font-size:medium">(</span><a href="mailto:dgrisby@apasphere.com"><span style="font-size:medium"><span style="font-style:italic"><span style="font-family:sans-serif">dgrisby@apasphere.com</span></span></span></a><span style="font-size:medium">)</span><span style="font-size:x-large"><br>
@@ -943,7 +943,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">Echo_i</span><span style="font-size:small">::</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">mesg</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">{</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Upcall: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">mesg</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//cout &lt;&lt; "Upcall: " &lt;&lt; mesg &lt;&lt; endl;</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">string_dup</span><span style="font-size:small">(</span><span style="font-size:small">mesg</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">}</span><span style="font-size:small">
 </span><span style="font-size:small">
@@ -1010,11 +1010,23 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">       &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"The Echo object replied, \""</span></span><span style="font-size:small"> &lt;&lt; (</span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*)</span><span style="font-size:small">dest</span><span style="font-size:small"> &lt;&lt;</span><span style="font-size:small"><span style="font-size:small">"\"."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span><span style="font-size:small">
 </span><span style="font-size:small">
+</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Boolean</span><span style="font-size:small"> </span><span style="font-size:small">comm_failure_handler</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">* </span><span style="font-size:small">cookie</span><span style="font-size:small">,</span><span style="font-size:small">
+</span><span style="font-size:small">                                    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small"> </span><span style="font-size:small">retries</span><span style="font-size:small">,</span><span style="font-size:small">
+</span><span style="font-size:small">                                    </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">COMM_FAILURE</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:small">{</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//cerr &lt;&lt; "COMM_FAILURE" &lt;&lt; endl;</span></span></span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">}</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//////////////////////////////////////////////////////////////////////</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">main</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">** </span><span style="font-size:small">argv</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">{</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">omniORB</span><span style="font-size:small">::</span><span style="font-size:small">installCommFailureExceptionHandler</span><span style="font-size:small">(0, </span><span style="font-size:small">comm_failure_handler</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_var</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">argc</span><span style="font-size:small"> != 2) {</span><span style="font-size:small">
@@ -1031,8 +1043,24 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 1;</span><span style="font-size:small">
 </span><span style="font-size:small">    }</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">for</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small"> </span><span style="font-size:small">count</span><span style="font-size:small">=0; </span><span style="font-size:small">count</span><span style="font-size:small">&lt;10; </span><span style="font-size:small">count</span><span style="font-size:small">++)</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">for</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small"> </span><span style="font-size:small">count</span><span style="font-size:small">=0; </span><span style="font-size:small">count</span><span style="font-size:small">&lt;1; </span><span style="font-size:small">count</span><span style="font-size:small">++)</span><span style="font-size:small">
 </span><span style="font-size:small">      </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">echoref</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">omni_time_t</span><span style="font-size:small"> </span><span style="font-size:small">before</span><span style="font-size:small">, </span><span style="font-size:small">after</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">omni_thread</span><span style="font-size:small">::</span><span style="font-size:small">get_time</span><span style="font-size:small">(</span><span style="font-size:small">before</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">sv</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small"> </span><span style="font-size:small">count</span><span style="font-size:small"> = 100000;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">for</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small"> </span><span style="font-size:small">idx</span><span style="font-size:small">=0; </span><span style="font-size:small">idx</span><span style="font-size:small"> != </span><span style="font-size:small">count</span><span style="font-size:small">; ++</span><span style="font-size:small">idx</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small">sv</span><span style="font-size:small"> = </span><span style="font-size:small">echoref</span><span style="font-size:small">-&gt;</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">""</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">omni_thread</span><span style="font-size:small">::</span><span style="font-size:small">get_time</span><span style="font-size:small">(</span><span style="font-size:small">after</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">omni_time_t</span><span style="font-size:small"> </span><span style="font-size:small">delta</span><span style="font-size:small"> = </span><span style="font-size:small">after</span><span style="font-size:small"> - </span><span style="font-size:small">before</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small"> </span><span style="font-size:small">dd</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small">)</span><span style="font-size:small">delta</span><span style="font-size:small">.</span><span style="font-size:small">s</span><span style="font-size:small"> + ((</span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small">)</span><span style="font-size:small">delta</span><span style="font-size:small">.</span><span style="font-size:small">ns</span><span style="font-size:small">) / 1000000000.0;</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Calls / sec = "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">count</span><span style="font-size:small">/</span><span style="font-size:small">dd</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">  }</span><span style="font-size:small">
@@ -1640,7 +1668,7 @@ between CORBA 2.2 and CORBA 2.3; omniORB 3.0 supported the old CORBA
 2.2 interfaces; omniORB 4 uses the new mapping. The changes are
 largely syntax changes, rather than semantic differences.</p>
 <!--TOC section id="sec50" omniORB 4.0 compatibility-->
-<h2 id="sec50" class="section">3.3&#XA0;&#XA0;omniORB 4.0 compatibility</h2><!--SEC END --><p>omniORB 4.2 is source-code compatible with omniORB 4.0, with four
+<h2 id="sec50" class="section">3.3&#XA0;&#XA0;omniORB 4.0 compatibility</h2><!--SEC END --><p>omniORB 4.3 is source-code compatible with omniORB 4.0, with four
 exceptions:</p><ol class="enumerate" type=1><li class="li-enumerate">As required by the 1.1 version of the CORBA C++ mapping
 specification, the <span style="font-family:monospace">RefCountServantBase</span> class has been
 deprecated, and the reference counting functionality moved into
@@ -1671,13 +1699,13 @@ accessing deleted data. To avoid this situation, use the alternative
 Any insertion operator using a const reference, which copies the
 sequence.</p></li></ol>
 <!--TOC section id="sec51" omniORB 4.1 compatibility-->
-<h2 id="sec51" class="section">3.4&#XA0;&#XA0;omniORB 4.1 compatibility</h2><!--SEC END --><p>omniORB 4.2 is source-code compatible with omniORB 4.1 with one
+<h2 id="sec51" class="section">3.4&#XA0;&#XA0;omniORB 4.1 compatibility</h2><!--SEC END --><p>omniORB 4.3 is source-code compatible with omniORB 4.1 with one
 exception:</p><ol class="enumerate" type=1><li class="li-enumerate">When omniORB 4.1 and earlier detected a timeout condition, they
 would throw the <span style="font-family:monospace">CORBA::TRANSIENT</span> system exception. omniORB
-4.2 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> system exception that was
-introduced with the CORBA Messaging specification. Application code
-that caught <span style="font-family:monospace">CORBA::TRANSIENT</span> to handle timeout situations
-should be updated to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
+4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> system exception
+that was introduced with the CORBA Messaging specification.
+Application code that caught <span style="font-family:monospace">CORBA::TRANSIENT</span> to handle
+timeout situations should be updated to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
 instead. Alternatively, to avoid code changes, omniORB can be
 configured to throw <span style="font-family:monospace">CORBA::TRANSIENT</span> for timeouts, by setting
 the <span style="font-family:monospace">throwTransientOnTimeout</span> parameter to <span style="font-family:monospace">1</span>. See
@@ -1861,7 +1889,7 @@ default.</p><p><span style="font-family:monospace">resetTimeoutOnRetries</span> 
 causes a call to be retried. If <span style="font-family:monospace">false</span>, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeout</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
-<span style="font-family:monospace">0</span></p><p>omniORB 4.2 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
+<span style="font-family:monospace">0</span></p><p>omniORB 4.3 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
 of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception, and instead used
@@ -2218,7 +2246,7 @@ handlers. The API to do so is summarised below:</p><div class="lstlisting"><span
 <span style="font-family:monospace">CORBA::TRANSIENT</span>.</p><p>omniORB version 4.1 and earlier did not have the <span style="font-family:monospace">CORBA::TIMEOUT</span>
 exception, and threw <span style="font-family:monospace">CORBA::TRANSIENT</span> instead. If the
 <span style="font-family:monospace">throwTransientOnTimeout</span> configuration parameter is set to
-<span style="font-family:monospace">1</span>, omniORB 4.2 reverts to this behaviour, and calls the
+<span style="font-family:monospace">1</span>, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.</p><p>The timeout exception handler is used when a CORBA call times out. It
 is <em>not</em> called when an AMI poller operation throws
 <span style="font-family:monospace">CORBA::TIMEOUT</span>. In that situation, the exception is always
@@ -2921,7 +2949,7 @@ for more details about endpoint publishing.</p>
 <!--TOC subsection id="sec104" Port ranges-->
 <h3 id="sec104" class="subsection">6.6.1&#XA0;&#XA0;Port ranges</h3><!--SEC END --><p>Sometimes it is useful to restrict a server to listen on one of a
 range of ports, rather than pinning it to one particular port or
-allowing the OS to choose an ephemeral port. omniORB 4.2 introduces
+allowing the OS to choose an ephemeral port. omniORB 4.2 introduced
 the ability to specify a range of ports using a hyphen. e.g. to
 listen on a port between 5000 and 5010 inclusive:</p><blockquote class="quote">
 <span style="font-family:monospace">giop:tcp::5000-5010</span>
@@ -4201,7 +4229,7 @@ the C++ mapping resolves this conflict, valuetypes supporting local
 interfaces cannot be used in omniORB.</p>
 <!--TOC chapter id="sec172" Asynchronous Method Invocation-->
 <h1 id="sec172" class="chapter">Chapter&#XA0;12&#XA0;&#XA0;Asynchronous Method Invocation</h1><!--SEC END --><p>
-<a id="chap:ami"></a></p><p>omniORB 4.2 supports Asynchronous Method Invocation, AMI, as defined
+<a id="chap:ami"></a></p><p>omniORB 4.3 supports Asynchronous Method Invocation, AMI, as defined
 in the CORBA Messaging specification. It supports both the polling and
 callback models of asynchronous calls. Note that omniORB does not
 support the other parts of the Messaging specification such as Quality

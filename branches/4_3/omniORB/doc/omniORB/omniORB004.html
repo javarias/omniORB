@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.30">
+<meta name="generator" content="hevea 2.31">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>omniORB configuration and API</title>
 </head>
@@ -190,7 +190,7 @@ default.</p><p><span style="font-family:monospace">resetTimeoutOnRetries</span> 
 causes a call to be retried. If <span style="font-family:monospace">false</span>, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeout</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
-<span style="font-family:monospace">0</span></p><p>omniORB 4.2 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
+<span style="font-family:monospace">0</span></p><p>omniORB 4.3 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
 of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception, and instead used
@@ -547,7 +547,7 @@ handlers. The API to do so is summarised below:</p><div class="lstlisting"><span
 <span style="font-family:monospace">CORBA::TRANSIENT</span>.</p><p>omniORB version 4.1 and earlier did not have the <span style="font-family:monospace">CORBA::TIMEOUT</span>
 exception, and threw <span style="font-family:monospace">CORBA::TRANSIENT</span> instead. If the
 <span style="font-family:monospace">throwTransientOnTimeout</span> configuration parameter is set to
-<span style="font-family:monospace">1</span>, omniORB 4.2 reverts to this behaviour, and calls the
+<span style="font-family:monospace">1</span>, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.</p><p>The timeout exception handler is used when a CORBA call times out. It
 is <em>not</em> called when an AMI poller operation throws
 <span style="font-family:monospace">CORBA::TIMEOUT</span>. In that situation, the exception is always

@@ -162,7 +162,7 @@
 \vfill
 
 { \Huge
-The omniORB version 4.2\\[4mm]
+The omniORB version 4.3\\[4mm]
 Users' Guide
 }
 
@@ -1587,7 +1587,7 @@ largely syntax changes, rather than semantic differences.
 
 \section{omniORB 4.0 compatibility}
 
-omniORB 4.2 is source-code compatible with omniORB 4.0, with four
+omniORB 4.3 is source-code compatible with omniORB 4.0, with four
 exceptions:
 
 \begin{enumerate}
@@ -1635,17 +1635,17 @@ exceptions:
 
 \section{omniORB 4.1 compatibility}
 
-omniORB 4.2 is source-code compatible with omniORB 4.1 with one
+omniORB 4.3 is source-code compatible with omniORB 4.1 with one
 exception:
 
 \begin{enumerate}
 
 \item When omniORB 4.1 and earlier detected a timeout condition, they
   would throw the \code{CORBA::TRANSIENT} system exception. omniORB
-  4.2 supports the \code{CORBA::TIMEOUT} system exception that was
-  introduced with the CORBA Messaging specification. Application code
-  that caught \code{CORBA::TRANSIENT} to handle timeout situations
-  should be updated to catch \code{CORBA::TIMEOUT}
+  4.2 and later support the \code{CORBA::TIMEOUT} system exception
+  that was introduced with the CORBA Messaging specification.
+  Application code that caught \code{CORBA::TRANSIENT} to handle
+  timeout situations should be updated to catch \code{CORBA::TIMEOUT}
   instead. Alternatively, to avoid code changes, omniORB can be
   configured to throw \code{CORBA::TRANSIENT} for timeouts, by setting
   the \code{throwTransient\dsc{}OnTimeout} parameter to \code{1}. See
@@ -2032,7 +2032,7 @@ each individual call attempt.
 
 \confopt{throwTransientOnTimeout}{0}
 
-omniORB 4.2 supports the \code{CORBA::TIMEOUT} exception that is part
+omniORB 4.3 supports the \code{CORBA::TIMEOUT} exception that is part
 of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the \code{CORBA::TIMEOUT} exception, and instead used
@@ -2638,7 +2638,7 @@ The functions are equivalent to their counterparts for
 omniORB version 4.1 and earlier did not have the \code{CORBA::TIMEOUT}
 exception, and threw \code{CORBA::TRANSIENT} instead. If the
 \code{throwTransientOnTimeout} configuration parameter is set to
-\code{1}, omniORB 4.2 reverts to this behaviour, and calls the
+\code{1}, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.
 
 The timeout exception handler is used when a CORBA call times out. It
@@ -3647,7 +3647,7 @@ for more details about endpoint publishing.
 
 Sometimes it is useful to restrict a server to listen on one of a
 range of ports, rather than pinning it to one particular port or
-allowing the OS to choose an ephemeral port. omniORB 4.2 introduces
+allowing the OS to choose an ephemeral port. omniORB 4.2 introduced
 the ability to specify a range of ports using a hyphen. e.g.\ to
 listen on a port between 5000 and 5010 inclusive:
 
@@ -5746,7 +5746,7 @@ interfaces cannot be used in omniORB.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{chap:ami}
 
-omniORB 4.2 supports Asynchronous Method Invocation, AMI, as defined
+omniORB 4.3 supports Asynchronous Method Invocation, AMI, as defined
 in the CORBA Messaging specification. It supports both the polling and
 callback models of asynchronous calls. Note that omniORB does not
 support the other parts of the Messaging specification such as Quality

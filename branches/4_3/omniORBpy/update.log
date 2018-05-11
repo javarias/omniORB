@@ -1,3 +1,31 @@
+Fri 11 May 12:18:05 BST 2018
+============================
+
+- Doc version updates.
+
+doc/omniORBpy.pdf
+doc/omniORBpy/index.html
+doc/omniORBpy/omniORBpy.html
+doc/omniORBpy/omniORBpy001.html
+doc/omniORBpy/omniORBpy002.html
+doc/omniORBpy/omniORBpy003.html
+doc/omniORBpy/omniORBpy004.html
+doc/omniORBpy/omniORBpy005.html
+doc/omniORBpy/omniORBpy006.html
+doc/omniORBpy/omniORBpy007.html
+doc/omniORBpy/omniORBpy008.html
+doc/omniORBpy/omniORBpy009.html
+doc/omniORBpy/omniORBpy010.html
+doc/omniORBpy/omniORBpy011.html
+doc/omniORBpy/omniORBpy012.html
+doc/omniORBpy/omniORBpy013.html
+doc/tex/omniORBpy.tex
+
+- Python 3 C++ API instructions.
+
+include/omniORBpy.h
+
+
 Tue  8 May 18:13:36 BST 2018
 ============================
 
