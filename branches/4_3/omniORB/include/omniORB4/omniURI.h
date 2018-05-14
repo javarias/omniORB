@@ -24,7 +24,7 @@
 //
 // Description:
 //      Parsing for object reference URIs
-//	*** PROPRIETARY INTERFACE ***
+//      *** PROPRIETARY INTERFACE ***
 //
 
 #ifndef _omniURI_h_
@@ -43,14 +43,16 @@ public:
   // URIs, and convert them to-and-from CORBA::Objects.
 
   static char* buildURI(const char*   prefix,
-			const char*   host,
-			CORBA::UShort port);
+                        const char*   host,
+                        CORBA::UShort port,
+                        const char*   path=0);
   // Build a URI with the prefix, containing the host and port,
-  // properly escaping the host if need be.
+  // properly escaping the host if need be. If path is set, it is
+  // added to the end, with no escaping.
 
   static char* extractHostPort(const char*    addr,
-			       CORBA::UShort& port,
-			       const char**   rest = 0);
+                               CORBA::UShort& port,
+                               const char**   rest = 0);
   // Extract host and port from the part of a URI containing the
   // address. If rest is non-zero, the pointer is set to the address
   // of the character following the port number, otherwise anything
@@ -58,11 +60,21 @@ public:
   // the address is invalid.
 
   static char* extractHostPortRange(const char*    addr,
-				    CORBA::UShort& port_min,
-				    CORBA::UShort& port_max);
+                                    CORBA::UShort& port_min,
+                                    CORBA::UShort& port_max);
   // Extract host and port range from the part of a URI containing the
   // address. Accepts a port range in the form min-max. Returns zero
   // if the address is invalid.
+
+  static CORBA::Boolean extractURL(const char*    url,
+                                   char*&         scheme,
+                                   char*&         host,
+                                   CORBA::UShort& port,
+                                   char*&         path);
+  // Extract scheme, host, port and path from a URL. If no port is
+  // present in the URL, sets port to zero. Does not attempt to handle
+  // escape sequences in the path. Returns true if the URL was valid,
+  // false if not.
 
   static CORBA::Boolean validHostPort(const char* addr);
   // True if addr is a valid host:port; false otherwise.
@@ -76,7 +88,7 @@ public:
   //  Does not throw any exceptions.
 
   static CORBA::Object_ptr stringToObject(const char*  uri,
-					  unsigned int cycles = 0);
+                                          unsigned int cycles = 0);
   // Converts the given URI to an object reference. Currently supports
   // IOR:, corbaloc: and corbaname: URIs.
   //
@@ -99,7 +111,7 @@ public:
     //  Does not throw any exceptions.
 
     virtual CORBA::Object_ptr toObject(const char* uri,
-				       unsigned int cycles) = 0;
+                                       unsigned int cycles) = 0;
     // Convert the given URI to an object reference. If the processing
     // involves a (potential) recursive call to stringToObject(),
     // cycles should be incremented.

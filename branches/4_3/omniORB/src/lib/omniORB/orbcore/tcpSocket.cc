@@ -197,11 +197,16 @@ tcpSocket::Bind(const char*   	      	 host,
 		const char*   	      	 transport_type,
 		char*&  	         bound_host,
 		CORBA::UShort&           bound_port,
-		orbServer::EndpointList& endpoints)
+		orbServer::EndpointList& endpoints,
+                const char*              uri_prefix,
+                const char*              path_suffix)
 {
   SocketHandle_t sock;
   PassiveHost passive_host;
 
+  if (!uri_prefix)
+    uri_prefix = transport_type;
+  
   bound_host = 0;
 
   if (host && *host) {
@@ -386,8 +391,9 @@ tcpSocket::Bind(const char*   	      	 host,
 	  continue;
 	}
 	endpoints.length(addrs_len + 1);
-	endpoints[addrs_len++] = omniURI::buildURI(transport_type,
-						   *i, bound_port);
+	endpoints[addrs_len++] = omniURI::buildURI(uri_prefix,
+						   *i, bound_port,
+                                                   path_suffix);
 
 	if (!set_host) {
 	  bound_host = CORBA::string_dup(*i);
@@ -398,17 +404,19 @@ tcpSocket::Bind(const char*   	      	 host,
 	// No suitable addresses other than the loopback.
 	if (loopback4) {
 	  endpoints.length(addrs_len + 1);
-	  endpoints[addrs_len++] = omniURI::buildURI(transport_type,
+	  endpoints[addrs_len++] = omniURI::buildURI(uri_prefix,
 						     loopback4,
-						     bound_port);
+						     bound_port,
+                                                     path_suffix);
 	  bound_host = CORBA::string_dup(loopback4);
 	  set_host = 1;
 	}
 	if (loopback6) {
 	  endpoints.length(addrs_len + 1);
-	  endpoints[addrs_len++] = omniURI::buildURI(transport_type,
+	  endpoints[addrs_len++] = omniURI::buildURI(uri_prefix,
 						     loopback6,
-						     bound_port);
+						     bound_port,
+                                                     path_suffix);
 	  if (!set_host) {
 	    bound_host = CORBA::string_dup(loopback6);
 	    set_host = 1;
@@ -449,8 +457,9 @@ tcpSocket::Bind(const char*   	      	 host,
       }
       bound_host = ai->asString();
       endpoints.length(1);
-      endpoints[0] = omniURI::buildURI(transport_type,
-				       bound_host, bound_port);
+      endpoints[0] = omniURI::buildURI(uri_prefix,
+				       bound_host, bound_port,
+                                       path_suffix);
     }
     if (omniORB::trace(1) &&
 	(omni::strMatch(bound_host, "127.0.0.1") ||
@@ -465,8 +474,9 @@ tcpSocket::Bind(const char*   	      	 host,
     // Specific host
     bound_host = CORBA::string_dup(host);
     endpoints.length(1);
-    endpoints[0] = omniURI::buildURI(transport_type,
-				     bound_host, bound_port);
+    endpoints[0] = omniURI::buildURI(uri_prefix,
+				     bound_host, bound_port,
+                                     path_suffix);
   }
 
   OMNIORB_ASSERT(bound_host);

@@ -612,6 +612,35 @@ omniIOR::unmarshal_TAG_OMNIORB_UNIX_TRANS(const IOP::TaggedComponent& c,
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void
+omniIOR::unmarshal_TAG_OMNIORB_HTTP_TRANS(const IOP::TaggedComponent& c,
+                                          omniIOR& ior) {
+  
+  OMNIORB_ASSERT(c.tag == IOP::TAG_OMNIORB_HTTP_TRANS);
+  OMNIORB_ASSERT(ior.pd_iorInfo);
+
+  cdrEncapsulationStream e(c.component_data.get_buffer(),
+                           c.component_data.length(),1);
+
+  CORBA::String_var url;
+  url = e.unmarshalRawString();
+
+  const char* format = "giop:http:%s";
+
+  CORBA::ULong len = strlen(url);
+  if (len == 0) return;
+  len += strlen(format);
+  CORBA::String_var addrstr(CORBA::string_alloc(len));
+  sprintf(addrstr,format,(const char*)url);
+  
+  giopAddress* address = giopAddress::str2Address(addrstr);
+  // If we do not have the http transport linked the return value will be 0
+  if (address == 0) return;
+  ior.getIORInfo()->addresses().push_back(address);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+void
 omniIOR::unmarshal_TAG_OMNIORB_PERSISTENT_ID(const IOP::TaggedComponent& c,
 					     omniIOR& ior)
 {
@@ -746,6 +775,9 @@ static struct {
   { IOP::TAG_OMNIORB_PERSISTENT_ID,
     omniIOR::unmarshal_TAG_OMNIORB_PERSISTENT_ID },
 
+  { IOP::TAG_OMNIORB_HTTP_TRANS,
+    omniIOR::unmarshal_TAG_OMNIORB_HTTP_TRANS },
+
   { 0xffffffff, 0 }
 };
 
@@ -769,6 +801,7 @@ public:
   OctetSeqSeq    alternative_addrs;
   OctetSeqSeq    ssl_addrs;
   OctetSeqSeq    unix_addrs;
+  OctetSeqSeq    http_addrs;
   OctetSeq       csi_component;
   AddressSeq     tls_addrs;
   CORBA::UShort  tls_supports;
@@ -1021,6 +1054,38 @@ omniIOR::add_TAG_OMNIORB_UNIX_TRANS(const char* filename,
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
+void
+omniIOR::add_TAG_OMNIORB_HTTP_TRANS(const char* url,
+                                    IORPublish* eps)
+{
+  if (!eps)
+    eps = &my_eps;
+
+  OMNIORB_ASSERT(url && strlen(url) != 0);
+
+  if (strlen(eps->address.host) == 0) {
+    // Add the host part of the address to the IIOP profile.
+    CORBA::String_var scheme, host, path;
+    CORBA::UShort     port;
+
+    CORBA::Boolean ok = omniURI::extractURL(url, scheme.out(), host.out(),
+                                            port, path.out());
+    OMNIORB_ASSERT(ok);
+    eps->address.host = host;
+  }
+
+  cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
+
+  s.marshalRawString(url);
+
+  CORBA::ULong index = eps->http_addrs.length();
+  eps->http_addrs.length(index+1);
+  
+  s.setOctetSeq(eps->http_addrs[index]);
+}
+
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1143,6 +1208,21 @@ insertSupportedComponents(omniInterceptors::encodeIOR_T::info_T& info)
     }
   }
 
+  if (v.major > 1 || v.minor >= 2) {
+    // 1.2 or later, Insert omniORB http transport
+    for (CORBA::ULong index = 0;
+	 index < eps->http_addrs.length(); index++) {
+
+      IOP::TaggedComponent& c = omniIOR::newIIOPtaggedComponent(cs);
+      c.tag = IOP::TAG_OMNIORB_HTTP_TRANS;
+      CORBA::ULong max, len;
+      max = eps->http_addrs[index].maximum();
+      len = eps->http_addrs[index].length();
+      c.component_data.replace(max,len,
+			       eps->http_addrs[index].get_buffer(),0);
+    }
+  }
+
   if (v.major > 1 || v.minor >= 1) {
     // 1.1 or later, insert omniORB persistent id
     if (orbParameters::persistentId.length()) {
@@ -1239,6 +1319,7 @@ public:
     my_eps.alternative_addrs.length(0);
     my_eps.ssl_addrs.length(0);
     my_eps.unix_addrs.length(0);
+    my_eps.http_addrs.length(0);
     my_eps.csi_component.length(0);
     my_eps.tls_addrs.length(0);
     my_eps.csi_enabled = 0;

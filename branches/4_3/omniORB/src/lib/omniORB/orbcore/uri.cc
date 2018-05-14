@@ -50,10 +50,14 @@ static omnivector<omniURI::URIHandler*> handlers;
 //
 
 char*
-omniURI::buildURI(const char* prefix, const char* host, CORBA::UShort port)
+omniURI::buildURI(const char*   prefix,
+                  const char*   host,
+                  CORBA::UShort port,
+                  const char*   path)
 {
-  const char* ip4format = "%s:%s:%d";
-  const char* ip6format = "%s:[%s]:%d";
+  CORBA::Boolean colon     = *prefix && prefix[strlen(prefix) - 1] != '/';
+  const char*    ip4format = colon ? "%s:%s:%d"   : "%s%s:%d";
+  const char*    ip6format = colon ? "%s:[%s]:%d" : "%s[%s]:%d";
 
   const char* format = ip4format;
   CORBA::ULong len = 0;
@@ -70,13 +74,19 @@ omniURI::buildURI(const char* prefix, const char* host, CORBA::UShort port)
   }
 
   len += strlen(format) + strlen(prefix) + 6;
+
+  if (path)
+    len += strlen(path) + 1;
+
   CORBA::String_var addrstr(CORBA::string_alloc(len));
 
-  if (*prefix)
-    sprintf((char*)addrstr, format, prefix, host, (int)port);
-  else
-    sprintf((char*)addrstr, format + 3, host, (int)port);
+  sprintf((char*)addrstr, format, prefix, host, (int)port);
 
+  if (path) {
+    strcat((char*)addrstr, "/");
+    strcat((char*)addrstr, path);
+  }
+  
   return addrstr._retn();
 }
 
@@ -92,7 +102,7 @@ omniURI::extractHostPort(const char*    addr,
     // IPv6 address
     ++addr;
     p = strchr(addr, ']');
-    if (!p || addr == p || *p == '\0') return 0;
+    if (!p || addr == p) return 0;
     host = CORBA::string_alloc(p-addr);
     strncpy(host, addr, p-addr);
     ((char*)host)[p-addr] = '\0';
@@ -114,7 +124,7 @@ omniURI::extractHostPort(const char*    addr,
   if (*p != '\0') {
     int v;
     if (sscanf(p,"%d%n", &v, &n) == 0) return 0;
-    if (v < 0 || v > 65536) return 0;
+    if (v < 0 || v > 65535) return 0;
     port = v;
   }
   else {
@@ -146,7 +156,7 @@ omniURI::extractHostPortRange(const char*    addr,
     int v, n;
     if (sscanf(++rest, "%d%n", &v, &n) == 0)
       return 0;
-    if (v < 0 || v > 65536)
+    if (v < 0 || v > 65535)
       return 0;
 
     port_max = v;
@@ -164,6 +174,85 @@ omniURI::extractHostPortRange(const char*    addr,
     return 0;
 
   return host._retn();
+}
+
+
+CORBA::Boolean
+omniURI::extractURL(const char*    url,
+                    char*&         scheme,
+                    char*&         host,
+                    CORBA::UShort& port,
+                    char*&         path)
+{
+  CORBA::String_var sv, hv, pv;
+  const char*       p;
+
+  p = strchr(url, ':');
+  if (!p)
+    return 0;
+
+  sv = CORBA::string_alloc(p - url);
+  strncpy(sv, url, p-url);
+  ((char*)sv)[p-url] = '\0';
+
+  url = p + 1;
+  if (*url++ != '/') return 0;
+  if (*url++ != '/') return 0;
+
+  if (*url == '[') {
+    // IPv6 address
+    ++url;
+    p = strchr(url, ']');
+    if (!p || url == p)
+      return 0;
+
+    hv = CORBA::string_alloc(p - url);
+    strncpy(hv, url, p-url);
+    ((char*)hv)[p-url] = '\0';
+    url = p + 1;
+  }
+  else {
+    // Name or IPv4 address
+    p = strchr(url, ':');
+    if (!p)
+      p = strchr(url, '/');
+    if (!p)
+      p = strchr(url, '\0');
+
+    hv = CORBA::string_alloc(p - url);
+    strncpy(hv, url, p-url);
+    ((char*)hv)[p-url] = '\0';
+    url = p;
+  }
+  if (*url == ':') {
+    ++url;
+    int v, n;
+    if (sscanf(url, "%d%n", &v, &n) == 0)
+      return 0;
+
+    if (v < 0 || v > 65535)
+      return 0;
+
+    port = v;
+    url += n;
+  }
+  else {
+    port = 0;
+  }
+
+  if (*url == '/') {
+    ++url;
+    pv = CORBA::string_dup(url);
+  }
+  else {
+    pv = "";
+  }
+
+  scheme = sv._retn();
+  host   = hv._retn();
+  path   = pv._retn();
+
+  return 1;
 }
 
 
@@ -193,7 +282,7 @@ validHostPortOptRange(const char* addr, CORBA::Boolean range_ok)
   if (*p == '\0') return 1;
 
   if (sscanf(p, "%d%n", &v1, &n) == 0) return 0;
-  if (v1 < 0 || v1 > 65536) return 0;
+  if (v1 < 0 || v1 > 65535) return 0;
   
   p += n;
 
@@ -203,7 +292,7 @@ validHostPortOptRange(const char* addr, CORBA::Boolean range_ok)
   ++p;
 
   if (sscanf(p, "%d%n", &v2, &n) == 0) return 0;
-  if (v2 < 0 || v2 > 65536 || v2 < v1) return 0;
+  if (v2 < 0 || v2 > 65535 || v2 < v1) return 0;
 
   p += n;
 

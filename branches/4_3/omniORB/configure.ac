@@ -312,6 +312,7 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/python3/GNUmakefile
                 src/lib/omniORB/orbcore/GNUmakefile
                 src/lib/omniORB/orbcore/ssl/GNUmakefile
+                src/lib/omniORB/orbcore/http/GNUmakefile
                 src/lib/omniORB/connections/GNUmakefile
                 src/lib/omniORB/ziop/GNUmakefile
                 src/lib/omniORB/ziopdynamic/GNUmakefile
