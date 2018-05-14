@@ -261,6 +261,9 @@ ifdef OPEN_SSL_ROOT
 SUBDIRS += ssl
 
   endif
+
+SUBDIRS += http
+
 endif
 
 all::

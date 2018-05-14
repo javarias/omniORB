@@ -146,6 +146,7 @@ AC_CONFIG_FILES(
                 examples/embed/GNUmakefile
                 modules/GNUmakefile
                 modules/codesets/GNUmakefile
+                modules/httpTP/GNUmakefile
                 modules/sslTP/GNUmakefile
                 modules/connections/GNUmakefile
                 modules/ziop/GNUmakefile

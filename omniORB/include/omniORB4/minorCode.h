@@ -168,6 +168,9 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_129 OMNIORBMinorCode(129)
 #define OMNIORBMinorCode_130 OMNIORBMinorCode(130)
 #define OMNIORBMinorCode_131 OMNIORBMinorCode(131)
+#define OMNIORBMinorCode_132 OMNIORBMinorCode(132)
+#define OMNIORBMinorCode_133 OMNIORBMinorCode(133)
+#define OMNIORBMinorCode_134 OMNIORBMinorCode(134)
 
 #define OMNI_COMMA ,
 #define DeclareValue(name,value) name = value
@@ -352,7 +355,10 @@ code( MARSHAL_InvalidChunkedEncoding          , OMNIORBMinorCode_111 ) sep \
 code( MARSHAL_InvalidValueTag                 , OMNIORBMinorCode_112 ) sep \
 code( MARSHAL_NoRepoIdInValueType             , OMNIORBMinorCode_113 ) sep \
 code( MARSHAL_TypeIsNotAValueType             , OMNIORBMinorCode_114 ) sep \
-code( MARSHAL_InvalidCompressedData           , OMNIORBMinorCode_128 )
+code( MARSHAL_InvalidCompressedData           , OMNIORBMinorCode_128 ) sep \
+code( MARSHAL_HTTPBufferFull                  , OMNIORBMinorCode_132 ) sep \
+code( MARSHAL_HTTPHeaderInvalid               , OMNIORBMinorCode_133 ) sep \
+code( MARSHAL_HTTPChunkInvalid                , OMNIORBMinorCode_134 )
 
 enum MARSHAL_minor {
   DECLARE_MARSHAL_minors(DeclareValue,OMNI_COMMA)

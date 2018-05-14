@@ -263,6 +263,12 @@ public:
                                           _OMNI_NS(IORPublish)* eps);
 
   ////
+  static void  unmarshal_TAG_OMNIORB_HTTP_TRANS(const IOP::TaggedComponent&,
+						omniIOR&);
+  static void  add_TAG_OMNIORB_HTTP_TRANS(const char*           url,
+                                          _OMNI_NS(IORPublish)* eps);
+
+  ////
   static void  unmarshal_TAG_OMNIORB_PERSISTENT_ID(const IOP::TaggedComponent&,
 						   omniIOR&);
 

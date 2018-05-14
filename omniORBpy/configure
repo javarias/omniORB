@@ -4228,7 +4228,7 @@ PROCESSOR_DEFINE=$proc_def
 ac_config_files="$ac_config_files mk/beforeauto.mk mk/afterauto.mk"
 
 
-ac_config_files="$ac_config_files GNUmakefile examples/embed/GNUmakefile modules/GNUmakefile modules/codesets/GNUmakefile modules/sslTP/GNUmakefile modules/connections/GNUmakefile modules/ziop/GNUmakefile python/GNUmakefile python/omniidl_be/GNUmakefile python/COS/GNUmakefile python/omniORB/GNUmakefile python3/GNUmakefile python3/omniidl_be/GNUmakefile python3/COS/GNUmakefile python3/omniORB/GNUmakefile include/GNUmakefile"
+ac_config_files="$ac_config_files GNUmakefile examples/embed/GNUmakefile modules/GNUmakefile modules/codesets/GNUmakefile modules/httpTP/GNUmakefile modules/sslTP/GNUmakefile modules/connections/GNUmakefile modules/ziop/GNUmakefile python/GNUmakefile python/omniidl_be/GNUmakefile python/COS/GNUmakefile python/omniORB/GNUmakefile python3/GNUmakefile python3/omniidl_be/GNUmakefile python3/COS/GNUmakefile python3/omniORB/GNUmakefile include/GNUmakefile"
 
 
 cat >confcache <<\_ACEOF
@@ -4943,6 +4943,7 @@ do
     "examples/embed/GNUmakefile") CONFIG_FILES="$CONFIG_FILES examples/embed/GNUmakefile" ;;
     "modules/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/GNUmakefile" ;;
     "modules/codesets/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/codesets/GNUmakefile" ;;
+    "modules/httpTP/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/httpTP/GNUmakefile" ;;
     "modules/sslTP/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/sslTP/GNUmakefile" ;;
     "modules/connections/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/connections/GNUmakefile" ;;
     "modules/ziop/GNUmakefile") CONFIG_FILES="$CONFIG_FILES modules/ziop/GNUmakefile" ;;

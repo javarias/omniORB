@@ -91,7 +91,7 @@ FILES = __init__.py CORBA.py PortableServer.py PortableServer__POA.py \
         minorCodes.py omniConnectionMgmt.py omniPolicy.py
 
 ifdef OPEN_SSL_ROOT
-FILES += sslTP.py
+FILES += httpTP.py sslTP.py
 endif
 
 export:: $(FILES)
