@@ -1,3 +1,12 @@
+Wed 16 May 13:53:26 BST 2018
+============================
+
+- retainAddressOrder fails to reset addresses if initial name
+  resolution fails; make it default to false.
+
+src/lib/omniORB/orbcore/giopRope.cc
+
+
 Mon 14 May 15:10:25 BST 2018
 ============================
 
