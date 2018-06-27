@@ -29,6 +29,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <SocketCollection.h>
 #include <omniORB4/omniURI.h>
 #include <omniORB4/httpContext.h>
 #include <orbParameters.h>

@@ -61,6 +61,7 @@ cp -v $src/bin/x86_win32/omniORB*_rt.dll $dest/bin/x86_win32
 cp -v $src/bin/x86_win32/omnicpp.exe $dest/bin/x86_win32
 cp -v $src/bin/x86_win32/omniidl.exe $dest/bin/x86_win32
 cp -v $src/bin/x86_win32/omnisslTP*_rt.dll $dest/bin/x86_win32
+cp -v $src/bin/x86_win32/omnihttpTP*_rt.dll $dest/bin/x86_win32
 cp -v $src/bin/x86_win32/omnithread*_rt.dll $dest/bin/x86_win32
 
 mkdir -p $dest/lib/python

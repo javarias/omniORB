@@ -29,8 +29,8 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
-#include <omniORB4/httpContext.h>
 #include <SocketCollection.h>
+#include <omniORB4/httpContext.h>
 #include <http/httpConnection.h>
 #include <http/httpEndpoint.h>
 #include <openssl/err.h>

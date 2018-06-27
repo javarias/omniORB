@@ -46,6 +46,12 @@
 #  include <ws2tcpip.h>
 #endif
 
+#if defined(_MSC_VER)
+#  if (_MSC_VER < 1800)
+#    define snprintf _snprintf
+#  endif
+#endif
+
 #if defined(__vxWorks__)
 #  include "selectLib.h"
 #endif
@@ -439,7 +445,7 @@ httpConnection::Send(void* buf, size_t sz,
   if (sz > pd_giop_remaining) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
-      log << "HTTP transport error. Trying to send " << sz
+      log << "HTTP transport error. Trying to send " << (unsigned long)sz
           << " bytes, but only " << pd_giop_remaining
           << " left in current message.\n";
     }

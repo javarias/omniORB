@@ -1398,8 +1398,8 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
       if (!odm.lookup(t_o, position)) {
 	if (omniORB::trace(10)) {
 	  omniORB::logger log;
-	  log << "Invalid indirection " << offset << " to " << position
-	      << ".\n";
+	  log << "Invalid indirection " << offset << " to "
+	      << (long)position << ".\n";
 	}
 	OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,
 		      (CORBA::CompletionStatus)stream.completion());
