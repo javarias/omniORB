@@ -10,8 +10,8 @@ OBJS =    pyhttpTP.o
 DIR_CPPFLAGS += $(patsubst %,-I%/include,$(OMNIORB_ROOT))
 DIR_CPPFLAGS += $(patsubst %,-I%/include/omniORB4/internal,$(OMNIORB_ROOT))
 DIR_CPPFLAGS += $(patsubst %,-I%/include/omniORB4/internal,$(IMPORT_TREES))
-DIR_CPPFLAGS += -I../include
-DIR_CPPFLAGS += $(OMNIORB_HTTP_CPPFLAGS)
+DIR_CPPFLAGS += -I../../include
+DIR_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
 
 
 #############################################################################
@@ -53,7 +53,7 @@ shlib := $(shell $(SharedLibraryFullName) $(namespec))
 DIR_CPPFLAGS += $(SHAREDLIB_CPPFLAGS)
 
 $(shlib): $(OBJS)
-	@(namespec="$(namespec)"; extralibs="$(OMNIORB_HTTP_LIB) $(extralibs)";\
+	@(namespec="$(namespec)"; extralibs="$(OMNIORB_HTTP_LIB) $(OMNIORB_SSL_LIB) $(extralibs)";\
           $(MakeCXXSharedLibrary))
 
 all:: $(shlib)
@@ -103,7 +103,7 @@ all:: $(lib)
 $(lib): $(OBJS)
 	(set -x; \
 	 $(RM) $@; \
-	 libs="$(OMNIORB_HTTP_LIB) $(OMNIORB_LIB_NODYN) $(PYLIB)"; \
+	 libs="$(OMNIORB_HTTP_LIB) $(OMNIORB_SSL_LIB) $(OMNIORB_LIB_NODYN) $(PYLIB)"; \
 	 $(CXXLINK) -out:$@ -DLL $(CXXLINKOPTIONS) $(IMPORT_LIBRARY_FLAGS) $(PYLIBPATH) $(OBJS) $$libs; \
          $(MANIFESTTOOL) /outputresource:"$@;#2" /manifest $@.manifest; \
 	)

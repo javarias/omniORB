@@ -1,3 +1,17 @@
+Wed 27 Jun 10:53:08 BST 2018
+============================
+
+- Windows build fixes.
+
+include/omniORB4/CORBA_sysdep.h
+src/lib/omniORB/orbcore/http/httpActive.cc
+src/lib/omniORB/orbcore/http/httpAddress.cc
+src/lib/omniORB/orbcore/http/httpConnection.cc
+src/lib/omniORB/orbcore/http/httpEndpoint.cc
+src/lib/omniORB/orbcore/http/httpTransportImpl.cc
+src/lib/omniORB/orbcore/http/msvcdlldtub.cc
+
+
 Wed 16 May 13:53:26 BST 2018
 ============================
 

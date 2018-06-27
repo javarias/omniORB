@@ -10,7 +10,7 @@ OBJS =    pysslTP.o
 DIR_CPPFLAGS += $(patsubst %,-I%/include,$(OMNIORB_ROOT))
 DIR_CPPFLAGS += $(patsubst %,-I%/include/omniORB4/internal,$(OMNIORB_ROOT))
 DIR_CPPFLAGS += $(patsubst %,-I%/include/omniORB4/internal,$(IMPORT_TREES))
-DIR_CPPFLAGS += -I../include
+DIR_CPPFLAGS += -I../../include
 DIR_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
 
 
