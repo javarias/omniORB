@@ -61,6 +61,11 @@ httpAddress::httpAddress(const char* url, httpContext* ctx)
   // Caller should have checked the URL already
   OMNIORB_ASSERT(ok);
 
+  // pd_host contains the host from the URL. Here it is the same as
+  // pd_address.host, but in other cases pd_address.host contains the
+  // resolved address.
+  pd_host = pd_address.host;
+
   if (!strcmp(scheme, "https")) {
     pd_secure = 1;
     if (!pd_address.port)
@@ -79,10 +84,11 @@ httpAddress::httpAddress(const char* url, httpContext* ctx)
 httpAddress::httpAddress(const char*          url,
                          CORBA::Boolean       secure,
                          const IIOP::Address& address,
+                         const char*          host,
                          const char*          path,
                          httpContext*         ctx)
   : pd_url(url), pd_secure(secure), pd_address(address),
-    pd_path(path), pd_ctx(ctx)
+    pd_host(host), pd_path(path), pd_ctx(ctx)
 {
   setAddrString();
 }
@@ -118,7 +124,8 @@ httpAddress::host() const {
 /////////////////////////////////////////////////////////////////////////
 giopAddress*
 httpAddress::duplicate() const {
-  return new httpAddress(pd_url, pd_secure, pd_address, pd_path, pd_ctx);
+  return new httpAddress(pd_url, pd_secure, pd_address,
+                         pd_host, pd_path, pd_ctx);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -128,7 +135,8 @@ httpAddress::duplicate(const char* host) const {
   addr.host = host;
   addr.port = pd_address.port;
 
-  return new httpAddress(pd_url, pd_secure, addr, pd_path, pd_ctx);
+  return new httpAddress(pd_url, pd_secure, addr,
+                         pd_host, pd_path, pd_ctx);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -206,7 +214,7 @@ httpAddress::Connect(const omni_time_t& deadline,
 
   CORBA::Boolean via_proxy = (proxy_host.in() && !pd_secure) ? 1 : 0;
   
-  h.conn = new httpActiveConnection(h.sock, pd_address.host, pd_path, pd_url,
+  h.conn = new httpActiveConnection(h.sock, pd_host, pd_path, pd_url,
                                     via_proxy, proxy_auth);
   
   if (proxy_host.in()) {
