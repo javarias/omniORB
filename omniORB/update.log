@@ -1,3 +1,56 @@
+Mon  9 Jul 11:14:57 BST 2018
+============================
+
+- Remove lots of obsolete platform files; update current Windows ones.
+
+config/config.mk
+mk/platforms/alpha_linux_2.0.mk
+mk/platforms/alpha_nt_4.0.mk
+mk/platforms/alpha_osf1_3.2.mk
+mk/platforms/alpha_osf1_4.0.mk
+mk/platforms/alpha_osf1_5.0.mk
+mk/platforms/arm_linux_mvl_3.1.mk
+mk/platforms/hppa_hpux_10.20.mk
+mk/platforms/hppa_hpux_11.00.mk
+mk/platforms/hppa_hpux_11.23.mk
+mk/platforms/i586_linux_2.0.mk
+mk/platforms/i586_linux_2.0_glibc.mk
+mk/platforms/i586_linux_2.0_glibc2.1.mk
+mk/platforms/ia64_hpux_11.23.mk
+mk/platforms/m68k_nextstep_3.3.mk
+mk/platforms/mips_irix_6.2_n32.mk
+mk/platforms/mips_irix_6.4_6.5_common.mk
+mk/platforms/mips_irix_6.4_64.mk
+mk/platforms/mips_irix_6.4_n32.mk
+mk/platforms/mips_irix_6.5_64.mk
+mk/platforms/mips_irix_6.5_n32.mk
+mk/platforms/mips_sinux_5.43.mk
+mk/platforms/powerpc_aix_4.2.mk
+mk/platforms/powerpc_aix_4.2_egcs.mk
+mk/platforms/powerpc_aix_4.2_xlc5.mk
+mk/platforms/powerpc_aix_4.3_gcc.mk
+mk/platforms/powerpc_aix_4.3_xlc5.mk
+mk/platforms/powerpc_darwin_1.3.mk
+mk/platforms/s390_linux_glibc2.1.mk
+mk/platforms/sun4_sosV_5.5.mk
+mk/platforms/sun4_sosV_5.6.mk
+mk/platforms/sun4_sosV_5.7.mk
+mk/platforms/x86_freebsd_3.2.mk
+mk/platforms/x86_freebsd_4.0.mk
+mk/platforms/x86_nextstep_3.3.mk
+mk/platforms/x86_osr5.mk
+mk/platforms/x86_sosV_5.5.mk
+mk/platforms/x86_win32_vs_10.mk
+mk/platforms/x86_win32_vs_11.mk
+mk/platforms/x86_win32_vs_12.mk
+mk/platforms/x86_win32_vs_14.mk
+mk/platforms/x86_win32_vs_15.mk
+mk/platforms/x86_win32_vs_6.mk
+mk/platforms/x86_win32_vs_7.mk
+mk/platforms/x86_win32_vs_8.mk
+mk/platforms/x86_win32_vs_9.mk
+
+
 Mon  9 Jul 10:24:03 BST 2018
 ============================
 
