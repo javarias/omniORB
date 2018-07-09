@@ -1,3 +1,19 @@
+Mon  9 Jul 10:24:03 BST 2018
+============================
+
+- Wrong Host header for resolved addresses in HTTP transport.
+
+src/lib/omniORB/orbcore/http/httpAddress.cc
+src/lib/omniORB/orbcore/http/httpAddress.h
+
+- Remove unnecessary duplicated msvcdllstub.cc.
+
+src/lib/omniORB/orbcore/http/dir.mk
+src/lib/omniORB/orbcore/http/msvcdlldtub.cc
+src/lib/omniORB/orbcore/ssl/dir.mk
+src/lib/omniORB/orbcore/ssl/msvcdllstub.cc
+
+
 Tue  3 Jul 17:47:46 BST 2018
 ============================
 
