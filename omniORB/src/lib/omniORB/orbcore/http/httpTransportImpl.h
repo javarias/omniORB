@@ -30,9 +30,9 @@
 #ifndef __HTTPTRANSPORTIMPL_H__
 #define __HTTPTRANSPORTIMPL_H__
 
-class httpContext;
-
 OMNI_NAMESPACE_BEGIN(omni)
+
+class httpContext;
 
 class httpTransportImpl : public giopTransportImpl {
 public:
@@ -47,8 +47,6 @@ public:
   const omnivector<const char*>* getInterfaceAddress();
 
   static omni_time_t httpsAcceptTimeOut;
-
-  static char* b64encode(const char* data, size_t len);
   
 private:
   httpContext* pd_ctx;

@@ -3933,7 +3933,7 @@ client is not on the intranet:
 
 \noindent In the absence of any explicit rules, the server uses the
 implicit rule of `\code{* unix,\dsc{}ssl,tcp}', meaning any kind of
-connection is accepted from any client.
+connection (other than HTTP) is accepted from any client.
 
 
 \section{Bidirectional GIOP}
@@ -4043,6 +4043,9 @@ make it easier to transport through firewalls and proxies that
 understand HTTP but not GIOP. It supports the use of HTTP proxies and
 reverse proxies.
 
+To use the HTTP transport, you must link your application with the
+\file{omnihttpTP} library.
+
 Normal client-server CORBA calls match the semantics of HTTP---the
 client sends a request and blocks waiting for the server to respond,
 meaning that in simple uses, the communication is pure, valid HTTP,
@@ -4075,7 +4078,7 @@ To avoid these issues with proxies, it is safest to keep
 make use of the \code{defaultCharCodeSet} and \code{defaultWCharCodeSet}
 parameters to choose suitable codesets.
 
-\subsection{Endpoint specification}
+\subsection{Endpoint and transport rule specification}
 
 The HTTP transport uses endpoint URIs of the form
 \code{giop:http:}\textit{url}, where the \textit{url} is a full
@@ -4095,6 +4098,13 @@ path-based routing in load balancer configurations.
 
 If no port is specified on the server endpoint, the server uses an
 ephemeral port; it does not default to 80 or 443.
+
+The transport specification `\code{http}' is not in the default client
+or server transport rules (as described in
+section~\ref{sec:clientRule}). To enable the use of HTTP, the client
+and server transport rules could for example contain `\code{*
+  unix,tcp,ssl,http}'.
+
 
 \subsection{HTTP proxies}
 
@@ -4122,6 +4132,54 @@ HTTP will succeed.
 Support for HTTPS uses the same concepts as the SSL transport. For
 each configuration option with a name starting `\code{ssl}', there is
 an equivalent option starting `\code{https}'.
+
+\subsection{In-message encryption}
+
+In some environments, the use of HTTPS is not sufficient to guarantee
+end-to-end security between client and server. There are at least two
+situations in which that can arise:
+
+\begin{itemize}
+  \item Some transparent web proxies intercept HTTPS connections and
+    act as a decrypting man-in-the-middle. For that to work, the
+    client and server must accept the proxy's certificates of course,
+    but that may be the only way for the client to connect to the
+    server.
+
+  \item On the server side, it can be useful to have a load balancer
+    that performs HTTPS off-load in front of the server. In that case,
+    the client connects with HTTPS, but the server sees a plain HTTP
+    connection.
+\end{itemize}
+
+To ensure message security in those cases, the HTTP transport supports
+in-message encryption, with pluggable encryption implementations. See
+\file{include/omniORB4/httpCrypto.h} for the interfaces. The
+\file{omnihttpCrypto} library provides an implementation that uses
+AES-256 for message encryption and RSA with pre-shared public keys for
+key transfer. To use it, on the server side, registering the public
+keys of two known clients:
+
+\begin{cxxlisting}
+httpCryptoManager_AES_RSA* manager = new httpCryptoManager_AES_RSA();
+manager->init("server-ident", "server_private.pem", true);
+manager->addClient("client-ident1", "client1_public.pem", true);
+manager->addClient("client-ident2", "client2_public.pem", true);
+
+httpContext::crypto_manager = manager;
+\end{cxxlisting}
+
+\noindent and on the client:
+
+\begin{cxxlisting}
+httpCryptoManager_AES_RSA* manager = new httpCryptoManager_AES_RSA();
+manager->init("client-ident1", "client1_private.pem", true);
+manager->addServer("http://server.example.com:8000/call",
+                   "server_public.pem", true);
+
+httpContext::crypto_manager = manager;
+\end{cxxlisting}
+
 
 
 \section{ZIOP}

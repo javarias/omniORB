@@ -116,6 +116,14 @@ public:
   inline omni_tracedmutex*     mainthread_mu()   { return pd_mainthread_mu; }
   inline omni_tracedcondition* mainthread_cond() { return pd_mainthread_cond; }
 
+  // Returns a pointer to the omniCallHandle for the current thread,
+  // or zero if there is not one.
+  static inline omniCallHandle* current()
+  {
+    omniCallDescriptor* cd = omniCallDescriptor::current();
+    return cd ? cd->callHandle() : 0;
+  }
+  
 private:
   _OMNI_NS(IOP_S)*      pd_iop_s;
   omniCallDescriptor*   pd_call_desc;

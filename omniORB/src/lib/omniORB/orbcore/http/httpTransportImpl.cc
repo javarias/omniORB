@@ -123,34 +123,9 @@ httpTransportImpl::getInterfaceAddress() {
 }
 
 
-/////////////////////////////////////////////////////////////////////////
-char*
-httpTransportImpl::b64encode(const char* data, size_t len) {
-
-  // Output to a memory BIO with a Base64 filter BIO
-  BIO* mem_bio = BIO_new(BIO_s_mem());
-  BIO* b64_bio = BIO_new(BIO_f_base64());
-
-  BIO_set_flags(b64_bio, BIO_FLAGS_BASE64_NO_NL);
-  BIO_set_close(b64_bio, BIO_CLOSE);
-  BIO_push(b64_bio, mem_bio);
-
-  // Write to the Base64 BIO
-  BIO_write(b64_bio, data, len);
-  BIO_flush(b64_bio);
-
-  // Extract the data from the memory BIO
-  BUF_MEM* bm;
-  BIO_get_mem_ptr(mem_bio, &bm);
-
-  char* ret = CORBA::string_alloc(bm->length);
-  memcpy(ret, bm->data, bm->length);
-  ret[bm->length] = '\0';
-
-  BIO_free_all(b64_bio);
-
-  return ret;
-}
+/////////////////////////////////////////////////////////////////////////////
+httpCrypto::~httpCrypto() {}
+httpCryptoManager::~httpCryptoManager() {}
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -566,6 +541,9 @@ public:
     if (_the_httpTransportImpl) delete _the_httpTransportImpl;
     _the_httpTransportImpl = 0;
 
+    if (httpContext::crypto_manager) delete httpContext::crypto_manager;
+    httpContext::crypto_manager = 0;
+    
     if (httpContext::singleton) delete httpContext::singleton;
     httpContext::singleton = 0;
   }

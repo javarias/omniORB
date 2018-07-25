@@ -74,14 +74,14 @@ public:
 
 
 private:
-  void setPeerDetails();
-
   ::SSL*            pd_ssl;
   CORBA::String_var pd_myaddress;
   CORBA::String_var pd_peeraddress;
   CORBA::String_var pd_peeridentity;
 
 protected:
+  void setPeerDetails();
+
   CORBA::Boolean           pd_handshake_ok;
   sslContext::PeerDetails* pd_peerdetails;
 };

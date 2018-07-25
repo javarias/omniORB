@@ -130,7 +130,6 @@
 #  include <unistd.h>
 #  include <sys/types.h>
 #  include <errno.h>
-#  include <libcWrapper.h>
 
 #  if defined(USE_POLL)
 #    include <poll.h>

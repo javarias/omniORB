@@ -44,6 +44,30 @@
 static omniORBpyAPI* api;
 
 
+static inline void
+setDictEntryIfValid(PyObject* d, const char* name, const char* val)
+{
+  if (val) {
+    PyObject* s = String_FromString(val);
+    PyDict_SetItemString(d, (char*)name, s);
+    Py_DECREF(s);
+  }
+}
+
+static void
+setCallInfo(PyObject* d, giopConnection* conn)
+{
+  if (sslContext::full_peerdetails) {
+    sslContext::PeerDetails* pd = (sslContext::PeerDetails*)conn->peerdetails();
+
+    if (pd) {
+      PyDict_SetItemString(d, (char*)"ssl_verified",
+                           pd->verified() ? Py_True : Py_False);
+    }
+  }
+}
+
+
 extern "C" {
 
   static char set_CA_doc[] =
@@ -318,6 +342,15 @@ extern "C" {
     PyObject* pyapi  = PyObject_GetAttrString(omnipy, (char*)"API");
     api              = (omniORBpyAPI*)PyCObject_AsVoidPtr(pyapi);
     Py_DECREF(pyapi);
+
+    // Set callInfo handler
+    omniPy::PyRefHolder callInfoFns(
+                          PyObject_GetAttrString(omnipy, (char*)"callInfoFns"));
+    if (!callInfoFns.valid())
+      return;
+
+    omniPy::PyRefHolder pyfn(PyCObject_FromVoidPtr((void*)setCallInfo, 0));
+    PyDict_SetItemString(callInfoFns, "ssl", pyfn);
   }
 
 #else
@@ -340,6 +373,16 @@ extern "C" {
     // Get the omniORBpy C++ API, which is used in
     // OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     api = (omniORBpyAPI*)PyCapsule_Import("_omnipy.API", 0);
+
+    // Set callInfo handler
+    PyObject* omnipy = PyImport_ImportModule((char*)"_omnipy");
+    omniPy::PyRefHolder callInfoFns(
+                          PyObject_GetAttrString(omnipy, (char*)"callInfoFns"));
+    if (!callInfoFns.valid())
+      return 0;
+ 
+    omniPy::PyRefHolder pyfn(PyCapsule_New((void*)setCallInfo, 0, 0));
+    PyDict_SetItemString(callInfoFns, "ssl", pyfn);
 
     return PyModule_Create(&omnisslTPmodule);
   }

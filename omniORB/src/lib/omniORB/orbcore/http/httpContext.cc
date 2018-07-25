@@ -46,22 +46,24 @@ OMNI_EXPORT_LINK_FORCE_SYMBOL(httpContext);
 
 OMNI_USING_NAMESPACE(omni)
 
-const char*    httpContext::proxy_url                   = 0;
-const char*    httpContext::proxy_username              = 0;
-const char*    httpContext::proxy_password              = 0;
+const char*                httpContext::proxy_url                  = 0;
+const char*                httpContext::proxy_username             = 0;
+const char*                httpContext::proxy_password             = 0;
 
-const char*    httpContext::certificate_authority_file  = 0;
-const char*    httpContext::certificate_authority_path  = 0;
-const char*    httpContext::key_file                    = 0;
-const char*    httpContext::key_file_password           = 0;
-const char*    httpContext::cipher_list                 = 0;
-int            httpContext::verify_mode                 =
-                            (SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT);
-int            httpContext::verify_mode_incoming        = -1;
-sslContext::omni_verify_cb httpContext::verify_callback = 0;
-sslContext::omni_info_cb   httpContext::info_callback   = 0;
+const char*                httpContext::certificate_authority_file = 0;
+const char*                httpContext::certificate_authority_path = 0;
+const char*                httpContext::key_file                   = 0;
+const char*                httpContext::key_file_password          = 0;
+const char*                httpContext::cipher_list                = 0;
+int                        httpContext::verify_mode                =
+                                              (SSL_VERIFY_PEER |
+                                               SSL_VERIFY_FAIL_IF_NO_PEER_CERT);
+int                        httpContext::verify_mode_incoming       = -1;
+sslContext::omni_verify_cb httpContext::verify_callback            = 0;
+sslContext::omni_info_cb   httpContext::info_callback              = 0;
+httpCryptoManager*         httpContext::crypto_manager             = 0;
 
-httpContext*  httpContext::singleton                    = 0;
+httpContext*               httpContext::singleton                  = 0;
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -164,7 +166,7 @@ httpContext::real_update_proxy(const char* url,
 
       sprintf((char*)up, "%s:%s", (const char*)username, (const char*)password);
 
-      CORBA::String_var b64 = httpTransportImpl::b64encode(up, ul);
+      CORBA::String_var b64 = b64encode(up, ul);
 
       pd_proxy_auth = CORBA::string_alloc(sizeof("basic ") + strlen(b64));
       sprintf((char*)pd_proxy_auth, "basic %s", (const char*)b64);
@@ -193,4 +195,71 @@ httpContext::proxy_info(char*&          host,
   secure = pd_proxy_secure;
 
   return 1;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+char*
+httpContext::b64encode(const char* data, size_t len) {
+
+  // Output to a memory BIO with a Base64 filter BIO
+  BIO* mem_bio = BIO_new(BIO_s_mem());
+  BIO* b64_bio = BIO_new(BIO_f_base64());
+
+  BIO_set_flags(b64_bio, BIO_FLAGS_BASE64_NO_NL);
+  BIO_set_close(b64_bio, BIO_CLOSE);
+  BIO_push(b64_bio, mem_bio);
+
+  // Write to the Base64 BIO
+  BIO_write(b64_bio, data, len);
+  BIO_flush(b64_bio);
+
+  // Extract the data from the memory BIO
+  BUF_MEM* bm;
+  BIO_get_mem_ptr(mem_bio, &bm);
+
+  char* ret = CORBA::string_alloc(bm->length);
+  memcpy(ret, bm->data, bm->length);
+  ret[bm->length] = '\0';
+
+  BIO_free_all(b64_bio);
+
+  return ret;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+char*
+httpContext::b64decode(const char* data, size_t& len) {
+
+  // Read from a memory BIO with a Base64 filter BIO
+  size_t b64_len = strlen(data);
+  BIO*   mem_bio = BIO_new_mem_buf(data, b64_len);
+  BIO*   b64_bio = BIO_new(BIO_f_base64());
+
+  BIO_set_flags(b64_bio, BIO_FLAGS_BASE64_NO_NL);
+  BIO_set_close(b64_bio, BIO_CLOSE);
+  BIO_push(b64_bio, mem_bio);
+
+  // Read from the Base64 BIO
+  size_t            out_len = (b64_len * 3) / 4;
+  CORBA::String_var out     = CORBA::string_alloc(out_len);  
+  int               l       = BIO_read(b64_bio, (void*)(char*)out, out_len);
+
+  BIO_free_all(b64_bio);
+
+  if (l < 0)
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidBase64Data, CORBA::COMPLETED_NO);
+
+  out[l] = '\0';
+  
+  len = (size_t)l;
+  return out._retn();
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+httpContext::PeerDetails::
+~PeerDetails()
+{
 }

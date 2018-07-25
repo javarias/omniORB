@@ -461,7 +461,7 @@ client is not on the intranet:</p><pre class="verbatim">  serverTransportRule = 
                       = *                          ssl,bidir
 </pre><p>In the absence of any explicit rules, the server uses the
 implicit rule of &#X2018;<span style="font-family:monospace">* unix,ssl,tcp</span>&#X2019;, meaning any kind of
-connection is accepted from any client.</p>
+connection (other than HTTP) is accepted from any client.</p>
 <h2 id="sec111" class="section">6.8&#XA0;&#XA0;Bidirectional GIOP</h2>
 <p>
 <a id="sec:bidir"></a></p><p>omniORB supports bidirectional GIOP, which allows callbacks to be made
@@ -526,7 +526,8 @@ same way.</p>
 works by encapsulating GIOP messages into HTTP messages, which can
 make it easier to transport through firewalls and proxies that
 understand HTTP but not GIOP. It supports the use of HTTP proxies and
-reverse proxies.</p><p>Normal client-server CORBA calls match the semantics of HTTP&#X2014;the
+reverse proxies.</p><p>To use the HTTP transport, you must link your application with the
+<span style="font-family:monospace">omnihttpTP</span> library.</p><p>Normal client-server CORBA calls match the semantics of HTTP&#X2014;the
 client sends a request and blocks waiting for the server to respond,
 meaning that in simple uses, the communication is pure, valid HTTP,
 and can therefore safely pass through proxies. However, there are a
@@ -547,7 +548,7 @@ connection, may be missing from the point of view of the server.
 <span style="font-family:monospace">oneCallPerConnection</span> set to true, avoid bidirectional GIOP, and
 make use of the <span style="font-family:monospace">defaultCharCodeSet</span> and <span style="font-family:monospace">defaultWCharCodeSet</span>
 parameters to choose suitable codesets.</p>
-<h3 id="sec115" class="subsection">6.10.1&#XA0;&#XA0;Endpoint specification</h3>
+<h3 id="sec115" class="subsection">6.10.1&#XA0;&#XA0;Endpoint and transport rule specification</h3>
 <p>The HTTP transport uses endpoint URIs of the form
 <span style="font-family:monospace">giop:http:</span><span style="font-style:italic">url</span>, where the <span style="font-style:italic">url</span> is a full
 <span style="font-family:monospace">http://</span> or <span style="font-family:monospace">https://</span> URL. That means the URIs appear to
@@ -559,7 +560,11 @@ the client makes an HTTP <span style="font-family:monospace">POST</span> request
 the path; the server checks that the path matches what it expects. The
 ability to specify a path this way can be helpful when configuring
 path-based routing in load balancer configurations.</p><p>If no port is specified on the server endpoint, the server uses an
-ephemeral port; it does not default to 80 or 443.</p>
+ephemeral port; it does not default to 80 or 443.</p><p>The transport specification &#X2018;<span style="font-family:monospace">http</span>&#X2019; is not in the default client
+or server transport rules (as described in
+section&#XA0;<a href="#sec%3AclientRule">6.7.1</a>). To enable the use of HTTP, the client
+and server transport rules could for example contain &#X2018;<span style="font-family:monospace">*
+unix,tcp,ssl,http</span>&#X2019;.</p>
 <h3 id="sec116" class="subsection">6.10.2&#XA0;&#XA0;HTTP proxies</h3>
 <p>Clients can connect via a web proxy. The <span style="font-family:monospace">httpProxy</span>
 configuration can be set to an http or https proxy URL. If the proxy
@@ -579,7 +584,36 @@ HTTP will succeed.</p>
 <p>Support for HTTPS uses the same concepts as the SSL transport. For
 each configuration option with a name starting &#X2018;<span style="font-family:monospace">ssl</span>&#X2019;, there is
 an equivalent option starting &#X2018;<span style="font-family:monospace">https</span>&#X2019;.</p>
-<h2 id="sec118" class="section">6.11&#XA0;&#XA0;ZIOP</h2>
+<h3 id="sec118" class="subsection">6.10.4&#XA0;&#XA0;In-message encryption</h3>
+<p>In some environments, the use of HTTPS is not sufficient to guarantee
+end-to-end security between client and server. There are at least two
+situations in which that can arise:</p><ul class="itemize"><li class="li-itemize">
+Some transparent web proxies intercept HTTPS connections and
+act as a decrypting man-in-the-middle. For that to work, the
+client and server must accept the proxy&#X2019;s certificates of course,
+but that may be the only way for the client to connect to the
+server.</li><li class="li-itemize">On the server side, it can be useful to have a load balancer
+that performs HTTPS off-load in front of the server. In that case,
+the client connects with HTTPS, but the server sees a plain HTTP
+connection.
+</li></ul><p>To ensure message security in those cases, the HTTP transport supports
+in-message encryption, with pluggable encryption implementations. See
+<span style="font-family:monospace">include/omniORB4/httpCrypto.h</span> for the interfaces. The
+<span style="font-family:monospace">omnihttpCrypto</span> library provides an implementation that uses
+AES-256 for message encryption and RSA with pre-shared public keys for
+key transfer. To use it, on the server side, registering the public
+keys of two known clients:</p><div class="lstlisting"><span style="font-size:small">httpCryptoManager_AES_RSA</span><span style="font-size:small">* </span><span style="font-size:small">manager</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">httpCryptoManager_AES_RSA</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">manager</span><span style="font-size:small">-&gt;</span><span style="font-size:small">init</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"server-ident"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"server_private.pem"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">manager</span><span style="font-size:small">-&gt;</span><span style="font-size:small">addClient</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"client-ident1"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"client1_public.pem"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">manager</span><span style="font-size:small">-&gt;</span><span style="font-size:small">addClient</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"client-ident2"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"client2_public.pem"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">httpContext</span><span style="font-size:small">::</span><span style="font-size:small">crypto_manager</span><span style="font-size:small"> = </span><span style="font-size:small">manager</span><span style="font-size:small">;</span></div><p>and on the client:</p><div class="lstlisting"><span style="font-size:small">httpCryptoManager_AES_RSA</span><span style="font-size:small">* </span><span style="font-size:small">manager</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">httpCryptoManager_AES_RSA</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">manager</span><span style="font-size:small">-&gt;</span><span style="font-size:small">init</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"client-ident1"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"client1_private.pem"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">manager</span><span style="font-size:small">-&gt;</span><span style="font-size:small">addServer</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"http://server.example.com:8000/call"</span></span><span style="font-size:small">,</span><span style="font-size:small">
+</span><span style="font-size:small">                   </span><span style="font-size:small"><span style="font-size:small">"server_public.pem"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">true</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">
+</span><span style="font-size:small">httpContext</span><span style="font-size:small">::</span><span style="font-size:small">crypto_manager</span><span style="font-size:small"> = </span><span style="font-size:small">manager</span><span style="font-size:small">;</span></div>
+<h2 id="sec119" class="section">6.11&#XA0;&#XA0;ZIOP</h2>
 <p>omniORB has support for ZIOP, which compresses transmitted
 messages. To use it, link with the <span style="font-family:monospace">omniZIOP4</span> library.</p><p>On Unix platforms, ZIOP support is automatically enabled if the
 configure script detects zlib. To enable it on Windows, set the
@@ -606,7 +640,7 @@ examples:</p><pre class="verbatim">  ziop_impl -ORBserverTransportRule "* unix,s
   ziop_clt -ORBclientTransportRule "* unix,ssl,tcp,ziop" IOR:...
 </pre><p>This allows you to enable ZIOP for WAN links, but disable it
 for LAN communication, for example.</p>
-<h3 id="sec119" class="subsection">6.11.1&#XA0;&#XA0;Forcing ZIOP Policies</h3>
+<h3 id="sec120" class="subsection">6.11.1&#XA0;&#XA0;Forcing ZIOP Policies</h3>
 <p>The fact that a server supports ZIOP is encoded in its IORs. This
 means that if a client uses a <span style="font-family:monospace">corbaloc</span> URI to reference an
 object, the object reference does not contain ZIOP details, and thus
@@ -621,7 +655,7 @@ If the server does not actually support ZIOP, it will receive
 compressed messages that it cannot handle. A well-behaved server will
 throw a <span style="font-family:monospace">CORBA::MARSHAL</span> exception in response, or perhaps just
 drop the invalid connection.</p>
-<h2 id="sec120" class="section">6.12&#XA0;&#XA0;Connection Management Extension</h2>
+<h2 id="sec121" class="section">6.12&#XA0;&#XA0;Connection Management Extension</h2>
 <p>The <span style="font-family:monospace">omniConnectionMgmt</span> library provides an omniORB-specific
 extension for application-level connection management. Its purpose is
 to allow clients and servers to negotiate private GIOP connections,
@@ -646,7 +680,7 @@ the connection management functionality. It builds an annotated object
 reference that contains information for the connection management
 system. It returns a new reference, leaving the original object
 reference unchanged.</p>
-<h3 id="sec121" class="subsection">6.12.1&#XA0;&#XA0;Client-side parameters</h3>
+<h3 id="sec122" class="subsection">6.12.1&#XA0;&#XA0;Client-side parameters</h3>
 <p>These parameters affect the client side of a connection:</p><p><span style="font-family:monospace">connection_id</span></p><p>This number identifies the private connection set. All object
 references with the same <span style="font-family:monospace">connection_id</span> will share the same set
 of GIOP connections. Object references with different connection ids
@@ -671,7 +705,7 @@ interleave calls on a single connection, issuing a new request message
 while a previous request is still waiting for a reply. If
 <span style="font-family:monospace">permit_interleaved</span> is true, clients can interleave messages;
 if it is false, they cannot.</p>
-<h3 id="sec122" class="subsection">6.12.2&#XA0;&#XA0;Server-side parameters</h3>
+<h3 id="sec123" class="subsection">6.12.2&#XA0;&#XA0;Server-side parameters</h3>
 <p>These parameters affect the client side of a connection:</p><p><span style="font-family:monospace">max_threads</span></p><p>This parameter overrides the global
 <span style="font-family:monospace">maxServerThreadPerConnection</span> configuration parameter that
 determines the maximum number of concurrent threads the server will
@@ -692,7 +726,7 @@ will potentially be lost. By setting the <span style="font-family:monospace">ser
 parameter to true, the server will not close the connection, relying
 on the client to do so. In that case, oneway calls will not be lost
 unless there is a network problem that breaks the GIOP connection.</p>
-<h3 id="sec123" class="subsection">6.12.3&#XA0;&#XA0;Usage</h3>
+<h3 id="sec124" class="subsection">6.12.3&#XA0;&#XA0;Usage</h3>
 <p>The omniConnectionMgmt extension is very easy to use&#X2014;simply call the
 <span style="font-family:monospace">init()</span> method in all processes involved, then restrict references
 as required. The <span style="font-family:monospace">makeRestrictedReference()</span> function adds profile

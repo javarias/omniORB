@@ -94,6 +94,10 @@ ifdef OPEN_SSL_ROOT
 FILES += httpTP.py sslTP.py
 endif
 
+ifdef EnableHTTPCrypto
+FILES += httpCrypto.py
+endif
+
 export:: $(FILES)
 	@(dir="$(PYLIBDIR)"; \
           for file in $^; do \

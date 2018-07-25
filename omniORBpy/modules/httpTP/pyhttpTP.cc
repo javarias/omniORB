@@ -39,10 +39,44 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/httpContext.h>
+#include <omniORB4/giopEndpoint.h>
 
 #include "../omnipy.h"
 
 static omniORBpyAPI* api;
+
+
+static inline void
+setDictEntryIfValid(PyObject* d, const char* name, const char* val)
+{
+  if (val) {
+    PyObject* s = String_FromString(val);
+    PyDict_SetItemString(d, (char*)name, s);
+    Py_DECREF(s);
+  }
+}
+
+static void
+setCallInfo(PyObject* d, giopConnection* conn)
+{
+  httpContext::PeerDetails* pd = (httpContext::PeerDetails*)conn->peerdetails();
+
+  {
+    omniORB::logger log;
+    log << "*** http setCallInfo: " << (void*)pd << "\n";
+  }
+  
+  if (pd) {
+    setDictEntryIfValid(d, "http_host", pd->host());
+    if (pd->crypto())
+      setDictEntryIfValid(d, "http_identity", pd->crypto()->peerIdent());
+
+    if (pd->ssl()) {
+      PyDict_SetItemString(d, (char*)"ssl_verified",
+                           pd->verified() ? Py_True : Py_False);
+    }
+  }
+}
 
 
 extern "C" {
@@ -210,6 +244,15 @@ extern "C" {
     PyObject* pyapi  = PyObject_GetAttrString(omnipy, (char*)"API");
     api              = (omniORBpyAPI*)PyCObject_AsVoidPtr(pyapi);
     Py_DECREF(pyapi);
+
+    // Set callInfo handler
+    omniPy::PyRefHolder callInfoFns(
+                          PyObject_GetAttrString(omnipy, (char*)"callInfoFns"));
+    if (!callInfoFns.valid())
+      return;
+
+    omniPy::PyRefHolder pyfn(PyCObject_FromVoidPtr((void*)setCallInfo, 0));
+    PyDict_SetItemString(callInfoFns, "http", pyfn);
   }
 
 #else
@@ -232,6 +275,16 @@ extern "C" {
     // Get the omniORBpy C++ API, which is used in
     // OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     api = (omniORBpyAPI*)PyCapsule_Import("_omnipy.API", 0);
+
+    // Set callInfo handler
+    PyObject* omnipy = PyImport_ImportModule((char*)"_omnipy");
+    omniPy::PyRefHolder callInfoFns(
+                          PyObject_GetAttrString(omnipy, (char*)"callInfoFns"));
+    if (!callInfoFns.valid())
+      return 0;
+ 
+    omniPy::PyRefHolder pyfn(PyCapsule_New((void*)setCallInfo, 0, 0));
+    PyDict_SetItemString(callInfoFns, "http", pyfn);
 
     return PyModule_Create(&omnihttpTPmodule);
   }

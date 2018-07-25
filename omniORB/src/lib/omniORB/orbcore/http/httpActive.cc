@@ -123,6 +123,9 @@ httpActiveConnection::httpActiveConnection(SocketHandle_t sock,
   pd_registered(0)
 {
   pd_handshake_ok = 1;
+
+  if (httpContext::crypto_manager)
+    pd_crypto = httpContext::crypto_manager->cryptoForServer(url, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////

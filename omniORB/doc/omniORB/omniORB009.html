@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="omniORB010.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h1 id="sec143" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Interceptors</h1>
+<h1 id="sec144" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Interceptors</h1>
 <p>
 <a id="chap:interceptors"></a></p><p>omniORB supports interceptors that allow the application to insert
 processing in various points along the call chain, and in various
@@ -53,7 +53,7 @@ called. You should only do that if you really know what you are doing.</p><p>Not
 data types. The definitions of these types can be found in other
 header files within <span style="font-family:monospace">include/omniORB4</span> and
 <span style="font-family:monospace">include/omniORB4/internal</span>.</p>
-<h2 id="sec144" class="section">9.1&#XA0;&#XA0;Interceptor registration</h2>
+<h2 id="sec145" class="section">9.1&#XA0;&#XA0;Interceptor registration</h2>
 <p>All the interceptor singletons are registered within another singleton
 object of class <span style="font-family:monospace">omniInterceptors</span>. You retrieve a pointer to the
 object with the <span style="font-family:monospace">omniORB::getInterceptors()</span> function, which
@@ -61,7 +61,7 @@ must be called after the ORB has been initialised with
 <span style="font-family:monospace">CORBA::ORB_init()</span>, but before the ORB is used. The code to
 register an interceptor looks, for example, like:</p><div class="lstlisting"><span style="font-size:small">omniInterceptors</span><span style="font-size:small">* </span><span style="font-size:small">interceptors</span><span style="font-size:small"> = </span><span style="font-size:small">omniORB</span><span style="font-size:small">::</span><span style="font-size:small">getInterceptors</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">interceptors</span><span style="font-size:small">-&gt;</span><span style="font-size:small">clientSendRequest</span><span style="font-size:small">.</span><span style="font-size:small">add</span><span style="font-size:small">(</span><span style="font-size:small">myInterceptorFunc</span><span style="font-size:small">);</span></div>
-<h2 id="sec145" class="section">9.2&#XA0;&#XA0;Available interceptors</h2>
+<h2 id="sec146" class="section">9.2&#XA0;&#XA0;Available interceptors</h2>
 <p>The following interceptors are available:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold">encodeIOR</span></dt><dd class="dd-description"><br>
 Called when encoding an IOR to represent an object reference. This
 interception point allows the application to insert extra profile
@@ -145,7 +145,7 @@ interceptors, the interceptor function must call the <span style="font-family:mo
 <span style="font-family:monospace">assignAMIThread</span> have no return values. Interceptor chaining is
 performed by calls through the <span style="font-family:monospace">info_T::run()</span> method, rather than
 by visiting interceptor functions in turn.</p></dd></dl>
-<h2 id="sec146" class="section">9.3&#XA0;&#XA0;Server-side call interceptor</h2>
+<h2 id="sec147" class="section">9.3&#XA0;&#XA0;Server-side call interceptor</h2>
 <p>Calls can be intercepted on the server just before the upcall into
 application code. This interceptor is registered with omniORB&#X2019;s
 <span style="font-family:monospace">callDescriptor</span> class, which is responsible for encapsulating
