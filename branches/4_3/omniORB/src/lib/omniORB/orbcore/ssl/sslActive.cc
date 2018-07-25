@@ -112,6 +112,7 @@ sslActiveConnection::sslActiveConnection(SocketHandle_t sock, ::SSL* ssl) :
   sslConnection(sock,ssl,&myCollection), pd_registered(0)
 {
   pd_handshake_ok = 1;
+  setPeerDetails();
 }
 
 /////////////////////////////////////////////////////////////////////////

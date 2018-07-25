@@ -556,8 +556,18 @@ OMNIORB_HTTP_LIB = $(patsubst %,$(LibSearchPattern),\
 lib_depend := $(patsubst %,$(LibPattern),omnihttpTP$(OMNIORB_MAJOR_VERSION))
 OMNIORB_HTTP_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
 
-OMNIORB_HTTP_LIB += $(OPEN_SSL_LIB)
+OMNIORB_HTTP_LIB += $(OMNIORB_SSL_LIB)
 OMNIORB_HTTP_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
+
+
+# omniORB HTTP Crypto library
+OMNIORB_HTTP_CRYPTO_LIB = $(patsubst %,$(LibSearchPattern),\
+                            omnihttpCrypto$(OMNIORB_MAJOR_VERSION))
+
+lib_depend := $(patsubst %,$(LibPattern),omnihttpCrypto$(OMNIORB_MAJOR_VERSION))
+OMNIORB_HTTP_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
+
+OMNIORB_HTTP_CRYPTO_LIB += $(OMNIORB_HTTP_LIB)
 
 
 # ZIOP
@@ -776,6 +786,14 @@ endif
 
 ifeq (@ENABLE_ZIOP@,yes)
 EnableZIOP = 1
+endif
+
+#
+# Enable HTTP Crypto?
+#
+
+ifeq (@ENABLE_HTTP_CRYPTO@,yes)
+EnableHTTPCrypto = 1
 endif
 
 

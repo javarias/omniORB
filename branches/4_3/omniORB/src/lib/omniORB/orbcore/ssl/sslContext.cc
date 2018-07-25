@@ -58,7 +58,7 @@ int            sslContext::verify_mode                 =
 int            sslContext::verify_mode_incoming        = -1;
 sslContext::omni_verify_cb sslContext::verify_callback = 0;
 sslContext::omni_info_cb   sslContext::info_callback   = 0;
-CORBA::Boolean sslContext::full_peerdetails            = 0;
+CORBA::Boolean sslContext::full_peerdetails            = 1;
 
 sslContext*    sslContext::singleton                   = 0;
 

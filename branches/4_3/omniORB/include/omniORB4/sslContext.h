@@ -92,9 +92,11 @@ public:
   static _core_attr omni_verify_cb verify_callback;
   static _core_attr omni_info_cb   info_callback;
 
-  // If this parameter is false (the default), interceptor
-  // peerdetails() calls return an X509*. If set true, the calls
-  // return a pointer to an sslContext::PeerDetails object.
+  // If this parameter is true (the default), interceptor
+  // peerdetails() calls return a pointer to an
+  // sslContext::PeerDetails object; if false, peerdetails() returns
+  // an X509*.
+
   static _core_attr CORBA::Boolean full_peerdetails;
 
   class PeerDetails {

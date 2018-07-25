@@ -29,6 +29,8 @@
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/callDescriptor.h>
+#include <omniORB4/callHandle.h>
 
 
 OMNI_USING_NAMESPACE(omni);
@@ -883,6 +885,101 @@ extern "C" {
     return Py_None;
   }
 
+  static char currentCallInfo_doc [] =
+  "currentCallInfo()\n"
+  "\n"
+  "Within a thread that is handling an incoming call, returns a dict\n"
+  "containing information about the 'current' call. It contains members:\n"
+  "\n"
+  "  operation     - the name of the operation being called\n"
+  "  my_address    - the endpoint URI that is serving the call\n"
+  "  peer_address  - the endpoint URI for the caller\n"
+  "  peer_identity - if the transport supports it, the identity of the caller\n"
+  "\n"
+  "Plus potentially transport-specific additional members.\n"
+  "\n"
+  "Returns None if called outside of the context of an incoming remote call.\n";
+
+  static inline void
+  setDictEntryIfValid(PyObject* d, const char* name, const char* val)
+  {
+    if (val) {
+      PyObject* s = String_FromString(val);
+      PyDict_SetItemString(d, (char*)name, s);
+      Py_DECREF(s);
+    }
+  }
+  
+  static PyObject* pyomni_currentCallInfo(PyObject* self, PyObject* args)
+  {
+    if (!PyArg_ParseTuple(args, (char*)""))
+      return 0;
+    
+    omniCallDescriptor* cd = omniCallDescriptor::current();
+
+    if (!cd) {
+      Py_INCREF(Py_None);
+      return Py_None;
+    }
+    
+    omniCallHandle* ch   = cd->callHandle();
+    giopConnection* conn = ch ? ch->connection() : 0;
+
+    omniPy::PyRefHolder r(PyDict_New());
+
+    setDictEntryIfValid(r, "operation", cd->op());
+
+    if (conn) {
+      const char* my_addr = conn->myaddress();
+
+      setDictEntryIfValid(r, "my_address",    my_addr);
+      setDictEntryIfValid(r, "peer_address",  conn->peeraddress());
+      setDictEntryIfValid(r, "peer_identity", conn->peeridentity());
+
+      if (my_addr && !strncmp(my_addr, "giop:", 5)) {
+        const char* transport = my_addr + 5;
+        const char* colon     = strchr(transport, ':');
+        if (colon) {
+          omniPy::PyRefHolder pyt(String_FromStringAndSize(transport,
+                                                           colon - transport));
+          PyObject* pyf = PyDict_GetItem(omniPy::py_callInfoFns, pyt);
+
+          {
+            omniORB::logger log;
+            log << "*** pyf = " << (void*)pyf << "; pyt = "
+                << String_AS_STRING(pyt) << "\n";
+          }
+          
+          if (pyf) {
+            omniORBpyCallInfoFn fn = 0;
+
+#if (PY_VERSION_HEX <= 0x03000000)
+            if (PyCObject_Check(pyf)) {
+              fn = (omniORBpyCallInfoFn)PyCObject_AsVoidPtr(pyf);
+            }
+            else {
+              omniORB::logs(1, "WARNING: Entry in _omnipy.callInfoFns "
+                            "is not a PyCObject.");
+            }
+#else
+            if (PyCapsule_CheckExact(pyf)) {
+              fn = (omniORBpyCallInfoFn)PyCapsule_GetPointer(pyf, 0);
+            }
+            else {
+              omniORB::logs(1, "WARNING: Entry in _omnipy.callInfoFns "
+                            "is not a PyCapsule.");
+            }
+#endif
+            if (fn)
+              fn(r, conn);
+          }
+        }
+      }
+    }
+    return r.retn();
+  }
+
+  
   static PyMethodDef pyomni_methods[] = {
     {(char*)"installTransientExceptionHandler",
      pyomni_installTransientExceptionHandler,
@@ -968,6 +1065,10 @@ extern "C" {
      pyomni_locationForward,
      METH_VARARGS, locationForward_doc},
 
+    {(char*)"currentCallInfo",
+     pyomni_currentCallInfo,
+     METH_VARARGS, currentCallInfo_doc},
+    
     {NULL,NULL}
   };
 }

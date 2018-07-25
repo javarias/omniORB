@@ -32,6 +32,7 @@
 
 #include <omniORB4/linkHacks.h>
 #include <omniORB4/sslContext.h>
+#include <omniORB4/httpCrypto.h>
 
 OMNI_FORCE_LINK(omnihttpTP);
 
@@ -46,6 +47,9 @@ OMNI_FORCE_LINK(omnihttpTP);
 #     define _core_attr _OMNIORB_NTDLL_IMPORT
 #endif
 
+OMNI_NAMESPACE_BEGIN(omni)
+
+class httpConnection;
 
 class httpContext : public sslContext {
 public:
@@ -95,6 +99,38 @@ public:
   static _core_attr omni_verify_cb verify_callback;
   static _core_attr omni_info_cb   info_callback;
 
+
+  // Manager for in-message crypto
+
+  static _core_attr httpCryptoManager* crypto_manager;
+
+  
+  // Interceptor peerdetails calls return this structure:
+
+  class PeerDetails {
+  public:
+    inline PeerDetails(SSL* s, X509* c, CORBA::Boolean v)
+      : pd_ssl(s), pd_cert(c), pd_verified(v), pd_host(0), pd_crypto(0) {}
+
+    ~PeerDetails();
+
+    inline SSL*           ssl()      { return pd_ssl; }
+    inline X509*          cert()     { return pd_cert; }
+    inline CORBA::Boolean verified() { return pd_verified; }
+    inline const char*    host()     { return pd_host; }
+    inline httpCrypto*    crypto()   { return pd_crypto; }
+
+  private:
+    SSL*           pd_ssl;
+    X509*          pd_cert;
+    CORBA::Boolean pd_verified;
+    const char*    pd_host;
+    httpCrypto*    pd_crypto;
+
+    friend class httpConnection;
+  };
+
+  
   httpContext(const char* cafile, const char* capath,
               const char* keyfile, const char* password);
   // Construct with CA file, CA path, key and password. All may be zero.
@@ -125,6 +161,9 @@ public:
   // If no proxy is configured, returns false.
 
   virtual void copy_globals(CORBA::Boolean include_keys);
+
+  static char* b64encode(const char* data, size_t len);
+  static char* b64decode(const char* data, size_t& len);
   
 protected:
   virtual const char* ctxType();
@@ -137,6 +176,8 @@ protected:
   CORBA::String_var pd_proxy_auth;
   CORBA::Boolean    pd_proxy_secure;
 };
+
+OMNI_NAMESPACE_END(omni)
 
 #undef _core_attr
 

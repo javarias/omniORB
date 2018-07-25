@@ -171,6 +171,14 @@ OMNI_NAMESPACE_BEGIN(omni)
 #define OMNIORBMinorCode_132 OMNIORBMinorCode(132)
 #define OMNIORBMinorCode_133 OMNIORBMinorCode(133)
 #define OMNIORBMinorCode_134 OMNIORBMinorCode(134)
+#define OMNIORBMinorCode_135 OMNIORBMinorCode(135)
+#define OMNIORBMinorCode_136 OMNIORBMinorCode(136)
+#define OMNIORBMinorCode_137 OMNIORBMinorCode(137)
+#define OMNIORBMinorCode_138 OMNIORBMinorCode(138)
+#define OMNIORBMinorCode_139 OMNIORBMinorCode(139)
+#define OMNIORBMinorCode_140 OMNIORBMinorCode(140)
+#define OMNIORBMinorCode_141 OMNIORBMinorCode(141)
+#define OMNIORBMinorCode_142 OMNIORBMinorCode(142)
 
 #define OMNI_COMMA ,
 #define DeclareValue(name,value) name = value
@@ -261,7 +269,9 @@ code( BAD_PARAM_WrongUnionMemberSelected     , OMNIORBMinorCode_107 ) sep \
 code( BAD_PARAM_InvalidFixedPointLimits      , OMNIORBMinorCode_109 ) sep \
 code( BAD_PARAM_AttemptToMarshalAbstractValue, OMNIORBMinorCode_115 ) sep \
 code( BAD_PARAM_InvalidPollerType            , OMNIORBMinorCode_127 ) sep \
-code( BAD_PARAM_PerThreadTimeoutWithNoCurrent, OMNIORBMinorCode_131 )
+code( BAD_PARAM_PerThreadTimeoutWithNoCurrent, OMNIORBMinorCode_131 ) sep \
+code( BAD_PARAM_InvalidFile                  , OMNIORBMinorCode_139 ) sep \
+code( BAD_PARAM_InvalidKey                   , OMNIORBMinorCode_140 )
 
 enum BAD_PARAM_minor {
   DECLARE_BAD_PARAM_minors(DeclareValue,OMNI_COMMA)
@@ -322,6 +332,17 @@ enum INV_OBJREF_minor {
 };
 
 
+// NO_PERMISSION
+#define DECLARE_NO_PERMISSION_minors(code,sep) \
+\
+code( NO_PERMISSION_UnknownClient     , OMNIORBMinorCode_141 ) sep \
+code( NO_PERMISSION_ProxyRequiresAuth , OMNIORBMinorCode_142 )
+
+enum NO_PERMISSION_minor {
+  DECLARE_NO_PERMISSION_minors(DeclareValue,OMNI_COMMA)
+};
+
+
 // MARSHAL
 #define DECLARE_MARSHAL_minors(code,sep) \
 \
@@ -358,7 +379,9 @@ code( MARSHAL_TypeIsNotAValueType             , OMNIORBMinorCode_114 ) sep \
 code( MARSHAL_InvalidCompressedData           , OMNIORBMinorCode_128 ) sep \
 code( MARSHAL_HTTPBufferFull                  , OMNIORBMinorCode_132 ) sep \
 code( MARSHAL_HTTPHeaderInvalid               , OMNIORBMinorCode_133 ) sep \
-code( MARSHAL_HTTPChunkInvalid                , OMNIORBMinorCode_134 )
+code( MARSHAL_HTTPChunkInvalid                , OMNIORBMinorCode_134 ) sep \
+code( MARSHAL_InvalidBase64Data               , OMNIORBMinorCode_136 ) sep \
+code( MARSHAL_InvalidEncryptedData            , OMNIORBMinorCode_137 )
 
 enum MARSHAL_minor {
   DECLARE_MARSHAL_minors(DeclareValue,OMNI_COMMA)
@@ -476,7 +499,8 @@ code( BAD_INV_ORDER_ArgumentsNotCalled            , OMNIORBMinorCode_65 ) sep \
 code( BAD_INV_ORDER_ErrorInDynamicImplementation  , OMNIORBMinorCode_66 ) sep \
 code( BAD_INV_ORDER_RequestConfiguredOutOfOrder   , OMNIORBMinorCode_86 ) sep \
 code( BAD_INV_ORDER_DynAnyNotInitialised          , OMNIORBMinorCode_103 ) sep \
-code( BAD_INV_ORDER_ORBNotInitialised             , OMNIORBMinorCode_120 )
+code( BAD_INV_ORDER_ORBNotInitialised             , OMNIORBMinorCode_120 ) sep \
+code( BAD_INV_ORDER_NotInitialised                , OMNIORBMinorCode_138 )
 
 enum BAD_INV_ORDER_minor {
   DECLARE_BAD_INV_ORDER_minors(DeclareValue,OMNI_COMMA)  
@@ -497,10 +521,34 @@ code( TRANSIENT_BiDirConnIsGone       	  , OMNIORBMinorCode_14 ) sep \
 code( TRANSIENT_BiDirConnUsedWithNoPOA	  , OMNIORBMinorCode_16 ) sep \
 code( TRANSIENT_ConnectionClosed      	  , OMNIORBMinorCode_17 ) sep \
 code( TRANSIENT_ObjDeactivatedWhileHolding, OMNIORBMinorCode_62 ) sep \
-code( TRANSIENT_PythonExceptionInORB      , OMNIORBMinorCode_106 )
+code( TRANSIENT_PythonExceptionInORB      , OMNIORBMinorCode_106 ) sep \
+code( TRANSIENT_Renegotiate               , OMNIORBMinorCode_135 )
 
 enum TRANSIENT_minor {
   DECLARE_TRANSIENT_minors(DeclareValue,OMNI_COMMA)  
+};
+
+
+// INTF_REPOS
+#define DECLARE_INTF_REPOS_minors(code,sep) \
+\
+code( INTF_REPOS_NotAvailable                , OMNIORBMinorCode_39 ) sep \
+code( INTF_REPOS_PrimaryInterfaceReturnedZero, OMNIORBMinorCode_68 )
+
+enum INTF_REPOS_minor {
+  DECLARE_INTF_REPOS_minors(DeclareValue,OMNI_COMMA)  
+};
+
+
+// BAD_CONTEXT
+#define DECLARE_BAD_CONTEXT_minors(code,sep) \
+\
+code( BAD_CONTEXT_NoMatchingProperty    , OMNIORBMinorCode_75 ) sep \
+code( BAD_CONTEXT_StartingScopeNotFound , OMNIORBMinorCode_76 )
+
+
+enum BAD_CONTEXT_minor {
+  DECLARE_BAD_CONTEXT_minors(DeclareValue,OMNI_COMMA)
 };
 
 
@@ -559,29 +607,6 @@ code( INV_POLICY_NoPolicyFactoryForPolicyType   , OMGMinorCode(3) )
 
 enum INV_POLICY_minor {
   DECLARE_INV_POLICY_minors(DeclareValue,OMNI_COMMA)  
-};
-
-
-// INTF_REPOS
-#define DECLARE_INTF_REPOS_minors(code,sep) \
-\
-code( INTF_REPOS_NotAvailable                , OMNIORBMinorCode_39 ) sep \
-code( INTF_REPOS_PrimaryInterfaceReturnedZero, OMNIORBMinorCode_68 )
-
-enum INTF_REPOS_minor {
-  DECLARE_INTF_REPOS_minors(DeclareValue,OMNI_COMMA)  
-};
-
-
-// BAD_CONTEXT
-#define DECLARE_BAD_CONTEXT_minors(code,sep) \
-\
-code( BAD_CONTEXT_NoMatchingProperty    , OMNIORBMinorCode_75 ) sep \
-code( BAD_CONTEXT_StartingScopeNotFound , OMNIORBMinorCode_76 )
-
-
-enum BAD_CONTEXT_minor {
-  DECLARE_BAD_CONTEXT_minors(DeclareValue,OMNI_COMMA)
 };
 
 

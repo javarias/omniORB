@@ -10,7 +10,24 @@ See the documentation in the doc directory for more information.
 Changes since omniORB 4.2.x
 ---------------------------
 
-None yet!
+omniORBpy 4.3 has a number of new features and changes:
+
+ - A new omniORB-specific HTTP / HTTPS transport, with a number of
+   capabilities:
+
+    . Full encapsulation of GIOP messages in HTTP.
+
+    . Support for web proxies, transparent web proxies, reverse proxies.
+
+    . For cases where security is important but an end-to-end HTTPS
+      connection cannot be assured, support for in-message encryption.
+
+ - New omniORB.currentCallInfo() function to return information about
+   the current server-side call.
+
+ - Support for vast CORBA messages on 64 bit platforms.
+
+ - Support for PyPy in omniidl and omniORBpy.
 
 
 Changes since omniORB 4.1.x / omniORBpy 3.x

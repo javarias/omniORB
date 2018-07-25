@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
 <a href="omniORB014.html"><img src="next_motif.gif" alt="Next"></a>
 <hr>
-<h1 id="sec180" class="chapter">Chapter&#XA0;13&#XA0;&#XA0;Interface Type Checking</h1>
+<h1 id="sec181" class="chapter">Chapter&#XA0;13&#XA0;&#XA0;Interface Type Checking</h1>
 <p>
 <a id="ch_intf"></a></p><p>This chapter describes the mechanism used by omniORB to ensure type
 safety when object references are exchanged across the network. This
@@ -20,7 +20,7 @@ programming interface visible at the application level. However, for
 the sake of diagnosing the problem when there is a type violation, it
 is useful to understand the underlying mechanism in order to interpret
 the error conditions reported by the ORB.</p>
-<h2 id="sec181" class="section">13.1&#XA0;&#XA0;Introduction</h2>
+<h2 id="sec182" class="section">13.1&#XA0;&#XA0;Introduction</h2>
 <p>In GIOP/IIOP, an object reference is encoded as an Interoperable
 Object Reference (IOR) when it is sent across a network connection.
 The IOR contains a Repository ID (RepoId) and one or more
@@ -51,7 +51,7 @@ RepoId field of an IOR. It is up to the receiving end to work out the
 real type of the object. omniORB never sends out null strings as
 RepoIds, but it may receive null RepoIds from other ORBs. In that
 case, it will use the mechanism described below to ensure type safety.</p>
-<h2 id="sec182" class="section">13.2&#XA0;&#XA0;Interface Inheritance</h2>
+<h2 id="sec183" class="section">13.2&#XA0;&#XA0;Interface Inheritance</h2>
 <p>When the ORB receives an IOR of interface type B when it expects the
 type to be A, it must find out if B inherits from A. When the ORB has
 no local knowledge of the type B, it must work out the type of B

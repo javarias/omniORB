@@ -630,6 +630,7 @@ OSVERSION
 PLATFORM_DEFINE
 PLATFORM_NAME
 COMPILER_NAME
+ENABLE_HTTP_CRYPTO
 OMNI_USE_CFNETWORK_CONNECT
 ENABLE_ZIOP
 ENABLE_LONGDOUBLE
@@ -7460,9 +7461,9 @@ $as_echo "#define OMNI_DISABLE_ATOMIC_OPS /**/" >>confdefs.h
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for compress2 in -lz" >&5
-$as_echo_n "checking for compress2 in -lz... " >&6; }
-if ${ac_cv_lib_z_compress2+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for compressBound in -lz" >&5
+$as_echo_n "checking for compressBound in -lz... " >&6; }
+if ${ac_cv_lib_z_compressBound+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -7476,27 +7477,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char compress2 ();
+char compressBound ();
 int
 main ()
 {
-return compress2 ();
+return compressBound ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_z_compress2=yes
+  ac_cv_lib_z_compressBound=yes
 else
-  ac_cv_lib_z_compress2=no
+  ac_cv_lib_z_compressBound=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_z_compress2" >&5
-$as_echo "$ac_cv_lib_z_compress2" >&6; }
-if test "x$ac_cv_lib_z_compress2" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_z_compressBound" >&5
+$as_echo "$ac_cv_lib_z_compressBound" >&6; }
+if test "x$ac_cv_lib_z_compressBound" = xyes; then :
   omni_cv_enable_ziop=yes
 else
   omni_cv_enable_ziop=no
@@ -7527,6 +7528,14 @@ $as_echo "#define OMNI_USE_CFNETWORK_CONNECT /**/" >>confdefs.h
 fi
 OMNI_USE_CFNETWORK_CONNECT=$omni_cv_enable_cfnetwork
 
+
+
+if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
+    omni_cv_enable_http_crypto=yes
+else
+    omni_cv_enable_http_crypto=no
+fi
+ENABLE_HTTP_CRYPTO=$omni_cv_enable_http_crypto
 
 
 
@@ -7637,7 +7646,7 @@ ac_config_files="$ac_config_files src/tool/omniidl/python/scripts/omniidl"
 
 ac_config_files="$ac_config_files src/tool/omniidl/python3/scripts/omniidl"
 
-ac_config_files="$ac_config_files src/appl/GNUmakefile src/appl/omniMapper/GNUmakefile src/appl/omniNames/GNUmakefile src/appl/utils/catior/GNUmakefile src/appl/utils/convertior/GNUmakefile src/appl/utils/GNUmakefile src/appl/utils/genior/GNUmakefile src/appl/utils/nameclt/GNUmakefile src/GNUmakefile src/examples/ami/GNUmakefile src/examples/anyExample/GNUmakefile src/examples/bidir/GNUmakefile src/examples/boa/GNUmakefile src/examples/call_back/GNUmakefile src/examples/dii/GNUmakefile src/examples/GNUmakefile src/examples/dsi/GNUmakefile src/examples/echo/GNUmakefile src/examples/poa/GNUmakefile src/examples/poa/implicit_activation/GNUmakefile src/examples/poa/persistent_objref/GNUmakefile src/examples/poa/servant_manager/GNUmakefile src/examples/poa/threading/GNUmakefile src/examples/poa/shortcut/GNUmakefile src/examples/ssl_echo/GNUmakefile src/examples/thread/GNUmakefile src/examples/valuetype/GNUmakefile src/examples/valuetype/simple/GNUmakefile src/examples/ziop/GNUmakefile src/lib/GNUmakefile src/lib/omniORB/codesets/GNUmakefile src/lib/omniORB/GNUmakefile src/lib/omniORB/dynamic/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python/omniidl_be/GNUmakefile src/lib/omniORB/python/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python3/omniidl_be/GNUmakefile src/lib/omniORB/python3/GNUmakefile src/lib/omniORB/orbcore/GNUmakefile src/lib/omniORB/orbcore/ssl/GNUmakefile src/lib/omniORB/orbcore/http/GNUmakefile src/lib/omniORB/connections/GNUmakefile src/lib/omniORB/ziop/GNUmakefile src/lib/omniORB/ziopdynamic/GNUmakefile src/lib/omnithread/GNUmakefile src/services/GNUmakefile src/services/mklib/GNUmakefile src/services/mklib/stublib/GNUmakefile src/services/mklib/dynstublib/GNUmakefile src/services/mklib/mkBOAlib/GNUmakefile src/tool/GNUmakefile src/tool/omkdepend/GNUmakefile src/tool/omniidl/cxx/cccp/GNUmakefile src/tool/omniidl/cxx/GNUmakefile src/tool/omniidl/GNUmakefile src/tool/omniidl/python/GNUmakefile src/tool/omniidl/python/omniidl_be/GNUmakefile src/tool/omniidl/python/omniidl/GNUmakefile src/tool/omniidl/python/scripts/GNUmakefile src/tool/omniidl/python3/GNUmakefile src/tool/omniidl/python3/omniidl_be/GNUmakefile src/tool/omniidl/python3/omniidl/GNUmakefile src/tool/omniidl/python3/scripts/GNUmakefile"
+ac_config_files="$ac_config_files src/appl/GNUmakefile src/appl/omniMapper/GNUmakefile src/appl/omniNames/GNUmakefile src/appl/utils/catior/GNUmakefile src/appl/utils/convertior/GNUmakefile src/appl/utils/GNUmakefile src/appl/utils/genior/GNUmakefile src/appl/utils/nameclt/GNUmakefile src/GNUmakefile src/examples/ami/GNUmakefile src/examples/anyExample/GNUmakefile src/examples/bidir/GNUmakefile src/examples/boa/GNUmakefile src/examples/call_back/GNUmakefile src/examples/dii/GNUmakefile src/examples/GNUmakefile src/examples/dsi/GNUmakefile src/examples/echo/GNUmakefile src/examples/poa/GNUmakefile src/examples/poa/implicit_activation/GNUmakefile src/examples/poa/persistent_objref/GNUmakefile src/examples/poa/servant_manager/GNUmakefile src/examples/poa/threading/GNUmakefile src/examples/poa/shortcut/GNUmakefile src/examples/ssl_echo/GNUmakefile src/examples/thread/GNUmakefile src/examples/valuetype/GNUmakefile src/examples/valuetype/simple/GNUmakefile src/examples/ziop/GNUmakefile src/lib/GNUmakefile src/lib/omniORB/codesets/GNUmakefile src/lib/omniORB/GNUmakefile src/lib/omniORB/dynamic/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python/omniidl_be/GNUmakefile src/lib/omniORB/python/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python3/omniidl_be/GNUmakefile src/lib/omniORB/python3/GNUmakefile src/lib/omniORB/orbcore/GNUmakefile src/lib/omniORB/orbcore/ssl/GNUmakefile src/lib/omniORB/orbcore/http/GNUmakefile src/lib/omniORB/connections/GNUmakefile src/lib/omniORB/ziop/GNUmakefile src/lib/omniORB/ziopdynamic/GNUmakefile src/lib/omniORB/httpcrypto/GNUmakefile src/lib/omnithread/GNUmakefile src/services/GNUmakefile src/services/mklib/GNUmakefile src/services/mklib/stublib/GNUmakefile src/services/mklib/dynstublib/GNUmakefile src/services/mklib/mkBOAlib/GNUmakefile src/tool/GNUmakefile src/tool/omkdepend/GNUmakefile src/tool/omniidl/cxx/cccp/GNUmakefile src/tool/omniidl/cxx/GNUmakefile src/tool/omniidl/GNUmakefile src/tool/omniidl/python/GNUmakefile src/tool/omniidl/python/omniidl_be/GNUmakefile src/tool/omniidl/python/omniidl/GNUmakefile src/tool/omniidl/python/scripts/GNUmakefile src/tool/omniidl/python3/GNUmakefile src/tool/omniidl/python3/omniidl_be/GNUmakefile src/tool/omniidl/python3/omniidl/GNUmakefile src/tool/omniidl/python3/scripts/GNUmakefile"
 
 
 ac_config_files="$ac_config_files include/GNUmakefile include/omniconfig.h include/omnithread/GNUmakefile include/omniORB4/GNUmakefile include/omniORB4/internal/GNUmakefile"
@@ -8404,6 +8413,7 @@ do
     "src/lib/omniORB/connections/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/connections/GNUmakefile" ;;
     "src/lib/omniORB/ziop/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/ziop/GNUmakefile" ;;
     "src/lib/omniORB/ziopdynamic/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/ziopdynamic/GNUmakefile" ;;
+    "src/lib/omniORB/httpcrypto/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/httpcrypto/GNUmakefile" ;;
     "src/lib/omnithread/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omnithread/GNUmakefile" ;;
     "src/services/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/services/GNUmakefile" ;;
     "src/services/mklib/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/services/mklib/GNUmakefile" ;;

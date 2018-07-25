@@ -216,6 +216,7 @@ public:
   static PyObject* py_omnipymodule;    	// _omnipy module
   static PyObject* py_pseudoFns;        //  pseudoFns
   static PyObject* py_policyFns;        //  policyFns
+  static PyObject* py_callInfoFns;      //  calInfoFns
   static PyObject* pyCORBAmodule;      	// CORBA module
   static PyObject* pyCORBAsysExcMap;   	//  The system exception map
   static PyObject* pyCORBAORBClass;    	//  ORB class

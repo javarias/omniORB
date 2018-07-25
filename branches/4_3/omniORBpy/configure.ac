@@ -23,12 +23,15 @@ AC_LANG(C++)
 
 AC_SUBST(EXTRA_GCC_CXXFLAGS)
 
+AC_CXX_HAVE_STD
+
 
 dnl ** Libraries
 
 OMNI_OMNIORB_ROOT
 OMNI_OPENSSL_ROOT
 OMNI_ENABLE_ZIOP
+OMNI_ENABLE_HTTP_CRYPTO
 
 
 dnl ** More programs
@@ -146,6 +149,7 @@ AC_CONFIG_FILES(
                 examples/embed/GNUmakefile
                 modules/GNUmakefile
                 modules/codesets/GNUmakefile
+                modules/httpCrypto/GNUmakefile
                 modules/httpTP/GNUmakefile
                 modules/sslTP/GNUmakefile
                 modules/connections/GNUmakefile

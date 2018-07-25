@@ -1,3 +1,48 @@
+Wed 25 Jul 17:55:11 BST 2018
+============================
+
+- HTTP in-message crypto.
+
+ReleaseNotes.txt
+acinclude.m4
+configure.ac
+configure
+doc/omniORBpy.pdf
+doc/omniORBpy/index.html
+doc/omniORBpy/omniORBpy.css
+doc/omniORBpy/omniORBpy.html
+doc/omniORBpy/omniORBpy006.html
+doc/omniORBpy/omniORBpy007.html
+doc/omniORBpy/omniORBpy008.html
+doc/omniORBpy/omniORBpy009.html
+doc/omniORBpy/omniORBpy010.html
+doc/omniORBpy/omniORBpy011.html
+doc/omniORBpy/omniORBpy012.html
+doc/omniORBpy/omniORBpy013.html
+doc/tex/omniORBpy.tex
+include/omniORBpy.h
+mk/beforeauto.mk.in
+modules/dir.mk
+modules/httpCrypto
+modules/httpCrypto/GNUmakefile.in
+modules/httpCrypto/GNUmakefile
+modules/httpCrypto/dir.mk
+modules/httpCrypto/pyhttpCrypto.cc
+modules/httpTP/dir.mk
+modules/httpTP/pyhttpTP.cc
+modules/omnipy.cc
+modules/omnipy.h
+modules/pyInterceptors.cc
+modules/pyObjectRef.cc
+modules/pyTypeCode.cc
+modules/pyomniFunc.cc
+modules/sslTP/pysslTP.cc
+python/omniORB/dir.mk
+python/omniORB/httpCrypto.py
+python3/omniORB/dir.mk
+python3/omniORB/httpCrypto.py
+
+
 Wed 27 Jun 10:53:08 BST 2018
 ============================
 

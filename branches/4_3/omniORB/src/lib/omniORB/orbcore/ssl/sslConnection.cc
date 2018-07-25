@@ -413,7 +413,6 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
   tcpSocket::setCloseOnExec(sock);
 
   belong_to->addSocket(this);
-  setPeerDetails();
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -449,7 +448,7 @@ sslConnection::setPeerDetails() {
   if (pd_peerdetails)
     return;
 
-  X509           *peer_cert = SSL_get_peer_certificate(pd_ssl);
+  X509*           peer_cert = SSL_get_peer_certificate(pd_ssl);
   CORBA::Boolean  verified  = 0;
 
   if (peer_cert) {
@@ -510,6 +509,9 @@ sslConnection::setPeerDetails() {
 	    << ex._name() << ")\n";
       }
     }
+  }
+  else {
+    pd_peerdetails = new sslContext::PeerDetails(pd_ssl, 0, 0);
   }
 }
 

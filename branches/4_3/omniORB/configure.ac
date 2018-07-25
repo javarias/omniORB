@@ -159,6 +159,7 @@ OMNI_DISABLE_LONGDOUBLE
 OMNI_DISABLE_ATOMIC
 OMNI_ENABLE_ZIOP
 OMNI_ENABLE_CFNETWORK
+OMNI_ENABLE_HTTP_CRYPTO
 
 
 dnl ** Compiler name
@@ -316,6 +317,7 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/connections/GNUmakefile
                 src/lib/omniORB/ziop/GNUmakefile
                 src/lib/omniORB/ziopdynamic/GNUmakefile
+                src/lib/omniORB/httpcrypto/GNUmakefile
                 src/lib/omnithread/GNUmakefile
                 src/services/GNUmakefile
                 src/services/mklib/GNUmakefile
