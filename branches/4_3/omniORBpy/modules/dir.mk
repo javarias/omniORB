@@ -519,11 +519,13 @@ SUBDIRS = codesets connections
 
 ifdef OPEN_SSL_ROOT
 SUBDIRS += httpTP sslTP
-endif
 
 ifdef EnableHTTPCrypto
 SUBDIRS += httpCrypto
 endif
+
+endif
+
 
 ifdef EnableZIOP
 SUBDIRS += ziop
