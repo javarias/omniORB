@@ -1,3 +1,19 @@
+Thu 26 Jul 13:14:17 BST 2018
+============================
+
+- Windows build fixes.
+
+mk/beforeauto.mk.in
+mk/platforms/x86_win32_vs_10.mk
+mk/platforms/x86_win32_vs_11.mk
+mk/platforms/x86_win32_vs_12.mk
+mk/platforms/x86_win32_vs_14.mk
+mk/platforms/x86_win32_vs_15.mk
+mk/win32.mk
+src/lib/omniORB/dir.mk
+src/lib/omniORB/httpcrypto/httpCrypto.cc
+
+
 Wed 25 Jul 17:55:11 BST 2018
 ============================
 

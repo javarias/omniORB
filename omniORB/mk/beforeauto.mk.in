@@ -565,7 +565,7 @@ OMNIORB_HTTP_CRYPTO_LIB = $(patsubst %,$(LibSearchPattern),\
                             omnihttpCrypto$(OMNIORB_MAJOR_VERSION))
 
 lib_depend := $(patsubst %,$(LibPattern),omnihttpCrypto$(OMNIORB_MAJOR_VERSION))
-OMNIORB_HTTP_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
+OMNIORB_HTTP_CRYPTO_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
 
 OMNIORB_HTTP_CRYPTO_LIB += $(OMNIORB_HTTP_LIB)
 

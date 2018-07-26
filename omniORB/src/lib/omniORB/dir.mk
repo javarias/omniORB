@@ -17,7 +17,9 @@ SUBDIRS += ziop ziopdynamic
 endif
 
 ifdef EnableHTTPCrypto
+ifdef OPEN_SSL_ROOT
 SUBDIRS += httpcrypto
+endif
 endif
 
 endif
