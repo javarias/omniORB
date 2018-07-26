@@ -328,14 +328,17 @@ writeAuthHeader(char* buf, size_t buf_space)
   }
 
   // Construct new key and send it to the server
+
+  int             self_size = RSA_size(pd_self_rsa);
+  int             peer_size = RSA_size(pd_peer_rsa);
+
+  CORBA::OctetSeq self_seq; self_seq.length(self_size);
+  CORBA::OctetSeq peer_seq; peer_seq.length(peer_size);
+
+  CORBA::Octet    key_data[KEY_SIZE * 2 + IDENT_SIZE];
+  CORBA::Octet*   self_enc = self_seq.NP_data();
+  CORBA::Octet*   peer_enc = peer_seq.NP_data();
   
-  int self_size = RSA_size(pd_self_rsa);
-  int peer_size = RSA_size(pd_peer_rsa);
-
-  CORBA::Octet key_data[KEY_SIZE * 2 + IDENT_SIZE];
-  CORBA::Octet self_enc[self_size];
-  CORBA::Octet peer_enc[peer_size];
-
   if (!RAND_bytes(key_data, KEY_SIZE * 2 + IDENT_SIZE)) {
     ERR_print_errors_cb(logError, 0);
     OMNIORB_THROW(INITIALIZE, INITIALIZE_TransportError, CORBA::COMPLETED_NO);
@@ -987,8 +990,11 @@ readAuthHeader(const char* host, const char* auth)
 
     self_enc_s   = httpContext::b64decode(self_b64.c_str(),   self_len);
     self_enc     = (const CORBA::Octet*)(const char*)self_enc_s;
+
+    CORBA::OctetSeq key_seq;
+    key_seq.length(RSA_size(client_rsa) + RSA_size(pd_self_rsa));
     
-    CORBA::Octet key_data[RSA_size(client_rsa) + RSA_size(pd_self_rsa)];
+    CORBA::Octet*   key_data = key_seq.NP_data();
 
     if (RSA_public_decrypt(client_len, client_enc, key_data,
                            client_rsa, RSA_PKCS1_PADDING) != KEY_SIZE) {
