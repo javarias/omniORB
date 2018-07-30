@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<?xml-stylesheet href="layout.xml" type="text/xsl"?>
+
+<page title="omniORB commercial support"
+      head="omniORB commercial support" id="index">
+
+omniORB is commercially supported by <a
+href="http://www.apasphere.com/">Apasphere Ltd</a>.
+
+<h1>What is offered?</h1>
+
+Support is primarily email based. The contract specifies a guaranteed
+response time. When you send a query to your personal support address,
+you are guaranteed to receive an answer within the specified time.
+Often, the response will contain a solution to your issue, but in more
+complex cases the response will contain an estimate of when the issue
+will be resolved. You can choose a response time suitable for you;
+most contracts specify 48 hours, but the time can be as short as 24
+hours.
+
+<h2>Email support</h2>
+
+For most issues, email based support is preferable to telephone
+support for two main reasons. Firstly, it means that the core omniORB
+developers can deal directly with your issues, rather than being
+several stages removed from telephone support staff. Secondly, writing
+up your issue in an email allows you to specify the problem more
+precisely than is possible with a phone conversation, which helps both
+you and us understand the situation.
+
+<p/>
+
+Despite the advantages of email, it can sometimes be useful to discuss
+a problem 'live', by telephone. We therefore offer the option of
+pre-arranged telephone calls with an expert. This combination of email
+and telephone support offers you the best possible service since your
+issues are always rapidly dealt with by the most knowledgeable people.
+
+<p/>
+
+If you are using omniORB in a mission-critical application, emergency
+telephone support can be arranged.
+
+<h1>The omniORB advantage</h1>
+
+Choosing omniORB gives you many advantages over other CORBA
+implementations. Because it is open source, there are no development
+or run-time license fees. Furthermore, support is extremely
+competitively priced, so the total cost of ownership is radically
+lower than for commercial products.
+
+<p/>
+
+omniORB is renowned for its robustness and strict adherence to the
+CORBA standard. Independent tests have repeatedly shown it to have
+significantly higher performance and smaller footprint than all of its
+major competitors, both commercial and open source.
+
+<p/>
+
+In addition to the C++ ORB, omniORB also has a version for Python, a
+high level, object oriented, interpreted language. Use of Python can
+dramatically reduce the time spent developing prototype and test code,
+and even large scale applications. omniORB's Python version is
+supported alongside the C++ version.
+
+<h1>What is supported?</h1>
+
+Everything in the omniORB distribution, both version 3.0.x and version
+4.0.x, is supported. All versions of omniORBpy are supported. Support
+covers issues and bugs within omniORB itself, and basic help with the
+details of the C++ and Python language mappings. <a
+href="http://www.apasphere.com/">Apasphere Ltd</a> offers consulting
+services for help with wider scale application architecture and
+implementation techniques.
+
+<h1>Pricing and more information</h1>
+
+Pricing is worked out on a per-customer basis, depending on your
+precise requirements. For more information, please contact <a
+href="mailto:info@omniorb-support.com">info@omniorb-support.com</a>,
+giving details of the support you require and any special requirements
+you have.
+
+</page>
+
