@@ -1,3 +1,11 @@
+Fri  3 Aug 15:30:14 BST 2018
+============================
+
+- Another Windows build fix.
+
+src/lib/omniORB/httpcrypto/dir.mk
+
+
 Thu 26 Jul 13:14:17 BST 2018
 ============================
 
