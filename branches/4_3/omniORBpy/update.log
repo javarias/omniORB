@@ -1,3 +1,11 @@
+Fri  3 Aug 15:29:12 BST 2018
+============================
+
+- Remove debug log message.
+
+modules/httpTP/pyhttpTP.cc
+
+
 Thu 26 Jul 13:27:41 BST 2018
 ============================
 
