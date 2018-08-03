@@ -16,8 +16,7 @@ endif
 
 ifdef Win32Platform
   DIR_CPPFLAGS += -D"NTArchitecture"
-  EXTRA_LIBS = $(patsubst %,$(LibNoDebugSearchPattern),advapi32) \
-               $(ZLIB_LIB)
+  EXTRA_LIBS = $(patsubst %,$(LibNoDebugSearchPattern),advapi32)
   MSVC_STATICLIB_CXXNODEBUGFLAGS += -D_WINSTATIC
   MSVC_STATICLIB_CXXDEBUGFLAGS += -D_WINSTATIC
   vpath %.cc $(VPATH):$(VPATH:%=%/../orbcore)
