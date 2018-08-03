@@ -61,11 +61,6 @@ setCallInfo(PyObject* d, giopConnection* conn)
 {
   httpContext::PeerDetails* pd = (httpContext::PeerDetails*)conn->peerdetails();
 
-  {
-    omniORB::logger log;
-    log << "*** http setCallInfo: " << (void*)pd << "\n";
-  }
-  
   if (pd) {
     setDictEntryIfValid(d, "http_host", pd->host());
     if (pd->crypto())
