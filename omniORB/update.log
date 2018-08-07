@@ -1,3 +1,11 @@
+Tue  7 Aug 10:46:27 BST 2018
+============================
+
+- Correct linkage and Windows binary release.
+
+src/lib/omniORB/httpcrypto/dir.mk
+
+
 Fri  3 Aug 15:30:14 BST 2018
 ============================
 
