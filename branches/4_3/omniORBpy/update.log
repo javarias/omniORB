@@ -1,3 +1,11 @@
+Tue  7 Aug 10:46:27 BST 2018
+============================
+
+- Correct linkage and Windows binary release.
+
+bin/scripts/binrelease.sh
+
+
 Fri  3 Aug 15:29:12 BST 2018
 ============================
 
