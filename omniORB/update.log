@@ -1,3 +1,14 @@
+Fri 17 Aug 17:53:11 BST 2018
+============================
+
+- Handle re-chunked HTTP messages containing encrypted data.
+
+include/omniORB4/minorCode.h
+src/lib/omniORB/httpcrypto/httpCrypto.cc
+src/lib/omniORB/orbcore/http/httpConnection.cc
+src/lib/omniORB/orbcore/http/httpConnection.h
+
+
 Tue  7 Aug 10:46:27 BST 2018
 ============================
 

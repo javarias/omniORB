@@ -295,13 +295,14 @@ httpConnection::readRequestLine()
 }
 
 
+/////////////////////////////////////////////////////////////////////////
 void
 httpConnection::readResponseLine()
 {
   if (strncmp((const char*)pd_buf_read, "HTTP/1.1 200 ", 13)) {
     if (omniORB::trace(10)) {
       omniORB::logger log;
-      log << "HTTP error response: "
+      log << "HTTP error response from " << pd_peeraddress << " : "
           << omniORB::logger::unsafe((const char*)pd_buf_read) << "\n";
     }
 
@@ -325,11 +326,11 @@ httpConnection::readResponseLine()
       OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_ProxyRequiresAuth,
                     CORBA::COMPLETED_NO);
     }
-    OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_NO);
+    OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_YES);
   }
 }
 
-
+/////////////////////////////////////////////////////////////////////////
 void
 httpConnection::readHeader()
 {
@@ -353,7 +354,7 @@ httpConnection::readHeader()
   else if (!strcasecmp(header, "Content-Length")) {
     char* endp;
 
-    pd_remaining = strtoul(value, &endp, 10);
+    pd_http_remaining = strtoul(value, &endp, 10);
     if (*endp != '\0')
       OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_NO);
   }
@@ -392,6 +393,7 @@ httpConnection::readHeader()
 }
 
 
+/////////////////////////////////////////////////////////////////////////
 void
 httpConnection::readChunkHeader()
 {
@@ -406,7 +408,7 @@ httpConnection::readChunkHeader()
 
   if ((CORBA::Octet*)endp == pd_buf_read)
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPChunkInvalid,
-                  CORBA::COMPLETED_NO);
+                  pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
 
   while (*endp == ' ' || *endp == '\t')
     ++endp;
@@ -418,12 +420,11 @@ httpConnection::readChunkHeader()
   
   if (*endp != '\0' && *endp != ';')
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPChunkInvalid,
-                  CORBA::COMPLETED_NO);
+                  pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
 
-  pd_remaining  = chunk_size;
-  pd_fragmented = chunk_size ? 1 : 0;
+  pd_http_remaining  = chunk_size;
+  pd_fragmented      = chunk_size ? 1 : 0;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -433,7 +434,7 @@ httpConnection::Send(void* buf, size_t sz,
 
   pd_buf_write = pd_buf;
   
-  if (pd_remaining == 0) {
+  if (pd_giop_remaining == 0) {
     // Start of a GIOP / ZIOP message
     const CORBA::Octet* obuf = (const CORBA::Octet*)buf;
 
@@ -456,13 +457,14 @@ httpConnection::Send(void* buf, size_t sz,
       return (int)sz;
     }
     
-    pd_remaining      = size + 12;
+    pd_giop_remaining = size + 12;
     pd_more_fragments = (flags & 2) ? 1 : 0;
     pd_fragmented     = pd_more_fragments || type == GIOP::Fragment;
 
-    size_t send_len   = (pd_crypto ?
-                         pd_crypto->encryptedSize(pd_remaining) :
-                         pd_remaining);
+    pd_http_remaining = (CORBA::ULong)
+                        (pd_crypto ?
+                         pd_crypto->encryptedSize(pd_giop_remaining) :
+                         pd_giop_remaining);
     
     try {
       if (type != GIOP::Fragment) {
@@ -509,11 +511,11 @@ httpConnection::Send(void* buf, size_t sz,
         if (pd_fragmented)
           addHeader("Transfer-Encoding", "chunked");
         else
-          addHeader("Content-Length", send_len);
+          addHeader("Content-Length", pd_http_remaining);
 
         if (omniORB::trace(30)) {
           omniORB::logger log;
-          log << "Send HTTP headers:\n";
+          log << "Send HTTP headers to " << pd_peeraddress << " :\n";
           log << (const char*)pd_buf;
         }
         endHeaders();
@@ -522,7 +524,7 @@ httpConnection::Send(void* buf, size_t sz,
       if (pd_fragmented) {
         // GIOP message is fragmented, so we are using HTTP chunked
         // encoding. Send a chunk header.
-        addChunkHeader(send_len);
+        addChunkHeader(pd_http_remaining);
       }
     }
     catch (CORBA::MARSHAL&) {
@@ -531,14 +533,14 @@ httpConnection::Send(void* buf, size_t sz,
     }
   }
 
-  if (sz > pd_remaining) {
+  if (sz > pd_giop_remaining) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
       log << "HTTP transport error. Trying to send " << (unsigned long)sz
-          << " bytes, but only " << pd_remaining
+          << " bytes, but only " << pd_giop_remaining
           << " left in current message.\n";
     }
-    sz = pd_remaining;
+    sz = pd_giop_remaining;
   }
   
   const CORBA::Octet* buf_ptr   = pd_buf;
@@ -585,15 +587,19 @@ httpConnection::Send(void* buf, size_t sz,
   if (!pd_crypto) {
     // Simple copy of the input data to our buffer.
     memcpy(pd_buf_write, buf, sz);
-    pd_buf_write += sz;
+
+    pd_buf_write      += sz;
+    pd_http_remaining -= sz;
   }
   else {
     // Encrypt into buffer
-    pd_buf_write += pd_crypto->encrypt(pd_buf_write, (const CORBA::Octet*)buf,
-                                       sz, pd_remaining == sz);
+    size_t written = pd_crypto->encrypt(pd_buf_write, (const CORBA::Octet*)buf,
+                                        sz, pd_giop_remaining == sz);
+    pd_buf_write      += written;
+    pd_http_remaining -= written;
   }
 
-  if (pd_fragmented && pd_remaining == sz) {
+  if (pd_fragmented && pd_giop_remaining == sz) {
     // The whole GIOP message is in the buffer, so we need to send the
     // chunk ending.
     *pd_buf_write++  = '\r';
@@ -618,8 +624,8 @@ httpConnection::Send(void* buf, size_t sz,
 
   } while (pd_buf_write > buf_ptr);
 
-  pd_remaining -= (CORBA::ULong)sz;
-  pd_buf_write  = pd_buf_read = pd_buf;
+  pd_giop_remaining -= (CORBA::ULong)sz;
+  pd_buf_write       = pd_buf_read = pd_buf;
 
   return sz;
 }
@@ -720,9 +726,10 @@ httpConnection::realSend(void* buf, size_t sz,
   return tx;
 }
 
-
+/////////////////////////////////////////////////////////////////////////
 int
-httpConnection::readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline)
+httpConnection::readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline,
+                         CORBA::Boolean keep_buf)
 {
   int rx;
   
@@ -734,14 +741,36 @@ httpConnection::readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline)
     if (buf_ptr == pd_buf_write) {
       // Receive more data into buffer
 
-      if (pd_buf_read == pd_buf_write)
+      if (pd_buf_read == pd_buf_write && !keep_buf)
         buf_ptr = pd_buf_write = pd_buf_read = pd_buf;
         
       size_t buf_space = BUF_SIZE - (pd_buf_write - pd_buf);
 
-      if (buf_space == 0)
-        OMNIORB_THROW(MARSHAL, MARSHAL_HTTPBufferFull, CORBA::COMPLETED_NO);
-      
+      if (buf_space == 0) {
+        if (keep_buf) {
+          OMNIORB_THROW(MARSHAL, MARSHAL_HTTPBufferFull,
+                        pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+        }
+        
+        // Copy the data that is present in the buffer back to the
+        // start of the buffer.
+        size_t avail = pd_buf_write - pd_buf_read;
+
+        if (avail > (pd_buf_read - pd_buf)) {
+          // There is more data present in the buffer than there is
+          // space at the start of the buffer, which means the line is
+          // implausibly long.
+          OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
+                        pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+        }
+        memcpy(pd_buf, pd_buf_read, avail);
+
+        pd_buf_read  = pd_buf;
+        pd_buf_write = pd_buf + avail;
+        buf_ptr      = pd_buf_write;
+        buf_space    = BUF_SIZE - (pd_buf_write - pd_buf);
+      }
+        
       if ((rx = realRecv(pd_buf_write, buf_space, deadline)) < 1)
         return rx;
 
@@ -763,28 +792,77 @@ httpConnection::readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline)
 
 
 /////////////////////////////////////////////////////////////////////////
+static void
+finishHeaderLogOnError(omniORB::logger*& log,
+                       CORBA::Octet*     buf_read,
+                       CORBA::Octet*     buf_write,
+                       CORBA::Boolean    in_headers,
+                       CORBA::Boolean    fragmented)
+{
+  // If logging headers, log all remaining headers after an error has occurred.
+
+  if (!log)
+    return;
+
+  if (in_headers && !fragmented) {
+
+    while (1) {
+      CORBA::Octet* start = buf_read;
+
+      for (; buf_read < (buf_write-1) && *buf_read && *buf_read != '\n';
+           ++buf_read);
+
+      *buf_read = '\0';
+      if (buf_read > start && buf_read[-1] == '\r')
+        buf_read[-1] = '\0';
+
+      if (buf_read - start < 3)
+        break;
+      
+      (*log) << omniORB::logger::unsafe((const char*)start) << "\n";
+
+      if (buf_read >= buf_write - 1)
+        break;
+
+      ++buf_read;
+    }
+  }
+  
+  delete log;
+  log = 0;
+
+  if (omniORB::trace(40) && buf_read < buf_write-1) {
+    buf_write[-1] = '\0';
+
+    omniORB::logger l2;
+    l2 << "Message body:\n"
+       << omniORB::logger::unsafe((const char*)buf_read) << "\n";
+  }
+}
+
+
+/////////////////////////////////////////////////////////////////////////
 int
 httpConnection::Recv(void* buf, size_t buf_sz,
                      const omni_time_t& deadline) {
 
   int rx;
-  
-  if (pd_remaining == 0) {
-    // Start of a message. We expect to get an HTTP header.
-    pd_recv_start_msg = 1;
 
-    omniORB::logger* log = 0;
-    
+  CORBA::Boolean giop_start = pd_giop_remaining == 0;
+  
+  if (pd_http_remaining == 0) {
+    // Start of a message. We expect to get an HTTP header.
+    omniORB::logger* log        = 0;
+    CORBA::Boolean   in_headers = 1;
+    CORBA::Boolean   first_line = 1;
+    CORBA::Octet*    buf_ptr    = pd_buf_read;
+
     try {
       if (omniORB::trace(30)) {
         log = new omniORB::logger;
-        (*log) << "Received HTTP headers:\n";
+        (*log) << "Received HTTP headers from " << pd_peeraddress << " :\n";
       }
-      
-      CORBA::Boolean in_headers = 1;
-      CORBA::Boolean first_line = 1;
-      CORBA::Octet*  buf_ptr;
-      
+            
       while (in_headers) {
         if ((rx = readLine(buf_ptr, deadline)) < 1)
           return rx;
@@ -846,7 +924,8 @@ httpConnection::Recv(void* buf, size_t buf_sz,
       }
     }
     catch (CORBA::TRANSIENT& ex) {
-      if (log) delete log;
+      finishHeaderLogOnError(log, buf_ptr, pd_buf_write,
+                             in_headers, pd_fragmented);
 
       if (!pd_client && ex.minor() == TRANSIENT_Renegotiate) {
         sendError(401, "Unauthorized", "Key not known\r\n");
@@ -855,53 +934,97 @@ httpConnection::Recv(void* buf, size_t buf_sz,
       throw;
     }
     catch (CORBA::NO_PERMISSION&) {
-      if (log) delete log;
+      finishHeaderLogOnError(log, buf_ptr, pd_buf_write,
+                             in_headers, pd_fragmented);
 
-      sendError(403, "Forbidden", "Unknown client\r\n");
-      return -1;
+      if (!pd_client) {
+        sendError(403, "Forbidden", "Unknown client\r\n");
+        return -1;
+      }
+      throw;
     }
     catch (CORBA::MARSHAL&) {
-      if (log) delete log;
+      finishHeaderLogOnError(log, buf_ptr, pd_buf_write,
+                             in_headers, pd_fragmented);
       return -1;
     }
     catch (...) {
-      if (log) delete log;
+      finishHeaderLogOnError(log, buf_ptr, pd_buf_write,
+                             in_headers, pd_fragmented);
       throw;
     }
   }
-  
+
   size_t avail = pd_buf_write - pd_buf_read;
 
   if (avail == 0) {
+    // Read some more data
+
     pd_buf_write = pd_buf_read = pd_buf;
-    
+
     if ((rx = realRecv(pd_buf_write, BUF_SIZE, deadline)) < 1)
       return rx;
 
     pd_buf_write += (size_t)rx;
-    avail = pd_buf_write - pd_buf_read;
+    avail         = pd_buf_write - pd_buf_read;
   }
 
-  size_t recv_sz = buf_sz;
+  size_t http_sz, giop_sz;
+
+  do {
+    http_sz = buf_sz;
   
-  if (recv_sz > avail)
-    recv_sz = avail;
+    if (http_sz > avail)
+      http_sz = avail;
 
-  if (recv_sz > pd_remaining)
-    recv_sz = pd_remaining;
+    if (http_sz > pd_http_remaining)
+      http_sz = pd_http_remaining;
 
+    if (giop_start) {
+      // At the start of a GIOP message, we require at least 12 bytes
+      // of GIOP to read the length from its header. If a proxy has
+      // re-chunked the HTTP, there might be less than that left in
+      // the HTTP message.
+      //
+      // When decrypting, the 12 byte GIOP header fits inside a single
+      // AES block, meaning that we need to read a little more data to
+      // be sure the decryption feeds us anything. All messages
+      // transmitted are at least 16 bytes.
+
+      size_t required = pd_crypto ? pd_crypto->encryptedSize(16) : 12;
+
+      if (http_sz < required) {
+        if (!pd_fragmented)
+          OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
+                        pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+
+        if ((rx = recvExtendHTTPData(required, deadline)) < 1)
+          return rx;
+
+        avail = pd_buf_write - pd_buf_read;
+        continue;
+      }
+    }
+    break;
+    
+  } while (1);
+    
   if (!pd_crypto) {
-    memcpy(buf, pd_buf_read, recv_sz);
-    pd_buf_read  += recv_sz;
-    pd_remaining -= recv_sz;
+    memcpy(buf, pd_buf_read, http_sz);
+    pd_buf_read += http_sz;
+    giop_sz      = http_sz;
+
+    if (giop_start)
+      readGIOPSize(buf);
+
+    pd_http_remaining -= http_sz;
+    pd_giop_remaining -= giop_sz;  
   }
   else {
-    recv_sz = recvDecrypt(buf, buf_sz, recv_sz, deadline);
+    giop_sz = recvDecrypt(buf, buf_sz, http_sz, giop_start, deadline);
   }
 
-  pd_recv_start_msg = 0;
-  
-  if (pd_remaining == 0 && pd_fragmented) {
+  if (pd_http_remaining == 0 && pd_fragmented) {
     // We have read the last data for a chunk, so we need to read the
     // trailing \r\n. If the chunk was the last one, there will be a
     // zero-length chunk following it. We must consume that here,
@@ -912,45 +1035,189 @@ httpConnection::Recv(void* buf, size_t buf_sz,
     // will have to block waiting for it until this chunk can be
     // handled.
 
-    try {
-      CORBA::Octet* buf_ptr;
-
-      if ((rx = readLine(buf_ptr, deadline)) < 1)
-        return rx;
-
-      if (*pd_buf_read) {
-        // The line should have been empty
-        OMNIORB_THROW(MARSHAL, MARSHAL_HTTPChunkInvalid,
-                      CORBA::COMPLETED_NO);
-      }
-      pd_buf_read = buf_ptr;
-
-      // Read the next chunk length
-      
-      if ((rx = readLine(buf_ptr, deadline)) < 1)
-        return rx;
-
-      readChunkHeader();
-      pd_buf_read       = buf_ptr;
-      pd_recv_start_msg = 1;
-    }
-    catch (CORBA::MARSHAL&) {
-      return -1;
-    }
+    if ((rx = readNextChunk(deadline)) < 1)
+      return rx;
   }
-  return recv_sz;
+
+  if (giop_sz) {
+    return (int)giop_sz;
+  }
+  else if (pd_crypto) {
+    // If only a small amount of HTTP data is available, recvDecrypt
+    // can legitimately return no data, meaning we need to receive
+    // some more.
+
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Received " << http_sz << " HTTP bytes from " << pd_peeraddress
+          << " but decrypted to no GIOP data. Receive more.\n";
+    }
+    return Recv(buf, buf_sz, deadline);
+  }
+  else {
+    OMNIORB_THROW(MARSHAL, MARSHAL_HTTPChunkInvalid,
+                  pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+  }
 }
+
+
+/////////////////////////////////////////////////////////////////////////
+int
+httpConnection::readNextChunk(const omni_time_t& deadline,
+                              CORBA::Boolean     keep_buf)
+{
+  try {
+    CORBA::Octet* buf_ptr;
+
+    int rx;
+    if ((rx = readLine(buf_ptr, deadline, keep_buf)) < 1)
+      return rx;
+
+    if (*pd_buf_read) {
+      // The line should have been empty
+      OMNIORB_THROW(MARSHAL, MARSHAL_HTTPChunkInvalid,
+                    pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+    }
+    pd_buf_read = buf_ptr;
+
+    // Read the next chunk length
+      
+    if ((rx = readLine(buf_ptr, deadline, keep_buf)) < 1)
+      return rx;
+
+    readChunkHeader();
+    pd_buf_read = buf_ptr;
+  }
+  catch (CORBA::MARSHAL&) {
+    return -1;
+  }
+  return 1;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+void
+httpConnection::readGIOPSize(void* buf)
+{
+  // Look at the GIOP header to read the size of the GIOP message.
+  const CORBA::Octet* obuf = (const CORBA::Octet*)buf;
+
+  if (!(obuf[0] == 'G' || obuf[0] == 'Z') &&
+        obuf[1] == 'I' &&
+        obuf[2] == 'O' &&
+        obuf[3] == 'P') {
+
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidGIOPMessage,
+                  pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+  }
+  CORBA::Octet flags = obuf[6];
+  CORBA::Octet type  = obuf[7];
+  CORBA::ULong size  = *(CORBA::ULong*)(obuf + 8);
+
+  if ((flags & 1) != omni::myByteOrder)
+    size = cdrStream::byteSwap(size);
+
+  pd_giop_remaining = size + 12;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+int
+httpConnection::recvExtendHTTPData(size_t required, const omni_time_t& deadline)
+{
+  // There is less data available than we require. One or both of two
+  // situations can be the case:
+  //
+  //  1. There is insufficient data in the buffer.
+  //
+  //  2. The HTTP chunk ends before all the data is available.
+
+  do {
+    int    rx;
+    size_t avail     = pd_buf_write - pd_buf_read;
+    size_t buf_space = BUF_SIZE - (pd_buf_write - pd_buf);
+
+    if (!(avail < required || pd_http_remaining < required)) {
+      // Enough data
+      return 1;
+    }
+    if (!pd_fragmented)
+      OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
+                    pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+    
+    
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Receiving from " << pd_peeraddress << " : require at least "
+          << required << " bytes. " << pd_http_remaining << " in HTTP chunk; "
+          << avail << " in buffer; " << buf_space << " space in buffer.\n";
+    }
+
+    if (avail < INLINE_SIZE && buf_space < BUF_SIZE / 16) {
+      // Make more space by copying the small amount currently in the
+      // buffer to the start.
+      memcpy(pd_buf, pd_buf_read, avail);
+      pd_buf_read  = pd_buf;
+      pd_buf_write = pd_buf + avail;
+      buf_space    = BUF_SIZE - avail;
+    }
+
+    while (avail < required) {
+      // Read some more data
+      if ((rx = realRecv(pd_buf_write, buf_space, deadline)) < 1)
+        return rx;
+
+      pd_buf_write += (size_t)rx;
+
+      avail     = pd_buf_write - pd_buf_read;
+      buf_space = BUF_SIZE - (pd_buf_write - pd_buf);
+    }
+
+    if (pd_http_remaining < required) {
+      // Read a new HTTP chunk, keeping any data that was available in
+      // the previous chunk.
+
+      OMNIORB_ASSERT(pd_http_remaining < INLINE_SIZE);
+
+      size_t       saved_http = pd_http_remaining;
+      CORBA::Octet tmp_buf[INLINE_SIZE];
+
+      if (saved_http) {
+        memcpy(tmp_buf, pd_buf_read, saved_http);
+        pd_buf_read += saved_http;
+      }
+
+      if ((rx = readNextChunk(deadline, 1)) < 1)
+        return rx;
+
+      if (saved_http) {
+        pd_http_remaining += saved_http;
+        pd_buf_read       -= saved_http;
+
+        memcpy(pd_buf_read, tmp_buf, saved_http);
+      }
+
+      // If we are really unlucky, there may still be insufficient
+      // data availble, either because the new chunk is very small, or
+      // because there isn't enough in the buffer. We loop to check
+      // again.
+    }
+  } while (1);
+}
+
 
 /////////////////////////////////////////////////////////////////////////
 size_t
-httpConnection::recvDecrypt(void* buf, size_t buf_sz, size_t recv_sz,
+httpConnection::recvDecrypt(void*              buf,
+                            size_t             buf_sz,
+                            size_t             http_sz,
+                            CORBA::Boolean     giop_start,
                             const omni_time_t& deadline) {
 
-  size_t         overhead   = pd_crypto->decryptOverhead();
-  size_t         decrypt_sz = 0;
-  CORBA::Boolean decrypted  = 0;
-    
-  if (buf_sz < recv_sz + overhead) {
+  size_t overhead = pd_crypto->decryptOverhead();
+  size_t giop_sz  = 0;
+
+  if (buf_sz < http_sz + overhead) {
     // The decrypted data may not fit in the buffer. This can be due
     // to the following situations:
     //
@@ -970,103 +1237,109 @@ httpConnection::recvDecrypt(void* buf, size_t buf_sz, size_t recv_sz,
     //      larger size than expected. We throw
     //      MARSHAL_InvalidEncryptedData.
 
-    if (recv_sz + overhead <= INLINE_SIZE) {
+    if (http_sz + overhead <= INLINE_SIZE) {
       // Very little received data, and very little buffer space to
       // write to. Decrypt into a temporary buffer on the stack.
       CORBA::Octet tmp_buf[INLINE_SIZE];
-      decrypt_sz = pd_crypto->decrypt(tmp_buf, pd_buf_read, recv_sz,
-                                      pd_remaining == recv_sz);
-      decrypted = 1;
 
-      if (decrypt_sz <= buf_sz)
-        memcpy(buf, tmp_buf, decrypt_sz);
-      else
+      if (omniORB::trace(25)) {
+        omniORB::logger log;
+        log << "Decrypt data from " << pd_peeraddress << " via inline buffer. "
+            << buf_sz << " bytes in target buffer; " << http_sz
+            << " bytes of HTTP data.\n";
+      }
+      giop_sz = recvDecrypt(tmp_buf, INLINE_SIZE, http_sz,
+                            giop_start, deadline);
+
+      if (giop_sz <= buf_sz) {
+        memcpy(buf, tmp_buf, giop_sz);
+        return giop_sz;
+      }
+      else {
         OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
                       pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+      }
     }
     else {
       // Reduce the amount of data we decrypt, leaving some
       // encrypted data in the buffer to be handled on the next call
       // to Recv().
-      recv_sz -= overhead;
+      http_sz -= overhead;
     }
   }
-  if (!decrypted)
-    decrypt_sz = pd_crypto->decrypt((CORBA::Octet*)buf, pd_buf_read, recv_sz,
-                                    pd_remaining == recv_sz);
 
-  pd_buf_read  += recv_sz;
-  pd_remaining -= recv_sz;
+  // If this is not the start of a GIOP message, and the HTTP data is
+  // all the encrypted data, this is definitely the last block to
+  // decrypt.
+  CORBA::Boolean last = !giop_start && http_sz == pd_encrypted_remaining;
+  
+  giop_sz = pd_crypto->decrypt((CORBA::Octet*)buf, pd_buf_read, http_sz, last);
 
-  if (pd_recv_start_msg) {
-    // We need to know the size of the GIOP message
-    const CORBA::Octet* obuf = (const CORBA::Octet*)buf;
+  pd_buf_read += http_sz;
 
-    if (!(obuf[0] == 'G' || obuf[0] == 'Z') &&
-          obuf[1] == 'I' &&
-          obuf[2] == 'O' &&
-          obuf[3] == 'P') {
-
+  if (giop_start) {
+    if (giop_sz < 12)
       OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
                     pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
-    }
-    CORBA::Octet flags = obuf[6];
-    CORBA::Octet type  = obuf[7];
-    CORBA::ULong size  = *(CORBA::ULong*)(obuf + 8);
 
-    if ((flags & 1) != omni::myByteOrder)
-      size = cdrStream::byteSwap(size);
+    readGIOPSize(buf);
 
-    pd_decrypt_remaining = size + 12;
+    pd_encrypted_remaining = pd_crypto->encryptedSize(pd_giop_remaining);
   }
 
-  pd_decrypt_remaining -= decrypt_sz;
+  pd_encrypted_remaining -= http_sz;
 
-  if (!pd_decrypt_remaining && pd_remaining) {
+  if (!last && pd_encrypted_remaining == 0) {
+    // The data was the last in the encrypted block, but we did not
+    // know that in the call to decrypt() above.
+    giop_sz += pd_crypto->decrypt(((CORBA::Octet*)buf) + giop_sz,
+                                  pd_buf_read, 0, 1);
+  }
+
+  pd_http_remaining -= http_sz;
+  pd_giop_remaining -= giop_sz;  
+
+  if (!pd_giop_remaining && pd_encrypted_remaining) {
+
     // The GIOP message is complete, but some padding bytes remain
     // in the encrypted data in the HTTP message. We must handle
     // them here, because either:
     //
     //  1. The whole transfer is complete, and the caller will not
     //     be asking for any more data.
+    //     
     // or
     // 
     //  2. There are more fragments to come, and the caller will
-    //     call again but receive zero bytes, which it will
+    //     call again but receive zero GIOP bytes, which it will
     //     interpret as a timeout.
+    
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Read trailing encrypted data from " << pd_peeraddress << " : "
+          << pd_encrypted_remaining << " encrypted bytes; "
+          << pd_http_remaining << " remaining HTTP bytes.\n";
+    }
 
-    while (pd_remaining) {
-      size_t avail = pd_buf_write - pd_buf_read;
+    int rx;
+    if ((rx = recvExtendHTTPData(pd_encrypted_remaining, deadline)) < 1)
+      return rx;
+    
+    CORBA::Octet tmp_buf[INLINE_SIZE];
 
-      if (!avail) {
-        pd_buf_write = pd_buf_read = pd_buf;
-
-        int rx;
-        if ((rx = realRecv(pd_buf_write, pd_remaining, deadline)) < 1)
-          return rx;
-
-        pd_buf_write += (size_t)rx;
-        avail = pd_buf_write - pd_buf_read;
-      }
-          
-      if (avail > pd_remaining)
-        avail = pd_remaining;
-
-      CORBA::Octet tmp_buf[INLINE_SIZE];
-
-      if (pd_crypto->decrypt((CORBA::Octet*)tmp_buf, pd_buf_read,
-                             avail, pd_remaining == avail)) {
+    if (pd_crypto->decrypt((CORBA::Octet*)tmp_buf, pd_buf_read,
+                           pd_encrypted_remaining, 1)) {
 
         // Decrypt should have resulted in no data
         OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
                       pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
-      }
-
-      pd_remaining -= avail;
-      pd_buf_read  += avail;
     }
+    
+    pd_http_remaining      -= pd_encrypted_remaining;
+    pd_buf_read            += pd_encrypted_remaining;
+    pd_encrypted_remaining  = 0;
   }
-  return decrypt_sz;
+  return giop_sz;
 }
 
 
@@ -1172,6 +1445,11 @@ httpConnection::realRecv(void* buf, size_t sz,
 
   } while(1);
 
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "Received " << rx << " HTTP bytes from " << pd_peeraddress << "\n";
+  }
+  
   return rx;
 }
 
@@ -1317,7 +1595,8 @@ httpConnection::httpConnection(SocketHandle_t    sock,
   pd_client(client),
   pd_via_proxy(via_proxy),
   pd_proxy_auth(proxy_auth),
-  pd_remaining(0),
+  pd_giop_remaining(0),
+  pd_http_remaining(0),
   pd_fragmented(0),
   pd_more_fragments(0),
   pd_handshake_ok(ssl ? 0 : 1),

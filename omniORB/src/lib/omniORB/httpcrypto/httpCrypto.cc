@@ -328,7 +328,6 @@ writeAuthHeader(char* buf, size_t buf_space)
   }
 
   // Construct new key and send it to the server
-
   int             self_size = RSA_size(pd_self_rsa);
   int             peer_size = RSA_size(pd_peer_rsa);
 
@@ -390,7 +389,12 @@ writeAuthHeader(char* buf, size_t buf_space)
 
   omni_thread::get_time(pd_deadline, pd_impl->key_lifetime());
   pd_impl->assignedKey(pd_peer_ident, pd_key, pd_key_ident, pd_deadline);
-  
+
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "Send new session key to " << pd_peer_ident.c_str() << "\n";
+  }
+
   return (size_t)n;
 }
 
@@ -462,13 +466,19 @@ encrypt(CORBA::Octet*       write_buf,
   }
 
   int write_size;
-  if (!EVP_EncryptUpdate(pd_cipher_ctx, write_buf, &write_size,
-                         read_buf, (int)read_size)) {
 
-    ERR_print_errors_cb(logError, 0);
-    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData, CORBA::COMPLETED_NO);
+  if (read_size) {
+    if (!EVP_EncryptUpdate(pd_cipher_ctx, write_buf, &write_size,
+                           read_buf, (int)read_size)) {
+
+      ERR_print_errors_cb(logError, 0);
+      OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData, CORBA::COMPLETED_NO);
+    }
   }
-
+  else {
+    write_size = 0;
+  }    
+    
   written += (size_t)write_size;
 
   if (last) {
@@ -530,14 +540,19 @@ decrypt(CORBA::Octet*       write_buf,
   }
 
   int write_size;
-  
-  if (!EVP_DecryptUpdate(pd_cipher_ctx, write_buf, &write_size,
-                         read_buf, read_size)) {
 
-    ERR_print_errors_cb(logError, 0);
-    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData, CORBA::COMPLETED_NO);
+  if (read_size) {
+    if (!EVP_DecryptUpdate(pd_cipher_ctx, write_buf, &write_size,
+                           read_buf, read_size)) {
+
+      ERR_print_errors_cb(logError, 0);
+      OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData, CORBA::COMPLETED_NO);
+    }
   }
-
+  else {
+    write_size = 0;
+  }
+    
   size_t written = (size_t)write_size;
 
   if (last) {
@@ -1020,6 +1035,11 @@ readAuthHeader(const char* host, const char* auth)
     sk.key.assign((const char*)key, KEY_SIZE);
     omni_thread::get_time(sk.deadline, (pd_key_lifetime * 3) / 2);
 
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Received new session key from " << client_ident.c_str() << "\n";
+    }
+    
     return new httpCrypto_AES_RSA(this, key, key_ident, client_ident,
                                   sk.deadline);
   }
