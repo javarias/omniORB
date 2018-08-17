@@ -88,7 +88,12 @@ protected:
   int realRecv(void* buf, size_t buf_sz,
                const omni_time_t& deadline);
 
-  size_t recvDecrypt(void* buf, size_t buf_sz, size_t recv_size,
+  int recvExtendHTTPData(size_t required, const omni_time_t& deadline);
+  
+  size_t recvDecrypt(void*              buf,
+                     size_t             buf_sz,
+                     size_t             http_size,
+                     CORBA::Boolean     giop_start,
                      const omni_time_t& deadline);
   
   void addRequestLine();
@@ -100,15 +105,21 @@ protected:
   void sendError(int code, const char* response, const char* msg);
   void endHeaders();
 
-  int readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline);
+  int readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline,
+               CORBA::Boolean keep_buf=0);
   // Read a \r\n terminated line into the buffer, replacing the line
   // end with null terminators. Sets buf_ptr to the next data after
-  // the line. Returns 1 on success, 0 on timeout, -1 on socket error.
-  
+  // the line. If keep_buf is true, always keeps the curent buffer
+  // contents.
+  //
+  // Returns 1 on success, 0 on timeout, -1 on socket error.
+
   void readRequestLine();
   void readResponseLine();
   void readHeader();
   void readChunkHeader();
+  int  readNextChunk(const omni_time_t& deadline, CORBA::Boolean keep_buf=0);
+  void readGIOPSize(void* buf);
 
   void setPeerDetails();
 
@@ -131,19 +142,19 @@ protected:
                                                // traditional HTTP proxy
   CORBA::String_var         pd_proxy_auth;     // Proxy auth header value
   
-  CORBA::ULong              pd_remaining;      // Remaining bytes in the current
-                                               // message
-  CORBA::ULong              pd_decrypt_remaining;
-                                               // When decrypting, the number of
-                                               // bytes left in the plaintext
+  CORBA::ULong              pd_giop_remaining; // Remaining bytes in the current
+                                               // GIOP message
+  CORBA::ULong              pd_http_remaining; // Remaining bytes in the current
+                                               // HTTP body
+  CORBA::ULong              pd_encrypted_remaining;
+                                               // Remaining bytes in encrypted
+                                               // block
   CORBA::Boolean            pd_fragmented;     // True if we are sending /
                                                // receiving a fragmented message
   CORBA::Boolean            pd_more_fragments; // True if more GIOP fragments
                                                // to come
-  CORBA::Boolean            pd_recv_start_msg; // True if recv call is receiving
-                                               // the start of a GIOP message
   CORBA::Boolean            pd_handshake_ok;   // True if all SSL handshakes
-                                              // are done
+                                               // are done
   httpContext::PeerDetails* pd_peerdetails;    // Peer certificate info
   httpCrypto*               pd_crypto;         // In-message crypto handler
 };
