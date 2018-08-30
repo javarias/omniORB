@@ -71,7 +71,7 @@ public:
   httpConnection(SocketHandle_t    sock,
                  ::SSL*            ssl,
                  SocketCollection* belong_to,
-                 const char*       host,
+                 const char*       host_header,
                  const char*       path,
                  const char*       url        = 0,
                  CORBA::Boolean    client     = 0,
@@ -92,9 +92,24 @@ protected:
   
   size_t recvDecrypt(void*              buf,
                      size_t             buf_sz,
-                     size_t             http_size,
+                     size_t             http_sz,
                      CORBA::Boolean     giop_start,
-                     const omni_time_t& deadline);
+                     const omni_time_t& deadline,
+                     int&               rx);
+
+  size_t recvDecryptLeft(void*  buf,
+                         size_t buf_sz,
+                         size_t http_sz);
+
+  size_t recvDecryptSmall(void*              buf,
+                          size_t             buf_sz,
+                          size_t             http_sz,
+                          size_t             overhead,
+                          CORBA::Boolean     giop_start,
+                          const omni_time_t& deadline,
+                          int&               rx);
+
+  int recvDecryptTrailing(const omni_time_t& deadline);
   
   void addRequestLine();
   void addResponseLine(int code, const char* msg);
@@ -131,8 +146,7 @@ protected:
   CORBA::Octet*             pd_buf;            // Buffer for HTTP data
   CORBA::Octet*             pd_buf_write;      // Write pointer into buffer
   CORBA::Octet*             pd_buf_read;       // Read pointer into buffer
-
-  CORBA::String_var         pd_host;           // Value for Host header
+  CORBA::String_var         pd_host_header;    // Value for Host header
   CORBA::String_var         pd_path;           // URL path
   CORBA::String_var         pd_url;            // On the client side, the
                                                // server's URL
@@ -157,6 +171,9 @@ protected:
                                                // are done
   httpContext::PeerDetails* pd_peerdetails;    // Peer certificate info
   httpCrypto*               pd_crypto;         // In-message crypto handler
+  CORBA::Octet*             pd_decrypted_left; // Data that has been decrypted
+                                               // but not yet fed to the caller
+  CORBA::ULong              pd_decrypted_sz;   // Amount of decrypted data left
 };
 
 
@@ -167,7 +184,7 @@ public:
   giopConnection& getConnection();
 
   httpActiveConnection(SocketHandle_t sock,
-                       const char*    host,
+                       const char*    host_header,
                        const char*    path,
                        const char*    url,
                        CORBA::Boolean via_proxy,
@@ -182,8 +199,7 @@ public:
   // Perform an SSL handshake, setting pd_ssl. If pd_ssl is already
   // set, sets up another SSL connection inside that one.
 
-  CORBA::Boolean proxyConnect(const char*        host,
-                              CORBA::UShort      port,
+  CORBA::Boolean proxyConnect(const char*        proxy_url,
                               const omni_time_t& deadline,
                               CORBA::Boolean&    timed_out);
   // Perform an HTTP CONNECT for an HTTPS URL.

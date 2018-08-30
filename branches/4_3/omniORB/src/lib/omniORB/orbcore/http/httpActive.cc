@@ -112,12 +112,12 @@ httpActiveCollection::deactivate() {
 
 /////////////////////////////////////////////////////////////////////////
 httpActiveConnection::httpActiveConnection(SocketHandle_t sock,
-                                           const char*    host,
+                                           const char*    host_header,
                                            const char*    path,
                                            const char*    url,
                                            CORBA::Boolean via_proxy,
                                            const char*    proxy_auth) :
-  httpConnection(sock, 0, &myCollection, host, path, url,
+  httpConnection(sock, 0, &myCollection, host_header, path, url,
                  1, via_proxy, proxy_auth),
   pd_proxy_peerdetails(0),
   pd_registered(0)

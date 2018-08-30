@@ -70,6 +70,7 @@ endif
 ORB_SRCS =  \
 	    anonObject.cc \
 	    callDescriptor.cc \
+	    connectionInfo.cc \
 	    constants.cc \
 	    corbaObject.cc \
 	    corbaBoa.cc \

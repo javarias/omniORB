@@ -29,9 +29,9 @@
 #ifndef __SSLTRANSPORTIMPL_H__
 #define __SSLTRANSPORTIMPL_H__
 
-class sslContext;
-
 OMNI_NAMESPACE_BEGIN(omni)
+
+class sslContext;
 
 class sslTransportImpl : public giopTransportImpl {
 public:

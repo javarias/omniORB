@@ -30,6 +30,7 @@
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/minorCode.h>
 #include <omniORB4/omniInterceptors.h>
+#include <omniORB4/connectionInfo.h>
 #include <giopRope.h>
 #include <giopStream.h>
 #include <giopStrand.h>
@@ -808,7 +809,8 @@ giopRope::filterAndSortAddressList()
           omniORB::logger log;
           log << "Resolve name '" << host << "'...\n";
         }
-
+        ConnectionInfo::set(ConnectionInfo::RESOLVE_NAME, host);
+        
         LibcWrapper::AddrInfo_var aiv;
         aiv = LibcWrapper::getAddrInfo(host, 0);
 
@@ -819,6 +821,7 @@ giopRope::filterAndSortAddressList()
             omniORB::logger log;
             log << "Unable to resolve '" << host << "'.\n";
           }
+          ConnectionInfo::set(ConnectionInfo::NAME_RESOLUTION_FAILED, host);
         }
         else {
           while (ai) {
@@ -828,6 +831,7 @@ giopRope::filterAndSortAddressList()
               omniORB::logger log;
               log << "Name '" << host << "' resolved to " << addr << "\n";
             }
+            ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, host, addr);
             resolved.push_back(ga->duplicate(addr));
             ai = ai->next();
           }

@@ -31,6 +31,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/omniURI.h>
+#include <omniORB4/connectionInfo.h>
 #include <SocketCollection.h>
 #include <omniORB4/sslContext.h>
 #include <libcWrapper.h>
@@ -324,7 +325,11 @@ sslEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
       SSL_set_fd(ssl, pd_new_conn_socket);
       SSL_set_accept_state(ssl);
 
-      return new sslConnection(pd_new_conn_socket, ssl, this);
+      sslConnection* nc = new sslConnection(pd_new_conn_socket, ssl, this);
+      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION,
+                          nc->peeraddress());
+      return nc;
+
     }
   }
   return 0;
