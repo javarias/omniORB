@@ -48,6 +48,8 @@ OMNI_FORCE_LINK(omnisslTP);
 #include <openssl/ssl.h>
 #undef crypt
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 class sslContext {
 public:
 
@@ -242,6 +244,8 @@ protected:
   SSL_CTX*          pd_ctx;
   omni_tracedmutex  pd_ctx_lock;
 };
+
+OMNI_NAMESPACE_END(omni)
 
 #undef _core_attr
 

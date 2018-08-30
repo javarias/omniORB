@@ -29,6 +29,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/connectionInfo.h>
 #include <omniORB4/omniURI.h>
 #include <orbParameters.h>
 #include <SocketCollection.h>
@@ -82,37 +83,47 @@ static const char* MONTH_NAMES[] = {
 
 /////////////////////////////////////////////////////////////////////////
 static inline CORBA::Boolean
-handleErrorSyscall(int ret, int ssl_err, const char* peer, const char* kind)
+handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
 {
   int errno_val = ERRNO;
   if (RC_TRY_AGAIN(errno_val))
     return 1;
 
+  const char* kind = send ? "send" : "recv";
+
+  ConnectionInfo::ConnectionEvent evt =
+    send ? ConnectionInfo::SEND_FAILED : ConnectionInfo::RECV_FAILED;
+
   int err_err = ERR_get_error();
   if (err_err) {
     while (err_err) {
-      if (omniORB::trace(10)) {
-        char buf[128];
-        ERR_error_string_n(err_err, buf, 128);
+      char buf[128];
+      ERR_error_string_n(err_err, buf, 128);
 
+      if (omniORB::trace(10)) {
         omniORB::logger log;
         log << peer << " " << kind << " error: " << (const char*)buf << "\n";
       }
+      ConnectionInfo::set(evt, peer, buf);
+
       err_err = ERR_get_error();
     }
   }
-  else if (omniORB::trace(10)) {
-    omniORB::logger log;
-    log << peer << " " << kind;
+  else {
+    if (omniORB::trace(10)) {
+      omniORB::logger log;
+      log << peer << " " << kind;
 
-    if (ssl_err == SSL_ERROR_ZERO_RETURN)
-      log << " connection has been closed.\n";
-    else if (ret == 0)
-      log << " observed an EOF that violates the protocol.\n";
-    else if (ret == -1)
-      log << " received an I/O error (" << errno_val << ").\n";
-    else
-      log << " unexepctedly returned " << ret << ".\n";
+      if (ssl_err == SSL_ERROR_ZERO_RETURN)
+        log << " connection has been closed.\n";
+      else if (ret == 0)
+        log << " observed an EOF that violates the protocol.\n";
+      else if (ret == -1)
+        log << " received an I/O error (" << errno_val << ").\n";
+      else
+        log << " unexepctedly returned " << ret << ".\n";
+    }
+    ConnectionInfo::set(evt, peer);
   }
   return 0;
 }
@@ -286,10 +297,16 @@ httpConnection::readRequestLine()
     }
   }
 
-  if (is_post || !strncmp((const char*)pd_buf_read, "GET ", 4))
+  if (is_post || !strncmp((const char*)pd_buf_read, "GET ", 4)) {
+    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR,
+                        pd_peeraddress, "404 Not Found");
     sendError(404, "Not Found", "Not available here\r\n");
-  else
+  }
+  else {
+    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR,
+                        pd_peeraddress, "400 Bad Request");
     sendError(400, "Bad Request", "Not available here\r\n");
+  }
   
   OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_NO);
 }
@@ -317,15 +334,24 @@ httpConnection::readResponseLine()
       }
       else if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 403 ", 13)) {
         omniORB::logs(10, "Server does not accept our key.");
+        ConnectionInfo::set(ConnectionInfo::INVALID_SESSION_KEY,
+                            pd_peeraddress);
+
         OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_UnknownClient,
                       CORBA::COMPLETED_NO);
       }
     }
     if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 407 ", 13)) {
       omniORB::logs(10, "HTTP proxy requires authentication.");
+      ConnectionInfo::set(ConnectionInfo::PROXY_REQUIRES_AUTH,
+                          pd_peeraddress);
+      
       OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_ProxyRequiresAuth,
                     CORBA::COMPLETED_NO);
     }
+    ConnectionInfo::set(ConnectionInfo::RECV_HTTP_ERROR,
+                        pd_peeraddress, (const char*)pd_buf_read);
+
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_YES);
   }
 }
@@ -365,11 +391,11 @@ httpConnection::readHeader()
       OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_NO);
   }
   else if (!strcasecmp(header, "Host")) {
-    if (strcmp(pd_host, value))
-      pd_host = (const char*)value;
+    if (strcmp(pd_host_header, value))
+      pd_host_header = (const char*)value;
 
     if (pd_peerdetails)
-      pd_peerdetails->pd_host = pd_host;
+      pd_peerdetails->pd_host_header = pd_host_header;
   }
   else if (!strcasecmp(header, "Authorization")) {
     if (pd_crypto) {
@@ -472,7 +498,7 @@ httpConnection::Send(void* buf, size_t sz,
       
         if (pd_client) {
           addRequestLine();
-          addHeader("Host", pd_host);
+          addHeader("Host", pd_host_header);
           addHeader("User-Agent", "omniORB");
 
           if (pd_proxy_auth.in())
@@ -529,6 +555,7 @@ httpConnection::Send(void* buf, size_t sz,
     }
     catch (CORBA::MARSHAL&) {
       // No room left in HTTP buffer
+      ConnectionInfo::set(ConnectionInfo::HTTP_BUFFER_FULL, pd_peeraddress);
       return -1;
     }
   }
@@ -536,9 +563,9 @@ httpConnection::Send(void* buf, size_t sz,
   if (sz > pd_giop_remaining) {
     if (omniORB::trace(1)) {
       omniORB::logger log;
-      log << "HTTP transport error. Trying to send " << (unsigned long)sz
+      log << "HTTP transport error. Trying to send " << sz
           << " bytes, but only " << pd_giop_remaining
-          << " left in current message.\n";
+          << " left in current message\n";
     }
     sz = pd_giop_remaining;
   }
@@ -651,6 +678,7 @@ httpConnection::realSend(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
         // Already timed out.
+        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
         return 0;
       }
       else {
@@ -660,6 +688,7 @@ httpConnection::realSend(void* buf, size_t sz,
 
         if (tx == 0) {
           // Timed out
+          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
           return 0;
         }
         else if (tx == RC_SOCKET_ERROR) {
@@ -667,6 +696,7 @@ httpConnection::realSend(void* buf, size_t sz,
             continue;
           }
           else {
+            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
             return -1;
           }
         }
@@ -683,13 +713,18 @@ httpConnection::realSend(void* buf, size_t sz,
       // Plain socket send
       if ((tx = ::send(pd_socket,(char*)buf,sz,0)) == RC_SOCKET_ERROR) {
         int err = ERRNO;
-        if (RC_TRY_AGAIN(err))
+        if (RC_TRY_AGAIN(err)) {
           continue;
-        else
+        }
+        else {
+          ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
           return -1;
+        }
       }
-      else if (tx == 0)
+      else if (tx == 0) {
+        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
         return -1;
+      }
     }
     else {
       // SSL send
@@ -756,7 +791,7 @@ httpConnection::readLine(CORBA::Octet*& buf_ptr, const omni_time_t& deadline,
         // start of the buffer.
         size_t avail = pd_buf_write - pd_buf_read;
 
-        if (avail > (pd_buf_read - pd_buf)) {
+        if (avail > (size_t)(pd_buf_read - pd_buf)) {
           // There is more data present in the buffer than there is
           // space at the start of the buffer, which means the line is
           // implausibly long.
@@ -847,9 +882,8 @@ httpConnection::Recv(void* buf, size_t buf_sz,
                      const omni_time_t& deadline) {
 
   int rx;
-
   CORBA::Boolean giop_start = pd_giop_remaining == 0;
-  
+
   if (pd_http_remaining == 0) {
     // Start of a message. We expect to get an HTTP header.
     omniORB::logger* log        = 0;
@@ -913,7 +947,7 @@ httpConnection::Recv(void* buf, size_t buf_sz,
 
         if (httpContext::singleton->crypto_manager) {
           pd_crypto = httpContext::singleton->crypto_manager->
-                                          readAuthHeader(pd_host, auth_header);
+                                    readAuthHeader(pd_host_header, auth_header);
           if (pd_peerdetails)
             pd_peerdetails->pd_crypto = pd_crypto;
         }
@@ -972,10 +1006,7 @@ httpConnection::Recv(void* buf, size_t buf_sz,
   size_t http_sz, giop_sz;
 
   do {
-    http_sz = buf_sz;
-  
-    if (http_sz > avail)
-      http_sz = avail;
+    http_sz = avail;
 
     if (http_sz > pd_http_remaining)
       http_sz = pd_http_remaining;
@@ -994,9 +1025,6 @@ httpConnection::Recv(void* buf, size_t buf_sz,
       size_t required = pd_crypto ? pd_crypto->encryptedSize(16) : 12;
 
       if (http_sz < required) {
-        if (!pd_fragmented)
-          OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
-                        pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
 
         if ((rx = recvExtendHTTPData(required, deadline)) < 1)
           return rx;
@@ -1010,18 +1038,27 @@ httpConnection::Recv(void* buf, size_t buf_sz,
   } while (1);
     
   if (!pd_crypto) {
+
+    if (giop_start)
+      readGIOPSize(pd_buf_read);
+
+    if (http_sz > pd_giop_remaining)
+      http_sz = pd_giop_remaining;
+
+    if (http_sz > buf_sz)
+      http_sz = buf_sz;
+    
     memcpy(buf, pd_buf_read, http_sz);
     pd_buf_read += http_sz;
     giop_sz      = http_sz;
-
-    if (giop_start)
-      readGIOPSize(buf);
 
     pd_http_remaining -= http_sz;
     pd_giop_remaining -= giop_sz;  
   }
   else {
-    giop_sz = recvDecrypt(buf, buf_sz, http_sz, giop_start, deadline);
+    giop_sz = recvDecrypt(buf, buf_sz, http_sz, giop_start, deadline, rx);
+    if (rx < 1)
+      return rx;
   }
 
   if (pd_http_remaining == 0 && pd_fragmented) {
@@ -1050,7 +1087,7 @@ httpConnection::Recv(void* buf, size_t buf_sz,
     if (omniORB::trace(25)) {
       omniORB::logger log;
       log << "Received " << http_sz << " HTTP bytes from " << pd_peeraddress
-          << " but decrypted to no GIOP data. Receive more.\n";
+          << " but decrypted to no GIOP data. Receive more\n";
     }
     return Recv(buf, buf_sz, deadline);
   }
@@ -1141,16 +1178,12 @@ httpConnection::recvExtendHTTPData(size_t required, const omni_time_t& deadline)
       // Enough data
       return 1;
     }
-    if (!pd_fragmented)
-      OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
-                    pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
-    
     
     if (omniORB::trace(25)) {
       omniORB::logger log;
       log << "Receiving from " << pd_peeraddress << " : require at least "
           << required << " bytes. " << pd_http_remaining << " in HTTP chunk; "
-          << avail << " in buffer; " << buf_space << " space in buffer.\n";
+          << avail << " in buffer; " << buf_space << " space in buffer\n";
     }
 
     if (avail < INLINE_SIZE && buf_space < BUF_SIZE / 16) {
@@ -1176,7 +1209,10 @@ httpConnection::recvExtendHTTPData(size_t required, const omni_time_t& deadline)
     if (pd_http_remaining < required) {
       // Read a new HTTP chunk, keeping any data that was available in
       // the previous chunk.
-
+      if (!pd_fragmented)
+        OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid,
+                      pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+    
       OMNIORB_ASSERT(pd_http_remaining < INLINE_SIZE);
 
       size_t       saved_http = pd_http_remaining;
@@ -1212,83 +1248,82 @@ httpConnection::recvDecrypt(void*              buf,
                             size_t             buf_sz,
                             size_t             http_sz,
                             CORBA::Boolean     giop_start,
-                            const omni_time_t& deadline) {
+                            const omni_time_t& deadline,
+                            int&               rx) {
 
+  rx              = 1;
   size_t overhead = pd_crypto->decryptOverhead();
   size_t giop_sz  = 0;
 
+  if (pd_decrypted_left)
+    return recvDecryptLeft(buf, buf_sz, http_sz);
+
   if (buf_sz < http_sz + overhead) {
-    // The decrypted data may not fit in the buffer. This can be due
-    // to the following situations:
+    // The decrypted data may not fit in the buffer.
     //
-    //   1. We just happen to have reached the end of the caller's
-    //      general purpose buffer, and on the next call to Recv()
-    //      there will be plenty more buffer space. We just decrypt
-    //      slightly less in this call and the next call will
-    //      decrypt more.
-    //
-    //   2. The buffer is an application-level buffer that is
-    //      exactly the right size for the data, so it will in fact
-    //      fit. We decrypt most of the data into the buffer, then
-    //      on the next call to Recv, we decrypt into a temporary
-    //      buffer and memcpy into the application buffer.
-    //      
-    //   3. The encrypted data is invalid, meaning it decrypts to a
-    //      larger size than expected. We throw
-    //      MARSHAL_InvalidEncryptedData.
+    // If there is a large amount of data available, we just decrypt a
+    // little less than available and the caller will call again. If
+    // there is a small amount of encrypted data, we decrypt into a
+    // buffer on the stack, filling the target buffer with as much as
+    // possible, and keeping any that is left over for the next call.
 
-    if (http_sz + overhead <= INLINE_SIZE) {
-      // Very little received data, and very little buffer space to
-      // write to. Decrypt into a temporary buffer on the stack.
-      CORBA::Octet tmp_buf[INLINE_SIZE];
-
-      if (omniORB::trace(25)) {
-        omniORB::logger log;
-        log << "Decrypt data from " << pd_peeraddress << " via inline buffer. "
-            << buf_sz << " bytes in target buffer; " << http_sz
-            << " bytes of HTTP data.\n";
-      }
-      giop_sz = recvDecrypt(tmp_buf, INLINE_SIZE, http_sz,
-                            giop_start, deadline);
-
-      if (giop_sz <= buf_sz) {
-        memcpy(buf, tmp_buf, giop_sz);
-        return giop_sz;
-      }
-      else {
-        OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
-                      pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
-      }
+    if (buf_sz + overhead <= INLINE_SIZE) {
+      return recvDecryptSmall(buf, buf_sz, http_sz, overhead,
+                              giop_start, deadline, rx);
     }
     else {
       // Reduce the amount of data we decrypt, leaving some
       // encrypted data in the buffer to be handled on the next call
       // to Recv().
-      http_sz -= overhead;
+      if (omniORB::trace(30)) {
+        omniORB::logger log;
+        log << "Reduce decrypt size from " << http_sz << " HTTP bytes to "
+            << (buf_sz - overhead)
+            << " bytes, to ensure fit in buffer of size " << buf_sz << "\n";
+      }
+      http_sz = buf_sz - overhead;
     }
   }
 
-  // If this is not the start of a GIOP message, and the HTTP data is
-  // all the encrypted data, this is definitely the last block to
-  // decrypt.
-  CORBA::Boolean last = !giop_start && http_sz == pd_encrypted_remaining;
+  // If this is the start of a GIOP message, we need to decrypt a
+  // minimal amount, so we can read the GIOP message size. If the
+  // sender has re-chunked the message, it is possible that there is
+  // more than one separately-encrypted GIOP message in the HTTP data,
+  // and we must not try to decrypt past the end of the first one.
   
-  giop_sz = pd_crypto->decrypt((CORBA::Octet*)buf, pd_buf_read, http_sz, last);
-
-  pd_buf_read += http_sz;
-
   if (giop_start) {
+    size_t start_sz = pd_crypto->encryptedSize(16);
+
+    OMNIORB_ASSERT(http_sz >= start_sz);
+
+    giop_sz = pd_crypto->decrypt((CORBA::Octet*)buf, pd_buf_read, start_sz, 0);
     if (giop_sz < 12)
       OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
                     pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
 
     readGIOPSize(buf);
 
-    pd_encrypted_remaining = pd_crypto->encryptedSize(pd_giop_remaining);
+    pd_encrypted_remaining =
+      pd_crypto->encryptedSize(pd_giop_remaining) - start_sz;
+
+    buf                = (void*)((CORBA::Octet*)buf + giop_sz);
+    pd_buf_read       += start_sz;
+    http_sz           -= start_sz;
+    pd_http_remaining -= start_sz;
   }
 
-  pd_encrypted_remaining -= http_sz;
+  CORBA::Boolean last = 0;
+  
+  if (http_sz >= pd_encrypted_remaining) {
+    http_sz = pd_encrypted_remaining;
+    last    = 1;
+  }
 
+  giop_sz += pd_crypto->decrypt((CORBA::Octet*)buf, pd_buf_read, http_sz, last);
+
+  pd_buf_read            += http_sz;
+  pd_encrypted_remaining -= http_sz;
+  
   if (!last && pd_encrypted_remaining == 0) {
     // The data was the last in the encrypted block, but we did not
     // know that in the call to decrypt() above.
@@ -1296,50 +1331,159 @@ httpConnection::recvDecrypt(void*              buf,
                                   pd_buf_read, 0, 1);
   }
 
-  pd_http_remaining -= http_sz;
-  pd_giop_remaining -= giop_sz;  
-
-  if (!pd_giop_remaining && pd_encrypted_remaining) {
-
-    // The GIOP message is complete, but some padding bytes remain
-    // in the encrypted data in the HTTP message. We must handle
-    // them here, because either:
-    //
-    //  1. The whole transfer is complete, and the caller will not
-    //     be asking for any more data.
-    //     
-    // or
-    // 
-    //  2. There are more fragments to come, and the caller will
-    //     call again but receive zero GIOP bytes, which it will
-    //     interpret as a timeout.
-    
+  if (giop_sz > pd_giop_remaining) {
     if (omniORB::trace(25)) {
       omniORB::logger log;
-      log << "Read trailing encrypted data from " << pd_peeraddress << " : "
-          << pd_encrypted_remaining << " encrypted bytes; "
-          << pd_http_remaining << " remaining HTTP bytes.\n";
+      log << "Decrypt returned " << giop_sz
+          << " bytes of data, but only expecting "
+          << pd_giop_remaining << " in GIOP message\n";
     }
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
+                    pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+  }
+  
+  pd_http_remaining -= http_sz;
+  pd_giop_remaining -= giop_sz;
 
-    int rx;
-    if ((rx = recvExtendHTTPData(pd_encrypted_remaining, deadline)) < 1)
-      return rx;
-    
-    CORBA::Octet tmp_buf[INLINE_SIZE];
+  if (!pd_giop_remaining && pd_encrypted_remaining)
+    rx = recvDecryptTrailing(deadline);
 
-    if (pd_crypto->decrypt((CORBA::Octet*)tmp_buf, pd_buf_read,
-                           pd_encrypted_remaining, 1)) {
+  return giop_sz;
+}
 
-        // Decrypt should have resulted in no data
-        OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
-                      pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
-    }
-    
-    pd_http_remaining      -= pd_encrypted_remaining;
-    pd_buf_read            += pd_encrypted_remaining;
-    pd_encrypted_remaining  = 0;
+
+/////////////////////////////////////////////////////////////////////////
+size_t
+httpConnection::recvDecryptLeft(void*  buf,
+                                size_t buf_sz,
+                                size_t http_sz)
+{
+  size_t giop_sz;
+  
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << pd_decrypted_sz
+        << " decrypted bytes previously left behind. Buffer space now "
+        << buf_sz << "; " << http_sz << " HTTP bytes\n";
+  }
+  if (pd_decrypted_sz <= buf_sz) {
+    memcpy(buf, pd_decrypted_left, pd_decrypted_sz);
+    giop_sz = pd_decrypted_sz;
+      
+    delete [] pd_decrypted_left;
+    pd_decrypted_left = 0;
+    pd_decrypted_sz   = 0;
+  }
+  else {
+    // There is more left-behind data than buffer space!
+    memcpy(buf, pd_decrypted_left, buf_sz);
+
+    size_t        new_size = pd_decrypted_sz - buf_sz;
+    CORBA::Octet* new_left = new CORBA::Octet[new_size];
+
+    memcpy(new_left, pd_decrypted_left + buf_sz, new_size);
+    delete [] pd_decrypted_left;
+
+    pd_decrypted_left = new_left;
+    pd_decrypted_sz   = (CORBA::ULong)new_size;
+    giop_sz           = buf_sz;
   }
   return giop_sz;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+size_t
+httpConnection::recvDecryptSmall(void*              buf,
+                                 size_t             buf_sz,
+                                 size_t             http_sz,
+                                 size_t             overhead,
+                                 CORBA::Boolean     giop_start,
+                                 const omni_time_t& deadline,
+                                 int&               rx)
+{
+  // Very little buffer space to write to. Decrypt into a temporary
+  // buffer on the stack.
+
+  size_t       giop_sz;
+  CORBA::Octet tmp_buf[INLINE_SIZE];
+
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "Decrypt data from " << pd_peeraddress << " via inline buffer. "
+        << buf_sz << " bytes in target buffer; " << http_sz
+        << " bytes of HTTP data\n";
+  }
+  if (http_sz > INLINE_SIZE - overhead)
+    http_sz = INLINE_SIZE - overhead;
+  
+  giop_sz = recvDecrypt(tmp_buf, INLINE_SIZE, http_sz,
+                        giop_start, deadline, rx);
+
+  if (giop_sz <= buf_sz) {
+    memcpy(buf, tmp_buf, giop_sz);
+    return giop_sz;
+  }
+  else {
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Decrypt of " << http_sz << " HTTP bytes led to " << giop_sz
+          << " bytes, but buffer space is only " << buf_sz << " bytes\n";
+    }
+    memcpy(buf, tmp_buf, buf_sz);
+
+    pd_decrypted_sz   = (CORBA::ULong)(giop_sz - buf_sz);
+    pd_decrypted_left = new CORBA::Octet[pd_decrypted_sz];
+
+    memcpy(pd_decrypted_left, tmp_buf + buf_sz, pd_decrypted_sz);
+    return buf_sz;
+  }
+}
+  
+
+/////////////////////////////////////////////////////////////////////////
+int
+httpConnection::recvDecryptTrailing(const omni_time_t& deadline)
+{
+  // The GIOP message is complete, but some padding bytes remain
+  // in the encrypted data in the HTTP message. We must handle
+  // them here, because either:
+  //
+  //  1. The whole transfer is complete, and the caller will not
+  //     be asking for any more data.
+  //     
+  // or
+  // 
+  //  2. There are more fragments to come, and the caller will
+  //     call again but receive zero GIOP bytes, which it will
+  //     interpret as a timeout.
+    
+  if (omniORB::trace(25)) {
+    omniORB::logger log;
+    log << "Read trailing encrypted data from " << pd_peeraddress << " : "
+        << pd_encrypted_remaining << " encrypted bytes; "
+        << pd_http_remaining << " remaining HTTP bytes\n";
+  }
+
+  int rx;
+  if ((rx = recvExtendHTTPData(pd_encrypted_remaining, deadline)) < 1)
+    return rx;
+    
+  CORBA::Octet tmp_buf[INLINE_SIZE];
+
+  if (pd_crypto->decrypt((CORBA::Octet*)tmp_buf, pd_buf_read,
+                         pd_encrypted_remaining, 1)) {
+
+    // Decrypt should have resulted in no data
+    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData,
+                  pd_client ? CORBA::COMPLETED_YES : CORBA::COMPLETED_NO);
+  }
+    
+  pd_http_remaining      -= pd_encrypted_remaining;
+  pd_buf_read            += pd_encrypted_remaining;
+  pd_encrypted_remaining  = 0;
+
+  return 1;
 }
 
 
@@ -1366,6 +1510,7 @@ httpConnection::realRecv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
+      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
       return 0;
     }
 
@@ -1382,6 +1527,7 @@ httpConnection::realRecv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
         continue;
 #else
+        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
         return 0;
 #endif
       }
@@ -1390,6 +1536,7 @@ httpConnection::realRecv(void* buf, size_t sz,
           continue;
         }
         else {
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
           return -1;
         }
       }
@@ -1405,13 +1552,18 @@ httpConnection::realRecv(void* buf, size_t sz,
       // Plain socket recv
       if ((rx = ::recv(pd_socket,(char*)buf,sz,0)) == RC_SOCKET_ERROR) {
         int err = ERRNO;
-        if (RC_TRY_AGAIN(err))
+        if (RC_TRY_AGAIN(err)) {
           continue;
-        else
+        }
+        else {
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
           return -1;
+        }
       }
-      else if (rx == 0)
+      else if (rx == 0) {
+        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
         return -1;
+      }
     }
     else {
       rx = SSL_read(pd_ssl,buf,sz);
@@ -1495,12 +1647,13 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
   }
   
   // Perform SSL accept
+  CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
 
   if (omniORB::trace(25)) {
     omniORB::logger log;
-    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:http");
     log << "Perform TLS accept for new incoming connection " << peer << "\n";
   }
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, peer);
 
   omni_time_t deadline;
   struct timeval tv;
@@ -1528,6 +1681,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_NONE:
       tcpSocket::setBlocking(pd_socket);
       pd_handshake_ok = 1;
+      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, peer);
       setPeerDetails();
       return 1;
 
@@ -1554,22 +1708,25 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_SSL:
     case SSL_ERROR_ZERO_RETURN:
       {
+        char buf[128];
+        ERR_error_string_n(ERR_get_error(), buf, 128);
+
         if (omniORB::trace(10)) {
           omniORB::logger log;
-          char buf[128];
-          ERR_error_string_n(ERR_get_error(), buf, 128);
-          CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
           log << "OpenSSL error detected in SSL accept from "
               << peer << " : " << (const char*) buf << "\n";
         }
+        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, peer, buf);
         go = 0;
       }
     }
   }
-  if (timeout && omniORB::trace(10)) {
-    omniORB::logger log;
-    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:http");
-    log << "Timeout in SSL accept from " << peer << "\n";
+  if (timeout) {
+    if (omniORB::trace(10)) {
+      omniORB::logger log;
+      log << "Timeout in SSL accept from " << peer << "\n";
+    }
+    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, peer);
   }
   return 0;
 }
@@ -1578,7 +1735,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
 httpConnection::httpConnection(SocketHandle_t    sock,
                                ::SSL*            ssl,
                                SocketCollection* belong_to,
-                               const char*       host,
+                               const char*       host_header,
                                const char*       path,
                                const char*       url,
                                CORBA::Boolean    client,
@@ -1589,7 +1746,7 @@ httpConnection::httpConnection(SocketHandle_t    sock,
   pd_buf(new CORBA::Octet[BUF_SIZE]),
   pd_buf_write(pd_buf),
   pd_buf_read(pd_buf),
-  pd_host(host),
+  pd_host_header(host_header),
   pd_path(path),
   pd_url(url),
   pd_client(client),
@@ -1601,7 +1758,9 @@ httpConnection::httpConnection(SocketHandle_t    sock,
   pd_more_fragments(0),
   pd_handshake_ok(ssl ? 0 : 1),
   pd_peerdetails(0),
-  pd_crypto(0)
+  pd_crypto(0),
+  pd_decrypted_left(0),
+  pd_decrypted_sz(0)
 {
   OMNI_SOCKADDR_STORAGE addr;
   SOCKNAME_SIZE_T l;
@@ -1638,6 +1797,7 @@ httpConnection::httpConnection(SocketHandle_t    sock,
 
 /////////////////////////////////////////////////////////////////////////
 httpConnection::~httpConnection() {
+
   clearSelectable();
   pd_belong_to->removeSocket(this);
 
@@ -1660,6 +1820,18 @@ httpConnection::~httpConnection() {
 
   if (pd_crypto)
     delete pd_crypto;
+
+  if (pd_decrypted_left) {
+    if (omniORB::trace(10)) {
+      omniORB::logger log;
+      log << pd_decrypted_sz
+          << " decrypted bytes left behind in closed connection "
+          << pd_peeraddress << "\n";
+    }
+    delete [] pd_decrypted_left;
+  }
+  
+  ConnectionInfo::set(ConnectionInfo::CLOSED, pd_peeraddress);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -1681,6 +1853,25 @@ httpConnection::setPeerDetails() {
   if (peer_cert) {
     verified       = SSL_get_verify_result(pd_ssl) == X509_V_OK;
     pd_peerdetails = new httpContext::PeerDetails(pd_ssl, peer_cert, verified);
+
+    if (ConnectionInfo::singleton) {
+      // Get PEM form of certificate
+      BIO* mem_bio = BIO_new(BIO_s_mem());
+      if (PEM_write_bio_X509(mem_bio, peer_cert)) {
+        BIO_write(mem_bio, "", 1);
+
+        BUF_MEM* bm;
+        BIO_get_mem_ptr(mem_bio, &bm);
+        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT,
+                            pd_peeraddress, (const char*)bm->data);
+      }
+      BIO_free_all(mem_bio);
+    }
+    
+    ConnectionInfo::set(verified ?
+                        ConnectionInfo::TLS_PEER_VERIFIED :
+                        ConnectionInfo::TLS_PEER_NOT_VERIFIED,
+                        pd_peeraddress);
 
     int lastpos = -1;
 
@@ -1726,8 +1917,11 @@ httpConnection::setPeerDetails() {
 
       if (omniORB::trace(25)) {
         omniORB::logger log;
-        log << "TLS peer identity: " << pd_peeridentity << "\n";
+        log << "TLS peer identity for " << pd_peeraddress
+            << " : " << pd_peeridentity << "\n";
       }
+      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY,
+                          pd_peeraddress, pd_peeridentity);
     }
     catch (CORBA::SystemException &ex) {
       if (omniORB::trace(2)) {
@@ -1779,12 +1973,15 @@ httpActiveConnection::sslConnect(const char*        host,
                                  const omni_time_t& deadline,
                                  CORBA::Boolean&    timed_out) {
 
+  CORBA::String_var addr_str(omniURI::buildURI("", host, port));
+  
   if (omniORB::trace(25)) {
     omniORB::logger log;
     log << "TLS connect"
         << (pd_ssl ? " (in TLS proxy tunnel)" : "")
-        << " to " << host << ":" << port << "\n";
+        << " to " << addr_str << "\n";
   }
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, addr_str);
   
   if (tcpSocket::setNonBlocking(pd_socket) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to non-blocking mode",
@@ -1816,6 +2013,7 @@ httpActiveConnection::sslConnect(const char*        host,
       // Already timed out.
       tcpSocket::logConnectFailure("Timed out before SSL handshake",
                                    host, port);
+      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
       SSL_free(ssl);
       timed_out = 1;
       return 0;
@@ -1840,6 +2038,7 @@ httpActiveConnection::sslConnect(const char*        host,
         }
         
         pd_ssl = ssl;
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, addr_str);
         setPeerDetails();
         return 1;
       }
@@ -1852,6 +2051,8 @@ httpActiveConnection::sslConnect(const char*        host,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
           tcpSocket::logConnectFailure("Timed out during SSL handshake",
                                        host, port);
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
+
           SSL_free(ssl);
           timed_out = 1;
           return 0;
@@ -1868,6 +2069,8 @@ httpActiveConnection::sslConnect(const char*        host,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
           tcpSocket::logConnectFailure("Timed out during SSL handshake",
                                        host, port);
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
+
           SSL_free(ssl);
           timed_out = 1;
           return 0;
@@ -1884,13 +2087,16 @@ httpActiveConnection::sslConnect(const char*        host,
       // otherwise falls through
     case SSL_ERROR_SSL:
       {
+        char buf[128];
+        ERR_error_string_n(ERR_get_error(),buf,128);
+
         if (omniORB::trace(10)) {
           omniORB::logger log;
-          char buf[128];
-          ERR_error_string_n(ERR_get_error(),buf,128);
           log << "OpenSSL error connecting to " << host << ":" << port
               << " : " << (const char*) buf << "\n";
         }
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, addr_str, buf);
+
         SSL_free(ssl);
         return 0;
       }
@@ -1903,32 +2109,34 @@ httpActiveConnection::sslConnect(const char*        host,
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-httpActiveConnection::proxyConnect(const char*        host,
-                                   CORBA::UShort      port,
+httpActiveConnection::proxyConnect(const char*        proxy_url,
                                    const omni_time_t& deadline,
                                    CORBA::Boolean&    timed_out)
 {
   int tx, rx;
-  
+
   // Send CONNECT request
   if (omniORB::trace(25)) {
     omniORB::logger log;
-    log << "HTTP CONNECT through proxy to " << host << ":" << port << "...\n";
+    log << "HTTP CONNECT through proxy " << proxy_url << " to "
+        << pd_host_header << "...\n";
   }
+  ConnectionInfo::set(ConnectionInfo::PROXY_CONNECT_REQUEST,
+                      proxy_url, pd_host_header);
   
   pd_buf_write = pd_buf;
 
   size_t buf_space = BUF_SIZE - (pd_buf_write - pd_buf);
 
   int n = snprintf((char*)pd_buf_write, buf_space,
-                   "CONNECT %s:%u HTTP/1.1\r\n", host, (unsigned int)port);
+                   "CONNECT %s HTTP/1.1\r\n", (const char*)pd_host_header);
 
   if (n < 0 || (size_t)n > buf_space)
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPBufferFull, CORBA::COMPLETED_NO);
 
   pd_buf_write += n;
 
-  addHeader("Host", host);
+  addHeader("Host", pd_host_header);
   addHeader("User-Agent", "omniORB");
 
   if (pd_proxy_auth.in())
@@ -1945,6 +2153,11 @@ httpActiveConnection::proxyConnect(const char*        host,
   do {
     if ((tx = realSend((void*)buf_ptr, pd_buf_write - buf_ptr, deadline)) < 1) {
       timed_out = tx == 0;
+
+      ConnectionInfo::set(timed_out ?
+                          ConnectionInfo::SEND_TIMED_OUT :
+                          ConnectionInfo::SEND_FAILED,
+                          pd_peeraddress);
       return 0;
     }
     buf_ptr += (size_t)tx;
@@ -2008,7 +2221,6 @@ httpActiveConnection::proxyConnect(const char*        host,
   omniORB::logs(25, "Proxy CONNECT successful.");
   return 1;
 }
-
 
 
 OMNI_NAMESPACE_END(omni)

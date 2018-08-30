@@ -62,7 +62,7 @@ setCallInfo(PyObject* d, giopConnection* conn)
   httpContext::PeerDetails* pd = (httpContext::PeerDetails*)conn->peerdetails();
 
   if (pd) {
-    setDictEntryIfValid(d, "http_host", pd->host());
+    setDictEntryIfValid(d, "http_host", pd->host_header());
     if (pd->crypto())
       setDictEntryIfValid(d, "http_identity", pd->crypto()->peerIdent());
 

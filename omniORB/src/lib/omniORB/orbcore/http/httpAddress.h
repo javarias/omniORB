@@ -40,7 +40,7 @@ public:
   httpAddress(const char*          url,
               CORBA::Boolean       secure,
               const IIOP::Address& address,
-              const char*          host,
+              const char*          host_header,
               const char*          path,
               httpContext*         ctx);
 
@@ -60,7 +60,7 @@ private:
   CORBA::String_var  pd_url;            // full original URL
   CORBA::Boolean     pd_secure;         // true if https
   IIOP::Address      pd_address;        // host and port to connect to
-  CORBA::String_var  pd_host;           // host component of URL
+  CORBA::String_var  pd_host_header;    // host and port component of URL
   CORBA::String_var  pd_path;           // path component of URL
   CORBA::String_var  pd_address_string;
   httpContext*       pd_ctx;

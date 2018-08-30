@@ -131,6 +131,7 @@ httpContext::real_update_proxy(const char* url,
                                const char* username, const char* password)
 {
   if (!url) {
+    pd_proxy_url    = (const char*)0;
     pd_proxy_host   = (const char*)0;
     pd_proxy_port   = 0;
     pd_proxy_auth   = (const char*)0;
@@ -143,6 +144,8 @@ httpContext::real_update_proxy(const char* url,
                              pd_proxy_port, path.out()))
       OMNIORB_THROW(INITIALIZE, INITIALIZE_TransportError, CORBA::COMPLETED_NO);
 
+    pd_proxy_url = url;
+    
     if (!strcmp(scheme, "https"))
       pd_proxy_secure = 1;
 
@@ -179,7 +182,8 @@ httpContext::real_update_proxy(const char* url,
 
 /////////////////////////////////////////////////////////////////////////
 CORBA::Boolean
-httpContext::proxy_info(char*&          host,
+httpContext::proxy_info(char*&          url,
+                        char*&          host,
                         CORBA::UShort&  port,
                         char*&          auth,
                         CORBA::Boolean& secure)
@@ -189,6 +193,7 @@ httpContext::proxy_info(char*&          host,
   if (!pd_proxy_host.in())
     return 0;
 
+  url    = CORBA::string_dup(pd_proxy_url);
   host   = CORBA::string_dup(pd_proxy_host);
   port   = pd_proxy_port;
   auth   = pd_proxy_auth.in() ? CORBA::string_dup(pd_proxy_auth) : 0;

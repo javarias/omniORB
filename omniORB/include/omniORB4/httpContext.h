@@ -110,21 +110,22 @@ public:
   class PeerDetails {
   public:
     inline PeerDetails(SSL* s, X509* c, CORBA::Boolean v)
-      : pd_ssl(s), pd_cert(c), pd_verified(v), pd_host(0), pd_crypto(0) {}
+      : pd_ssl(s), pd_cert(c), pd_verified(v), pd_host_header(0),
+        pd_crypto(0) {}
 
     ~PeerDetails();
 
-    inline SSL*           ssl()      { return pd_ssl; }
-    inline X509*          cert()     { return pd_cert; }
-    inline CORBA::Boolean verified() { return pd_verified; }
-    inline const char*    host()     { return pd_host; }
-    inline httpCrypto*    crypto()   { return pd_crypto; }
+    inline SSL*           ssl()         { return pd_ssl; }
+    inline X509*          cert()        { return pd_cert; }
+    inline CORBA::Boolean verified()    { return pd_verified; }
+    inline const char*    host_header() { return pd_host_header; }
+    inline httpCrypto*    crypto()      { return pd_crypto; }
 
   private:
     SSL*           pd_ssl;
     X509*          pd_cert;
     CORBA::Boolean pd_verified;
-    const char*    pd_host;
+    const char*    pd_host_header;
     httpCrypto*    pd_crypto;
 
     friend class httpConnection;
@@ -148,15 +149,16 @@ public:
   //
   // Methods used internally
   
-  CORBA::Boolean proxy_info(char*&          host,
+  CORBA::Boolean proxy_info(char*&          url,
+                            char*&          host,
                             CORBA::UShort&  port,
                             char*&          auth,
                             CORBA::Boolean& secure);
-  // If a proxy is configured, returns true and populates host, port,
-  // auth, secure. If the proxy requires basic authentication, auth is
-  // set to the value that should be set in the Proxy-Authorization
-  // header (i.e. base64 encoded username:password); otherwise, auth
-  // is set to null.
+  // If a proxy is configured, returns true and populates url, host,
+  // port, auth, secure. If the proxy requires basic authentication,
+  // auth is set to the value that should be set in the Proxy-
+  // Authorization header (i.e. base64 encoded username:password);
+  // otherwise, auth is set to null.
   //
   // If no proxy is configured, returns false.
 
@@ -171,6 +173,7 @@ protected:
   void real_update_proxy(const char* url,
                          const char* username, const char* password);
 
+  CORBA::String_var pd_proxy_url;
   CORBA::String_var pd_proxy_host;
   CORBA::UShort     pd_proxy_port;
   CORBA::String_var pd_proxy_auth;

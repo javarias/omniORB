@@ -29,6 +29,7 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/httpContext.h>
 #include <omniORB4/httpCrypto.h>
+#include <omniORB4/connectionInfo.h>
 
 #include <openssl/conf.h>
 #include <openssl/rand.h>
@@ -394,7 +395,8 @@ writeAuthHeader(char* buf, size_t buf_space)
     omniORB::logger log;
     log << "Send new session key to " << pd_peer_ident.c_str() << "\n";
   }
-
+  ConnectionInfo::set(ConnectionInfo::SEND_SESSION_KEY, pd_peer_ident.c_str());
+  
   return (size_t)n;
 }
 
@@ -990,6 +992,9 @@ readAuthHeader(const char* host, const char* auth)
         log << "HTTP crypto client '" << client_ident.c_str()
             << "' is not known.\n";
       }
+      ConnectionInfo::set(ConnectionInfo::CRYPTO_CLIENT_UNKNOWN,
+                          client_ident.c_str());
+
       OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_UnknownClient,
                     CORBA::COMPLETED_NO);
     }
@@ -1039,6 +1044,9 @@ readAuthHeader(const char* host, const char* auth)
       omniORB::logger log;
       log << "Received new session key from " << client_ident.c_str() << "\n";
     }
+    ConnectionInfo::set(ConnectionInfo::RECEIVED_SESSION_KEY,
+                        client_ident.c_str());
+
     
     return new httpCrypto_AES_RSA(this, key, key_ident, client_ident,
                                   sk.deadline);

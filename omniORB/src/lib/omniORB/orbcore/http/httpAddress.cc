@@ -29,6 +29,7 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
+#include <omniORB4/connectionInfo.h>
 #include <SocketCollection.h>
 #include <omniORB4/omniURI.h>
 #include <omniORB4/httpContext.h>
@@ -61,10 +62,10 @@ httpAddress::httpAddress(const char* url, httpContext* ctx)
   // Caller should have checked the URL already
   OMNIORB_ASSERT(ok);
 
-  // pd_host contains the host from the URL. Here it is the same as
-  // pd_address.host, but in other cases pd_address.host contains the
+  // pd_host_header contains the host and port from the URL, to be
+  // used in HTTP Host headers. Here it is the same as the contents of
+  // pd_address, but in other cases pd_address.host contains the
   // resolved address.
-  pd_host = pd_address.host;
 
   if (!strcmp(scheme, "https")) {
     pd_secure = 1;
@@ -77,6 +78,8 @@ httpAddress::httpAddress(const char* url, httpContext* ctx)
       pd_address.port = 80;
   }
 
+  pd_host_header = omniURI::buildURI("", pd_address.host, pd_address.port);
+
   setAddrString();
 }
 
@@ -84,11 +87,11 @@ httpAddress::httpAddress(const char* url, httpContext* ctx)
 httpAddress::httpAddress(const char*          url,
                          CORBA::Boolean       secure,
                          const IIOP::Address& address,
-                         const char*          host,
+                         const char*          host_header,
                          const char*          path,
                          httpContext*         ctx)
   : pd_url(url), pd_secure(secure), pd_address(address),
-    pd_host(host), pd_path(path), pd_ctx(ctx)
+    pd_host_header(host_header), pd_path(path), pd_ctx(ctx)
 {
   setAddrString();
 }
@@ -125,7 +128,7 @@ httpAddress::host() const {
 giopAddress*
 httpAddress::duplicate() const {
   return new httpAddress(pd_url, pd_secure, pd_address,
-                         pd_host, pd_path, pd_ctx);
+                         pd_host_header, pd_path, pd_ctx);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -136,7 +139,7 @@ httpAddress::duplicate(const char* host) const {
   addr.port = pd_address.port;
 
   return new httpAddress(pd_url, pd_secure, addr,
-                         pd_host, pd_path, pd_ctx);
+                         pd_host_header, pd_path, pd_ctx);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -183,11 +186,11 @@ httpAddress::Connect(const omni_time_t& deadline,
   CORBA::UShort     port;
 
   // Web proxy
-  CORBA::String_var proxy_host, proxy_auth;
+  CORBA::String_var proxy_url, proxy_host, proxy_auth;
   CORBA::UShort     proxy_port;
   CORBA::Boolean    proxy_secure;
 
-  if (pd_ctx->proxy_info(proxy_host.out(), proxy_port,
+  if (pd_ctx->proxy_info(proxy_url.out(), proxy_host.out(), proxy_port,
                          proxy_auth.out(), proxy_secure)) {
     host = proxy_host;
     port = proxy_port;
@@ -196,10 +199,9 @@ httpAddress::Connect(const omni_time_t& deadline,
       omniORB::logger log;
       log << "Connect via "
           << (proxy_auth.in() ? "authenticated " : "")
-          << "web proxy "
-          << (proxy_secure ? "https://" : "http://")
-          << proxy_host << ':' << proxy_port << "/\n";
+          << "web proxy " << proxy_url << "\n";
     }
+    ConnectionInfo::set(ConnectionInfo::CONNECT_TO_PROXY, proxy_url);
   }
   else {
     host = pd_address.host;
@@ -214,7 +216,7 @@ httpAddress::Connect(const omni_time_t& deadline,
 
   CORBA::Boolean via_proxy = (proxy_host.in() && !pd_secure) ? 1 : 0;
   
-  h.conn = new httpActiveConnection(h.sock, pd_host, pd_path, pd_url,
+  h.conn = new httpActiveConnection(h.sock, pd_host_header, pd_path, pd_url,
                                     via_proxy, proxy_auth);
   
   if (proxy_host.in()) {
@@ -226,8 +228,7 @@ httpAddress::Connect(const omni_time_t& deadline,
 
     // Make an HTTP CONNECT request
     if (pd_secure)
-      if (!h.conn->proxyConnect(pd_address.host, pd_address.port,
-                                deadline, timed_out))
+      if (!h.conn->proxyConnect(proxy_url, deadline, timed_out))
         return 0;
   }
 
