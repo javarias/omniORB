@@ -117,7 +117,7 @@ omniORB::logger::logger(const char* prefix)
     if (self)
       *this << "(" << self->id() << ") ";
     else
-      *this << "(?) ";
+      *this << "(? " << omni_thread::plat_id() << ") ";
   }
 
 #if defined(HAVE_STRFTIME) && defined(HAVE_LOCALTIME)
@@ -251,6 +251,29 @@ omniORB::logger::operator<<(unsigned long n)
   pd_p += strlen(pd_p);
   return *this;
 }
+
+#if defined(_MSC_VER) && defined(_WIN64)
+
+omniORB::logger&
+omniORB::logger::operator<<(__int64 n)
+{
+  reserve(30);
+  sprintf(pd_p, "%I64d", n);
+  pd_p += strlen(pd_p);
+  return *this;
+}
+
+
+omniORB::logger&
+omniORB::logger::operator<<(unsigned __int64 n)
+{
+  reserve(30);
+  sprintf(pd_p, "%I64u", n);
+  pd_p += strlen(pd_p);
+  return *this;
+}
+
+#endif
 
 
 #ifndef NO_FLOAT
@@ -435,7 +458,7 @@ omniORB::do_logs(const char* mesg)
     if (self)
       cbuf += sprintf(cbuf, "(%d) ", self->id());
     else
-      cbuf += sprintf(cbuf, "(?) ");
+      cbuf += sprintf(cbuf, "(? %lu) ", omni_thread::plat_id());
   }
 
 #if defined(HAVE_STRFTIME) && defined(HAVE_LOCALTIME)
