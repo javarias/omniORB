@@ -272,6 +272,10 @@ _CORBA_MODULE_BEG
     logger& operator<<(unsigned long n);
     logger& operator<<(short n) {return operator<<((int)n);}
     logger& operator<<(unsigned short n) {return operator<<((unsigned int)n);}
+#if defined(_MSC_VER) && defined(_WIN64)
+    logger& operator<<(__int64 n);
+    logger& operator<<(unsigned __int64 n);
+#endif
 #ifdef HAS_Cplusplus_Bool
     logger& operator<<(bool b) { return operator<<((int)b); }
 #endif

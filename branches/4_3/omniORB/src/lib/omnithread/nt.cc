@@ -807,9 +807,16 @@ omni_thread::self(void)
     me = TlsGetValue(self_tls_index);
 
     if (me == 0) {
-      DB(cerr << "omni_thread::self: called with a non-ominthread. NULL is returned." << endl);
+      DB(cerr << "omni_thread::self: called with a non-omnithread. NULL is returned." << endl);
     }
     return (omni_thread*)me;
+}
+
+
+unsigned long
+omni_thread::plat_id()
+{
+    return GetCurrentThreadId();
 }
 
 
