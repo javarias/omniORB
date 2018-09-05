@@ -159,8 +159,15 @@ giopRope::giopRope(giopAddress* addr) :
 giopRope::~giopRope() {
   OMNIORB_ASSERT(pd_nwaiting == 0);
   giopAddressList::iterator i, last;
+
   i    = pd_addresses.begin();
   last = pd_addresses.end();
+  for (; i != last; i++) {
+    delete (*i);
+  }
+
+  i    = pd_dead_addresses.begin();
+  last = pd_dead_addresses.end();
   for (; i != last; i++) {
     delete (*i);
   }
@@ -291,7 +298,7 @@ giopRope::acquireClient(const omniIOR*      ior,
     // receive and pass along object references that we ourselves
     // cannot talk to.
     if (pd_addresses_order.empty()) {
-      resetAddressOrder(1);
+      resetAddressOrder(1, 0);
       OMNIORB_THROW(TRANSIENT,TRANSIENT_NoUsableProfile,CORBA::COMPLETED_NO);
     }
 
@@ -621,7 +628,7 @@ giopRope::notifyCommFailure(const giopAddress* addr,
 
 ////////////////////////////////////////////////////////////////////////
 void
-giopRope::resetAddressOrder(CORBA::Boolean heldlock)
+giopRope::resetAddressOrder(CORBA::Boolean heldlock, giopStrand* strand)
 {
   if (orbParameters::retainAddressOrder)
     return;
@@ -633,24 +640,28 @@ giopRope::resetAddressOrder(CORBA::Boolean heldlock)
 
   if (omniORB::trace(25)) {
     omniORB::logger log;
+    log << "Reset rope addresses (";
+
     if (pd_addresses_order.size() > pd_address_in_use) {
       const giopAddress* addr =
         pd_addresses[pd_addresses_order[pd_address_in_use]];
 
-      log << "Reset rope addresses (current address "
-          << addr->address() << ")\n";
+      log << "current address " << addr->address();
     }
     else {
-      log << "Reset rope addresses (no current address)\n";
+      log << "no current address";
     }
+    log << ")\n";
   }
-
+  
   // Names may have been resolved to addresses, so we remove the
   // resolved addresses from the end of pd_addresses.
   while (pd_addresses.size() > pd_ior_addr_size) {
-    delete pd_addresses.back();
+    pd_dead_addresses.push_back(pd_addresses.back());
     pd_addresses.pop_back();
   }
+
+  deleteDeadAddresses(strand);
 
   pd_addresses_order.clear();
   pd_addrs_filtered = 0;
@@ -672,12 +683,43 @@ giopRope::resetIdleRopeAddresses()
     giopRope* gr = (giopRope*)p;
 
     if (gr->pd_addrs_filtered && RopeLink::is_empty(gr->pd_strands))
-      gr->resetAddressOrder(1);
+      gr->resetAddressOrder(1, 0);
 
     p = p->next;
   }
 }
-    
+
+
+////////////////////////////////////////////////////////////////////////
+void
+giopRope::deleteDeadAddresses(giopStrand* strand)
+{
+  giopAddressList::iterator it = pd_dead_addresses.begin();
+
+  while (it != pd_dead_addresses.end()) {
+    CORBA::Boolean can_delete = 1;
+
+    RopeLink* p = pd_strands.next;
+    for (; p != &pd_strands; p = p->next) {
+      giopStrand* s = (giopStrand*)p;
+      if (s != strand && s->address == *it) {
+        // Still in use by a strand.
+        can_delete = 0;
+        break;
+      }
+    }
+
+    if (can_delete) {
+      delete *it;
+      *it = pd_dead_addresses.back();
+      pd_dead_addresses.pop_back();
+    }
+    else {
+      ++it;
+    }
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 int
