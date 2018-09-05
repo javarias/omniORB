@@ -1,3 +1,12 @@
+Wed  5 Sep 16:21:32 BST 2018
+============================
+
+- Always add all algorithms with OpenSSL 1.0, even if the SSL
+  transport is disabled.
+
+src/lib/omniORB/orbcore/ssl/sslTransportImpl.cc
+
+
 Wed  5 Sep 16:19:11 BST 2018
 ============================
 
