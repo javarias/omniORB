@@ -1,3 +1,15 @@
+Wed  5 Sep 16:19:11 BST 2018
+============================
+
+- Merge build fixes from 4_2 branch.
+
+mk/beforeauto.mk.in
+mk/win32.mk
+src/services/mklib/dynstublib/dir.mk
+src/tool/omkdepend/ifparser.h
+src/tool/omniidl/cxx/dir.mk
+
+
 Thu 30 Aug 14:06:02 BST 2018
 ============================
 
