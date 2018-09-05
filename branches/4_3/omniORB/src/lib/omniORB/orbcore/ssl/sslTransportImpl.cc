@@ -464,6 +464,23 @@ public:
   void attach() {
     if (_the_sslTransportImpl) return;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    if (CRYPTO_get_locking_callback() == 0) {
+      // If there is no locking callback, assume that we are looking
+      // after the OpenSSL library.
+      SSL_library_init();
+      OpenSSL_add_all_algorithms();
+      SSL_load_error_strings();
+
+      _the_locks = new omni_tracedmutex[CRYPTO_num_locks()];
+      CRYPTO_set_locking_callback(ssl_locking_callback);
+
+#  ifndef __WIN32__
+      CRYPTO_set_id_callback(ssl_thread_id);
+#  endif
+    }
+#endif
+
     if (!sslContext::singleton) {
 
       if (omniORB::trace(5)) {
@@ -486,23 +503,6 @@ public:
       sslContext::singleton = new sslContext();
       sslContext::singleton->copy_globals(1);
     }
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-    if (CRYPTO_get_locking_callback() == 0) {
-      // If there is no locking callback, assume that we are looking
-      // after the OpenSSL library.
-      SSL_library_init();
-      OpenSSL_add_all_algorithms();
-      SSL_load_error_strings();
-
-      _the_locks = new omni_tracedmutex[CRYPTO_num_locks()];
-      CRYPTO_set_locking_callback(ssl_locking_callback);
-
-#  ifndef __WIN32__
-      CRYPTO_set_id_callback(ssl_thread_id);
-#  endif
-    }
-#endif
 
     if (!RAND_status()) {
       omniORB::logs(1, "The OpenSSL random number generator has "
