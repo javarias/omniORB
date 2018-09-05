@@ -1,3 +1,13 @@
+Wed  5 Sep 16:19:11 BST 2018
+============================
+
+- Merge build fixes from 4_2 branch.
+
+mk/beforeauto.mk.in
+modules/connections/dir.mk
+modules/ziop/dir.mk
+
+
 Thu 30 Aug 13:50:10 BST 2018
 ============================
 
