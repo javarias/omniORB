@@ -944,12 +944,6 @@ extern "C" {
                                                            colon - transport));
           PyObject* pyf = PyDict_GetItem(omniPy::py_callInfoFns, pyt);
 
-          {
-            omniORB::logger log;
-            log << "*** pyf = " << (void*)pyf << "; pyt = "
-                << String_AS_STRING(pyt) << "\n";
-          }
-          
           if (pyf) {
             omniORBpyCallInfoFn fn = 0;
 
