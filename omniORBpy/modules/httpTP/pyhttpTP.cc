@@ -87,16 +87,19 @@ extern "C" {
     const char* username = 0;
     const char* password = 0;
 
-    if (!PyArg_ParseTuple(args, (char*)"s|zz", &url, &username, &password))
+    if (!PyArg_ParseTuple(args, (char*)"z|zz", &url, &username, &password))
       return 0;
 
     if (httpContext::singleton) {
-      httpContext::singleton->update_proxy(url, username, password);
+      try {
+        httpContext::singleton->update_proxy(url, username, password);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the globals. We leak copies of the strings, because there
       // is no safe time to free them.
-      httpContext::proxy_url      = CORBA::string_dup(url);
+      httpContext::proxy_url      = url ?      CORBA::string_dup(url)      : 0;
       httpContext::proxy_username = username ? CORBA::string_dup(username) : 0;
       httpContext::proxy_password = password ? CORBA::string_dup(password) : 0;
     }
@@ -120,7 +123,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"zz", &ca_file, &ca_path)) return 0;
 
     if (httpContext::singleton) {
-      httpContext::singleton->update_CA(ca_file, ca_path);
+      try {
+        httpContext::singleton->update_CA(ca_file, ca_path);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the globals. We leak copies of the strings, because there
@@ -147,7 +153,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"ss", &key_file, &password)) return 0;
 
     if (httpContext::singleton) {
-      httpContext::singleton->update_key(key_file, password);
+      try {
+        httpContext::singleton->update_key(key_file, password);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the globals. We leak copies of the strings, because there
@@ -171,7 +180,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"s", &cipher_list)) return 0;
 
     if (httpContext::singleton) {
-      httpContext::singleton->update_cipher_list(cipher_list);
+      try {
+        httpContext::singleton->update_cipher_list(cipher_list);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the global.

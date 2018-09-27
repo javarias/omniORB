@@ -86,7 +86,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"zz", &ca_file, &ca_path)) return 0;
 
     if (sslContext::singleton) {
-      sslContext::singleton->update_CA(ca_file, ca_path);
+      try {
+        sslContext::singleton->update_CA(ca_file, ca_path);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the globals. We leak copies of the strings, because there
@@ -113,7 +116,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"ss", &key_file, &password)) return 0;
 
     if (sslContext::singleton) {
-      sslContext::singleton->update_key(key_file, password);
+      try {
+        sslContext::singleton->update_key(key_file, password);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the globals. We leak copies of the strings, because there
@@ -137,7 +143,10 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)"s", &cipher_list)) return 0;
 
     if (sslContext::singleton) {
-      sslContext::singleton->update_cipher_list(cipher_list);
+      try {
+        sslContext::singleton->update_cipher_list(cipher_list);
+      }
+      OMNIORBPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS
     }
     else {
       // Set the global.
