@@ -31,10 +31,49 @@
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/callDescriptor.h>
 #include <omniORB4/callHandle.h>
+#include <omniORB4/connectionInfo.h>
 
+OMNI_NAMESPACE_BEGIN(omni)
+
+class PyConnectionInfo : public ConnectionInfo {
+public:
+  inline PyConnectionInfo(PyObject* fn) : fn_(fn)
+  {
+    Py_INCREF(fn_);
+  }
+
+  inline ~PyConnectionInfo() {
+    Py_DECREF(fn_);
+  }
+  
+  void event(ConnectionEvent evt,
+             const char*     addr,
+             const char*     info)
+  {
+    omnipyThreadCache::lock _t;
+
+    omniPy::PyRefHolder r(PyObject_CallFunction(fn_, (char*)"kss",
+                                                (unsigned long)evt,
+                                                addr, info));
+    if (!r.valid()) {
+      if (omniORB::trace(1)) {
+        omniORB::logs(1, "Python connection info callback failed. "
+                      "Traceback follows:");
+        PyErr_Print();
+      }
+      else {
+	PyErr_Clear();
+      }
+    }
+  }
+
+private:
+  PyObject* fn_;
+};
+
+OMNI_NAMESPACE_END(omni)
 
 OMNI_USING_NAMESPACE(omni);
-
 
 static PyObject* transientEHtuple   = 0;
 static PyObject* timeoutEHtuple     = 0;
@@ -973,6 +1012,76 @@ extern "C" {
     return r.retn();
   }
 
+  static char registerConnectionInfoFn_doc [] =
+  "registerConnectionInfoFn(fn)\n"
+  "\n"
+  "Register a function to receive connection information. Each time a\n"
+  "connection event occurs, the function will be called:\n"
+  "\n"
+  "  fn(event, address, info)\n"
+  "\n"
+  "Where event is a numeric event identifier (defined in\n"
+  "omniORB.ConnectionEvent), address is an address string, and info is\n"
+  "a string with additional event-specific information or None.\n";
+  
+  static PyObject* pyomni_registerConnectionInfoFn(PyObject* self,
+                                                   PyObject* args)
+  {
+    PyObject* fn;
+    
+    if (!PyArg_ParseTuple(args, (char*)"O", &fn))
+      return 0;
+
+    if (ConnectionInfo::singleton)
+      delete ConnectionInfo::singleton;
+
+    if (fn == Py_None)
+      ConnectionInfo::singleton = 0;
+    else
+      ConnectionInfo::singleton = new PyConnectionInfo(fn);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+  
+  static char traceConnectionInfo_doc [] =
+  "traceConnectionInfo(bool)\n"
+  "\n"
+  "Enable or disable logging of connection info to the omniORB logger.\n";
+  
+  static PyObject* pyomni_traceConnectionInfo(PyObject* self,
+                                              PyObject* args)
+  {
+    int on;
+    if (!PyArg_ParseTuple(args, (char*)"i", &on))
+      return 0;
+
+    if (ConnectionInfo::singleton)
+      delete ConnectionInfo::singleton;
+
+    if (on)
+      ConnectionInfo::singleton = new LoggingConnectionInfo();
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
+  static char connectionEventToString_doc [] =
+  "connectionEventToString(event)\n"
+  "\n"
+  "Return a string corresponding to the numeric connection event.\n";
+
+  static PyObject* pyomni_connectionEventToString(PyObject* self,
+                                                  PyObject* args)
+  {
+    unsigned long evt;
+    if (!PyArg_ParseTuple(args, (char*)"k", &evt))
+      return 0;
+
+    return String_FromString(
+      ConnectionInfo::toString((ConnectionInfo::ConnectionEvent)evt));
+  }
+
   
   static PyMethodDef pyomni_methods[] = {
     {(char*)"installTransientExceptionHandler",
@@ -1062,6 +1171,18 @@ extern "C" {
     {(char*)"currentCallInfo",
      pyomni_currentCallInfo,
      METH_VARARGS, currentCallInfo_doc},
+    
+    {(char*)"registerConnectionInfoFn",
+     pyomni_registerConnectionInfoFn,
+     METH_VARARGS, registerConnectionInfoFn_doc},
+    
+    {(char*)"traceConnectionInfo",
+     pyomni_traceConnectionInfo,
+     METH_VARARGS, traceConnectionInfo_doc},
+    
+    {(char*)"connectionEventToString",
+     pyomni_connectionEventToString,
+     METH_VARARGS, connectionEventToString_doc},
     
     {NULL,NULL}
   };

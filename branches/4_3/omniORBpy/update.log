@@ -1,3 +1,16 @@
+Thu 27 Sep 16:57:51 BST 2018
+============================
+
+- ConnectionInfo callback.
+
+modules/pyomniFunc.cc
+python/omniORB/ConnectionInfo.py
+python/omniORB/__init__.py
+python/omniORB/dir.mk
+python3/omniORB/ConnectionInfo.py
+python3/omniORB/dir.mk
+
+
 Thu 27 Sep 11:18:38 BST 2018
 ============================
 
