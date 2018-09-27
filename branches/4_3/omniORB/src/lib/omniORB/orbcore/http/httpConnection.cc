@@ -501,7 +501,7 @@ httpConnection::Send(void* buf, size_t sz,
           addHeader("Host", pd_host_header);
           addHeader("User-Agent", "omniORB");
 
-          if (pd_proxy_auth.in())
+          if (pd_via_proxy && pd_proxy_auth.in())
             addHeader("Proxy-Authorization", pd_proxy_auth);
 
           if (pd_crypto)
