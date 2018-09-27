@@ -1,3 +1,11 @@
+Thu 27 Sep 11:12:40 BST 2018
+============================
+
+- Do not send Proxy-Authorization after using a CONNECT request for a tunnel.
+
+src/lib/omniORB/orbcore/http/httpConnection.cc
+
+
 Wed  5 Sep 18:09:37 BST 2018
 ============================
 
