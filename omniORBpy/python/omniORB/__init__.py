@@ -300,6 +300,10 @@ Make stubs for the Interface Repository appear in the CORBA module"""
 #   myIPAddresses
 #   setPersistentServerIdentifier
 #   locationForward
+#   currentCallInfo
+#   registerConnectionInfoFn
+#   traceConnectionInfo
+#   connectionEventToString
 
 from _omnipy.omni_func import *
 
