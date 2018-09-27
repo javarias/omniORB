@@ -1,3 +1,14 @@
+Thu 27 Sep 16:56:19 BST 2018
+============================
+
+- Connection info for the Unix socket transport.
+
+include/omniORB4/connectionInfo.h
+src/lib/omniORB/orbcore/unix/unixAddress.cc
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+src/lib/omniORB/orbcore/unix/unixEndpoint.cc
+
+
 Thu 27 Sep 11:12:40 BST 2018
 ============================
 

@@ -101,8 +101,7 @@ public:
                      const char*     addr,
                      const char*     info) = 0;
 
-  const char* toString(ConnectionEvent event);
-
+  static const char* toString(ConnectionEvent event);
 
   static inline void set(ConnectionEvent evt,
                          const char*     addr,
