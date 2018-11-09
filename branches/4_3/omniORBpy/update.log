@@ -1,3 +1,12 @@
+Fri  9 Nov 11:41:44 GMT 2018
+============================
+
+- Allow unions to be unpickled.
+
+python/omniORB/__init__.py
+python3/omniORB/__init__.py
+
+
 Thu 27 Sep 16:57:51 BST 2018
 ============================
 
