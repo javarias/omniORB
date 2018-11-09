@@ -544,6 +544,9 @@ class Union(object):
             self.__setattr__(k, kw[k])
 
     def __getattr__(self, mem):
+        if mem[0] == "_":
+            raise AttributeError(mem)
+
         try:
             cmem = self._d_to_m[self._d]
             if mem == cmem:
