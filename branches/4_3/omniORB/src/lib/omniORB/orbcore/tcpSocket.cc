@@ -482,7 +482,7 @@ tcpSocket::Bind(const char*   	      	 host,
 
   if (ConnectionInfo::singleton) {
     for (CORBA::ULong idx=0; idx != endpoints.length(); ++idx)
-      ConnectionInfo::set(ConnectionInfo::BIND, endpoints[idx]);
+      ConnectionInfo::set(ConnectionInfo::BIND, 0, endpoints[idx]);
   }
   
   OMNIORB_ASSERT(bound_host);
@@ -541,31 +541,31 @@ doConnect(const char*   	 host,
 
   if (ConnectionInfo::singleton) {
     addr_str = tcpSocket::addrToURI(ai->addr(), "");
-    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, addr_str);
+    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 
   if (::connect(sock,ai->addr(),ai->addrSize()) == RC_SOCKET_ERROR) {
     tcpSocket::logConnectFailure("Failed to connect", ai);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
   }
-  ConnectionInfo::set(ConnectionInfo::CONNECTED, addr_str);
+  ConnectionInfo::set(ConnectionInfo::CONNECTED, 0, addr_str);
   return sock;
 
 #else
   if (tcpSocket::setNonBlocking(sock) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to non-blocking mode",
 				 ai);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
   }
 
   if (ConnectionInfo::singleton) {
     addr_str = tcpSocket::addrToURI(ai->addr(), "");
-    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, addr_str);
+    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 
   if (::connect(sock,ai->addr(),ai->addrSize()) == RC_SOCKET_ERROR) {
@@ -573,7 +573,7 @@ doConnect(const char*   	 host,
     int err = ERRNO;
     if (err && err != RC_EINPROGRESS) {
       tcpSocket::logConnectFailure("Failed to connect", ai);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 
       CLOSESOCKET(sock);
       return RC_INVALID_SOCKET;
@@ -587,7 +587,7 @@ doConnect(const char*   	 host,
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
       tcpSocket::logConnectFailure("Connect timed out", ai);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return RC_INVALID_SOCKET;
@@ -601,7 +601,7 @@ doConnect(const char*   	 host,
       continue;
 #else
       tcpSocket::logConnectFailure("Connect timed out", ai);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return RC_INVALID_SOCKET;
@@ -614,7 +614,7 @@ doConnect(const char*   	 host,
       else {
 	tcpSocket::logConnectFailure("Failed to connect "
                                      "(waiting for writable socket)", ai);
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return RC_INVALID_SOCKET;
       }
@@ -631,7 +631,7 @@ doConnect(const char*   	 host,
       }
       else {
 	tcpSocket::logConnectFailure("Failed to connect (no peer name)", ai);
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return RC_INVALID_SOCKET;
       }
@@ -642,12 +642,12 @@ doConnect(const char*   	 host,
 
   if (tcpSocket::setBlocking(sock) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to blocking mode", ai);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
   }
 
-  ConnectionInfo::set(ConnectionInfo::CONNECTED, addr_str);
+  ConnectionInfo::set(ConnectionInfo::CONNECTED, 0, addr_str);
   return sock;
 #endif
 }
@@ -672,7 +672,7 @@ tcpSocket::Connect(const char*        host,
       omniORB::logger log;
       log << "Resolve name '" << host << "'...\n";
     }
-    ConnectionInfo::set(ConnectionInfo::RESOLVE_NAME, host);
+    ConnectionInfo::set(ConnectionInfo::RESOLVE_NAME, 0, host);
   }
   
   LibcWrapper::AddrInfo_var aiv;
@@ -685,7 +685,7 @@ tcpSocket::Connect(const char*        host,
       omniORB::logger log;
       log << "Unable to resolve: " << host << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::NAME_RESOLUTION_FAILED, host);
+    ConnectionInfo::set(ConnectionInfo::NAME_RESOLUTION_FAILED, 1, host);
     return RC_INVALID_SOCKET;
   }
 
@@ -696,7 +696,7 @@ tcpSocket::Connect(const char*        host,
         omniORB::logger log;
 	log << "Name '" << host << "' resolved to " << addr << "\n";
       }
-      ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, host, addr);
+      ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, 0, host, addr);
     }
     SocketHandle_t sock = doConnect(host, port, deadline,
 				    strand_flags, ai, timed_out);
@@ -725,7 +725,7 @@ tcpSocket::Connect(const char*        host,
   CORBA::String_var addr_str;
   if (ConnectionInfo::singleton) {
     addr_str = tcpSocket::addrToURI(ai->addr(), "");
-    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, addr_str);
+    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 
   if (omniORB::trace(25)) {
@@ -761,7 +761,7 @@ tcpSocket::Connect(const char*        host,
       omni_thread::get_time(now);
       if (now >= deadline) {
 	tcpSocket::logConnectFailure("Connect timed out", host, port);
-        ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, addr_str);
+        ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
 
 	CFRelease(wstream);
 	timed_out = 1;
@@ -781,7 +781,7 @@ tcpSocket::Connect(const char*        host,
       log << "Failed to open CFNetwork stream to "
           << host << ":" << port << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CFRelease(wstream);
     return RC_INVALID_SOCKET;
   }
@@ -809,7 +809,7 @@ tcpSocket::Connect(const char*        host,
 		   (char*)&valtrue,sizeof(int)) == RC_SOCKET_ERROR) {
       tcpSocket::logConnectFailure("Failed to set TCP_NODELAY option",
                                    host, port);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
       CLOSESOCKET(sock);
       return RC_INVALID_SOCKET;
     }
@@ -825,7 +825,7 @@ tcpSocket::Connect(const char*        host,
 		   (char*)&bufsize, sizeof(bufsize)) == RC_SOCKET_ERROR) {
       tcpSocket::logConnectFailure("Failed to set socket send buffer",
                                    host, port);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
       CLOSESOCKET(sock);
       return RC_INVALID_SOCKET;
     }
@@ -835,7 +835,7 @@ tcpSocket::Connect(const char*        host,
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
       tcpSocket::logConnectFailure("Connect timed out", host, port);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return RC_INVALID_SOCKET;
@@ -846,7 +846,7 @@ tcpSocket::Connect(const char*        host,
     if (rc == 0) {
       // Timed out
       tcpSocket::logConnectFailure("Connect timed out", host, port);
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return RC_INVALID_SOCKET;
@@ -859,7 +859,7 @@ tcpSocket::Connect(const char*        host,
 	tcpSocket::logConnectFailure("Failed to connect "
                                      "(waiting for writable socket)",
                                      host, port);
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return RC_INVALID_SOCKET;
       }
@@ -877,7 +877,7 @@ tcpSocket::Connect(const char*        host,
       else {
 	tcpSocket::logConnectFailure("Failed to connect (no peer name)",
                                      host, port);
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return RC_INVALID_SOCKET;
       }
@@ -889,12 +889,12 @@ tcpSocket::Connect(const char*        host,
   if (tcpSocket::setBlocking(sock) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to blocking mode",
                                  host, port);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return RC_INVALID_SOCKET;
   }
 
-  ConnectionInfo::set(ConnectionInfo::CONNECTED, addr_str);
+  ConnectionInfo::set(ConnectionInfo::CONNECTED, 0, addr_str);
   return sock;
 }
 

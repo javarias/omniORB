@@ -350,7 +350,7 @@ httpEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
       }
       httpConnection* nc = new httpConnection(pd_new_conn_socket, ssl, this,
                                               pd_address.host, pd_path);
-      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION,
+      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION, 0,
                           nc->peeraddress());
       return nc;
     }

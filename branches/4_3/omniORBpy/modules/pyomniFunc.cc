@@ -47,13 +47,15 @@ public:
   }
   
   void event(ConnectionEvent evt,
+             CORBA::Boolean  is_error,
              const char*     addr,
              const char*     info)
   {
     omnipyThreadCache::lock _t;
 
-    omniPy::PyRefHolder r(PyObject_CallFunction(fn_, (char*)"kss",
+    omniPy::PyRefHolder r(PyObject_CallFunction(fn_, (char*)"kOss",
                                                 (unsigned long)evt,
+                                                (is_error ? Py_True : Py_False),
                                                 addr, info));
     if (!r.valid()) {
       if (omniORB::trace(1)) {
@@ -1018,11 +1020,13 @@ extern "C" {
   "Register a function to receive connection information. Each time a\n"
   "connection event occurs, the function will be called:\n"
   "\n"
-  "  fn(event, address, info)\n"
+  "  fn(event, is_error, address, info)\n"
   "\n"
   "Where event is a numeric event identifier (defined in\n"
-  "omniORB.ConnectionEvent), address is an address string, and info is\n"
-  "a string with additional event-specific information or None.\n";
+  "omniORB.ConnectionEvent), is_error is true if the reported event is\n"
+  "an error, false if it is purely informational, address is an\n"
+  "address string, and info is a string with additional event-specific\n"
+  "information or None.\n";
   
   static PyObject* pyomni_registerConnectionInfoFn(PyObject* self,
                                                    PyObject* args)
@@ -1045,23 +1049,29 @@ extern "C" {
   }
   
   static char traceConnectionInfo_doc [] =
-  "traceConnectionInfo(bool)\n"
+  "traceConnectionInfo(enable, errors_only=False)\n"
   "\n"
-  "Enable or disable logging of connection info to the omniORB logger.\n";
+  "Enable or disable logging of connection info to the omniORB logger.\n"
+  "If enabling and errors_only is True, only error conditions are logged;\n"
+  "otherwise, all events are logged.\n";
   
   static PyObject* pyomni_traceConnectionInfo(PyObject* self,
                                               PyObject* args)
   {
     int on;
-    if (!PyArg_ParseTuple(args, (char*)"i", &on))
+    int err_only = 0;
+    
+    if (!PyArg_ParseTuple(args, (char*)"i|i", &on, &err_only))
       return 0;
 
     if (ConnectionInfo::singleton)
       delete ConnectionInfo::singleton;
 
     if (on)
-      ConnectionInfo::singleton = new LoggingConnectionInfo();
-    
+      ConnectionInfo::singleton = new LoggingConnectionInfo(err_only);
+    else
+      ConnectionInfo::singleton = 0;
+
     Py_INCREF(Py_None);
     return Py_None;
   }

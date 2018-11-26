@@ -68,7 +68,7 @@ handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
         omniORB::logger log;
         log << peer << " " << kind << " error: " << (const char*)buf << "\n";
       }
-      ConnectionInfo::set(evt, peer, buf);
+      ConnectionInfo::set(evt, 1, peer, buf);
       
       err_err = ERR_get_error();
     }
@@ -87,7 +87,7 @@ handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
       else
         log << " unexepctedly returned " << ret << ".\n";
     }
-    ConnectionInfo::set(evt, peer);
+    ConnectionInfo::set(evt, 1, peer);
   }
   return 0;
 }
@@ -115,7 +115,7 @@ sslConnection::Send(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
 	// Already timed out.
-        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
       }
       else {
@@ -125,7 +125,8 @@ sslConnection::Send(void* buf, size_t sz,
 
 	if (tx == 0) {
 	  // Timed out
-          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1,
+                              pd_peeraddress);
 	  return 0;
 	}
 	else if (tx == RC_SOCKET_ERROR) {
@@ -133,7 +134,7 @@ sslConnection::Send(void* buf, size_t sz,
 	    continue;
           }
 	  else {
-            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
 	    return -1;
 	  }
 	}
@@ -206,7 +207,7 @@ sslConnection::Recv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
-      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
       return 0;
     }
 
@@ -219,7 +220,7 @@ sslConnection::Recv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
 	continue;
 #else
-        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
 #endif
       }
@@ -228,7 +229,7 @@ sslConnection::Recv(void* buf, size_t sz,
 	  continue;
         }
 	else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
 	  return -1;
 	}
       }
@@ -329,7 +330,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
     omniORB::logger log;
     log << "Perform TLS accept for new incoming connection " << peer << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, peer);
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, 0, peer);
 
   omni_time_t deadline;
   struct timeval tv;
@@ -357,7 +358,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_NONE:
       tcpSocket::setBlocking(pd_socket);
       pd_handshake_ok = 1;
-      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, peer);
+      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, 0, peer);
       setPeerDetails();
       return 1;
 
@@ -392,7 +393,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
           log << "OpenSSL error detected in SSL accept from "
               << peer << " : " << (const char*) buf << "\n";
         }
-        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, peer, buf);
+        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, 1, peer, buf);
 	go = 0;
       }
     }
@@ -402,7 +403,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
       omniORB::logger log;
       log << "Timeout in SSL accept from " << peer << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, peer);
+    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, 1, peer);
   }
   return 0;
 }
@@ -458,7 +459,7 @@ sslConnection::~sslConnection() {
   }
 
   CLOSESOCKET(pd_socket);
-  ConnectionInfo::set(ConnectionInfo::CLOSED, pd_peeraddress);
+  ConnectionInfo::set(ConnectionInfo::CLOSED, 0, pd_peeraddress);
 }
 
 
@@ -486,7 +487,7 @@ sslConnection::setPeerDetails() {
 
         BUF_MEM* bm;
         BIO_get_mem_ptr(mem_bio, &bm);
-        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT,
+        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT, 0,
                             pd_peeraddress, (const char*)bm->data);
       }
       BIO_free_all(mem_bio);
@@ -495,7 +496,7 @@ sslConnection::setPeerDetails() {
     ConnectionInfo::set(verified ?
                         ConnectionInfo::TLS_PEER_VERIFIED :
                         ConnectionInfo::TLS_PEER_NOT_VERIFIED,
-                        pd_peeraddress);
+                        0, pd_peeraddress);
 
     int lastpos = -1;
 
@@ -544,7 +545,7 @@ sslConnection::setPeerDetails() {
         log << "TLS peer identity for " << pd_peeraddress
             << " : " << pd_peeridentity << "\n";
       }
-      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY,
+      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY, 0,
                           pd_peeraddress, pd_peeridentity);
     }
     catch (CORBA::SystemException &ex) {

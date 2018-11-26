@@ -98,17 +98,19 @@ public:
   static _core_attr ConnectionInfo* singleton;
   
   virtual void event(ConnectionEvent evt,
+                     CORBA::Boolean  is_error,
                      const char*     addr,
                      const char*     info) = 0;
 
   static const char* toString(ConnectionEvent event);
 
   static inline void set(ConnectionEvent evt,
+                         CORBA::Boolean  is_error,
                          const char*     addr,
                          const char*     info = 0)
   {
     if (singleton)
-      singleton->event(evt, addr, info);
+      singleton->event(evt, is_error, addr, info);
   }
   
   virtual ~ConnectionInfo();
@@ -121,16 +123,19 @@ public:
   // Implementation of ConnectionInfo that logs to the omniORB logger
   // with a prefix.
 
-  inline LoggingConnectionInfo(const char* prefix = "Conn info: ")
-    : pd_prefix(prefix)
+  inline LoggingConnectionInfo(CORBA::Boolean errors_only = 0,
+                               const char*    prefix      = "Conn info: ")
+    : pd_errors_only(errors_only), pd_prefix(prefix)
   {}
   
   virtual void event(ConnectionEvent evt,
+                     CORBA::Boolean  is_error,
                      const char*     addr,
                      const char*     info);
 
 private:
-  const char* pd_prefix;
+  CORBA::Boolean pd_errors_only;
+  const char*    pd_prefix;
 };
 
 

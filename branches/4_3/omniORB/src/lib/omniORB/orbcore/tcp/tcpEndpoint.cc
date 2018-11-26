@@ -316,7 +316,7 @@ tcpEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
       tcpConnection* nc = new tcpConnection(pd_new_conn_socket, this);
 
-      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION,
+      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION, 0,
                           nc->peeraddress());
       return nc;
     }

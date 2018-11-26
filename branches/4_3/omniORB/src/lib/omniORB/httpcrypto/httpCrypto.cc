@@ -395,7 +395,8 @@ writeAuthHeader(char* buf, size_t buf_space)
     omniORB::logger log;
     log << "Send new session key to " << pd_peer_ident.c_str() << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::SEND_SESSION_KEY, pd_peer_ident.c_str());
+  ConnectionInfo::set(ConnectionInfo::SEND_SESSION_KEY, 0,
+                      pd_peer_ident.c_str());
   
   return (size_t)n;
 }
@@ -992,7 +993,7 @@ readAuthHeader(const char* host, const char* auth)
         log << "HTTP crypto client '" << client_ident.c_str()
             << "' is not known.\n";
       }
-      ConnectionInfo::set(ConnectionInfo::CRYPTO_CLIENT_UNKNOWN,
+      ConnectionInfo::set(ConnectionInfo::CRYPTO_CLIENT_UNKNOWN, 1,
                           client_ident.c_str());
 
       OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_UnknownClient,
@@ -1044,7 +1045,7 @@ readAuthHeader(const char* host, const char* auth)
       omniORB::logger log;
       log << "Received new session key from " << client_ident.c_str() << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::RECEIVED_SESSION_KEY,
+    ConnectionInfo::set(ConnectionInfo::RECEIVED_SESSION_KEY, 0,
                         client_ident.c_str());
 
     

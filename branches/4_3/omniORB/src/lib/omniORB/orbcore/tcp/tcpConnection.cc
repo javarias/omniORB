@@ -66,7 +66,7 @@ tcpConnection::Send(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
 	// Already timed out.
-        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
       }
       else {
@@ -76,7 +76,8 @@ tcpConnection::Send(void* buf, size_t sz,
 
 	if (tx == 0) {
 	  // Timed out
-          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1,
+                              pd_peeraddress);
 	  return 0;
 	}
 	else if (tx == RC_SOCKET_ERROR) {
@@ -84,7 +85,7 @@ tcpConnection::Send(void* buf, size_t sz,
 	    continue;
           }
 	  else {
-            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
 	    return -1;
 	  }
 	}
@@ -102,12 +103,12 @@ tcpConnection::Send(void* buf, size_t sz,
 	continue;
       }
       else {
-        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
 	return -1;
       }
     }
     else if (tx == 0) {
-      ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
       return -1;
     }
 
@@ -136,7 +137,7 @@ tcpConnection::Recv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
-      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
       return 0;
     }
 
@@ -149,7 +150,7 @@ tcpConnection::Recv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
 	continue;
 #else
-        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
 #endif
       }
@@ -158,7 +159,7 @@ tcpConnection::Recv(void* buf, size_t sz,
 	  continue;
         }
 	else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
 	  return -1;
 	}
       }
@@ -175,12 +176,12 @@ tcpConnection::Recv(void* buf, size_t sz,
 	continue;
       }
       else {
-        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
 	return -1;
       }
     }
     else if (rx == 0) {
-      ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
       return -1;
     }
 
@@ -246,7 +247,7 @@ tcpConnection::~tcpConnection() {
   clearSelectable();
   pd_belong_to->removeSocket(this);
   CLOSESOCKET(pd_socket);
-  ConnectionInfo::set(ConnectionInfo::CLOSED, pd_peeraddress);
+  ConnectionInfo::set(ConnectionInfo::CLOSED, 0, pd_peeraddress);
 }
 
 /////////////////////////////////////////////////////////////////////////
