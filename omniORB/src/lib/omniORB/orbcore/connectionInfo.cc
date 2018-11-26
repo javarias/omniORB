@@ -163,16 +163,19 @@ ConnectionInfo::~ConnectionInfo()
 void
 LoggingConnectionInfo::
 event(ConnectionEvent evt,
+      CORBA::Boolean  is_error,
       const char*     addr,
       const char*     info)
 {
-  omniORB::logger log(pd_prefix);
-  log << toString(evt) << " : " << addr;
+  if (is_error || !pd_errors_only) {
+    omniORB::logger log(pd_prefix);
+    log << toString(evt) << " : " << addr;
 
-  if (info)
-    log << " : " << info;
+    if (info)
+      log << " : " << info;
 
-  log << "\n";
+    log << "\n";
+  }
 }
 
 

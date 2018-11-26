@@ -201,7 +201,7 @@ httpAddress::Connect(const omni_time_t& deadline,
           << (proxy_auth.in() ? "authenticated " : "")
           << "web proxy " << proxy_url << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::CONNECT_TO_PROXY, proxy_url);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_TO_PROXY, 0, proxy_url);
   }
   else {
     host = pd_address.host;

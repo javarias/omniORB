@@ -104,7 +104,7 @@ handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
         omniORB::logger log;
         log << peer << " " << kind << " error: " << (const char*)buf << "\n";
       }
-      ConnectionInfo::set(evt, peer, buf);
+      ConnectionInfo::set(evt, 1, peer, buf);
 
       err_err = ERR_get_error();
     }
@@ -123,7 +123,7 @@ handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
       else
         log << " unexepctedly returned " << ret << ".\n";
     }
-    ConnectionInfo::set(evt, peer);
+    ConnectionInfo::set(evt, 1, peer);
   }
   return 0;
 }
@@ -298,12 +298,12 @@ httpConnection::readRequestLine()
   }
 
   if (is_post || !strncmp((const char*)pd_buf_read, "GET ", 4)) {
-    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR,
+    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR, 1,
                         pd_peeraddress, "404 Not Found");
     sendError(404, "Not Found", "Not available here\r\n");
   }
   else {
-    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR,
+    ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR, 1,
                         pd_peeraddress, "400 Bad Request");
     sendError(400, "Bad Request", "Not available here\r\n");
   }
@@ -334,7 +334,7 @@ httpConnection::readResponseLine()
       }
       else if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 403 ", 13)) {
         omniORB::logs(10, "Server does not accept our key.");
-        ConnectionInfo::set(ConnectionInfo::INVALID_SESSION_KEY,
+        ConnectionInfo::set(ConnectionInfo::INVALID_SESSION_KEY, 1,
                             pd_peeraddress);
 
         OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_UnknownClient,
@@ -343,13 +343,13 @@ httpConnection::readResponseLine()
     }
     if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 407 ", 13)) {
       omniORB::logs(10, "HTTP proxy requires authentication.");
-      ConnectionInfo::set(ConnectionInfo::PROXY_REQUIRES_AUTH,
+      ConnectionInfo::set(ConnectionInfo::PROXY_REQUIRES_AUTH, 1,
                           pd_peeraddress);
       
       OMNIORB_THROW(NO_PERMISSION, NO_PERMISSION_ProxyRequiresAuth,
                     CORBA::COMPLETED_NO);
     }
-    ConnectionInfo::set(ConnectionInfo::RECV_HTTP_ERROR,
+    ConnectionInfo::set(ConnectionInfo::RECV_HTTP_ERROR, 1,
                         pd_peeraddress, (const char*)pd_buf_read);
 
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_YES);
@@ -555,7 +555,7 @@ httpConnection::Send(void* buf, size_t sz,
     }
     catch (CORBA::MARSHAL&) {
       // No room left in HTTP buffer
-      ConnectionInfo::set(ConnectionInfo::HTTP_BUFFER_FULL, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::HTTP_BUFFER_FULL, 1, pd_peeraddress);
       return -1;
     }
   }
@@ -678,7 +678,7 @@ httpConnection::realSend(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
         // Already timed out.
-        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1, pd_peeraddress);
         return 0;
       }
       else {
@@ -688,7 +688,8 @@ httpConnection::realSend(void* buf, size_t sz,
 
         if (tx == 0) {
           // Timed out
-          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1,
+                              pd_peeraddress);
           return 0;
         }
         else if (tx == RC_SOCKET_ERROR) {
@@ -696,7 +697,7 @@ httpConnection::realSend(void* buf, size_t sz,
             continue;
           }
           else {
-            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
             return -1;
           }
         }
@@ -717,12 +718,12 @@ httpConnection::realSend(void* buf, size_t sz,
           continue;
         }
         else {
-          ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
           return -1;
         }
       }
       else if (tx == 0) {
-        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
         return -1;
       }
     }
@@ -1510,7 +1511,7 @@ httpConnection::realRecv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
-      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
       return 0;
     }
 
@@ -1527,7 +1528,7 @@ httpConnection::realRecv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
         continue;
 #else
-        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
         return 0;
 #endif
       }
@@ -1536,7 +1537,7 @@ httpConnection::realRecv(void* buf, size_t sz,
           continue;
         }
         else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
           return -1;
         }
       }
@@ -1556,12 +1557,12 @@ httpConnection::realRecv(void* buf, size_t sz,
           continue;
         }
         else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
           return -1;
         }
       }
       else if (rx == 0) {
-        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, pd_peeraddress);
+        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
         return -1;
       }
     }
@@ -1653,7 +1654,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
     omniORB::logger log;
     log << "Perform TLS accept for new incoming connection " << peer << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, peer);
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, 0, peer);
 
   omni_time_t deadline;
   struct timeval tv;
@@ -1681,7 +1682,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_NONE:
       tcpSocket::setBlocking(pd_socket);
       pd_handshake_ok = 1;
-      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, peer);
+      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, 0, peer);
       setPeerDetails();
       return 1;
 
@@ -1716,7 +1717,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
           log << "OpenSSL error detected in SSL accept from "
               << peer << " : " << (const char*) buf << "\n";
         }
-        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, peer, buf);
+        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, 1, peer, buf);
         go = 0;
       }
     }
@@ -1726,7 +1727,7 @@ httpConnection::gatekeeperCheckSpecific(giopStrand* strand)
       omniORB::logger log;
       log << "Timeout in SSL accept from " << peer << "\n";
     }
-    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, peer);
+    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, 1, peer);
   }
   return 0;
 }
@@ -1831,7 +1832,7 @@ httpConnection::~httpConnection() {
     delete [] pd_decrypted_left;
   }
   
-  ConnectionInfo::set(ConnectionInfo::CLOSED, pd_peeraddress);
+  ConnectionInfo::set(ConnectionInfo::CLOSED, 0, pd_peeraddress);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -1862,7 +1863,7 @@ httpConnection::setPeerDetails() {
 
         BUF_MEM* bm;
         BIO_get_mem_ptr(mem_bio, &bm);
-        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT,
+        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT, 0,
                             pd_peeraddress, (const char*)bm->data);
       }
       BIO_free_all(mem_bio);
@@ -1871,7 +1872,7 @@ httpConnection::setPeerDetails() {
     ConnectionInfo::set(verified ?
                         ConnectionInfo::TLS_PEER_VERIFIED :
                         ConnectionInfo::TLS_PEER_NOT_VERIFIED,
-                        pd_peeraddress);
+                        0, pd_peeraddress);
 
     int lastpos = -1;
 
@@ -1920,7 +1921,7 @@ httpConnection::setPeerDetails() {
         log << "TLS peer identity for " << pd_peeraddress
             << " : " << pd_peeridentity << "\n";
       }
-      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY,
+      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY, 0,
                           pd_peeraddress, pd_peeridentity);
     }
     catch (CORBA::SystemException &ex) {
@@ -1981,7 +1982,7 @@ httpActiveConnection::sslConnect(const char*        host,
         << (pd_ssl ? " (in TLS proxy tunnel)" : "")
         << " to " << addr_str << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, addr_str);
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, 0, addr_str);
   
   if (tcpSocket::setNonBlocking(pd_socket) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to non-blocking mode",
@@ -2013,7 +2014,7 @@ httpActiveConnection::sslConnect(const char*        host,
       // Already timed out.
       tcpSocket::logConnectFailure("Timed out before SSL handshake",
                                    host, port);
-      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1, addr_str);
       SSL_free(ssl);
       timed_out = 1;
       return 0;
@@ -2038,7 +2039,7 @@ httpActiveConnection::sslConnect(const char*        host,
         }
         
         pd_ssl = ssl;
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, 0, addr_str);
         setPeerDetails();
         return 1;
       }
@@ -2051,8 +2052,8 @@ httpActiveConnection::sslConnect(const char*        host,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
           tcpSocket::logConnectFailure("Timed out during SSL handshake",
                                        host, port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
-
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
+                              addr_str);
           SSL_free(ssl);
           timed_out = 1;
           return 0;
@@ -2069,8 +2070,8 @@ httpActiveConnection::sslConnect(const char*        host,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
           tcpSocket::logConnectFailure("Timed out during SSL handshake",
                                        host, port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
-
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
+                              addr_str);
           SSL_free(ssl);
           timed_out = 1;
           return 0;
@@ -2095,8 +2096,8 @@ httpActiveConnection::sslConnect(const char*        host,
           log << "OpenSSL error connecting to " << host << ":" << port
               << " : " << (const char*) buf << "\n";
         }
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, addr_str, buf);
-
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, 1,
+                            addr_str, buf);
         SSL_free(ssl);
         return 0;
       }
@@ -2121,7 +2122,7 @@ httpActiveConnection::proxyConnect(const char*        proxy_url,
     log << "HTTP CONNECT through proxy " << proxy_url << " to "
         << pd_host_header << "...\n";
   }
-  ConnectionInfo::set(ConnectionInfo::PROXY_CONNECT_REQUEST,
+  ConnectionInfo::set(ConnectionInfo::PROXY_CONNECT_REQUEST, 0,
                       proxy_url, pd_host_header);
   
   pd_buf_write = pd_buf;
@@ -2157,7 +2158,7 @@ httpActiveConnection::proxyConnect(const char*        proxy_url,
       ConnectionInfo::set(timed_out ?
                           ConnectionInfo::SEND_TIMED_OUT :
                           ConnectionInfo::SEND_FAILED,
-                          pd_peeraddress);
+                          1, pd_peeraddress);
       return 0;
     }
     buf_ptr += (size_t)tx;

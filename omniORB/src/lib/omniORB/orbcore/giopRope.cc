@@ -851,7 +851,7 @@ giopRope::filterAndSortAddressList()
           omniORB::logger log;
           log << "Resolve name '" << host << "'...\n";
         }
-        ConnectionInfo::set(ConnectionInfo::RESOLVE_NAME, host);
+        ConnectionInfo::set(ConnectionInfo::RESOLVE_NAME, 0, host);
         
         LibcWrapper::AddrInfo_var aiv;
         aiv = LibcWrapper::getAddrInfo(host, 0);
@@ -863,7 +863,7 @@ giopRope::filterAndSortAddressList()
             omniORB::logger log;
             log << "Unable to resolve '" << host << "'.\n";
           }
-          ConnectionInfo::set(ConnectionInfo::NAME_RESOLUTION_FAILED, host);
+          ConnectionInfo::set(ConnectionInfo::NAME_RESOLUTION_FAILED, 1, host);
         }
         else {
           while (ai) {
@@ -873,7 +873,7 @@ giopRope::filterAndSortAddressList()
               omniORB::logger log;
               log << "Name '" << host << "' resolved to " << addr << "\n";
             }
-            ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, host, addr);
+            ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, 0, host, addr);
             resolved.push_back(ga->duplicate(addr));
             ai = ai->next();
           }

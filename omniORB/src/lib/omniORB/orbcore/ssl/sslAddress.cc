@@ -107,7 +107,7 @@ sslAddress::Connect(const omni_time_t& deadline,
   if (tcpSocket::setNonBlocking(sock) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to non-blocking mode",
 				 pd_address.host, pd_address.port);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, addr_str);
+    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return 0;
   }
@@ -124,7 +124,7 @@ sslAddress::Connect(const omni_time_t& deadline,
     omniORB::logger log;
     log << "TLS connect to " << addr_str << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, addr_str);
+  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, 0, addr_str);
     
   while (1) {
 
@@ -132,7 +132,7 @@ sslAddress::Connect(const omni_time_t& deadline,
       // Already timed out.
       tcpSocket::logConnectFailure("Timed out before SSL handshake",
 				   pd_address.host, pd_address.port);
-      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
+      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1, addr_str);
       SSL_free(ssl);
       CLOSESOCKET(sock);
       timed_out = 1;
@@ -152,7 +152,7 @@ sslAddress::Connect(const omni_time_t& deadline,
 	  CLOSESOCKET(sock);
 	  return 0;
 	}
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, addr_str);
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, 0, addr_str);
 	return new sslActiveConnection(sock,ssl);
       }
 
@@ -164,8 +164,8 @@ sslAddress::Connect(const omni_time_t& deadline,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
 	  tcpSocket::logConnectFailure("Timed out during SSL handshake",
 				       pd_address.host, pd_address.port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
-
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
+                              addr_str);
 	  SSL_free(ssl);
 	  CLOSESOCKET(sock);
 	  timed_out = 1;
@@ -183,8 +183,8 @@ sslAddress::Connect(const omni_time_t& deadline,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
 	  tcpSocket::logConnectFailure("Timed out during SSL handshake",
 				       pd_address.host, pd_address.port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, addr_str);
-
+          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
+                              addr_str);
 	  SSL_free(ssl);
 	  CLOSESOCKET(sock);
 	  timed_out = 1;
@@ -210,8 +210,8 @@ sslAddress::Connect(const omni_time_t& deadline,
 	  log << "OpenSSL error connecting to " << pd_address.host
               << ":" << pd_address.port << " : " << (const char*) buf << "\n";
 	}
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, addr_str, buf);
-        
+        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, 1,
+                            addr_str, buf);        
 	SSL_free(ssl);
 	CLOSESOCKET(sock);
 	return 0;
