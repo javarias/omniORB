@@ -1,3 +1,14 @@
+Tue 27 Nov 12:34:07 GMT 2018
+============================
+
+- Merge small changes from 4_2 branch.
+
+src/examples/ami/dir.mak
+src/examples/boa/dir.mak
+src/examples/poa/shortcut/dir.mak
+src/lib/omniORB/ziopdynamic/dir.mk
+
+
 Mon 26 Nov 12:46:40 GMT 2018
 ============================
 
