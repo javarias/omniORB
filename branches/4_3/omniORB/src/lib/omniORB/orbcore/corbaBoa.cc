@@ -1207,15 +1207,6 @@ omniORB::generateNewKey(omniORB::objectKey& k)
 }
 
 
-omniORB::objectKey
-omniORB::nullkey()
-{
-  omniORB::objectKey n;
-  n.hi = n.med = n.lo = 0;
-  return n;
-}
-
-
 #if defined(HAS_Cplusplus_Namespace)
 namespace omniORB {
 #endif
