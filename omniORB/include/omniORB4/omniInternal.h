@@ -133,8 +133,9 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE_FN inline _CORBA_ULong hash(const _CORBA_Octet* key,
 					    int keysize)
   {
-    _CORBA_ULong n = 0;
-    while( keysize-- )  n = ((n << 5) ^ (n >> 27)) ^ *key++;
+    // FNV-1a hash
+    _CORBA_ULong n = 0x811c9dc5;
+    while (keysize--) n = (n ^ *key++) * 0x1000193;
     return n;
   }
   // Computes a hash of the object key.  The caller must ensure
