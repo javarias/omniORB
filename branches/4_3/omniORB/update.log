@@ -1,3 +1,17 @@
+Tue  4 Dec 10:02:22 GMT 2018
+============================
+
+- Use FNV-1a hash for object table.
+
+include/omniORB4/omniInternal.h
+include/omniORB4/omniORBcompat.h
+src/lib/omniORB/orbcore/corbaBoa.cc
+
+- Change fixed-sized struct var to store a pointer to the struct.
+
+include/omniORB4/templatedecls.h
+
+
 Thu 29 Nov 17:10:43 GMT 2018
 ============================
 
