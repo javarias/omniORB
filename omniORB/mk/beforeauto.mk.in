@@ -44,14 +44,38 @@ INSTALLPYTHONDIR := $(DESTDIR)@pythondir@
 INSTALLPYEXECDIR := $(DESTDIR)@pyexecdir@
 INSTALLIDLDIR    := $(DESTDIR)@datadir@/idl
 
+
+#############################################################################
+#
+# Cross compilation
+#
+
+ifeq (@CROSS_COMPILING@,yes)
+  EmbeddedSystem = 1
+endif
+
+
 #############################################################################
 #
 # Tool bindir to use depends on make target
 #
+
+ifndef EmbeddedSystem
+
 ifeq ($(MAKECMDGOALS),install)
-  TOOLBINDIR = $(INSTALLBINDIR)
+    TOOLBINDIR = $(INSTALLBINDIR)
 else
-  TOOLBINDIR = $(TOP)/$(BINDIR)
+    TOOLBINDIR = $(TOP)/$(BINDIR)
+endif
+
+OMKDEPEND        = $(TOOLBINDIR)/omkdepend
+OMNIORB_IDL_ONLY = $(TOOLBINDIR)/omniidl -bcxx
+
+else
+
+OMKDEPEND        = @OMKDEPEND@
+OMNIORB_IDL_ONLY = @OMNIIDL@ -bcxx
+
 endif
 
 
@@ -167,7 +191,7 @@ unexport SUBDIRS
 
 define CreateDir
 if [ ! -d $$dir ]; then \
-   (umask 002; set -x; $(MKDIRHIER) $$dir); \
+   (umask 022; set -x; $(MKDIRHIER) $$dir); \
 fi
 endef
 
@@ -445,17 +469,11 @@ OMNITHREAD_PLATFORM_LIB = $(filter-out $(patsubst %,$(LibSearchPattern),\
 
 CorbaImplementation = OMNIORB
 
-lib_depend := $(patsubst %,$(LibPattern),omniBase$(OMNIORB_MAJOR_VERSION))
-omniBase_lib_depend := $(GENERATE_LIB_DEPEND)
-
 lib_depend := $(patsubst %,$(LibPattern),omniORB$(OMNIORB_MAJOR_VERSION))
 omniORB_lib_depend := $(GENERATE_LIB_DEPEND)
 
 lib_depend := $(patsubst %,$(LibPattern),omniDynamic$(OMNIORB_MAJOR_VERSION))
 omniDynamic_lib_depend := $(GENERATE_LIB_DEPEND)
-
-OMNIORB_BASE_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
-                        omniBase$(OMNIORB_MAJOR_VERSION))
 
 OMNIORB_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
                    omniORB$(OMNIORB_MAJOR_VERSION))
@@ -463,7 +481,6 @@ OMNIORB_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
 OMNIORB_DYNAMIC_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
                            omniDynamic$(OMNIORB_MAJOR_VERSION))
 
-OMNIORB_IDL_ONLY = $(TOOLBINDIR)/omniidl -bcxx
 OMNIORB_IDL_ANY_FLAGS = -Wba
 OMNIORB_IDL = $(OMNIORB_IDL_ONLY) $(OMNIORB_IDL_ANY_FLAGS)
 OMNIORB_CPPFLAGS = -D__OMNIORB$(OMNIORB_MAJOR_VERSION)__ \
@@ -471,11 +488,11 @@ OMNIORB_CPPFLAGS = -D__OMNIORB$(OMNIORB_MAJOR_VERSION)__ \
 
 OMNIORB_IDL_OUTPUTDIR_PATTERN = -C%
 
-OMNIORB_LIB = $(OMNIORB_BASE_DLL_NAME) $(OMNIORB_DLL_NAME) $(OMNIORB_DYNAMIC_DLL_NAME)
-OMNIORB_LIB_NODYN = $(OMNIORB_BASE_DLL_NAME) $(OMNIORB_DLL_NAME)
+OMNIORB_LIB = $(OMNIORB_DLL_NAME) $(OMNIORB_DYNAMIC_DLL_NAME)
+OMNIORB_LIB_NODYN = $(OMNIORB_DLL_NAME)
 
-OMNIORB_LIB_NODYN_DEPEND = $(omniBase_lib_depend) $(omniORB_lib_depend)
-OMNIORB_LIB_DEPEND = $(omniBase_lib_depend) $(omniORB_lib_depend) $(omniDynamic_lib_depend)
+OMNIORB_LIB_NODYN_DEPEND = $(omniORB_lib_depend)
+OMNIORB_LIB_DEPEND = $(omniORB_lib_depend) $(omniDynamic_lib_depend)
 
 OMNIORB_STATIC_STUB_OBJS = \
 	$(CORBA_INTERFACES:%=$(CORBA_STUB_DIR)/%SK.o)
@@ -540,6 +557,17 @@ OMNIORB_ZIOP_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
 OMNIORB_ZIOP_DYNAMIC_LIB = $(patsubst %,$(LibSearchPattern),omniZIOPDynamic$(OMNIORB_MAJOR_VERSION))
 lib_depend := $(patsubst %,$(LibPattern),omniZIOPDynamic$(OMNIORB_MAJOR_VERSION))
 OMNIORB_ZIOP_DYNAMIC_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
+
+
+# COS
+OMNIORB_COS_LIB = $(patsubst %,$(LibSearchPattern),COS$(OMNIORB_MAJOR_VERSION))
+lib_depend := $(patsubst %,$(LibPattern),COS$(OMNIORB_MAJOR_VERSION))
+OMNIORB_COS_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
+
+OMNIORB_COS_DYNAMIC_LIB = $(patsubst %,$(LibSearchPattern),COSDynamic$(OMNIORB_MAJOR_VERSION))
+lib_depend := $(patsubst %,$(LibPattern),COSDynamic$(OMNIORB_MAJOR_VERSION))
+OMNIORB_COS_DYNAMIC_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
+
 
 
 ##########################################################################
@@ -697,7 +725,6 @@ INSTEXEFLAGS	= -m 0755
 CP		= cp
 MV		= mv -f
 CPP		= @CPP@
-OMKDEPEND	= $(TOOLBINDIR)/omkdepend
 RMDIRHIER	= $(RM) -rf
 
 CXXMAKEDEPEND   = $(OMKDEPEND) -D__cplusplus
@@ -749,14 +776,6 @@ endif
 
 ifeq (@ENABLE_ZIOP@,yes)
 EnableZIOP = 1
-endif
-
-#
-# Enable C++11 mapping?
-#
-
-ifeq (@ENABLE_CXX11@,yes)
-EnableCXX11 = 1
 endif
 
 
@@ -1019,10 +1038,6 @@ SharedLibraryPlatformLinkFlagsTemplate = -G -qmkshrobj \
 endif
 
 ifdef Compiler_GCC
-# A lot of this is stolen from the mk/platform/powerpc_aix4.3_gcc
-# platform file, some of it is made up.  This is tested on AIX 5.3
-# with gcc 4.2.0 (as included in the AIX Toolbox for Linux
-# Applications 4/2008 (they really mean GNU applications!)).
 
 IMPORT_CPPFLAGS += -D__aix__
 CMAKEDEPEND     += -D_AIX
@@ -1035,19 +1050,21 @@ LibPattern = lib%-ar.a
 LibDebugPattern = lib%-ar.a
 LibNoDebugPattern = lib%-ar.a
 LibSuffixPattern = %-ar.a
-LibSearchPattern = -l%-ar
 
 # Name all shared libraries with .a suffix
 LibSharedPattern = lib%.a
 LibSharedSuffixPattern = %.a
 LibSharedSearchPattern = -l%
 
+# Link with shared libraries
+LibSearchPattern = -l%$(OMNIORB_MINOR_VERSION)
+
 # OMNI thread stuff
 ThreadSystem = Posix
 OMNITHREAD_POSIX_CPPFLAGS = -DNoNanoSleep -DPthreadDraftVersion=10
 OMNITHREAD_CPPFLAGS = -D_REENTRANT -D_THREAD_SAFE
 OMNITHREAD_PLATFORM_LIB = -lpthreads
-OMNITHREAD_LIB = -lomnithread$(OMNITHREAD_MAJOR_VERSION)$(OMNITHREAD_MINOR_VERSION) $(OMNITHREAD_PLATFORM_LIB)
+OMNITHREAD_LIB = -lomnithread$(OMNITHREAD_MAJOR_VERSION) $(OMNITHREAD_PLATFORM_LIB)
 
 # Shared library support stuff
 SHAREDLIB_SUFFIX   = a
@@ -1055,7 +1072,7 @@ PythonSHAREDLIB_SUFFIX = so
 SharedLibraryFullNameTemplate = lib$$1$$2$$3$$4.$(SHAREDLIB_SUFFIX)
 SharedLibrarySoNameTemplate = lib$$1$$2.$(SHAREDLIB_SUFFIX).$$3
 SharedLibraryLibNameTemplate = lib$$1$$2$$3.$(SHAREDLIB_SUFFIX)
-SharedLibraryPlatformLinkFlagsTemplate = -shared -fPIC -Wl,-brtl -Wl,-bexpfull -Wl,-blibpath:/lib:/usr/lib:$(prefix)/lib
+SharedLibraryPlatformLinkFlagsTemplate = -shared -fPIC -Wl,-brtl -Wl,-blibpath:/lib:/usr/lib:$(prefix)/lib
 
 endif	# Compiler_GCC
 endif	# AIX
@@ -1067,19 +1084,22 @@ IMPORT_CPPFLAGS += -D__darwin__
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=10 \
                             -DPthreadSupportThreadPriority -DNoNanoSleep
 
-CXXOPTIONS = -fno-common -bind_at_load @EXTRA_GCC_CXXFLAGS@
+CXXOPTIONS = -fno-common @EXTRA_GCC_CXXFLAGS@
 SHAREDLIB_SUFFIX = dylib
+
+ifeq (@OMNI_USE_CFNETWORK_CONNECT@,yes)
+CXXLINKOPTIONS += -framework CoreFoundation
+endif
 
 SharedLibraryFullNameTemplate = lib$$1$$2.$$3.$$4.$(SHAREDLIB_SUFFIX)
 SharedLibrarySoNameTemplate = lib$$1$$2.$$3.$(SHAREDLIB_SUFFIX)
 SharedLibraryLibNameTemplate = lib$$1$$2.$(SHAREDLIB_SUFFIX)
 SharedLibraryPlatformLinkFlagsTemplate = -dynamiclib \
-                                         -install_name $(INSTALLLIBDIR)/$$soname \
+                                         -install_name $(INSTALLLIBDIR)/$(SharedLibraryFullNameTemplate) \
                                          -flat_namespace \
                                          -undefined suppress
 PythonLibraryPlatformLinkFlagsTemplate = -bundle -flat_namespace \
-                                         -undefined suppress \
-                                         -bind_at_load
+                                         -undefined suppress
 PythonSHAREDLIB_SUFFIX = so
 
 

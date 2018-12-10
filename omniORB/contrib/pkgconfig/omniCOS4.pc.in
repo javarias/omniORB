@@ -5,9 +5,9 @@ datadir=@datadir@
 idldir=${datadir}/idl/omniORB/COS
 includedir=@includedir@
 
-Name: omniCOS5
+Name: omniCOS4
 Description: CORBA Object Request Broker - CORBA Services stubs
 Version: @PACKAGE_VERSION@
-Requires: omniORB5
-Libs: -L${libdir} -lCOS5
+Requires: omniORB4
+Libs: -L${libdir} -lCOS4
 Cflags:

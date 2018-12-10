@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -434,9 +432,8 @@ CORBA::Boolean
 orbOptions::getULong(const char* value, CORBA::ULong& result) {
 
   unsigned long v;
-  char* end;
-  v = strtoul(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
+  v = strtoul(value,0,10);
+  if (v == ULONG_MAX && errno == ERANGE) return 0;
   result = v;
   return 1;
 }
@@ -446,33 +443,10 @@ CORBA::Boolean
 orbOptions::getLong(const char* value, CORBA::Long& result) {
 
   long v;
-  char* end;
-  v = strtol(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
+  v = strtol(value,0,10);
+  if (v == LONG_MAX && errno == ERANGE) return 0;
   result = v;
   return 1;
-}
-
-////////////////////////////////////////////////////////////////////////
-CORBA::Boolean
-orbOptions::getSizeT(const char* value, size_t& result) {
-
-#if defined (_WIN64)
-  __int64 v;
-  char* end;
-  v = _strtoui64(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
-  result = v;
-  return 1;
-
-#else
-  size_t v;
-  char* end;
-  v = strtoul(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
-  result = v;
-  return 1;
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -495,7 +469,7 @@ orbOptions::addKVBoolean(const char* key, CORBA::Boolean value,
 ////////////////////////////////////////////////////////////////////////
 void
 orbOptions::addKVULong(const char* key, CORBA::ULong value,
-                       orbOptions::sequenceString& result) {
+			 orbOptions::sequenceString& result) {
 
   CORBA::String_var kv;
   CORBA::ULong l;
@@ -520,28 +494,6 @@ orbOptions::addKVLong(const char* key, CORBA::Long value,
   l = strlen(key) + 16;
   kv = CORBA::string_alloc(l);
   sprintf(kv,"%s = %ld",key,(long)value);
-
-  l = result.length();
-  result.length(l+1);
-  result[l] = kv._retn();
-}
-
-////////////////////////////////////////////////////////////////////////
-void
-orbOptions::addKVSizeT(const char* key, size_t value,
-                       orbOptions::sequenceString& result) {
-
-  CORBA::String_var kv;
-  CORBA::ULong l;
-
-  l = strlen(key) + 26;
-  kv = CORBA::string_alloc(l);
-
-#if defined (_WIN64)
-  sprintf(kv,"%s = %I64u",key,(unsigned __int64)value);
-#else
-  sprintf(kv,"%s = %lu",key,(unsigned long)value);
-#endif
 
   l = result.length();
   result.length(l+1);

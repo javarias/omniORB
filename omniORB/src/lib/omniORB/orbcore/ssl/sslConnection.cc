@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -372,7 +370,7 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
 	  char buf[128];
 	  ERR_error_string_n(ERR_get_error(), buf, 128);
 	  CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
-	  log << "openSSL error detected in SSL accept from "
+	  log << "OpenSSL error detected in SSL accept from "
 	      << peer << " : " << (const char*) buf << "\n";
 	}
 	go = 0;
@@ -488,7 +486,12 @@ sslConnection::setPeerDetails() {
     else {
       int len = ASN1_STRING_length(asn1_str);
       CORBA::ULong(len+1) >>= stream;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
       stream.put_octet_array(ASN1_STRING_data(asn1_str), len);
+#else
+      stream.put_octet_array(ASN1_STRING_get0_data(asn1_str), len);
+#endif
       stream.marshalOctet(0);
     }
 

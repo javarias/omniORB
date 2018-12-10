@@ -1,5 +1,5 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 5.0.0, bugs@omniorb-support.com)
+AC_INIT(omniORB, 4.2.3, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
@@ -36,6 +36,24 @@ AC_PROG_MAKE_SET
 AM_PATH_PYTHON
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+
+
+dnl ** Cross compilation
+
+if test "$cross_compiling" = yes; then
+  AC_PATH_PROG(OMNIIDL, omniidl, no)
+  if test "x$ac_cv_path_OMNIIDL" = "xno"; then
+    AC_MSG_ERROR(cannot find omniidl on the path)
+  fi
+
+  AC_PATH_PROG(OMKDEPEND, omkdepend, no)
+  if test "x$ac_cv_path_OMKDEPEND" = "xno"; then
+    AC_MSG_ERROR(cannot find omkdepend on the path)
+  fi
+fi
+
+AC_SUBST(CROSS_COMPILING, $cross_compiling)
+
 
 AC_LANG(C++)
 
@@ -139,7 +157,7 @@ OMNI_DISABLE_ALLOCA
 OMNI_DISABLE_LONGDOUBLE
 OMNI_DISABLE_ATOMIC
 OMNI_ENABLE_ZIOP
-OMNI_ENABLE_CXX11
+OMNI_ENABLE_CFNETWORK
 
 
 dnl ** Compiler name
@@ -291,7 +309,6 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/GNUmakefile
                 src/lib/omniORB/python3/GNUmakefile
-                src/lib/omniORB/base/GNUmakefile
                 src/lib/omniORB/orbcore/GNUmakefile
                 src/lib/omniORB/orbcore/ssl/GNUmakefile
                 src/lib/omniORB/connections/GNUmakefile
@@ -333,13 +350,12 @@ AC_CONFIG_FILES(contrib/GNUmakefile
                 contrib/pkgconfig/GNUmakefile)
 
 AC_OUTPUT([
-contrib/pkgconfig/omnithread.pc
-contrib/pkgconfig/omniBase5.pc
-contrib/pkgconfig/omniORB5.pc
-contrib/pkgconfig/omniDynamic5.pc
-contrib/pkgconfig/omniCOS5.pc
-contrib/pkgconfig/omniCOSDynamic5.pc
-contrib/pkgconfig/omniConnectionMgmt5.pc
-contrib/pkgconfig/omniZIOP5.pc
-contrib/pkgconfig/omniZIOPDynamic5.pc
+contrib/pkgconfig/omnithread3.pc
+contrib/pkgconfig/omniORB4.pc
+contrib/pkgconfig/omniDynamic4.pc
+contrib/pkgconfig/omniCOS4.pc
+contrib/pkgconfig/omniCOSDynamic4.pc
+contrib/pkgconfig/omniConnectionMgmt4.pc
+contrib/pkgconfig/omniZIOP4.pc
+contrib/pkgconfig/omniZIOPDynamic4.pc
 ])
