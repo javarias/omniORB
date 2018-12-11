@@ -1,3 +1,17 @@
+Tue 11 Dec 00:23:12 GMT 2018
+============================
+
+- Small merge from 4.2.3.
+
+aclocal.m4
+configure
+contrib/RPMs/omniORBpy_new.spec
+mk/version.mk
+modules/omnipy.cc
+modules/pyExceptions.cc
+modules/pyServant.cc
+
+
 Mon 26 Nov 12:46:40 GMT 2018
 ============================
 

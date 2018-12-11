@@ -1,3 +1,15 @@
+Tue 11 Dec 00:23:12 GMT 2018
+============================
+
+- Small merge from 4.2.3.
+
+aclocal.m4
+configure
+contrib/RPMs/omniORB.spec
+contrib/RPMs/omniORB_new.spec
+mk/version.mk
+
+
 Tue  4 Dec 10:02:22 GMT 2018
 ============================
 
