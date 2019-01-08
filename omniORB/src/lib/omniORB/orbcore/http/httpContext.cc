@@ -267,4 +267,6 @@ httpContext::b64decode(const char* data, size_t& len) {
 httpContext::PeerDetails::
 ~PeerDetails()
 {
+  if (pd_cert)
+    X509_free(pd_cert);
 }
