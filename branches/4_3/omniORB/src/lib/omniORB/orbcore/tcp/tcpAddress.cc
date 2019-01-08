@@ -95,7 +95,8 @@ tcpAddress::Connect(const omni_time_t& deadline,
   if (pd_address.port == 0) return 0;
 
   SocketHandle_t sock = tcpSocket::Connect(pd_address.host, pd_address.port,
-					   deadline, strand_flags, timed_out);
+                                           deadline, strand_flags, "giop:tcp",
+                                           timed_out);
   if (sock == RC_SOCKET_ERROR)
     return 0;
 

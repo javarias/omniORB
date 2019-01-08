@@ -210,7 +210,8 @@ httpAddress::Connect(const omni_time_t& deadline,
 
   httpConnHolder h;
   
-  h.sock = tcpSocket::Connect(host, port, deadline, strand_flags, timed_out);
+  h.sock = tcpSocket::Connect(host, port, deadline, strand_flags,
+                              "giop:http", timed_out);
   if (h.sock == RC_SOCKET_ERROR)
     return 0;
 
