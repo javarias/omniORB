@@ -316,7 +316,32 @@ httpConnection::readRequestLine()
 void
 httpConnection::readResponseLine()
 {
-  if (strncmp((const char*)pd_buf_read, "HTTP/1.1 200 ", 13)) {
+  const char* resp = (const char*)pd_buf_read;
+
+  // Although we always request and reply HTTP/1.1, we permit the
+  // response to be HTTP/1.0, to handle proxies that return 1.0.
+
+  if (!(strncmp(resp, "HTTP/1.", 7) == 0 &&
+        (resp[7] == '1' || resp[7] == '0') &&
+        resp[8] == ' ')) {
+
+    if (omniORB::trace(10)) {
+      omniORB::logger log;
+      log << "Invalid HTTP response from " << pd_peeraddress << " : "
+          << omniORB::logger::unsafe((const char*)pd_buf_read) << "\n";
+    }
+    ConnectionInfo::set(ConnectionInfo::RECV_HTTP_ERROR, 1,
+                        pd_peeraddress, (const char*)pd_buf_read);
+
+    OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_YES);
+  }
+
+  // Allow multiple spaces before the status code
+  resp += 9;
+  while (*resp == ' ')
+    ++resp;
+
+  if (strncmp(resp, "200 ", 4)) {
     if (omniORB::trace(10)) {
       omniORB::logger log;
       log << "HTTP error response from " << pd_peeraddress << " : "
@@ -324,7 +349,7 @@ httpConnection::readResponseLine()
     }
 
     if (pd_crypto && httpContext::crypto_manager) {
-      if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 401 ", 13)) {
+      if (!strncmp(resp, "401 ", 4)) {
         omniORB::logs(10, "Force new key.");
         delete pd_crypto;
         pd_crypto = 0;
@@ -332,7 +357,7 @@ httpConnection::readResponseLine()
 
         OMNIORB_THROW(TRANSIENT, TRANSIENT_Renegotiate, CORBA::COMPLETED_NO);
       }
-      else if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 403 ", 13)) {
+      else if (!strncmp(resp, "403 ", 4)) {
         omniORB::logs(10, "Server does not accept our key.");
         ConnectionInfo::set(ConnectionInfo::INVALID_SESSION_KEY, 1,
                             pd_peeraddress);
@@ -341,7 +366,7 @@ httpConnection::readResponseLine()
                       CORBA::COMPLETED_NO);
       }
     }
-    if (!strncmp((const char*)pd_buf_read, "HTTP/1.1 407 ", 13)) {
+    if (!strncmp(resp, "407 ", 4)) {
       omniORB::logs(10, "HTTP proxy requires authentication.");
       ConnectionInfo::set(ConnectionInfo::PROXY_REQUIRES_AUTH, 1,
                           pd_peeraddress);

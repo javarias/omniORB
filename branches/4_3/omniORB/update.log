@@ -1,3 +1,23 @@
+Tue  8 Jan 17:50:03 GMT 2019
+============================
+
+- Include transport type in connection info connect event.
+
+include/omniORB4/internal/tcpSocket.h
+src/lib/omniORB/orbcore/http/httpAddress.cc
+src/lib/omniORB/orbcore/ssl/sslAddress.cc
+src/lib/omniORB/orbcore/tcp/tcpAddress.cc
+src/lib/omniORB/orbcore/tcpSocket.cc
+
+- Fix leak of peer certificate.
+
+src/lib/omniORB/orbcore/http/httpContext.cc
+
+- Accept HTTP/1.0 responses.
+
+src/lib/omniORB/orbcore/http/httpConnection.cc
+
+
 Fri 14 Dec 10:57:04 GMT 2018
 ============================
 
