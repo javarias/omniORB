@@ -502,6 +502,7 @@ doConnect(const char*   	 host,
 	  const omni_time_t&     deadline,
 	  CORBA::ULong  	 strand_flags,
 	  LibcWrapper::AddrInfo* ai,
+	  const char*            transport_type,
 	  CORBA::Boolean&        timed_out)
 {
   SocketHandle_t    sock;
@@ -540,7 +541,7 @@ doConnect(const char*   	 host,
 #if !defined(USE_NONBLOCKING_CONNECT)
 
   if (ConnectionInfo::singleton) {
-    addr_str = tcpSocket::addrToURI(ai->addr(), "");
+    addr_str = tcpSocket::addrToURI(ai->addr(), transport_type);
     ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 
@@ -564,7 +565,7 @@ doConnect(const char*   	 host,
   }
 
   if (ConnectionInfo::singleton) {
-    addr_str = tcpSocket::addrToURI(ai->addr(), "");
+    addr_str = tcpSocket::addrToURI(ai->addr(), transport_type);
     ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 
@@ -658,6 +659,7 @@ tcpSocket::Connect(const char*        host,
 		   CORBA::UShort      port,
 		   const omni_time_t& deadline,
 		   CORBA::ULong       strand_flags,
+		   const char*        transport_type,
 		   CORBA::Boolean&    timed_out)
 {
   OMNIORB_ASSERT(host);
@@ -698,8 +700,8 @@ tcpSocket::Connect(const char*        host,
       }
       ConnectionInfo::set(ConnectionInfo::NAME_RESOLVED, 0, host, addr);
     }
-    SocketHandle_t sock = doConnect(host, port, deadline,
-				    strand_flags, ai, timed_out);
+    SocketHandle_t sock = doConnect(host, port, deadline, strand_flags,
+                                    ai, transport_type, timed_out);
     if (sock != RC_INVALID_SOCKET)
       return sock;
 
@@ -717,6 +719,7 @@ tcpSocket::Connect(const char*        host,
 		   CORBA::UShort      port,
 		   const omni_time_t& deadline,
 		   CORBA::ULong       strand_flags,
+		   const char*        transport_type,
 		   CORBA::Boolean&    timed_out)
 {
   OMNIORB_ASSERT(host);
@@ -724,7 +727,7 @@ tcpSocket::Connect(const char*        host,
 
   CORBA::String_var addr_str;
   if (ConnectionInfo::singleton) {
-    addr_str = tcpSocket::addrToURI(ai->addr(), "");
+    addr_str = tcpSocket::addrToURI(ai->addr(), transport_type);
     ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 

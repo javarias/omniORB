@@ -250,6 +250,7 @@ public:
                                 CORBA::UShort      port,
                                 const omni_time_t& deadline,
                                 CORBA::ULong       strand_flags,
+                                const char*        transport_type,
                                 CORBA::Boolean&    timed_out);
   // Connect to specified host and port.
   //
