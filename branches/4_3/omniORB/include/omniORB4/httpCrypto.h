@@ -3,7 +3,8 @@
 // httpCrypto.h               Created on: 20 June 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018 BMC Software
+//    Copyright (C) 2018-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //
 //    This file is part of the omniORB library
 //

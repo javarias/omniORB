@@ -3,8 +3,8 @@
 // httpActive.cc              Created on: 18 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018      BMC Software
-//    Copyright (C) 2005-2006 Apasphere Ltd
+//    Copyright (C) 2005-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -115,10 +115,11 @@ httpActiveConnection::httpActiveConnection(SocketHandle_t sock,
                                            const char*    host_header,
                                            const char*    path,
                                            const char*    url,
+                                           CORBA::Boolean websocket,
                                            CORBA::Boolean via_proxy,
                                            const char*    proxy_auth) :
   httpConnection(sock, 0, &myCollection, host_header, path, url,
-                 1, via_proxy, proxy_auth),
+                 1, websocket, via_proxy, proxy_auth),
   pd_proxy_peerdetails(0),
   pd_registered(0)
 {

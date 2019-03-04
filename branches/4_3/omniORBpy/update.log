@@ -1,3 +1,12 @@
+Mon  4 Mar 23:12:22 GMT 2019
+============================
+
+- WebSocket support in HTTP transport.
+
+python/omniORB/ConnectionInfo.py
+python3/omniORB/ConnectionInfo.py
+
+
 Fri 15 Feb 21:32:28 GMT 2019
 ============================
 

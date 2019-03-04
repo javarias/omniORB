@@ -1,3 +1,51 @@
+Mon  4 Mar 23:12:22 GMT 2019
+============================
+
+- WebSocket support in HTTP transport.
+
+doc/omniORB.pdf
+doc/omniORB/index.html
+doc/omniORB/omniORB.html
+doc/omniORB/omniORB001.html
+doc/omniORB/omniORB002.html
+doc/omniORB/omniORB003.html
+doc/omniORB/omniORB004.html
+doc/omniORB/omniORB005.html
+doc/omniORB/omniORB006.html
+doc/omniORB/omniORB007.html
+doc/omniORB/omniORB008.html
+doc/omniORB/omniORB009.html
+doc/omniORB/omniORB010.html
+doc/omniORB/omniORB011.html
+doc/omniORB/omniORB012.html
+doc/omniORB/omniORB013.html
+doc/omniORB/omniORB014.html
+doc/omniORB/omniORB015.html
+doc/omniORB/omniORB016.html
+doc/tex/omniORB.tex
+include/omniORB4/connectionInfo.h
+include/omniORB4/httpContext.h
+include/omniORB4/httpCrypto.h
+include/omniORB4/omniURI.h
+src/lib/omniORB/httpcrypto/httpCrypto.cc
+src/lib/omniORB/orbcore/connectionInfo.cc
+src/lib/omniORB/orbcore/giopRope.cc
+src/lib/omniORB/orbcore/http/httpActive.cc
+src/lib/omniORB/orbcore/http/httpAddress.cc
+src/lib/omniORB/orbcore/http/httpAddress.h
+src/lib/omniORB/orbcore/http/httpConnection.cc
+src/lib/omniORB/orbcore/http/httpConnection.h
+src/lib/omniORB/orbcore/http/httpContext.cc
+src/lib/omniORB/orbcore/http/httpEndpoint.cc
+src/lib/omniORB/orbcore/http/httpEndpoint.h
+src/lib/omniORB/orbcore/http/httpTransportImpl.cc
+src/lib/omniORB/orbcore/http/httpTransportImpl.h
+src/lib/omniORB/orbcore/ior.cc
+src/lib/omniORB/orbcore/ssl/sslAddress.cc
+src/lib/omniORB/orbcore/ssl/sslAddress.h
+src/lib/omniORB/orbcore/uri.cc
+
+
 Mon  4 Mar 23:07:00 GMT 2019
 ============================
 

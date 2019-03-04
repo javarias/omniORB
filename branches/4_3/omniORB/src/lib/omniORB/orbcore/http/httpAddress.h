@@ -3,9 +3,9 @@
 // httpAddress.h              Created on: 18 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018 BMC Software
-//    Copyright (C) 2013 Apasphere Ltd
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2013-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //
@@ -39,7 +39,9 @@ public:
 
   httpAddress(const char*          url,
               CORBA::Boolean       secure,
+              CORBA::Boolean       websocket,
               const IIOP::Address& address,
+              const char*          orig_host,
               const char*          host_header,
               const char*          path,
               httpContext*         ctx);
@@ -59,7 +61,9 @@ public:
 private:
   CORBA::String_var  pd_url;            // full original URL
   CORBA::Boolean     pd_secure;         // true if https
+  CORBA::Boolean     pd_websocket;      // true if using WebSocket
   IIOP::Address      pd_address;        // host and port to connect to
+  CORBA::String_var  pd_orig_host;      // original hostname before resolution
   CORBA::String_var  pd_host_header;    // host and port component of URL
   CORBA::String_var  pd_path;           // path component of URL
   CORBA::String_var  pd_address_string;

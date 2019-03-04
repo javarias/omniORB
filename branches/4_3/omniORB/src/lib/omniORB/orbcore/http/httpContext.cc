@@ -3,8 +3,8 @@
 // httpContext.cc             Created on: 27 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018      BMC Software
-//    Copyright (C) 2003-2012 Apasphere Ltd
+//    Copyright (C) 2003-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -138,10 +138,10 @@ httpContext::real_update_proxy(const char* url,
     pd_proxy_secure = 0;
   }
   else {
-    CORBA::String_var scheme, path;
+    CORBA::String_var scheme, path, fragment;
 
     if (!omniURI::extractURL(url, scheme.out(), pd_proxy_host.out(),
-                             pd_proxy_port, path.out()))
+                             pd_proxy_port, path.out(), fragment.out()))
       OMNIORB_THROW(INITIALIZE, INITIALIZE_TransportError, CORBA::COMPLETED_NO);
 
     pd_proxy_url = url;

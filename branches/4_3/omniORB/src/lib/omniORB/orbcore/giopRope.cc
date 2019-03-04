@@ -3,7 +3,7 @@
 // giopRope.cc                Created on: 16/01/2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2018 Apasphere Ltd
+//    Copyright (C) 2002-2019 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -163,13 +163,15 @@ giopRope::~giopRope() {
   i    = pd_addresses.begin();
   last = pd_addresses.end();
   for (; i != last; i++) {
-    delete (*i);
+    if (*i)
+      delete (*i);
   }
 
   i    = pd_dead_addresses.begin();
   last = pd_dead_addresses.end();
   for (; i != last; i++) {
-    delete (*i);
+    if (*i)
+      delete (*i);
   }
 }
 
@@ -646,7 +648,10 @@ giopRope::resetAddressOrder(CORBA::Boolean heldlock, giopStrand* strand)
       const giopAddress* addr =
         pd_addresses[pd_addresses_order[pd_address_in_use]];
 
-      log << "current address " << addr->address();
+      if (addr)
+        log << "current address " << addr->address();
+      else
+        log << "current nil address";
     }
     else {
       log << "no current address";

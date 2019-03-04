@@ -3,7 +3,7 @@
 // ior.cc                     Created on: 5/7/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2013 Apasphere Ltd
+//    Copyright (C) 2002-2019 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -1066,11 +1066,11 @@ omniIOR::add_TAG_OMNIORB_HTTP_TRANS(const char* url,
 
   if (strlen(eps->address.host) == 0) {
     // Add the host part of the address to the IIOP profile.
-    CORBA::String_var scheme, host, path;
+    CORBA::String_var scheme, host, path, fragment;
     CORBA::UShort     port;
 
     CORBA::Boolean ok = omniURI::extractURL(url, scheme.out(), host.out(),
-                                            port, path.out());
+                                            port, path.out(), fragment.out());
     OMNIORB_ASSERT(ok);
     eps->address.host = host;
   }

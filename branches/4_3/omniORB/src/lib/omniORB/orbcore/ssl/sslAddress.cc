@@ -3,7 +3,7 @@
 // sslAddress.cc              Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2013 Apasphere Ltd
+//    Copyright (C) 2003-2019 Apasphere Ltd
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -47,9 +47,18 @@ OMNI_EXPORT_LINK_FORCE_SYMBOL(sslAddress);
 OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
-sslAddress::sslAddress(const IIOP::Address& address, sslContext* ctx) : 
-  pd_address(address), pd_ctx(ctx) {
+sslAddress::sslAddress(const IIOP::Address& address,
+                       sslContext*          ctx)
+  : pd_address(address), pd_orig_host(address.host), pd_ctx(ctx)
+{
+  pd_address_string = omniURI::buildURI("giop:ssl", address.host, address.port);
+}
 
+sslAddress::sslAddress(const IIOP::Address& address,
+                       const char*          orig_host,
+                       sslContext*          ctx)
+  : pd_address(address), pd_orig_host(orig_host), pd_ctx(ctx)
+{
   pd_address_string = omniURI::buildURI("giop:ssl", address.host, address.port);
 }
 
@@ -84,7 +93,7 @@ sslAddress::duplicate(const char* host) const {
   addr.host = host;
   addr.port = pd_address.port;
 
-  return new sslAddress(addr, pd_ctx);
+  return new sslAddress(addr, pd_orig_host, pd_ctx);
 }
 
 
@@ -117,6 +126,10 @@ sslAddress::Connect(const omni_time_t& deadline,
   SSL_set_fd(ssl, sock);
   SSL_set_connect_state(ssl);
 
+  // Set TLS SNI (Server Name Indication) extension.
+  if (!LibcWrapper::isipaddr(pd_orig_host))
+    SSL_set_tlsext_host_name(ssl, (const char*)pd_orig_host);
+  
   struct timeval t;
   int rc;
 
