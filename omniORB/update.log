@@ -1,3 +1,11 @@
+Mon  4 Mar 23:07:00 GMT 2019
+============================
+
+- Fix catch by non-reference type.
+
+src/appl/utils/nameclt/nameclt.cc
+
+
 Tue  8 Jan 17:50:03 GMT 2019
 ============================
 
