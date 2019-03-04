@@ -3,9 +3,9 @@
 // httpTransportImpl.h        Created on: 18 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018 BMC Software
-//    Copyright (C) 2013 Apasphere Ltd
-//    Copyright (C) 2001 AT&T Laboratories Cambridge
+//    Copyright (C) 2013-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
+//    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
 //

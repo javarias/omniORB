@@ -3,8 +3,8 @@
 // httpCrypto.cc              Created on: 2 July 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018      BMC Software
-//    Copyright (C) 2002-2018 Apasphere Ltd
+//    Copyright (C) 2018-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //
 //    This file is part of the omniORB library
 //
@@ -82,7 +82,8 @@ namespace omni {
                               RSA*                            self_rsa,
                               RSA*                            peer_rsa)
       : pd_impl(impl),
-        pd_cipher_ctx(0),
+        pd_i_cipher_ctx(0),
+        pd_o_cipher_ctx(0),
         pd_peer_ident(peer_ident),
         pd_self_ident(self_ident),
         pd_self_rsa(self_rsa),
@@ -101,7 +102,8 @@ namespace omni {
                               RSA*                            peer_rsa,
                               const omni_time_t&              deadline)
       : pd_impl(impl),
-        pd_cipher_ctx(0),
+        pd_i_cipher_ctx(0),
+        pd_o_cipher_ctx(0),
         pd_key_ident(key_ident),
         pd_peer_ident(peer_ident),
         pd_self_ident(self_ident),
@@ -120,7 +122,8 @@ namespace omni {
                               const std::string&              peer_ident,
                               const omni_time_t&              deadline)
       : pd_impl(impl),
-        pd_cipher_ctx(0),
+        pd_i_cipher_ctx(0),
+        pd_o_cipher_ctx(0),
         pd_key_ident(key_ident),
         pd_peer_ident(peer_ident),
         pd_self_rsa(0),
@@ -134,8 +137,11 @@ namespace omni {
     
     inline ~httpCrypto_AES_RSA()
     {
-      if (pd_cipher_ctx)
-        EVP_CIPHER_CTX_free(pd_cipher_ctx);
+      if (pd_i_cipher_ctx)
+        EVP_CIPHER_CTX_free(pd_i_cipher_ctx);
+
+      if (pd_o_cipher_ctx)
+        EVP_CIPHER_CTX_free(pd_o_cipher_ctx);
     }
 
     virtual const char*    peerIdent();
@@ -159,7 +165,8 @@ namespace omni {
 
   private:
     httpCryptoManager_AES_RSA_impl* pd_impl;
-    EVP_CIPHER_CTX*                 pd_cipher_ctx;
+    EVP_CIPHER_CTX*                 pd_i_cipher_ctx;
+    EVP_CIPHER_CTX*                 pd_o_cipher_ctx;
     AESKey                          pd_key;
     std::string                     pd_key_ident;
     std::string                     pd_peer_ident;
@@ -445,12 +452,12 @@ encrypt(CORBA::Octet*       write_buf,
 {
   size_t written = 0;
   
-  if (!pd_cipher_ctx) {
+  if (!pd_o_cipher_ctx) {
     OMNIORB_ASSERT(pd_key_set);
 
-    pd_cipher_ctx = EVP_CIPHER_CTX_new();
+    pd_o_cipher_ctx = EVP_CIPHER_CTX_new();
 
-    if (!pd_cipher_ctx) {
+    if (!pd_o_cipher_ctx) {
       ERR_print_errors_cb(logError, 0);
       OMNIORB_THROW(NO_MEMORY, NO_MEMORY_BadAlloc, CORBA::COMPLETED_NO);
     }
@@ -462,7 +469,7 @@ encrypt(CORBA::Octet*       write_buf,
     }      
 
     // Initialise encryption
-    EVP_EncryptInit_ex(pd_cipher_ctx, EVP_aes_256_cbc(), 0, pd_key, write_buf);
+    EVP_EncryptInit_ex(pd_o_cipher_ctx, EVP_aes_256_cbc(), 0, pd_key, write_buf);
 
     written   += IV_SIZE;
     write_buf += IV_SIZE;
@@ -471,7 +478,7 @@ encrypt(CORBA::Octet*       write_buf,
   int write_size;
 
   if (read_size) {
-    if (!EVP_EncryptUpdate(pd_cipher_ctx, write_buf, &write_size,
+    if (!EVP_EncryptUpdate(pd_o_cipher_ctx, write_buf, &write_size,
                            read_buf, (int)read_size)) {
 
       ERR_print_errors_cb(logError, 0);
@@ -485,7 +492,7 @@ encrypt(CORBA::Octet*       write_buf,
   written += (size_t)write_size;
 
   if (last) {
-    if (!EVP_EncryptFinal_ex(pd_cipher_ctx, write_buf + write_size,
+    if (!EVP_EncryptFinal_ex(pd_o_cipher_ctx, write_buf + write_size,
                              &write_size)) {
 
       ERR_print_errors_cb(logError, 0);
@@ -494,8 +501,8 @@ encrypt(CORBA::Octet*       write_buf,
     
     written += (size_t)write_size;
 
-    EVP_CIPHER_CTX_free(pd_cipher_ctx);
-    pd_cipher_ctx = 0;
+    EVP_CIPHER_CTX_free(pd_o_cipher_ctx);
+    pd_o_cipher_ctx = 0;
   }
 
   return written;
@@ -517,12 +524,12 @@ decrypt(CORBA::Octet*       write_buf,
         size_t              read_size,
         CORBA::Boolean      last)
 {
-  if (!pd_cipher_ctx) {
+  if (!pd_i_cipher_ctx) {
     OMNIORB_ASSERT(pd_key_set);
 
-    pd_cipher_ctx = EVP_CIPHER_CTX_new();
+    pd_i_cipher_ctx = EVP_CIPHER_CTX_new();
 
-    if (!pd_cipher_ctx) {
+    if (!pd_i_cipher_ctx) {
       ERR_print_errors_cb(logError, 0);
       OMNIORB_THROW(NO_MEMORY, NO_MEMORY_BadAlloc, CORBA::COMPLETED_NO);
     }
@@ -532,7 +539,7 @@ decrypt(CORBA::Octet*       write_buf,
 
     // The message starts with the IV.
     
-    if (!EVP_DecryptInit_ex(pd_cipher_ctx, EVP_aes_256_cbc(), 0,
+    if (!EVP_DecryptInit_ex(pd_i_cipher_ctx, EVP_aes_256_cbc(), 0,
                             pd_key, read_buf)) {
       ERR_print_errors_cb(logError, 0);
       OMNIORB_THROW(MARSHAL, MARSHAL_InvalidEncryptedData, CORBA::COMPLETED_NO);
@@ -545,7 +552,7 @@ decrypt(CORBA::Octet*       write_buf,
   int write_size;
 
   if (read_size) {
-    if (!EVP_DecryptUpdate(pd_cipher_ctx, write_buf, &write_size,
+    if (!EVP_DecryptUpdate(pd_i_cipher_ctx, write_buf, &write_size,
                            read_buf, read_size)) {
 
       ERR_print_errors_cb(logError, 0);
@@ -559,7 +566,7 @@ decrypt(CORBA::Octet*       write_buf,
   size_t written = (size_t)write_size;
 
   if (last) {
-    if (!EVP_DecryptFinal_ex(pd_cipher_ctx, write_buf + write_size,
+    if (!EVP_DecryptFinal_ex(pd_i_cipher_ctx, write_buf + write_size,
                              &write_size)) {
 
       ERR_print_errors_cb(logError, 0);
@@ -568,8 +575,8 @@ decrypt(CORBA::Octet*       write_buf,
       
     written += (size_t)write_size;
     
-    EVP_CIPHER_CTX_free(pd_cipher_ctx);
-    pd_cipher_ctx = 0;
+    EVP_CIPHER_CTX_free(pd_i_cipher_ctx);
+    pd_i_cipher_ctx = 0;
   }
   
   return written;

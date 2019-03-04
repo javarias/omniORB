@@ -2,16 +2,16 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.31">
+<meta name="generator" content="hevea 2.32">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>Objects by value, etc.</title>
 </head>
 <body >
-<a href="omniORB010.html"><img src="previous_motif.gif" alt="Previous"></a>
-<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="omniORB012.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="omniORB010.html"><img src="previous_motif.svg" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
+<a href="omniORB012.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec164" class="chapter">Chapter&#XA0;11&#XA0;&#XA0;Objects by value, abstract interfaces and local interfaces</h1>
+<h1 id="sec166" class="chapter">Chapter&#XA0;11&#XA0;&#XA0;Objects by value, abstract interfaces and local interfaces</h1>
 <p>
 <a id="chap:valuetype"></a></p><p>omniORB 4.1 supports objects by value, declared with the
 <span style="font-family:monospace">valuetype</span> keyword in IDL, and both abstract and local
@@ -20,14 +20,14 @@ types in omniORB. You are assumed to have read the relevant parts of
 the CORBA specification, specifically chapters 3, 4, 5 and 6 of the
 CORBA 2.6 specification, and sections 1.17, 1.18 and 1.35 of the C++
 mapping specification, version 1.1.</p>
-<h2 id="sec165" class="section">11.1&#XA0;&#XA0;Features</h2>
+<h2 id="sec167" class="section">11.1&#XA0;&#XA0;Features</h2>
 <p>omniORB supports the complete objects by value specification, with the
 exception of custom valuetypes. All other valuetype features including
 value boxes, value sharing semantics, abstract valuetypes, and
 abstract interfaces are supported. Local interfaces are supported,
 with a number of caveats outlined in
 section&#XA0;<a href="#sec%3ALocalInterfaces">11.8</a>.</p>
-<h2 id="sec166" class="section">11.2&#XA0;&#XA0;Reference counting</h2>
+<h2 id="sec168" class="section">11.2&#XA0;&#XA0;Reference counting</h2>
 <p>Values are reference counted. This means that, as long as your
 application properly manages reference counts, values are usually
 automatically deleted when they are no longer required. However, one
@@ -37,7 +37,7 @@ counting garbage collection does not work, because references internal
 to the graph prevent the reference counts ever becoming zero.</p><p>To avoid memory leaks, application code must explicitly break any
 reference cycles in values it manipulates. This includes graphs of
 values received as parameters and return values from CORBA operations.</p>
-<h2 id="sec167" class="section">11.3&#XA0;&#XA0;Value sharing and local calls</h2>
+<h2 id="sec169" class="section">11.3&#XA0;&#XA0;Value sharing and local calls</h2>
 <p>When valuetypes are passed as parameters in CORBA calls (i.e. calls
 on CORBA objects declared with <span style="font-family:monospace">interface</span> in IDL), the structure
 of related values is maintained. Consider, for example, the following
@@ -70,7 +70,7 @@ values it passes as parameters (and similarly, the object
 implementation will see any changes the client makes to returned
 values). To choose this option, set the <span style="font-family:monospace">copyValuesInLocalCalls</span>
 configuration parameter to zero.</p>
-<h2 id="sec168" class="section">11.4&#XA0;&#XA0;Value box factories</h2>
+<h2 id="sec170" class="section">11.4&#XA0;&#XA0;Value box factories</h2>
 <p>With normal valuetypes, omniidl generates factory classes (with names
 ending <span style="font-family:monospace">_init</span>) as required by the C++ mapping specification.
 The application is responsible for registering the factories with the
@@ -80,11 +80,11 @@ registered with the ORB, and there are no application-visible factory
 classes generated for them. Some other CORBA implementations generate
 application visible factories, and the application <em>does</em> have to
 register the factories with the ORB.</p>
-<h2 id="sec169" class="section">11.5&#XA0;&#XA0;Standard value boxes</h2>
+<h2 id="sec171" class="section">11.5&#XA0;&#XA0;Standard value boxes</h2>
 <p>The standard <span style="font-family:monospace">CORBA::StringValue</span> and <span style="font-family:monospace">CORBA::WStringValue</span>
 value boxes are available to application code. To make the definitions
 available in IDL, #include the standard <span style="font-family:monospace">orb.idl</span>.</p>
-<h2 id="sec170" class="section">11.6&#XA0;&#XA0;Covariant returns</h2>
+<h2 id="sec172" class="section">11.6&#XA0;&#XA0;Covariant returns</h2>
 <p>As required by the C++ mapping, on C++ compilers that support
 covariant return types, omniidl generates code for the
 <span style="font-family:monospace">_copy_value()</span> function that returns the most derived type of the
@@ -95,7 +95,7 @@ type <span style="font-family:monospace">CORBA::ValueBase*</span> and downcast t
 than using the covariant return.</p><p>If you are overriding <span style="font-family:monospace">_copy_value()</span>, you must correctly take
 account of the <span style="font-family:monospace">OMNI_HAVE_COVARIANT_RETURNS</span> preprocessor
 definition.</p>
-<h2 id="sec171" class="section">11.7&#XA0;&#XA0;Values inside Anys</h2>
+<h2 id="sec173" class="section">11.7&#XA0;&#XA0;Values inside Anys</h2>
 <p>Valuetypes inserted into Anys cause a number of interesting issues.
 Even when inside Anys, values are required to support complete sharing
 semantics. Take this IDL for example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">module</span></span><span style="font-size:small"> </span><span style="font-size:small">ValueTest</span><span style="font-size:small"> {</span><span style="font-size:small">
@@ -142,7 +142,7 @@ the correct types and values, but the fact that both should have
 referred to the same value has been lost.</p><p>Because of these issues, it is best to avoid defining interfaces that
 mix valuetypes and Anys in a single operation, and certainly to avoid
 trying to share plain values with values inside Anys.</p>
-<h3 id="sec172" class="subsection">11.7.1&#XA0;&#XA0;Values inside DynAnys</h3>
+<h3 id="sec174" class="subsection">11.7.1&#XA0;&#XA0;Values inside DynAnys</h3>
 <p>The sharing semantics of valuetypes can also cause difficulties for
 DynAny. The CORBA 2.6 specification does not mention how shared values
 inside DynAnys should be handled; the CORBA 3.x specification slightly
@@ -159,12 +159,12 @@ same value can manipulated inside a DynAny without breaking the
 sharing, provided the value members are not accessed as DynAnys.
 Extracting the value members as ValueBase will reveal the sharing, for
 example.</p>
-<h2 id="sec173" class="section">11.8&#XA0;&#XA0;Local Interfaces</h2>
+<h2 id="sec175" class="section">11.8&#XA0;&#XA0;Local Interfaces</h2>
 <p>
 <a id="sec:LocalInterfaces"></a></p><p>Local interfaces are somewhat under-specified in the C++ mapping. This
 section outlines the way local interfaces are supported in omniORB,
 and details the limitations and issues.</p>
-<h3 id="sec174" class="subsection">11.8.1&#XA0;&#XA0;Simple local interfaces</h3>
+<h3 id="sec176" class="subsection">11.8.1&#XA0;&#XA0;Simple local interfaces</h3>
 <p>With simple IDL, there are no particular issues:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">module</span></span><span style="font-size:small"> </span><span style="font-size:small">Test</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">local</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">Example</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">in</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">arg</span><span style="font-size:small">);</span><span style="font-size:small">
@@ -179,7 +179,7 @@ when the last reference is released, the application must implement
 the <span style="font-family:monospace">_add_ref()</span> and <span style="font-family:monospace">_remove_ref()</span> virtual member functions
 within the implementation class. Make sure that the implementations
 are thread safe.</p>
-<h3 id="sec175" class="subsection">11.8.2&#XA0;&#XA0;Inheritance from unconstrained interfaces</h3>
+<h3 id="sec177" class="subsection">11.8.2&#XA0;&#XA0;Inheritance from unconstrained interfaces</h3>
 <p>Local interfaces can inherit from unconstrained (i.e. non-local)
 interfaces:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">module</span></span><span style="font-size:small"> </span><span style="font-size:small">Test</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">One</span><span style="font-size:small"> {</span><span style="font-size:small">
@@ -225,7 +225,7 @@ management problems.</p><p>In summary, to use local interfaces derived from norm
 interfaces, you should compile all your IDL with the omniidl flags:</p><blockquote class="quote">
 <span style="font-family:monospace">-Wbvirtual-objref -Wbimpl-mapping</span>
 </blockquote>
-<h3 id="sec176" class="subsection">11.8.3&#XA0;&#XA0;Valuetypes supporting local interfaces</h3>
+<h3 id="sec178" class="subsection">11.8.3&#XA0;&#XA0;Valuetypes supporting local interfaces</h3>
 <p>According to the IDL specification, it should be possible to declare a
 valuetype that supports a local interface:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">local</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">I</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">my_operation</span><span style="font-size:small">();</span><span style="font-size:small">
@@ -241,8 +241,8 @@ from both these base classes, and therefore have an ambiguity. Until
 the C++ mapping resolves this conflict, valuetypes supporting local
 interfaces cannot be used in omniORB.</p>
 <hr>
-<a href="omniORB010.html"><img src="previous_motif.gif" alt="Previous"></a>
-<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="omniORB012.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="omniORB010.html"><img src="previous_motif.svg" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
+<a href="omniORB012.html"><img src="next_motif.svg" alt="Next"></a>
 </body>
 </html>

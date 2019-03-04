@@ -2,16 +2,16 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.31">
+<meta name="generator" content="hevea 2.32">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>Code set conversion</title>
 </head>
 <body >
-<a href="omniORB007.html"><img src="previous_motif.gif" alt="Previous"></a>
-<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="omniORB009.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="omniORB007.html"><img src="previous_motif.svg" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
+<a href="omniORB009.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec139" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Code set conversion</h1>
+<h1 id="sec141" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Code set conversion</h1>
 <p>
 <a id="chap:codesets"></a></p><p>omniORB supports full code set negotiation, used to select and
 translate between different character code sets when transmitting
@@ -20,7 +20,7 @@ to application code, but there are a number of options that can be
 selected. This chapter covers the options, and also gives some
 pointers about how to implement your own code sets, in case the ones
 that come with omniORB are not sufficient.</p>
-<h2 id="sec140" class="section">8.1&#XA0;&#XA0;Native code sets</h2>
+<h2 id="sec142" class="section">8.1&#XA0;&#XA0;Native code sets</h2>
 <p>For the ORB to know how to handle strings and wstrings given to it by
 the application, it must know what code set they are represented
 with, so it can properly translate them if need be. The defaults are
@@ -34,7 +34,7 @@ Unicode range to be supported in strings.</p><p>Note that the default for wchar 
 platforms where wchar is a 32-bit type. Select the UCS-4 code set to
 select characters outside the first plane without having to use UTF-16
 surrogates<sup><a id="text14" href="#note14">1</a></sup>.</p>
-<h2 id="sec141" class="section">8.2&#XA0;&#XA0;Default code sets</h2>
+<h2 id="sec143" class="section">8.2&#XA0;&#XA0;Default code sets</h2>
 <p>The way code set conversion is meant to work in CORBA communication is
 that each client and server has a <span style="font-style:italic">native</span> code set that it uses
 for character data in application code, and supports a number of
@@ -62,7 +62,7 @@ code sets that are assumed to be supported by the other end of the
 communication, if they are not otherwise known. Set
 <span style="font-family:monospace">defaultCharCodeSet</span> for char and string data, and
 <span style="font-family:monospace">defaultWCharCodeSet</span> for wchar and wstring data.</p>
-<h2 id="sec142" class="section">8.3&#XA0;&#XA0;Code set library</h2>
+<h2 id="sec144" class="section">8.3&#XA0;&#XA0;Code set library</h2>
 <p>To save space in the main ORB core library, most of the code set
 implementations are in a separate library named omniCodeSets4. To use
 the extra code sets, you must link your application with that
@@ -74,7 +74,7 @@ you must force the linker to initialise the library. You do that by
 including the <span style="font-family:monospace">omniORB4/optionalFeatures.h</span> header. By default,
 that header enables several optional features. Look at the file
 contents to see how to turn off particular features.</p>
-<h2 id="sec143" class="section">8.4&#XA0;&#XA0;Implementing new code sets</h2>
+<h2 id="sec145" class="section">8.4&#XA0;&#XA0;Implementing new code sets</h2>
 <p>It is quite easy to implement new code sets, if you need support for
 code sets (or marshalling formats) that do not come with the omniORB
 distribution. There are extensive comments in the headers and ORB code
@@ -109,8 +109,8 @@ entirely of data and no code, since they are driven by look-up tables.</p>
 worry&#X2014;you&#X2019;re better off not knowing unless you <em>really</em> have
 to.</div></dd></dl>
 <hr>
-<a href="omniORB007.html"><img src="previous_motif.gif" alt="Previous"></a>
-<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
-<a href="omniORB009.html"><img src="next_motif.gif" alt="Next"></a>
+<a href="omniORB007.html"><img src="previous_motif.svg" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
+<a href="omniORB009.html"><img src="next_motif.svg" alt="Next"></a>
 </body>
 </html>

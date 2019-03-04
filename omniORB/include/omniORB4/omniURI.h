@@ -3,7 +3,7 @@
 // omniURI.h                  Created on: 2000/04/03
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2005-2006 Apasphere Ltd
+//    Copyright (C) 2005-2019 Apasphere Ltd
 //    Copyright (C) 2000      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -42,6 +42,11 @@ public:
   // The omniURI class contains all functions which manipulate object
   // URIs, and convert them to-and-from CORBA::Objects.
 
+  static char* unescape(const char*& c, unsigned int& size);
+  // Unescape an escaped path component. Updates c to point to the
+  // next character after the escaped characters; size is set to the
+  // size of the unescaped value.
+
   static char* buildURI(const char*   prefix,
                         const char*   host,
                         CORBA::UShort port,
@@ -70,11 +75,12 @@ public:
                                    char*&         scheme,
                                    char*&         host,
                                    CORBA::UShort& port,
-                                   char*&         path);
-  // Extract scheme, host, port and path from a URL. If no port is
-  // present in the URL, sets port to zero. Does not attempt to handle
-  // escape sequences in the path. Returns true if the URL was valid,
-  // false if not.
+                                   char*&         path,
+                                   char*&         fragment);
+  // Extract scheme, host, port, path and fragment from a URL. If no
+  // port is present in the URL, sets port to zero. path and fragment
+  // are not unescaped. Returns true if the URL was valid, false if
+  // not.
 
   static CORBA::Boolean validHostPort(const char* addr);
   // True if addr is a valid host:port; false otherwise.
@@ -124,6 +130,11 @@ public:
     virtual ~URIHandler();
   };
 
+  static void registerURIHandler(URIHandler* h);
+  static void unregisterURIHandler(URIHandler* h);
+  // Register / unregister a URI handler.
+ 
+  
   // The following functions implement the stringified name operations
   // of CosNaming::NamingContextExt. They are available here to avoid
   // the overhead of remote calls just to do some string bashing.

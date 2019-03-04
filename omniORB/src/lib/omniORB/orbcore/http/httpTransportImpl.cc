@@ -3,8 +3,8 @@
 // httpTransportImpl.cc       Created on: 18 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018      BMC Software
-//    Copyright (C) 2002-2013 Apasphere Ltd
+//    Copyright (C) 2002-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -85,14 +85,17 @@ httpTransportImpl::toEndpoint(const char* param)
 CORBA::Boolean
 httpTransportImpl::isValid(const char* param) {
 
-  CORBA::String_var scheme, host, path;
+  CORBA::String_var scheme, host, path, fragment;
   CORBA::UShort     port;
 
   CORBA::Boolean ok = omniURI::extractURL(param,
                                           scheme.out(), host.out(),
-                                          port, path.out());
+                                          port, path.out(), fragment.out());
 
-  return ok && (!strcmp(scheme, "https") || !strcmp(scheme, "http"));
+  return ok && (!strcmp(scheme, "https") ||
+                !strcmp(scheme, "http")  ||
+                !strcmp(scheme, "wss")   ||
+                !strcmp(scheme, "ws"));
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -127,6 +130,104 @@ httpTransportImpl::getInterfaceAddress() {
 httpCrypto::~httpCrypto() {}
 httpCryptoManager::~httpCryptoManager() {}
 
+
+//
+// URI Handler
+
+/////////////////////////////////////////////////////////////////////////////
+class httpURIHandler : public omniURI::URIHandler {
+public:
+  CORBA::Boolean    supports     (const char* uri);
+  CORBA::Object_ptr toObject     (const char* uri, unsigned int cycles);
+  CORBA::Boolean    syntaxIsValid(const char* uri);
+};
+
+CORBA::Boolean
+httpURIHandler::supports(const char* uri)
+{
+  return (!strncmp(uri, "http://",  7) ||
+          !strncmp(uri, "https://", 8) ||
+          !strncmp(uri, "ws://",    5) ||
+          !strncmp(uri, "wss://",   6));
+}
+
+CORBA::Object_ptr
+httpURIHandler::toObject(const char* uri, unsigned int cycles)
+{
+  CORBA::String_var scheme, host, path, fragment;
+  CORBA::UShort     port;
+
+  CORBA::Boolean ok = omniURI::extractURL(uri, scheme.out(), host.out(),
+                                          port, path.out(), fragment.out());
+  if (!ok)
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadURIOther, CORBA::COMPLETED_NO);
+
+  if (!(*(const char*)scheme &&
+        *(const char*)host   &&
+        *(const char*)path   &&
+        *(const char*)fragment)) {
+    
+    OMNIORB_THROW(BAD_PARAM, BAD_PARAM_BadSchemeSpecificPart,
+		  CORBA::COMPLETED_NO);
+  }
+
+  // Unescape key from the fragment
+  unsigned int      key_size;
+  const char*       key_ptr = (const char*)fragment;
+  CORBA::String_var key_str = omniURI::unescape(key_ptr, key_size);
+
+  _CORBA_Unbounded_Sequence_Octet key;
+  key.replace(key_size, key_size, (CORBA::Octet*)(const char*)key_str);
+
+  // Build URL without the key
+  CORBA::String_var prefix = CORBA::string_alloc(strlen(scheme) + 4);
+  sprintf((char*)prefix, "%s://", (const char*)scheme);
+  
+  CORBA::String_var ior_url = omniURI::buildURI(prefix, host, port, path);
+
+  
+  // Marshal the HTTP transport tagged component
+  IOP::MultipleComponentProfile tagged_components;
+  tagged_components.length(1);
+
+  IOP::TaggedComponent& c = tagged_components[0];
+  c.tag = IOP::TAG_OMNIORB_HTTP_TRANS;
+
+  cdrEncapsulationStream s(CORBA::ULong(0), CORBA::Boolean(1));
+  s.marshalRawString(ior_url);
+  s.setOctetSeq(c.component_data);
+
+  IIOP::Address addrs[1];
+  addrs[0].host = host;
+  addrs[0].port = 0;
+
+  GIOP::Version ver;
+  ver.major = 1; ver.minor = 2;
+
+  omniIOR* ior = new omniIOR((const char*)"", key, addrs, 1, ver,
+                             omniIOR::NoInterceptor, &tagged_components);
+
+  omniObjRef* objref = omni::createObjRef(CORBA::Object::_PD_repoId,ior,0);
+  OMNIORB_ASSERT(objref);
+
+  return (CORBA::Object_ptr)objref->_ptrToObjRef(CORBA::Object::_PD_repoId);
+}
+
+CORBA::Boolean
+httpURIHandler::syntaxIsValid(const char* uri)
+{
+  CORBA::String_var scheme, host, path, fragment;
+  CORBA::UShort     port;
+
+  CORBA::Boolean ok = omniURI::extractURL(uri, scheme.out(), host.out(),
+                                          port, path.out(), fragment.out());
+
+  
+}
+
+
+//
+// Options handlers
 
 /////////////////////////////////////////////////////////////////////////////
 class httpProxyHandler : public orbOptions::Handler {
@@ -492,6 +593,7 @@ static httpsAcceptTimeOutHandler httpsAcceptTimeOutHandler_;
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 static httpTransportImpl* _the_httpTransportImpl = 0;
+static httpURIHandler     _the_httpURIHandler;
 
 class omni_httpTransport_initialiser : public omniInitialiser {
 public:
@@ -514,6 +616,8 @@ public:
   void attach() {
     if (_the_httpTransportImpl) return;
 
+    omniURI::registerURIHandler(&_the_httpURIHandler);
+    
     if (!httpContext::singleton) {
 
       if (omniORB::trace(5)) {
@@ -546,6 +650,8 @@ public:
     
     if (httpContext::singleton) delete httpContext::singleton;
     httpContext::singleton = 0;
+
+    omniURI::unregisterURIHandler(&_the_httpURIHandler);
   }
 };
 

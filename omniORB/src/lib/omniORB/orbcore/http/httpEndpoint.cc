@@ -3,8 +3,8 @@
 // httpEndpoint.cc            Created on: 18 April 2018
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2018      BMC Software
-//    Copyright (C) 2002-2013 Apasphere Ltd
+//    Copyright (C) 2002-2019 Apasphere Ltd
+//    Copyright (C) 2018      Apasphere Ltd, BMC Software
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -51,7 +51,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 /////////////////////////////////////////////////////////////////////////
 httpEndpoint::httpEndpoint(const char* param, httpContext* ctx) :
   SocketHolder(RC_INVALID_SOCKET),
-  pd_address_param(param), pd_ctx(ctx),
+  pd_address_param(param), pd_secure(0), pd_ctx(ctx),
   pd_new_conn_socket(RC_INVALID_SOCKET), pd_callback_func(0),
   pd_callback_cookie(0), pd_poked(0)
 {
@@ -84,6 +84,16 @@ httpEndpoint::addresses() const {
 }
 
 /////////////////////////////////////////////////////////////////////////
+static inline char* prefixForScheme(const char* scheme)
+{
+  const char* fmt = "giop:http:%s://";
+  
+  char* prefix = CORBA::string_alloc(15 + strlen(scheme));
+  sprintf(prefix, fmt, scheme);
+  return prefix;
+}
+
+
 static CORBA::Boolean
 publish_one(const char*              publish_spec,
             const char*              ep,
@@ -94,24 +104,23 @@ publish_one(const char*              publish_spec,
 
   CORBA::String_var to_add;
 
-  CORBA::String_var ep_scheme, ep_host, ep_path;
+  CORBA::String_var ep_scheme, ep_host, ep_path, ep_fragment;
   CORBA::UShort     ep_port;
 
   CORBA::Boolean ok = omniURI::extractURL(ep + 10, ep_scheme.out(),
                                           ep_host.out(), ep_port,
-                                          ep_path.out());
+                                          ep_path.out(), ep_fragment.out());
   OMNIORB_ASSERT(ok);
 
-  const char* prefix = (!strcmp(ep_scheme, "https") ?
-                        "giop:http:https://" : "giop:http:http://");
+  CORBA::String_var prefix = prefixForScheme(ep_scheme);
   
   if (!strncmp(publish_spec, "giop:http:", 10)) {
 
-    CORBA::String_var ps_scheme, ps_host, ps_path;
+    CORBA::String_var ps_scheme, ps_host, ps_path, ps_fragment;
     CORBA::UShort     ps_port;
     
     ok = omniURI::extractURL(publish_spec + 10, ps_scheme.out(), ps_host.out(),
-                             ps_port, ps_path.out());
+                             ps_port, ps_path.out(), ps_fragment.out());
     if (!ok) {
       if (omniORB::trace(1)) {
         omniORB::logger l;
@@ -128,9 +137,7 @@ publish_one(const char*              publish_spec,
     if (!ps_port)
       ps_port = ep_port;
 
-    prefix = (!strcmp(ps_scheme, "https") ?
-              "giop:http:https://" : "giop:http:http://");
-
+    prefix = prefixForScheme(ps_scheme);
     to_add = omniURI::buildURI(prefix, ps_host, ps_port, ep_path);
   }
   else if (no_publish) {
@@ -253,17 +260,38 @@ httpEndpoint::Bind() {
 
   OMNIORB_ASSERT(pd_socket == RC_INVALID_SOCKET);
 
-  CORBA::String_var scheme, host;
+  CORBA::String_var scheme, host, fragment;
   CORBA::UShort     port;
 
   CORBA::Boolean ok = omniURI::extractURL(pd_address_param,
                                           scheme.out(), host.out(),
-                                          port, pd_path.out());
+                                          port, pd_path.out(), fragment.out());
   OMNIORB_ASSERT(ok);
 
-  pd_secure = !strcmp(scheme, "https");
-  const char* prefix = pd_secure ? "giop:http:https://" : "giop:http:http://";
-
+  const char* prefix = 0;
+  
+  if (!strcmp(scheme, "https")) {
+    pd_secure = 1;
+    prefix    = "giop:http:https://";
+  }
+  else if (!strcmp(scheme, "http")) {
+    pd_secure = 0;
+    prefix    = "giop:http:http://";
+  }
+  else if (!strcmp(scheme, "wss")) {
+    pd_secure = 1;
+    prefix    = "giop:http:wss://";
+  }
+  else if (!strcmp(scheme, "ws")) {
+    pd_secure = 0;
+    prefix    = "giop:http:ws://";
+  }
+  else {
+    // Caller should have already validated the scheme
+    ok = 0;
+    OMNIORB_ASSERT(ok);
+  }
+  
   char*         bound_host;
   CORBA::UShort bound_port;
 

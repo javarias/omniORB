@@ -3,7 +3,7 @@
 // connectionInfo.cc          Created on: 2018/08/28
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2018 Apasphere Ltd.
+//    Copyright (C) 2018-2019 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -138,6 +138,24 @@ ConnectionInfo::toString(ConnectionInfo::ConnectionEvent evt)
   case HTTP_BUFFER_FULL:
     return "HTTP buffer full";
 
+  case SEND_WEBSOCKET_REQ:
+    return "Send WebSocket upgrade request";
+
+  case RECV_WEBSOCKET_REQ:
+    return "Receive WebSocket upgrade request";
+
+  case SEND_WEBSOCKET_ACK:
+    return "Send WebSocket upgrade acknowledgement";
+
+  case RECV_WEBSOCKET_ACK:
+    return "Receive WebSocket upgrade acknowledgement";
+
+  case RECV_WEBSOCKET_REJECT:
+    return "WebSocket upgrade rejected";
+
+
+    // HTTP crypto
+    
   case SEND_SESSION_KEY:
     return "Send HTTP crypto session key";
 

@@ -3,7 +3,7 @@
 // connectionInfo.h           Created on: 2018/08/28
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2018 Apasphere Ltd.
+//    Copyright (C) 2018-2019 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -89,10 +89,17 @@ public:
     SEND_HTTP_ERROR         = 0x204,
     RECV_HTTP_ERROR         = 0x205,
     HTTP_BUFFER_FULL        = 0x206,
-    SEND_SESSION_KEY        = 0X207,
-    RECEIVED_SESSION_KEY    = 0x208,
-    CRYPTO_CLIENT_UNKNOWN   = 0x209,
-    INVALID_SESSION_KEY     = 0x20a
+    SEND_WEBSOCKET_REQ      = 0x207,
+    RECV_WEBSOCKET_REQ      = 0x208,
+    SEND_WEBSOCKET_ACK      = 0x209,
+    RECV_WEBSOCKET_ACK      = 0x20a,
+    RECV_WEBSOCKET_REJECT   = 0x20b,
+
+    // HTTP crypto
+    SEND_SESSION_KEY        = 0x301,
+    RECEIVED_SESSION_KEY    = 0x302,
+    CRYPTO_CLIENT_UNKNOWN   = 0x303,
+    INVALID_SESSION_KEY     = 0x304
   };
 
   static _core_attr ConnectionInfo* singleton;

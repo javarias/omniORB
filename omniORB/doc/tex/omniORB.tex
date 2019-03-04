@@ -4035,16 +4035,21 @@ If need be, create more certificates for servers and clients in the
 same way.
 
 
-\section{HTTP and HTTPS transport}
+\section{HTTP, HTTPS and WebSocket transport}
+\label{sec:httptransport}
 
-omniORB includes an omniORB-specific HTTP and HTTPS transport. It
-works by encapsulating GIOP messages into HTTP messages, which can
-make it easier to transport through firewalls and proxies that
-understand HTTP but not GIOP. It supports the use of HTTP proxies and
-reverse proxies.
+omniORB includes an omniORB-specific HTTP transport. It works by
+encapsulating GIOP messages into HTTP messages, which can make it
+easier to transport through firewalls and proxies that understand HTTP
+but not GIOP. It supports the use of HTTP proxies, reverse proxies and
+load balancers. It can optionally establish WebSocket connections,
+which avoid many of the limitations of pure HTTP, but are not quite as
+widely accepted.
 
-To use the HTTP transport, you must link your application with the
-\file{omnihttpTP} library.
+To use the HTTP transport, you must link with the \file{omnihttpTP}
+library.
+
+\subsection{HTTP limitations}
 
 Normal client-server CORBA calls match the semantics of HTTP---the
 client sends a request and blocks waiting for the server to respond,
@@ -4071,33 +4076,59 @@ is interpreting the HTTP messages along the communication path:
     does not necessarily match what the server sees. This means that
     codeset information, which is only transmitted on the first call on a
     connection, may be missing from the point of view of the server.
+
+  \item Some web proxies and load balancers routinely close
+    connections after a client has sent a request, without sending the
+    request on to the server. The client therefore sees the connection
+    fail, but cannot know that the server did not receive the
+    request. It therefore has to fail the call with a
+    \code{COMM\_FAILURE} exception with completion status
+    \code{COMPLETED\_MAYBE}. Application code must be prepared to
+    handle the situation.
+    
 \end{itemize}
 
-To avoid these issues with proxies, it is safest to keep
+To minimise these issues with proxies, it is safest to keep
 \code{oneCallPerConnection} set to true, avoid bidirectional GIOP, and
-make use of the \code{defaultCharCodeSet} and \code{defaultWCharCodeSet}
-parameters to choose suitable codesets.
+make use of the \code{defaultCharCodeSet} and
+\code{defaultWCharCodeSet} parameters to choose suitable codesets.
+
+Alternatively, clients can `upgrade' the HTTP connection to a
+WebSockets connection, in which cases messages are sent in a binary
+framing format that \emph{does} permit the use of full GIOP semantics.
+Upgrading an HTTP connection to a WebSockets connection requires that
+all intermediary servers (proxies, load balancers, etc.)  support the
+WebSocket protocol, so there are some environments in which plain HTTP
+communication succeeds but WebSockets fail.
+
 
 \subsection{Endpoint and transport rule specification}
 
 The HTTP transport uses endpoint URIs of the form
 \code{giop:http:}\textit{url}, where the \textit{url} is a full
-\code{http://} or \code{https://} URL. That means the URIs appear to
-duplicate the `http':
+\code{http://}, \code{https://}, \code{ws://} or \code{wss://}
+URL. That means the URIs appear to duplicate the `http':
 
 \begin{quote}
   \code{giop:http:http://server.example.com:8000/call}\\
-  \code{giop:http:https://secure.example.com:443/invoke}
+  \code{giop:http:https://secure.example.com:443/invoke}\\
+  \code{giop:http:ws://websocket.example.com:8080/ws}\\
+  \code{giop:http:wss://websocket-secure.example.com:8443/ws}
 \end{quote}
 
-The path part of the URL can be set to any value. On the client side,
-the client makes an HTTP \code{POST} request to the URL, specifying
-the path; the server checks that the path matches what it expects. The
-ability to specify a path this way can be helpful when configuring
-path-based routing in load balancer configurations.
+\noindent The path part of the URL can be set to any value. On the
+client side, the client makes an HTTP \code{POST} request to the URL,
+specifying the path; the server checks that the path matches what it
+expects. The ability to specify a path this way can be helpful when
+configuring path-based routing in load balancer configurations.
 
 If no port is specified on the server endpoint, the server uses an
 ephemeral port; it does not default to 80 or 443.
+
+Servers always support upgrade of connections to WebSocket. The use of
+a \code{ws://} or \code{wss://} URL determines the URL that is
+published in object references, and thus whether clients will attempt
+to use WebSockets or not.
 
 The transport specification `\code{http}' is not in the default client
 or server transport rules (as described in
@@ -4114,24 +4145,27 @@ requires basic authentication, the \code{httpProxyUsername} and
 \code{httpProxyPassword} parameters can be set.
 
 When connecting through a proxy, the behaviour depends on whether the
-client is connecting to an HTTP or HTTPS server. When connecting to
-HTTP, the request is sent directly to the proxy, and the proxy
-forwards it at an HTTP level. In this situation, it is essential that
-only pure HTTP-compliant messages are sent.
+client is connecting to an HTTP or HTTPS server, and whether it is
+attempting to use WebSockets. When connecting with plain HTTP, the
+request is sent directly to the proxy, and the proxy forwards it at an
+HTTP level. In this situation, it is essential that only pure
+HTTP-compliant messages are sent.
 
-When connecting to an HTTPS server, the client makes a \code{CONNECT}
-request to the proxy. If accepted by the proxy, that opens a
-transparent tunnel through to the server. In that situation, as long
-as nothing else intercepts and attempts to interpret the data, the
-omniORB client is in effect directly connected to the omniORB server,
-and there is more chance that transfers that are not strictly legal
-HTTP will succeed.
+When connecting to an HTTPS server or upgrading the connection to
+WebSockets, the client makes a \code{CONNECT} request to the proxy. If
+accepted by the proxy, that opens a transparent tunnel through to the
+server. In that situation, as long as nothing else intercepts and
+attempts to interpret the data, the omniORB client is in effect
+directly connected to the omniORB server, and there is more chance
+that transfers that are not strictly legal HTTP will succeed.
+
 
 \subsection{HTTPS keys and certificates}
 
 Support for HTTPS uses the same concepts as the SSL transport. For
 each configuration option with a name starting `\code{ssl}', there is
 an equivalent option starting `\code{https}'.
+
 
 \subsection{In-message encryption}
 
@@ -4492,6 +4526,31 @@ the form \code{\textit{filename}}.
 
 \end{description}
 
+
+\subsection{HTTP URLs}
+
+If the omniORB-specific HTTP transport is enabled (see
+section~\ref{sec:httptransport}), then HTTP URLs are also
+supported. The format is
+
+\begin{quote}
+\textit{scheme}%
+\corbauri{://}%
+<\textit{host}>%
+[\corbauri{:}\textit{port}]%
+\corbauri{/}%
+<\textit{path}>%
+\corbauri{#}%
+<\textit{object key}>
+\end{quote}
+
+\noindent Where \textit{scheme} is one of \corbauri{http},
+\corbauri{https}, \corbauri{ws} or \corbauri{wss}. For example:
+
+\begin{quote}
+\corbauri{http://myhost.example.com/call#MyObjectKey}\\
+\corbauri{wss://myhost.example.com/websocket#MyObjectKey}\\
+\end{quote}
 
 
 \subsection{Resolve initial references}
