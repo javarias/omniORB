@@ -47,13 +47,15 @@ public:
   // next character after the escaped characters; size is set to the
   // size of the unescaped value.
 
-  static char* buildURI(const char*   prefix,
-                        const char*   host,
-                        CORBA::UShort port,
-                        const char*   path=0);
+  static char* buildURI(const char*    prefix,
+                        const char*    host,
+                        CORBA::UShort  port,
+                        const char*    path = 0,
+                        CORBA::Boolean always_port = 1);
   // Build a URI with the prefix, containing the host and port,
   // properly escaping the host if need be. If path is set, it is
-  // added to the end, with no escaping.
+  // added to the end, with no escaping. If always_port is false, does
+  // not include the port if it is zero.
 
   static char* extractHostPort(const char*    addr,
                                CORBA::UShort& port,

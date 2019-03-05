@@ -367,7 +367,6 @@ httpConnection::readRequestLine()
     ConnectionInfo::set(ConnectionInfo::SEND_HTTP_ERROR, 1,
                         pd_peeraddress, "400 Bad Request");
     sendError(400, "Bad Request", "Not available here\r\n");
-    abort();
     OMNIORB_THROW(MARSHAL, MARSHAL_HTTPHeaderInvalid, CORBA::COMPLETED_NO);
   }
 
