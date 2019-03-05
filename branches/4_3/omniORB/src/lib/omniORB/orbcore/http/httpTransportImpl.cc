@@ -183,7 +183,7 @@ httpURIHandler::toObject(const char* uri, unsigned int cycles)
   CORBA::String_var prefix = CORBA::string_alloc(strlen(scheme) + 4);
   sprintf((char*)prefix, "%s://", (const char*)scheme);
   
-  CORBA::String_var ior_url = omniURI::buildURI(prefix, host, port, path);
+  CORBA::String_var ior_url = omniURI::buildURI(prefix, host, port, path, 0);
 
   
   // Marshal the HTTP transport tagged component

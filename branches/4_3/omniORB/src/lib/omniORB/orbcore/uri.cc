@@ -135,10 +135,11 @@ omniURI::unregisterURIHandler(URIHandler* h)
 //
 
 char*
-omniURI::buildURI(const char*   prefix,
-                  const char*   host,
-                  CORBA::UShort port,
-                  const char*   path)
+omniURI::buildURI(const char*    prefix,
+                  const char*    host,
+                  CORBA::UShort  port,
+                  const char*    path,
+                  CORBA::Boolean always_port)
 {
   CORBA::ULong   prefix_len = strlen(prefix);
   CORBA::Boolean colon      = *prefix && prefix[prefix_len - 1] != '/';
@@ -173,7 +174,7 @@ omniURI::buildURI(const char*   prefix,
 
   addrp += sprintf(addrp, format, prefix, host);
   
-  if (port)
+  if (port || always_port)
     addrp += sprintf(addrp, ":%d", (int)port);
   
   if (path)
