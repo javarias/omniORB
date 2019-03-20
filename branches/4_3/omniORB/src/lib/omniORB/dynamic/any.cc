@@ -301,8 +301,13 @@ CORBA::Any::operator<<= (cdrStream& s)
   PR_clearData();
 
   grabTC(pd_tc, CORBA::TypeCode::unmarshalTypeCode(s));
-  pd_mbuf = new cdrAnyMemoryStream;
-  tcParser::copyStreamToStream(get(pd_tc), s, *pd_mbuf);
+
+  CORBA::TCKind kind = pd_tc->kind();
+
+  if (!(kind == CORBA::tk_void || kind == tk_null)) {
+    pd_mbuf = new cdrAnyMemoryStream;
+    tcParser::copyStreamToStream(get(pd_tc), s, *pd_mbuf);
+  }
 }
 
 // omniORB data-only marshalling functions

@@ -1,3 +1,12 @@
+Wed 20 Mar 16:26:49 GMT 2019
+============================
+
+- No need to allocate and copy into buffer when unmarshalling a void
+  or null Any.
+
+src/lib/omniORB/dynamic/any.cc
+
+
 Tue  5 Mar 10:16:06 GMT 2019
 ============================
 
