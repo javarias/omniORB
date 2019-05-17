@@ -1,3 +1,11 @@
+Fri 17 May 11:39:34 BST 2019
+============================
+
+- Avoid most use of deprecated imp module.
+
+python3/omniORB/__init__.py
+
+
 Fri 17 May 10:58:52 BST 2019
 ============================
 
