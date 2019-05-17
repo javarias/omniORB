@@ -30,7 +30,7 @@
 omniORB module -- omniORB specific features
 """
 
-import sys, types, imp, os, os.path, tempfile
+import sys, types, os, os.path, tempfile
 
 try:
     import threading
@@ -121,7 +121,7 @@ Returns a tuple of Python module names corresponding to the IDL module
 names declared in the file. The modules can be accessed through
 sys.modules."""
 
-    import subprocess
+    import subprocess, imp
 
     if not os.path.isfile(idlname):
         raise ImportError("File " + idlname + " does not exist")
@@ -411,7 +411,7 @@ def newModule(mname):
             mod = _partialModules[current]
 
         else:
-            newmod = imp.new_module(current)
+            newmod = types.ModuleType(current)
             _partialModules[current] = mod = newmod
 
         current = current + "."
