@@ -1,3 +1,14 @@
+Fri 17 May 10:58:52 BST 2019
+============================
+
+- Small merge from 4.2.x.
+
+python/omniORB/__init__.py
+python/omniidl_be/python.py
+python3/omniORB/__init__.py
+python3/omniidl_be/python.py
+
+
 Mon  4 Mar 23:12:22 GMT 2019
 ============================
 
