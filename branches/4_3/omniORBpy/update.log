@@ -1,3 +1,9 @@
+Mon 20 May 16:46:53 BST 2019
+============================
+
+- Properly use bytes for object ids in servant manager calls on Python 3.
+
+
 Fri 17 May 11:39:34 BST 2019
 ============================
 
