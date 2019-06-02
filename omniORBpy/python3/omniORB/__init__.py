@@ -480,17 +480,41 @@ class EnumItem(object):
     def __repr__(self):
         return self._n
 
-    def __cmp__(self, other):
-        try:
-            if isinstance(other, EnumItem):
-                if other._parent_id == self._parent_id:
-                    return cmp(self._v, other._v)
-                else:
-                    return cmp(self._parent_id, other._parent_id)
-            else:
-                return cmp(id(self), id(other))
-        except:
-            return cmp(id(self), id(other))
+    def __eq__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v == other._v
+        else:
+            return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v != other._v
+        else:
+            return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v < other._v
+        else:
+            return NotImplemented
+
+    def __le__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v <= other._v
+        else:
+            return NotImplemented
+
+    def __gt__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v > other._v
+        else:
+            return NotImplemented
+
+    def __ge__(self, other):
+        if isinstance(other, EnumItem) and other._parent_id == self._parent_id:
+            return self._v >= other._v
+        else:
+            return NotImplemented
 
     def __hash__(self):
         return hash(self._parent_id + "/" + self._n)

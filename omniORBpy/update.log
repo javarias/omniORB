@@ -1,3 +1,11 @@
+Sun  2 Jun 22:22:20 BST 2019
+============================
+
+- Correct comparison operators for enums in Python 3.
+
+python3/omniORB/__init__.py
+
+
 Mon 20 May 16:46:53 BST 2019
 ============================
 
