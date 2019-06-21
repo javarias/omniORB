@@ -139,23 +139,24 @@ sys.modules."""
     cmd.extend(args)
     cmd.append(idlname)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE) as proc:
 
-    try:
-        tempname  = tempfile.mktemp()
-        tempnamec = tempname + "c"
-        while os.path.exists(tempnamec):
+        try:
             tempname  = tempfile.mktemp()
             tempnamec = tempname + "c"
+            while os.path.exists(tempnamec):
+                tempname  = tempfile.mktemp()
+                tempnamec = tempname + "c"
 
-        mod    = imp.load_source(modname, tempname, proc.stdout)
-        errors = proc.stderr.read()
-        status = proc.wait()
+            mod    = imp.load_source(modname, tempname, proc.stdout)
+            errors = proc.stderr.read()
+            status = proc.wait()
 
-    finally:
-        # Get rid of byte-compiled file
-        if os.path.isfile(tempnamec):
-            os.remove(tempnamec)
+        finally:
+            # Get rid of byte-compiled file
+            if os.path.isfile(tempnamec):
+                os.remove(tempnamec)
 
     if status:
         if not isinstance(errors, str):
