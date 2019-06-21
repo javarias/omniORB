@@ -1,3 +1,15 @@
+Fri 21 Jun 09:07:36 BST 2019
+============================
+
+- Use with statement to avoid unittest warning about unclosed subprocess.
+
+python3/omniORB/__init__.py
+
+- Handle invalid received UTF-8.
+
+modules/pyMarshal.cc
+
+
 Sun  2 Jun 22:22:20 BST 2019
 ============================
 
