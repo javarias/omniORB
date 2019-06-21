@@ -2678,14 +2678,27 @@ unmarshalPyObjectString(cdrStream& stream, PyObject* d_o)
   len = orbParameters::nativeCharCodeSet->unmarshalString(stream,
                                                           stream.TCS_C(),
                                                           max_len, s);
-#else
-  len = omniPy::ncs_c_utf_8->unmarshalString(stream, stream.TCS_C(),
-                                             max_len, s);
-#endif
-
   PyObject* r_o = String_FromStringAndSize(s, len);
   _CORBA_String_helper::dealloc(s);
   return r_o;
+
+#else
+  len = omniPy::ncs_c_utf_8->unmarshalString(stream, stream.TCS_C(),
+                                             max_len, s);
+  
+  PyObject* r_o = String_FromStringAndSize(s, len);
+
+  if (!r_o) {
+    // If the sender claims it is sending UTF-8, the UTF-8 native
+    // codeset believes it, without ensuring it is valid UTF-8. Python
+    // does validate it, so Unicode object creation can fail. If that
+    // happens, we decode it replacing the errors.
+    PyErr_Clear();
+    r_o = PyUnicode_DecodeUTF8(s, len, "replace");
+  }
+  _CORBA_String_helper::dealloc(s);
+  return r_o;
+#endif
 }
 
 
