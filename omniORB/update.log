@@ -1,3 +1,11 @@
+Mon  1 Jul 11:43:00 BST 2019
+============================
+
+- Race condition creating unix transport socket directory.
+
+src/lib/omniORB/orbcore/unix/unixTransportImpl.cc
+
+
 Wed 20 Mar 17:28:41 GMT 2019
 ============================
 
