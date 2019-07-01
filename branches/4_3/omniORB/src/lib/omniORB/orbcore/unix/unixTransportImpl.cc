@@ -92,18 +92,25 @@ unixTransportImpl::toEndpoint(const char* param) {
       sprintf(dname,format,pw->pw_name);
       param = dname;
     }
-    if (stat(param,&sb) == 0) {
-      if (!S_ISDIR(sb.st_mode)) {
-	if (omniORB::trace(1)) {
-	  omniORB::logger log;	
-	  log << "Error: " << param << " exists and is not a directory. "
-	      << "Please remove it and try again\n";
-	}
-	return 0;
+
+    while (1) {
+      if (stat(param,&sb) == 0) {
+        if (!S_ISDIR(sb.st_mode)) {
+          if (omniORB::trace(1)) {
+            omniORB::logger log;	
+            log << "Error: " << param << " exists and is not a directory. "
+                << "Please remove it and try again\n";
+          }
+          return 0;
+        }
       }
-    }
-    else {
-      if (mkdir(param,0755) < 0) {
+      else {
+        if (mkdir(param,0755) == 0)
+          break;
+
+        if (errno == EEXIST) // race with something else creating the directory
+          continue;
+
 	if (omniORB::trace(1)) {
 	  omniORB::logger log;	
 	  log << "Error: cannot create directory: " << param << "\n";
