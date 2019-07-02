@@ -103,6 +103,7 @@ unixTransportImpl::toEndpoint(const char* param) {
           }
           return 0;
         }
+        break;
       }
       else {
         if (mkdir(param,0755) == 0)
