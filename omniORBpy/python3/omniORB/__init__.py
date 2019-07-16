@@ -105,7 +105,7 @@ e.g. omniidlArguments(["-I/my/include", "-DMY_DEFINE"])"""
 
 # Import an IDL file by forking the IDL compiler and processing the
 # output
-def importIDL(idlname, args=None, inline=1):
+def importIDL(idlname, args=None, inline=True):
     """importIDL(filename [, args ] [, inline ]) -> tuple
 
 Run the IDL compiler on the specified IDL file, and import the
@@ -114,7 +114,7 @@ used as arguments to omniidl. If args is not present, uses the default
 set with omniidlArguments().
 
 Normally imports the definitions for #included files as well as the
-main file. Set inline to 0 to only import definitions for the main
+main file. Set inline to False to only import definitions for the main
 file.
 
 Returns a tuple of Python module names corresponding to the IDL module
@@ -142,21 +142,9 @@ sys.modules."""
     with subprocess.Popen(cmd, stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE) as proc:
 
-        try:
-            tempname  = tempfile.mktemp()
-            tempnamec = tempname + "c"
-            while os.path.exists(tempnamec):
-                tempname  = tempfile.mktemp()
-                tempnamec = tempname + "c"
-
-            mod    = imp.load_source(modname, tempname, proc.stdout)
-            errors = proc.stderr.read()
-            status = proc.wait()
-
-        finally:
-            # Get rid of byte-compiled file
-            if os.path.isfile(tempnamec):
-                os.remove(tempnamec)
+        source = proc.stdout.read()
+        errors = proc.stderr.read()
+        status = proc.wait()
 
     if status:
         if not isinstance(errors, str):
@@ -165,8 +153,9 @@ sys.modules."""
         raise ImportError(errors)
 
     try:
-        mod.__file__ = idlname
-        mods = mod._exported_modules
+        mdict = {"__file__": idlname}
+        exec(source, mdict)
+        mods = mdict["_exported_modules"]
 
         for mod in mods:
             for m in (mod, skeletonModuleName(mod)):
@@ -184,7 +173,7 @@ sys.modules."""
         raise ImportError("Invalid output from omniidl")
 
 
-def importIDLString(str, args=None, inline=1):
+def importIDLString(str, args=None, inline=True):
     """importIDLString(string [, args ] [, inline ]) -> tuple
 
 Run the IDL compiler on the given string, and import the resulting
@@ -193,7 +182,7 @@ arguments to omniidl. If args is not present, uses the default set
 with omniidlArguments().
 
 Normally imports the definitions for #included files as well as the
-main file. Set inline to 0 to only import definitions for the main
+main file. Set inline to False to only import definitions for the main
 file.
 
 Returns a tuple of Python module names corresponding to the IDL module
@@ -473,7 +462,6 @@ class EnumItem(object):
     def __init__(self, name, value):
         self._n = name
         self._v = value
-        return
 
     def __str__(self):
         return self._n
@@ -927,7 +915,7 @@ class WorkerThread(threading.Thread):
 
 class omniThreadHook(object):
     def __init__(self, target):
-        self.target            = target
+        self.target = target
 
         try:
             self.target_stop       = target._Thread__stop
