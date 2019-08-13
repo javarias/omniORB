@@ -3643,6 +3643,15 @@ $as_echo "$am_cv_python_pyexecdir" >&6; }
   fi
 
 
+pyplat=`$PYTHON -c "import sys, platform; sys.stdout.write(platform.python_implementation())"`
+   if test "x$pyplat" = "xPyPy"
+   then
+     echo "Fix PyPy pythondir to $am_cv_python_pyexecdir"
+     am_cv_python_pythondir=$am_cv_python_pyexecdir
+     pythondir=$am_cv_python_pyexecdir
+   fi
+
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'

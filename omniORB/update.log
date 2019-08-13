@@ -1,3 +1,13 @@
+Tue 13 Aug 14:15:31 BST 2019
+============================
+
+- pypy3 support.
+
+acinclude.m4
+configure.ac
+configure
+
+
 Tue  2 Jul 21:33:32 BST 2019
 ============================
 

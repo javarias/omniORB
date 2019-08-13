@@ -2497,6 +2497,10 @@ unmarshalPyObjectChar(cdrStream& stream, PyObject* d_o)
   Py_UNICODE uc = stream.unmarshalChar();
   return PyUnicode_FromUnicode(&uc, 1);
 
+#elif defined(PYPY_VERSION)
+  wchar_t uc = stream.unmarshalChar();
+  return PyUnicode_FromWideChar(&uc, 1);
+  
 #else
   Py_UCS4   uc  = stream.unmarshalChar();
   PyObject* r_o = PyUnicode_New(1, uc);
@@ -2750,6 +2754,20 @@ unmarshalPyObjectSeqArray(cdrStream& stream, PyObject* d_o, CORBA::ULong len)
       for (i=0; i<len; i++)
         uc[i] = stream.unmarshalChar();
 
+#elif defined(PYPY_VERSION)
+      wchar_t* buf = new wchar_t[len];
+      try {
+        for (i=0; i<len; i++)
+          buf[i] = stream.unmarshalChar();
+
+        r_o = PyUnicode_FromWideChar(buf, len);
+        delete [] buf;
+      }
+      catch (...) {
+        delete [] buf;
+        throw;
+      }
+      
 #else
       r_o = PyUnicode_New(len, 255);
 
@@ -2990,12 +3008,22 @@ unmarshalPyObjectWChar(cdrStream& stream, PyObject* d_o)
 {
   OMNIORB_CHECK_TCS_W_FOR_UNMARSHAL(stream.TCS_W(), stream);
 
-  Py_UNICODE  c   = stream.TCS_W()->unmarshalWChar(stream);
-  PyObject*   r_o = PyUnicode_FromUnicode(0, 1);
-  Py_UNICODE* str = PyUnicode_AS_UNICODE(r_o);
-  str[0]          = c;
-  str[1]          = 0;
+#if (PY_VERSION_HEX < 0x03030000)
+  Py_UNICODE uc = stream.TCS_W()->unmarshalWChar(stream);
+  return  PyUnicode_FromUnicode(&uc, 1);
+
+#elif defined(PYPY_VERSION)
+  wchar_t uc = stream.unmarshalWChar();
+  return PyUnicode_FromWideChar(&uc, 1);
+
+#else
+  Py_UCS4   uc  = stream.unmarshalChar();
+  PyObject* r_o = PyUnicode_New(1, uc);
+
+  PyUnicode_WriteChar(r_o, 0, uc);
   return r_o;
+
+#endif
 }
 
 static PyObject*
