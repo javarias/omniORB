@@ -385,6 +385,18 @@ fi
 AC_SUBST(ENABLE_HTTP_CRYPTO, $omni_cv_enable_http_crypto)])
 
 
+dnl Fix pypy pythondir
+AC_DEFUN([OMNI_FIX_PYTHONDIR],
+  [pyplat=`$PYTHON -c "import sys, platform; sys.stdout.write(platform.python_implementation())"`
+   if test "x$pyplat" = "xPyPy"
+   then
+     echo "Fix PyPy pythondir to $am_cv_python_pyexecdir"
+     am_cv_python_pythondir=$am_cv_python_pyexecdir
+     pythondir=$am_cv_python_pyexecdir
+   fi
+])
+
+
 dnl
 dnl Tests from http://www.gnu.org/software/ac-archive/
 dnl
