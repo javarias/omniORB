@@ -121,7 +121,7 @@ Returns a tuple of Python module names corresponding to the IDL module
 names declared in the file. The modules can be accessed through
 sys.modules."""
 
-    import subprocess, imp
+    import subprocess
 
     if not os.path.isfile(idlname):
         raise ImportError("File " + idlname + " does not exist")
