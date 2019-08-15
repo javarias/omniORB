@@ -221,8 +221,7 @@ httpURIHandler::syntaxIsValid(const char* uri)
 
   CORBA::Boolean ok = omniURI::extractURL(uri, scheme.out(), host.out(),
                                           port, path.out(), fragment.out());
-
-  
+  return ok;
 }
 
 
