@@ -78,7 +78,7 @@ def main(argv):
     linere1 = re.compile(r"^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +\(\) +External +\| +(\?[^ ]*)(.*)\n")
     linere2 = re.compile(r"^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +External +\| +(\?[^?][^ ]*)(.*)\n")
 
-    exclude = re.compile(r"deleting destructor[^(]+\(unsigned int\)|anonymous namespace|std@")
+    exclude = re.compile(r"deleting destructor[^(]+\(unsigned int\)|anonymous namespace")
 
     with open(deffile, "r") as dumped:
         while 1:
