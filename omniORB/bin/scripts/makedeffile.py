@@ -90,13 +90,13 @@ def main(argv):
             if match:
                 symbol = match.group(1)
                 args   = match.group(2)
-                if exclude.search(args):
+
+                if "std@" in symbol or exclude.search(args):
                     continue
 
                 definitions[symbol] = None
 
-    symbols = definitions.keys()
-    symbols.sort()
+    symbols = sorted(definitions.keys())
 
     print("Output %d symbols." % len(symbols))
 

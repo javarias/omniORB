@@ -1,3 +1,11 @@
+Wed 28 Aug 14:20:39 BST 2019
+============================
+
+- makedeffile.py works on Python 3.
+
+bin/scripts/makedeffile.py
+
+
 Wed 28 Aug 14:07:49 BST 2019
 ============================
 
