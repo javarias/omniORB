@@ -5,9 +5,9 @@
 
 <p>
 omniORB development happens in Subversion. See the omniORB <a
-href="http://sourceforge.net/projects/omniorb/develop">SourceForge
-develop page</a> for generic instructions, or <a
-href="http://omniorb.svn.sourceforge.net/viewvc/omniorb/">browse</a>
+href="https://sourceforge.net/projects/omniorb/">SourceForge
+project page</a> for generic instructions, or <a
+href="https://sourceforge.net/p/omniorb/svn/">browse</a>
 the repository.
 </p>
 
@@ -16,14 +16,8 @@ the repository.
 <p>
 The repository contains the following directories:
 
-<ul>
 <li><a
-href="http://sourceforge.net/p/omniorb/svn/HEAD/tree/trunk/">trunk</a>
-contains the current unstable development version.
-</li>
-
-<li><a
-href="http://sourceforge.net/p/omniorb/svn/HEAD/tree/branches/">branches</a>
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/branches/">branches</a>
 contains stable branches of omniORB. omniORB and omniORBpy releases
 are synchronised with each other, so the branches are named after the
 omniORB release.
@@ -31,23 +25,36 @@ omniORB release.
 
 <li>
 <a
-href="http://sourceforge.net/p/omniorb/svn/HEAD/tree/branches/4_2">branches/4_2</a>
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/branches/4_3">branches/4_3</a>
+is the current development branch, containing omniORB and omniORBpy 4.3.x.
+</li>
+
+<li>
+<a
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/branches/4_2">branches/4_2</a>
 is the current stable branch, containing omniORB and omniORBpy 4.2.x.
 </li>
 
 <li><a
-href="http://sourceforge.net/p/omniorb/svn/HEAD/tree/tags/">tags</a>
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/tags/">tags</a>
 contains tagged releases.
 </li>
 
 <li>
 <a
-href="http://sourceforge.net/p/omniorb/svn/HEAD/tree/cost/">cost</a>
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/cost/">cost</a>
 contains testing code from the CORBA Open Source Testing project.
 </li>
 
+<ul>
+<li><a
+href="https://sourceforge.net/p/omniorb/svn/HEAD/tree/trunk/">trunk</a>
+contains a very incomplete and unstable development version. Do not
+use it.
+</li>
+
 <li>
-old_* contain old branches and tags resulting form the conversion from
+old_* contain old branches and tags resulting from the conversion from
 CVS.
 </li>
 
