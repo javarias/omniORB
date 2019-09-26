@@ -1,3 +1,19 @@
+Thu 26 Sep 13:30:20 BST 2019
+============================
+
+- Merge Python 3 thread interceptor fix and doc updates from 4_2.
+
+doc/omniORB.pdf
+doc/omniORB/contents_motif.gif
+doc/omniORB/contents_motif.svg
+doc/omniORB/next_motif.gif
+doc/omniORB/next_motif.svg
+doc/omniORB/omniORB.html
+doc/omniORB/omniORB002.html
+doc/omniORB/previous_motif.gif
+doc/omniORB/previous_motif.svg
+
+
 Wed 28 Aug 14:22:50 BST 2019
 ============================
 
