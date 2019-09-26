@@ -4172,10 +4172,12 @@ C++ documentation for details.
 omniORBpy has limited interceptor support. Interceptors permit the
 application to insert processing at various points along the call
 chain, as requests are processed. The Portable Interceptors API is not
-yet supported.
+supported.
 
-Interceptors are registered using functions in the
-\code{omniORB.interceptors} module:
+\section{Request interceptors}
+
+Interceptors for incoming and outgoing requests are registered using
+functions in the \code{omniORB.interceptors} module:
 
 \begin{pylisting}
   addClientSendRequest()
@@ -4213,6 +4215,34 @@ is initialised. Attempting to call them later results in a
 \code{BAD\_INV\_ORDER} exception.
 
 
+\section{Thread interceptors}
+
+Thread interceptors are registered using functions in the
+\code{omniORB.interceptors} module:
+
+\begin{pylisting}
+  addAssignUpcallThread
+  addAssignAMIThread
+\end{pylisting}
+
+To register thread interceptors, call the relevant registration
+function with a callable argument. The callable can be a simple
+function that returns None, or a generator that yields once. When a
+thread is assigned to perform server upcalls or AMI calls, the
+corresponding function is called. If it is a simple function, the
+function is called when the thread is assigned. If it is a generator,
+it is called when the thread is assigned, yields to permit the thread
+to execute, and then resumes when the thread is unassigned. For
+example:
+
+\begin{pylisting}
+def upcallInterceptor():
+    print("This thread is about to be used to call into server code")
+    yield
+    print("The thread has finished")
+
+omniORB.interceptors.addAssignUpcallThread(upcallInterceptor)
+\end{pylisting}
 
 
 
