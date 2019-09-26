@@ -1,3 +1,37 @@
+Thu 26 Sep 13:30:20 BST 2019
+============================
+
+- Merge Python 3 thread interceptor fix and doc updates from 4_2.
+
+doc/omniORBpy.pdf
+doc/omniORBpy/contents_motif.gif
+doc/omniORBpy/contents_motif.svg
+doc/omniORBpy/index.html
+doc/omniORBpy/next_motif.gif
+doc/omniORBpy/next_motif.svg
+doc/omniORBpy/omniORBpy.html
+doc/omniORBpy/omniORBpy001.html
+doc/omniORBpy/omniORBpy002.html
+doc/omniORBpy/omniORBpy003.html
+doc/omniORBpy/omniORBpy004.html
+doc/omniORBpy/omniORBpy005.html
+doc/omniORBpy/omniORBpy006.html
+doc/omniORBpy/omniORBpy007.html
+doc/omniORBpy/omniORBpy008.html
+doc/omniORBpy/omniORBpy009.html
+doc/omniORBpy/omniORBpy010.html
+doc/omniORBpy/omniORBpy011.html
+doc/omniORBpy/omniORBpy012.html
+doc/omniORBpy/omniORBpy013.html
+doc/omniORBpy/previous_motif.gif
+doc/omniORBpy/previous_motif.svg
+doc/tex/omniORBpy.tex
+modules/pyInterceptors.cc
+modules/pyThreadCache.cc
+python/omniORB/interceptors.py
+python3/omniORB/interceptors.py
+
+
 Tue 13 Aug 14:15:31 BST 2019
 ============================
 
