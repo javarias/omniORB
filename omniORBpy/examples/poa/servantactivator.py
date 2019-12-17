@@ -73,7 +73,7 @@ child.set_servant_manager(sai)
 del sai
 
 # Create an object reference with no servant
-eo = child.create_reference_with_id("MyEcho", CORBA.id(_GlobalIDL.Echo))
+eo = child.create_reference_with_id(b"MyEcho", CORBA.id(_GlobalIDL.Echo))
 print(orb.object_to_string(eo))
 
 # Run, or do some local calls...

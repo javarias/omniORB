@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# Run me with command line:
+#
+# ziop_srv.py -ORBserverTransportRule "* unix,ssl,tcp,ziop"
+
 import sys
 from omniORB import CORBA, PortableServer
 from omniORB import ZIOP, Compression

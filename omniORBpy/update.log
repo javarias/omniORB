@@ -1,3 +1,17 @@
+Tue 17 Dec 11:42:44 GMT 2019
+============================
+
+- Python 3 example fixes.
+
+examples/poa/servantactivator.py
+examples/poa/servantlocator.py
+examples/tests/pclient.py
+examples/tests/tclient.py
+examples/tests/tserver.py
+examples/ziop/example_echo.idl
+examples/ziop/ziop_srv.py
+
+
 Tue 17 Dec 09:37:53 GMT 2019
 ============================
 

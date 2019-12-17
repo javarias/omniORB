@@ -152,7 +152,7 @@ class I_i (TypeTest__POA.I):
                          TypeTest.U1(a = 5),
                          jo,
                          [1, 2, 3, 4, 5, 6, 7],
-                         "octet sequence",
+                         b"octet sequence",
                          "string")
         if a == 0:
             pass

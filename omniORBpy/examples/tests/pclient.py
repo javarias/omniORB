@@ -20,7 +20,7 @@ def doTests(orb, poa, io):
     a = time.time()
     print(a-b)
 
-    s = "".join(map(chr, l))
+    s = bytes(l)
 
     print("octet sequence: ", end=' ')
     sys.stdout.flush()
