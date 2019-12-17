@@ -62,9 +62,9 @@ child.set_servant_manager(sli)
 
 rooteo = Echo_i()._this()
 
-# Create an object reference with no servant
-eo = child.create_reference_with_id("MyEcho", CORBA.id(_GlobalIDL.Echo))
-eo2 = child.create_reference_with_id("MyEcho2", CORBA.id(_GlobalIDL.Echo))
+# Create object references with no servants
+eo  = child.create_reference_with_id(b"MyEcho", CORBA.id(_GlobalIDL.Echo))
+eo2 = child.create_reference_with_id(b"MyEcho2", CORBA.id(_GlobalIDL.Echo))
 print(orb.object_to_string(eo))
 
 # Run, or do some local calls...

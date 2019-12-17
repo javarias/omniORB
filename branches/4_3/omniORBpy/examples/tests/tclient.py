@@ -1041,7 +1041,7 @@ def doTests(orb, poa, io):
         ok = 0
         tresult("-")
 
-    s = "This is a sequence of octet, which is remarkably similar to a sequence of char. It also has a \0 in it."
+    s = b"This is a sequence of octet, which is a bytes type. It also has a \0 in it."
     r = io.complex17(s)
     if r == s:
         tresult("+")
@@ -1216,7 +1216,7 @@ def doTests(orb, poa, io):
         ok = 0
         tresult("-")
 
-    s = "This is a "
+    s = b"This is a "
     r = io.complex26(s)
     if r == s:
         tresult("+")
@@ -1297,7 +1297,7 @@ def doTests(orb, poa, io):
     except CORBA.MARSHAL:
         tresult("+")
 
-    s = "This is a long sequence<octet>"
+    s = b"This is a long sequence<octet>"
     try:
         r = io.complex26(s)
         ok = 0
@@ -1376,7 +1376,7 @@ def doTests(orb, poa, io):
         ok = 0
         tresult("-")
 
-    s = "ab\0de"
+    s = b"ab\0de"
     r = io.complex35(s)
     if r == s:
         tresult("+")
@@ -1600,7 +1600,7 @@ def doTests(orb, poa, io):
                      TypeTest.U1(a = 5),
                      jo,
                      [1, 2, 3, 4, 5, 6, 7],
-                     "octet sequence",
+                     b"octet sequence",
                      "string")
     r = io.complex37(s2)
     if r.c._is_equivalent(jo):
@@ -1615,7 +1615,7 @@ def doTests(orb, poa, io):
                      TypeTest.U1(a = 5),
                      None,
                      [1, 2, 3, 4, 5, 6, 7],
-                     "octet sequence",
+                     b"octet sequence",
                      "string")
     r = io.complex37(s2)
     if r.c is None:
@@ -1634,7 +1634,7 @@ def doTests(orb, poa, io):
                      TypeTest.U1(a = 5),
                      12345,
                      [1, 2, 3, 4, 5, 6, 7],
-                     "octet sequence",
+                     b"octet sequence",
                      "string")
     try:
         r = io.complex37(s2)
