@@ -1,3 +1,17 @@
+Tue 17 Dec 11:48:20 GMT 2019
+============================
+
+- Merge ZIOP import fix and tictactoe example removal from 4_2.
+
+examples/tictactoe
+examples/tictactoe/README
+examples/tictactoe/gameClient.py
+examples/tictactoe/gameServer.py
+examples/tictactoe/tictactoe.idl
+python/omniORB/ZIOP.py
+python3/omniORB/ZIOP.py
+
+
 Tue 17 Dec 11:42:44 GMT 2019
 ============================
 
