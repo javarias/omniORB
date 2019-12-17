@@ -8,7 +8,7 @@ omniORBpy is a robust high-performance CORBA ORB for Python.
 The bindings adhere to the standard IDL to Python mapping which you
 may find at
 
-  http://www.omg.org/technology/documents/formal/python_language_mapping.htm
+  https://www.omg.org/spec/PYTH
 
 
 omniORBpy makes use of the C++ omniORB library. omniORBpy version
@@ -20,7 +20,7 @@ contributors.
 
 It is a good idea to subscribe to the omniORB mailing list. See
 
-    http://omniorb.sourceforge.net/list.html
+    https://www.omniorb.net/list.html
 
 
 Please report any bugs you find to the mailing list.
@@ -60,7 +60,7 @@ use variables CC, CXX and PYTHON, e.g.:
 
 If you do not have Autoconf support on your platform (e.g. on
 Windows), you must install the omniORBpy source in the $TOP/src/lib
-directory of a working omniORB 4.2 tree. Make sure the directory is
+directory of a working omniORB 4.3 tree. Make sure the directory is
 called omniORBpy -- if you downloaded a release archive you must
 rename the directory to remove the version from the directory name.
 
@@ -82,7 +82,7 @@ add this path:
   export PYTHONPATH=$PYTHONPATH:$PREFIX/lib/pythonX.Y/site-packages
 
 replacing pythonX.Y with the version of Python you are using,
-e.g. python2.7
+e.g. python3.7
 
 With the non Autoconf build, you must add two directories to
 PYTHONPATH:
