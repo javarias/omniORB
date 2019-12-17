@@ -2,7 +2,7 @@
 
 # gameServer.py
 
-import sys, threading, time, Queue
+import sys, threading, time, queue
 import CORBA, PortableServer, CosNaming
 import TicTacToe, TicTacToe__POA
 
@@ -28,7 +28,7 @@ class GameFactory_i (TicTacToe__POA.GameFactory):
 
         self.iterator_scavenger = IteratorScavenger(self)
 
-        print "GameFactory_i created."
+        print("GameFactory_i created.")
 
     def newGame(self, name):
         # Create a POA for the game and its associated objects.
@@ -67,7 +67,7 @@ class GameFactory_i (TicTacToe__POA.GameFactory):
         self.lock.release()
 
         # Create list of GameInfo structures to return
-        ret = map(lambda g: TicTacToe.GameInfo(g[0], g[2]), front)
+        ret = [TicTacToe.GameInfo(g[0], g[2]) for g in front]
 
         # Create iterator if necessary
         if rest:
@@ -102,10 +102,10 @@ class GameIterator_i (TicTacToe__POA.GameIterator):
         self.poa     = poa
         self.games   = games
         self.tick    = 1 # Tick for time-out garbage collection
-        print "GameIterator_i created."
+        print("GameIterator_i created.")
 
     def __del__(self):
-        print "GameIterator_i deleted."
+        print("GameIterator_i deleted.")
 
     def next_n(self, how_many):
         self.tick  = 1
@@ -113,7 +113,7 @@ class GameIterator_i (TicTacToe__POA.GameIterator):
         self.games = self.games[int(how_many):]
 
         # Convert internal representation to GameInfo sequence
-        ret = map(lambda g: TicTacToe.GameInfo(g[0], g[2]), front)
+        ret = [TicTacToe.GameInfo(g[0], g[2]) for g in front]
 
         if self.games:
             more = 1
@@ -135,7 +135,7 @@ class IteratorScavenger (threading.Thread):
         self.start()
 
     def run(self):
-        print "Iterator scavenger running..."
+        print("Iterator scavenger running...")
 
         lock      = self.factory.lock
         iterators = self.factory.iterators
@@ -145,13 +145,13 @@ class IteratorScavenger (threading.Thread):
         while 1:
             time.sleep(SCAVENGER_INTERVAL)
 
-            print "Scavenging dead iterators..."
+            print("Scavenging dead iterators...")
 
             # Bonus points for spotting why we hold requests...
             manager.hold_requests(1)
             lock.acquire()
 
-            for id, iter in iterators.items():
+            for id, iter in list(iterators.items()):
                 if iter.tick == 1:
                     iter.tick = 0
                 else:
@@ -188,10 +188,10 @@ class Game_i (TicTacToe__POA.Game):
         self.spectators        = []
         self.spectatorNotifier = SpectatorNotifier(self.spectators, self.lock)
 
-        print "Game_i created."
+        print("Game_i created.")
 
     def __del__(self):
-        print "Game_i deleted."
+        print("Game_i deleted.")
 
     def _get_name(self):
         return self.name
@@ -220,8 +220,8 @@ class Game_i (TicTacToe__POA.Game):
                 try:
                     self.whose_go = TicTacToe.Nought
                     self.p_noughts.yourGo(self.state)
-                except (CORBA.COMM_FAILURE, CORBA.OBJECT_NOT_EXIST), ex:
-                    print "Lost contact with player"
+                except (CORBA.COMM_FAILURE, CORBA.OBJECT_NOT_EXIST) as ex:
+                    print("Lost contact with player")
                     self.kill()
 
             # Create a GameController
@@ -256,20 +256,20 @@ class Game_i (TicTacToe__POA.Game):
         if self.p_noughts:
             try:
                 self.p_noughts.gameAborted()
-            except CORBA.SystemException, ex:
-                print "System exception contacting noughts player"
+            except CORBA.SystemException as ex:
+                print("System exception contacting noughts player")
 
         if self.p_crosses:
             try:
                 self.p_crosses.gameAborted()
-            except CORBA.SystemException, ex:
-                print "System exception contacting crosses player"
+            except CORBA.SystemException as ex:
+                print("System exception contacting crosses player")
 
         self.spectatorNotifier.gameAborted()
 
         self.poa.destroy(1,0)
 
-        print "Game killed"
+        print("Game killed")
 
     
     def _play(self, x, y, ptype):
@@ -290,7 +290,7 @@ class Game_i (TicTacToe__POA.Game):
 
         try:
             if w is not None:
-                print "Winner:", w
+                print("Winner:", w)
                 self.p_noughts.end(self.state, w)
                 self.p_crosses.end(self.state, w)
                 self.spectatorNotifier.end(self.state, w)
@@ -309,8 +309,8 @@ class Game_i (TicTacToe__POA.Game):
 
                 self.spectatorNotifier.update(self.state)
 
-        except (CORBA.COMM_FAILURE, CORBA.OBJECT_NOT_EXIST), ex:
-            print "Lost contact with player!"
+        except (CORBA.COMM_FAILURE, CORBA.OBJECT_NOT_EXIST) as ex:
+            print("Lost contact with player!")
             self.kill()
 
         return self.state
@@ -372,16 +372,16 @@ class SpectatorNotifier (threading.Thread):
         self.setDaemon(1)
         self.spectators = spectators
         self.lock       = lock
-        self.queue      = Queue.Queue(0)
+        self.queue      = queue.Queue(0)
         self.start()
 
     def run(self):
-        print "SpectatorNotifier running..."
+        print("SpectatorNotifier running...")
 
         while 1:
             method, args = self.queue.get()
 
-            print "Notifying:", method
+            print("Notifying:", method)
 
             try:
                 self.lock.acquire()
@@ -389,11 +389,11 @@ class SpectatorNotifier (threading.Thread):
                     spec = self.spectators[i]
                     if spec:
                         try:
-                            apply(getattr(spec, method), args)
+                            getattr(spec, method)(*args)
 
                         except (CORBA.COMM_FAILURE,
-                                CORBA.OBJECT_NOT_EXIST), ex:
-                            print "Spectator lost"
+                                CORBA.OBJECT_NOT_EXIST) as ex:
+                            print("Spectator lost")
                             self.spectators[i] = None
             finally:
                 self.lock.release()
@@ -413,17 +413,17 @@ class GameController_i (TicTacToe__POA.GameController):
     def __init__(self, game, ptype):
         self.game  = game
         self.ptype = ptype
-        print "GameController_i created."
+        print("GameController_i created.")
 
     def __del__(self):
-        print "GameController_i deleted."
+        print("GameController_i deleted.")
     
     def play(self, x, y):
         return self.game._play(x, y, self.ptype)
 
 def main(argv):
 
-    print "Game Server starting..."
+    print("Game Server starting...")
 
     orb = CORBA.ORB_init(argv, CORBA.ORB_ID)
     poa = orb.resolve_initial_references("RootPOA")
@@ -434,7 +434,7 @@ def main(argv):
     gf_id   = poa.activate_object(gf_impl)
     gf_obj  = poa.id_to_reference(gf_id)
 
-    print orb.object_to_string(gf_obj)
+    print(orb.object_to_string(gf_obj))
 
     # Bind the GameFactory into the Naming service. This code is
     # paranoid about checking all the things which could go wrong.
@@ -444,23 +444,23 @@ def main(argv):
         nameRoot = orb.resolve_initial_references("NameService")
         nameRoot = nameRoot._narrow(CosNaming.NamingContext)
         if nameRoot is None:
-            print "NameService narrow failed!"
+            print("NameService narrow failed!")
             sys.exit(1)
 
-    except CORBA.ORB.InvalidName, ex:
+    except CORBA.ORB.InvalidName as ex:
         # This should never happen, since "NameService" is always a
         # valid name, even if it hadn't been configured.
 
-        print "Got an InvalidName exception when resolving NameService!"
+        print("Got an InvalidName exception when resolving NameService!")
         sys.exit(1)
 
-    except CORBA.NO_RESOURCES, ex:
-        print "No NameService configured!"
+    except CORBA.NO_RESOURCES as ex:
+        print("No NameService configured!")
         sys.exit(1)
 
-    except CORBA.SystemException, ex:
-        print "System exception trying to resolve and narrow NameService!"
-        print ex
+    except CORBA.SystemException as ex:
+        print("System exception trying to resolve and narrow NameService!")
+        print(ex)
         sys.exit(1)
 
     # Create a new context named "tutorial"
@@ -468,10 +468,10 @@ def main(argv):
         name = [CosNaming.NameComponent("tutorial", "")]
         tutorialContext = nameRoot.bind_new_context(name)
 
-    except CosNaming.NamingContext.AlreadyBound, ex:
+    except CosNaming.NamingContext.AlreadyBound as ex:
         # There is already a context named "tutorial", so we resolve
         # that.
-        print 'Reusing "tutorial" naming context.'
+        print('Reusing "tutorial" naming context.')
 
         tutorialContext = nameRoot.resolve(name)
         tutorialContext = tutorialContext._narrow(CosNaming.NamingContext)
@@ -480,14 +480,14 @@ def main(argv):
             # Oh dear -- the thing called "tutorial" isn't a
             # NamingContext. We could replace it, but it's safer to
             # bail out.
-            print 'The name "tutorial" is already bound in the NameService.'
+            print('The name "tutorial" is already bound in the NameService.')
             sys.exit(1)
 
     # Bind the GameServer into the "tutorial" context. Use rebind() to
     # replace an existing entry is there is one.
     tutorialContext.rebind([CosNaming.NameComponent("GameFactory","")], gf_obj)
 
-    print "GameFactory bound in NameService."
+    print("GameFactory bound in NameService.")
 
     orb.run()
 

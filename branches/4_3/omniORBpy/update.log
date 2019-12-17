@@ -1,3 +1,36 @@
+Tue 17 Dec 09:37:53 GMT 2019
+============================
+
+- Update examples to Python 3.
+
+examples/ami/ami_callback.py
+examples/ami/ami_poller.py
+examples/echo/echo_clt.py
+examples/echo/echo_srv.py
+examples/echo/example_echo_clt.py
+examples/echo/example_echo_coloc.py
+examples/echo/example_echo_nsclt.py
+examples/echo/example_echo_nssrv.py
+examples/echo/example_echo_srv.py
+examples/embed/embed.py
+examples/poa/mainthread.py
+examples/poa/servantactivator.py
+examples/poa/servantlocator.py
+examples/poa/singlethread.py
+examples/tests/pclient.py
+examples/tests/pserver.py
+examples/tests/tclient.py
+examples/tests/tserver.py
+examples/tictactoe/gameClient.py
+examples/tictactoe/gameServer.py
+examples/valuetype/simple/server.py
+examples/valuetype/tests/client.py
+examples/valuetype/tests/server.py
+examples/ziop/ziop_clt.py
+examples/ziop/ziop_srv.py
+update.log
+
+
 Thu 26 Sep 13:30:20 BST 2019
 ============================
 

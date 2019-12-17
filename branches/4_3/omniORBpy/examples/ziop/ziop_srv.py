@@ -10,7 +10,7 @@ import Example, Example__POA
 # Define an implementation of the Echo interface
 class Echo_i (Example__POA.Echo):
     def echoString(self, mesg):
-        print "echoString() called with", len(mesg), "characters"
+        print("echoString() called with", len(mesg), "characters")
         return mesg * 2
 
 # Initialise the ORB
@@ -37,7 +37,7 @@ poa.activate_object(ei)
 eo = ei._this()
 
 # Print out the IOR
-print orb.object_to_string(eo)
+print(orb.object_to_string(eo))
 
 # Activate the POA
 poa.the_POAManager.activate()

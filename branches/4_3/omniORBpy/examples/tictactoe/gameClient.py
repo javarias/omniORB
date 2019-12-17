@@ -6,7 +6,7 @@ import sys, threading
 import CORBA, PortableServer
 import TicTacToe, TicTacToe__POA
 
-from Tkinter import *
+from tkinter import *
 
 class GameBrowser :
 
@@ -21,7 +21,7 @@ class GameBrowser :
         self.gameFactory = gameFactory
         self.initGui()
         self.getGameList()
-        print "GameBrowser initialised"
+        print("GameBrowser initialised")
 
     def initGui(self):
         """Initialise the Tk objects for the GUI"""
@@ -100,16 +100,16 @@ class GameBrowser :
 
         try:
             seq, iterator = self.gameFactory.listGames(0)
-        except CORBA.SystemException, ex:
-            print "System exception contacting GameFactory:"
-            print "  ", CORBA.id(ex), ex
+        except CORBA.SystemException as ex:
+            print("System exception contacting GameFactory:")
+            print("  ", CORBA.id(ex), ex)
             return
 
         if len(seq) > 0:
-            print "listGames() did not return an empty sequence as it should"
+            print("listGames() did not return an empty sequence as it should")
 
         if iterator is None:
-            print "No games in the GameFactory"
+            print("No games in the GameFactory")
             return
 
         try:
@@ -125,9 +125,9 @@ class GameBrowser :
 
             iterator.destroy()
 
-        except CORBA.SystemException, ex:
-            print "System exception contacting GameIterator:"
-            print "  ", CORBA.id(ex), ex
+        except CORBA.SystemException as ex:
+            print("System exception contacting GameIterator:")
+            print("  ", CORBA.id(ex), ex)
 
     def statusMessage(self, msg):
         self.statusbar.config(text = msg)
@@ -149,9 +149,9 @@ class GameBrowser :
             else:
                 msg = "game in progress"
 
-        except CORBA.SystemException, ex:
-            print "System exception contacting Game:"
-            print "  ", CORBA.id(ex), ex
+        except CORBA.SystemException as ex:
+            print("System exception contacting Game:")
+            print("  ", CORBA.id(ex), ex)
             msg = "error contacting Game object"
 
         self.statusMessage("%s: %s" % (info.name, msg))
@@ -193,9 +193,9 @@ class GameBrowser :
             self.statusMessage("Game name in use")
             return
 
-        except CORBA.SystemException, ex:
-            print "System exception trying to create new game:"
-            print "  ", CORBA.id(ex), ex
+        except CORBA.SystemException as ex:
+            print("System exception trying to create new game:")
+            print("  ", CORBA.id(ex), ex)
             self.statusMessage("System exception trying to create new game")
             return
 
@@ -222,14 +222,14 @@ class GameBrowser :
 
             self.statusMessage("%s: joined game as %s" % (info.name, stype))
 
-        except TicTacToe.Game.CannotJoin, ex:
+        except TicTacToe.Game.CannotJoin as ex:
             poa.deactivate_object(id)
             self.statusMessage("%s: cannot join game" % info.name)
 
-        except CORBA.SystemException, ex:
+        except CORBA.SystemException as ex:
             poa.deactivate_object(id)
-            print "System exception trying to join game:"
-            print "  ", CORBA.id(ex), ex
+            print("System exception trying to join game:")
+            print("  ", CORBA.id(ex), ex)
             self.statusMessage("%s: system exception contacting game" % \
                                info.name)
             self.getGameList()
@@ -250,10 +250,10 @@ class GameBrowser :
 
             self.statusMessage("Watching %s" % info.name)
 
-        except CORBA.SystemException, ex:
+        except CORBA.SystemException as ex:
             poa.deactivate_object(id)
-            print "System exception trying to watch game:"
-            print "  ", CORBA.id(ex), ex
+            print("System exception trying to watch game:")
+            print("  ", CORBA.id(ex), ex)
             self.statusMessage("%s: system exception contacting game" % \
                                info.name)
             self.getGameList()
@@ -272,9 +272,9 @@ class GameBrowser :
             info.obj.kill()
             msg = "killed"
 
-        except CORBA.SystemException, ex:
-            print "System exception trying to kill game:"
-            print "  ", CORBA.id(ex), ex
+        except CORBA.SystemException as ex:
+            print("System exception trying to kill game:")
+            print("  ", CORBA.id(ex), ex)
             msg = "error contacting object"
 
         self.statusMessage("%s: %s" % (info.name, msg))
@@ -285,10 +285,10 @@ class Player_i (TicTacToe__POA.Player):
     def __init__(self, master, name):
         self.master = master
         self.name   = name
-        print "Player_i created"
+        print("Player_i created")
 
     def __del__(self):
-        print "Player_i deleted"
+        print("Player_i deleted")
 
     # CORBA methods
     def yourGo(self, state):
@@ -355,8 +355,8 @@ class Player_i (TicTacToe__POA.Player):
             self.statusMessage("Eek!  Invalid coordinates")
 
         except CORBA.SystemException:
-            print "System exception trying to contact GameController:"
-            print "  ", CORBA.id(ex), ex
+            print("System exception trying to contact GameController:")
+            print("  ", CORBA.id(ex), ex)
             self.statusMessage("System exception contacting GameController!")
 
     def close(self, evt):
@@ -364,9 +364,9 @@ class Player_i (TicTacToe__POA.Player):
             self.toplevel = None
             try:
                 self.game.kill()
-            except CORBA.SystemException, ex:
-                print "System exception trying to kill game:"
-                print "  ", CORBA.id(ex), ex
+            except CORBA.SystemException as ex:
+                print("System exception trying to kill game:")
+                print("  ", CORBA.id(ex), ex)
                 
             id = poa.servant_to_id(self)
             poa.deactivate_object(id)
@@ -398,10 +398,10 @@ class Spectator_i (TicTacToe__POA.Spectator):
     def __init__(self, master, name):
         self.master = master
         self.name   = name
-        print "Spectator_i created"
+        print("Spectator_i created")
 
     def __del__(self):
-        print "Spectator_i deleted"
+        print("Spectator_i deleted")
 
     # CORBA methods
     def update(self, state):
@@ -452,9 +452,9 @@ class Spectator_i (TicTacToe__POA.Spectator):
             self.toplevel = None
             try:
                 self.game.unwatchGame(self.cookie)
-            except CORBA.SystemException, ex:
-                print "System exception trying to unwatch game:"
-                print "  ", CORBA.id(ex), ex
+            except CORBA.SystemException as ex:
+                print("System exception trying to unwatch game:")
+                print("  ", CORBA.id(ex), ex)
                 
             id = poa.servant_to_id(self)
             poa.deactivate_object(id)
@@ -492,17 +492,17 @@ try:
     gameFactory = orb.string_to_object("corbaname:rir:#tutorial/GameFactory")
     gameFactory = gameFactory._narrow(TicTacToe.GameFactory)
 
-except CORBA.BAD_PARAM, ex:
+except CORBA.BAD_PARAM as ex:
     # string_to_object throws BAD_PARAM if the name cannot be resolved
-    print "Cannot find the GameFactory in the naming service."
+    print("Cannot find the GameFactory in the naming service.")
     sys.exit(1)
 
-except CORBA.SystemException, ex:
+except CORBA.SystemException as ex:
     # This might happen if the naming service is dead, or the narrow
     # tries to contact the object and it is not there.
 
-    print "CORBA system exception trying to get the GameFactory reference:"
-    print "  ", CORBA.id(ex), ex
+    print("CORBA system exception trying to get the GameFactory reference:")
+    print("  ", CORBA.id(ex), ex)
     sys.exit(1)
 
 # Start the game browser
@@ -512,7 +512,7 @@ browser = GameBrowser(orb, poa, gameFactory)
 
 def tkloop():
     browser.master.mainloop()
-    print "Shutting down the ORB..."
+    print("Shutting down the ORB...")
     orb.shutdown(0)
     
 threading.Thread(target=tkloop).start()
