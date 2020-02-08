@@ -1,3 +1,12 @@
+Sat  8 Feb 22:55:25 GMT 2020
+============================
+
+- Platform file for Visual Studio 16 / 2019.
+
+config/config.mk
+mk/platforms/x86_win32_vs_16.mk
+
+
 Tue 17 Dec 14:45:43 GMT 2019
 ============================
 
