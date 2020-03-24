@@ -446,6 +446,20 @@ typedef size_t omni_ptr_arith_t;
 #  define OMNI_CONSTRTYPE_FIX_VAR(T) typedef T::_var_type T##_var;
 #endif
 
+
+//
+// Suppress throw specifications that are not valid from C++-17. Note
+// that we keep them for older compilers because removing them may
+// break ABI compatibility.
+
+#if __cplusplus >= 201703L
+#  define OMNI_THROW_SPEC(...)
+#else
+#  define OMNI_THROW_SPEC throw
+#endif
+
+
+
 // #define ENABLE_CLIENT_IR_SUPPORT
 // Define ENABLE_CLIENT_IR_SUPPORT to use as client to an Interface Repository
 

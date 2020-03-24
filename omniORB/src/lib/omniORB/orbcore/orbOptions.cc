@@ -106,7 +106,7 @@ orbOptions::reset() {
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::visit() throw(orbOptions::BadParam) {
+orbOptions::visit() OMNI_THROW_SPEC(orbOptions::BadParam) {
 
   omnivector<HandlerValuePair*>::iterator i = pd_values.begin();
   omnivector<HandlerValuePair*>::iterator last = pd_values.end();
@@ -120,9 +120,9 @@ orbOptions::visit() throw(orbOptions::BadParam) {
 void
 orbOptions::addOption(const char* key,
 		      const char* value,
-		      orbOptions::Source source) throw (orbOptions::Unknown,
-							orbOptions::BadParam) {
-
+		      orbOptions::Source source)
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
   orbOptions::Handler* handler = findHandler(key);
@@ -148,9 +148,9 @@ orbOptions::addOption(const char* key,
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::addOptions(const char* options[][2]) throw (orbOptions::Unknown,
-							orbOptions::BadParam) {
-
+orbOptions::addOptions(const char* options[][2])
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   for (int i=0; options[i][0]; i++) {
     addOption(options[i][0],options[i][1],fromArray);
   }
@@ -171,8 +171,8 @@ orbOptions::move_args(int& argc,char **argv,int idx,int nargs)
 ////////////////////////////////////////////////////////////////////////
 void
 orbOptions::extractInitOptions(int& argc,char** argv) 
-  throw (orbOptions::Unknown,orbOptions::BadParam) {
-
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
   omnivector<orbOptions::Handler*>::iterator i = pd_handlers.begin();
@@ -236,8 +236,8 @@ orbOptions::extractInitOptions(int& argc,char** argv)
 ////////////////////////////////////////////////////////////////////////
 void
 orbOptions::getTraceLevel(int argc, char** argv)
-  throw (orbOptions::Unknown,orbOptions::BadParam) {
-
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   int i;
   for (i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBtraceLevel")) {
@@ -279,8 +279,8 @@ orbOptions::getTraceLevel(int argc, char** argv)
 ////////////////////////////////////////////////////////////////////////
 const char*
 orbOptions::getConfigFileName(int argc, char** argv, const char* fname)
-  throw (orbOptions::Unknown,orbOptions::BadParam) {
-
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   for (int i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBconfigFile")) {
       if (i+1 == argc) {
@@ -296,8 +296,9 @@ orbOptions::getConfigFileName(int argc, char** argv, const char* fname)
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::importFromEnv() throw (orbOptions::Unknown,orbOptions::BadParam) {
-  
+orbOptions::importFromEnv()
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
   omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();

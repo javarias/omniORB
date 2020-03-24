@@ -915,8 +915,9 @@ public:
 			1) {}
 
 
-  void visit(const char*,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char*,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbOptions::sequenceString_var usage;
     usage = orbOptions::singleton().usageArgv();
 
@@ -945,8 +946,9 @@ public:
 			"-ORBid " ORB_ID_STRING " (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     if (!isValidId(value)) {
       throw orbOptions::BadParam(key(),value,"id is not " ORB_ID_STRING);
     }
@@ -977,8 +979,9 @@ public:
 			"-ORBdumpConfiguration < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1006,8 +1009,9 @@ public:
 			"-ORBlcdMode < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1036,7 +1040,9 @@ public:
 			"-ORBprincipal <GIOP 1.0 principal string>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong l = (CORBA::ULong)strlen(value) + 1;
     omni::myPrincipalID.length(l);
     for (CORBA::ULong i = 0; i < l; i++)
@@ -1071,7 +1077,9 @@ public:
 			"-ORBconfigFile <filename>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     // Do nothing -- already handled before normal arguments are processed
   }
 
