@@ -151,10 +151,10 @@ private:
   _CORBA_Boolean pd_dedicated_thread_in_upcall;
   // Initialised to 0. Read and write by giopServer exclusively.
 
-  int            pd_n_workers;
+  _CORBA_ULong   pd_n_workers;
   // Initialised to 0. Read and write by giopServer exclusively.
 
-  int            pd_max_workers;
+  _CORBA_ULong   pd_max_workers;
   // Initialised to 0. Read and write by giopServer and interceptors.
 
   _CORBA_Boolean pd_has_hit_n_workers_limit;

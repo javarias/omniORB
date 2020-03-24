@@ -1,3 +1,13 @@
+Tue 24 Mar 22:13:30 GMT 2020
+============================
+
+- Avoid some warnings.
+
+include/omniORB4/giopEndpoint.h
+src/lib/omniORB/orbcore/SocketCollection.cc
+src/lib/omniORB/orbcore/giopServer.cc
+
+
 Sat  8 Feb 22:55:25 GMT 2020
 ============================
 
