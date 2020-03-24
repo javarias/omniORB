@@ -625,8 +625,9 @@ public:
 "                          * may not be supported on the platform.\n") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -667,8 +668,9 @@ public:
 			"-ORBendPointNoPublish <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 1;
@@ -703,7 +705,8 @@ public:
 			"-ORBendPointPublish <publish options>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {
     omniObjAdapter::options.publish = value;
   }
@@ -727,8 +730,9 @@ public:
 			"-ORBendPointNoListen <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -760,7 +764,9 @@ public:
 			"-ORBendPointPublishAllIFs < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

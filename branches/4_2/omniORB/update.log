@@ -1,3 +1,34 @@
+Tue 24 Mar 22:09:17 GMT 2020
+============================
+
+- Avoid throw specification on C++17 compilers.
+
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/internal/orbOptions.h
+src/lib/omniORB/orbcore/codeSets.cc
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/cs-UTF-8.cc
+src/lib/omniORB/orbcore/current.cc
+src/lib/omniORB/orbcore/dynamicLib.cc
+src/lib/omniORB/orbcore/giopBiDir.cc
+src/lib/omniORB/orbcore/giopEndpoint.cc
+src/lib/omniORB/orbcore/giopRope.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/giopStrand.cc
+src/lib/omniORB/orbcore/giopStreamImpl.cc
+src/lib/omniORB/orbcore/initRefs.cc
+src/lib/omniORB/orbcore/invoker.cc
+src/lib/omniORB/orbcore/objectAdapter.cc
+src/lib/omniORB/orbcore/omniInternal.cc
+src/lib/omniORB/orbcore/omniObjRef.cc
+src/lib/omniORB/orbcore/omniTransport.cc
+src/lib/omniORB/orbcore/orbOptions.cc
+src/lib/omniORB/orbcore/orbOptionsFile.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/ssl/sslTransportImpl.cc
+src/lib/omniORB/orbcore/transportRules.cc
+
+
 Sat  8 Feb 22:55:25 GMT 2020
 ============================
 

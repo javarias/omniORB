@@ -738,8 +738,9 @@ public:
 			1,
 			"-ORBnativeCharCodeSet <code set name, e.g. ISO-8859-1>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-    
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::NCS_C* v = omniCodeSet::getNCS_C(value);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -770,8 +771,9 @@ public:
 			1,
 			"-ORBnativeWCharCodeSet <code set name, e.g. UTF-16>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-    
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::NCS_W* v = omniCodeSet::getNCS_W(value);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -803,7 +805,9 @@ public:
 			1,
 			"-ORBdefaultCharCodeSet <code set name, e.g. ISO-8859-1>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::TCS_C* v = omniCodeSet::getTCS_C(value, omniCodeSetUtil::GIOP12);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -834,7 +838,9 @@ public:
 			1,
 			"-ORBdefaultWCharCodeSet <code set name, e.g. UTF-16>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::TCS_W* v = omniCodeSet::getTCS_W(value, omniCodeSetUtil::GIOP12);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);

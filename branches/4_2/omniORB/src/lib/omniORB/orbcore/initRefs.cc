@@ -737,7 +737,9 @@ public:
 			"-ORBDefaultInitRef <Default URI> (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source src) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     if (src == orbOptions::fromArgv || src == orbOptions::fromArray) {
       omniInitialReferences::setDefaultInitRefFromArgs(value);
     }
@@ -770,8 +772,9 @@ public:
 			"-ORBInitRef <ObjectID>=<ObjectURI> (standard option)") {}
 
 
-  void visit(const char* value, orbOptions::Source src) throw (orbOptions::BadParam) {
-
+  void visit(const char* value, orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     unsigned int slen = strlen(value) + 1;
     CORBA::String_var id(CORBA::string_alloc(slen));
     CORBA::String_var uri(CORBA::string_alloc(slen));
@@ -823,8 +826,9 @@ public:
 			"-ORBsupportBootstrapAgent < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -852,8 +856,9 @@ public:
 			"-ORBbootstrapAgentPort < 1-65535 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || !(v >=1 && v <=65535) ) {
       throw orbOptions::BadParam(key(),value,
@@ -881,8 +886,9 @@ public:
 			"-ORBbootstrapAgentHostname <hostname>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbParameters::bootstrapAgentHostname = value;
   }
 

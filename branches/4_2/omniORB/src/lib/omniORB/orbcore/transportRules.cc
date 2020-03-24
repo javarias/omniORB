@@ -584,7 +584,7 @@ public:
 			"-ORBclientTransportRule \"<address mask>  [action]+\"") {}
 
   void visit(const char* value,
-	     orbOptions::Source)  throw (orbOptions::BadParam) {
+	     orbOptions::Source)  OMNI_THROW_SPEC (orbOptions::BadParam) {
 
     if (!parseAndAddRuleString(clientRules_, value)) {
       throw orbOptions::BadParam(key(),value,"Unrecognised address mask");
@@ -619,7 +619,7 @@ public:
 			"-ORBserverTransportRule \"<address mask>  [action]+\"") {}
 
   void visit(const char* value,
-	     orbOptions::Source) throw (orbOptions::BadParam) {
+	     orbOptions::Source) OMNI_THROW_SPEC (orbOptions::BadParam) {
 
     if (!parseAndAddRuleString(serverRules_, value)) {
       throw orbOptions::BadParam(key(),value,"Unrecognised address mask");
