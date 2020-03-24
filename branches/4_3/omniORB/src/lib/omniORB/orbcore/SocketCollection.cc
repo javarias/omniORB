@@ -192,7 +192,7 @@ SocketCollection::Select() {
   tcpSocket::setTimeout(pd_abs_time, timeout);
 
   if ((timeout.tv_sec == 0 && timeout.tv_usec == 0) ||
-      timeout.tv_sec > scan_interval.s) {
+      (unsigned long)timeout.tv_sec > scan_interval.s) {
 
     // Time to scan the socket list...
 

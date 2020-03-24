@@ -1052,7 +1052,7 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     // is therefore safe to delete this record.
     pd_lock.lock();
 
-    int workers;
+    CORBA::ULong   workers;
     CORBA::Boolean singleshot = w->singleshot();
 
     if (singleshot)
