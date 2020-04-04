@@ -1,3 +1,20 @@
+Sat  4 Apr 15:08:26 BST 2020
+============================
+
+- This is omniORB 4.2.4.
+
+README.FIRST.txt
+ReleaseChecklist.txt
+ReleaseNotes.txt
+THIS_IS_OMNIORB_4_2_3
+THIS_IS_OMNIORB_4_2_4
+configure.ac
+configure
+contrib/RPMs/omniORB.spec
+contrib/RPMs/omniORB_new.spec
+mk/version.mk
+
+
 Tue 24 Mar 22:09:17 GMT 2020
 ============================
 
