@@ -41,7 +41,30 @@ Error: your Python executable was not built with thread support.
 """)
     raise ImportError("Python executable has no thread support")
 
-import _omnipy
+omniorb_dll_path = None
+
+if sys.platform == "win32" and hasattr(os, "add_dll_directory"):
+    # Python 3.8 on Windows no longer looks in PATH to find DLLs,
+    # meaning that importing the omniORBpy extension modules fails.
+    # You can set the OMNIORB_DLL_PATH environment variable to the
+    # directory they are in, or this attempts to find them in the
+    # default location.
+    omniorb_dll_path = os.environ.get("OMNIORB_DLL_PATH")
+
+    if omniorb_dll_path is None:
+        omniorb_dll_path = os.path.abspath(
+                               os.path.join(os.path.dirname(__file__),
+                                            r"..\..\..\bin\x86_win32"))
+
+    if not os.path.isdir(omniorb_dll_path):
+        omniorb_dll_path = None
+
+
+if omniorb_dll_path is not None:
+    with os.add_dll_directory(omniorb_dll_path):
+        import _omnipy
+else:
+    import _omnipy
 
 _coreVersion = _omnipy.coreVersion()
 __version__  = _omnipy.__version__
