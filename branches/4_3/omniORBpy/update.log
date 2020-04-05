@@ -1,3 +1,20 @@
+Mon  6 Apr 00:05:55 BST 2020
+============================
+
+- Merge from 4.2.4. Find DLLs on Windows Python 3.8.
+
+bin/scripts/binrelease.sh
+python3/omniORB/PortableServer.py
+python3/omniORB/ZIOP.py
+python3/omniORB/__init__.py
+python3/omniORB/codesets.py
+python3/omniORB/httpCrypto.py
+python3/omniORB/httpTP.py
+python3/omniORB/omniConnectionMgmt.py
+python3/omniORB/omniZIOP.py
+python3/omniORB/sslTP.py
+
+
 Tue 17 Dec 14:55:15 GMT 2019
 ============================
 
