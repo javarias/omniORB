@@ -1,3 +1,11 @@
+Sun  5 Apr 18:40:34 BST 2020
+============================
+
+- Include __pycache__ directories in binrelease.
+
+bin/scripts/binrelease.sh
+
+
 Sun  5 Apr 18:38:19 BST 2020
 ============================
 
