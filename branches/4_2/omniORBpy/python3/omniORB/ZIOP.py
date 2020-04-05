@@ -26,14 +26,19 @@
 #    ZIOP module
 
 import sys
-
+import omniORB
 import omniORB.compression_idl
 sys.modules["compression_idl"] = omniORB.compression_idl
 
 import omniORB.ziop_idl
 sys.modules["ziop_idl"] = omniORB.ziop_idl
 
-import _omniZIOP
+if omniORB.omniorb_dll_path is not None:
+    with os.add_dll_directory(omniorb_dll_path):
+        import _omniZIOP
+else:
+    import _omniZIOP
+
 from omniORB import CORBA
 
 import omniORB
