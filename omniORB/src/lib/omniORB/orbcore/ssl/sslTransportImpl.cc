@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -29,7 +27,6 @@
 // 
 
 #include <omniORB4/CORBA.h>
-#include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <omniORB4/giopEndpoint.h>
@@ -150,7 +147,8 @@ public:
 			1,
 			"-ORBsslCAFile <certificate authority file>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {    
     sslContext::certificate_authority_file = CORBA::string_dup(value);
   }
@@ -177,7 +175,8 @@ public:
 			1,
 			"-ORBsslCAPath <certificate authority path>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {    
     sslContext::certificate_authority_path = CORBA::string_dup(value);
   }
@@ -204,7 +203,8 @@ public:
 			1,
 			"-ORBsslKeyFile <key file>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {    
     sslContext::key_file = CORBA::string_dup(value);
   }
@@ -231,7 +231,8 @@ public:
 			1,
 			"-ORBsslKeyPassword <key file password>") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {    
     sslContext::key_file_password = CORBA::string_dup(value);
   }
@@ -258,7 +259,8 @@ public:
 			"-ORBsslVerifyMode < \"none\" | \"peer[,fail][,once]\" >")
   {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {    
     if (!strcmp(value, "none")) {
       sslContext::verify_mode = 0;
@@ -327,8 +329,9 @@ public:
 			1,
 			"-ORBsslAcceptTimeOut < n >= 0 in msecs >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -354,12 +357,6 @@ static sslAcceptTimeOutHandler sslAcceptTimeOutHandler_;
 /////////////////////////////////////////////////////////////////////////
 static sslTransportImpl* _the_sslTransportImpl = 0;
 
-static inline CORBA::Boolean validPath(const char* path)
-{
-  struct stat sb;
-  return (path && stat(path, &sb) == 0);
-}
-
 class omni_sslTransport_initialiser : public omniInitialiser {
 public:
 
@@ -383,13 +380,13 @@ public:
 	log << "No SSL context object supplied. Attempt to create one "
 	    << "with the default constructor.\n";
       }
-      if (!(validPath(sslContext::certificate_authority_file) ||
-            validPath(sslContext::certificate_authority_path))) {
+      if (!(sslContext::certificate_authority_file ||
+            sslContext::certificate_authority_path)) {
 
 	if (omniORB::trace(1)) {
 	  omniORB::logger log;
-	  log << "Warning: SSL CA certificate location is not set "
-	      << "or cannot be found. SSL transport disabled.\n";
+	  log << "Warning: SSL CA certificate location is not set. "
+	      << "SSL transport disabled.\n";
 	}
 	return;
       }

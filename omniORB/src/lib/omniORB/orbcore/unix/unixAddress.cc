@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -146,12 +144,23 @@ unixAddress::Connect(const omni_time_t& deadline,
       return 0;
 #endif
     }
-    if (rc != RC_SOCKET_ERROR) {
-      // Check to make sure that the socket is connected.
-      OMNI_SOCKADDR_STORAGE peer;
-      SOCKNAME_SIZE_T len = sizeof(peer);
-      rc = getpeername(sock, (struct sockaddr*)&peer, &len);
+    else if (rc == RC_SOCKET_ERROR) {
+      if (ERRNO == RC_EINTR) {
+	continue;
+      }
+      else {
+        omniORB::logs(25, "Failed to connect to Unix socket "
+                      "(waiting for writable socket)");
+	CLOSESOCKET(sock);
+	return 0;
+      }
     }
+
+    // Check to make sure that the socket is connected.
+    OMNI_SOCKADDR_STORAGE peer;
+    SOCKNAME_SIZE_T len = sizeof(peer);
+    rc = getpeername(sock, (struct sockaddr*)&peer, &len);
+
     if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
 	continue;

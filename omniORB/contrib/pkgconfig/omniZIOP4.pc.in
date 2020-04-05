@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: omniZIOP5
+Name: omniZIOP4
 Description: CORBA Object Request Broker - ZIOP library
 Version: @PACKAGE_VERSION@
-Requires: omniORB5
-Libs: -L${libdir} -lomniZIOP5
+Requires: omniORB4
+Libs: -L${libdir} -lomniZIOP4
 Cflags:

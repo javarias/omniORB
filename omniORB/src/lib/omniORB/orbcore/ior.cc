@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -313,6 +311,10 @@ IIOP::unmarshalObjectKey(const IOP::TaggedProfile& profile,
 
   len <<= s; // Get object key length
 
+  if (len > profile.profile_data.length())
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                  CORBA::COMPLETED_NO);
+
   if (s.readOnly()) {
     CORBA::Octet* p = (CORBA::Octet*)((omni::ptr_arith_t)s.bufPtr() +
 				      s.currentInputPtr());
@@ -367,7 +369,7 @@ omniIOR::unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent& c,
   cdrEncapsulationStream e(c.component_data.get_buffer(),
 			   c.component_data.length(),1);
 
-  CORBA::UShort target_supports,target_requires, port;
+  CORBA::UShort target_supports, target_requires, port;
 
   try {
     switch (c.component_data.length()) {
@@ -387,8 +389,8 @@ omniIOR::unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent& c,
 		      "Warning: Wrong component size. Attempt to decode "
                       "it as the Visibroker non-compilant format");
 	CORBA::ULong v;
-	v <<= e; target_supports = v;
-	v <<= e; target_requires = v;
+	v <<= e; target_supports = (CORBA::UShort)v;
+	v <<= e; target_requires = (CORBA::UShort)v;
 	port <<= e;
 	break;
       }
@@ -445,6 +447,10 @@ omniIOR::unmarshal_TAG_CSI_SEC_MECH_LIST(const IOP::TaggedComponent& c,
   CORBA::ULong mech_count;
   mech_count <<= e;
 
+  if (mech_count > c.component_data.length())
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                  CORBA::COMPLETED_NO);
+
   for (CORBA::ULong mech_idx = 0; mech_idx != mech_count; ++mech_idx) {
     CORBA::UShort target_requires;
 
@@ -473,6 +479,11 @@ omniIOR::unmarshal_TAG_CSI_SEC_MECH_LIST(const IOP::TaggedComponent& c,
     sas_target_supports <<= e;
     sas_target_requires <<= e;
     sas_privilege_authorities_len <<= e;
+
+    if (sas_privilege_authorities_len > transport_mech.component_data.length())
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                    CORBA::COMPLETED_NO);
+
     for (CORBA::ULong pi = 0; pi != sas_privilege_authorities_len; ++pi) {
       CORBA::ULong syntax;
       _CORBA_Unbounded_Sequence_Octet name;
@@ -499,6 +510,10 @@ omniIOR::unmarshal_TAG_CSI_SEC_MECH_LIST(const IOP::TaggedComponent& c,
       tls_target_requires <<= tls_e;
       addresses_len <<= tls_e;
 
+      if (addresses_len > transport_mech.component_data.length())
+        OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                      CORBA::COMPLETED_NO);
+      
       for (CORBA::ULong ai = 0; ai != addresses_len; ++ai) {
 	IIOP::Address ssladdr;
 

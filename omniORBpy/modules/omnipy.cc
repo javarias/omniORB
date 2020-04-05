@@ -20,9 +20,7 @@
 //    GNU Lesser General Public License for more details.
 //
 //    You should have received a copy of the GNU Lesser General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-//    MA 02111-1307, USA
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -377,7 +375,7 @@ extern "C" {
 	delete[] argv;
 	return 0;
       }
-      argv[i] = String_AsString(o);
+      argv[i] = (char*)String_AsString(o);
     }
 
     int orig_argc = argc;
@@ -404,7 +402,7 @@ extern "C" {
 
 	while (1) {
 	  o = PyList_GetItem(pyargv, i); OMNIORB_ASSERT(o != 0);
-	  t = String_AsString(o);
+	  t = (char*)String_AsString(o);
 	  if (s == t) break;
 	  r = PySequence_DelItem(pyargv, i);
 	  OMNIORB_ASSERT(r != -1);
@@ -629,8 +627,9 @@ extern "C" {
   {
     PyObject* d = PyModule_GetDict(m);
 
-    PyDict_SetItemString(d, (char*)"__version__",
-			 String_FromString(OMNIPY_VERSION_STRING));
+    PyObject* ver = String_FromString(OMNIPY_VERSION_STRING);
+    PyDict_SetItemString(d, (char*)"__version__", ver);
+    Py_DECREF(ver);
 
     PyObject* excs = generateExceptionList();
     PyDict_SetItemString(d, (char*)"system_exceptions", excs);

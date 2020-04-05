@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -94,7 +92,8 @@ class orbOptions {
     CORBA::Boolean argvYes() const { return argvYes_; }
     CORBA::Boolean argvHasNoValue() const { return argvHasNoValue_; }
 
-    virtual void visit(const char* value,Source source) throw (BadParam) = 0;
+    virtual void visit(const char* value,Source source)
+      OMNI_THROW_SPEC (BadParam) = 0;
     virtual void dump(sequenceString& result) = 0;
 
   protected:
@@ -146,7 +145,7 @@ class orbOptions {
   // addOptions().
 
   ////////////////////////////////////////////////////////////////////////
-  void visit() throw(BadParam);
+  void visit() OMNI_THROW_SPEC(BadParam);
   // Call this method will cause the object to walk through all the options
   // accumulated so far via addOption(). For each of these options, its
   // handler will be called.
@@ -156,7 +155,7 @@ class orbOptions {
 
   ////////////////////////////////////////////////////////////////////////
   void addOption(const char* key, const char* value, 
-		 Source source=fromInternal) throw (Unknown,BadParam);
+		 Source source=fromInternal) OMNI_THROW_SPEC (Unknown,BadParam);
   // Add to the internal option list a <key,value> tuple.
   // Both arguments are copied.
   //
@@ -164,7 +163,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void addOptions(const char* options[][2]) throw (Unknown,BadParam);
+  void addOptions(const char* options[][2]) OMNI_THROW_SPEC (Unknown,BadParam);
   // Add the option list. Each element of the variable size array is
   // a key, value pair. The array ends with a key, value pair that is both
   // nil(0) in value.
@@ -173,7 +172,8 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void extractInitOptions(int& argc, char** argv) throw (Unknown,BadParam);
+  void extractInitOptions(int& argc, char** argv)
+    OMNI_THROW_SPEC (Unknown,BadParam);
   // Extract the ORB_init options from the argv list. Extract the arguments
   // from the argument list for those registered handlers that can accept
   // ORB_init arguments.
@@ -182,7 +182,7 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  void getTraceLevel(int argc, char** argv) throw (Unknown,BadParam);
+  void getTraceLevel(int argc, char** argv) OMNI_THROW_SPEC (Unknown,BadParam);
   // Look for -ORBtraceLevel and -ORBtraceFile arguments very early
   // on, so the trace level can affect later option logging. Does not
   // remove the arguments -- that is done by extractInitOptions()
@@ -193,7 +193,7 @@ class orbOptions {
 
   ////////////////////////////////////////////////////////////////////////
   const char* getConfigFileName(int argc, char** argv, const char* fname)
-    throw (Unknown,BadParam);
+    OMNI_THROW_SPEC (Unknown,BadParam);
   // Look for an -ORBconfigFile argument before processing the config
   // file. Does not remove the arguments -- that is done by
   // extractInitOptions() later.
@@ -202,15 +202,16 @@ class orbOptions {
   //    Not thread safe
 
   ////////////////////////////////////////////////////////////////////////
-  CORBA::Boolean importFromFile(const char* filename) throw (Unknown,BadParam);
+  CORBA::Boolean importFromFile(const char* filename)
+    OMNI_THROW_SPEC (Unknown,BadParam);
 
 #if defined(NTArchitecture) && !defined(__ETS_KERNEL__)
   ////////////////////////////////////////////////////////////////////////
-  CORBA::Boolean importFromRegistry() throw (Unknown,BadParam);
+  CORBA::Boolean importFromRegistry() OMNI_THROW_SPEC (Unknown,BadParam);
 #endif
 
   ////////////////////////////////////////////////////////////////////////
-  void importFromEnv() throw (Unknown,BadParam);
+  void importFromEnv() OMNI_THROW_SPEC (Unknown,BadParam);
 
   ////////////////////////////////////////////////////////////////////////
   sequenceString* usage() const;
@@ -272,11 +273,9 @@ class orbOptions {
   static CORBA::Boolean getBoolean(const char* value, CORBA::Boolean& result);
   static CORBA::Boolean getULong(const char* value, CORBA::ULong& result);
   static CORBA::Boolean getLong(const char* value, CORBA::Long& result);
-  static CORBA::Boolean getSizeT(const char* value, size_t& result);
   static void addKVBoolean(const char* key, CORBA::Boolean,sequenceString&);
   static void addKVULong(const char* key, CORBA::ULong,sequenceString&);
   static void addKVLong(const char* key, CORBA::Long,sequenceString&);
-  static void addKVSizeT(const char* key, size_t, sequenceString&);
   static void addKVString(const char* key, const char* value, sequenceString&);
 
   static void move_args(int& argc,char **argv,int idx,int nargs);

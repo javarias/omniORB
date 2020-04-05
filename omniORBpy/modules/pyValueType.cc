@@ -3,7 +3,7 @@
 // pyValueType.cc             Created on: 2003/04/11
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2003-2015 Apasphere Ltd.
+//    Copyright (C) 2003-2014 Apasphere Ltd.
 //
 //    This file is part of the omniORBpy library
 //
@@ -19,9 +19,7 @@
 //    GNU Lesser General Public License for more details.
 //
 //    You should have received a copy of the GNU Lesser General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-//    MA 02111-1307, USA
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -68,7 +66,7 @@ public:
     return magic_ == MAGIC_;
   }
 
-  omni::s_size_t addValue(PyObject* obj, omni::s_size_t current)
+  CORBA::Long addValue(PyObject* obj, CORBA::Long current)
   {
     // Look to see if the value has been marshalled before. If so,
     // return its offset; if not, add it to the table and return -1.
@@ -78,12 +76,12 @@ public:
 
     if (val) {
       OMNIORB_ASSERT(Int_Check(val));
-      omni::s_size_t pos = Int_AsSsize_t(val);
+      CORBA::Long pos = Int_AS_LONG(val);
       Py_DECREF(key);
       return pos;
     }
     else {
-      PyObject* val = Int_FromSsize_t(current);
+      PyObject* val = Int_FromLong(current);
       PyDict_SetItem(dict_, key, val);
       Py_DECREF(val);
       Py_DECREF(key);
@@ -91,7 +89,7 @@ public:
     }
   }
 
-  omni::s_size_t addRepoIds(PyObject* obj, omni::s_size_t current)
+  CORBA::Long addRepoIds(PyObject* obj, CORBA::Long current)
   {
     // Caller is marshalling a repoid or a list of repoids stored in a
     // tuple.
@@ -99,11 +97,11 @@ public:
 
     if (val) {
       OMNIORB_ASSERT(Int_Check(val));
-      omni::s_size_t pos = Int_AsSsize_t(val);
+      CORBA::Long pos = Int_AS_LONG(val);
       return pos;
     }
     else {
-      val = Int_FromSsize_t(current);
+      val = Int_FromLong(current);
       PyDict_SetItem(dict_, obj, val);
       Py_DECREF(val);
       return -1;
@@ -156,21 +154,21 @@ public:
     return magic_ == MAGIC_;
   }
   
-  void add(PyObject* obj, omni::s_size_t pos)
+  void add(PyObject* obj, CORBA::Long pos)
   {
     // Add record of an unmarshalled value.
-    PyObject* key = Int_FromSsize_t(pos);
+    PyObject* key = Int_FromLong(pos);
     PyDict_SetItem(dict_, key, obj);
     Py_DECREF(key);
   }
 
-  PyObject* lookup(omni::s_size_t pos, CORBA::CompletionStatus completion)
+  PyObject* lookup(CORBA::Long pos, CORBA::CompletionStatus completion)
   {
     // Lookup specified position for a previously unmarshalled value.
     // If the value has been previously unmarshalled, return a
     // duplicated reference to it. Otherwise, throw a MARSHAL
     // exception.
-    PyObject* key = Int_FromSsize_t(pos);
+    PyObject* key = Int_FromLong(pos);
     PyObject* ret = PyDict_GetItem(dict_, key);
     Py_DECREF(key);
 
@@ -372,26 +370,18 @@ validateTypeValueBox(PyObject* d_o, PyObject* a_o,
 
 
 static void
-marshalIndirection(cdrStream& stream, omni::s_size_t pos)
+marshalIndirection(cdrStream& stream, CORBA::Long pos)
 {
   stream.declareArrayLength(omni::ALIGN_4, 8);
   CORBA::ULong indirect = 0xffffffff;
   indirect >>= stream;
 
-  omni::s_size_t offset = pos - stream.currentOutputPtr();
+  CORBA::Long offset = pos - stream.currentOutputPtr();
 
   OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
   // In a counting stream, the currentOutputPtr is always zero.
 
-#if (SIZEOF_PTR == 8)
-  if (offset < -0x7fffffff - 1) {
-    // Value is more than 2GB earlier in the stream!
-    OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,
-                  (CORBA::CompletionStatus)stream.completion());
-  }
-#endif
-
-  stream.marshalLong((CORBA::Long)offset);
+  offset >>= stream;
 }
 
 
@@ -468,8 +458,7 @@ real_marshalPyObjectValue(cdrValueChunkStream& stream,
 
     OMNIORB_ASSERT(baseIds && baseIds != Py_None);
 
-    omni::s_size_t pos = tracker->addRepoIds(baseIds,
-                                             stream.currentOutputPtr());
+    CORBA::Long pos = tracker->addRepoIds(baseIds, stream.currentOutputPtr());
 
     if (pos != -1) {
       marshalIndirection(stream, pos);
@@ -489,8 +478,8 @@ real_marshalPyObjectValue(cdrValueChunkStream& stream,
     }
   }
   else if ((tag & REPOID_MASK) == REPOID_SINGLE) {
-    omni::s_size_t pos = tracker->addRepoIds(actualRepoId,
-                                             stream.currentOutputPtr());
+    CORBA::Long pos = tracker->addRepoIds(actualRepoId,
+					  stream.currentOutputPtr());
     if (pos != -1)
       marshalIndirection(stream, pos);
     else
@@ -557,7 +546,7 @@ marshalPyObjectValue(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 
   stream.alignOutput(omni::ALIGN_4);
 
-  omni::s_size_t pos = tracker->addValue(a_o, stream.currentOutputPtr());
+  CORBA::Long pos = tracker->addValue(a_o, stream.currentOutputPtr());
 
   if (pos != -1) {
     marshalIndirection(stream, pos);
@@ -604,7 +593,7 @@ marshalPyObjectValueBox(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 
   stream.alignOutput(omni::ALIGN_4);
 
-  omni::s_size_t pos = tracker->addValue(a_o, stream.currentOutputPtr());
+  CORBA::Long pos = tracker->addValue(a_o, stream.currentOutputPtr());
 
   if (pos != -1) {
     marshalIndirection(stream, pos);
@@ -637,7 +626,7 @@ marshalPyObjectValueBox(cdrStream& stream, PyObject* d_o, PyObject* a_o)
     tag >>= stream;
 
   if (tag & REPOID_SINGLE) {
-    omni::s_size_t pos = tracker->addRepoIds(repoId, stream.currentOutputPtr());
+    CORBA::Long pos = tracker->addRepoIds(repoId, stream.currentOutputPtr());
     if (pos != -1)
       marshalIndirection(stream, pos);
     else
@@ -666,7 +655,7 @@ unmarshalValueRepoId(cdrStream& stream, pyInputValueTracker* tracker)
   // Unmarshal a raw string, or an indirection to one
 
   CORBA::ULong len; len <<= stream;
-  omni::s_size_t  pos = stream.currentInputPtr();
+  CORBA::Long  pos = stream.currentInputPtr();
 
   if (len == 0xffffffff) {
     CORBA::Long offset;
@@ -694,7 +683,7 @@ unmarshalMembers(cdrStream& stream, PyObject* desc,
 
 static PyObject*
 real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
-			    PyObject* d_o, CORBA::ULong tag, omni::s_size_t pos)
+			    PyObject* d_o, CORBA::ULong tag, CORBA::Long pos)
 { // class, repoid, value name, valuemodifier, truncatable base repoids,
   // concrete base descr, [ member name, desc, visibility ] ...
   //or:
@@ -732,7 +721,7 @@ real_unmarshalPyObjectValue(cdrStream& stream, cdrValueChunkStream* cstreamp,
     CORBA::ULong count;
     count <<= stream;
 
-    omni::s_size_t idpos = stream.currentInputPtr();
+    CORBA::Long idpos = stream.currentInputPtr();
 
     if (count == 0xffffffff) { // Indirection
       CORBA::Long offset;
@@ -1002,7 +991,7 @@ unmarshalPyObjectValue(cdrStream& stream, PyObject* d_o)
   OMNIORB_ASSERT(tracker->valid());
 
   PyObject* result;
-  omni::s_size_t pos = stream.currentInputPtr();
+  CORBA::Long pos = stream.currentInputPtr();
 
   if (tag == 0xffffffff) {
     // indirection

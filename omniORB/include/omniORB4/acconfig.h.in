@@ -222,9 +222,6 @@
 /* define if you want to disable long double support */
 #undef OMNIORB_DISABLE_LONGDOUBLE
 
-/* define if you want to support the C++11 mapping */
-#undef OMNIORB_ENABLE_CXX11
-
 /* define if you want mutexes to be traced */
 #undef OMNIORB_ENABLE_LOCK_TRACES
 
@@ -248,6 +245,9 @@
 
 /* Define to the type of getsockname's third argument */
 #undef OMNI_SOCKNAME_SIZE_T
+
+/* define if you want to use CFNetwork */
+#undef OMNI_USE_CFNETWORK_CONNECT
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

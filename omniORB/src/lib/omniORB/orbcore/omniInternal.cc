@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library.
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -693,7 +691,10 @@ omni::createIdentity(omniIOR* ior, const char* target, CORBA::Boolean locked)
 
     if (result) {
       holder._retn();
+
+      omni_optional_lock sync(*internalLock,locked,locked);
       result->gainRef();
+
       return result;
     }
   }
@@ -1140,8 +1141,9 @@ public:
 			1,
 			"-ORBtraceLevel < n >= 0 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1172,8 +1174,9 @@ public:
 			"-ORBtraceExceptions < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1201,8 +1204,9 @@ public:
 			"-ORBtraceInvocations < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1230,8 +1234,9 @@ public:
 			"-ORBtraceInvocationReturns < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1259,8 +1264,9 @@ public:
 			"-ORBtraceThreadId < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1288,8 +1294,9 @@ public:
 			"-ORBtraceTime < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1317,8 +1324,9 @@ public:
 			"-ORBtraceLocking < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1346,7 +1354,9 @@ public:
 			"-ORBtraceFile <filename>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniORB::setLogFilename(value);
   }
 
@@ -1368,8 +1378,9 @@ public:
 			1,
 			"-ORBobjectTableSize < n >= 0 >") {}
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,orbOptions::expect_ulong_msg);
@@ -1397,8 +1408,9 @@ public:
 			"-ORBabortOnInternalError < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1427,8 +1439,9 @@ public:
 			"-ORBabortOnNativeException < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1469,8 +1482,9 @@ public:
 			"-ORBthrowTransientOnTimeOut < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

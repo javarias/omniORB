@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -627,8 +625,9 @@ public:
 "                          * may not be supported on the platform.\n") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -669,8 +668,9 @@ public:
 			"-ORBendPointNoPublish <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 1;
@@ -705,7 +705,8 @@ public:
 			"-ORBendPointPublish <publish options>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam)
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
   {
     omniObjAdapter::options.publish = value;
   }
@@ -729,8 +730,9 @@ public:
 			"-ORBendPointNoListen <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -762,7 +764,9 @@ public:
 			"-ORBendPointPublishAllIFs < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

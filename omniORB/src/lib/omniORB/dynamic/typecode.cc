@@ -10,19 +10,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -2489,6 +2487,10 @@ TypeCode_struct::NP_unmarshalComplexParams(cdrStream& s,
     _ptr->pd_name   = s.unmarshalRawString();
     _ptr->pd_nmembers <<= s;
 
+    if (!s.checkInputOverrun(1, _ptr->pd_nmembers))
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                    (CORBA::CompletionStatus)s.completion());
+    
     // We need to initialised the members of <pd_members> to zero
     // to ensure we can destroy this properly in the case of an
     // exception being thrown.
@@ -2921,6 +2923,10 @@ TypeCode_except::NP_unmarshalComplexParams(cdrStream& s,
     _ptr->pd_name   = s.unmarshalRawString();
     _ptr->pd_nmembers <<= s;
 
+    if (!s.checkInputOverrun(1, _ptr->pd_nmembers))
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                    (CORBA::CompletionStatus)s.completion());
+    
     // We need to initialised the members of <pd_members> to zero
     // to ensure we can destroy this properly in the case of an
     // exception being thrown.
@@ -3317,6 +3323,10 @@ TypeCode_enum::NP_unmarshalComplexParams(cdrStream &s,
   CORBA::ULong len;
   len <<= s;
 
+  if (!s.checkInputOverrun(1, len))
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                  (CORBA::CompletionStatus)s.completion());
+  
   _ptr->pd_members.length(len);
   char** buffer = _ptr->pd_members.get_buffer(0);
 
@@ -3634,6 +3644,10 @@ TypeCode_union::NP_unmarshalComplexParams(cdrStream &s,
   CORBA::ULong memberCount;
   memberCount <<= s;
 
+  if (!s.checkInputOverrun(1, memberCount))
+    OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                  (CORBA::CompletionStatus)s.completion());
+  
   _ptr->pd_members.length(memberCount);
 
   // Read in the different labels, names and types
@@ -4143,6 +4157,10 @@ TypeCode_value::NP_unmarshalComplexParams(cdrStream& s,
     }
     _ptr->pd_nmembers <<= s;
 
+    if (!s.checkInputOverrun(1, _ptr->pd_nmembers))
+      OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
+                    (CORBA::CompletionStatus)s.completion());
+    
     // We need to initialise the members of <pd_members> to zero
     // to ensure we can destroy this properly in the case of an
     // exception being thrown.
@@ -4864,7 +4882,7 @@ TypeCode_offsetTable::~TypeCode_offsetTable()
 
 // Routine to create a child, encapsulating offsetTable
 TypeCode_offsetTable::TypeCode_offsetTable(TypeCode_offsetTable* parent,
-					   omni::s_size_t        base_offset)
+					   CORBA::Long base_offset)
   : pd_table(0), pd_curr_offset(base_offset),
     pd_parent_table(parent),
     pd_parent_base_offset(parent->currentOffset() - base_offset)
@@ -4874,20 +4892,19 @@ TypeCode_offsetTable::TypeCode_offsetTable(TypeCode_offsetTable* parent,
 
 // Routine to add an offset->typecode mapping
 void
-TypeCode_offsetTable::addEntry(omni::s_size_t offset, TypeCode_base* typecode)
+TypeCode_offsetTable::addEntry(CORBA::Long offset, TypeCode_base* typecode)
 {
   // If this table is a wrapper round another then correct the offset and
   // pass on the request
-  if (pd_parent_table != 0) {
+  if (pd_parent_table != 0)
     pd_parent_table->addEntry(offset + pd_parent_base_offset, typecode);
-  }
   else
     {
       // Otherwise, just look in this table directly
       TypeCode_offsetEntry* new_entry = new TypeCode_offsetEntry;
 
-      new_entry->pd_next     = pd_table;
-      new_entry->pd_offset   = offset;
+      new_entry->pd_next = pd_table;
+      new_entry->pd_offset = offset;
       new_entry->pd_typecode = typecode;
 
       pd_table = new_entry;
@@ -4897,7 +4914,7 @@ TypeCode_offsetTable::addEntry(omni::s_size_t offset, TypeCode_base* typecode)
 
 // Routines to retrieve typecode by offset or vica versa
 TypeCode_base*
-TypeCode_offsetTable::lookupOffset(omni::s_size_t offset)
+TypeCode_offsetTable::lookupOffset(CORBA::Long offset)
 {
   // If this table is a wrapper round another then correct
   // the offset and pass on the request
@@ -4910,14 +4927,14 @@ TypeCode_offsetTable::lookupOffset(omni::s_size_t offset)
   if (orbParameters::acceptMisalignedTcIndirections && (offset & 0x3)) {
     omniORB::logs(1, "Warning: received TypeCode with "
                   "mis-aligned indirection.");
-    offset = ((offset + 3) >> 2) << 2;
+    offset = (offset + 3) & 0xfffffffc;
   }
 
   // Otherwise, just look in this table directly
   TypeCode_offsetEntry* entry = pd_table;
 
   while (entry != 0) {
-    if ((omni::s_size_t)entry->pd_offset == offset)
+    if ((CORBA::Long)entry->pd_offset == offset)
       return entry->pd_typecode;
 
     entry = entry->pd_next;
@@ -4929,7 +4946,7 @@ TypeCode_offsetTable::lookupOffset(omni::s_size_t offset)
 
 CORBA::Boolean
 TypeCode_offsetTable::lookupTypeCode(const TypeCode_base*  tc,
-				     omni::s_size_t&       offset)
+				     CORBA::Long &offset)
 {
   // If this table is a wrapper round another then correct
   // the offset and pass on the request
@@ -5011,8 +5028,7 @@ TypeCode_marshaller::marshal(TypeCode_base* tc,
 
   // If this _exact_ typecode has already been marshalled into the stream
   // then just put in an indirection
-  omni::s_size_t tc_offset;
-
+  CORBA::Long tc_offset;
   if( orbParameters::useTypeCodeIndirections &&
       otbl->lookupTypeCode(tc, tc_offset) )
     {
@@ -5021,7 +5037,7 @@ TypeCode_marshaller::marshal(TypeCode_base* tc,
       tck_indirect >>= s;
 
       // Now write out the offset
-      CORBA::Long offset = (CORBA::Long)(tc_offset - s.currentOutputPtr());
+      CORBA::Long offset = tc_offset - (s.currentOutputPtr());
       offset >>= s;
     }
   else
@@ -5114,14 +5130,14 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
       // Indirection typecode
     case 0xffffffff:
       {
-        omni::s_size_t currpos = s.currentInputPtr();
-	CORBA::Long    offset;
+	CORBA::Long currpos = s.currentInputPtr();
+	CORBA::Long offset;
 
 	// Read in the offset within the GIOP message
 	offset <<= s;
 
 	// Now look it up in the table
-	TypeCode_base* tc = otbl->lookupOffset(currpos + offset);
+	TypeCode_base* tc = otbl->lookupOffset(offset+currpos);
 	if (tc == 0)
 	  OMNIORB_THROW(MARSHAL,
 			MARSHAL_InvalidIndirection,

@@ -9,19 +9,17 @@
 //    This file is part of the omniORB library
 //
 //    The omniORB library is free software; you can redistribute it and/or
-//    modify it under the terms of the GNU Library General Public
+//    modify it under the terms of the GNU Lesser General Public
 //    License as published by the Free Software Foundation; either
-//    version 2 of the License, or (at your option) any later version.
+//    version 2.1 of the License, or (at your option) any later version.
 //
 //    This library is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//    Library General Public License for more details.
+//    Lesser General Public License for more details.
 //
-//    You should have received a copy of the GNU Library General Public
-//    License along with this library; if not, write to the Free
-//    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
-//    02111-1307, USA
+//    You should have received a copy of the GNU Lesser General Public
+//    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 //
 // Description:
@@ -739,7 +737,9 @@ public:
 			"-ORBDefaultInitRef <Default URI> (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source src) throw (orbOptions::BadParam) {
+  void visit(const char* value,orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     if (src == orbOptions::fromArgv || src == orbOptions::fromArray) {
       omniInitialReferences::setDefaultInitRefFromArgs(value);
     }
@@ -772,8 +772,9 @@ public:
 			"-ORBInitRef <ObjectID>=<ObjectURI> (standard option)") {}
 
 
-  void visit(const char* value, orbOptions::Source src) throw (orbOptions::BadParam) {
-
+  void visit(const char* value, orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     unsigned int slen = strlen(value) + 1;
     CORBA::String_var id(CORBA::string_alloc(slen));
     CORBA::String_var uri(CORBA::string_alloc(slen));
@@ -825,8 +826,9 @@ public:
 			"-ORBsupportBootstrapAgent < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -854,14 +856,15 @@ public:
 			"-ORBbootstrapAgentPort < 1-65535 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || !(v >=1 && v <=65535) ) {
       throw orbOptions::BadParam(key(),value,
 				 "Invalid value, expect 1-65535");
     }
-    orbParameters::bootstrapAgentPort = v;
+    orbParameters::bootstrapAgentPort = (CORBA::UShort)v;
   }
 
   void dump(orbOptions::sequenceString& result) {
@@ -883,8 +886,9 @@ public:
 			"-ORBbootstrapAgentHostname <hostname>") {}
 
 
-  void visit(const char* value,orbOptions::Source) throw (orbOptions::BadParam) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbParameters::bootstrapAgentHostname = value;
   }
 
