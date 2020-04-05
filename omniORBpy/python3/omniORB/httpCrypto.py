@@ -40,5 +40,12 @@ Functions:
   removeServer()
 """
 
-import _omnipy
-from _omnihttpCrypto import *
+import omniORB
+
+if omniORB.omniorb_dll_path is not None:
+    with os.add_dll_directory(omniorb_dll_path):
+        import _omnipy
+        from _omnihttpCrypto import *
+else:
+    import _omnipy
+    from _omnihttpCrypto import *
