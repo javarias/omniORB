@@ -1,7 +1,7 @@
 RELEASE NOTES
 =============
 
-This is the omniORBpy 4.3 development branch.
+This is the omniORBpy 4.3.0 beta 1.
 
 See README.txt for building instructions.
 See the documentation in the doc directory for more information.
