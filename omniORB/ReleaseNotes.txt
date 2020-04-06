@@ -1,7 +1,7 @@
 RELEASE NOTES
 =============
 
-This is the omniORB 4.3.x development branch.
+This is omniORB 4.3.0 beta 1.
 
 See README.unix.txt or README.win32.txt for building instructions.
 See the documentation in the doc directory for more information.
