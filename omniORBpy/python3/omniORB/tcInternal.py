@@ -777,11 +777,12 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
         b_ids = {}
 
     try:
-        if a == b: return 1
+        if a == b:
+            return True
 
         # If they don't trivially match, they must be tuples:
         if not (isinstance(a, tuple) and isinstance(b, tuple)):
-            return 0
+            return False
 
         # Follow aliases and indirections
         while (isinstance(a, tuple) and
@@ -809,21 +810,22 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
                     b = b[1][0]
 
         # Re-do the trivial checks on the underlying types.
-        if a == b: return 1
+        if a == b:
+            return True
 
         if not (isinstance(a, tuple) and isinstance(b, tuple)):
-            return 0
+            return False
 
         # Handle cycles
         idt = id(a), id(b)
         if idt in seen:
-            return 1
+            return True
 
         seen[idt] = None
 
         # Must be same kind
         if a[0] != b[0]:
-            return 0
+            return False
 
         if a[0] == tv_struct:
             # id
@@ -832,20 +834,20 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[2] != "" and b[2] != "":
                 if a[2] == b[2]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
             # members:
             if len(a) != len(b):
-                return 0
+                return False
             
             for i in range(4, len(a), 2):
                 # Member type
                 if not equivalentDescriptors(a[i+1], b[i+1],
                                              seen, a_ids, b_ids):
-                    return 0
-            return 1
+                    return False
+            return True
 
         elif a[0] == tv_union:
             # id
@@ -854,33 +856,33 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[2] != "" and b[2] != "":
                 if a[2] == b[2]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
             # discriminant type
             if not equivalentDescriptors(a[4], b[4], seen, a_ids, b_ids):
-                return 0
+                return False
 
             # default index
             if a[5] != b[5]:
-                return 0
+                return False
 
             # Members
             if len(a[6]) != len(b[6]):
-                return 0
+                return False
 
             for i in range(len(a[6])):
                 # Member label
                 if a[6][i][0] != b[6][i][0]:
-                    return 0
+                    return False
 
                 # Member descriptor
                 if not equivalentDescriptors(a[6][i][2], b[6][i][2],
                                              seen, a_ids, b_ids):
-                    return 0
+                    return False
 
-            return 1
+            return True
 
         elif a[0] == tv_enum:
             # id
@@ -889,20 +891,20 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[1] != "" and b[1] != "":
                 if a[1] == b[1]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
             # Members
             if len(a[3]) != len(b[3]):
-                return 0
+                return False
 
-            return 1
+            return True
 
         elif a[0] == tv_sequence:
             # Bound
             if a[2] != b[2]:
-                return 0
+                return False
 
             # Type
             return equivalentDescriptors(a[1], b[1], seen, a_ids, b_ids)
@@ -910,7 +912,7 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
         elif a[0] == tv_array:
             # Length
             if a[2] != b[2]:
-                return 0
+                return False
 
             # Type
             return equivalentDescriptors(a[1], b[1], seen, a_ids, b_ids)
@@ -922,20 +924,20 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[2] != "" and b[2] != "":
                 if a[2] == b[2]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
                 # members:
                 if len(a) != len(b):
-                    return 0
+                    return False
 
                 for i in range(4, len(self._d), 2):
                     # Member type
                     if not equivalentDescriptors(a[i+1], b[i+1],
                                                  seen, a_ids, b_ids):
-                        return 0
-            return 1
+                        return False
+            return True
 
         elif a[0] == tv_value:
             # id
@@ -944,24 +946,24 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[2] != "" and b[2] != "":
                 if a[2] == b[2]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
             # members
             if len(a) != len(b):
-                return 0
+                return False
 
             for i in range(7, len(a), 3):
                 # Access spec
                 if a[i+2] != b[i+2]:
-                    return 0
+                    return False
                 
                 if not equivalentDescriptors(a[i+1], b[i+1],
                                              seen, a_ids, b_ids):
-                    return 0
+                    return False
 
-            return 1
+            return True
 
         elif a[0] == tv_value_box:
             # id
@@ -970,17 +972,17 @@ def equivalentDescriptors(a, b, seen=None, a_ids=None, b_ids=None):
 
             if a[2] != "" and b[2] != "":
                 if a[2] == b[2]:
-                    return 1
+                    return True
                 else:
-                    return 0
+                    return False
 
             # Boxed type
             if equivalentDescriptors(a[4], b[4], seen, a_ids, b_ids):
-                return 1
+                return True
             else:
-                return 0
+                return False
 
-        return 0
+        return False
 
     except AttributeError:
         raise BAD_PARAM(BAD_PARAM_WrongPythonType, COMPLETED_NO)

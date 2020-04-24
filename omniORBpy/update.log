@@ -1,3 +1,12 @@
+Fri 24 Apr 22:17:22 BST 2020
+============================
+
+- Return proper bools from TypeCode equivalent.
+
+python/omniORB/tcInternal.py
+python3/omniORB/tcInternal.py
+
+
 Mon  6 Apr 12:16:47 BST 2020
 ============================
 
