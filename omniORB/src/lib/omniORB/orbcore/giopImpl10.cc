@@ -821,13 +821,11 @@ giopImpl10::inputTerminalProtocolError(giopStream* g,
   if (omniORB::trace(1)) {
     omniORB::logger l;
     l << "From endpoint: " << g->pd_strand->connection->peeraddress()
-      << ". Detected GIOP 1.0 protocol error in input message. "
-      << omniExHelper::strip(file) << ":" << line
+      << ". Detected GIOP 1.0 protocol error in input message: "
+      << message << ". " << omniExHelper::strip(file) << ":" << line
       << ". Connection is closed.\n";
   }
-
   sendMsgErrorMessage(g, 0);
-
   inputRaiseCommFailure(g, message);
 }
 
