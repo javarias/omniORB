@@ -1,3 +1,13 @@
+Fri 24 Apr 22:14:35 BST 2020
+============================
+
+- Improve MessageError logging.
+
+src/lib/omniORB/orbcore/giopImpl10.cc
+src/lib/omniORB/orbcore/giopImpl11.cc
+src/lib/omniORB/orbcore/giopImpl12.cc
+
+
 Mon  6 Apr 12:16:47 BST 2020
 ============================
 
