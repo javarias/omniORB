@@ -9,6 +9,17 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
 
+dnl ** CFLAGS / CXXFLAGS
+
+if test "${CFLAGS+set}" != set; then
+    CFLAGS="-O"
+fi
+
+if test "${CXXFLAGS+set}" != set; then
+    CXXFLAGS="-O3"
+fi
+
+
 dnl ** Programs
 
 AC_PROG_CC

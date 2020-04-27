@@ -1,3 +1,12 @@
+Mon 27 Apr 17:46:11 BST 2020
+============================
+
+- Use -O3 by default.
+
+configure.ac
+configure
+
+
 Fri 24 Apr 22:17:22 BST 2020
 ============================
 

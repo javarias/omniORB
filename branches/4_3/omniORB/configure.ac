@@ -20,7 +20,7 @@ if test "${CFLAGS+set}" != set; then
 fi
 
 if test "${CXXFLAGS+set}" != set; then
-    CXXFLAGS="-O2"
+    CXXFLAGS="-O3"
 fi
 
 
