@@ -1,3 +1,12 @@
+Mon 27 Apr 17:47:44 BST 2020
+============================
+
+- Avoid temporary Any when marshalling nested Any. It led to
+  exponential performance with deeply nested Anys.
+
+src/lib/omniORB/dynamic/tcParser.cc
+
+
 Mon 27 Apr 17:46:11 BST 2020
 ============================
 

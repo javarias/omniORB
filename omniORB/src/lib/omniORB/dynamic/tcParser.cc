@@ -115,7 +115,13 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 	  }
 
 	case CORBA::tk_any:
-	  { CORBA::Any d; d <<= ibuf; d >>= obuf; break; }
+          {
+            CORBA::TypeCode_member atc;
+            atc <<= ibuf;
+            atc >>= obuf;
+            fastCopyUsingTC(ToTcBase(atc), ibuf, obuf);
+            break;
+          }
 
 	case CORBA::tk_Principal:
 	  {
@@ -366,7 +372,13 @@ void copyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 #endif
 
     case CORBA::tk_any:
-      { CORBA::Any d;     d <<= ibuf; d >>= obuf; return; }
+      {
+        CORBA::TypeCode_member atc;
+        atc <<= ibuf;
+        atc >>= obuf;
+        copyUsingTC(ToTcBase(atc), ibuf, obuf);
+        return;
+      }
 
     // COMPLEX TYPES
     case CORBA::tk_char:
@@ -595,7 +607,12 @@ void skipUsingTC(TypeCode_base* tc, cdrStream& buf)
 	  }
 
 	case CORBA::tk_any:
-	  { CORBA::Any d; d <<= buf; break; }
+          {
+            CORBA::TypeCode_member atc;
+            atc <<= buf;
+            skipUsingTC(ToTcBase(atc), buf);
+            break;
+          }
 
 	case CORBA::tk_Principal:
 	case CORBA::tk_string:
