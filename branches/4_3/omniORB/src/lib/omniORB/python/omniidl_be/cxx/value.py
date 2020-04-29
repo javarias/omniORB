@@ -100,7 +100,7 @@ public:
 
   virtual void _PR_marshal_state(cdrStream&) const;
   virtual void _PR_unmarshal_state(cdrStream&);
-  virtual void _PR_copy_state(@name@*);
+  void _PR_copy_state(@name@*);
 
   static _core_attr const char* _PD_repoId;
 

@@ -1,3 +1,12 @@
+Wed 29 Apr 21:38:14 BST 2020
+============================
+
+- Avoid warning about virtual functions shadowing each other.
+
+src/lib/omniORB/python/omniidl_be/cxx/value.py
+src/lib/omniORB/python3/omniidl_be/cxx/value.py
+
+
 Mon 27 Apr 17:47:44 BST 2020
 ============================
 
