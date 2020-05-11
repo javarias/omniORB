@@ -69,6 +69,7 @@ unixConnection::Send(void* buf, size_t sz,
 	}
 	else if (tx == RC_SOCKET_ERROR) {
 	  if (ERRNO == RC_EINTR) {
+	    SET_ERRNO(0);
 	    continue;
           }
 	  else {
@@ -135,6 +136,7 @@ unixConnection::Recv(void* buf, size_t sz,
       }
       else if (rx == RC_SOCKET_ERROR) {
 	if (ERRNO == RC_EINTR) {
+	  SET_ERRNO(0);
 	  continue;
         }
 	else {

@@ -102,6 +102,7 @@
 #  define CLOSESOCKET(sock)    closesocket(sock)
 #  define SHUTDOWNSOCKET(sock) ::shutdown(sock,2)
 #  define ERRNO                ::WSAGetLastError()
+#  define SET_ERRNO(v)         ::WSASetLastError(v)
 #  define RC_EINPROGRESS       WSAEWOULDBLOCK
 #  define RC_EINTR             WSAEINTR
 #  define RC_EBADF             WSAENOTSOCK
@@ -175,6 +176,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 #  endif
 
 #  define ERRNO              errno
+#  define SET_ERRNO(v)       errno = v
 #  define RC_EINTR           EINTR
 #  define RC_EINPROGRESS     EINPROGRESS
 #  if defined (__vxWorks__)
