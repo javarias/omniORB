@@ -35,6 +35,8 @@
 #ifndef __omnithread_h_
 #define __omnithread_h_
 
+#include <omniORB4/CORBA_sysdep.h>
+
 class omni_mutex;
 class omni_condition;
 class omni_semaphore;
