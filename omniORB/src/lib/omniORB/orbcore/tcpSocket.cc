@@ -611,6 +611,7 @@ doConnect(const char*   	 host,
     }
     else if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -629,6 +630,7 @@ doConnect(const char*   	 host,
 
     if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -857,6 +859,7 @@ tcpSocket::Connect(const char*        host,
     }
     else if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -876,6 +879,7 @@ tcpSocket::Connect(const char*        host,
 
     if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
