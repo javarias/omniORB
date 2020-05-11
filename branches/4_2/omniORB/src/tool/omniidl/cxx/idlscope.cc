@@ -97,7 +97,7 @@ toString(IDL_Boolean qualify) const
   for (f = scopeList_; f; f = f->next())
     i += strlen(f->identifier()) + 2;
 
-  char* str = new char [i-1];
+  char* str = new char [i > 2 ? i-1 : 1];
 
   if (qualify && absolute_) {
     str[0] = ':'; str[1] = ':';
