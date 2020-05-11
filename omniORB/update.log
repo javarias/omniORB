@@ -1,3 +1,27 @@
+Mon 11 May 23:36:59 BST 2020
+============================
+
+- Ensure correct dependency macros are defined for omnithread.
+
+include/omnithread.h
+
+- Fix incorrect non-reference catch statements.
+
+src/appl/utils/nameclt/nameclt.cc
+
+- Avoid false-positive g++ warning about overlapping a string buffer.
+
+src/tool/omniidl/cxx/idlscope.cc
+
+- Ensure errno is cleared after an EINTR in poll().
+
+include/omniORB4/internal/tcpSocket.h
+src/lib/omniORB/orbcore/ssl/sslConnection.cc
+src/lib/omniORB/orbcore/tcp/tcpConnection.cc
+src/lib/omniORB/orbcore/tcpSocket.cc
+src/lib/omniORB/orbcore/unix/unixConnection.cc
+
+
 Sun  5 Apr 23:30:26 BST 2020
 ============================
 
