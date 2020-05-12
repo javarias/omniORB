@@ -1,3 +1,15 @@
+Tue 12 May 22:40:14 BST 2020
+============================
+
+- Rename python directories to python2.
+
+configure.ac
+configure
+dir.mk
+python
+python2
+
+
 Mon 11 May 23:44:12 BST 2020
 ============================
 

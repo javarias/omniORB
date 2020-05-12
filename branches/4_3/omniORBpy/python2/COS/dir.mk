@@ -2,7 +2,7 @@ PYLIBROOT= $(EXPORT_TREE)/lib/python
 PYLIBDIR = $(PYLIBROOT)/omniORB/COS
 INSTALLPYLIBDIR = $(INSTALLPYTHONDIR)/omniORB/COS
 
-PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python")')
+PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python2")')
 
 # Where to look for IDL files.
 # This list could be configurable.

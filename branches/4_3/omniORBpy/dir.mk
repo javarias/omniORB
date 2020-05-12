@@ -1,4 +1,4 @@
-PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python")')
+PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python2")')
 
 SUBDIRS = modules $(PYSUBDIR) include
 

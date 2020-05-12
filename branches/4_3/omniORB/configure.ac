@@ -263,7 +263,7 @@ AC_SUBST(PROCESSOR_DEFINE, $proc_def)
 dnl ** Output
 
 AC_CONFIG_FILES(mk/beforeauto.mk mk/afterauto.mk GNUmakefile)
-AC_CONFIG_FILES(src/tool/omniidl/python/scripts/omniidl)
+AC_CONFIG_FILES(src/tool/omniidl/python2/scripts/omniidl)
 AC_CONFIG_FILES(src/tool/omniidl/python3/scripts/omniidl)
 AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/appl/omniMapper/GNUmakefile
@@ -298,13 +298,13 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/codesets/GNUmakefile
                 src/lib/omniORB/GNUmakefile
                 src/lib/omniORB/dynamic/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/GNUmakefile
-                src/lib/omniORB/python/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/dynskel/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/header/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/impl/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/skel/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/GNUmakefile
+                src/lib/omniORB/python2/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile
@@ -330,10 +330,10 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/tool/omniidl/cxx/cccp/GNUmakefile
                 src/tool/omniidl/cxx/GNUmakefile
                 src/tool/omniidl/GNUmakefile
-                src/tool/omniidl/python/GNUmakefile
-                src/tool/omniidl/python/omniidl_be/GNUmakefile
-                src/tool/omniidl/python/omniidl/GNUmakefile
-                src/tool/omniidl/python/scripts/GNUmakefile
+                src/tool/omniidl/python2/GNUmakefile
+                src/tool/omniidl/python2/omniidl_be/GNUmakefile
+                src/tool/omniidl/python2/omniidl/GNUmakefile
+                src/tool/omniidl/python2/scripts/GNUmakefile
                 src/tool/omniidl/python3/GNUmakefile
                 src/tool/omniidl/python3/omniidl_be/GNUmakefile
                 src/tool/omniidl/python3/omniidl/GNUmakefile

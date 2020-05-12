@@ -1,3 +1,16 @@
+Tue 12 May 22:40:14 BST 2020
+============================
+
+- Rename python directories to python2.
+
+configure.ac
+configure
+src/lib/omniORB/dir.mk
+src/lib/omniORB/python
+src/lib/omniORB/python2
+src/tool/omniidl/python2
+
+
 Mon 11 May 23:48:37 BST 2020
 ============================
 
