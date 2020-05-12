@@ -7650,11 +7650,11 @@ PROCESSOR_DEFINE=$proc_def
 
 ac_config_files="$ac_config_files mk/beforeauto.mk mk/afterauto.mk GNUmakefile"
 
-ac_config_files="$ac_config_files src/tool/omniidl/python/scripts/omniidl"
+ac_config_files="$ac_config_files src/tool/omniidl/python2/scripts/omniidl"
 
 ac_config_files="$ac_config_files src/tool/omniidl/python3/scripts/omniidl"
 
-ac_config_files="$ac_config_files src/appl/GNUmakefile src/appl/omniMapper/GNUmakefile src/appl/omniNames/GNUmakefile src/appl/utils/catior/GNUmakefile src/appl/utils/convertior/GNUmakefile src/appl/utils/GNUmakefile src/appl/utils/genior/GNUmakefile src/appl/utils/nameclt/GNUmakefile src/GNUmakefile src/examples/ami/GNUmakefile src/examples/anyExample/GNUmakefile src/examples/bidir/GNUmakefile src/examples/boa/GNUmakefile src/examples/call_back/GNUmakefile src/examples/dii/GNUmakefile src/examples/GNUmakefile src/examples/dsi/GNUmakefile src/examples/echo/GNUmakefile src/examples/poa/GNUmakefile src/examples/poa/implicit_activation/GNUmakefile src/examples/poa/persistent_objref/GNUmakefile src/examples/poa/servant_manager/GNUmakefile src/examples/poa/threading/GNUmakefile src/examples/poa/shortcut/GNUmakefile src/examples/ssl_echo/GNUmakefile src/examples/thread/GNUmakefile src/examples/valuetype/GNUmakefile src/examples/valuetype/simple/GNUmakefile src/examples/ziop/GNUmakefile src/lib/GNUmakefile src/lib/omniORB/codesets/GNUmakefile src/lib/omniORB/GNUmakefile src/lib/omniORB/dynamic/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python/omniidl_be/GNUmakefile src/lib/omniORB/python/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python3/omniidl_be/GNUmakefile src/lib/omniORB/python3/GNUmakefile src/lib/omniORB/orbcore/GNUmakefile src/lib/omniORB/orbcore/ssl/GNUmakefile src/lib/omniORB/orbcore/http/GNUmakefile src/lib/omniORB/connections/GNUmakefile src/lib/omniORB/ziop/GNUmakefile src/lib/omniORB/ziopdynamic/GNUmakefile src/lib/omniORB/httpcrypto/GNUmakefile src/lib/omnithread/GNUmakefile src/services/GNUmakefile src/services/mklib/GNUmakefile src/services/mklib/stublib/GNUmakefile src/services/mklib/dynstublib/GNUmakefile src/services/mklib/mkBOAlib/GNUmakefile src/tool/GNUmakefile src/tool/omkdepend/GNUmakefile src/tool/omniidl/cxx/cccp/GNUmakefile src/tool/omniidl/cxx/GNUmakefile src/tool/omniidl/GNUmakefile src/tool/omniidl/python/GNUmakefile src/tool/omniidl/python/omniidl_be/GNUmakefile src/tool/omniidl/python/omniidl/GNUmakefile src/tool/omniidl/python/scripts/GNUmakefile src/tool/omniidl/python3/GNUmakefile src/tool/omniidl/python3/omniidl_be/GNUmakefile src/tool/omniidl/python3/omniidl/GNUmakefile src/tool/omniidl/python3/scripts/GNUmakefile"
+ac_config_files="$ac_config_files src/appl/GNUmakefile src/appl/omniMapper/GNUmakefile src/appl/omniNames/GNUmakefile src/appl/utils/catior/GNUmakefile src/appl/utils/convertior/GNUmakefile src/appl/utils/GNUmakefile src/appl/utils/genior/GNUmakefile src/appl/utils/nameclt/GNUmakefile src/GNUmakefile src/examples/ami/GNUmakefile src/examples/anyExample/GNUmakefile src/examples/bidir/GNUmakefile src/examples/boa/GNUmakefile src/examples/call_back/GNUmakefile src/examples/dii/GNUmakefile src/examples/GNUmakefile src/examples/dsi/GNUmakefile src/examples/echo/GNUmakefile src/examples/poa/GNUmakefile src/examples/poa/implicit_activation/GNUmakefile src/examples/poa/persistent_objref/GNUmakefile src/examples/poa/servant_manager/GNUmakefile src/examples/poa/threading/GNUmakefile src/examples/poa/shortcut/GNUmakefile src/examples/ssl_echo/GNUmakefile src/examples/thread/GNUmakefile src/examples/valuetype/GNUmakefile src/examples/valuetype/simple/GNUmakefile src/examples/ziop/GNUmakefile src/lib/GNUmakefile src/lib/omniORB/codesets/GNUmakefile src/lib/omniORB/GNUmakefile src/lib/omniORB/dynamic/GNUmakefile src/lib/omniORB/python2/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python2/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python2/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python2/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python2/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python2/omniidl_be/GNUmakefile src/lib/omniORB/python2/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/impl/GNUmakefile src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile src/lib/omniORB/python3/omniidl_be/GNUmakefile src/lib/omniORB/python3/GNUmakefile src/lib/omniORB/orbcore/GNUmakefile src/lib/omniORB/orbcore/ssl/GNUmakefile src/lib/omniORB/orbcore/http/GNUmakefile src/lib/omniORB/connections/GNUmakefile src/lib/omniORB/ziop/GNUmakefile src/lib/omniORB/ziopdynamic/GNUmakefile src/lib/omniORB/httpcrypto/GNUmakefile src/lib/omnithread/GNUmakefile src/services/GNUmakefile src/services/mklib/GNUmakefile src/services/mklib/stublib/GNUmakefile src/services/mklib/dynstublib/GNUmakefile src/services/mklib/mkBOAlib/GNUmakefile src/tool/GNUmakefile src/tool/omkdepend/GNUmakefile src/tool/omniidl/cxx/cccp/GNUmakefile src/tool/omniidl/cxx/GNUmakefile src/tool/omniidl/GNUmakefile src/tool/omniidl/python2/GNUmakefile src/tool/omniidl/python2/omniidl_be/GNUmakefile src/tool/omniidl/python2/omniidl/GNUmakefile src/tool/omniidl/python2/scripts/GNUmakefile src/tool/omniidl/python3/GNUmakefile src/tool/omniidl/python3/omniidl_be/GNUmakefile src/tool/omniidl/python3/omniidl/GNUmakefile src/tool/omniidl/python3/scripts/GNUmakefile"
 
 
 ac_config_files="$ac_config_files include/GNUmakefile include/omniconfig.h include/omnithread/GNUmakefile include/omniORB4/GNUmakefile include/omniORB4/internal/GNUmakefile"
@@ -8366,7 +8366,7 @@ do
     "mk/beforeauto.mk") CONFIG_FILES="$CONFIG_FILES mk/beforeauto.mk" ;;
     "mk/afterauto.mk") CONFIG_FILES="$CONFIG_FILES mk/afterauto.mk" ;;
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile" ;;
-    "src/tool/omniidl/python/scripts/omniidl") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python/scripts/omniidl" ;;
+    "src/tool/omniidl/python2/scripts/omniidl") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python2/scripts/omniidl" ;;
     "src/tool/omniidl/python3/scripts/omniidl") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python3/scripts/omniidl" ;;
     "src/appl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/appl/GNUmakefile" ;;
     "src/appl/omniMapper/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/appl/omniMapper/GNUmakefile" ;;
@@ -8401,13 +8401,13 @@ do
     "src/lib/omniORB/codesets/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/codesets/GNUmakefile" ;;
     "src/lib/omniORB/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/GNUmakefile" ;;
     "src/lib/omniORB/dynamic/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/dynamic/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile" ;;
-    "src/lib/omniORB/python/omniidl_be/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/omniidl_be/GNUmakefile" ;;
-    "src/lib/omniORB/python/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/cxx/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/cxx/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/cxx/dynskel/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/cxx/dynskel/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/cxx/header/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/cxx/header/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/cxx/impl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/cxx/impl/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/cxx/skel/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/cxx/skel/GNUmakefile" ;;
+    "src/lib/omniORB/python2/omniidl_be/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/omniidl_be/GNUmakefile" ;;
+    "src/lib/omniORB/python2/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python2/GNUmakefile" ;;
     "src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile" ;;
     "src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile" ;;
     "src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile" ;;
@@ -8433,10 +8433,10 @@ do
     "src/tool/omniidl/cxx/cccp/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/cxx/cccp/GNUmakefile" ;;
     "src/tool/omniidl/cxx/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/cxx/GNUmakefile" ;;
     "src/tool/omniidl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/GNUmakefile" ;;
-    "src/tool/omniidl/python/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python/GNUmakefile" ;;
-    "src/tool/omniidl/python/omniidl_be/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python/omniidl_be/GNUmakefile" ;;
-    "src/tool/omniidl/python/omniidl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python/omniidl/GNUmakefile" ;;
-    "src/tool/omniidl/python/scripts/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python/scripts/GNUmakefile" ;;
+    "src/tool/omniidl/python2/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python2/GNUmakefile" ;;
+    "src/tool/omniidl/python2/omniidl_be/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python2/omniidl_be/GNUmakefile" ;;
+    "src/tool/omniidl/python2/omniidl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python2/omniidl/GNUmakefile" ;;
+    "src/tool/omniidl/python2/scripts/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python2/scripts/GNUmakefile" ;;
     "src/tool/omniidl/python3/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python3/GNUmakefile" ;;
     "src/tool/omniidl/python3/omniidl_be/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python3/omniidl_be/GNUmakefile" ;;
     "src/tool/omniidl/python3/omniidl/GNUmakefile") CONFIG_FILES="$CONFIG_FILES src/tool/omniidl/python3/omniidl/GNUmakefile" ;;

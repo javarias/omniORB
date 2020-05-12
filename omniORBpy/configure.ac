@@ -167,10 +167,10 @@ AC_CONFIG_FILES(
                 modules/sslTP/GNUmakefile
                 modules/connections/GNUmakefile
                 modules/ziop/GNUmakefile
-                python/GNUmakefile
-                python/omniidl_be/GNUmakefile
-                python/COS/GNUmakefile
-                python/omniORB/GNUmakefile
+                python2/GNUmakefile
+                python2/omniidl_be/GNUmakefile
+                python2/COS/GNUmakefile
+                python2/omniORB/GNUmakefile
                 python3/GNUmakefile
                 python3/omniidl_be/GNUmakefile
                 python3/COS/GNUmakefile

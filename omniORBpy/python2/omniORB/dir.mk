@@ -2,7 +2,7 @@ PYLIBROOT= $(EXPORT_TREE)/lib/python
 PYLIBDIR = $(PYLIBROOT)/omniORB
 INSTALLPYLIBDIR = $(INSTALLPYTHONDIR)/omniORB
 
-PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python")')
+PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python2")')
 
 ir_idl.py: ir.idl
 	$(OMNIIDL) -v -p$(BASE_OMNI_TREE)/$(PYSUBDIR)/omniidl_be \
