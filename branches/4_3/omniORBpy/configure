@@ -584,7 +584,7 @@ PACKAGE_STRING='omniORBpy 4.3.0'
 PACKAGE_BUGREPORT='bugs@omniorb-support.com'
 PACKAGE_URL=''
 
-ac_unique_file="python/omniORB/CORBA.py"
+ac_unique_file="python3/omniORB/CORBA.py"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 PROCESSOR_DEFINE
