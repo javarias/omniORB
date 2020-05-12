@@ -51,11 +51,6 @@
 #   define USE_POLL
 #endif
 
-// Darwin implementation of poll() appears to be broken
-#if defined(__darwin__)
-#   undef USE_POLL
-#endif
-
 #if defined(__hpux__)
 #   if __OSVERSION__ < 11
 #       undef USE_POLL
