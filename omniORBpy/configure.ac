@@ -2,7 +2,7 @@ dnl -*- M4 -*-
 AC_INIT(omniORBpy, 4.3.0, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(python/omniORB/CORBA.py)
+AC_CONFIG_SRCDIR(python3/omniORB/CORBA.py)
 AC_CONFIG_AUX_DIR(bin/scripts)
 
 AC_CANONICAL_BUILD
