@@ -1,4 +1,12 @@
-Tue 12 May 22:40:14 BST 2020
+Wed 13 May 00:11:25 BST 2020
+============================
+
+- All in-use Darwin versions now apparently have a working poll().
+
+include/omniORB4/internal/tcpSocket.h
+
+
+Mon 11 May 23:36:59 BST 2020
 ============================
 
 - Rename python directories to python2.
