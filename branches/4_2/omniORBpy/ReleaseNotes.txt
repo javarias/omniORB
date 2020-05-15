@@ -77,8 +77,6 @@ Known limitations
 
 This release has the following known limitations:
 
- - Only Python 2.x is supported.
-
  - There is no support for DII and DSI. Since you can write IDL and
    Python code on-the-fly, this is not a significant limitation.
 
