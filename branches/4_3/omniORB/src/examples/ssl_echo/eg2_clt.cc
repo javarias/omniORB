@@ -33,19 +33,19 @@ static void hello(Echo_ptr e)
 
 int main(int argc, char** argv)
 {
-  sslContext::certificate_authority_file = "root.pem";
-  sslContext::key_file = "client.pem";
-  sslContext::key_file_password = "password";
+  omni::sslContext::certificate_authority_file = "root.pem";
+  omni::sslContext::key_file = "client.pem";
+  omni::sslContext::key_file_password = "password";
 
   struct stat sb;
-  if (stat(sslContext::certificate_authority_file,&sb) < 0) {
+  if (stat(omni::sslContext::certificate_authority_file,&sb) < 0) {
     cerr << "Cannot open certificate file: " 
-	 << sslContext::certificate_authority_file << endl;
+	 << omni::sslContext::certificate_authority_file << endl;
     return 1;
   }
-  if (stat(sslContext::key_file,&sb) < 0) {
+  if (stat(omni::sslContext::key_file,&sb) < 0) {
     cerr << "Cannot open key file: "
-	 << sslContext::key_file << endl;
+	 << omni::sslContext::key_file << endl;
     return 1;
   }
 
