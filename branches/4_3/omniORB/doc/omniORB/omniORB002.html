@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>The Basics</title>
 </head>
@@ -13,7 +13,7 @@
 <hr>
 <h1 id="sec8" class="chapter">Chapter&#XA0;2&#XA0;&#XA0;The Basics</h1>
 <p>
-<a id="chap:basic"></a></p><p>In this chapter, we go through three examples to illustrate the
+<a id="chap:basics"></a></p><p>In this chapter, we go through three examples to illustrate the
 practical steps to use omniORB. By going through the source code of
 each example, the essential concepts and APIs are introduced. If you
 have no previous experience with using CORBA, you should study this
@@ -35,7 +35,7 @@ omniORB distribution; there are several other examples in
 <p>We define an object interface, called <span style="font-family:monospace">Echo</span>, as follows:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">in</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">};</span></div><p>If you are new to IDL, you can learn about its syntax in Chapter 3 of
-the CORBA 2.6 specification&#XA0;[<a href="omniORB016.html#corba26-spec">OMG01</a>]. For the moment, you
+the CORBA 2.6 specification&#XA0;[<a href="omniORB017.html#corba26-spec">OMG01</a>]. For the moment, you
 only need to know that the interface consists of a single operation,
 <span style="font-family:monospace">echoString()</span>, which takes a string as an input argument and returns
 a copy of the same string.</p><p>The interface is written in a file, called <span style="font-family:monospace">echo.idl</span>. It is part
@@ -82,7 +82,7 @@ compiler will complain if you use a servant when an object reference
 is expected, or vice-versa.</p>
 <h2 id="sec13" class="section">2.5&#XA0;&#XA0;A quick look at the C++ mapping</h2>
 <p>The C++ stubs conform to the standard mapping defined in the CORBA
-specification&#XA0;[<a href="omniORB016.html#cxxmapping">OMG03</a>]. Sadly, since it pre-dates the C++
+specification&#XA0;[<a href="omniORB017.html#cxxmapping">OMG03</a>]. Sadly, since it pre-dates the C++
 standard library, the C++ language mapping is quite hard to use,
 especially because it has complex memory management rules.</p><p>The best way to understand the mapping is to read either the
 specification or, better, a book about using CORBA from C++. Reading
@@ -312,7 +312,7 @@ used.</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><sp
 </span><span style="font-size:xx-small">  14</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">dest</span><span style="font-size:small"> = </span><span style="font-size:small">e</span><span style="font-size:small">-&gt;</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">src</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"I said,\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">src</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"\"."</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"I said, \""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">src</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"\"."</span></span><span style="font-size:small">
 </span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small">       &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">" The Object said,\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">dest</span><span style="font-size:small"> &lt;&lt;</span><span style="font-size:small"><span style="font-size:small">"\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">}</span></div><p>The <span style="font-family:monospace">hello()</span> function accepts a generic object reference. The
 object reference (<span style="font-family:monospace">obj</span>) is narrowed to <span style="font-family:monospace">Echo_ptr</span>. If the
@@ -394,15 +394,14 @@ POA</span>, rather than creating any child POAs. The Root POA is found with
 type for a POA.<p>A POA&#X2019;s behaviour is governed by its <span style="font-style:italic">policies</span>. The Root POA has
 suitable policies for many simple servers, and closely matches the
 &#X2018;policies&#X2019; used by omniORB 2&#X2019;s BOA. See Chapter 11 of the CORBA 2.6
-specification[<a href="omniORB016.html#corba26-spec">OMG01</a>] for details of all the POA policies
+specification[<a href="omniORB017.html#corba26-spec">OMG01</a>] for details of all the POA policies
 which are available.</p></dd></dl>
 <h3 id="sec27" class="subsection">2.8.3&#XA0;&#XA0;Object initialisation</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 9</span></dt><dd class="dd-description"><br>
 An instance of the Echo servant is initialised using the <span style="font-family:monospace">new</span>
-operator. The <span style="font-family:monospace">PortableServer::Servant_var&lt;&gt;</span> template
-automatically is analogous to the <span style="font-family:monospace">T_var</span> types generated by the
-IDL compiler. It releases our reference to the servant when it goes
-out of scope.</dd><dt class="dt-description"><span style="font-weight:bold">Line 10</span></dt><dd class="dd-description"><br>
+operator. The <span style="font-family:monospace">PortableServer::Servant_var&lt;&gt;</span> template is
+analogous to the <span style="font-family:monospace">T_var</span> types generated by the IDL compiler. It
+releases our reference to the servant when it goes out of scope.</dd><dt class="dt-description"><span style="font-weight:bold">Line 10</span></dt><dd class="dd-description"><br>
 The servant object is activated in the Root POA using
 <span style="font-family:monospace">poa-&gt;activate_object()</span>, which returns an object identifier
 (of type <span style="font-family:monospace">PortableServer::ObjectId*</span>). The object id must
@@ -424,7 +423,7 @@ applicable not only to object references returned by <span style="font-family:mo
 to any object references that are passed around within the same
 address space or received from other address spaces via remote calls.</p></dd></dl>
 <h3 id="sec28" class="subsection">2.8.4&#XA0;&#XA0;Activating the POA</h3>
-<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Lines 15&#X2013;16</span></dt><dd class="dd-description"><br>
+<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Lines 14&#X2013;15</span></dt><dd class="dd-description"><br>
 POAs are initially in the <span style="font-style:italic">holding</span> state, meaning that incoming
 requests are blocked. Lines 15 and 16 acquire a reference to the POA&#X2019;s
 POA manager, and use it to put the POA into the <span style="font-style:italic">active</span> state.
@@ -432,19 +431,17 @@ Incoming requests are now served. <span style="font-weight:bold">Failing to acti
 is one of the most common programming mistakes. If your program
 appears deadlocked, make sure you activated the POA!</span></dd></dl>
 <h3 id="sec29" class="subsection">2.8.5&#XA0;&#XA0;Performing a call</h3>
-<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 18</span></dt><dd class="dd-description"><br>
+<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 17</span></dt><dd class="dd-description"><br>
 At long last, we can call <span style="font-family:monospace">hello()</span> with this object reference. The
 argument is widened implicitly to the generic object reference
 <span style="font-family:monospace">CORBA::Object_ptr</span>.</dd></dl>
 <h3 id="sec30" class="subsection">2.8.6&#XA0;&#XA0;ORB destruction</h3>
-<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 20</span></dt><dd class="dd-description"><br>
+<dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 19</span></dt><dd class="dd-description"><br>
 Shutdown the ORB permanently. This call causes the ORB to release all
 its resources, e.g. internal threads, and also to deactivate any
 servant objects which are currently active. When it deactivates the
 <span style="font-family:monospace">Echo_i</span> instance, the servant&#X2019;s reference count drops to zero,
-so the servant is deleted.<p>This call is particularly important when writing a CORBA DLL on
-Windows NT that is to be used from ActiveX. If this call is absent,
-the application will hang when the CORBA DLL is unloaded.</p></dd></dl>
+so the servant is deleted.</dd></dl>
 <h2 id="sec31" class="section">2.9&#XA0;&#XA0;Example 2 &#X2014; Different Address Spaces</h2>
 <p>In this example, the client and the object implementation reside in
 two different address spaces. The code of this example is almost the
@@ -531,29 +528,29 @@ restarted.</p><p>To support persistent objects, the servants must be activated i
 POA with the same object identifier each time. Also, the server must
 be configured with the same <span style="font-style:italic">endpoint</span> details so it is
 contactable in the same way as previous invocations. See
-section&#XA0;<a href="omniORB006.html#sec%3Aendpoints">6.6</a> for details.</p><p>A POA&#X2019;s Lifespan Policy determines whether objects created within it
+chapter&#XA0;<a href="omniORB007.html#chap%3Aendpoints">7</a> for details.</p><p>A POA&#X2019;s Lifespan Policy determines whether objects created within it
 are transient or persistent. The Root POA has the <span style="font-family:monospace">TRANSIENT</span>
 policy.</p><p>An alternative to creating persistent objects is to register object
 references in a <span style="font-style:italic">naming service</span> and bind them to fixed path
 names. Clients can bind to the object implementations at run time by
 asking the naming service to resolve the path names to the object
 references. CORBA defines a standard naming service, which is a
-component of the Common Object Services (COS)&#XA0;[<a href="omniORB016.html#corbaservices">OMG98</a>],
+component of the Common Object Services (COS)&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>],
 that can be used for this purpose. The next section describes an
 example of how to use the COS Naming Service.</p>
 <h2 id="sec36" class="section">2.10&#XA0;&#XA0;Example 3 &#X2014; Using the Naming Service</h2>
 <p>In this example, the object implementation uses the Naming
-Service&#XA0;[<a href="omniORB016.html#corbaservices">OMG98</a>] to pass on the object reference to the
+Service&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>] to pass on the object reference to the
 client. This method is often more practical than using stringified
 object references. The full listing of the object implementation
 (<span style="font-family:monospace">eg3_impl.cc</span>) and the client (<span style="font-family:monospace">eg3_clt.cc</span>) can be found
 at the end of this chapter.</p><p>The names used by the Naming service consist of a sequence of
 <span style="font-style:italic">name components</span>. Each name component has an <span style="font-style:italic">id</span> and a
 <span style="font-style:italic">kind</span> field, both of which are strings. All name components
-except the last one are bound to a naming context. A naming context is
-analogous to a directory in a filing system: it can contain names of
-object references or other naming contexts. The last name component is
-bound to an object reference.</p><p>Sequences of name components can be represented as a flat string,
+except the last one are bound to <span style="font-style:italic">naming contexts</span>. A naming
+context is analogous to a directory in a filing system: it can contain
+names of object references or other naming contexts. The last name
+component is bound to an object reference.</p><p>Sequences of name components can be represented as a flat string,
 using &#X2018;.&#X2019; to separate the id and kind fields, and &#X2018;/&#X2019; to separate name
 components from each other<sup><a id="text8" href="#note8">8</a></sup>. In our example, the Echo object
 reference is bound to the stringified name
@@ -583,7 +580,7 @@ list will be empty and <span style="font-family:monospace">resolve_initial_refer
 <h3 id="sec38" class="subsection">2.10.2&#XA0;&#XA0;The Naming Service Interface</h3>
 <p>It is beyond the scope of this chapter to describe in detail the
 Naming Service interface. You should consult the CORBA services
-specification&#XA0;[<a href="omniORB016.html#corbaservices">OMG98</a>] (chapter 3). The code listed in
+specification&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>] (chapter 3). The code listed in
 <span style="font-family:monospace">eg3_impl.cc</span> and <span style="font-family:monospace">eg3_clt.cc</span> are good examples of how the
 service can be used.</p>
 <h2 id="sec39" class="section">2.11&#XA0;&#XA0;Example 4 &#X2014; Using tie implementation templates</h2>
@@ -981,9 +978,6 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">.</span><span style="font-size:small">length</span><span style="font-size:small">(1);</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">[0].</span><span style="font-size:small">id</span><span style="font-size:small">   = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"test"</span></span><span style="font-size:small">;       </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">[0].</span><span style="font-size:small">kind</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"my_context"</span></span><span style="font-size:small">; </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Note on kind: The kind field is used to indicate the type</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// of the object. This is to avoid conventions such as that used</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// by files (name.type -- e.g. test.ps = postscript etc.)</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">NamingContext_var</span><span style="font-size:small"> </span><span style="font-size:small">testContext</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
@@ -1039,7 +1033,7 @@ templates, see the CORBA C++ mapping specification.</p>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg3_clt.cc - This is the source code of example 3 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              This is the client. It uses the COSS naming service</span></span></span><span style="font-size:small">
+</span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              This is the client. It uses the COS naming service</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              to obtain the object reference.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Usage: eg3_clt</span></span></span><span style="font-size:small">
@@ -1065,8 +1059,6 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small"><span style="font-weight:bold">#  include</span></span><span style="font-size:small"> &lt;</span><span style="font-size:small">iostream</span><span style="font-size:small">.</span><span style="font-size:small">h</span><span style="font-size:small">&gt;</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">#endif</span></span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">static</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small"> </span><span style="font-size:small">getObjectReference</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_ptr</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">static</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">Echo_ptr</span><span style="font-size:small"> </span><span style="font-size:small">e</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">{</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">is_nil</span><span style="font-size:small">(</span><span style="font-size:small">e</span><span style="font-size:small">)) {</span><span style="font-size:small">
@@ -1090,7 +1082,9 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_var</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">getObjectReference</span><span style="font-size:small">(</span><span style="font-size:small">orb</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// We use a corbaname URI to resolve the name</span></span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*       </span><span style="font-size:small">uri</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"corbaname:rir:#test.my_context/Echo.Object"</span></span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">string_to_object</span><span style="font-size:small">(</span><span style="font-size:small">uri</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">Echo_var</span><span style="font-size:small"> </span><span style="font-size:small">echoref</span><span style="font-size:small"> = </span><span style="font-size:small">Echo</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
@@ -1098,10 +1092,21 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">      </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">echoref</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">TRANSIENT</span><span style="font-size:small">&amp;) {</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught system exception TRANSIENT -- unable to contact the "</span></span><span style="font-size:small">
 </span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"server."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">  }</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">NO_RESOURCES</span><span style="font-size:small">&amp;) {</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught NO_RESOURCES exception."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">
+</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"You must configure omniORB with the location of the naming service."</span></span><span style="font-size:small">
+</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">  }</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">BAD_PARAM</span><span style="font-size:small">&amp;) {</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught BAD_PARAM exception."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">
+</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"The object is not registered in the naming service."</span></span><span style="font-size:small">
+</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">SystemException</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught a CORBA::"</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">ex</span><span style="font-size:small">.</span><span style="font-size:small">_name</span><span style="font-size:small">() &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
@@ -1109,73 +1114,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Exception</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught CORBA::Exception: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">ex</span><span style="font-size:small">.</span><span style="font-size:small">_name</span><span style="font-size:small">() &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//////////////////////////////////////////////////////////////////////</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">static</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small">
-</span><span style="font-size:small">getObjectReference</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_ptr</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:small">{</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">NamingContext_var</span><span style="font-size:small"> </span><span style="font-size:small">rootContext</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Obtain a reference to the root context of the Name service:</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"NameService"</span></span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Narrow the reference returned.</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">rootContext</span><span style="font-size:small"> = </span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">NamingContext</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">is_nil</span><span style="font-size:small">(</span><span style="font-size:small">rootContext</span><span style="font-size:small">)) {</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Failed to narrow the root naming context."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object</span><span style="font-size:small">::</span><span style="font-size:small">_nil</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">    }</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">NO_RESOURCES</span><span style="font-size:small">&amp;) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught NO_RESOURCES exception. You must configure omniORB "</span></span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"with the location"</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"of the naming service."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object</span><span style="font-size:small">::</span><span style="font-size:small">_nil</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB</span><span style="font-size:small">::</span><span style="font-size:small">InvalidName</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// This should not happen!</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Service required is invalid [does not exist]."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object</span><span style="font-size:small">::</span><span style="font-size:small">_nil</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Create a name object, containing the name test/context:</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">Name</span><span style="font-size:small"> </span><span style="font-size:small">name</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">name</span><span style="font-size:small">.</span><span style="font-size:small">length</span><span style="font-size:small">(2);</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">name</span><span style="font-size:small">[0].</span><span style="font-size:small">id</span><span style="font-size:small">   = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"test"</span></span><span style="font-size:small">;       </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">name</span><span style="font-size:small">[0].</span><span style="font-size:small">kind</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"my_context"</span></span><span style="font-size:small">; </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">name</span><span style="font-size:small">[1].</span><span style="font-size:small">id</span><span style="font-size:small">   = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"Echo"</span></span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">name</span><span style="font-size:small">[1].</span><span style="font-size:small">kind</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"Object"</span></span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Note on kind: The kind field is used to indicate the type</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// of the object. This is to avoid conventions such as that used</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// by files (name.type -- e.g. test.ps = postscript etc.)</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Resolve the name to an object reference.</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">rootContext</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">NamingContext</span><span style="font-size:small">::</span><span style="font-size:small">NotFound</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// This exception is thrown if any of the components of the</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// path [contexts or the object] aren't found:</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Context not found."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">TRANSIENT</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught system exception TRANSIENT -- unable to contact the "</span></span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"naming service."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Make sure the naming server is running and that omniORB is "</span></span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"configured correctly."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">SystemException</span><span style="font-size:small">&amp; </span><span style="font-size:small">ex</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Caught a CORBA::"</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">ex</span><span style="font-size:small">.</span><span style="font-size:small">_name</span><span style="font-size:small">()</span><span style="font-size:small">
-</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">" while using the naming service."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object</span><span style="font-size:small">::</span><span style="font-size:small">_nil</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 1;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
 <h3 id="sec46" class="subsection">2.12.6&#XA0;&#XA0;eg3_tieimpl.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg3_tieimpl.cc - This example is similar to eg3_impl.cc except that</span></span></span><span style="font-size:small">
@@ -1306,9 +1245,6 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">.</span><span style="font-size:small">length</span><span style="font-size:small">(1);</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">[0].</span><span style="font-size:small">id</span><span style="font-size:small">   = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"test"</span></span><span style="font-size:small">;       </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">contextName</span><span style="font-size:small">[0].</span><span style="font-size:small">kind</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"my_context"</span></span><span style="font-size:small">; </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// string copied</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Note on kind: The kind field is used to indicate the type</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// of the object. This is to avoid conventions such as that used</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// by files (name.type -- e.g. test.ps = postscript etc.)</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">CosNaming</span><span style="font-size:small">::</span><span style="font-size:small">NamingContext_var</span><span style="font-size:small"> </span><span style="font-size:small">testContext</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
@@ -1378,9 +1314,9 @@ defaulted to abort the whole process and on some systems will cause a
 core file to be produced.</div></dd><dt class="dt-thefootnotes"><a id="note7" href="#text7">7</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">The POA itself can be activated on demand
 with an adapter activator.</div></dd><dt class="dt-thefootnotes"><a id="note8" href="#text8">8</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">There are escaping rules to cope
 with id and kind fields which contain &#X2018;.&#X2019; and &#X2018;/&#X2019; characters. See
-chapter&#XA0;<a href="omniORB007.html#chap%3Ains">7</a> of this manual, and chapter 3 of the CORBA
+chapter&#XA0;<a href="omniORB008.html#chap%3Ains">8</a> of this manual, and chapter 3 of the CORBA
 services specification, as updated for the Interoperable Naming
-Service&#XA0;[<a href="omniORB016.html#inschapters">OMG00</a>].</div></dd></dl>
+Service&#XA0;[<a href="omniORB017.html#inschapters">OMG00</a>].</div></dd></dl>
 <hr>
 <a href="omniORB001.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>

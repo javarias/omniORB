@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>Introduction</title>
 </head>
@@ -13,7 +13,7 @@
 <h1 id="sec1" class="chapter">Chapter&#XA0;1&#XA0;&#XA0;Introduction</h1>
 <p>omniORB is an Object Request Broker (ORB) that implements version 2.6
 of the Common Object Request Broker Architecture
-(CORBA)&#XA0;[<a href="omniORB016.html#corba26-spec">OMG01</a>] specification. Where possible, backward
+(CORBA)&#XA0;[<a href="omniORB017.html#corba26-spec">OMG01</a>] specification. Where possible, backward
 compatibility has been maintained back to specification 2.0. It passed
 the Open Group CORBA compliant testsuite (for CORBA 2.1) and was one
 of the three ORBs to be granted the CORBA brand in June 1999.</p><p>This user guide tells you how to use omniORB to develop CORBA
@@ -60,13 +60,14 @@ not use the alternative mappings for C++ dialects. The only small
 exception is the mapping of IDL modules, which can use either
 namespaces according to the standard, or nested classes for truly
 ancient C++ compilers without namespace support.</p><p>omniORB relies on native thread libraries to provide multithreading
-capability. A small class library (omnithread&#XA0;[<a href="omniORB016.html#tjr96a">Ric96</a>]) is used
+capability. A small class library (omnithread&#XA0;[<a href="omniORB017.html#tjr96a">Ric96</a>]) is used
 to encapsulate the APIs of the native thread libraries. In application
 code, it is recommended but not mandatory to use this class library
 for thread management. It should be easy to port omnithread to any
 platform that either supports the POSIX thread standard or has a
 thread package that supports similar capabilities.</p><p>Partly for historical reasons, and partly to support users with
-archaic compilers, omniORB does not use the C++ standard library.</p><p>The omniORB IDL compiler, omniidl, requires Python 2.5, 2.6 or 2.7.</p>
+archaic compilers, omniORB does not use the C++ standard library.</p><p>The omniORB IDL compiler, omniidl, requires Python version 3.5 or
+later or, for people stuck in the past, version 2.7.</p>
 <h3 id="sec5" class="subsection">1.1.3&#XA0;&#XA0;Missing features</h3>
 <p>
 <a id="sec:missing"></a></p><p>omniORB is not a complete implementation of the CORBA 2.6 core. The
@@ -99,7 +100,7 @@ chapter&#XA0;<a href="omniORB004.html#chap%3Aconfig">4</a> for full details. The
 configuration file and set of registry entries respectively.</p><p>To get all the omniORB examples running, the main thing you need to
 configure is the Naming service, omniNames. To do that, the
 configuration file or registry should contain an entry of the form</p><pre class="verbatim">  InitRef = NameService=corbaname::my.host.name
-</pre><p>See section&#XA0;<a href="omniORB007.html#sec%3Acorbaname">7.1.5</a> for full details of
+</pre><p>See section&#XA0;<a href="omniORB008.html#sec%3Acorbaname">8.1.5</a> for full details of
 corbaname URIs.</p>
 <h2 id="sec7" class="section">1.3&#XA0;&#XA0;Platform specific variables</h2>
 <p>To compile omniORB programs correctly, several C++ preprocessor
@@ -142,10 +143,8 @@ NextStep 3.x</td><td style="text-align:left;border:solid 1px;white-space:nowrap"
 Unixware 7</td><td style="text-align:left;border:solid 1px;white-space:nowrap" ><code>__x86__     __uw7__      __OSVERSION__=5</code> </td></tr>
 </table>
 </div><p>The preprocessor defines for new platform ports not listed above can
-be found in the corresponding platform configuration files. For
-instance, the platform configuration file for Sun Solaris 2.6 is in
-<span style="font-family:monospace">mk/platforms/sun4_sosV_5.6.mk</span>. The preprocessor defines to
-identify a platform are in the make variable
+be found in the corresponding platform configuration files. The
+preprocessor defines to identify a platform are in the make variable
 <span style="font-family:monospace">IMPORT_CPPFLAGS</span>.</p><p>In a single source multi-target environment, you can put the
 preprocessor defines as the command-line arguments for the compiler.
 If you are building for a single platform, you can edit

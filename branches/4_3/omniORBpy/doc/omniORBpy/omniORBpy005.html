@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>The IDL compiler</title>
 </head>
@@ -92,15 +92,7 @@ directory is not on the include search path by default&#X2014;use
 specify a different preprocessor to omnicpp. Beware that line
 directives inserted by other preprocessors are likely to confuse
 omniidl.</p>
-<h4 id="sec63" class="subsubsection">5.1.1.1&#XA0;&#XA0;Windows 9x</h4>
-<p>The output from the C preprocessor is normally fed to the omniidl
-parser through a pipe. On some Windows 98 machines (but not all!) the
-pipe does not work, and the preprocessor output is echoed to the
-screen. When this happens, the omniidl parser sees an empty file, and
-produces useless stub files with strange long names. To avoid the
-problem, use the &#X2018;<span style="font-family:monospace">-T</span>&#X2019; option to create a temporary file
-between the two stages.</p>
-<h3 id="sec64" class="subsection">5.1.2&#XA0;&#XA0;Forward-declared interfaces</h3>
+<h3 id="sec63" class="subsection">5.1.2&#XA0;&#XA0;Forward-declared interfaces</h3>
 <p>If you have an IDL file like:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">I</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">J</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">attribute</span></span><span style="font-size:small"> </span><span style="font-size:small">I</span><span style="font-size:small"> </span><span style="font-size:small">the_I</span><span style="font-size:small">;</span><span style="font-size:small">
@@ -111,7 +103,7 @@ between the two stages.</p>
 you have a lot of IDL with this sort of construct, you will drown
 under the warning messages. Use the <span style="font-family:monospace">-nf</span> option to suppress
 them.</p>
-<h3 id="sec65" class="subsection">5.1.3&#XA0;&#XA0;Comments</h3>
+<h3 id="sec64" class="subsection">5.1.3&#XA0;&#XA0;Comments</h3>
 <p>By default, omniidl discards comments in the input IDL. However, with
 the <span style="font-family:monospace">-k</span> and <span style="font-family:monospace">-K</span> options, it preserves the comments
 for use by the back-ends. The Python back-end ignores this
@@ -123,7 +115,7 @@ declarations within the IDL. Given IDL like:</p><div class="lstlisting"><span st
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">op2</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">};</span></div><p>the <span style="font-family:monospace">-k</span> flag will attach the comment to <span style="font-family:monospace">op1()</span>;
 the <span style="font-family:monospace">-K</span> flag will attach it to <span style="font-family:monospace">op2()</span>.</p>
-<h2 id="sec66" class="section">5.2&#XA0;&#XA0;Python back-end options</h2>
+<h2 id="sec65" class="section">5.2&#XA0;&#XA0;Python back-end options</h2>
 <p>
 <a id="sec:Wbglobal"></a></p><p>When you specify the Python back-end (with <span style="font-family:monospace">-bpython</span>), the
 following <span style="font-family:monospace">-Wb</span> options become available. Note that the
@@ -158,13 +150,13 @@ file.</td></tr>
 <tr><td style="text-align:left;white-space:nowrap" >
 </td></tr>
 </table>
-<h3 id="sec67" class="subsection">5.2.1&#XA0;&#XA0;Inclusion options</h3>
+<h3 id="sec66" class="subsection">5.2.1&#XA0;&#XA0;Inclusion options</h3>
 <p>When you compile an IDL file which #includes other IDL files, omniidl
 normally only generates code for the main file, assuming that code for
 the included files will be generated separately. Instead, you can use
 the <span style="font-family:monospace">-Wbinline</span> option to generate code for the main IDL file
 <em>and</em> all included files in a single stub file.</p>
-<h3 id="sec68" class="subsection">5.2.2&#XA0;&#XA0;Output options</h3>
+<h3 id="sec67" class="subsection">5.2.2&#XA0;&#XA0;Output options</h3>
 <p>The <span style="font-family:monospace">-Wbstdout</span> option is not really useful if you are
 invoking omniidl yourself. It is used by <span style="font-family:monospace">omniORB.importIDL()</span>,
 described in section&#XA0;<a href="omniORBpy004.html#sec%3AimportIDL">4.9</a>.</p><p>Definitions declared at IDL global scope are normally placed in a
@@ -195,18 +187,18 @@ can use the <span style="font-family:monospace">-Wbmodules</span> and <span styl
 interface to the generated code is not strictly-speaking CORBA
 compliant. You may have to change your code if you ever use a Python
 ORB other than omniORBpy.</p>
-<h3 id="sec69" class="subsection">5.2.3&#XA0;&#XA0;Asynchronous Method Invocation</h3>
+<h3 id="sec68" class="subsection">5.2.3&#XA0;&#XA0;Asynchronous Method Invocation</h3>
 <p>Generate asynchronous invocation operations and the various types
 required by AMI by specifying <span style="font-family:monospace">-Wbami</span>. See
-chapter&#XA0;<a href="omniORBpy011.html#chap%3Aami">11</a> for details.</p>
-<h2 id="sec70" class="section">5.3&#XA0;&#XA0;Examples</h2>
+chapter&#XA0;<a href="omniORBpy012.html#chap%3Aami">12</a> for details.</p>
+<h2 id="sec69" class="section">5.3&#XA0;&#XA0;Examples</h2>
 <p>Generate the Python stubs for a file <span style="font-family:monospace">a.idl</span>:</p><blockquote class="quote">
 <span style="font-family:monospace">omniidl -bpython a.idl</span>
 </blockquote><p>As above, but put the stubs in a package called
 &#X2018;<span style="font-family:monospace">stubs</span>&#X2019;:</p><blockquote class="quote">
 <span style="font-family:monospace">omniidl -bpython -Wbstubs=stubs a.idl</span>
-</blockquote><p>Generate both Python and C++ stubs for two IDL files:</p><blockquote class="quote">
-<span style="font-family:monospace">omniidl -bpython -bcxx a.idl b.idl</span>
+</blockquote><p>Generate both Python and C++ stubs:</p><blockquote class="quote">
+<span style="font-family:monospace">omniidl -bpython -bcxx a.idl</span>
 </blockquote><p>Just check the IDL files for validity, generating no output:</p><blockquote class="quote">
 <span style="font-family:monospace">omniidl a.idl b.idl</span>
 </blockquote>

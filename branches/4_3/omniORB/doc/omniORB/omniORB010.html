@@ -2,247 +2,178 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
-<title>Type Any and TypeCode</title>
+<title>Interceptors</title>
 </head>
 <body >
 <a href="omniORB009.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB011.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec150" class="chapter">Chapter&#XA0;10&#XA0;&#XA0;Type Any and TypeCode</h1>
+<h1 id="sec147" class="chapter">Chapter&#XA0;10&#XA0;&#XA0;Interceptors</h1>
 <p>
-<a id="chap:any"></a></p><p>The CORBA specification provides for a type that can hold the value of
-any OMG IDL type. This type is known as type <span style="font-family:monospace">Any</span>. The OMG also
-specifies a pseudo-object, <span style="font-family:monospace">TypeCode</span>, that can encode a
-description of any type specifiable in OMG IDL.</p><p>In this chapter, an example demonstrating the use of type Any is
-presented. The example code is in the <span style="font-family:monospace">src/examples/anyExample</span>
-directory in the omniORB distribution. The example is followed by
-sections describing the behaviour of type Any and TypeCode in omniORB.
-For further information on type Any, refer to the C++ Mapping
-specification., and for more information on TypeCode, refer to the
-Interface Repository chapter in the CORBA core section of the CORBA
-specification.</p>
-<h2 id="sec151" class="section">10.1&#XA0;&#XA0;Example using type Any</h2>
-<p>Before going through this example, you should make sure that you have
-read and understood the examples in chapter&#XA0;<a href="omniORB002.html#chap%3Abasic">2</a>.</p>
-<h3 id="sec152" class="subsection">10.1.1&#XA0;&#XA0;Type Any in IDL</h3>
-<p>
-Type Any allows one to delay the decision on the type used in an
-operation until run-time. To use type any in IDL, use the keyword
-<span style="font-family:monospace">any</span>, as in the following example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">anyExample</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">any</span></span><span style="font-size:small"> </span><span style="font-size:small">testOp</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">in</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">any</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><p>The operation <span style="font-family:monospace">testOp()</span> in this example can now take any
-value expressible in OMG IDL as an argument, and can also return any
-type expressible in OMG IDL.</p><p>Type Any is mapped into C++ as the type <span style="font-family:monospace">CORBA::Any</span>. When passed
-as an argument or as a result of an operation, the following rules
-apply:</p><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-weight:bold">In </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-weight:bold">InOut </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-weight:bold">Out </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-weight:bold">Return </span></span><span style="font-size:small"> </span></td></tr>
-<tr><td class="hbar" colspan=4><span style="font-size:small"></span></td></tr>
-<tr><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-family:monospace">const CORBA::Any&amp; </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-family:monospace">CORBA::Any&amp; </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-family:monospace">CORBA::Any*&amp; </span></span></td><td style="text-align:left;white-space:nowrap" ><span style="font-size:small"><span style="font-family:monospace">CORBA::Any* </span></span><span style="font-size:small">
-</span></td></tr>
-</table><p>So, the above IDL would map to the following C++:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
+<a id="chap:interceptors"></a></p><p>omniORB supports interceptors that allow the application to insert
+processing in various points along the call chain, and in various
+other locations. It does not support the standard Portable
+Interceptors API.</p><p>The interceptor interfaces are defined in a single header,
+<span style="font-family:monospace">include/omniORB4/omniInterceptors.h</span>. Each interception point
+consists of a singleton object with <span style="font-family:monospace">add()</span> and <span style="font-family:monospace">remove()</span> methods,
+and the definition of an &#X2018;interceptor info&#X2019; class. For example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">omniInterceptors</span><span style="font-size:small"> {</span><span style="font-size:small">
+</span><span style="font-size:small">  ...</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">clientSendRequest_T</span><span style="font-size:small"> {</span><span style="font-size:small">
+</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">anyExample_i</span><span style="font-size:small"> : </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small">POA_anyExample</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">anyExample_i</span><span style="font-size:small">() { }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> ~</span><span style="font-size:small">anyExample_i</span><span style="font-size:small">() { }</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Any</span><span style="font-size:small">* </span><span style="font-size:small">testOp</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Any</span><span style="font-size:small">&amp; </span><span style="font-size:small">a</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div>
-<h3 id="sec153" class="subsection">10.1.2&#XA0;&#XA0;Inserting and Extracting Basic Types from an Any</h3>
-<p>The question now arises as to how values are inserted into and removed
-from an Any. This is achieved using two overloaded operators:
-<span style="font-family:monospace">&lt;&lt;=</span> and <span style="font-family:monospace">&gt;&gt;=</span>.</p><p>To insert a value into an Any, the <span style="font-family:monospace">&lt;&lt;=</span> operator is used, as
-in this example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Any</span><span style="font-size:small"> </span><span style="font-size:small">an_any</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Long</span><span style="font-size:small"> </span><span style="font-size:small">l</span><span style="font-size:small"> = 100;</span><span style="font-size:small">
-</span><span style="font-size:small">an_any</span><span style="font-size:small"> &lt;&lt;= </span><span style="font-size:small">l</span><span style="font-size:small">;</span></div><p>Note that the overloaded <span style="font-family:monospace">&lt;&lt;=</span> operator has a return
-type of <span style="font-family:monospace">void</span>.</p><p>To extract a value, the <span style="font-family:monospace">&gt;&gt;=</span> operator is used, as in this
-example (where the Any contains a long):</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Long</span><span style="font-size:small"> </span><span style="font-size:small">l</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">an_any</span><span style="font-size:small"> &gt;&gt;= </span><span style="font-size:small">l</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small"> {</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small">GIOP_C</span><span style="font-size:small">&amp;                 </span><span style="font-size:small">giop_c</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small">IOP</span><span style="font-size:small">::</span><span style="font-size:small">ServiceContextList</span><span style="font-size:small"> </span><span style="font-size:small">service_contexts</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"This is a long: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">l</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span></div><p>The overloaded <span style="font-family:monospace">&gt;&gt;=</span> operator returns a <span style="font-family:monospace">CORBA::Boolean</span>.
-If an attempt is made to extract a value from an Any when it contains
-a different type of value (e.g. an attempt to extract a long from an
-Any containing a double), the overloaded <span style="font-family:monospace">&gt;&gt;=</span> operator will
-return <span style="font-family:monospace">false</span>; otherwise it will return <span style="font-family:monospace">true</span>. Thus, a
-common tactic to extract values from an Any is as follows:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Long</span><span style="font-size:small"> </span><span style="font-size:small">l</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Double</span><span style="font-size:small"> </span><span style="font-size:small">d</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">str</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small">info_T</span><span style="font-size:small">(</span><span style="font-size:small">GIOP_C</span><span style="font-size:small">&amp; </span><span style="font-size:small">c</span><span style="font-size:small">) : </span><span style="font-size:small">giop_c</span><span style="font-size:small">(</span><span style="font-size:small">c</span><span style="font-size:small">), </span><span style="font-size:small">service_contexts</span><span style="font-size:small">(5) {}</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">an_any</span><span style="font-size:small"> &gt;&gt;= </span><span style="font-size:small">l</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Long: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">l</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">an_any</span><span style="font-size:small"> &gt;&gt;= </span><span style="font-size:small">d</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Double: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">d</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">an_any</span><span style="font-size:small"> &gt;&gt;= </span><span style="font-size:small">str</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"String: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">str</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// The storage of the extracted string is still owned by the any.</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">}</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Unknown value."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span></div>
-<h3 id="sec154" class="subsection">10.1.3&#XA0;&#XA0;Inserting and Extracting Constructed Types from an Any</h3>
-<p>It is also possible to insert and extract constructed types and object
-references from an Any. omniidl will generate insertion and extraction
-operators for the constructed type. Note that it is necessary to
-specify the <span style="font-family:monospace">-Wba</span> command-line flag when running omniidl in
-order to generate these operators. The following example illustrates
-the use of constructed types with type Any:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">testStruct</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">long</span></span><span style="font-size:small"> </span><span style="font-size:small">l</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">short</span></span><span style="font-size:small"> </span><span style="font-size:small">s</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// Accessors for operation / connection details</span></span></span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">operation</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">myaddress</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">peeraddress</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">peeridentity</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">*       </span><span style="font-size:small">peerdetails</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">anyExample</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">any</span></span><span style="font-size:small"> </span><span style="font-size:small">testOp</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">in</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">any</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><p>Upon compiling the above IDL with <span style="font-family:monospace">omniidl -bcxx -Wba</span>, the
-following overloaded operators are generated:</p><ol class="enumerate" type=1><li class="li-enumerate">
-<code>void operator&lt;&lt;=(CORBA::Any&amp;, const testStruct&amp;)</code>
-</li><li class="li-enumerate"><code>void operator&lt;&lt;=(CORBA::Any&amp;, testStruct*)</code>
-</li><li class="li-enumerate"><code>CORBA::Boolean operator&gt;&gt;=(const CORBA::Any&amp;,</code><br>
- <code>const testStruct*&amp;)</code>
-</li></ol><p>Operators of this form are generated for all constructed types, and
-for interfaces.</p><p>The first operator, <em>(1)</em>, copies the constructed type, and
-inserts it into the Any. The second operator, <em>(2)</em>, inserts the
-constructed type into the Any, and then manages it. Note that if the
-second operator is used, the Any consumes the constructed type, and
-the caller should not use the pointer to access the data after
-insertion. The following is an example of how to insert a value into
-an Any using operator <em>(1)</em>:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
-</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Any</span><span style="font-size:small"> </span><span style="font-size:small">an_any</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//... private things</span></span></span><span style="font-size:small">
+</span><span style="font-size:small">    };</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small">testStruct</span><span style="font-size:small"> </span><span style="font-size:small">t</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">t</span><span style="font-size:small">.</span><span style="font-size:small">l</span><span style="font-size:small"> = 456;</span><span style="font-size:small">
-</span><span style="font-size:small">t</span><span style="font-size:small">.</span><span style="font-size:small">s</span><span style="font-size:small"> = 8;</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Boolean</span><span style="font-size:small"> (*</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">)(</span><span style="font-size:small">info_T</span><span style="font-size:small">&amp; </span><span style="font-size:small">info</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small">an_any</span><span style="font-size:small"> &lt;&lt;= </span><span style="font-size:small">t</span><span style="font-size:small">;</span></div><p>The third operator, <em>(3)</em>, is used to extract the constructed
-type from the Any, and can be used as follows:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small">testStruct</span><span style="font-size:small">* </span><span style="font-size:small">tp</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">an_any</span><span style="font-size:small"> &gt;&gt;= </span><span style="font-size:small">tp</span><span style="font-size:small">) {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"testStruct: l: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">tp</span><span style="font-size:small">-&gt;</span><span style="font-size:small">l</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"            s: "</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">tp</span><span style="font-size:small">-&gt;</span><span style="font-size:small">s</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"Unknown value contained in Any."</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">}</span></div><p>As with basic types, if an attempt is made to extract a type from an
-Any that does not contain a value of that type, the extraction
-operator returns <span style="font-family:monospace">false</span>. If the Any does contain that type, the
-extraction operator returns <span style="font-family:monospace">true</span>. If the extraction is
-successful, the caller&#X2019;s pointer will point to memory managed by the
-Any. The caller must not delete or otherwise change this storage, and
-should not use this storage after the contents of the Any are replaced
-(either by insertion or assignment), or after the Any has been
-destroyed. In particular, management of the pointer should not be
-assigned to a <span style="font-family:monospace">_var</span> type.</p><p>If the extraction fails, the caller&#X2019;s pointer will be set to point to
-null.</p><p>Note that there are special rules for inserting and extracting arrays
-(using the <span style="font-family:monospace">_forany</span> types), and for inserting and extracting
-bounded strings, booleans, chars, and octets. Please refer to the C++
-Mapping specification for further information.</p>
-<h2 id="sec155" class="section">10.2&#XA0;&#XA0;Type Any in omniORB</h2>
-<p>
-<a id="anyOmniORB"></a></p><p>This section contains some notes on the use and behaviour of type Any
-in omniORB.</p>
-<h3 id="sec156" class="subsection">10.2.1&#XA0;&#XA0;Generating Insertion and Extraction Operators.</h3>
-<p>
-To generate type Any insertion and extraction operators for
-constructed types and interfaces, the <span style="font-family:monospace">-Wba</span> command line flag
-should be specified when running omniidl.</p>
-<h3 id="sec157" class="subsection">10.2.2&#XA0;&#XA0;TypeCode comparison when extracting from an Any.</h3>
-<p>
-When an attempt is made to extract a type from an Any, the TypeCode of
-the type is checked for <em>equivalence</em> with the TypeCode of the
-type stored by the Any. The <span style="font-family:monospace">equivalent()</span> test in the TypeCode
-interface is used for this purpose. For example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 1</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small"> </span><span style="font-size:small">Double1</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">Test1</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">Double1</span><span style="font-size:small"> </span><span style="font-size:small">a</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 2</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small"> </span><span style="font-size:small">Double2</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">Test1</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">Double2</span><span style="font-size:small"> </span><span style="font-size:small">a</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><p>If an attempt is made to extract the type <span style="font-family:monospace">Test1</span> defined in IDL
-1 from an Any containing the <span style="font-family:monospace">Test1</span> defined in IDL 2, this will
-succeed (and vice-versa), as the two types differ only by an alias.</p>
-<h3 id="sec158" class="subsection">10.2.3&#XA0;&#XA0;Top-level aliases.</h3>
-<p>
-When a type is inserted into an Any, the Any stores both the value of
-the type and the TypeCode for that type. However, in some cases, a
-top-level alias can be lost due to the details of the C++ mapping. For
-example, consider these IDL definitions:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 3</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">sequence</span></span><span style="font-size:small">&lt;</span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small">&gt; </span><span style="font-size:small">seqDouble1</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">sequence</span></span><span style="font-size:small">&lt;</span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small">&gt; </span><span style="font-size:small">seqDouble2</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small">seqDouble2</span><span style="font-size:small">       </span><span style="font-size:small">seqDouble3</span><span style="font-size:small">;</span></div><p>omniidl generates distinct types for <span style="font-family:monospace">seqDouble1</span> and
-<span style="font-family:monospace">seqDouble2</span>, and therefore each has its own set of C++ operators
-for Any insertion and extraction. That means inserting a
-<span style="font-family:monospace">seqDouble1</span> into an Any sets the Any&#X2019;s TypeCode to include the
-alias &#X2018;seqDouble1&#X2019;, and inserting a <span style="font-family:monospace">seqDouble2</span> sets the
-TypeCode to the alias &#X2018;seqDouble2&#X2019;.</p><p>However, in the C++ mapping, <span style="font-family:monospace">seqDouble3</span> is required to be just
-a C++ typedef to <span style="font-family:monospace">seqDouble2</span>, so the C++ compiler uses the Any
-insertion operator for <span style="font-family:monospace">seqDouble2</span>. Therefore, inserting a
-<span style="font-family:monospace">seqDouble3</span> sets the Any&#X2019;s TypeCode to the <span style="font-family:monospace">seqDouble2</span>
-alias. If this is not desirable, you can use the member function
-&#X2018;<span style="font-family:monospace">void type(TypeCode_ptr)</span>&#X2019; of the Any interface to explicitly
-set the TypeCode to the correct one.</p>
-<h3 id="sec159" class="subsection">10.2.4&#XA0;&#XA0;Removing aliases from TypeCodes.</h3>
-<p>
-Some ORBs (such as old versions of Orbix) will not accept TypeCodes
-containing <span style="font-family:monospace">tk_alias</span> TypeCodes. When using type Any while
-interoperating with these ORBs, it is necessary to remove
-<span style="font-family:monospace">tk_alias</span> TypeCodes from throughout the TypeCode representing a
-constructed type.</p><p>To remove all <span style="font-family:monospace">tk_alias</span> TypeCodes from TypeCodes transmitted in
-Anys, supply the <span style="font-family:monospace">-ORBtcAliasExpand 1</span> command-line flag when
-running an omniORB executable. There will be some (small) performance
-penalty when transmitting Any values.</p><p>Note that the <span style="font-family:monospace">_tc_</span> TypeCodes generated for all constructed
-types will contain the complete TypeCode for the type (including any
-<span style="font-family:monospace">tk_alias</span> TypeCodes), regardless of whether the
-<span style="font-family:monospace">-ORBtcAliasExpand</span> flag is set to 1 or not. It is only when
-Anys are transmitted that the aliases are stripped.</p>
-<h3 id="sec160" class="subsection">10.2.5&#XA0;&#XA0;Recursive TypeCodes.</h3>
-<p>
-omniORB supports recursive TypeCodes. This means that types such as
-the following can be inserted or extracted from an Any:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 4</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">Test4</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">sequence</span></span><span style="font-size:small">&lt;</span><span style="font-size:small">Test4</span><span style="font-size:small">&gt; </span><span style="font-size:small">a</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div>
-<h3 id="sec161" class="subsection">10.2.6&#XA0;&#XA0;Threads and type Any.</h3>
-<p>
-Inserting and extracting simultaneously from the same Any (in 2
-threads) results in undefined behaviour.</p><p>In versions of omniORB before 4.0, extracting simultaneously from the
-same Any (in 2 or more different threads) also led to undefined
-behaviour. That is no longer the case&#X2014;Any extraction is now thread
-safe.</p>
-<h2 id="sec162" class="section">10.3&#XA0;&#XA0;TypeCode in omniORB</h2>
-<p>This section contains some notes on the use and behaviour of TypeCode
-in omniORB</p>
-<h3 id="sec163" class="subsection">10.3.1&#XA0;&#XA0;TypeCodes in IDL.</h3>
-<p>When using TypeCodes in IDL, note that they are defined in the CORBA
-scope. Therefore, <span style="font-family:monospace">CORBA::TypeCode</span> should be used. Example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 5</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">Test5</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">long</span></span><span style="font-size:small"> </span><span style="font-size:small">length</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">TypeCode</span><span style="font-size:small"> </span><span style="font-size:small">desc</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div>
-<h3 id="sec164" class="subsection">10.3.2&#XA0;&#XA0;orb.idl</h3>
-<p>The CORBA specification says that IDL using <span style="font-family:monospace">CORBA::TypeCode</span>
-must include the file <span style="font-family:monospace">orb.idl</span>. That is not required in omniORB,
-but a suitable <span style="font-family:monospace">orb.idl</span> is available.</p>
-<h3 id="sec165" class="subsection">10.3.3&#XA0;&#XA0;Generating TypeCodes for constructed types.</h3>
-<p>To generate a TypeCode for constructed types, specify the
-<span style="font-family:monospace">-Wba</span> command-line flag when running omniidl. This will
-generate a <span style="font-family:monospace">_tc_</span> TypeCode describing the type, at the same
-scope as the type. Example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// IDL 6</span></span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">struct</span></span><span style="font-size:small"> </span><span style="font-size:small">Test6</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">double</span></span><span style="font-size:small"> </span><span style="font-size:small">a</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">sequence</span></span><span style="font-size:small">&lt;</span><span style="font-size:small"><span style="font-weight:bold">long</span></span><span style="font-size:small">&gt; </span><span style="font-size:small">b</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><p>A TypeCode, <span style="font-family:monospace">_tc_Test6</span>, will be generated to describe the
-struct <span style="font-family:monospace">Test6</span>. The operations defined in the TypeCode interface
-can be used to query the TypeCode about the type it represents.</p><hr>
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">add</span><span style="font-size:small">(</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">remove</span><span style="font-size:small">(</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:small">  };</span><span style="font-size:small">
+</span><span style="font-size:small">  ...</span><span style="font-size:small">
+</span><span style="font-size:small">};</span></div><p>You can see that the interceptors themselves are functions
+that take the <span style="font-family:monospace">info_T</span> object as their argument and return
+boolean. Interceptors are called in the order they are registered;
+normally, all interceptor functions return <span style="font-family:monospace">true</span>, meaning that
+processing should continue with subsequent interceptors. If an
+interceptor returns <span style="font-family:monospace">false</span>, later interceptors are not
+called. You should only do that if you really know what you are doing.</p><p>Notice that the <span style="font-family:monospace">info_T</span> contains references to omniORB internal
+data types. The definitions of these types can be found in other
+header files within <span style="font-family:monospace">include/omniORB4</span> and
+<span style="font-family:monospace">include/omniORB4/internal</span>.</p>
+<h2 id="sec148" class="section">10.1&#XA0;&#XA0;Interceptor registration</h2>
+<p>All the interceptor singletons are registered within another singleton
+object of class <span style="font-family:monospace">omniInterceptors</span>. You retrieve a pointer to the
+object with the <span style="font-family:monospace">omniORB::getInterceptors()</span> function, which
+must be called after the ORB has been initialised with
+<span style="font-family:monospace">CORBA::ORB_init()</span>, but before the ORB is used. The code to
+register an interceptor looks, for example, like:</p><div class="lstlisting"><span style="font-size:small">omniInterceptors</span><span style="font-size:small">* </span><span style="font-size:small">interceptors</span><span style="font-size:small"> = </span><span style="font-size:small">omniORB</span><span style="font-size:small">::</span><span style="font-size:small">getInterceptors</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:small">interceptors</span><span style="font-size:small">-&gt;</span><span style="font-size:small">clientSendRequest</span><span style="font-size:small">.</span><span style="font-size:small">add</span><span style="font-size:small">(</span><span style="font-size:small">myInterceptorFunc</span><span style="font-size:small">);</span></div>
+<h2 id="sec149" class="section">10.2&#XA0;&#XA0;Available interceptors</h2>
+<p>The following interceptors are available:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold">encodeIOR</span></dt><dd class="dd-description"><br>
+Called when encoding an IOR to represent an object reference. This
+interception point allows the application to insert extra profile
+components into IORs. Note that you must understand and adhere to the
+rules about data stored in IORs, otherwise the IORs created may be
+invalid. omniORB itself uses this interceptor to insert various items,
+so you can see an example of its use in the
+<span style="font-family:monospace">insertSupportedComponents()</span> function defined in
+<span style="font-family:monospace">src/lib/omniORB/orbcore/ior.cc</span>.</dd><dt class="dt-description"><span style="font-weight:bold">decodeIOR</span></dt><dd class="dd-description"><br>
+Called when decoding an IOR. The application can use this to get out
+whatever information they put into IORs with encodeIOR. Again, see
+<span style="font-family:monospace">extractSupportedComponents()</span> in
+<span style="font-family:monospace">src/lib/omniORB/orbcore/ior.cc</span> for an example.</dd><dt class="dt-description"><span style="font-weight:bold">clientOpenConnection</span></dt><dd class="dd-description"><br>
+Called as a client opens a new connection to a server, after the
+connection is opened but before it is used to send a request. The
+interceptor function can set the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">reject</span> member
+to <span style="font-family:monospace">true</span> to cause the client to immediately close the new
+connection and throw CORBA::TRANSIENT to the calling code. In that
+case, the interceptor function can also set the <span style="font-family:monospace">why</span> member to
+provide a message that is logged.</dd><dt class="dt-description"><span style="font-weight:bold">clientSendRequest</span></dt><dd class="dd-description"><br>
+Called just before a request header is sent over the network. The
+application can use it to insert service contexts in the header. See
+the <span style="font-family:monospace">setCodeSetServiceContext()</span> function in
+<span style="font-family:monospace">src/lib/omniORB/orbcore/cdrStream.cc</span> for an example of its use.</dd><dt class="dt-description"><span style="font-weight:bold">clientReceiveReply</span></dt><dd class="dd-description"><br>
+Called as the client receives a reply, just after unmarshalling the
+reply header. Called for normal replies and exceptions.</dd><dt class="dt-description"><span style="font-weight:bold">serverAcceptConnection</span></dt><dd class="dd-description"><br>
+Called when a server accepts a new incoming connection, but before it
+reads any data from it. The interceptor function can set the
+<span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">reject</span> member to <span style="font-family:monospace">true</span> to cause the
+server to immediately close the new connection. In that case, the
+interceptor function can also set the <span style="font-family:monospace">why</span> member to provide a
+message that is logged.</dd><dt class="dt-description"><span style="font-weight:bold">serverReceiveRequest</span></dt><dd class="dd-description"><br>
+Called when the server receives a request, just after unmarshalling
+the request header. See the <span style="font-family:monospace">getCodeSetServiceContext()</span> function in
+<span style="font-family:monospace">src/lib/omniORB/orbcore/cdrStream.cc</span> for an example.</dd><dt class="dt-description"><span style="font-weight:bold">serverSendReply</span></dt><dd class="dd-description"><br>
+Called just before the server marshals a reply header.</dd><dt class="dt-description"><span style="font-weight:bold">serverSendException</span></dt><dd class="dd-description"><br>
+Called just before the server marshals an exception reply header.</dd><dt class="dt-description"><span style="font-weight:bold">createRope</span></dt><dd class="dd-description"><br>
+Called when the ORB is about to create a &#X2018;rope&#X2019; that encapsulates a
+bundle of connections (&#X2018;strands&#X2019;) to a remote address space. It allows
+application code to override omniORB&#X2019;s normal connection management.</dd><dt class="dt-description"><span style="font-weight:bold">createIdentity</span></dt><dd class="dd-description"><br>
+Called when the ORB is about to create an &#X2018;identity&#X2019; object to
+represent a CORBA object. It allows application code to provide its
+own identity implementations. It is very unlikely that an application
+will need to do this.</dd><dt class="dt-description"><span style="font-weight:bold">createORBServer</span></dt><dd class="dd-description"><br>
+Used internally by the ORB to register different kinds of server. At
+present, only a GIOP server is registered. It is very unlikely that
+application code will need to do this.</dd><dt class="dt-description"><span style="font-weight:bold">createThread</span></dt><dd class="dd-description"><br>
+Called whenever the ORB creates a thread. The <span style="font-family:monospace">info_T</span> class for
+this interceptor is<div class="lstlisting"><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small"> {</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">run</span><span style="font-size:small">() = 0;</span><span style="font-size:small">
+</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small">omni_thread</span><span style="font-size:small">* </span><span style="font-size:small">self</span><span style="font-size:small">() = 0;</span><span style="font-size:small">
+</span><span style="font-size:small">    };</span></div><p>The interceptor is called in the context of the newly created thread.
+The function <em>must</em> call the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">run()</span> method, to
+pass control to the thread body. <span style="font-family:monospace">run()</span> returns just before the
+thread exits. This arrangement allows the interceptor to initialise
+some per-thread state before the thread body runs, then release it
+just before the thread exits.</p><p>The <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">self()</span> method returns a pointer to the
+<span style="font-family:monospace">omni_thread</span> object for the thread, equivalent to calling
+<span style="font-family:monospace">omni_thread::self()</span>.</p></dd><dt class="dt-description"><span style="font-weight:bold">assignUpcallThread</span></dt><dd class="dd-description"><br>
+The ORB maintains a general thread pool, from which threads are drawn
+for various purposes. One purpose is for performing upcalls to
+application code, in response to incoming CORBA calls. The
+<span style="font-family:monospace">assignUpcallThread</span> interceptor is called when a thread is
+assigned to perform upcalls. In the thread per connection model, the
+thread stays assigned to performing upcalls for the entire lifetime of
+the underlying network connection; in the thread pool model, threads
+are assigned for upcalls on a per call basis, so this interceptor is
+triggered for every incoming call<sup><a id="text15" href="#note15">1</a></sup>. As with the <span style="font-family:monospace">createThread</span> interceptor, the
+interceptor function must call the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">run()</span> method to
+pass control to the upcall.<p>When a thread finishes its assignment of processing upcalls, it
+returns to the pool (even in thread per connection mode), so the same
+thread can be reassigned to perform more upcalls, or reused for a
+different purpose.</p></dd><dt class="dt-description"><span style="font-weight:bold">assignAMIThread</span></dt><dd class="dd-description"><br>
+Asynchronous Method Invocation (AMI) uses threads to perform outgoing
+calls. The <span style="font-family:monospace">assignAMIThread</span> interceptor is called when a thread
+is assigned to perform AMI calls. As with the other thread
+interceptors, the interceptor function must call the <span style="font-family:monospace">info_T</span>&#X2019;s
+<span style="font-family:monospace">run()</span> method to pass control to the AMI call.<p>Unlike the other interceptors, the interceptor functions for
+<span style="font-family:monospace">createThread</span>, <span style="font-family:monospace">assignUpcallThread</span> and
+<span style="font-family:monospace">assignAMIThread</span> have no return values. Interceptor chaining is
+performed by calls through the <span style="font-family:monospace">info_T::run()</span> method, rather than
+by visiting interceptor functions in turn.</p></dd></dl>
+<h2 id="sec150" class="section">10.3&#XA0;&#XA0;Server-side call interceptor</h2>
+<p>Calls can be intercepted on the server just before the upcall into
+application code. This interceptor is registered with omniORB&#X2019;s
+<span style="font-family:monospace">callDescriptor</span> class, which is responsible for encapsulating
+the state of a call. Unlike the transport-related
+<span style="font-family:monospace">serverReceiveRequest</span>, <span style="font-family:monospace">serverSendReply</span> and
+<span style="font-family:monospace">serverSendException</span> interceptors, the <span style="font-family:monospace">callDescriptor</span>
+interceptor is invoked for <em>all</em> calls, even ones from colocated
+clients in the same address space.</p><p>The types used for the call interceptor are defined in
+<span style="font-family:monospace">include/omniORB4/callDescriptor.h</span>. The interceptor takes the
+form of a bare function with two parameters. The first parameter is a
+pointer to the <span style="font-family:monospace">callDescriptor</span>; the second is a pointer to
+<span style="font-family:monospace">omniServant</span>, which is the base class of all servant
+classes. The interceptor function must call the
+<span style="font-family:monospace">callDescriptor</span>&#X2019;s <span style="font-family:monospace">interceptedCall()</span> method to pass on the
+call.</p><p>This interception point allows access to various parts of omniORB&#X2019;s
+call machinery. The <span style="font-family:monospace">callDescriptor</span> includes access to the
+operation name and, if cast to the concrete subclass defined by the
+IDL compiler, the call arguments and return values too.</p>
+<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
+<a id="note15" href="#text15">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Except that with the
+<span style="font-family:monospace">threadPoolWatchConnection</span> parameter set <span style="font-family:monospace">true</span>, a thread
+can perform multiple upcalls even when thread pool mode is
+active.</div></dd></dl>
+<hr>
 <a href="omniORB009.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB011.html"><img src="next_motif.svg" alt="Next"></a>

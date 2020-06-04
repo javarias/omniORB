@@ -25,6 +25,9 @@ omniORB 4.3 has a number of new features and changes:
  - New Connection Info callback to receive information about
    connection establishment and errors.
 
+ - New plain object keys POA policy, extending the capabilities of
+   omniINSPOA.
+
  - Support for vast CORBA messages on 64 bit platforms.
 
  - Support for PyPy in omniidl and omniORBpy.

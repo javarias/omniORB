@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Introduction</title>
 </head>
@@ -12,8 +12,8 @@
 <hr>
 <h1 id="sec1" class="chapter">Chapter&#XA0;1&#XA0;&#XA0;Introduction</h1>
 <p>omniORBpy is an Object Request Broker (ORB) that implements the CORBA
-2.6 Python mapping&#XA0;[<a href="omniORBpy013.html#pythonmapping">OMG01b</a>]. It works in conjunction with
-omniORB for C++, version 4.3.</p><p>This user guide tells you how to use omniORBpy to develop CORBA
+2.6 Python mapping&#XA0;[<a href="omniORBpy014.html#pythonmapping">OMG01b</a>]. It works in conjunction with
+omniORB for C++.</p><p>This user guide tells you how to use omniORBpy to develop CORBA
 applications using Python. It assumes a basic understanding of CORBA,
 and of the Python mapping. Unlike most CORBA standards, the Python
 mapping document is small, and quite easy to follow.</p><p>This manual contains all you need to know about omniORB in order to
@@ -22,7 +22,7 @@ and what you need to do to setup your environment to run it.</p>
 <h2 id="sec2" class="section">1.1&#XA0;&#XA0;Features</h2>
 <h3 id="sec3" class="subsection">1.1.1&#XA0;&#XA0;Multithreading</h3>
 <p>omniORB is fully multithreaded. To achieve low call overhead,
-unnecessary call-multiplexing is eliminated. With the default
+unnecessary call multiplexing is eliminated. With the default
 policies, there is at most one call in-flight in each communication
 channel between two address spaces at any one time. To do this without
 limiting the level of concurrency, new channels connecting the two
@@ -34,7 +34,7 @@ call. Furthermore, to maximise the throughput in processing large call
 arguments, large data elements are sent as soon as they are processed
 while the other arguments are being marshalled. With GIOP 1.2, large
 messages are fragmented, so the marshaller can start transmission
-before it knows how large the entire message will be.</p><p>omniORB also supports a flexible thread pooling policy, and supports
+before it knows how large the entire message will be.</p><p>omniORB also supports a flexible thread pool policy, and supports
 sending multiple interleaved calls on a single connection. This policy
 leads to a small amount of additional call overhead, compared to the
 default thread per connection model, but allows omniORB to scale to
@@ -84,7 +84,7 @@ or, on Windows, the Windows registry.</p><ul class="itemize"><li class="li-itemi
 variable <span style="font-family:monospace">OMNIORB_CONFIG</span>. If this variable is defined, it
 contains the pathname of the omniORB configuration file. If the
 variable is not set, omniORB will use the compiled-in pathname to
-locate the file (by default <span style="font-family:monospace">/etc/omniORB.cfg</span>).</li><li class="li-itemize">On Win32 / Win64 platforms omniORB first checks the environment
+locate the file (by default <span style="font-family:monospace">/etc/omniORB.cfg</span>).</li><li class="li-itemize">On Win32 / Win64 platforms, omniORB first checks the environment
 variable <span style="font-family:monospace">OMNIORB_CONFIG</span> to obtain the pathname of the
 configuration file. If this is not set, it then attempts to obtain
 configuration data in the system registry. It searches for the data
@@ -94,7 +94,8 @@ chapter&#XA0;<a href="omniORBpy004.html#chap%3Aconfig">4</a> for full details. T
 configuration file and set of registry entries respectively.</p><p>To get all the omniORB examples running, the main thing you need to
 configure is the Naming service, omniNames. To do that, the
 configuration file or registry should contain an entry of the form</p><pre class="verbatim">  InitRef = NameService=corbaname::my.host.name
-</pre><p>See section&#XA0;<a href="omniORBpy007.html#sec%3Acorbaname">7.1.2</a> for full details of corbaname URIs.</p>
+</pre><p>See section&#XA0;<a href="omniORBpy008.html#sec%3Acorbaname">8.1.5</a> for full details of
+corbaname URIs.</p>
 <hr>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy002.html"><img src="next_motif.svg" alt="Next"></a>

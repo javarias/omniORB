@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>omniORB configuration and API</title>
 </head>
@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB005.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec52" class="chapter">Chapter&#XA0;4&#XA0;&#XA0;omniORB configuration and API</h1>
+<h1 id="sec53" class="chapter">Chapter&#XA0;4&#XA0;&#XA0;omniORB configuration and API</h1>
 <p>
 <a id="chap:config"></a></p><p>omniORB has a wide range of parameters that can be configured. They
 can be set in the configuration file / Windows registry, as
@@ -19,25 +19,25 @@ environment variables, on the command line, or within a proprietary
 extra argument to <span style="font-family:monospace">CORBA::ORB_init()</span>. A few parameters can be
 configured at run time. This chapter lists all the configuration
 parameters, and how they are used.</p>
-<h2 id="sec53" class="section">4.1&#XA0;&#XA0;Setting parameters</h2>
+<h2 id="sec54" class="section">4.1&#XA0;&#XA0;Setting parameters</h2>
 <p>When <span style="font-family:monospace">CORBA::ORB_init()</span> is called, the value for each configuration
 parameter is searched for in the following order:</p><ol class="enumerate" type=1><li class="li-enumerate">Command line arguments
 </li><li class="li-enumerate"><span style="font-family:monospace">ORB_init()</span> options
 </li><li class="li-enumerate">Environment variables
 </li><li class="li-enumerate">Configuration file / Windows registry
 </li><li class="li-enumerate">Built-in defaults</li></ol>
-<h3 id="sec54" class="subsection">4.1.1&#XA0;&#XA0;Command line arguments</h3>
+<h3 id="sec55" class="subsection">4.1.1&#XA0;&#XA0;Command line arguments</h3>
 <p>Command line arguments take the form
 &#X2018;<span style="font-family:monospace">-ORB</span><span style="font-style:italic">parameter</span>&#X2019;, and usually expect another
 argument. An example is &#X2018;<span style="font-family:monospace">-ORBtraceLevel 10</span>&#X2019;.</p>
-<h3 id="sec55" class="subsection">4.1.2&#XA0;&#XA0;ORB_init() parameter</h3>
+<h3 id="sec56" class="subsection">4.1.2&#XA0;&#XA0;ORB_init() parameter</h3>
 <p><span style="font-family:monospace">ORB_init()</span>&#X2019;s extra argument accepts an array of two-dimensional
 string arrays, like this:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">* </span><span style="font-size:small">options</span><span style="font-size:small">[][2] = { { </span><span style="font-size:small"><span style="font-size:small">"traceLevel"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"1"</span></span><span style="font-size:small"> }, { 0, 0 } };</span><span style="font-size:small">
 </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">,</span><span style="font-size:small">argv</span><span style="font-size:small">,</span><span style="font-size:small"><span style="font-size:small">"omniORB4"</span></span><span style="font-size:small">,</span><span style="font-size:small">options</span><span style="font-size:small">);</span></div>
-<h3 id="sec56" class="subsection">4.1.3&#XA0;&#XA0;Environment variables</h3>
+<h3 id="sec57" class="subsection">4.1.3&#XA0;&#XA0;Environment variables</h3>
 <p>Environment variables consist of the parameter name prefixed with
 &#X2018;<span style="font-family:monospace">ORB</span>&#X2019;. Using bash, for example</p><div class="lstlisting"><span style="font-size:small">export</span><span style="font-size:small"> </span><span style="font-size:small">ORBtraceLevel</span><span style="font-size:small">=10</span></div>
-<h3 id="sec57" class="subsection">4.1.4&#XA0;&#XA0;Configuration file</h3>
+<h3 id="sec58" class="subsection">4.1.4&#XA0;&#XA0;Configuration file</h3>
 <p>The best way to understand the format of the configuration file is to
 look at the <span style="font-family:monospace">sample.cfg</span> file in the omniORB distribution. Each
 parameter is set on a single line like</p><pre class="verbatim">traceLevel = 10
@@ -52,11 +52,11 @@ Command line arguments and environment variables prefix parameter
 names with &#X2018;-ORB&#X2019; and &#X2018;ORB&#X2019; respectively, but the configuration file
 and the extra argument to <span style="font-family:monospace">ORB_init()</span> do not use a prefix.
 </dd></dl><hr style="height:2"></div>
-<h3 id="sec58" class="subsection">4.1.5&#XA0;&#XA0;Windows registry</h3>
+<h3 id="sec59" class="subsection">4.1.5&#XA0;&#XA0;Windows registry</h3>
 <p>On Windows, configuration parameters can be stored in the registry,
 under the key <span style="font-family:monospace">HKEY_LOCAL_MACHINE\SOFTWARE\omniORB</span>.</p><p>The file <span style="font-family:monospace">sample.reg</span> shows the settings that can be made. It can
 be edited and then imported into regedit.</p>
-<h2 id="sec59" class="section">4.2&#XA0;&#XA0;Tracing options</h2>
+<h2 id="sec60" class="section">4.2&#XA0;&#XA0;Tracing options</h2>
 <p>The following options control debugging trace output.</p><p><span style="font-family:monospace">traceLevel</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">1</span></p><p>omniORB can output tracing and diagnostic messages to the standard
 error stream. The following levels are defined:</p><table style="border-spacing:6px;border-collapse:separate;" class="cellpading0"><tr><td style="vertical-align:top;text-align:left;white-space:nowrap" >&nbsp;</td></tr>
@@ -95,7 +95,7 @@ prefixed with the time. This is useful, but on some platforms it adds
 a very large overhead, so it can be turned off.</p><p><span style="font-family:monospace">traceFile</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 </p><p>omniORB&#X2019;s tracing is normally sent to stderr. If <span style="font-family:monospace">traceFile</span> it
 set, the specified file name is used for trace messages.</p>
-<h3 id="sec60" class="subsection">4.2.1&#XA0;&#XA0;Tracing API</h3>
+<h3 id="sec61" class="subsection">4.2.1&#XA0;&#XA0;Tracing API</h3>
 <p>The tracing parameters can be modified at runtime by assigning to the
 following variables</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">namespace</span></span><span style="font-size:small"> </span><span style="font-size:small">omniORB</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ULong</span><span style="font-size:small">   </span><span style="font-size:small">traceLevel</span><span style="font-size:small">;</span><span style="font-size:small">
@@ -111,7 +111,7 @@ logging function which is called with the text of each log message:</p><div clas
 </span><span style="font-size:small">};</span></div><p>The log function must not make any CORBA calls, since that could lead
 to infinite recursion as outputting a log message caused other log
 messages to be generated, and so on.</p>
-<h2 id="sec61" class="section">4.3&#XA0;&#XA0;Miscellaneous global options</h2>
+<h2 id="sec62" class="section">4.3&#XA0;&#XA0;Miscellaneous global options</h2>
 <p>These options control miscellaneous features that affect the whole ORB
 runtime.</p><p><span style="font-family:monospace">dumpConfiguration</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>If set <span style="font-family:monospace">true</span>, the ORB dumps the values of all configuration
@@ -121,17 +121,17 @@ scans incoming and outgoing connections, so it can close unused
 ones. This value is the granularity in seconds at which the ORB
 performs its scans. A value of zero turns off the scanning altogether.</p><p><span style="font-family:monospace">nativeCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">ISO-8859-1</span></p><p>The native code set the application is using for <span style="font-family:monospace">char</span> and
-<span style="font-family:monospace">string</span>. See chapter&#XA0;<a href="omniORB008.html#chap%3Acodesets">8</a>.</p><p><span style="font-family:monospace">nativeWCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+<span style="font-family:monospace">string</span>. See chapter&#XA0;<a href="omniORB009.html#chap%3Acodesets">9</a>.</p><p><span style="font-family:monospace">nativeWCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">UTF-16</span></p><p>The native code set the application is using for <span style="font-family:monospace">wchar</span> and
-<span style="font-family:monospace">wstring</span>. See chapter&#XA0;<a href="omniORB008.html#chap%3Acodesets">8</a>.</p><p><span style="font-family:monospace">defaultCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+<span style="font-family:monospace">wstring</span>. See chapter&#XA0;<a href="omniORB009.html#chap%3Acodesets">9</a>.</p><p><span style="font-family:monospace">defaultCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace"><span style="font-style:italic">none</span></span></p><p>The default code set used for <span style="font-family:monospace">char</span> and <span style="font-family:monospace">string</span> if the
 server does not specify it in its IORs. See
-chapter&#XA0;<a href="omniORB008.html#chap%3Acodesets">8</a>.</p><p><span style="font-family:monospace">defaultWCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+chapter&#XA0;<a href="omniORB009.html#chap%3Acodesets">9</a>.</p><p><span style="font-family:monospace">defaultWCharCodeSet</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace"><span style="font-style:italic">none</span></span></p><p>The default code set used for <span style="font-family:monospace">wchar</span> and <span style="font-family:monospace">wstring</span> if the
 server does not specify it in its IORs. See
-chapter&#XA0;<a href="omniORB008.html#chap%3Acodesets">8</a>.</p><p><span style="font-family:monospace">copyValuesInLocalCalls</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+chapter&#XA0;<a href="omniORB009.html#chap%3Acodesets">9</a>.</p><p><span style="font-family:monospace">copyValuesInLocalCalls</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">1</span></p><p>Determines whether valuetype parameters in local calls are copied or
-not. See chapter&#XA0;<a href="omniORB011.html#chap%3Avaluetype">11</a>.</p><p><span style="font-family:monospace">abortOnInternalError</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+not. See chapter&#XA0;<a href="omniORB012.html#chap%3Avaluetype">12</a>.</p><p><span style="font-family:monospace">abortOnInternalError</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>If this is set <span style="font-family:monospace">true</span>, internal fatal errors will abort
 immediately, rather than throwing the <span style="font-family:monospace">omniORB::fatalException</span>
 exception. This can be helpful for tracking down bugs, since it
@@ -158,7 +158,7 @@ other platforms the default is -1.</p><p><span style="font-family:monospace">val
 usually passes it directly, assuming that it is valid. With this
 parameter set <span style="font-family:monospace">true</span>, omniORB checks that all UTF-8 strings are
 valid, and throws DATA_CONVERSION if not.</p>
-<h2 id="sec62" class="section">4.4&#XA0;&#XA0;Client side options</h2>
+<h2 id="sec63" class="section">4.4&#XA0;&#XA0;Client side options</h2>
 <p>
 <a id="sec:clientconf"></a></p><p>These options control aspects of client-side behaviour.</p><p><span style="font-family:monospace">InitRef</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace"><span style="font-style:italic">none</span></span></p><p>Specify objects available from
@@ -166,12 +166,11 @@ valid, and throws DATA_CONVERSION if not.</p>
 &lt;<span style="font-style:italic">key</span>&gt;=&lt;<span style="font-style:italic">uri</span>&gt;, where <span style="font-style:italic">key</span> is the name given to
 <span style="font-family:monospace">resolve_initial_references()</span> and <span style="font-style:italic">uri</span> is a
 valid CORBA object reference URI, as detailed in
-chapter&#XA0;<a href="omniORB007.html#chap%3Ains">7</a>.</p><p><span style="font-family:monospace">DefaultInitRef</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+chapter&#XA0;<a href="omniORB008.html#chap%3Ains">8</a>.</p><p><span style="font-family:monospace">DefaultInitRef</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace"><span style="font-style:italic">none</span></span></p><p>Specify the default URI prefix for
-<span style="font-family:monospace">resolve_initial_references()</span>, as explained in
-chapter&#XA0;<a href="omniORB007.html#chap%3Ains">7</a>.</p><p><span style="font-family:monospace">clientTransportRule</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+<span style="font-family:monospace">resolve_initial_references()</span>. See chapter&#XA0;<a href="omniORB008.html#chap%3Ains">8</a>.</p><p><span style="font-family:monospace">clientTransportRule</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">* unix,tcp,ssl</span></p><p>Used to specify the way the client contacts a server, depending on the
-server&#X2019;s address. See section&#XA0;<a href="omniORB006.html#sec%3AclientRule">6.7.1</a> for details.</p><p><span style="font-family:monospace">clientCallTimeOutPeriod</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+server&#X2019;s address. See section&#XA0;<a href="omniORB007.html#sec%3AclientRule">7.5</a> for details.</p><p><span style="font-family:monospace">clientCallTimeOutPeriod</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>Call timeout in milliseconds for the client side. If a call takes
 longer than the specified number of milliseconds, the ORB closes the
 connection to the server and raises a <span style="font-family:monospace">TRANSIENT</span> exception. A
@@ -190,8 +189,8 @@ default.</p><p><span style="font-family:monospace">resetTimeoutOnRetries</span> 
 causes a call to be retried. If <span style="font-family:monospace">false</span>, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeout</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
-<span style="font-family:monospace">0</span></p><p>omniORB 4.3 supports the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that is part
-of the CORBA Messaging specification. By default, that is the
+<span style="font-family:monospace">0</span></p><p>omniORB 4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that
+is part of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception, and instead used
 <span style="font-family:monospace">CORBA::TRANSIENT</span>. If this parameter is set <span style="font-family:monospace">true</span>, omniORB
@@ -220,7 +219,7 @@ If more concurrent calls are made, they are queued.</p><p><span style="font-fami
 <span style="font-family:monospace">0</span></p><p>If set <span style="font-family:monospace">true</span>, the client will indicate to servers that it is
 willing to accept callbacks on client-initiated connections using
 bidirectional GIOP, provided the relevant POA policies are set. See
-section&#XA0;<a href="omniORB006.html#sec%3Abidir">6.8</a>.</p><p><span style="font-family:monospace">diiThrowsSysExceptions</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+section&#XA0;<a href="omniORB007.html#sec%3Abidir">7.7</a>.</p><p><span style="font-family:monospace">diiThrowsSysExceptions</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>If this is <span style="font-family:monospace">true</span>, DII functions throw system exceptions; if it
 is <span style="font-family:monospace">false</span>, system exceptions that occur are passed through the
 <span style="font-family:monospace">Environment</span> object.</p><p><span style="font-family:monospace">verifyObjectExistsAndType</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
@@ -267,18 +266,16 @@ mean, and its use is now deprecated; GIOP 1.2 has no such field. Some
 systems (e.g. Gnome) use the principal field as a primitive
 authentication scheme. This parameter sets the data omniORB uses in
 the principal field. The default is an empty sequence.</p>
-<h2 id="sec63" class="section">4.5&#XA0;&#XA0;Server side options</h2>
+<h2 id="sec64" class="section">4.5&#XA0;&#XA0;Server side options</h2>
 <p>These parameters affect server-side operations.</p><p><span style="font-family:monospace">endPoint&#XA0;&#XA0;&#XA0;&#XA0;&#XA0;&#XA0;&#XA0;&#XA0;&#XA0;</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> = <span style="font-family:monospace">giop:tcp::</span><br>
-<span style="font-family:monospace">endPointNoListen</span><br>
 <span style="font-family:monospace">endPointPublish</span><br>
 <span style="font-family:monospace">endPointNoPublish</span><br>
-<span style="font-family:monospace">endPointPublishAllIFs</span><br>
 
 These options determine the end-points the ORB should listen on, and
 the details that should be published in IORs. See
-chapter&#XA0;<a href="omniORB006.html#chap%3Aconnections">6</a> for details.</p><p><span style="font-family:monospace">serverTransportRule</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+chapter&#XA0;<a href="omniORB007.html#chap%3Aendpoints">7</a> for details.</p><p><span style="font-family:monospace">serverTransportRule</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">* unix,tcp,ssl</span></p><p>Configure the rules about whether a server should accept an incoming
-connection from a client. See section&#XA0;<a href="omniORB006.html#sec%3AserverRule">6.7.2</a> for
+connection from a client. See section&#XA0;<a href="omniORB007.html#sec%3AserverRule">7.6</a> for
 details.</p><p><span style="font-family:monospace">serverCallTimeOutPeriod</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>This timeout is used to catch the situation that the server starts
 receiving a request, but the end of the request never comes. If a
@@ -335,7 +332,7 @@ interactive response to clients that multiplex calls, but adds
 significant overhead along the call chain.</p><p>Note that this setting has no effect on Windows, since it has no
 mechanism for signalling the connection watching thread.</p><p><span style="font-family:monospace">acceptBiDirectionalGIOP</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>Determines whether a server will ever accept clients&#X2019; offers of
-bidirectional GIOP connections. See section&#XA0;<a href="omniORB006.html#sec%3Abidir">6.8</a>.</p><p><span style="font-family:monospace">unixTransportDirectory</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+bidirectional GIOP connections. See section&#XA0;<a href="omniORB007.html#sec%3Abidir">7.7</a>.</p><p><span style="font-family:monospace">unixTransportDirectory</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">/tmp/omni-%u</span></p><p>(Unix platforms only). Selects the location used to store Unix domain
 sockets. The &#X2018;<span style="font-family:monospace">%u</span>&#X2019; is expanded to the user name.</p><p><span style="font-family:monospace">unixTransportPermission</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0777</span></p><p>(Unix platforms only). Determines the octal permission bits for Unix
@@ -366,7 +363,7 @@ compatibility.</p><p><span style="font-family:monospace">idleThreadTimeout</span
 while, in case a new thread is required. Once a thread has been idle
 for the number of seconds specified in this parameter, it exits.</p><p><span style="font-family:monospace">supportBootstrapAgent</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>If set <span style="font-family:monospace">true</span>, servers support the Sun bootstrap agent protocol.</p>
-<h3 id="sec64" class="subsection">4.5.1&#XA0;&#XA0;Main thread selection</h3>
+<h3 id="sec65" class="subsection">4.5.1&#XA0;&#XA0;Main thread selection</h3>
 <p>There is one server-side parameter that must be set with an API
 function, rather than a normal configuration parameter:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">namespace</span></span><span style="font-size:small"> </span><span style="font-size:small">omniORB</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">setMainThread</span><span style="font-size:small">();</span><span style="font-size:small">
@@ -379,7 +376,7 @@ must have been created by omnithread, or
 <span style="font-family:monospace">omni_thread::create_dummy()</span> must have been called). If it
 does not, the function throws <span style="font-family:monospace">CORBA::INITIALIZE</span>.</p><p>Note that calls are only actually dispatched to the &#X2018;main&#X2019; thread if
 <span style="font-family:monospace">ORB::run()</span> or <span style="font-family:monospace">ORB::perform_work()</span> is called from that thread.</p>
-<h2 id="sec65" class="section">4.6&#XA0;&#XA0;GIOP and interoperability options</h2>
+<h2 id="sec66" class="section">4.6&#XA0;&#XA0;GIOP and interoperability options</h2>
 <p>These options control omniORB&#X2019;s use of GIOP, and cover some areas
 where omniORB can work around buggy behaviour by other ORBs.</p><p><span style="font-family:monospace">maxGIOPVersion</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">1.2</span></p><p>Choose the maximum GIOP version the ORB should support. Valid values
@@ -405,7 +402,7 @@ Setting this flag to <span style="font-family:monospace">false</span> prevents t
 <span style="font-family:monospace">0</span></p><p>If <span style="font-family:monospace">true</span>, try to fix a mis-aligned indirection in a
 typecode. This is used to work around a bug in some old versions of
 Visibroker&#X2019;s Java ORB.</p>
-<h2 id="sec66" class="section">4.7&#XA0;&#XA0;System Exception Handlers</h2>
+<h2 id="sec67" class="section">4.7&#XA0;&#XA0;System Exception Handlers</h2>
 <p>By default, all system exceptions that are raised during an operation
 invocation, with the exception of some cases of
 <span style="font-family:monospace">CORBA::TRANSIENT</span>, are propagated to the application code. Some
@@ -424,14 +421,15 @@ system exceptions other than the three specific ones covered by the
 first three handlers. An exception handler can be installed for
 individual proxy objects, or it can be installed for all proxy objects
 in the address space.</p>
-<h3 id="sec67" class="subsection">4.7.1&#XA0;&#XA0;Minor codes</h3>
+<h3 id="sec68" class="subsection">4.7.1&#XA0;&#XA0;Minor codes</h3>
 <p>omniORB makes extensive use of exception minor codes to indicate the
 specific circumstances surrounding a system exception. The file
 <span style="font-family:monospace">include/omniORB4/minorCode.h</span> contains definitions of all the
 minor codes used in omniORB, covering codes allocated in the CORBA
-specification, and ones specific to omniORB. In compilers with
-namespace support, the minor code constants appear in namespace
-<span style="font-family:monospace">omni</span>; otherwise they are in the global scope.</p><p>Applications can use minor codes to adjust their behaviour according
+specification, and ones specific to omniORB. The minor code constants
+appear in namespace <span style="font-family:monospace">omni</span> unless you have a truly ancient C++
+compiler with no namespace support, in which case they are in the
+global scope.</p><p>Applications can use minor codes to adjust their behaviour according
 to the condition, e.g.</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  ...</span><span style="font-size:small">
 </span><span style="font-size:small">}</span><span style="font-size:small">
@@ -443,7 +441,7 @@ to the condition, e.g.</p><div class="lstlisting"><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// print an error message...</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec68" class="subsection">4.7.2&#XA0;&#XA0;CORBA::TRANSIENT handlers</h3>
+<h3 id="sec69" class="subsection">4.7.2&#XA0;&#XA0;CORBA::TRANSIENT handlers</h3>
 <p><span style="font-family:monospace">TRANSIENT</span> exceptions can occur in many circumstances. One
 circumstance is as follows:</p><ol class="enumerate" type=1><li class="li-enumerate">The client invokes on an object reference.
 </li><li class="li-enumerate">The object replies with a <span style="font-family:monospace">LOCATION_FORWARD</span> message.
@@ -526,7 +524,7 @@ objects and for a specific object:</p><div class="lstlisting"><span style="font-
 </span><span style="font-size:small">   </span><span style="font-size:small">omniORB</span><span style="font-size:small">::</span><span style="font-size:small">installTransientExceptionHandler</span><span style="font-size:small">(</span><span style="font-size:small">myobj</span><span style="font-size:small">, 0, </span><span style="font-size:small">my_transient_handler2</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">   </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// The proxy object of myobj will call my_transient_handler2 from now on.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec69" class="subsection">4.7.3&#XA0;&#XA0;CORBA::TIMEOUT</h3>
+<h3 id="sec70" class="subsection">4.7.3&#XA0;&#XA0;CORBA::TIMEOUT</h3>
 <p>When a call timeout occurs, by default the ORB throws
 <span style="font-family:monospace">CORBA::TIMEOUT</span>. The default behaviour of the proxy objects is
 to propagate this exception to the application. Applications can
@@ -552,7 +550,7 @@ transient exception handler instead of the timeout exception handler.</p><p>The 
 is <em>not</em> called when an AMI poller operation throws
 <span style="font-family:monospace">CORBA::TIMEOUT</span>. In that situation, the exception is always
 propagated to the caller.</p>
-<h3 id="sec70" class="subsection">4.7.4&#XA0;&#XA0;CORBA::COMM_FAILURE</h3>
+<h3 id="sec71" class="subsection">4.7.4&#XA0;&#XA0;CORBA::COMM_FAILURE</h3>
 <p>If the ORB has successfully contacted a server at some point, and
 access to it subsequently fails (and the condition for
 <span style="font-family:monospace">TRANSIENT</span> described above does not occur), the ORB raises a
@@ -573,7 +571,7 @@ is summarised below:</p><div class="lstlisting"><span style="font-size:small"><s
 </span><span style="font-size:small">                                   </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">* </span><span style="font-size:small">cookie</span><span style="font-size:small">,</span><span style="font-size:small">
 </span><span style="font-size:small">                                   </span><span style="font-size:small">commFailureExceptionHandler_t</span><span style="font-size:small"> </span><span style="font-size:small">fn</span><span style="font-size:small">);</span></div><p>The functions are equivalent to their counterparts for
 <span style="font-family:monospace">CORBA::TRANSIENT</span>.</p>
-<h3 id="sec71" class="subsection">4.7.5&#XA0;&#XA0;CORBA::SystemException</h3>
+<h3 id="sec72" class="subsection">4.7.5&#XA0;&#XA0;CORBA::SystemException</h3>
 <p>If a system exceptions other than <span style="font-family:monospace">TRANSIENT</span>, <span style="font-family:monospace">TIMEOUT</span> or
 <span style="font-family:monospace">COMM_FAILURE</span> occurs, the default behaviour of the proxy
 objects is to propagate this exception to the application.
@@ -592,7 +590,7 @@ own exception handlers. The API to do so is summarised below:</p><div class="lst
 </span><span style="font-size:small">                              </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">* </span><span style="font-size:small">cookie</span><span style="font-size:small">,</span><span style="font-size:small">
 </span><span style="font-size:small">                              </span><span style="font-size:small">systemExceptionHandler_t</span><span style="font-size:small"> </span><span style="font-size:small">fn</span><span style="font-size:small">);</span></div><p>The functions are equivalent to their counterparts for
 <span style="font-family:monospace">CORBA::TRANSIENT</span>.</p>
-<h3 id="sec72" class="subsection">4.7.6&#XA0;&#XA0;Extended exception handlers</h3>
+<h3 id="sec73" class="subsection">4.7.6&#XA0;&#XA0;Extended exception handlers</h3>
 <p>New in omniORB 4.2, each of the exception handlers described above
 also has an &#X2018;extended&#X2019; form in which the exception handler takes two
 additional parameters, the object reference being invoked upon, and a
@@ -620,7 +618,7 @@ is subject to the same exception handling mechanism as a normal
 operation invocation, but it is represented with a null operation
 name. Exception handler code that uses the operation name must
 correctly handle a null operation name pointer.</p>
-<h2 id="sec73" class="section">4.8&#XA0;&#XA0;Location forwarding</h2>
+<h2 id="sec74" class="section">4.8&#XA0;&#XA0;Location forwarding</h2>
 <p>
 <a id="sec:locationForward"></a></p><p>Any CORBA operation invocation can return a <span style="font-family:monospace">LOCATION_FORWARD</span>
 message to the caller, indicating that it should retry the invocation
