@@ -166,6 +166,7 @@ public:
     unsigned implicit_activation    : 1;
     unsigned bidirectional_accept   : 1;
     unsigned local_shortcut         : 1;
+    unsigned plain_object_keys      : 1;
   };
 
   inline _CORBA_Boolean acceptBiDirectional() const { 

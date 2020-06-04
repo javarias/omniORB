@@ -162,6 +162,12 @@ createPolicyObject(PortableServer::POA_ptr poa, PyObject* pypolicy)
       }
       break;
 
+    case 0x41545403: // PlainObjectKeysPolicy
+      {
+        policy = new omniPolicy::PlainObjectKeysPolicy(PyObject_IsTrue(pyvalue));
+      }
+      break;
+
     default:
       {
         // Is there a function registered in _omnipy.policyFns?

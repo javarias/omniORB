@@ -1,3 +1,13 @@
+Fri  5 Jun 00:45:37 BST 2020
+============================
+
+- Plain object keys policy.
+
+modules/pyPOAFunc.cc
+python2/omniORB/omniPolicy.py
+python3/omniORB/omniPolicy.py
+
+
 Fri 15 May 14:11:09 BST 2020
 ============================
 

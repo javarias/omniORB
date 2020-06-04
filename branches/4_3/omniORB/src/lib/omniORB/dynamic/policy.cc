@@ -122,7 +122,7 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
   CASE_CPFN_BIDIR(/*BIDIRECTIONAL_POLICY_TYPE*/   37, BidirectionalPolicy)
 
   // omniORB specific policies
-  CASE_CPFN_OMNI(/*LOCAL_SHORTCUT_POLICY*/   0x41545401, LocalShortcutPolicy)
+  CASE_CPFN_OMNI(/*LOCAL_SHORTCUT_POLICY_TYPE*/ 0x41545401, LocalShortcutPolicy)
 
   case /*ENDPOINT_PUBLISH_POLICY*/ 0x41545402:
     {
@@ -141,7 +141,10 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
       }
       break;
     }
+
+  CASE_CPFN_OMNI(/*PLAIN_OBJECT_KEYS_POLICY_TYPE*/ 0x41545403, PlainObjectKeysPolicy)
   }
+
   throw CORBA::PolicyError(CORBA::BAD_POLICY);
 }
 
