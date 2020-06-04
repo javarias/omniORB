@@ -1,3 +1,46 @@
+Fri  5 Jun 00:47:50 BST 2020
+============================
+
+- Documentation and example updates.
+
+ReleaseNotes.txt
+doc/omniNames.html
+doc/omniNames.pdf
+doc/omniORB.pdf
+doc/omniORB/index.html
+doc/omniORB/omniORB.html
+doc/omniORB/omniORB001.html
+doc/omniORB/omniORB002.html
+doc/omniORB/omniORB003.html
+doc/omniORB/omniORB004.html
+doc/omniORB/omniORB005.html
+doc/omniORB/omniORB006.html
+doc/omniORB/omniORB007.html
+doc/omniORB/omniORB008.html
+doc/omniORB/omniORB009.html
+doc/omniORB/omniORB010.html
+doc/omniORB/omniORB011.html
+doc/omniORB/omniORB012.html
+doc/omniORB/omniORB013.html
+doc/omniORB/omniORB014.html
+doc/omniORB/omniORB015.html
+doc/omniORB/omniORB016.html
+doc/omniidl.html
+doc/omniidl.pdf
+doc/omnithread.html
+doc/omnithread.pdf
+doc/tex/omniNames.tex
+doc/tex/omniORB.tex
+doc/tex/omniidl.tex
+doc/tex/omnithread.tex
+doc/tex/utilities.tex
+doc/utilities.html
+doc/utilities.pdf
+src/examples/echo/eg3_clt.cc
+src/examples/echo/eg3_impl.cc
+src/examples/echo/eg3_tieimpl.cc
+
+
 Fri  5 Jun 00:45:37 BST 2020
 ============================
 
