@@ -42,10 +42,20 @@ _init_in_def_( const LocalShortcutPolicyValue
                LOCAL_CALLS_THROUGH_POA = 0; )
 
 _init_in_def_( const LocalShortcutPolicyValue
-               LOCAL_CALLS_SHORTCUT    = 0; )
+               LOCAL_CALLS_SHORTCUT    = 1; )
 
 _init_in_def_( const CORBA::PolicyType
 	       ENDPOINT_PUBLISH_POLICY_TYPE = 0x41545402; )
+
+_init_in_def_( const CORBA::PolicyType
+	       PLAIN_OBJECT_KEYS_POLICY_TYPE = 0x41545403; )
+
+_init_in_def_( const PlainObjectKeysPolicyValue
+               PLAIN_OBJECT_KEYS_DISABLE = 0; )
+
+_init_in_def_( const PlainObjectKeysPolicyValue
+               PLAIN_OBJECT_KEYS_ENABLE = 1; )
+
 }
 #else
 _init_in_def_( const CORBA::PolicyType
@@ -55,11 +65,19 @@ _init_in_def_( const omniPolicy::LocalShortcutPolicyValue
                omniPolicy::LOCAL_CALLS_THROUGH_POA = 0; )
 
 _init_in_def_( const omniPolicy::LocalShortcutPolicyValue
-               omniPolicy::LOCAL_CALLS_SHORTCUT    = 0; )
+               omniPolicy::LOCAL_CALLS_SHORTCUT    = 1; )
 
 _init_in_def_( const CORBA::PolicyType
 	       omniPolicy::ENDPOINT_PUBLISH_POLICY_TYPE = 0x41545402; )
 
+_init_in_def_( const CORBA::PolicyType
+	       omniPolicy::PLAIN_OBJECT_KEYS_POLICY_TYPE = 0x41545403; )
+
+_init_in_def_( const PlainObjectKeysPolicyValue
+               omniPolicy::PLAIN_OBJECT_KEYS_DISABLE = 0; )
+
+_init_in_def_( const PlainObjectKeysPolicyValue
+               omniPolicy::PLAIN_OBJECT_KEYS_ENABLE = 1; )
 #endif
 
 //
@@ -226,4 +244,77 @@ omniPolicy::
 create_endpoint_publish_policy(const EndPointPublishPolicyValue& v)
 {
   return new EndPointPublishPolicy(v);
+}
+
+
+//
+// Plain object keys
+
+omniPolicy::PlainObjectKeysPolicy::~PlainObjectKeysPolicy() {}
+
+CORBA::Policy_ptr
+omniPolicy::PlainObjectKeysPolicy::copy()
+{
+  if (_NP_is_nil())  _CORBA_invoked_nil_pseudo_ref();
+  return new PlainObjectKeysPolicy(pd_value);
+}
+
+void*
+omniPolicy::PlainObjectKeysPolicy::_ptrToObjRef(const char* repoId)
+{
+  OMNIORB_ASSERT(repoId);
+
+  if (omni::ptrStrMatch(repoId, omniPolicy::PlainObjectKeysPolicy::_PD_repoId))
+    return (omniPolicy::PlainObjectKeysPolicy_ptr) this;
+  if (omni::ptrStrMatch(repoId, CORBA::Policy::_PD_repoId))
+    return (CORBA::Policy_ptr) this;
+  if (omni::ptrStrMatch(repoId, CORBA::Object::_PD_repoId))
+    return (CORBA::Object_ptr) this;
+
+  return 0;
+}
+
+omniPolicy::PlainObjectKeysPolicy_ptr
+omniPolicy::PlainObjectKeysPolicy::_duplicate(omniPolicy::PlainObjectKeysPolicy_ptr obj)
+{
+  if (!CORBA::is_nil(obj))  obj->_NP_incrRefCount();
+
+  return obj;
+}
+
+omniPolicy::PlainObjectKeysPolicy_ptr
+omniPolicy::PlainObjectKeysPolicy::_narrow(CORBA::Object_ptr obj)
+{
+  if (CORBA::is_nil(obj))  return _nil();
+
+  PlainObjectKeysPolicy_ptr p = (PlainObjectKeysPolicy_ptr) obj->_ptrToObjRef(PlainObjectKeysPolicy::_PD_repoId);
+
+  if (p)  p->_NP_incrRefCount();
+
+  return p ? p : _nil();
+}
+
+omniPolicy::PlainObjectKeysPolicy_ptr
+omniPolicy::PlainObjectKeysPolicy::_nil()
+{
+  static PlainObjectKeysPolicy* _the_nil_ptr = 0;
+  if (!_the_nil_ptr) {
+    omni::nilRefLock().lock();
+    if (!_the_nil_ptr) {
+      _the_nil_ptr = new PlainObjectKeysPolicy;
+      registerNilCorbaObject(_the_nil_ptr);
+    }
+    omni::nilRefLock().unlock();
+  }
+  return _the_nil_ptr;
+}
+
+const char*
+omniPolicy::PlainObjectKeysPolicy::_PD_repoId = "IDL:omniorb.net/omniPolicy/PlainObjectKeysPolicy:1.0";
+
+
+omniPolicy::PlainObjectKeysPolicy_ptr
+omniPolicy::create_plain_object_keys_policy(PlainObjectKeysPolicyValue v)
+{
+  return new PlainObjectKeysPolicy(v);
 }

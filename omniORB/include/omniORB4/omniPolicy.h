@@ -3,7 +3,7 @@
 // omniPolicy.h               Created on: 2001/11/07
 //                            Author    : Duncan Grisby (dpg1)
 //
-//    Copyright (C) 2013 Apasphere Ltd
+//    Copyright (C) 2020 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -105,6 +105,28 @@ typedef _CORBA_PseudoObj_Var<EndPointPublishPolicy> EndPointPublishPolicy_var;
 
 _CORBA_MODULE_FN EndPointPublishPolicy_ptr
 create_endpoint_publish_policy(const EndPointPublishPolicyValue& v);
+
+
+//
+// Plain object keys
+
+typedef CORBA::UShort PlainObjectKeysPolicyValue;
+
+_CORBA_MODULE_VARINT
+const PlainObjectKeysPolicyValue PLAIN_OBJECT_KEYS_DISABLE _init_in_decl_( = 0 );
+
+_CORBA_MODULE_VARINT
+const PlainObjectKeysPolicyValue PLAIN_OBJECT_KEYS_ENABLE  _init_in_decl_( = 1 );
+
+_CORBA_MODULE_VARINT
+const CORBA::PolicyType PLAIN_OBJECT_KEYS_POLICY_TYPE
+                                              _init_in_decl_( = 0x41545403 );
+
+OMNIORB_DECLARE_POLICY_OBJECT(PlainObjectKeysPolicy, 0x41545403)
+
+
+_CORBA_MODULE_FN PlainObjectKeysPolicy_ptr
+create_plain_object_keys_policy(PlainObjectKeysPolicyValue v);
 
 
 _CORBA_MODULE_END

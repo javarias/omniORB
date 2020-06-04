@@ -3,7 +3,7 @@
 # __init__.py                Created on: 2013/07/23
 #                            Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 2013 Apasphere Ltd
+#    Copyright (C) 2013-2020 Apasphere Ltd
 #
 #    This file is part of the omniORBpy library
 #
@@ -27,7 +27,8 @@
 import omniORB
 from omniORB import CORBA
 
-ENDPOINT_PUBLISH_POLICY_TYPE = 0x41545402
+ENDPOINT_PUBLISH_POLICY_TYPE  = 0x41545402
+PLAIN_OBJECT_KEYS_POLICY_TYPE = 0x41545403
 
 class EndPointPublishPolicy (CORBA.Policy):
     _NP_RepositoryId = "IDL:omniorb.net/omniPolicy/EndPointPublishPolicy:1.0"
@@ -40,7 +41,7 @@ class EndPointPublishPolicy (CORBA.Policy):
             if not isinstance(item, str):
                 raise CORBA.PolicyError(CORBA.BAD_POLICY_VALUE)
 
-        self._value = value
+        self._value       = value
         self._policy_type = ENDPOINT_PUBLISH_POLICY_TYPE
 
     def _get_value(self):
@@ -49,9 +50,26 @@ class EndPointPublishPolicy (CORBA.Policy):
     value = property(_get_value)
 
 
+class PlainObjectKeysPolicy (CORBA.Policy):
+    _NP_RepositoryId = "IDL:omniorb.net/omniPolicy/PlainObjectKeysPolicy:1.0"
+
+    def __init__(self, value):
+        self._value       = bool(value)
+        self._policy_type = PLAIN_OBJECT_KEYS_POLICY_TYPE
+
+    def _get_value(self):
+        return self._value
+
+    value = property(_get_value)
+
+
+
 def _create_policy(ptype, val):
-    if ptype == 0x41545402:
+    if ptype == ENDPOINT_PUBLISH_POLICY_TYPE:
         return EndPointPublishPolicy(val)
+
+    if ptype == PLAIN_OBJECT_KEYS_POLICY_TYPE:
+        return PlainObjectKeysPolicy(val)
 
     return None
 
