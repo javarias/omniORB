@@ -866,8 +866,8 @@ omniIOR::add_TAG_ALTERNATE_IIOP_ADDRESS(const IIOP::Address& address,
 /////////////////////////////////////////////////////////////////////////////
 void
 omniIOR::add_TAG_SSL_SEC_TRANS(const IIOP::Address& address,
-			       CORBA::UShort        supports,
-                               CORBA::UShort        requires,
+                               CORBA::UShort        target_supports,
+                               CORBA::UShort        target_requires,
                                IORPublish*          eps)
 {
   if (!eps)
@@ -879,8 +879,8 @@ omniIOR::add_TAG_SSL_SEC_TRANS(const IIOP::Address& address,
     eps->tls_addrs.length(length+1);
 
     eps->tls_addrs[length] = address;
-    eps->tls_supports      = supports;
-    eps->tls_requires      = requires;
+    eps->tls_supports      = target_supports;
+    eps->tls_requires      = target_requires;
   }
 
   if (strlen(eps->address.host) == 0) {
@@ -894,8 +894,8 @@ omniIOR::add_TAG_SSL_SEC_TRANS(const IIOP::Address& address,
   }
 
   cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
-  supports >>= s;
-  requires >>= s;
+  target_supports >>= s;
+  target_requires >>= s;
   address.port >>= s;
 
   CORBA::ULong index = eps->ssl_addrs.length();
@@ -907,8 +907,8 @@ omniIOR::add_TAG_SSL_SEC_TRANS(const IIOP::Address& address,
 /////////////////////////////////////////////////////////////////////////////
 static
 void add_TAG_CSI_SEC_MECH_LIST(const _CORBA_Unbounded_Sequence<IIOP::Address>& addrs,
-			       CORBA::UShort supports,
-                               CORBA::UShort requires,
+			       CORBA::UShort target_supports,
+                               CORBA::UShort target_requires,
                                IORPublish*   eps)
 {
   if (!eps)
@@ -936,22 +936,22 @@ void add_TAG_CSI_SEC_MECH_LIST(const _CORBA_Unbounded_Sequence<IIOP::Address>& a
   mechanism_count >>= stream;
 
   // struct CompoundSecMech {
-  //   AssociationOptions taget_requires;
+  //   AssociationOptions target_requires;
   //   IOP::TaggedComponent transport_mech;
   //   AS_ContextSec as_context_mech;
   //   SAS_ContextSec sas_context_mech;
   // };
 
-  requires >>= stream;
+  target_requires >>= stream;
 
   IOP::TaggedComponent transport_mech;
   transport_mech.tag = IOP::TAG_TLS_SEC_TRANS;
 
   cdrEncapsulationStream mech_stream(CORBA::ULong(0),CORBA::Boolean(1));
 
-  supports >>= mech_stream;
-  requires >>= mech_stream;
-  addrs    >>= mech_stream;
+  target_supports >>= mech_stream;
+  target_requires >>= mech_stream;
+  addrs           >>= mech_stream;
 
   {
     CORBA::Octet* p;

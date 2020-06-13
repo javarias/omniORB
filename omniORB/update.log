@@ -1,3 +1,12 @@
+Sat 13 Jun 23:05:33 BST 2020
+============================
+
+- Avoid clash with C++20 "requires" keyword.
+
+include/omniORB4/omniIOR.h
+src/lib/omniORB/orbcore/ior.cc
+
+
 Tue 12 May 22:37:15 BST 2020
 ============================
 
