@@ -811,12 +811,7 @@ public:
   virtual void NP_releaseChildren();
 
 private:
-  inline TypeCode_except()
-    : TypeCode_base(CORBA::tk_except),
-      pd_members(0), pd_nmembers(0) {}
-
-  void generateAlignmentTable();
-
+  TypeCode_except();
 
   CORBA::String_member     pd_repoId;
   CORBA::String_member     pd_name;

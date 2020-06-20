@@ -185,10 +185,12 @@ const CORBA::TypeCode_ptr CORBA::_tc_PolicyError = _0RL_tc_CORBA_mPolicyError;
 static void _0RL_CORBA_mPolicyError_marshal_fn(cdrStream& _s, void* _v)
 {
   const CORBA::PolicyError* _p = (const CORBA::PolicyError*)_v;
+  ::CORBA::Any::PR_marshalExceptionRepoId(_s, _p->_rep_id());
   *_p >>= _s;
 }
 static void _0RL_CORBA_mPolicyError_unmarshal_fn(cdrStream& _s, void*& _v)
 {
+  ::CORBA::Any::PR_unmarshalExceptionRepoId(_s);
   CORBA::PolicyError* _p = new CORBA::PolicyError;
   *_p <<= _s;
   _v = _p;

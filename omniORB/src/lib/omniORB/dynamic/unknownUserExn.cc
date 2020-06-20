@@ -127,12 +127,14 @@ static CORBA::TypeCode_ptr _0RL_tc_CORBA_mUnknownUserException = CORBA::TypeCode
 
 static void _0RL_CORBA_mUnknownUserException_marshal_fn(cdrStream& _s, void* _v)
 {
+  CORBA::Any::PR_marshalExceptionRepoId(_s, _0RL_tc_CORBA_mUnknownUserException->id());
   CORBA::UnknownUserException* _p = (CORBA::UnknownUserException*)_v;
   CORBA::Any& a = _p->exception();
   a >>= _s;
 }
 static void _0RL_CORBA_mUnknownUserException_unmarshal_fn(cdrStream& _s, void*& _v)
 {
+  CORBA::Any::PR_unmarshalExceptionRepoId(_s);
   CORBA::Any* a = new CORBA::Any();
   *a <<= _s;
 

@@ -276,10 +276,12 @@ exception = """
 static void @private_prefix@_@guard_name@_marshal_fn(cdrStream& _s, void* _v)
 {
   const @fqname@* _p = (const @fqname@*)_v;
+  ::CORBA::Any::PR_marshalExceptionRepoId(_s, _p->_rep_id());
   *_p >>= _s;
 }
 static void @private_prefix@_@guard_name@_unmarshal_fn(cdrStream& _s, void*& _v)
 {
+  ::CORBA::Any::PR_unmarshalExceptionRepoId(_s);
   @fqname@* _p = new @fqname@;
   *_p <<= _s;
   _v = _p;

@@ -194,8 +194,11 @@ protected:
   // Method to pass to SSL_CTX_new. Defaults to return TLS_method().
 
   virtual void set_supported_versions(); 
-  // Default to SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
-  // That is, only accept TLS.
+  // Default to
+  //   SSL_CTX_set_options(ssl_ctx,
+  //                       SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
+  //                       SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
+  // That is, only accept TLS 1.2 or later.
 
   virtual void set_CA();
   // Set CA details. Calls both SSL_CTX_load_verify_locations and
