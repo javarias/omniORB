@@ -81,6 +81,21 @@ CORBA::Boolean  orbParameters::acceptMisalignedTcIndirections = 0;
 //
 // Valid values = 0 or 1
 
+CORBA::Boolean  orbParameters::exceptionIdInAny = 1;
+// When an exception is transmitted inside an Any, should the
+// repository id be transmitted at the start of the value?  The id
+// is in the TypeCode, so the id is redundant inside the value, and
+// the CORBA specification is not especially clear. The common
+// interpretation of the CORBA specification is that the repository
+// id should always be sent at the start of the marshalled exception
+// value, even when inside an Any.
+//
+// Versions of omniORB for C++ prior to 4.3 did not send the
+// repository id when transmitting an exception inside an Any. Set
+// this to false for compatibility with previous omniORB versions.
+//
+// Valid values = 0 or 1
+
 
 ////////////////////////////////////////////////////////////////////////////
 static void init();
@@ -239,6 +254,35 @@ public:
 static acceptMisalignedTcIndirectionsHandler acceptMisalignedTcIndirectionsHandler_;
 
 /////////////////////////////////////////////////////////////////////////////
+class exceptionIdInAnyHandler : public orbOptions::Handler {
+public:
+
+  exceptionIdInAnyHandler() : 
+    orbOptions::Handler("exceptionIdInAny",
+			"exceptionIdInAny = 0 or 1",
+			1,
+			"-ORBexceptionIdInAny < 0 | 1 >") {}
+
+
+  void visit(const char* value,orbOptions::Source) {
+
+    CORBA::Boolean v;
+    if (!orbOptions::getBoolean(value,v)) {
+      throw orbOptions::BadParam(key(),value,
+				 orbOptions::expect_boolean_msg);
+    }
+    orbParameters::exceptionIdInAny = v;
+  }
+
+  void dump(orbOptions::sequenceString& result) {
+    orbOptions::addKVBoolean(key(),orbParameters::exceptionIdInAny,
+			     result);
+  }
+};
+
+static exceptionIdInAnyHandler exceptionIdInAnyHandler_;
+
+/////////////////////////////////////////////////////////////////////////////
 //            Module initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -250,6 +294,7 @@ public:
     orbOptions::singleton().registerHandler(diiThrowsSysExceptionsHandler_);
     orbOptions::singleton().registerHandler(useTypeCodeIndirectionsHandler_);
     orbOptions::singleton().registerHandler(acceptMisalignedTcIndirectionsHandler_);
+    orbOptions::singleton().registerHandler(exceptionIdInAnyHandler_);
   }
 
   void attach() {

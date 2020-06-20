@@ -35,6 +35,7 @@
 \newcommand{\term}[1]{\textit{#1}}
 
 \hyphenation{omni-ORB}
+\hyphenation{omni-ORBpy}
 
 % Environment to make important statements stand out:
 \newenvironment{statement}%
@@ -1663,6 +1664,42 @@ exception:
 \end{enumerate}
 
 
+\section{Interoperability}
+
+In general, all versions of omniORB interoperate with each other, and
+with other CORBA implementations. There are a number of configuration
+options that can be set to work around interoperability with other
+CORBA implementations, described in section~\ref{sec:interop_opts}.
+
+\subsection{Exceptions in Anys}
+
+Normally, exceptions---both system exceptions and user-defined
+exceptions---are thrown by server operations and caught by clients.
+When that occurs, the GIOP protocol is completely clear that the
+exception is marshalled as the exception's repository id, followed by
+the exception's data members.
+
+It is not permitted to specify an Exception as a normal operation
+parameter or within a constructed IDL type, but it \emph{is} permitted
+to insert an Exception into an Any, and transmit that in an operation
+parameter. In that case, when the Any is marshalled, first the
+TypeCode is sent, and then the data value. It is somewhat ambiguous in
+the GIOP specification whether the value part of an Exception sent
+this way should contain the repository id, or not --- the id is
+contained in the TypeCode, so sending it as part of the value too is
+redundant.
+
+Versions of omniORB for C++ prior to 4.3 did not send the Exception
+repository id in the value part of an Any. All versions of omniORBpy
+\emph{do} send it, as do some other CORBA implementations. For
+interoperability, omniORB 4.3 has changed to send the repository id.
+This means that it is compatible with omniORBpy and other ORBs, but
+that it is \emph{incompatible} with previous versions of omniORB for
+C++. The \code{exceptionIdInAny} configuration parameter can be set to
+\code{false} to revert to the prior behaviour if interoperability with
+earlier omniORB versions is required.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{omniORB configuration and API}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2389,6 +2426,7 @@ Note that calls are only actually dispatched to the `main' thread if
 
 
 \section{GIOP and interoperability options}
+\label{sec:interop_opts}
 
 These options control omniORB's use of GIOP, and cover some areas
 where omniORB can work around buggy behaviour by other ORBs.
@@ -2444,7 +2482,16 @@ typecode. This is used to work around a bug in some old versions of
 Visibroker's Java ORB.
 
 
-\vspace{2\baselineskip}
+\confopt{exceptionIdInAny}{1}
+
+If \code{true} (the default), when an Exception is inserted in an Any,
+it is transmitted as the TypeCode, followed by the Exception
+repository id, followed by the Exception data members. This is the
+format used by other CORBA implementations, including omniORBpy.
+Versions of omniORB for C++ prior to 4.3 did not send the repository
+id after the TypeCode. If you require interoperability with earlier
+omniORB versions that send or receive exceptions inside Anys, set this
+parameter to \code{false}.
 
 
 \section{System Exception Handlers}

@@ -11,16 +11,16 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB009.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec127" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Interoperable Naming Service</h1>
+<h1 id="sec129" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Interoperable Naming Service</h1>
 <p>
 <a id="chap:ins"></a></p><p>omniORB supports the Interoperable Naming Service (INS). The following
 is a summary of its facilities.</p>
-<h2 id="sec128" class="section">8.1&#XA0;&#XA0;Object URIs</h2>
+<h2 id="sec130" class="section">8.1&#XA0;&#XA0;Object URIs</h2>
 <p>As well as accepting IOR-format strings, <span style="font-family:monospace">ORB::string_to_object()</span>
 also supports two Uniform Resource Identifier (URI)&#XA0;[<a href="omniORB017.html#rfc2396">BLFIM98</a>]
 formats, which can be used to specify objects in a convenient
 human-readable form.</p>
-<h3 id="sec129" class="subsection">8.1.1&#XA0;&#XA0;corbaloc</h3>
+<h3 id="sec131" class="subsection">8.1.1&#XA0;&#XA0;corbaloc</h3>
 <p><span style="font-family:monospace">corbaloc</span> URIs allow you to specify object references which
 can be contacted by IIOP, or found through
 <span style="font-family:monospace">ORB::resolve_initial_references()</span>. To specify an IIOP object
@@ -54,7 +54,7 @@ higher versions make use of various information stored in IORs that is
 not present in a corbaloc URI. It is generally best to contact initial
 corbaloc objects with IIOP 1.0, and rely on higher versions for all
 other object references.</p>
-<h3 id="sec130" class="subsection">8.1.2&#XA0;&#XA0;Other transports</h3>
+<h3 id="sec132" class="subsection">8.1.2&#XA0;&#XA0;Other transports</h3>
 <p>The only transport specified in the CORBA standard is <span style="font-family:monospace">iiop</span>,
 but omniORB also supports the following extensions:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold"><span style="font-family:monospace">ssliop</span></span></dt><dd class="dd-description"><br>
 Equivalent semantics to <span style="font-family:monospace">iiop</span>, but the server is contacted
@@ -62,7 +62,7 @@ using SSL / TLS. As with <span style="font-family:monospace">iiop</span>, the ad
 the form <span style="font-family:monospace"><span style="font-style:italic">host</span></span><span style="font-family:monospace">:</span><span style="font-family:monospace"><span style="font-style:italic">port</span></span>.</dd><dt class="dt-description"><span style="font-weight:bold"><span style="font-family:monospace">omniunix</span></span></dt><dd class="dd-description"><br>
 The omniORB Unix domain socket transport. The address details are of
 the form <span style="font-family:monospace"><span style="font-style:italic">filename</span></span>.</dd></dl>
-<h3 id="sec131" class="subsection">8.1.3&#XA0;&#XA0;HTTP URLs</h3>
+<h3 id="sec133" class="subsection">8.1.3&#XA0;&#XA0;HTTP URLs</h3>
 <p>If the omniORB-specific HTTP transport is enabled (see
 section&#XA0;<a href="omniORB007.html#sec%3Ahttptransport">7.9</a>), then HTTP URLs are also
 supported. The format is</p><blockquote class="quote">
@@ -72,10 +72,10 @@ supported. The format is</p><blockquote class="quote">
 <span style="font-family:monospace">http://myhost.example.com/call#MyObjectKey</span><br>
 <span style="font-family:monospace">wss://myhost.example.com/websocket#MyObjectKey</span><br>
 </blockquote>
-<h3 id="sec132" class="subsection">8.1.4&#XA0;&#XA0;Resolve initial references</h3>
+<h3 id="sec134" class="subsection">8.1.4&#XA0;&#XA0;Resolve initial references</h3>
 <p>A <span style="font-family:monospace">corbaloc:</span> can also specify a call to
 <span style="font-family:monospace">resolve_initial_references()</span>. This</p><div class="lstlisting"><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">string_to_object</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"corbaloc:rir:/NameService"</span></span><span style="font-size:small">);</span></div><p>is identical in behaviour to</p><div class="lstlisting"><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"NameService"</span></span><span style="font-size:small">);</span></div>
-<h3 id="sec133" class="subsection">8.1.5&#XA0;&#XA0;corbaname</h3>
+<h3 id="sec135" class="subsection">8.1.5&#XA0;&#XA0;corbaname</h3>
 <p>
 <a id="sec:corbaname"></a></p><p><span style="font-family:monospace">corbaname</span> URIs cause <span style="font-family:monospace">string_to_object()</span> to look-up a
 name in a CORBA Naming service. They are an extension of the
@@ -97,11 +97,11 @@ have been used for a look-up:</p><blockquote class="quote">
 <span style="font-family:monospace">corbaname:rir:</span>
 </blockquote><p>The first of these examples is the easiest way of specifying
 the location of a naming service.</p>
-<h2 id="sec134" class="section">8.2&#XA0;&#XA0;Configuring resolve_initial_references</h2>
+<h2 id="sec136" class="section">8.2&#XA0;&#XA0;Configuring resolve_initial_references</h2>
 <p>
 <a id="sec:insargs"></a></p><p>The INS specifies two standard command line arguments that provide a
 portable way of configuring <span style="font-family:monospace">ORB::resolve_initial_references()</span>:</p>
-<h3 id="sec135" class="subsection">8.2.1&#XA0;&#XA0;ORBInitRef</h3>
+<h3 id="sec137" class="subsection">8.2.1&#XA0;&#XA0;ORBInitRef</h3>
 <p><span style="font-family:monospace">-ORBInitRef</span> takes an argument of the form
 &lt;<span style="font-style:italic">ObjectId</span>&gt;<span style="font-family:monospace">=</span>&lt;<span style="font-style:italic">ObjectURI</span>&gt;. So, for example,
 with command line arguments of:</p><blockquote class="quote">
@@ -112,7 +112,7 @@ myhost.example.com, port 2809. Since IOR-format strings are considered
 URIs, you can also say things like:</p><blockquote class="quote">
 <span style="font-family:monospace">-ORBInitRef NameService=IOR:00ff...</span>
 </blockquote>
-<h3 id="sec136" class="subsection">8.2.2&#XA0;&#XA0;ORBDefaultInitRef</h3>
+<h3 id="sec138" class="subsection">8.2.2&#XA0;&#XA0;ORBDefaultInitRef</h3>
 <p><span style="font-family:monospace">-ORBDefaultInitRef</span> provides a prefix string which is used to
 resolve otherwise unknown names. When
 <span style="font-family:monospace">resolve_initial_references()</span> is unable to resolve a name which
@@ -130,8 +130,8 @@ impossible to specify a look-up in the root context of the naming
 service&#X2014;you have to use a sub-context, like:</p><blockquote class="quote">
 <span style="font-family:monospace">-ORBDefaultInitRef corbaname::myhost.example.com#services</span>
 </blockquote>
-<h2 id="sec137" class="section">8.3&#XA0;&#XA0;omniNames</h2>
-<h3 id="sec138" class="subsection">8.3.1&#XA0;&#XA0;NamingContextExt</h3>
+<h2 id="sec139" class="section">8.3&#XA0;&#XA0;omniNames</h2>
+<h3 id="sec140" class="subsection">8.3.1&#XA0;&#XA0;NamingContextExt</h3>
 <p>omniNames supports the extended <span style="font-family:monospace">CosNaming::NamingContextExt</span>
 interface:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">module</span></span><span style="font-size:small"> </span><span style="font-size:small">CosNaming</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">NamingContextExt</span><span style="font-size:small"> : </span><span style="font-size:small">NamingContext</span><span style="font-size:small"> {</span><span style="font-size:small">
@@ -175,11 +175,11 @@ omniORB provides the equivalent local function
 <span style="font-family:monospace">omniURI::addrAndNameToURI()</span>.</p><p><span style="font-family:monospace">resolve_str()</span> is equivalent to calling <span style="font-family:monospace">to_name()</span> followed by
 the inherited <span style="font-family:monospace">resolve()</span> operation. There are no string-based
 equivalents of the various bind operations.</p>
-<h3 id="sec139" class="subsection">8.3.2&#XA0;&#XA0;Use with corbaname</h3>
+<h3 id="sec141" class="subsection">8.3.2&#XA0;&#XA0;Use with corbaname</h3>
 <p>To make it easy to use omniNames with <span style="font-family:monospace">corbaname</span> URIs, it
 starts with the default port of 2809, and an object key of
 &#X2018;<span style="font-family:monospace">NameService</span>&#X2019; for the root naming context.</p>
-<h2 id="sec140" class="section">8.4&#XA0;&#XA0;omniMapper</h2>
+<h2 id="sec142" class="section">8.4&#XA0;&#XA0;omniMapper</h2>
 <p>omniMapper is a simple daemon which listens on port 2809 (or any other
 port), and redirects IIOP requests for configured object keys to
 associated persistent object references. It can be used to make a
@@ -210,7 +210,7 @@ configuration file could contain the line:</p><blockquote class="quote">
 <pre class="verbatim">ORBDefaultInitRef corbaloc::localhost
 </pre>
 </blockquote>
-<h2 id="sec141" class="section">8.5&#XA0;&#XA0;Creating objects with plain object keys</h2>
+<h2 id="sec143" class="section">8.5&#XA0;&#XA0;Creating objects with plain object keys</h2>
 <p>In normal use, omniORB creates object keys containing various
 information including POA names and various non-ASCII characters.
 Since object keys are supposed to be opaque, this is not usually a

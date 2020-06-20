@@ -37,6 +37,11 @@ omniORB 4.3 has a number of new features and changes:
 
  - The sslContext class is now in the omni namespace.
 
+ - The marshalled format of exceptions inside Anys has changed for
+   compatibility with other ORBs, meaning that it is incompatible with
+   omniORB versions prior to 4.3. See the exceptionIdInAny
+   configuration parameter to revert to the previous format.
+
 
 Changes since omniORB 4.1.x
 ---------------------------

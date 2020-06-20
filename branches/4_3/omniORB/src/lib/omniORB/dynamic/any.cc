@@ -1447,3 +1447,25 @@ CORBA::Any::value() const
   }
   return snap_mbuf->bufPtr();
 }
+
+
+// Exception repository id
+void
+CORBA::Any::PR_marshalExceptionRepoId(cdrStream& s, const char* repo_id)
+{
+  // Exception value is preceeded by repository id, even though the id
+  // is in the TypeCode.
+  if (orbParameters::exceptionIdInAny)
+    s.marshalRawString(repo_id);
+}
+
+void
+CORBA::Any::PR_unmarshalExceptionRepoId(cdrStream& s)
+{
+  if (orbParameters::exceptionIdInAny) {
+    // We don't need the repository id. We just skip it.
+    CORBA::ULong len;
+    len <<= s;
+    s.skipInput(len);
+  }
+}

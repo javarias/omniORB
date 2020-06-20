@@ -125,6 +125,33 @@ section&#XA0;<a href="omniORB004.html#sec%3Aclientconf">4.4</a>.</li><li class="
 <h2 id="sec52" class="section">3.5&#XA0;&#XA0;omniORB 4.2 compatibility</h2>
 <p>omniORB 4.3 is source-code compatible with omniORB 4.2, with one
 exception:</p><ol class="enumerate" type=1><li class="li-enumerate"><span style="font-family:monospace">sslContext</span> has moved to the <span style="font-family:monospace">omni</span> namespace.</li></ol>
+<h2 id="sec53" class="section">3.6&#XA0;&#XA0;Interoperability</h2>
+<p>In general, all versions of omniORB interoperate with each other, and
+with other CORBA implementations. There are a number of configuration
+options that can be set to work around interoperability with other
+CORBA implementations, described in section&#XA0;<a href="omniORB004.html#sec%3Ainterop_opts">4.6</a>.</p>
+<h3 id="sec54" class="subsection">3.6.1&#XA0;&#XA0;Exceptions in Anys</h3>
+<p>Normally, exceptions&#X2014;both system exceptions and user-defined
+exceptions&#X2014;are thrown by server operations and caught by clients.
+When that occurs, the GIOP protocol is completely clear that the
+exception is marshalled as the exception&#X2019;s repository id, followed by
+the exception&#X2019;s data members.</p><p>It is not permitted to specify an Exception as a normal operation
+parameter or within a constructed IDL type, but it <em>is</em> permitted
+to insert an Exception into an Any, and transmit that in an operation
+parameter. In that case, when the Any is marshalled, first the
+TypeCode is sent, and then the data value. It is somewhat ambiguous in
+the GIOP specification whether the value part of an Exception sent
+this way should contain the repository id, or not &#X2014; the id is
+contained in the TypeCode, so sending it as part of the value too is
+redundant.</p><p>Versions of omniORB for C++ prior to 4.3 did not send the Exception
+repository id in the value part of an Any. All versions of omniORBpy
+<em>do</em> send it, as do some other CORBA implementations. For
+interoperability, omniORB 4.3 has changed to send the repository id.
+This means that it is compatible with omniORBpy and other ORBs, but
+that it is <em>incompatible</em> with previous versions of omniORB for
+C++. The <span style="font-family:monospace">exceptionIdInAny</span> configuration parameter can be set to
+<span style="font-family:monospace">false</span> to revert to the prior behaviour if interoperability with
+earlier omniORB versions is required.</p>
 <hr>
 <a href="omniORB002.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>

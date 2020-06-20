@@ -312,6 +312,8 @@ public:
   cdrAnyMemoryStream& PR_streamToWrite();
   // Clear the contents and allocate a memory stream for writing into.
 
+  static void PR_marshalExceptionRepoId(cdrStream& s, const char* repo_id);
+  static void PR_unmarshalExceptionRepoId(cdrStream& s);
 
   void PR_clearData();
   // Clear the contents ready to insert a different value.

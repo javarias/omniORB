@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB006.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec75" class="chapter">Chapter&#XA0;5&#XA0;&#XA0;The IDL compiler</h1>
+<h1 id="sec77" class="chapter">Chapter&#XA0;5&#XA0;&#XA0;The IDL compiler</h1>
 <p>
 <a id="chap:omniidl"></a></p><p>omniORB&#X2019;s IDL compiler is called omniidl. It consists of a generic
 front-end parser written in C++, and a number of back-ends written in
@@ -19,7 +19,7 @@ Python. omniidl is very strict about IDL validity, so you may find
 that it reports errors in IDL which compiles fine with other IDL
 compilers.</p><p>The general form of an omniidl command line is:</p><blockquote class="quote"> <span style="font-family:monospace">omniidl </span>[<span style="font-style:italic">options</span>]<span style="font-family:monospace"> -b</span>&lt;<span style="font-style:italic">back-end</span>&gt;<span style="font-family:monospace"> </span>[<span style="font-style:italic">back-end options</span>]<span style="font-family:monospace"> </span>&lt;<span style="font-style:italic">file</span>&gt;
 </blockquote>
-<h2 id="sec76" class="section">5.1&#XA0;&#XA0;Common options</h2>
+<h2 id="sec78" class="section">5.1&#XA0;&#XA0;Common options</h2>
 <p>The following options are common to all back-ends:</p><table style="border:0;border-spacing:0" class="cellpadding0"><tr><td style="text-align:left;white-space:nowrap" ></td></tr>
 <tr><td style="text-align:left;white-space:nowrap" >
 <span style="font-family:monospace">-b</span><span style="font-style:italic">back-end</span>
@@ -83,7 +83,7 @@ preprocessor.</td></tr>
 </td></tr>
 </table><p>Most of these options are self explanatory, but some are not
 so obvious.</p>
-<h3 id="sec77" class="subsection">5.1.1&#XA0;&#XA0;Preprocessor interactions</h3>
+<h3 id="sec79" class="subsection">5.1.1&#XA0;&#XA0;Preprocessor interactions</h3>
 <p>IDL is processed by the C preprocessor before omniidl parses it.
 omniidl always uses the GNU C preprocessor (which it builds with the
 name omnicpp). The <span style="font-family:monospace">-D</span>, <span style="font-family:monospace">-U</span>, and <span style="font-family:monospace">-I</span>
@@ -93,7 +93,7 @@ directory is not on the include search path by default&#X2014;use
 specify a different preprocessor to omnicpp. Beware that line
 directives inserted by other preprocessors are likely to confuse
 omniidl.</p>
-<h3 id="sec78" class="subsection">5.1.2&#XA0;&#XA0;Forward-declared interfaces</h3>
+<h3 id="sec80" class="subsection">5.1.2&#XA0;&#XA0;Forward-declared interfaces</h3>
 <p>If you have an IDL file like:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">I</span><span style="font-size:small">;</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">J</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">attribute</span></span><span style="font-size:small"> </span><span style="font-size:small">I</span><span style="font-size:small"> </span><span style="font-size:small">the_I</span><span style="font-size:small">;</span><span style="font-size:small">
@@ -104,7 +104,7 @@ omniidl.</p>
 you have a lot of IDL with this sort of construct, you will drown
 under the warning messages. Use the <span style="font-family:monospace">-nf</span> option to suppress
 them.</p>
-<h3 id="sec79" class="subsection">5.1.3&#XA0;&#XA0;Comments</h3>
+<h3 id="sec81" class="subsection">5.1.3&#XA0;&#XA0;Comments</h3>
 <p>By default, omniidl discards comments in the input IDL. However, with
 the <span style="font-family:monospace">-k</span> and <span style="font-family:monospace">-K</span> options, it preserves the comments
 for use by the back-ends. The C++ back-end ignores this information,
@@ -116,7 +116,7 @@ declarations within the IDL. Given IDL like:</p><div class="lstlisting"><span st
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">op2</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">};</span></div><p>the <span style="font-family:monospace">-k</span> flag will attach the comment to <span style="font-family:monospace">op1()</span>;
 the <span style="font-family:monospace">-K</span> flag will attach it to <span style="font-family:monospace">op2()</span>.</p>
-<h2 id="sec80" class="section">5.2&#XA0;&#XA0;C++ back-end options</h2>
+<h2 id="sec82" class="section">5.2&#XA0;&#XA0;C++ back-end options</h2>
 <p>
 <a id="sec:cxx_backend"></a></p><p>When you specify the C++ back-end (with <span style="font-family:monospace">-bcxx</span>), the
 following <span style="font-family:monospace">-Wb</span> options are available. Note that the
@@ -187,12 +187,12 @@ main file.</td></tr>
 <tr><td style="text-align:left;white-space:nowrap" >
 </td></tr>
 </table>
-<h3 id="sec81" class="subsection">5.2.1&#XA0;&#XA0;Optional code generation options</h3>
+<h3 id="sec83" class="subsection">5.2.1&#XA0;&#XA0;Optional code generation options</h3>
 <p>By default, omniidl generates the minimum code required to provide all
 the IDL-defined types and interfaces, which is sufficient for the
 majority of applications. Additional code can also be generated, for
 various purposes:</p>
-<h4 id="sec82" class="subsubsection">5.2.1.1&#XA0;&#XA0;Any and TypeCode</h4>
+<h4 id="sec84" class="subsubsection">5.2.1.1&#XA0;&#XA0;Any and TypeCode</h4>
 <p>To generate TypeCodes and Any insertion operators, give the
 <span style="font-family:monospace">-Wba</span> option. See chapter&#XA0;<a href="omniORB011.html#chap%3Aany">11</a> for details.</p><p>By default, omniidl separates the normal stub and skeleton file (the
 <span style="font-family:monospace">SK.cc</span> file) from these &#X2018;dynamic&#X2019; stubs (the <span style="font-family:monospace">DynSK.cc</span>
@@ -204,7 +204,7 @@ extension for both files. This command places both the normal stubs
 and the dynamic stubs in <span style="font-family:monospace">aSK.cc</span>:</p><blockquote class="quote">
 <span style="font-family:monospace">omniidl -bcxx -Wba -Wbd=SK.cc a.idl</span>
 </blockquote>
-<h4 id="sec83" class="subsubsection">5.2.1.2&#XA0;&#XA0;Tie templates</h4>
+<h4 id="sec85" class="subsubsection">5.2.1.2&#XA0;&#XA0;Tie templates</h4>
 <p>As described in section&#XA0;<a href="omniORB002.html#sec%3Atie">2.11</a>, tie templates can be used to
 provide servant implementations, instead of using inheritance from the
 normal skeleton classes. To generate tie templates, give the
@@ -218,11 +218,11 @@ names, in which the template class is declared at global scope with
 the name <span style="font-family:monospace">POA_M_I_tie</span>. i.e. all occurrences of &#X2018;<span style="font-family:monospace">::</span>&#X2019;
 are replaced by &#X2018;<span style="font-family:monospace">_</span>&#X2019;. Generate the flattened ties using the
 <span style="font-family:monospace">-Wbtf</span> command line argument.</p>
-<h4 id="sec84" class="subsubsection">5.2.1.3&#XA0;&#XA0;Asynchronous Method Invocation</h4>
+<h4 id="sec86" class="subsubsection">5.2.1.3&#XA0;&#XA0;Asynchronous Method Invocation</h4>
 <p>Generate asynchronous invocation operations and the various types
 required by AMI by specifying <span style="font-family:monospace">-Wbami</span>. See
 chapter&#XA0;<a href="omniORB013.html#chap%3Aami">13</a> for details.</p>
-<h4 id="sec85" class="subsubsection">5.2.1.4&#XA0;&#XA0;Example implementations</h4>
+<h4 id="sec87" class="subsubsection">5.2.1.4&#XA0;&#XA0;Example implementations</h4>
 <p>If you use the <span style="font-family:monospace">-Wbexample</span> flag, omniidl will generate an
 example implementation file as well as the stubs and skeletons. For
 IDL file <span style="font-family:monospace">foo.idl</span>, the example code is written to
@@ -231,7 +231,7 @@ declarations for the operations of all interfaces in the IDL file,
 along with a <span style="font-family:monospace">main()</span> function which creates an instance of each
 object. You still have to fill in the operation implementations, of
 course.</p>
-<h3 id="sec86" class="subsection">5.2.2&#XA0;&#XA0;Include file options</h3>
+<h3 id="sec88" class="subsection">5.2.2&#XA0;&#XA0;Include file options</h3>
 <p>IDL files regularly <span style="font-family:monospace">#include</span> other files. By default, if file
 <span style="font-family:monospace">a.idl</span> says <span style="font-family:monospace">#include &lt;b/c.idl&gt;</span> then the generated
 header <span style="font-family:monospace">a.hh</span> has an include of the form <span style="font-family:monospace">#include
@@ -245,7 +245,7 @@ should only use that single set of files.</p><p>If <span style="font-family:mono
 directive are removed, leaving just the base name. If
 <span style="font-family:monospace">-Wbkeep-inc-path</span> is specified, the directive in
 <span style="font-family:monospace">a.hh</span> is <span style="font-family:monospace">#include &lt;b/c.hh&gt;</span>.</p>
-<h3 id="sec87" class="subsection">5.2.3&#XA0;&#XA0;Object reference operations</h3>
+<h3 id="sec89" class="subsection">5.2.3&#XA0;&#XA0;Object reference operations</h3>
 <p>Some of the C++ mapping&#X2019;s parameter passing rules are problematic in
 terms of memory management. For example, if an IDL operation has a
 parameter of type <span style="font-family:monospace">inout string</span>, the standard mapping has a C++
@@ -267,7 +267,7 @@ local interface situation also requires method overrides, so omniidl
 must be instructed to generate object references as virtual. Use
 <span style="font-family:monospace">-Wbvirtual-objref</span> to achieve this.</p><p>More details about the local interface mapping can be found in
 section&#XA0;<a href="omniORB012.html#sec%3ALocalInterfaces">12.8</a>.</p>
-<h3 id="sec88" class="subsection">5.2.4&#XA0;&#XA0;Module splicing</h3>
+<h3 id="sec90" class="subsection">5.2.4&#XA0;&#XA0;Module splicing</h3>
 <p>On ancient C++ compilers without namespace support, IDL modules map to
 C++ classes, and so cannot be reopened. For some IDL, it is possible
 to &#X2018;splice&#X2019; reopened modules on to the first occurrence of the module,
@@ -302,7 +302,7 @@ option causes omniidl to put all of the definitions for module
 fine. For the second case, class <span style="font-family:monospace">M1::K</span> will contain a reference
 to <span style="font-family:monospace">M2::J</span>, which has not yet been defined; the C++ compiler will
 complain.</p>
-<h2 id="sec89" class="section">5.3&#XA0;&#XA0;Examples</h2>
+<h2 id="sec91" class="section">5.3&#XA0;&#XA0;Examples</h2>
 <p>Generate the C++ headers and stubs for a file <span style="font-family:monospace">a.idl</span>:</p><blockquote class="quote">
 <span style="font-family:monospace">omniidl -bcxx a.idl</span>
 </blockquote><p>Generate with Any support:</p><blockquote class="quote">
