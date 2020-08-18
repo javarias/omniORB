@@ -31,6 +31,12 @@ in this Software without prior written authorization from the X Consortium.
 extern char	*directives[];
 extern struct inclist	maininclist;
 
+void overlap_strcpy(char* dest, char* src)
+{
+  while ((*dest++ = *src++));
+}
+
+
 int find_includes(struct filepointer *filep,
                   struct inclist     *file,
                   struct inclist     *file_red,
@@ -336,7 +342,7 @@ int deftype (line, filep, file_red, file, parse_it)
 		/*
 		 * copy the definition back to the beginning of the line.
 		 */
-		strcpy (line, p);
+		overlap_strcpy (line, p);
 		break;
 	case ELSE:
 	case ENDIF:

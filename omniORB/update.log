@@ -1,3 +1,11 @@
+Tue 18 Aug 22:43:08 BST 2020
+============================
+
+- Fix overlapping strcpy in omkdepend.
+
+src/tool/omkdepend/parse.c
+
+
 Sat 20 Jun 23:07:40 BST 2020
 ============================
 
