@@ -3,7 +3,7 @@
 # any.py                     Created on: 2002/09/16
 #                            Author    : Duncan Grisby (dgrisby)
 #
-#    Copyright (C) 2002-2014 Apasphere Ltd
+#    Copyright (C) 2002-2020 Apasphere Ltd
 #
 #    This file is part of the omniORBpy library
 #
@@ -28,13 +28,16 @@
 """
 omniORB.any module -- Any support functions.
 
-to_any(data)                  -- try to coerce data to an Any.
+to_any(data)
 
-from_any(any, keep_structs=0) -- return any's contents as plain Python
-                                 objects. If keep_structs is true,
-                                 CORBA structs are kept as Python class
-                                 instances; if false, they are expanded
-                                 to dictionaries.
+  Try to coerce data to an Any.
+
+
+from_any(any, keep_structs=False)
+
+  Return any's contents as plain Python objects. If keep_structs is
+  true, CORBA structs are kept as Python class instances; if false,
+  they are expanded to dictionaries.
 """
 
 import omniORB
@@ -53,9 +56,9 @@ _idcount = 0
 _idlock  = threading.Lock()
 
 # TypeCode kinds that must not be used in struct / sequence members
-INVALID_MEMBER_KINDS = [ tcInternal.tv_null,
-                         tcInternal.tv_void,
-                         tcInternal.tv_except ]
+INVALID_MEMBER_KINDS = (tcInternal.tv_null,
+                        tcInternal.tv_void,
+                        tcInternal.tv_except)
 
 #
 # Fixed type
@@ -81,8 +84,7 @@ except NameError:
 
 def to_any(data):
     """to_any(data) -- try to return data as a CORBA.Any"""
-    tc, val = _to_tc_value(data)
-    return CORBA.Any(tc, val)
+    return CORBA.Any(*_to_tc_value(data))
 
 
 def _to_tc_value(data):
@@ -172,8 +174,10 @@ def _to_tc_value(data):
             for d in data:
                 if (not (isinstance(d, (int,long)) or isinstance(d, bool))):
                     break
-                if d < min_v: min_v = d
-                if d > max_v: max_v = d
+                if d < min_v:
+                    min_v = d
+                if d > max_v:
+                    max_v = d
             else:
                 if min_v >= -2147483648L and max_v <= 2147483647L:
                     tc = tcInternal.createTypeCode((tcInternal.tv_sequence,
@@ -253,8 +257,7 @@ def _to_tc_value(data):
         dl = [tcInternal.tv_struct, None, id, ""]
         ms = []
         svals = []
-        items = data.items()
-        for (k,v) in items:
+        for (k,v) in data.iteritems():
             if not isinstance(k, str):
                 raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
                                       CORBA.COMPLETED_NO)

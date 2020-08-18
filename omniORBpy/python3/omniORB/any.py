@@ -3,7 +3,7 @@
 # any.py                     Created on: 2002/09/16
 #                            Author    : Duncan Grisby (dgrisby)
 #
-#    Copyright (C) 2002-2014 Apasphere Ltd
+#    Copyright (C) 2002-2020 Apasphere Ltd
 #
 #    This file is part of the omniORBpy library
 #
@@ -28,13 +28,16 @@
 """
 omniORB.any module -- Any support functions.
 
-to_any(data)                  -- try to coerce data to an Any.
+to_any(data)
 
-from_any(any, keep_structs=0) -- return any's contents as plain Python
-                                 objects. If keep_structs is true,
-                                 CORBA structs are kept as Python class
-                                 instances; if false, they are expanded
-                                 to dictionaries.
+  Try to coerce data to an Any.
+
+
+from_any(any, keep_structs=False)
+
+  Return any's contents as plain Python objects. If keep_structs is
+  true, CORBA structs are kept as Python class instances; if false,
+  they are expanded to dictionaries.
 """
 
 import omniORB
@@ -53,9 +56,9 @@ _idcount = 0
 _idlock  = threading.Lock()
 
 # TypeCode kinds that must not be used in struct / sequence members
-INVALID_MEMBER_KINDS = [ tcInternal.tv_null,
-                         tcInternal.tv_void,
-                         tcInternal.tv_except ]
+INVALID_MEMBER_KINDS = (tcInternal.tv_null,
+                        tcInternal.tv_void,
+                        tcInternal.tv_except)
 
 #
 # Fixed type
@@ -65,24 +68,11 @@ FixedType = type(_f)
 
 
 #
-# Python 2 / 3 differences
-
-try:
-    if bytes is str:
-        # Python 2.7
-        raise NameError()
-
-except NameError:
-    class bytes(object): pass
-
-
-#
 # to_any
 
 def to_any(data):
     """to_any(data) -- try to return data as a CORBA.Any"""
-    tc, val = _to_tc_value(data)
-    return CORBA.Any(tc, val)
+    return CORBA.Any(*_to_tc_value(data))
 
 
 def _to_tc_value(data):
@@ -93,9 +83,6 @@ def _to_tc_value(data):
 
     elif isinstance(data, str):
         return CORBA.TC_string, data
-
-    elif isinstance(data, str):
-        return CORBA.TC_wstring, data
 
     elif isinstance(data, bytes):
         return CORBA._tc_OctetSeq, data
@@ -137,16 +124,6 @@ def _to_tc_value(data):
                                                 CORBA.TC_string._d, 0))
                 return tc, data
 
-        elif isinstance(d0, str):
-            for d in data:
-                if not isinstance(d, str):
-                    break
-            else:
-                # List of wstrings
-                tc = tcInternal.createTypeCode((tcInternal.tv_sequence,
-                                                CORBA.TC_wstring._d, 0))
-                return tc, data
-
         elif isinstance(d0, bytes):
             for d in data:
                 if not isinstance(d, bytes):
@@ -172,8 +149,10 @@ def _to_tc_value(data):
             for d in data:
                 if (not (isinstance(d, int) or isinstance(d, bool))):
                     break
-                if d < min_v: min_v = d
-                if d > max_v: max_v = d
+                if d < min_v:
+                    min_v = d
+                if d > max_v:
+                    max_v = d
             else:
                 if min_v >= -2147483648 and max_v <= 2147483647:
                     tc = tcInternal.createTypeCode((tcInternal.tv_sequence,
@@ -253,8 +232,7 @@ def _to_tc_value(data):
         dl = [tcInternal.tv_struct, None, id, ""]
         ms = []
         svals = []
-        items = list(data.items())
-        for (k,v) in items:
+        for (k,v) in data.items():
             if not isinstance(k, str):
                 raise CORBA.BAD_PARAM(omniORB.BAD_PARAM_WrongPythonType,
                                       CORBA.COMPLETED_NO)
