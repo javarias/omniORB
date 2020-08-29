@@ -1,3 +1,11 @@
+Sat 29 Aug 17:36:51 BST 2020
+============================
+
+- Remove invalid end-of-line comment in sample config file.
+
+sample.cfg
+
+
 Tue 18 Aug 22:43:08 BST 2020
 ============================
 
