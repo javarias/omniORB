@@ -1,3 +1,16 @@
+Sat 29 Aug 22:43:10 BST 2020
+============================
+
+- Remove long obsolete services headers.
+
+src/services/include
+src/services/include/BootStrapAgent.h
+src/services/include/CosNaming_i.h
+src/services/include/CosNotify.h
+src/services/include/CosNotifyComm_i.h
+src/services/include/corba_wrappers.h
+
+
 Sat 29 Aug 17:36:51 BST 2020
 ============================
 
