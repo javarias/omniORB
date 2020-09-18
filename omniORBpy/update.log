@@ -1,3 +1,11 @@
+Fri 18 Sep 17:12:15 BST 2020
+============================
+
+- Ensure WorkerThread object is registered in Python3.
+
+python3/omniORB/__init__.py
+
+
 Fri 15 May 14:05:12 BST 2020
 ============================
 
