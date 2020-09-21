@@ -87,7 +87,7 @@ getULong(PyObject* obj)
                     BAD_PARAM_PythonValueOutOfRange,
                     CORBA::COMPLETED_NO);
     }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
     if (ul > 0xffffffffL) {
       OMNIORB_THROW(BAD_PARAM,
                     BAD_PARAM_PythonValueOutOfRange,
@@ -99,7 +99,7 @@ getULong(PyObject* obj)
 #if (PY_VERSION_HEX < 0x03000000)
   else if (PyInt_Check(obj)) {
     long l = PyInt_AS_LONG(obj);
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
     if (l < 0 || l > 0xffffffffL) {
       OMNIORB_THROW(BAD_PARAM,
                     BAD_PARAM_PythonValueOutOfRange,

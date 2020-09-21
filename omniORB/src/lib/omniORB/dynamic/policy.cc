@@ -157,7 +157,7 @@ static CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 static CORBA::TypeCode_ptr _0RL_tc_CORBA_mPolicyErrorCode = CORBA::TypeCode::PR_alias_tc("IDL:omg.org/CORBA/PolicyErrorCode:1.0", "PolicyErrorCode", CORBA::TypeCode::PR_short_tc(), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace CORBA { 
   const CORBA::TypeCode_ptr _tc_PolicyErrorCode = _0RL_tc_CORBA_mPolicyErrorCode;
@@ -171,7 +171,7 @@ static CORBA::PR_structMember _0RL_structmember_CORBA_mPolicyError[] = {
 };
 
 static CORBA::TypeCode_ptr _0RL_tc_CORBA_mPolicyError = CORBA::TypeCode::PR_exception_tc("IDL:omg.org/CORBA/PolicyError:1.0", "PolicyError", _0RL_structmember_CORBA_mPolicyError, 1, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace CORBA { 
   const CORBA::TypeCode_ptr _tc_PolicyError = _0RL_tc_CORBA_mPolicyError;

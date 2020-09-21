@@ -50,7 +50,7 @@
 #include <omniIdentity.h>
 #include <SocketCollection.h>
 
-#ifdef HAVE_SIGNAL_H
+#ifdef OMNI_HAVE_SIGNAL_H
 #  include <signal.h>
 #  include <errno.h>
 #endif
@@ -1103,11 +1103,11 @@ public:
   void attach() {
 
 #if !defined(__CIAO__)
-# if defined(HAVE_SIGACTION)
+# if defined(OMNI_HAVE_SIGACTION)
 
     struct sigaction act;
     sigemptyset(&act.sa_mask);
-#  ifdef HAVE_SIG_IGN
+#  ifdef OMNI_HAVE_SIG_IGN
     act.sa_handler = SIG_IGN;
 #  else
     act.sa_handler = (void (*)())0;
@@ -1120,7 +1120,7 @@ public:
 	  "SIG_IGN handler for signal SIGPIPE. (errno = " << errno << ")\n";
       }
     }
-# elif defined(HAVE_SIGVEC)
+# elif defined(OMNI_HAVE_SIGVEC)
     struct sigvec act;
     act.sv_mask = 0;
     act.sv_handler = SIG_IGN;
@@ -1132,7 +1132,7 @@ public:
 	  "SIG_IGN handler for signal SIGPIPE. (errno = " << errno << ")\n";
       }
     }
-# endif // HAVE_SIGACTION
+# endif // OMNI_HAVE_SIGACTION
 #endif // __CIAO__
 
     orbAsyncInvoker = new omniAsyncInvoker();

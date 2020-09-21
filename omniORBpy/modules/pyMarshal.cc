@@ -153,7 +153,7 @@ validateTypeLong(PyObject* d_o, PyObject* a_o,
 					    "O", a_o->ob_type));
   }
 
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
   if (l < -0x80000000L || l > 0x7fffffffL) {
     THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 		       omniPy::formatString("%s is out of range for long",
@@ -213,7 +213,7 @@ validateTypeULong(PyObject* d_o, PyObject* a_o,
 					      "unsigned long",
 					      "O", a_o));
     }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
     if (ul > 0xffffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 			 omniPy::formatString("%s is out of range for "
@@ -225,7 +225,7 @@ validateTypeULong(PyObject* d_o, PyObject* a_o,
 #if (PY_VERSION_HEX < 0x03000000)
   else if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
     if (l < 0 || l > 0xffffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 			 omniPy::formatString("%s is out of range for "
@@ -797,7 +797,7 @@ validateOptSequenceItems(CORBA::ULong            len,
                                                 seq_arr, i, t_o->ob_type));
       }
 
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
       if (long_val < -0x80000000L || long_val > 0x7fffffffL) {
         THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
                            omniPy::formatString("%s item %d: "
@@ -864,7 +864,7 @@ validateOptSequenceItems(CORBA::ULong            len,
                                                   "unsigned long", "siO",
                                                   seq_arr, i, t_o));
         }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
         if (ulong_val > 0xffffffffL) {
           THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
                              omniPy::formatString("%s item %d: "
@@ -878,7 +878,7 @@ validateOptSequenceItems(CORBA::ULong            len,
       else if (PyInt_Check(t_o)) {
         long_val = PyInt_AS_LONG(t_o);
 
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
         if (long_val < 0 || long_val > 0xffffffffL)
 #  else
           if (long_val < 0)
@@ -959,7 +959,7 @@ validateOptSequenceItems(CORBA::ULong            len,
     }
     return;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
   case CORBA::tk_longlong:
 
@@ -1362,7 +1362,7 @@ validateTypeLongLong(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus,
 		     PyObject* track)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   if (PyLong_Check(a_o)) {
     CORBA::LongLong ll = PyLong_AsLongLong(a_o);
     if (ll == -1 && PyErr_Occurred()) {
@@ -1394,7 +1394,7 @@ validateTypeULongLong(PyObject* d_o, PyObject* a_o,
 		      CORBA::CompletionStatus compstatus,
 		      PyObject* track)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   if (PyLong_Check(a_o)) {
     CORBA::ULongLong ull = PyLong_AsUnsignedLongLong(a_o);
     if (ull == (CORBA::ULongLong)-1 && PyErr_Occurred()) {
@@ -2027,7 +2027,7 @@ marshalOptSequenceItems(cdrStream&   stream,
     }
     break;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
   case CORBA::tk_longlong:
     {
@@ -2246,7 +2246,7 @@ marshalPyObjectExcept(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 static void
 marshalPyObjectLongLong(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::LongLong ll;
 
 #if (PY_VERSION_HEX < 0x03000000)
@@ -2268,7 +2268,7 @@ marshalPyObjectLongLong(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 static void
 marshalPyObjectULongLong(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::ULongLong ull;
 
 #if (PY_VERSION_HEX < 0x03000000)
@@ -2854,7 +2854,7 @@ unmarshalPyObjectSeqArray(cdrStream& stream, PyObject* d_o, CORBA::ULong len)
 	}
 	return r_o.retn();
 	    
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
       case CORBA::tk_longlong:
 	{
@@ -2970,7 +2970,7 @@ unmarshalPyObjectExcept(cdrStream& stream, PyObject* d_o)
 static PyObject*
 unmarshalPyObjectLongLong(cdrStream& stream, PyObject* d_o)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::LongLong ll;
   ll <<= stream;
   return PyLong_FromLongLong(ll);
@@ -2984,7 +2984,7 @@ unmarshalPyObjectLongLong(cdrStream& stream, PyObject* d_o)
 static PyObject*
 unmarshalPyObjectULongLong(cdrStream& stream, PyObject* d_o)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::ULongLong ull;
   ull <<= stream;
   return PyLong_FromUnsignedLongLong(ull);
@@ -3231,7 +3231,7 @@ copyArgumentLong(PyObject* d_o, PyObject* a_o,
 {
 #if (PY_VERSION_HEX < 0x03000000)
   if (PyInt_Check(a_o)) {
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
     long l = PyInt_AS_LONG(a_o);
     if (l < -0x80000000L || l > 0x7fffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
@@ -3251,7 +3251,7 @@ copyArgumentLong(PyObject* d_o, PyObject* a_o,
 			 omniPy::formatString("%s is out of range for long",
 					      "O", a_o));
     }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
     if (l < -0x80000000L || l > 0x7fffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 			 omniPy::formatString("%s is out of range for long",
@@ -3332,7 +3332,7 @@ copyArgumentULong(PyObject* d_o, PyObject* a_o,
 					      "unsigned long",
 					      "O", a_o));
     }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
     if (ul > 0xffffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 			 omniPy::formatString("%s is out of range for "
@@ -3345,7 +3345,7 @@ copyArgumentULong(PyObject* d_o, PyObject* a_o,
 #if (PY_VERSION_HEX < 0x03000000)
   else if (PyInt_Check(a_o)) {
     long l = PyInt_AS_LONG(a_o);
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
     if (l < 0 || l > 0xffffffffL) {
       THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
 			 omniPy::formatString("%s is out of range for "
@@ -3899,7 +3899,7 @@ copyOptSequenceItems(CORBA::ULong            len,
   long             long_val;
   unsigned long    ulong_val;
   double           double_val;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::LongLong  llong_val;
   CORBA::ULongLong ullong_val;
 #endif
@@ -3963,12 +3963,12 @@ copyOptSequenceItems(CORBA::ULong            len,
 
 #if (PY_VERSION_HEX < 0x03000000)
       if (PyInt_Check(t_o)) {
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
         long_val = PyInt_AS_LONG(t_o);
         if (long_val >= -0x80000000L && long_val <= 0x7fffffffL) {
 #  endif
           Py_INCREF(t_o); PyList_SET_ITEM(r_o, i, t_o); continue;
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
         }
         THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
                            omniPy::formatString("%s item %d: "
@@ -3989,7 +3989,7 @@ copyOptSequenceItems(CORBA::ULong            len,
                                                   "long", "siO",
                                                   seq_arr, i, t_o));
         }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
         if (long_val >= -0x80000000L && long_val <= 0x7fffffffL) {
 #endif
 #if (PY_VERSION_HEX < 0x03000000)
@@ -3997,7 +3997,7 @@ copyOptSequenceItems(CORBA::ULong            len,
 #else
           Py_INCREF(t_o); PyList_SET_ITEM(r_o, i, t_o); continue;
 #endif
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
         }
         THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
                            omniPy::formatString("%s item %d: "
@@ -4079,7 +4079,7 @@ copyOptSequenceItems(CORBA::ULong            len,
                                                   "unsigned long", "siO",
                                                   seq_arr, i, t_o));
         }
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
         if (ulong_val > 0xffffffffL) {
           THROW_PY_BAD_PARAM(BAD_PARAM_PythonValueOutOfRange, compstatus,
                              omniPy::formatString("%s item %d: "
@@ -4093,7 +4093,7 @@ copyOptSequenceItems(CORBA::ULong            len,
 #if (PY_VERSION_HEX < 0x03000000)
       else if (PyInt_Check(t_o)) {
         long_val = PyInt_AS_LONG(t_o);
-#  if SIZEOF_LONG > 4
+#  if OMNI_SIZEOF_LONG > 4
         if (long_val >= 0 && long_val <= 0xffffffffL) {
           PyList_SET_ITEM(r_o, i, PyLong_FromLong(long_val));
           continue;
@@ -4179,7 +4179,7 @@ copyOptSequenceItems(CORBA::ULong            len,
     }
     break;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
   case CORBA::tk_longlong:
 
@@ -4587,7 +4587,7 @@ static PyObject*
 copyArgumentLongLong(PyObject* d_o, PyObject* a_o,
 		     CORBA::CompletionStatus compstatus)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   if (PyLong_Check(a_o)) {
     CORBA::LongLong ll = PyLong_AsLongLong(a_o);
     if (ll == -1 && PyErr_Occurred()) {
@@ -4621,7 +4621,7 @@ static PyObject*
 copyArgumentULongLong(PyObject* d_o, PyObject* a_o,
 		      CORBA::CompletionStatus compstatus)
 {
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   if (PyLong_Check(a_o)) {
     CORBA::ULongLong ll = PyLong_AsUnsignedLongLong(a_o);
     if (ll == (CORBA::ULongLong)-1 && PyErr_Occurred()) {

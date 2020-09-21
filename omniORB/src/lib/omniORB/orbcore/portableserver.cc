@@ -316,10 +316,10 @@ PortableServer::ObjectId_to_string(const ObjectId& id)
 _CORBA_WChar*
 PortableServer::ObjectId_to_wstring(const ObjectId& id)
 {
-  if (id.length() % SIZEOF_WCHAR != 0)
+  if (id.length() % OMNI_SIZEOF_WCHAR != 0)
     OMNIORB_THROW(BAD_PARAM,BAD_PARAM_InvalidObjectId, CORBA::COMPLETED_NO);
 
-  int len = id.length() / SIZEOF_WCHAR;
+  int len = id.length() / OMNI_SIZEOF_WCHAR;
 
   _CORBA_WChar* s = _CORBA_WString_helper::alloc(len);
 
@@ -355,9 +355,9 @@ PortableServer::ObjectId*
 PortableServer::wstring_to_ObjectId(const _CORBA_WChar* s)
 {
   int len = _CORBA_WString_helper::len(s);
-  ObjectId* pid = new ObjectId(len * SIZEOF_WCHAR);
+  ObjectId* pid = new ObjectId(len * OMNI_SIZEOF_WCHAR);
   
-  pid->length(len * SIZEOF_WCHAR);
+  pid->length(len * OMNI_SIZEOF_WCHAR);
 
   _CORBA_WChar* buf = (_CORBA_WChar*)pid->NP_data();
 

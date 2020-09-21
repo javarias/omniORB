@@ -117,7 +117,7 @@ NCS_W_UTF_16::marshalWChar(cdrStream& stream,
 
   if (tcs->fastMarshalWChar(stream, this, wc)) return;
 
-#if (SIZEOF_WCHAR == 4)
+#if (OMNI_SIZEOF_WCHAR == 4)
   if (wc > 0xffff)
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
 		  (CORBA::CompletionStatus)stream.completion());
@@ -142,7 +142,7 @@ NCS_W_UTF_16::marshalWString(cdrStream&          stream,
 		  (CORBA::CompletionStatus)stream.completion());
 
 
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
   tcs->marshalWString(stream, bound, len, ws);
 #else
   omniCodeSet::UniChar*    us = omniCodeSetUtil::allocU(len+1);
@@ -188,7 +188,7 @@ NCS_W_UTF_16::unmarshalWString(cdrStream& stream,
   len = tcs->unmarshalWString(stream, bound, us);
   OMNIORB_ASSERT(us);
 
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
   ws = us;
   return len;
 #else
@@ -303,7 +303,7 @@ TCS_W_UTF_16::unmarshalWChar(cdrStream& stream)
   }
   OMNIORB_THROW(MARSHAL, MARSHAL_InvalidWCharSize,
 		(CORBA::CompletionStatus)stream.completion());
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }

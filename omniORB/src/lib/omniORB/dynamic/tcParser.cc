@@ -375,13 +375,13 @@ void copyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
     case CORBA::tk_enum:
       { CORBA::ULong d;   d <<= ibuf; d >>= obuf; return; }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     case CORBA::tk_longlong:
       { CORBA::LongLong d;    d <<= ibuf; d >>= obuf; return; }
     case CORBA::tk_ulonglong:
       { CORBA::ULongLong d;   d <<= ibuf; d >>= obuf; return; }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     case CORBA::tk_longdouble:
       { CORBA::LongDouble d;  d <<= ibuf; d >>= obuf; return; }
 #endif

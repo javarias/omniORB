@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////////////////
 //  Platform feature selection
 
-#if !defined(OMNI_DISABLE_IPV6) && defined(HAVE_STRUCT_SOCKADDR_IN6) && defined(HAVE_STRUCT_SOCKADDR_STORAGE) && defined(HAVE_GETADDRINFO) && defined(HAVE_GETNAMEINFO)
+#if !defined(OMNI_DISABLE_IPV6) && defined(OMNI_HAVE_STRUCT_SOCKADDR_IN6) && defined(OMNI_HAVE_STRUCT_SOCKADDR_STORAGE) && defined(OMNI_HAVE_GETADDRINFO) && defined(OMNI_HAVE_GETNAMEINFO)
 #  define OMNI_SUPPORT_IPV6
 #  define OMNI_SOCKADDR_STORAGE sockaddr_storage
 #else
@@ -47,7 +47,7 @@
 #define OMNI_IPV6_SOCKETS_ACCEPT_IPV4_CONNECTIONS
 #define OMNIORB_HOSTNAME_MAX 512
 
-#ifdef HAVE_POLL
+#ifdef OMNI_HAVE_POLL
 #   define USE_POLL
 #endif
 

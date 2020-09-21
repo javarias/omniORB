@@ -199,7 +199,7 @@ public:
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_need_fq_base_ctor" = yes; then
-  AC_DEFINE(OMNI_REQUIRES_FQ_BASE_CTOR,,
+  AC_DEFINE(REQUIRES_FQ_BASE_CTOR,,
             [define if base constructors have to be fully qualified])
 fi
 ])
@@ -216,7 +216,7 @@ int f(long x){return 1;}
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_long_is_int" = yes; then
-  AC_DEFINE(OMNI_LONG_IS_INT,,[define if long is the same type as int])
+  AC_DEFINE(LONG_IS_INT,,[define if long is the same type as int])
 fi
 ])
 
@@ -319,7 +319,7 @@ AC_DEFUN([OMNI_SOCKNAME_ARG],
 ],
  omni_cv_sockname_size_t=size_t, omni_cv_sockname_size_t=int)
  fi
- AC_DEFINE_UNQUOTED(OMNI_SOCKNAME_SIZE_T, $omni_cv_sockname_size_t,
+ AC_DEFINE_UNQUOTED(SOCKNAME_SIZE_T, $omni_cv_sockname_size_t,
                     [Define to the type of getsockname's third argument])
  AC_MSG_RESULT([$omni_cv_sockname_size_t])
 ])
@@ -377,7 +377,7 @@ AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
 dnl Enable HTTP Crypto library
 AC_DEFUN([OMNI_ENABLE_HTTP_CRYPTO],
 [
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
+if test -n $open_ssl_root; then
     omni_cv_enable_http_crypto=yes
 else
     omni_cv_enable_http_crypto=no

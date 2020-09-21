@@ -356,7 +356,7 @@ local_interface_nil_operation = """\
 OMNIORB_THROW(INV_OBJREF, INV_OBJREF_InvokeOnNilObjRef, ::CORBA::COMPLETED_NO);"""
 
 local_interface_nil_dummy_return = """
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
 // Pretend recursive call to silence warnings about no return value
 return @method@(@args@);
 #endif"""
@@ -386,7 +386,7 @@ interface_callback_invoke = """\
 """
 
 interface_callback_tryblock = """\
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   @result@impl->@cxx_operation_name@(@operation_arguments@);
 #else
   if (!cd->is_upcall())
@@ -887,7 +887,7 @@ void
 ##
 
 union_default_bool = """\
-#ifndef HAS_Cplusplus_Bool
+#ifndef OMNI_HAS_Cplusplus_Bool
   default: break;
 #endif
 """
@@ -926,7 +926,7 @@ void
 ##
 
 const_namespace = """\
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage othewise.
 @open_namespace@
   extern const @type@ @simple_name@ = @value@;

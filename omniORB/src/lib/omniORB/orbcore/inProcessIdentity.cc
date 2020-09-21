@@ -92,7 +92,7 @@ omniInProcessIdentity::dispatch(omniCallDescriptor& call_desc)
     l << "Invoke '" << call_desc.op() << "' on in-process: " << this << '\n';
   }
 
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   try {
 #endif
     // Can we find the object in the local object table?
@@ -152,7 +152,7 @@ omniInProcessIdentity::dispatch(omniCallDescriptor& call_desc)
     OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch,
 		  CORBA::COMPLETED_NO);
 
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   }
   catch (CORBA::SystemException& ex) {
     throw;

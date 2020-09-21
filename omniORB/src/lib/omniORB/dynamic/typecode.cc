@@ -910,7 +910,7 @@ CORBA::TypeCode_ptr CORBA::TypeCode::PR_wstring_tc() {
   check_static_data_is_initialised();
   return CORBA::_tc_wstring;
 }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::TypeCode_ptr CORBA::TypeCode::PR_longlong_tc() {
   check_static_data_is_initialised();
   return CORBA::_tc_longlong;
@@ -920,7 +920,7 @@ CORBA::TypeCode_ptr CORBA::TypeCode::PR_ulonglong_tc() {
   return CORBA::_tc_ulonglong;
 }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::TypeCode_ptr CORBA::TypeCode::PR_longdouble_tc() {
   check_static_data_is_initialised();
   return CORBA::_tc_longdouble;
@@ -984,7 +984,7 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
     break;
 
   case CORBA::tk_double:
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
   case CORBA::tk_ulonglong:
 #endif
@@ -993,7 +993,7 @@ TypeCode_base::TypeCode_base(CORBA::TCKind tck)
     pd_aliasExpandedTc = pd_compactTc = this;
     break;
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case CORBA::tk_longdouble:
     pd_alignmentTable.setNumEntries(1);
     pd_alignmentTable.addSimple(omni::ALIGN_8, 16);
@@ -1123,7 +1123,7 @@ const char*
 TypeCode_base::NP_id() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1132,7 +1132,7 @@ const char*
 TypeCode_base::NP_name() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1141,7 +1141,7 @@ CORBA::ULong
 TypeCode_base::NP_member_count() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1150,7 +1150,7 @@ const char*
 TypeCode_base::NP_member_name(CORBA::ULong index) const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1159,7 +1159,7 @@ TypeCode_base*
 TypeCode_base::NP_member_type(CORBA::ULong index) const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1168,7 +1168,7 @@ CORBA::Any*
 TypeCode_base::NP_member_label(CORBA::ULong index) const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1177,7 +1177,7 @@ TypeCode_base*
 TypeCode_base::NP_discriminator_type() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1186,7 +1186,7 @@ CORBA::Long
 TypeCode_base::NP_default_index() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1195,7 +1195,7 @@ CORBA::ULong
 TypeCode_base::NP_length() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1205,7 +1205,7 @@ TypeCode_base*
 TypeCode_base::NP_content_type() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1214,7 +1214,7 @@ CORBA::UShort
 TypeCode_base::NP_fixed_digits() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1223,7 +1223,7 @@ CORBA::Short
 TypeCode_base::NP_fixed_scale() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1239,7 +1239,7 @@ CORBA::Any*
 TypeCode_base::NP_parameter(CORBA::Long) const
 {
   throw CORBA::TypeCode::Bounds();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1248,7 +1248,7 @@ CORBA::Short
 TypeCode_base::NP_member_visibility(CORBA::ULong) const
 {
   throw CORBA::TypeCode::Bounds();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1257,7 +1257,7 @@ CORBA::ValueModifier
 TypeCode_base::NP_type_modifier() const
 {
   throw CORBA::TypeCode::Bounds();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1266,7 +1266,7 @@ TypeCode_base*
 TypeCode_base::NP_concrete_base_type() const
 {
   throw CORBA::TypeCode::BadKind();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1291,7 +1291,7 @@ TypeCode_base::NP_aliasExpand(TypeCode_pairlist*)
 {
   throw omniORB::fatalException(__FILE__,__LINE__,
      "TypeCode_base::NP_aliasExpand() - should not have been called");
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -5110,7 +5110,7 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
     case CORBA::tk_Principal:
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_Principal));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_Principal));
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     case CORBA::tk_longlong:
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_longlong));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_longlong));
@@ -5118,7 +5118,7 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_ulonglong));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_ulonglong));
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     case CORBA::tk_longdouble:
       otbl->addEntry(otbl->currentOffset(), ToTcBase(CORBA::_tc_longdouble));
       return TypeCode_collector::duplicateRef(ToTcBase(CORBA::_tc_longdouble));
@@ -5226,7 +5226,7 @@ TypeCode_marshaller::unmarshal(cdrStream& s,
     // Never reach here
   };
 
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -5279,7 +5279,7 @@ TypeCode_marshaller::paramListType(CORBA::ULong kind)
     return plt[kind];
 
   OMNIORB_THROW(MARSHAL, MARSHAL_InvalidTypeCodeKind, CORBA::COMPLETED_NO);
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return plt_None;
 #endif
 }
@@ -5718,7 +5718,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 	lbl_value = c;
 	break;
       }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     case CORBA::tk_longlong:
       {
 	CORBA::LongLong c;
@@ -5789,7 +5789,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
       OMNIORB_THROW(BAD_PARAM,
 		    BAD_PARAM_IllegitimateDiscriminatorType,
 		    CORBA::COMPLETED_NO);
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
    // The unlikely looking constant -1 is to work around a bug in MSVC
    // that incorrectly deals with large negative literals :-( .
    if (sign &&
@@ -5807,7 +5807,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
       OMNIORB_THROW(BAD_PARAM,
 		    BAD_PARAM_IllegitimateDiscriminatorType,
 		    CORBA::COMPLETED_NO);
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     if (lbl_value > 0xffffffff)
       OMNIORB_THROW(BAD_PARAM,
 		    BAD_PARAM_IllegitimateDiscriminatorType,
@@ -5815,7 +5815,7 @@ TypeCode_union_helper::extractLabel(const CORBA::Any& label,
 #endif
     break;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
     if (!sign && (lbl_value > _CORBA_LONGLONG_CONST(0x7fffffffffffffff)))
       OMNIORB_THROW(BAD_PARAM,
@@ -5880,7 +5880,7 @@ TypeCode_union_helper::insertLabel(CORBA::Any& label,
   case CORBA::tk_ulong:
     label <<= CORBA::ULong(c);
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
     label <<= CORBA::LongLong(c);
     break;
@@ -5961,7 +5961,7 @@ TypeCode_union_helper::marshalLabel(TypeCode_union::Discriminator l,
       c >>= s;
       break;
     }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
     {
       CORBA::LongLong c = CORBA::LongLong(l);
@@ -6031,7 +6031,7 @@ TypeCode_union_helper::unmarshalLabel(CORBA::TypeCode_ptr tc,
       c <<= s;
       return TypeCode_union::Discriminator(c);
     }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
     {
       CORBA::LongLong c;
@@ -6052,7 +6052,7 @@ TypeCode_union_helper::unmarshalLabel(CORBA::TypeCode_ptr tc,
        "TypeCode_union_helper::unmarshalLabel() - illegal disciminator type");
   }
 
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -6084,7 +6084,7 @@ TypeCode_union_helper::has_implicit_default(TypeCode_base* tc)
   case CORBA::tk_octet:
     npossible = 256;
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
   case CORBA::tk_ulonglong:
     // Not likely to have this many cases!
@@ -6486,7 +6486,7 @@ CORBA::ORB::create_recursive_tc(const char* id)
 ///////////////////////// TypeCode constants /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constants external linkage otherwise. Its a bug.
 namespace CORBA {
 TypeCode_ptr         _tc_null;
@@ -6508,11 +6508,11 @@ TypeCode_ptr         _tc_Object;
 TypeCode_ptr         _tc_string;
 TypeCode_ptr         _tc_wstring;
 TypeCode_ptr         _tc_NamedValue;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 TypeCode_ptr         _tc_longlong;
 TypeCode_ptr         _tc_ulonglong;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 TypeCode_ptr         _tc_longdouble;
 #endif
 }
@@ -6536,11 +6536,11 @@ CORBA::TypeCode_ptr         CORBA::_tc_Object;
 CORBA::TypeCode_ptr         CORBA::_tc_string;
 CORBA::TypeCode_ptr         CORBA::_tc_wstring;
 CORBA::TypeCode_ptr         CORBA::_tc_NamedValue;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::TypeCode_ptr         CORBA::_tc_longlong;
 CORBA::TypeCode_ptr         CORBA::_tc_ulonglong;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::TypeCode_ptr         CORBA::_tc_longdouble;
 #endif
 
@@ -6648,14 +6648,14 @@ static void check_static_data_is_initialised()
   the_typecodes->track(CORBA::_tc_string);
   the_typecodes->track(CORBA::_tc_wstring);
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   CORBA::_tc_longlong   = new TypeCode_base(CORBA::tk_longlong);
   CORBA::_tc_ulonglong  = new TypeCode_base(CORBA::tk_ulonglong);
 
   the_typecodes->track(CORBA::_tc_longlong);
   the_typecodes->track(CORBA::_tc_ulonglong);
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   CORBA::_tc_longdouble = new TypeCode_base(CORBA::tk_longdouble);
   the_typecodes->track(CORBA::_tc_longdouble);
 #endif

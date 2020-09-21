@@ -29,12 +29,8 @@
 #include <BindingIterator_i.h>
 #include <omniORB4/omniURI.h>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 ReadersWritersLock NamingContext_i::lock;
 NamingContext_i* NamingContext_i::headContext = (NamingContext_i*)0;
@@ -123,7 +119,7 @@ NamingContext_i::resolve_simple(const CosNaming::Name& n)
 
   throw CosNaming::NamingContext::NotFound(CosNaming::NamingContext::
 					   missing_node, n);
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }

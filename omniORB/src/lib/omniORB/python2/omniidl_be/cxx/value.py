@@ -1279,14 +1279,14 @@ inline @name@(unsigned _v)          : _pd_boxed(_v) {}
 inline @name@(_CORBA_Long _v)       : _pd_boxed(_v) {}
 inline @name@(_CORBA_ULong _v)      : _pd_boxed(_v) {}
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 inline @name@(_CORBA_LongLong _v)   : _pd_boxed(_v) {}
 inline @name@(_CORBA_ULongLong _v)  : _pd_boxed(_v) {}
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 inline @name@(_CORBA_Double _v)     : _pd_boxed(_v) {}
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 inline @name@(_CORBA_LongDouble _v) : _pd_boxed(_v) {}
 #endif
 inline @name@(const char* _v)       : _pd_boxed(_v) {}

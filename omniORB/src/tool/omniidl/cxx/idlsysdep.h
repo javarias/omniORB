@@ -46,7 +46,7 @@
 #endif
 
 
-#ifdef HAS_Cplusplus_Bool
+#ifdef OMNI_HAS_Cplusplus_Bool
 typedef bool                      IDL_Boolean;
 #else
 typedef unsigned char             IDL_Boolean;
@@ -62,11 +62,11 @@ typedef unsigned short            IDL_UShort;
 
 typedef unsigned short            IDL_WChar;
 
-#if SIZEOF_LONG == 4
+#if OMNI_SIZEOF_LONG == 4
 typedef long                      IDL_Long;
 
 typedef unsigned long             IDL_ULong;
-#elif SIZEOF_INT == 4
+#elif OMNI_SIZEOF_INT == 4
 typedef int                       IDL_Long;
 
 typedef unsigned int              IDL_ULong;
@@ -74,13 +74,13 @@ typedef unsigned int              IDL_ULong;
 # error "Can't map Long (32 bits) to a native type."
 #endif
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 typedef _CORBA_LONGLONG_DECL      IDL_LongLong;
 typedef _CORBA_ULONGLONG_DECL     IDL_ULongLong;
 #endif
 
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
 #ifndef __VAX
 
@@ -88,7 +88,7 @@ typedef _CORBA_ULONGLONG_DECL     IDL_ULongLong;
 typedef float                     IDL_Float;
 typedef double                    IDL_Double;
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    IDL_LongDouble;
 #endif
 
@@ -123,12 +123,12 @@ public:
 
 //  Assume long double type is compatible with the CORBA standard.
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    IDL_LongDouble;
 #endif
 
 #endif   // VAX float test
-#endif   // !defined(NO_FLOAT)
+#endif   // !defined(OMNI_NO_FLOAT)
 
 
 #endif // _idlsysdep_h_

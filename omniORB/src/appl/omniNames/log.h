@@ -26,12 +26,8 @@
 
 #include <omniORB4/CORBA.h>
 
-#ifdef HAVE_STD
-#  include <fstream>
-   using namespace std;
-#else
-#  include <fstream.h>
-#endif
+#include <fstream>
+using namespace std;
 
 #ifndef DATADIR_ENV_VAR
 #  define DATADIR_ENV_VAR "OMNINAMES_DATADIR"

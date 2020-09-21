@@ -24,14 +24,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#ifdef HAVE_STD
-#  include <iostream>
-#  include <fstream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#  include <fstream.h>
-#endif
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 static void
 usage()

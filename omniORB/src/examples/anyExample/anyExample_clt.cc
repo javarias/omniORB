@@ -9,12 +9,8 @@
 
 #include <anyExample.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 
 static void invokeOp(anyExample_ptr& tobj, const CORBA::Any& a)
@@ -47,7 +43,7 @@ static void hello(anyExample_ptr tobj)
   invokeOp(tobj,a);
     
   // Sending Double
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   CORBA::Double d = 1.2345;
   a <<= d;
   cout << "Sending Any containing Double: " << d << endl; 

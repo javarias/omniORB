@@ -497,7 +497,7 @@ void operator<<=(::CORBA::Any& _a, @fqname@* _sp)
 
 
 external_linkage = """\
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 @open_namespace@
   const ::CORBA::TypeCode_ptr @tc_unscoped_name@ = @mangled_name@;

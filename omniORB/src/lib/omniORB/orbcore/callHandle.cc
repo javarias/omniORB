@@ -48,7 +48,7 @@ dealWithUserException(cdrMemoryStream& stream,
 		      CORBA::UserException& ex);
 
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
   class PostInvoker {
@@ -98,7 +98,7 @@ namespace {
     int                   pd_done;
   };
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 }
 #endif
 
@@ -188,7 +188,7 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
 
 	pd_call_desc->unmarshalReturnedValues(stream);
       }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
       catch (CORBA::UserException& ex) {
 	stream.rewindPtrs();
 	stream.clearValueTracker();
@@ -297,7 +297,7 @@ MainThreadTask::execute()
     _OMNI_NS(poaCurrentStackInsert) insert(&pd_desc);
     pd_desc.doLocalCall(pd_servant);
   }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   catch (CORBA::Exception& ex) {
     pd_except = CORBA::Exception::_duplicate(&ex);
   }

@@ -297,9 +297,9 @@ public:
       // Set to maximum signed value, to aid indirection code that
       // calculates negative values.
 
-#if (SIZEOF_LONG == SIZEOF_PTR)
+#if (OMNI_SIZEOF_LONG == OMNI_SIZEOF_PTR)
       orbParameters::giopMaxMsgSize = LONG_MAX;
-#elif (SIZEOF_INT == SIZEOF_PTR)
+#elif (OMNI_SIZEOF_INT == OMNI_SIZEOF_PTR)
       orbParameters::giopMaxMsgSize = INT_MAX;
 #elif defined (_WIN64)
       orbParameters::giopMaxMsgSize = _I64_MAX;

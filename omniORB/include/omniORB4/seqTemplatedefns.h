@@ -136,7 +136,7 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
     }
     else if (elmSize == 8) {
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
       _CORBA_ULongLong* data = (_CORBA_ULongLong*)Base_T_seq::NP_data();
 
       for (_CORBA_ULong i=0; i<l; i++) {
@@ -211,7 +211,7 @@ _CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator<<
     }
     else if (elmSize == 8) {
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
       _CORBA_ULongLong* data = (_CORBA_ULongLong*)Base_T_seq::NP_data();
 
       for (_CORBA_ULong i=0; i<l; i++) {
@@ -310,7 +310,7 @@ _CORBA_Sequence_Boolean::operator>>= (cdrStream& s) const
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-# if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
+# if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
   s.put_octet_array((_CORBA_Octet*)this->pd_buf,l);
 # else
   for ( _CORBA_ULong i = 0; i < l; i++ )
@@ -331,7 +331,7 @@ _CORBA_Sequence_Boolean::operator<<= (cdrStream& s)
   }
   this->length(l);
   if (l==0) return;
-# if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
+# if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
   s.get_octet_array((_CORBA_Octet*)this->pd_buf,l);
 # else
   for ( _CORBA_ULong i = 0; i < l; i++ )
@@ -502,7 +502,7 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator>>=(cdrStream& s) co
 {
   this->pd_len >>= s;
   if (this->pd_len==0) return;
-# if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
+# if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
   s.put_octet_array((_CORBA_Octet*)this->pd_buf,(int)this->pd_len*dimension);
 # else
   for (_CORBA_ULong i=0; i<this->pd_len; i++) {
@@ -526,7 +526,7 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator<<=(cdrStream& s)
   }
   this->length(l);
   if (l==0) return;
-# if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
+# if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
   s.get_octet_array((_CORBA_Octet*)this->pd_buf,(int)l*dimension);
 # else
   for (_CORBA_ULong i=0; i<l; i++) {
@@ -651,7 +651,7 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
     }
     else if (elmSize == 8) {
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
       _CORBA_ULongLong* data = (_CORBA_ULongLong*)Base_T_seq::NP_data();
 
       for (_CORBA_ULong i=0; i<l; i++) {
@@ -729,7 +729,7 @@ _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmS
     }
     else if (elmSize == 8) {
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
       _CORBA_ULongLong* data = (_CORBA_ULongLong*)Base_T_seq::NP_data();
 
       for (_CORBA_ULong i=0; i<l; i++) {

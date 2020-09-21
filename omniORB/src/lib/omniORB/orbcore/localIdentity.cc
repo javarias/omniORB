@@ -134,7 +134,7 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
 
   omni::localInvocationCount++;
 
-#ifndef HAS_Cplusplus_catch_exception_by_base
+#ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
   // The compiler cannot catch exceptions by base class, hence
   // we cannot trap invalid exceptions going through here.
   pd_adapter->dispatch(call_desc, this);

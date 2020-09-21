@@ -553,7 +553,7 @@ inline @name@_ptr
 @name@::_unmarshalObjRef(cdrStream& s) {
   OMNIORB_THROW(MARSHAL, _OMNI_NS(MARSHAL_LocalObject),
                 (::CORBA::CompletionStatus)s.completion());
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1003,7 +1003,7 @@ case @discrimvalue@: @name@(_value.@name@()); break;
 """
 
 union_ctor_bool_default = """\
-#ifndef HAS_Cplusplus_Bool
+#ifndef OMNI_HAS_Cplusplus_Bool
 default: @name@(_value.@name@()); break;
 #endif
 """

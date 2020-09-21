@@ -997,7 +997,7 @@ tcpSocket::setCloseOnExec(SocketHandle_t sock)
 char*
 tcpSocket::addrToString(sockaddr* addr)
 {
-#if defined(HAVE_INET_NTOP)
+#if defined(OMNI_HAVE_INET_NTOP)
 
   char dest[80];
   const char* addrstr;
@@ -1017,7 +1017,7 @@ tcpSocket::addrToString(sockaddr* addr)
 
   return CORBA::string_dup(addrstr);
 
-#elif defined (HAVE_GETNAMEINFO)
+#elif defined (OMNI_HAVE_GETNAMEINFO)
 
   char dest[80];
   socklen_t addrlen = 0;
@@ -1063,7 +1063,7 @@ tcpSocket::addrToString(sockaddr* addr)
 char*
 tcpSocket::addrToURI(sockaddr* addr, const char* prefix)
 {
-#if defined(HAVE_INET_NTOP)
+#if defined(OMNI_HAVE_INET_NTOP)
 
   char dest[80];
   int port;
@@ -1092,7 +1092,7 @@ tcpSocket::addrToURI(sockaddr* addr, const char* prefix)
 
   return omniURI::buildURI(prefix, addrstr, port);
 
-#elif defined (HAVE_GETNAMEINFO)
+#elif defined (OMNI_HAVE_GETNAMEINFO)
 
   char dest[80];
   int port;

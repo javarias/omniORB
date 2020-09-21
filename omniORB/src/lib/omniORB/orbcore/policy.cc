@@ -167,7 +167,7 @@ CORBA::Policy::_PD_repoId = "IDL:omg.org/CORBA/Policy:1.0";
 ///////////////// CORBA::PolicyError user exception //////////////////
 //////////////////////////////////////////////////////////////////////
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the variables external linkage otherwise. Its a bug.
 namespace CORBA {
 

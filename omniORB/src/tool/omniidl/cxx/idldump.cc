@@ -179,7 +179,7 @@ printdouble(IDL_Double d)
   printf("%s", buffer);
 }
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 static void
 printlongdouble(IDL_LongDouble d)
 {
@@ -263,9 +263,9 @@ visitConst(Const* c)
     printString(c->constAsString());
     printf("\"");
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
-#  if defined(SIZEOF_LONG) && (SIZEOF_LONG == 8)
+#  if defined(OMNI_SIZEOF_LONG) && (OMNI_SIZEOF_LONG == 8)
   case IdlType::tk_longlong:  printf("%ld", c->constAsLongLong());     break;
   case IdlType::tk_ulonglong: printf("%lu", c->constAsULongLong());    break;
 #  else
@@ -274,7 +274,7 @@ visitConst(Const* c)
 #  endif
 
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case IdlType::tk_longdouble:printlongdouble(c->constAsLongDouble()); break;
 #endif
   case IdlType::tk_wchar:     printwchar(c->constAsWChar());           break;
@@ -416,9 +416,9 @@ visitCaseLabel(CaseLabel* l)
     printChar(l->labelAsChar());
     printf("'");
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
-#  if defined(SIZEOF_LONG) && (SIZEOF_LONG == 8)
+#  if defined(OMNI_SIZEOF_LONG) && (OMNI_SIZEOF_LONG == 8)
   case IdlType::tk_longlong:  printf("%ld", l->labelAsLongLong());  break;
   case IdlType::tk_ulonglong: printf("%lu", l->labelAsULongLong()); break;
 #  else

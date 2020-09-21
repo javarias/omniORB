@@ -65,13 +65,6 @@
 #  include <process.h>
 #endif
 
-#ifdef __atmos__
-#  include <kernel.h>
-#  include <timelib.h>
-#  include <sys/time.h>
-#endif
-
-
 #define POA_NAME_SEP            '\xff'
 #define POA_NAME_SEP_STR        "\xff"
 #define TRANSIENT_SUFFIX_SEP    '\xfe'
@@ -571,7 +564,7 @@ omniOrbPOA::find_POA(const char* adapter_name, CORBA::Boolean activate_it)
   try {
     poa = attempt_to_activate_adapter(adapter_name);
   }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   catch (CORBA::SystemException&)
 #else
   catch (...)
@@ -1448,7 +1441,7 @@ omniOrbPOA::reference_to_servant(CORBA::Object_ptr reference)
 
   throw ObjectNotActive();
 
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1517,7 +1510,7 @@ omniOrbPOA::id_to_servant(const PortableServer::ObjectId& oid)
 
   throw ObjectNotActive();
 
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }
@@ -1872,7 +1865,7 @@ omniOrbPOA::objectExists(const _CORBA_Octet*, int)
 
 // Task to release servant reference in main thread policy POAs.
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
   class RemoveRefTask : public omniTask {
@@ -1903,7 +1896,7 @@ namespace {
     omni_tracedcondition    pd_cond;
   };
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 }
 #endif
 
@@ -3203,7 +3196,7 @@ omniOrbPOA::dispatch_to_sa(omniCallHandle& handle,
     throw omniORB::LOCATION_FORWARD(
 	               CORBA::Object::_duplicate(fr.forward_reference), 0);
   }
-#ifndef HAS_Cplusplus_catch_exception_by_base
+#ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
 #define RETHROW_EXCEPTION(name)  \
   catch (CORBA::name& ex) {  \
     pd_servant_activator_queue->unlock();  \
@@ -3341,7 +3334,7 @@ omniOrbPOA::dispatch_to_sl(omniCallHandle& handle,
   try {
     servant = sl->preinvoke(oid, this, handle.operation_name(), cookie);
   }
-#ifndef HAS_Cplusplus_catch_exception_by_base
+#ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
 #define RETHROW_EXCEPTION(name) catch(CORBA::name&) { exitAdapter(); throw; }
   OMNIORB_FOR_EACH_SYS_EXCEPTION(RETHROW_EXCEPTION)
 #undef RETHROW_EXCEPTION
@@ -3446,7 +3439,7 @@ omniOrbPOA::attempt_to_activate_adapter(const char* name)
   try {
     ret = pd_adapterActivator->unknown_adapter(this, name);
   }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   catch (CORBA::SystemException&) {
     poa_lock.lock();
     throw;
@@ -3823,19 +3816,19 @@ generateUniqueId(CORBA::Octet* k)
 
     CORBA::Short pid;
 
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef OMNI_HAVE_GETTIMEOFDAY
     // Use gettimeofday() to obtain the current time. Use this to
     // initialise the 32-bit field hi and med in the seed.
     // On unices, add the process id to med.
     // Initialise lo to 0.
     struct timeval v;
-# ifdef GETTIMEOFDAY_TIMEZONE
+# ifdef OMNI_GETTIMEOFDAY_TIMEZONE
     gettimeofday(&v,0);
 # else
     gettimeofday(&v);
 # endif
     hi = v.tv_sec;
-# ifdef HAVE_GETPID
+# ifdef OMNI_HAVE_GETPID
     pid = (CORBA::Short) getpid();
 # else
     pid = (CORBA::Short) v.tv_usec;

@@ -230,14 +230,14 @@ httpConnection::addHeader(const char* header, int value)
 void
 httpConnection::addDateHeader()
 {
-#if defined(HAVE_GMTIME)
+#if defined(OMNI_HAVE_GMTIME)
   omni_time_t now;
   omni_thread::get_time(now);
 
   char   tbuf[40];
   time_t ts = now.s;
 
-#  if defined(HAVE_GMTIME_R)
+#  if defined(OMNI_HAVE_GMTIME_R)
   struct tm  tms;
   struct tm* tp = gmtime_r(&ts, &tms);
 #  else

@@ -56,7 +56,7 @@ marshalIndirection(cdrStream& stream, omni::s_size_t pos)
   OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
   // In a counting stream, the currentOutputPtr is always zero.
 
-#if (SIZEOF_PTR == 8)
+#if (OMNI_SIZEOF_PTR == 8)
   if (offset < -0x7fffffff - 1) {
     // Value is more than 2GB earlier in the stream!
     OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,
@@ -611,7 +611,7 @@ handleIncompatibleValue(const char* repoId, CORBA::ULong hashval,
     // a value that could not be downcast to the required type.
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_ValueFactoryFailure, completion);
   }
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }

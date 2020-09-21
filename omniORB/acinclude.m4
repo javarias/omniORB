@@ -172,7 +172,7 @@ public:
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_need_fq_base_ctor" = yes; then
-  AC_DEFINE(OMNI_REQUIRES_FQ_BASE_CTOR,,
+  AC_DEFINE(REQUIRES_FQ_BASE_CTOR,,
             [define if base constructors have to be fully qualified])
 fi
 ])
@@ -198,7 +198,7 @@ public:
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_covariant_returns" = yes; then
-  AC_DEFINE(OMNI_HAVE_COVARIANT_RETURNS,,
+  AC_DEFINE(HAVE_COVARIANT_RETURNS,,
             [define if the compiler supports covariant return types])
 fi
 ])
@@ -216,7 +216,7 @@ int f(long x){return 1;}
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_cxx_long_is_int" = yes; then
-  AC_DEFINE(OMNI_LONG_IS_INT,,[define if long is the same type as int])
+  AC_DEFINE(LONG_IS_INT,,[define if long is the same type as int])
 fi
 ])
 
@@ -319,7 +319,7 @@ AC_DEFUN([OMNI_SOCKNAME_ARG],
 ],
  omni_cv_sockname_size_t=size_t, omni_cv_sockname_size_t=int)
  fi
- AC_DEFINE_UNQUOTED(OMNI_SOCKNAME_SIZE_T, $omni_cv_sockname_size_t,
+ AC_DEFINE_UNQUOTED(SOCKNAME_SIZE_T, $omni_cv_sockname_size_t,
                     [Define to the type of getsockname's third argument])
  AC_MSG_RESULT([$omni_cv_sockname_size_t])
 ])
@@ -380,7 +380,7 @@ omni_cv_enable_thread_tracing,
                omni_cv_enable_thread_tracing=no)
 ])
 if test "$omni_cv_enable_thread_tracing" = "yes"; then
-  AC_DEFINE(OMNIORB_ENABLE_LOCK_TRACES,,[define if you want mutexes to be traced])
+  AC_DEFINE(ENABLE_LOCK_TRACES,,[define if you want mutexes to be traced])
 fi
 ])
 
@@ -396,7 +396,7 @@ omni_cv_enable_ipv6,
                omni_cv_enable_ipv6=yes)
 ])
 if test "$omni_cv_enable_ipv6" = "no"; then
-  AC_DEFINE(OMNI_DISABLE_IPV6,,[define if you want to disable IPv6 support])
+  AC_DEFINE(DISABLE_IPV6,,[define if you want to disable IPv6 support])
 fi
 ])
 
@@ -411,7 +411,7 @@ omni_cv_enable_alloca,
                omni_cv_enable_alloca=yes)
 ])
 if test "$omni_cv_enable_alloca" = "no"; then
-  AC_DEFINE(OMNIORB_DISABLE_ALLOCA,,[define if you want to avoid use of alloca])
+  AC_DEFINE(DISABLE_ALLOCA,,[define if you want to avoid use of alloca])
 fi
 ])
 
@@ -426,7 +426,7 @@ omni_cv_enable_longdouble,
                omni_cv_enable_longdouble=yes)
 ])
 if test "$omni_cv_enable_longdouble" = "no"; then
-  AC_DEFINE(OMNIORB_DISABLE_LONGDOUBLE,,[define if you want to disable long double support])
+  AC_DEFINE(DISABLE_LONGDOUBLE,,[define if you want to disable long double support])
 fi
 AC_SUBST(ENABLE_LONGDOUBLE, $omni_cv_enable_longdouble)
 ])
@@ -439,7 +439,7 @@ AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
 dnl Enable HTTP Crypto library
 AC_DEFUN([OMNI_ENABLE_HTTP_CRYPTO],
 [
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
+if test -n $open_ssl_root; then
     omni_cv_enable_http_crypto=yes
 else
     omni_cv_enable_http_crypto=no
@@ -462,7 +462,7 @@ int c = __sync_sub_and_fetch(&b, 1);
  AC_LANG_POP(C++)
 ])
 if test "$omni_cv_sync_add_and_fetch" = yes; then
-  AC_DEFINE(OMNI_HAVE_SYNC_ADD_AND_FETCH,,
+  AC_DEFINE(HAVE_SYNC_ADD_AND_FETCH,,
             [define if __sync_add_and_fetch and __sync_sub_and_fetch are available])
 fi
 ])
@@ -481,7 +481,7 @@ omni_cv_enable_atomic,
                omni_cv_enable_atomic=yes)
 ])
 if test "$omni_cv_enable_atomic" = "no"; then
-  AC_DEFINE(OMNI_DISABLE_ATOMIC_OPS,,[define if you want to disable atomic operations])
+  AC_DEFINE(DISABLE_ATOMIC_OPS,,[define if you want to disable atomic operations])
 fi
 ])
 
@@ -498,7 +498,7 @@ omni_cv_enable_cfnetwork,
                omni_cv_enable_cfnetwork=no)
 ])
 if test "$omni_cv_enable_cfnetwork" = "yes"; then
-  AC_DEFINE(OMNI_USE_CFNETWORK_CONNECT,,[define if you want to use CFNetwork])
+  AC_DEFINE(USE_CFNETWORK_CONNECT,,[define if you want to use CFNetwork])
 fi
 AC_SUBST(OMNI_USE_CFNETWORK_CONNECT, $omni_cv_enable_cfnetwork)
 ])

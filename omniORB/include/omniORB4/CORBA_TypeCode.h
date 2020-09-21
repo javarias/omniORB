@@ -40,7 +40,7 @@ struct PR_structMember {
   TypeCode_ptr type;
 };
 
-#ifndef HAS_LongLong
+#ifndef OMNI_HAS_LongLong
 typedef ULong PR_unionDiscriminator;
 typedef Long  PR_unionDiscriminatorSigned;
 #else
@@ -295,11 +295,11 @@ public:
   static TypeCode_ptr PR_Object_tc();
   static TypeCode_ptr PR_string_tc();
   static TypeCode_ptr PR_wstring_tc();
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   static TypeCode_ptr PR_longlong_tc();
   static TypeCode_ptr PR_ulonglong_tc();
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   static TypeCode_ptr PR_longdouble_tc();
 #endif
 
@@ -344,11 +344,11 @@ _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_Object;
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_string;
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_wstring;
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_NamedValue;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_longlong;
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_ulonglong;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 _CORBA_MODULE_VAR _dyn_attr TypeCode_ptr _tc_longdouble;
 #endif
 

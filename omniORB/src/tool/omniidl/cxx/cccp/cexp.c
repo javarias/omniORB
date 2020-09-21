@@ -69,14 +69,14 @@
 /* #define YYDEBUG 1 */
 
 /* The following symbols should be autoconfigured:
-	HAVE_STDLIB_H
+	OMNI_HAVE_STDLIB_H
 	STDC_HEADERS
    In the mean time, we'll get by with approximations based
    on existing GCC configuration symbols.  */
 
 #ifdef POSIX
-# ifndef HAVE_STDLIB_H
-# define HAVE_STDLIB_H 1
+# ifndef OMNI_HAVE_STDLIB_H
+# define OMNI_HAVE_STDLIB_H 1
 # endif
 # ifndef STDC_HEADERS
 # define STDC_HEADERS 1
@@ -87,7 +87,7 @@
 # include <string.h>
 #endif
 
-#if HAVE_STDLIB_H || defined (MULTIBYTE_CHARS)
+#if OMNI_HAVE_STDLIB_H || defined (MULTIBYTE_CHARS)
 # include <stdlib.h>
 #endif
 
@@ -152,7 +152,7 @@ struct arglist {
 # endif
 #endif
 
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 # include <stdarg.h>
 # define VA_START(va_list, var) va_start (va_list, var)
 # define PRINTF_ALIST(msg) char *msg, ...

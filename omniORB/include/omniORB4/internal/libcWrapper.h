@@ -132,11 +132,11 @@ OMNI_NAMESPACE_END(omni)
 #  define _NT_DLL_ATTR
 #endif
 
-#ifndef HAVE_STRCASECMP
+#ifndef OMNI_HAVE_STRCASECMP
 int _NT_DLL_ATTR strcasecmp(const char *s1, const char *s2);
 #endif
 
-#ifndef HAVE_STRNCASECMP
+#ifndef OMNI_HAVE_STRNCASECMP
 int _NT_DLL_ATTR strncasecmp(const char *s1, const char *s2,size_t n);
 #endif
 

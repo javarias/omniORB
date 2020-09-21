@@ -31,13 +31,13 @@
 
 #include <idlsysdep.h>
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 typedef IDL_ULongLong IdlIntLiteral;
 #else
 typedef IDL_ULong IdlIntLiteral;
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef IDL_LongDouble IdlFloatLiteral;
 #else
 typedef IDL_Double IdlFloatLiteral;
@@ -52,7 +52,7 @@ int        idl_wstrlen(const IDL_WChar* s);
 IDL_WChar* idl_wstrcpy(IDL_WChar* a, const IDL_WChar* b);
 IDL_WChar* idl_wstrcat(IDL_WChar* a, const IDL_WChar* b);
 
-#ifndef HAVE_STRCASECMP
+#ifndef OMNI_HAVE_STRCASECMP
 int strcasecmp(const char* s1, const char* s2);
 #endif
 

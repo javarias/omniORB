@@ -37,13 +37,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#if !defined(HAVE_STRCASECMP) || !defined(HAVE_STRNCASECMP)
+#if !defined(OMNI_HAVE_STRCASECMP) || !defined(OMNI_HAVE_STRNCASECMP)
 #  include <ctype.h>  //  for toupper and tolower.
 #endif
 
 #include <SocketCollection.h>
 
-#ifdef HAVE_GETADDRINFO
+#ifdef OMNI_HAVE_GETADDRINFO
 #  ifdef __WIN32__
 #    include <ws2tcpip.h>
 #  else
@@ -53,12 +53,12 @@
 #  endif
 #endif
 
-#define HAVE_GETHOSTBYADDR
+#define OMNI_HAVE_GETHOSTBYADDR
 
 #ifdef __vxWorks__
 #  include <hostLib.h>
 #  include <resolvLib.h>
-#  undef HAVE_GETHOSTBYADDR
+#  undef OMNI_HAVE_GETHOSTBYADDR
 #endif
 
 #include <libcWrapper.h>
@@ -69,7 +69,7 @@ OMNI_NAMESPACE_BEGIN(omni)
 // Pseudo-random numbers
 //
 
-#ifdef HAVE_RAND_R
+#ifdef OMNI_HAVE_RAND_R
 static unsigned int seed=1;
 
 unsigned int LibcWrapper::Rand()
@@ -258,7 +258,7 @@ CORBA::Boolean LibcWrapper::isipaddr(const char* node)
 LibcWrapper::AddrInfo::~AddrInfo() {}
 
 
-#ifdef HAVE_GETADDRINFO
+#ifdef OMNI_HAVE_GETADDRINFO
 
 class FullAddrInfo : public LibcWrapper::AddrInfo
 {
@@ -433,7 +433,7 @@ FullAddrInfo::next()
 }
 
 
-#else // no HAVE_GETADDRINFO
+#else // no OMNI_HAVE_GETADDRINFO
 
 
 //
@@ -470,10 +470,10 @@ IP4AddrInfo::IP4AddrInfo(const char* name,
   pd_addr.sin_family      = INETSOCKET;
   pd_addr.sin_addr.s_addr = ip4addr;
   pd_addr.sin_port        = htons(port);
-#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
+#ifdef OMNI_HAVE_STRUCT_SOCKADDR_IN_SIN_LEN
   pd_addr.sin_len = sizeof(struct sockaddr_in);
 #endif
-#ifdef HAVE_STRUCT_SOCKADDR_IN_SIN_ZERO
+#ifdef OMNI_HAVE_STRUCT_SOCKADDR_IN_SIN_ZERO
   memset((void *)&pd_addr.sin_zero, 0, sizeof(pd_addr.sin_zero));
 #endif
 }
@@ -518,7 +518,7 @@ IP4AddrInfo::name()
   if ((const char*)pd_name) {
     return CORBA::string_dup(pd_name);
   }
-#ifdef HAVE_GETHOSTBYADDR
+#ifdef OMNI_HAVE_GETHOSTBYADDR
   omni_tracedmutex_lock sync(non_reentrant);
   struct hostent* ent = gethostbyaddr((const char*)&pd_addr.sin_addr.s_addr,
 				      sizeof(struct sockaddr_in),
@@ -715,13 +715,8 @@ again:
 
   struct hostent *hp = ::gethostbyname(node);
   
-# ifdef __atmos__
-  if (hp <= 0)
-    return 0
-# else
   if (hp == NULL)
     return 0;
-# endif
 
   return new IP4AddrInfo(hp->h_name, hostent_to_ip4(hp), port);
 #endif
@@ -732,7 +727,7 @@ void LibcWrapper::freeAddrInfo(LibcWrapper::AddrInfo* ai)
   delete ai;
 }
 
-#endif  // HAVE_GETADDRINFO
+#endif  // OMNI_HAVE_GETADDRINFO
 
 OMNI_NAMESPACE_END(omni)
 
@@ -741,7 +736,7 @@ OMNI_NAMESPACE_END(omni)
 // strcasecmp / strncasecmp
 //
 
-#ifndef HAVE_STRCASECMP
+#ifndef OMNI_HAVE_STRCASECMP
 int
 strcasecmp(const char *s1, const char *s2)
 {
@@ -755,7 +750,7 @@ strcasecmp(const char *s1, const char *s2)
 #endif
 
 
-#ifndef HAVE_STRNCASECMP
+#ifndef OMNI_HAVE_STRNCASECMP
 int
 strncasecmp(const char *s1, const char *s2, size_t n)
 {

@@ -60,10 +60,10 @@
 // Pointer arithmetic type
 //
 
-#if SIZEOF_PTR == SIZEOF_LONG
+#if OMNI_SIZEOF_PTR == OMNI_SIZEOF_LONG
 typedef unsigned long omni_ptr_arith_t;
 typedef long omni_s_size_t;
-#elif SIZEOF_PTR == SIZEOF_INT
+#elif OMNI_SIZEOF_PTR == OMNI_SIZEOF_INT
 typedef unsigned int omni_ptr_arith_t;
 typedef int omni_s_size_t;
 #elif defined (_WIN64)
@@ -103,7 +103,7 @@ typedef __int64 omni_s_size_t;
 //
 // Macro to provide const_cast functionality on all platforms.
 //
-#ifdef HAS_Cplusplus_const_cast
+#ifdef OMNI_HAS_Cplusplus_const_cast
 #  define OMNI_CONST_CAST(_t, _v) const_cast< _t >(_v)
 #  define OMNI_CONST_VOID_CAST(_v) const_cast<void*>(static_cast<const void*>(_v))
 #else
@@ -111,7 +111,7 @@ typedef __int64 omni_s_size_t;
 #  define OMNI_CONST_VOID_CAST(_v) (void*)(_t)
 #endif
 
-#ifdef HAS_Cplusplus_reinterpret_cast
+#ifdef OMNI_HAS_Cplusplus_reinterpret_cast
 #  define OMNI_REINTERPRET_CAST(_t, _v) reinterpret_cast< _t const& >(_v)
 #else
 #  define OMNI_REINTERPRET_CAST(_t, _v) (*(_t*)(&_v))
@@ -120,7 +120,7 @@ typedef __int64 omni_s_size_t;
 
 #if defined(__GNUG__)
 // GNU G++ compiler
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 #endif
 
 #if defined(__DECCXX)
@@ -134,7 +134,7 @@ typedef __int64 omni_s_size_t;
 #     ifdef __VMS
 #       pragma message disable CANTCOMPLETE
 #     endif
-#     define NEED_DUMMY_RETURN
+#     define OMNI_NEED_DUMMY_RETURN
 #     define OMNI_OPERATOR_REFPTR_REQUIRES_TYPEDEF
 #     define OMNI_PREMATURE_INSTANTIATION
 //    Extra macros from the Compaq C++ 5.x patch (in <top>/patches/) to be
@@ -147,7 +147,7 @@ typedef __int64 omni_s_size_t;
 
 #if defined(__SUNPRO_CC) 
 // SUN C++ compiler
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 
 // XXX
 // This is a hack to work around a bug in SUN C++ compiler (seen on 4.2).
@@ -169,7 +169,7 @@ typedef __int64 omni_s_size_t;
 #endif
 
 #if defined(__HP_aCC) || ( defined(__hpux__) && !defined(__GNUG__) )
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 #endif
 
 #if defined(__hpux__) && __OSVERSION__ < 11
@@ -186,7 +186,7 @@ typedef __int64 omni_s_size_t;
 
 #if defined(__aix__) && defined(__xlC__)
 #  define OMNI_NO_INLINE_FRIENDS
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 #endif
 
 
@@ -201,7 +201,7 @@ typedef __int64 omni_s_size_t;
 
 #if defined(_MSC_VER)
 
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 
 // VC.NET 2003 (v. 7.1) has problems recognizing inline friend
 // operators.
@@ -252,7 +252,7 @@ typedef __int64 omni_s_size_t;
 #  pragma warning(disable: 4250)
 
 #elif defined(__DMC__)
-#  define NEED_DUMMY_RETURN
+#  define OMNI_NEED_DUMMY_RETURN
 
 #  ifdef _WINSTATIC
 #    define _OMNIORB_NTDLL_IMPORT
@@ -353,7 +353,7 @@ typedef __int64 omni_s_size_t;
 #endif
 
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 
 #  define _CORBA_MODULE        namespace
 #  define _CORBA_MODULE_BEG    {
@@ -424,7 +424,7 @@ typedef __int64 omni_s_size_t;
 #  define _init_in_cldecl_(x)
 #  define _init_in_cldef_(x) x
 
-#endif // HAS_Cplusplus_Namespace
+#endif // OMNI_HAS_Cplusplus_Namespace
 
 
 #ifdef OMNI_REQUIRES_FQ_BASE_CTOR

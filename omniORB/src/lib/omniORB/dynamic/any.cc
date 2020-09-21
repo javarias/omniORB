@@ -571,7 +571,7 @@ CORBA::Any::operator<<=(ULong u)
   u >>= *pd_mbuf;
 }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 void
 CORBA::Any::operator<<=(LongLong l)
 {
@@ -592,7 +592,7 @@ CORBA::Any::operator<<=(ULongLong u)
 #endif
 
 
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
 void
 CORBA::Any::operator<<=(Float f)
 {
@@ -611,7 +611,7 @@ CORBA::Any::operator<<=(Double d)
   d >>= *pd_mbuf;
 }
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 void
 CORBA::Any::operator<<=(LongDouble d)
 {
@@ -720,7 +720,7 @@ CORBA::Any::operator>>=(ULong& u) const
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::Boolean
 CORBA::Any::operator>>=(LongLong& l) const
 {
@@ -744,7 +744,7 @@ CORBA::Any::operator>>=(ULongLong& u) const
 #endif
 
 
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
 CORBA::Boolean
 CORBA::Any::operator>>=(Float& f) const
 {
@@ -766,7 +766,7 @@ CORBA::Any::operator>>=(Double& d) const
   return 1;
 }
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::Boolean
 CORBA::Any::operator>>=(LongDouble& d) const
 {
