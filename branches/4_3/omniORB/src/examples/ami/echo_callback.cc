@@ -5,13 +5,9 @@
 
 #include <echo_ami.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-#  include <fstream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 class EchoHandler_i : public virtual POA_AMI_EchoHandler
 {

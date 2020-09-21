@@ -1,4 +1,4 @@
-/* include/omniORB4/acconfig.h.in.  Generated from configure.ac by autoheader.  */
+/* include/omniORB4/acconfig_pre.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
@@ -10,6 +10,21 @@
 
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
+
+/* define if you want to avoid use of alloca */
+#undef DISABLE_ALLOCA
+
+/* define if you want to disable atomic operations */
+#undef DISABLE_ATOMIC_OPS
+
+/* define if you want to disable IPv6 support */
+#undef DISABLE_IPV6
+
+/* define if you want to disable long double support */
+#undef DISABLE_LONGDOUBLE
+
+/* define if you want mutexes to be traced */
+#undef ENABLE_LOCK_TRACES
 
 /* define if gettimeofday() takes a timezone argument */
 #undef GETTIMEOFDAY_TIMEZONE
@@ -29,6 +44,9 @@
 
 /* define if the compiler supports const_cast<> */
 #undef HAVE_CONST_CAST
+
+/* define if the compiler supports covariant return types */
+#undef HAVE_COVARIANT_RETURNS
 
 /* define if the compiler supports dynamic_cast<> */
 #undef HAVE_DYNAMIC_CAST
@@ -72,17 +90,26 @@
 /* Define to 1 if you have the `inet_ntop' function. */
 #undef HAVE_INET_NTOP
 
-/* Define to 1 if you have the `insinff' function. */
-#undef HAVE_INSINFF
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `isinf' function. */
 #undef HAVE_ISINF
 
+/* Define to 1 if you have the `isinff' function. */
+#undef HAVE_ISINFF
+
 /* Define to 1 if you have the `isinfl' function. */
 #undef HAVE_ISINFL
+
+/* Define to 1 if you have the `isnan' function. */
+#undef HAVE_ISNAN
+
+/* Define to 1 if you have the `isnanf' function. */
+#undef HAVE_ISNANF
+
+/* Define to 1 if you have the `isnanl' function. */
+#undef HAVE_ISNANL
 
 /* Define if you have the `IsNANorINF' function */
 #undef HAVE_ISNANORINF
@@ -192,6 +219,9 @@
 /* Define to 1 if the system has the type `struct sockaddr_storage'. */
 #undef HAVE_STRUCT_SOCKADDR_STORAGE
 
+/* define if __sync_add_and_fetch and __sync_sub_and_fetch are available */
+#undef HAVE_SYNC_ADD_AND_FETCH
+
 /* Define to 1 if you have the <sys/if.h> header file. */
 #undef HAVE_SYS_IF_H
 
@@ -225,38 +255,8 @@
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
 
-/* define if you want to avoid use of alloca */
-#undef OMNIORB_DISABLE_ALLOCA
-
-/* define if you want to disable long double support */
-#undef OMNIORB_DISABLE_LONGDOUBLE
-
-/* define if you want mutexes to be traced */
-#undef OMNIORB_ENABLE_LOCK_TRACES
-
-/* define if you want to disable atomic operations */
-#undef OMNI_DISABLE_ATOMIC_OPS
-
-/* define if you want to disable IPv6 support */
-#undef OMNI_DISABLE_IPV6
-
-/* define if the compiler supports covariant return types */
-#undef OMNI_HAVE_COVARIANT_RETURNS
-
-/* define if __sync_add_and_fetch and __sync_sub_and_fetch are available */
-#undef OMNI_HAVE_SYNC_ADD_AND_FETCH
-
 /* define if long is the same type as int */
-#undef OMNI_LONG_IS_INT
-
-/* define if base constructors have to be fully qualified */
-#undef OMNI_REQUIRES_FQ_BASE_CTOR
-
-/* Define to the type of getsockname's third argument */
-#undef OMNI_SOCKNAME_SIZE_T
-
-/* define if you want to use CFNetwork */
-#undef OMNI_USE_CFNETWORK_CONNECT
+#undef LONG_IS_INT
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -275,6 +275,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* define if base constructors have to be fully qualified */
+#undef REQUIRES_FQ_BASE_CTOR
 
 /* The size of `bool', as computed by sizeof. */
 #undef SIZEOF_BOOL
@@ -312,6 +315,9 @@
 /* The size of `wchar_t', as computed by sizeof. */
 #undef SIZEOF_WCHAR_T
 
+/* Define to the type of getsockname's third argument */
+#undef SOCKNAME_SIZE_T
+
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at runtime.
@@ -325,6 +331,9 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
+
+/* define if you want to use CFNetwork */
+#undef USE_CFNETWORK_CONNECT
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

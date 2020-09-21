@@ -13,12 +13,9 @@
 
 #include <anyExample.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
+
 
 class anyExample_i : public POA_anyExample {
 public:
@@ -32,7 +29,7 @@ CORBA::Any* anyExample_i::testOp(const CORBA::Any& a)
 {
   cout << "Any received, containing: " << endl;
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   CORBA::Double d;
 #endif
 
@@ -45,7 +42,7 @@ CORBA::Any* anyExample_i::testOp(const CORBA::Any& a)
   if (a >>= l) {
     cout << "Long: " << l << endl;
   }
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   else if (a >>= d) {
     cout << "Double: " << (double)d << endl;
   }

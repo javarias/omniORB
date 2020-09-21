@@ -1,3 +1,17 @@
+Mon 21 Sep 22:46:33 BST 2020
+============================
+
+- Clean up and rationalise platform dependencies.
+
+acinclude.m4
+configure
+modules/omnipy.h
+modules/pyMarshal.cc
+modules/pyTypeCode.cc
+modules/pyValueType.cc
+modules/ziop/pyZIOP.cc
+
+
 Fri 18 Sep 17:12:15 BST 2020
 ============================
 

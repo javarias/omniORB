@@ -246,7 +246,7 @@ const CORBA::ULong CORBA::Object::_PR_magic         = 0x434F424AU; // COBJ
 //             ValueType TypeCode related constants                       //
 ////////////////////////////////////////////////////////////////////////////
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the variables external linkage otherwise. Its a bug.
 namespace CORBA {
 

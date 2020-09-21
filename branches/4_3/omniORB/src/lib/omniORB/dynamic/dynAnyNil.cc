@@ -96,7 +96,7 @@ public:
   virtual void insert_ulong(CORBA::ULong value) {
     _CORBA_invoked_nil_pseudo_ref();
   }
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   virtual void insert_float(CORBA::Float value) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -113,7 +113,7 @@ public:
   virtual void insert_typecode(CORBA::TypeCode_ptr value) {
     _CORBA_invoked_nil_pseudo_ref();
   }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   virtual void insert_longlong(CORBA::LongLong value) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -121,7 +121,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
   }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   virtual void insert_longdouble(CORBA::LongDouble value) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -173,7 +173,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
   }
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   virtual CORBA::Float get_float() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0.0;
@@ -195,7 +195,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
   }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   virtual CORBA::LongLong get_longlong() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
@@ -205,7 +205,7 @@ public:
     return 0;
   }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   virtual CORBA::LongDouble get_longdouble() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0.0;
@@ -257,7 +257,7 @@ public:
   virtual void insert_ulong_seq(CORBA::ULongSeq&) {
     _CORBA_invoked_nil_pseudo_ref();
   }
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   virtual void insert_float_seq(CORBA::FloatSeq&) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -265,7 +265,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
   }
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   virtual void insert_longlong_seq(CORBA::LongLongSeq&) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -273,7 +273,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
   }
 #endif
-#ifdef HAS_LongDouble						 
+#ifdef OMNI_HAS_LongDouble						 
   virtual void insert_longdouble_seq(CORBA::LongDoubleSeq&) {
     _CORBA_invoked_nil_pseudo_ref();
   }
@@ -309,7 +309,7 @@ public:
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
   }
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   virtual CORBA::FloatSeq* get_float_seq() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
@@ -319,7 +319,7 @@ public:
     return 0;
   }
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   virtual CORBA::LongLongSeq* get_longlong_seq() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0;
@@ -329,7 +329,7 @@ public:
     return 0;
   }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   virtual CORBA::LongDoubleSeq* get_longdouble_seq() {
     _CORBA_invoked_nil_pseudo_ref();
     return 0;

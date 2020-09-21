@@ -2814,7 +2814,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-ac_config_headers="$ac_config_headers include/omniORB4/acconfig.h"
+ac_config_headers="$ac_config_headers include/omniORB4/acconfig_pre.h"
 
 
 
@@ -6558,7 +6558,7 @@ fi
 $as_echo "$omni_cv_cxx_need_fq_base_ctor" >&6; }
 if test "$omni_cv_cxx_need_fq_base_ctor" = yes; then
 
-$as_echo "#define OMNI_REQUIRES_FQ_BASE_CTOR /**/" >>confdefs.h
+$as_echo "#define REQUIRES_FQ_BASE_CTOR /**/" >>confdefs.h
 
 fi
 
@@ -6613,7 +6613,7 @@ fi
 $as_echo "$omni_cv_cxx_covariant_returns" >&6; }
 if test "$omni_cv_cxx_covariant_returns" = yes; then
 
-$as_echo "#define OMNI_HAVE_COVARIANT_RETURNS /**/" >>confdefs.h
+$as_echo "#define HAVE_COVARIANT_RETURNS /**/" >>confdefs.h
 
 fi
 
@@ -6660,7 +6660,7 @@ fi
 $as_echo "$omni_cv_cxx_long_is_int" >&6; }
 if test "$omni_cv_cxx_long_is_int" = yes; then
 
-$as_echo "#define OMNI_LONG_IS_INT /**/" >>confdefs.h
+$as_echo "#define LONG_IS_INT /**/" >>confdefs.h
 
 fi
 
@@ -6757,7 +6757,7 @@ _ACEOF
 fi
 done
 
-for ac_func in isinf insinff isinfl localtime localtime_r nanosleep poll
+for ac_func in isinf isinff isinfl isnan isnanf isnanl localtime localtime_r
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6769,7 +6769,7 @@ _ACEOF
 fi
 done
 
-for ac_func in rand_r sigaction sigvec snprintf strcasecmp strdup
+for ac_func in nanosleep poll rand_r sigaction sigvec snprintf strcasecmp
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6781,7 +6781,7 @@ _ACEOF
 fi
 done
 
-for ac_func in strerror strftime stricmp strncasecmp strtoul strtoull
+for ac_func in strdup strerror strftime stricmp strncasecmp strtoul strtoull
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -7233,7 +7233,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
  fi
 
 cat >>confdefs.h <<_ACEOF
-#define OMNI_SOCKNAME_SIZE_T $omni_cv_sockname_size_t
+#define SOCKNAME_SIZE_T $omni_cv_sockname_size_t
 _ACEOF
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $omni_cv_sockname_size_t" >&5
@@ -7284,7 +7284,7 @@ fi
 $as_echo "$omni_cv_sync_add_and_fetch" >&6; }
 if test "$omni_cv_sync_add_and_fetch" = yes; then
 
-$as_echo "#define OMNI_HAVE_SYNC_ADD_AND_FETCH /**/" >>confdefs.h
+$as_echo "#define HAVE_SYNC_ADD_AND_FETCH /**/" >>confdefs.h
 
 fi
 
@@ -7375,7 +7375,7 @@ fi
 $as_echo "$omni_cv_enable_thread_tracing" >&6; }
 if test "$omni_cv_enable_thread_tracing" = "yes"; then
 
-$as_echo "#define OMNIORB_ENABLE_LOCK_TRACES /**/" >>confdefs.h
+$as_echo "#define ENABLE_LOCK_TRACES /**/" >>confdefs.h
 
 fi
 
@@ -7397,7 +7397,7 @@ fi
 $as_echo "$omni_cv_enable_ipv6" >&6; }
 if test "$omni_cv_enable_ipv6" = "no"; then
 
-$as_echo "#define OMNI_DISABLE_IPV6 /**/" >>confdefs.h
+$as_echo "#define DISABLE_IPV6 /**/" >>confdefs.h
 
 fi
 
@@ -7419,7 +7419,7 @@ fi
 $as_echo "$omni_cv_enable_alloca" >&6; }
 if test "$omni_cv_enable_alloca" = "no"; then
 
-$as_echo "#define OMNIORB_DISABLE_ALLOCA /**/" >>confdefs.h
+$as_echo "#define DISABLE_ALLOCA /**/" >>confdefs.h
 
 fi
 
@@ -7441,7 +7441,7 @@ fi
 $as_echo "$omni_cv_enable_longdouble" >&6; }
 if test "$omni_cv_enable_longdouble" = "no"; then
 
-$as_echo "#define OMNIORB_DISABLE_LONGDOUBLE /**/" >>confdefs.h
+$as_echo "#define DISABLE_LONGDOUBLE /**/" >>confdefs.h
 
 fi
 ENABLE_LONGDOUBLE=$omni_cv_enable_longdouble
@@ -7465,7 +7465,7 @@ fi
 $as_echo "$omni_cv_enable_atomic" >&6; }
 if test "$omni_cv_enable_atomic" = "no"; then
 
-$as_echo "#define OMNI_DISABLE_ATOMIC_OPS /**/" >>confdefs.h
+$as_echo "#define DISABLE_ATOMIC_OPS /**/" >>confdefs.h
 
 fi
 
@@ -7531,14 +7531,14 @@ fi
 $as_echo "$omni_cv_enable_cfnetwork" >&6; }
 if test "$omni_cv_enable_cfnetwork" = "yes"; then
 
-$as_echo "#define OMNI_USE_CFNETWORK_CONNECT /**/" >>confdefs.h
+$as_echo "#define USE_CFNETWORK_CONNECT /**/" >>confdefs.h
 
 fi
 OMNI_USE_CFNETWORK_CONNECT=$omni_cv_enable_cfnetwork
 
 
 
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
+if test -n $open_ssl_root; then
     omni_cv_enable_http_crypto=yes
 else
     omni_cv_enable_http_crypto=no
@@ -7646,6 +7646,10 @@ PROCESSOR_NAME=$proc_name
 
 PROCESSOR_DEFINE=$proc_def
 
+
+
+
+ac_config_commands="$ac_config_commands acconfig.h"
 
 
 ac_config_files="$ac_config_files mk/beforeauto.mk mk/afterauto.mk GNUmakefile"
@@ -8205,6 +8209,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
 config_files="$ac_config_files"
 config_headers="$ac_config_headers"
+config_commands="$ac_config_commands"
 
 _ACEOF
 
@@ -8233,6 +8238,9 @@ $config_files
 
 Configuration headers:
 $config_headers
+
+Configuration commands:
+$config_commands
 
 Report bugs to <bugs@omniorb-support.com>."
 
@@ -8362,7 +8370,8 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "include/omniORB4/acconfig.h") CONFIG_HEADERS="$CONFIG_HEADERS include/omniORB4/acconfig.h" ;;
+    "include/omniORB4/acconfig_pre.h") CONFIG_HEADERS="$CONFIG_HEADERS include/omniORB4/acconfig_pre.h" ;;
+    "acconfig.h") CONFIG_COMMANDS="$CONFIG_COMMANDS acconfig.h" ;;
     "mk/beforeauto.mk") CONFIG_FILES="$CONFIG_FILES mk/beforeauto.mk" ;;
     "mk/afterauto.mk") CONFIG_FILES="$CONFIG_FILES mk/afterauto.mk" ;;
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile" ;;
@@ -8472,6 +8481,7 @@ done
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
   test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
+  test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
 # Have a temporary directory for convenience.  Make it in the build tree
@@ -8768,7 +8778,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 fi # test -n "$CONFIG_HEADERS"
 
 
-eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS    "
+eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS    :C $CONFIG_COMMANDS"
 shift
 for ac_tag
 do
@@ -9006,9 +9016,16 @@ $as_echo "$as_me: $ac_file is unchanged" >&6;}
   fi
  ;;
 
-
+  :C)  { $as_echo "$as_me:${as_lineno-$LINENO}: executing $ac_file commands" >&5
+$as_echo "$as_me: executing $ac_file commands" >&6;}
+ ;;
   esac
 
+
+  case $ac_file$ac_mode in
+    "acconfig.h":C) sed 's/#\( *define\| *undef\) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h ;;
+
+  esac
 done # for ac_tag
 
 

@@ -52,14 +52,14 @@ public:
   Fixed(Long val);
   Fixed(ULong val);
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   Fixed(LongLong val);
   Fixed(ULongLong val);
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   Fixed(Double val);
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   Fixed(LongDouble val);
 #endif
   Fixed(const Fixed& val);
@@ -71,13 +71,13 @@ public:
   ~Fixed();
 
   // Conversions
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   operator LongLong() const;
 #else
   operator Long() const;
 #endif
-#ifndef NO_FLOAT
-#  ifdef HAS_LongDouble
+#ifndef OMNI_NO_FLOAT
+#  ifdef OMNI_HAS_LongDouble
   operator LongDouble() const;
 #  else
   operator Double() const;

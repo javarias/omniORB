@@ -47,7 +47,7 @@ struct IdlLongVal {
   };
 };
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 struct IdlLongLongVal {
   IdlLongLongVal(IDL_ULongLong a) : negative(0), u(a) {}
   IdlLongLongVal(IDL_LongLong  a) : negative(0), s(a) { if (a<0) negative=1; }
@@ -70,7 +70,7 @@ public:
   //
 
   virtual IdlLongVal       evalAsLongV();
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   virtual IdlLongLongVal   evalAsLongLongV();
 #endif
   virtual IDL_Float        evalAsFloat();
@@ -79,7 +79,7 @@ public:
   virtual IDL_Char         evalAsChar();
   virtual const char*      evalAsString();
   virtual Enumerator*      evalAsEnumerator(const Enum* target);
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   virtual IDL_LongDouble   evalAsLongDouble();
 #endif
   virtual IDL_WChar        evalAsWChar();
@@ -96,7 +96,7 @@ public:
   IDL_UShort    evalAsUShort();
   IDL_ULong 	evalAsULong();
   IDL_Octet 	evalAsOctet();
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IDL_LongLong  evalAsLongLong();
   IDL_ULongLong evalAsULongLong();
 #endif
@@ -121,7 +121,7 @@ public:
   virtual ~DummyExpr() {}
 
   IdlLongVal       evalAsLongV()     { return IdlLongVal (IDL_ULong(1)); }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IdlLongLongVal   evalAsLongLongV() { return IdlLongLongVal(IDL_ULongLong(1));}
 #endif
 
@@ -131,7 +131,7 @@ public:
   IDL_Char         evalAsChar()                         { return '!'; }
   const char*      evalAsString()                       { return "!"; }
   Enumerator*      evalAsEnumerator(const Enum* target) { return 0; }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   IDL_LongDouble   evalAsLongDouble()                   { return 1.0; }
 #endif
   IDL_WChar        evalAsWChar()                        { return '!'; }
@@ -151,7 +151,7 @@ public:
   ~IntegerExpr() {}
 
   IdlLongVal       evalAsLongV();
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IdlLongLongVal   evalAsLongLongV();
 #endif
   const char*      errText() { return "integer literal"; }
@@ -227,7 +227,7 @@ public:
 
   IDL_Float        evalAsFloat();
   IDL_Double       evalAsDouble();
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   IDL_LongDouble   evalAsLongDouble();
 #endif
   const char*      errText() { return "floating point literal"; }
@@ -269,7 +269,7 @@ public:
   ~ConstExpr() {}
 
   IdlLongVal       evalAsLongV();
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IdlLongLongVal   evalAsLongLongV();
 #endif
   IDL_Float        evalAsFloat();
@@ -279,7 +279,7 @@ public:
   IDL_Octet        evalAsOctet();
   const char*      evalAsString();
   Enumerator*      evalAsEnumerator(const Enum* target);
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   IDL_LongDouble   evalAsLongDouble();
 #endif
   IDL_WChar        evalAsWChar();
@@ -296,7 +296,7 @@ private:
 
 // Expressions
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 #define EXPR_INT_CONVERSION_FUNCTIONS \
   IdlLongVal       evalAsLongV(); \
   IdlLongLongVal   evalAsLongLongV();
@@ -305,7 +305,7 @@ private:
   IdlLongVal       evalAsLongV();
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 #define EXPR_FLOAT_CONVERSION_FUNCTIONS \
   IDL_Float        evalAsFloat();    \
   IDL_Double       evalAsDouble();   \

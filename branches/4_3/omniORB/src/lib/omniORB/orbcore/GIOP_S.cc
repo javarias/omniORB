@@ -46,9 +46,7 @@
 #include <poaimpl.h>
 #include <orbParameters.h>
 
-#ifdef HAVE_STD
 #include <memory>
-#endif
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -173,7 +171,7 @@ GIOP_S::dispatcher() {
     return 0;
   }
 
-#ifndef HAS_Cplusplus_catch_exception_by_base
+#ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
 #  define CATCH_AND_HANDLE(name) \
   catch(CORBA::name& ex) { \
     impl()->sendMsgErrorMessage(this, &ex); \
@@ -344,7 +342,7 @@ GIOP_S::handleRequest() {
     } \
 } while (0) 
 
-# ifndef HAS_Cplusplus_catch_exception_by_base
+# ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
 
   // We have to catch each type of system exception separately
   // here to support compilers which cannot catch more derived
@@ -382,7 +380,6 @@ GIOP_S::handleRequest() {
     throw;
   }
 
-#ifdef HAVE_STD
   catch (const std::bad_alloc&) {
     // We keep logging as simple as possible to avoid too much allocation.
     omniORB::logs(1, "Error: upcall raised std::bad_alloc.");
@@ -407,7 +404,6 @@ GIOP_S::handleRequest() {
       impl()->sendSystemException(this,ex);
     }
   }
-#endif // HAVE_STD
 
   catch (const omni_thread_fatal& thr_ex) {
     if (omniORB::trace(1)) {
@@ -526,7 +522,7 @@ GIOP_S::handleLocateRequest() {
     } \
 } while (0) 
 
-# ifndef HAS_Cplusplus_catch_exception_by_base
+# ifndef OMNI_HAS_Cplusplus_catch_exception_by_base
 
   // We have to catch each type of system exception separately
   // here to support compilers which cannot catch more derived

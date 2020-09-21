@@ -471,7 +471,7 @@ public:
       long v = PyInt_AS_LONG(obj);
 
       if (v < 0
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
           || v > 0xffffffff
 #endif
           ) {
@@ -490,7 +490,7 @@ public:
     unsigned long v = PyLong_AsUnsignedLong(obj);
 
     if (PyErr_Occurred() 
-#if SIZEOF_LONG > 4
+#if OMNI_SIZEOF_LONG > 4
         || v > 0xffffffff
 #endif
         ) {
@@ -1495,7 +1495,7 @@ public:
 
 };
 
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
 
 #define OMNIPY_CATCH_AND_HANDLE_SYSTEM_EXCEPTIONS \
 catch (Py_BAD_PARAM& ex) { \

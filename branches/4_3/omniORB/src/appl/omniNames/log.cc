@@ -38,14 +38,9 @@
 #include <INSMapper.h>
 #include <log.h>
 
-#ifdef HAVE_STD
-#  include <iostream>
-#  include <iomanip>
-   using namespace std;
-#else
-#  include <iostream.h>
-#  include <iomanip.h>
-#endif
+#include <iostream>
+#include <iomanip>
+using namespace std;
 
 #ifdef __WIN32__
 #  include <io.h>
@@ -68,21 +63,10 @@
 #  endif
 #endif
 
-#ifdef HAVE_STD
-#  define USE_STREAM_OPEN
-#  define OPEN(name,mode,perm) open(name,mode)
-#elif defined(__SUNPRO_CC) && __SUNPRO_CC >= 0x500
-#  define USE_STREAM_OPEN
-#  define OPEN(name,mode,perm) open(name,mode,perm)
-#elif defined(__DMC__)
-#  define USE_STREAM_OPEN
-#  define OPEN(name,mode,perm) open(name,mode,perm)
-#elif defined(__ICC)
-#  define USE_STREAM_OPEN
-#  define OPEN(name,mode,perm) open(name,mode,perm)
-#endif
+#define USE_STREAM_OPEN
+#define OPEN(name,mode,perm) open(name,mode)
 
-#ifndef HAVE_STRDUP
+#ifndef OMNI_HAVE_STRDUP
 
 // we have no strdup
 static char *
@@ -95,7 +79,7 @@ strdup (char* str)
     strcpy (newstr, str);
   return newstr;
 }
-#endif  // not HAVE_STRDUP
+#endif  // not OMNI_HAVE_STRDUP
 
 
 static
@@ -163,7 +147,7 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
   else {
 
 #if !defined(__WIN32__) && !defined(__VMS)
-#  ifdef HAVE_UNAME
+#  ifdef OMNI_HAVE_UNAME
 
     struct utsname un;
     if (uname(&un) < 0) {
@@ -175,7 +159,7 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
 				  strlen(un.nodename));
     sprintf(logname, "%s/omninames-%s", (const char*)logdir, un.nodename);
 
-#  elif HAVE_GETHOSTNAME
+#  elif OMNI_HAVE_GETHOSTNAME
 
     // Apparently on some AIX versions, MAXHOSTNAMELEN is too small (32) to
     // reflect the true size a hostname can be. Check and fix the value.
@@ -197,7 +181,7 @@ omniNameslog::omniNameslog(int& p, const char* arg_logdir,
 				  strlen(hostname));
     sprintf(logname, "%s/omninames-%s", (const char*)logdir, hostname);
 
-#  endif // HAVE_UNAME
+#  endif // OMNI_HAVE_UNAME
 
 #elif defined(__WIN32__)
 

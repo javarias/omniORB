@@ -212,7 +212,7 @@ static CORBA::PR_structMember _0RL_structmember_PortableServer_mForwardRequest[]
 };
 
 static CORBA::TypeCode_ptr _0RL_tc_PortableServer_mForwardRequest = CORBA::TypeCode::PR_exception_tc("IDL:omg.org/PortableServer/ForwardRequest:1.0", "ForwardRequest", _0RL_structmember_PortableServer_mForwardRequest, 1, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace PortableServer { 
   const CORBA::TypeCode_ptr _tc_ForwardRequest = _0RL_tc_PortableServer_mForwardRequest;

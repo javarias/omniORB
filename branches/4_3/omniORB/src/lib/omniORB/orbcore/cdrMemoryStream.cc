@@ -240,9 +240,9 @@ cdrMemoryStream::cdrMemoryStream(void* databuffer)
   pd_bufp = databuffer;
   pd_bufp_8 = databuffer;
 
-#if (SIZEOF_LONG == SIZEOF_PTR)
+#if (OMNI_SIZEOF_LONG == OMNI_SIZEOF_PTR)
   pd_inb_end = (void *) ULONG_MAX;
-#elif (SIZEOF_INT == SIZEOF_PTR)
+#elif (OMNI_SIZEOF_INT == OMNI_SIZEOF_PTR)
   pd_inb_end = (void *) UINT_MAX;
 #elif defined (_WIN64)
   pd_inb_end = (void *) _UI64_MAX;

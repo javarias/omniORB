@@ -172,7 +172,7 @@ CORBA::LocalObject::_unmarshalObjRef(cdrStream& s)
 {
   OMNIORB_THROW(MARSHAL, MARSHAL_LocalObject,
 		(CORBA::CompletionStatus)s.completion());
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return 0;
 #endif
 }

@@ -30,11 +30,11 @@
 #include <math.h>
 #include <idlutil.h>
 
-#ifdef HAVE_NAN_H
+#ifdef OMNI_HAVE_NAN_H
 #  include <nan.h>
 #endif
 
-#if defined(HAVE_ISINF) && defined(HAVE_ISINFF) && (defined(HAVE_ISINFL) || !defined(HAS_LongDouble))
+#if defined(OMNI_HAVE_ISINF) && defined(OMNI_HAVE_ISINFF) && (defined(OMNI_HAVE_ISINFL) || !defined(OMNI_HAS_LongDouble))
 
 inline IDL_Boolean IdlFPOverflow(IDL_Double f) {
   return isinf(f) || isnan(f);
@@ -43,13 +43,13 @@ inline IDL_Boolean IdlFPOverflow(IDL_Double f) {
 inline IDL_Boolean IdlFPOverflow(IDL_Float f) {
   return isinff(f) || isnanf(f);
 }
-#  ifdef HAS_LongDouble
+#  ifdef OMNI_HAS_LongDouble
 inline IDL_Boolean IdlFPOverflow(IDL_LongDouble f) {
   return isinfl(f) || isnanl(f);
 }
 #  endif
 
-#elif defined(HAVE_ISNANORINF)
+#elif defined(OMNI_HAVE_ISNANORINF)
 
 inline IDL_Boolean IdlFPOverflow(IDL_Float f) {
   double d = f;
@@ -58,7 +58,7 @@ inline IDL_Boolean IdlFPOverflow(IDL_Float f) {
 inline IDL_Boolean IdlFPOverflow(IDL_Double f) {
   return IsNANorINF(f);
 }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 inline IDL_Boolean IdlFPOverflow(IDL_LongDouble f) {
   return 0;
 }
@@ -72,7 +72,7 @@ inline IDL_Boolean IdlFPOverflow(IDL_Float f) {
 inline IDL_Boolean IdlFPOverflow(IDL_Double f) {
   return 0;
 }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 inline IDL_Boolean IdlFPOverflow(IDL_LongDouble f) {
   return 0;
 }

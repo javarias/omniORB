@@ -98,7 +98,7 @@ PortableServer::DynamicImplementation::_is_a(const char* logical_type_id)
 }
 
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
   class DSIPostInvoker {
@@ -150,7 +150,7 @@ namespace {
     int                                    pd_done;
   };
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 }
 #endif
 
@@ -304,7 +304,7 @@ DSIMainThreadTask::execute()
     poaCurrentStackInsert insert(pd_sreq.calldesc());
     pd_servant->invoke(&pd_sreq);
   }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
   catch (CORBA::Exception& ex) {
     pd_except = CORBA::Exception::_duplicate(&ex);
   }

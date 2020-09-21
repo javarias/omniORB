@@ -171,7 +171,7 @@ httpAddress::duplicate(const char* host) const {
 }
 
 /////////////////////////////////////////////////////////////////////////
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
   struct httpConnHolder {
@@ -198,7 +198,7 @@ namespace {
     SocketHandle_t        sock;
     httpActiveConnection* conn;
   };
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 };
 #endif
 

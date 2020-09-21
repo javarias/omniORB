@@ -45,7 +45,7 @@
 #  include <net/if.h>
 #endif
 
-#if defined(HAVE_IFADDRS_H)
+#if defined(OMNI_HAVE_IFADDRS_H)
 #  include <ifaddrs.h>
 #endif
  
@@ -138,7 +138,7 @@ tcpTransportImpl::addToIOR(const char* param, IORPublish* eps) {
 /////////////////////////////////////////////////////////////////////////
 #if   defined(__vxWorks__)
 static void vxworks_get_ifinfo(omnivector<const char*>& ifaddrs);
-#elif defined(HAVE_IFADDRS_H)
+#elif defined(OMNI_HAVE_IFADDRS_H)
 static void ifaddrs_get_ifinfo(omnivector<const char*>& addrs);
 #elif defined(UnixArchitecture)
 static void unix_get_ifinfo(omnivector<const char*>& ifaddrs);
@@ -155,7 +155,7 @@ tcpTransportImpl::initialise() {
 
 #if   defined(__vxWorks__)
   vxworks_get_ifinfo(ifAddresses);
-#elif defined(HAVE_IFADDRS_H)
+#elif defined(OMNI_HAVE_IFADDRS_H)
   ifaddrs_get_ifinfo(ifAddresses);
 #elif defined(UnixArchitecture)
   unix_get_ifinfo(ifAddresses);
@@ -185,7 +185,7 @@ tcpTransportImpl::getInterfaceAddress() {
 const tcpTransportImpl _the_tcpTransportImpl;
 
 /////////////////////////////////////////////////////////////////////////
-#if defined(HAVE_IFADDRS_H)
+#if defined(OMNI_HAVE_IFADDRS_H)
 static
 void ifaddrs_get_ifinfo(omnivector<const char*>& addrs)
 {
@@ -261,7 +261,7 @@ void ifaddrs_get_ifinfo(omnivector<const char*>& addrs)
 
 #elif defined(UnixArchitecture) && !defined(__vxWorks__)
 
-#  if defined(HAVE_STRUCT_LIFCONF) && defined(OMNI_SUPPORT_IPV6)
+#  if defined(OMNI_HAVE_STRUCT_LIFCONF) && defined(OMNI_SUPPORT_IPV6)
 #    ifdef __sunos__
 #      undef ifc_buf
 #      undef ifc_req

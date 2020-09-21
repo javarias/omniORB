@@ -8,7 +8,7 @@ AC_CONFIG_AUX_DIR(bin/scripts)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-AC_CONFIG_HEADERS(include/omniORB4/acconfig.h)
+AC_CONFIG_HEADERS(include/omniORB4/acconfig_pre.h)
 
 dnl to prevent error from autoreconf while crosscompiling
 m4_pattern_allow(PKG_CONFIG_LIBDIR)
@@ -135,9 +135,9 @@ dnl ** Functions
 AC_LANG(C)
 AC_CHECK_FUNCS(getaddrinfo gethostname getopt getpid gettimeofday)
 AC_CHECK_FUNCS(getnameinfo gmtime gmtime_r inet_ntop)
-AC_CHECK_FUNCS(isinf insinff isinfl localtime localtime_r nanosleep poll)
-AC_CHECK_FUNCS(rand_r sigaction sigvec snprintf strcasecmp strdup)
-AC_CHECK_FUNCS(strerror strftime stricmp strncasecmp strtoul strtoull)
+AC_CHECK_FUNCS(isinf isinff isinfl isnan isnanf isnanl localtime localtime_r)
+AC_CHECK_FUNCS(nanosleep poll rand_r sigaction sigvec snprintf strcasecmp)
+AC_CHECK_FUNCS(strdup strerror strftime stricmp strncasecmp strtoul strtoull)
 AC_CHECK_FUNCS(strtouq uname vprintf vsnprintf)
 AC_FUNC_ALLOCA
 AC_LANG(C++)
@@ -261,6 +261,11 @@ AC_SUBST(PROCESSOR_NAME, $proc_name)
 AC_SUBST(PROCESSOR_DEFINE, $proc_def)
 
 dnl ** Output
+
+dnl Rewrite the config header to prefix definitions with OMNI, to avoid clashes
+
+AC_CONFIG_COMMANDS([acconfig.h],
+                   [sed 's/#\( *define\| *undef\) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h])
 
 AC_CONFIG_FILES(mk/beforeauto.mk mk/afterauto.mk GNUmakefile)
 AC_CONFIG_FILES(src/tool/omniidl/python2/scripts/omniidl)

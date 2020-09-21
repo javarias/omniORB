@@ -77,7 +77,7 @@ public:
 	    ((l & 0x000000ff) << 24));
   }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   static inline _CORBA_LongLong byteSwap(_CORBA_LongLong l) {
     return (((l & _CORBA_LONGLONG_CONST(0xff00000000000000)) >> 56) |
 	    ((l & _CORBA_LONGLONG_CONST(0x00ff000000000000)) >> 40) |
@@ -154,7 +154,7 @@ public:
 
   inline _CORBA_Boolean unmarshalBoolean() {
     _CORBA_Octet o = unmarshalOctet();
-#ifdef HAS_Cplusplus_Bool
+#ifdef OMNI_HAS_Cplusplus_Bool
     return o ? true : false;
 #else
     return (_CORBA_Boolean)o;
@@ -206,7 +206,7 @@ public:
   intMarshalFns(Long,   ALIGN_4)
   intMarshalFns(ULong,  ALIGN_4)  
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   intMarshalFns(LongLong,  ALIGN_8)
   intMarshalFns(ULongLong, ALIGN_8)  
 #endif
@@ -217,7 +217,7 @@ public:
   //
   // Marshalling methods : float types
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
 #  ifndef USING_PROXY_FLOAT
 
@@ -232,7 +232,7 @@ public:
     return u.a;
   }
 
-#    if defined(HAS_LongLong) && !defined(OMNI_MIXED_ENDIAN_DOUBLE)
+#    if defined(OMNI_HAS_LongLong) && !defined(OMNI_MIXED_ENDIAN_DOUBLE)
 
   inline void marshalDouble(_CORBA_Double a) {
     union { _CORBA_Double a; _CORBA_ULongLong l; } u;
@@ -381,11 +381,11 @@ public:
 #  endif  // USING_PROXY_FLOAT
 
 
-#  if defined(HAS_LongDouble) && defined(HAS_LongLong)
+#  if defined(OMNI_HAS_LongDouble) && defined(OMNI_HAS_LongLong)
 
   // We only support LongDouble if we also have LongLong.
 
-#    if SIZEOF_LONG_DOUBLE == 16
+#    if OMNI_SIZEOF_LONG_DOUBLE == 16
 
   inline void marshalLongDouble(_CORBA_LongDouble a) {
     omni::ptr_arith_t p1 = outMkr(omni::ALIGN_8);
@@ -442,9 +442,9 @@ public:
   _CORBA_LongDouble unmarshalLongDouble();
 #    endif
 
-#  endif  // HAS_LongDouble
+#  endif  // OMNI_HAS_LongDouble
 
-#endif // NO_FLOAT
+#endif // OMNI_NO_FLOAT
 
 
   //
@@ -594,7 +594,7 @@ public:
   inline void
   unmarshalArrayBoolean(_CORBA_Boolean* a, int length)
   {
-#if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
+#if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
     get_octet_array((_CORBA_Char*)a, length, omni::ALIGN_1);
 #else
     for (int i = 0; i < length; i++)
@@ -643,7 +643,7 @@ public:
 	a[i] = byteSwap(a[i]);
   }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   inline void
   unmarshalArrayLongLong(_CORBA_LongLong* a, int length)
   {
@@ -665,7 +665,7 @@ public:
   }
 #endif
 
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
   inline void
   unmarshalArrayFloat(_CORBA_Float* a, int length)
   {
@@ -687,7 +687,7 @@ public:
 
     if (unmarshal_byte_swap()) {
 
-#  if defined(HAS_Longlong) && !defined (OMNI_MIXED_ENDIAN_DOUBLE)
+#  if defined(OMNI_HAS_Longlong) && !defined (OMNI_MIXED_ENDIAN_DOUBLE)
       _CORBA_ULongLong* p=(_CORBA_ULongLong*)a;
       for( int i = 0; i < length; i++ ) {
 	p[i] = byteSwap(p[i]);
@@ -854,13 +854,13 @@ private:
   fetchReserveMarshalFns(UShort);
   fetchReserveMarshalFns(Long);
   fetchReserveMarshalFns(ULong);
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   fetchReserveMarshalFns(LongLong);
   fetchReserveMarshalFns(ULongLong);
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   fetchReserveMarshalFns(Double);
-#  if defined(HAS_LongDouble) && defined(HAS_LongLong)
+#  if defined(OMNI_HAS_LongDouble) && defined(OMNI_HAS_LongLong)
   fetchReserveMarshalFns(LongDouble);
 #  endif
 #endif
@@ -949,14 +949,14 @@ marshallingOperators(Short)
 marshallingOperators(UShort)
 marshallingOperators(Long)
 marshallingOperators(ULong)
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 marshallingOperators(LongLong)
 marshallingOperators(ULongLong)
 #endif
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
 marshallingOperators(Float)
 marshallingOperators(Double)
-#  if defined(HAS_LongDouble) && defined(HAS_LongLong)
+#  if defined(OMNI_HAS_LongDouble) && defined(OMNI_HAS_LongLong)
 marshallingOperators(LongDouble)
 #  endif
 #endif
@@ -973,7 +973,7 @@ void operator<<=(char& a, cdrStream& s);
 void operator>>=(unsigned char  a, cdrStream& s);
 void operator<<=(unsigned char& a, cdrStream& s);
 
-#ifdef HAS_Cplusplus_Bool
+#ifdef OMNI_HAS_Cplusplus_Bool
 
 void operator>>=(bool  a, cdrStream& s);
 void operator<<=(bool& a, cdrStream& s);

@@ -381,7 +381,7 @@ marshalIndirection(cdrStream& stream, omni::s_size_t pos)
   OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
   // In a counting stream, the currentOutputPtr is always zero.
 
-#if (SIZEOF_PTR == 8)
+#if (OMNI_SIZEOF_PTR == 8)
   if (offset < -0x7fffffff - 1) {
     // Value is more than 2GB earlier in the stream!
     OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,

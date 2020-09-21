@@ -1129,20 +1129,20 @@ omniORB::generateNewKey(omniORB::objectKey& k)
       // initialise the seed of the objectKey generator
       // Guarantee that no two keys generated on the same machine are the same
       // ever.
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef OMNI_HAVE_GETTIMEOFDAY
       // Use gettimeofday() to obtain the current time. Use this to
       // initialise the 32-bit field hi and med in the seed.
       // On unices, add the process id to med.
       // Initialise lo to 0.
       struct timeval v;
-#ifdef GETTIMEOFDAY_TIMEZONE
+#ifdef OMNI_GETTIMEOFDAY_TIMEZONE
       gettimeofday(&v,0);
 #else
       gettimeofday(&v);
 #endif
       omniORB_seed.hi = v.tv_sec;
       omniORB_seed.med = (v.tv_usec << 12);
-#ifdef HAVE_GETPID
+#ifdef OMNI_HAVE_GETPID
       omniORB_seed.med += getpid();
 #else
       // without the process id, there is no guarantee that the keys generated
@@ -1207,7 +1207,7 @@ omniORB::generateNewKey(omniORB::objectKey& k)
 }
 
 
-#if defined(HAS_Cplusplus_Namespace)
+#if defined(OMNI_HAS_Cplusplus_Namespace)
 namespace omniORB {
 #endif
 
@@ -1232,7 +1232,7 @@ operator!=(const omniORB::objectKey &k1,const omniORB::objectKey &k2)
 	  k1.lo != k2.lo) ? 1 : 0;
 }
 
-#if defined(HAS_Cplusplus_Namespace)
+#if defined(OMNI_HAS_Cplusplus_Namespace)
 }
 #endif
 

@@ -40,15 +40,15 @@ typedef _CORBA_Short      Short;
 typedef _CORBA_UShort     UShort;
 typedef _CORBA_Long       Long;
 typedef _CORBA_ULong      ULong;
-# ifdef HAS_LongLong
+# ifdef OMNI_HAS_LongLong
 typedef _CORBA_LongLong   LongLong;
 typedef _CORBA_ULongLong  ULongLong;
 # endif
 typedef _CORBA_WChar      WChar;
-# ifndef NO_FLOAT
+# ifndef OMNI_NO_FLOAT
 typedef _CORBA_Float      Float;
 typedef _CORBA_Double     Double;
-# ifdef HAS_LongDouble
+# ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LongDouble LongDouble;
 # endif
 # endif
@@ -60,15 +60,15 @@ typedef _CORBA_Short&      Short_out;
 typedef _CORBA_UShort&     UShort_out;
 typedef _CORBA_Long&       Long_out;
 typedef _CORBA_ULong&      ULong_out;
-# ifdef HAS_LongLong
+# ifdef OMNI_HAS_LongLong
 typedef _CORBA_LongLong&   LongLong_out;
 typedef _CORBA_ULongLong&  ULongLong_out;
 # endif
 typedef _CORBA_WChar&      WChar_out;
-# ifndef NO_FLOAT
+# ifndef OMNI_NO_FLOAT
 typedef _CORBA_Float&      Float_out;
 typedef _CORBA_Double&     Double_out;
-# ifdef HAS_LongDouble
+# ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LongDouble& LongDouble_out;
 # endif
 # endif

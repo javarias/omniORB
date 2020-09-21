@@ -31,11 +31,11 @@
 
 #include <stddef.h>
 
-#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__) && !defined(__vxWorks__)
-#include <strings.h>
-#include <string.h>
+#if !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__) && !defined(__vxWorks__)
+#  include <strings.h>
+#  include <string.h>
 #else
-#include <string.h>
+#  include <string.h>
 #endif
 #include <omniORB4/CORBA_sysdep.h>
 #include <omnithread.h>

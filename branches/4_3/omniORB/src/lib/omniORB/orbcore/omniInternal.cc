@@ -163,7 +163,7 @@ CORBA::Boolean orbParameters::throwTransientOnTimeOut = 0;
 
 ////////////////////////////////////////////////////////////////////////////
 
-#if defined(HAS_Cplusplus_Namespace)
+#if defined(OMNI_HAS_Cplusplus_Namespace)
 #  ifndef __DMC__
 using omniORB::operator==;
 #  endif

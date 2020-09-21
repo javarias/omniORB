@@ -401,11 +401,11 @@ public:
   IDL_Char         constAsChar()       const;
   IDL_Octet        constAsOctet()      const;
   const char*      constAsString()     const;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IDL_LongLong     constAsLongLong()   const;
   IDL_ULongLong    constAsULongLong()  const;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   IDL_LongDouble   constAsLongDouble() const;
 #endif
   IDL_WChar        constAsWChar()      const;
@@ -435,11 +435,11 @@ private:
     IDL_Char         char_;
     IDL_Octet        octet_;
     char*            string_;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     IDL_LongLong     longlong_;
     IDL_ULongLong    ulonglong_;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     IDL_LongDouble   longdouble_;
 #endif
     IDL_WChar        wchar_;
@@ -652,7 +652,7 @@ public:
   IDL_ULong        labelAsULong()      const;
   IDL_Boolean      labelAsBoolean()    const;
   IDL_Char         labelAsChar()       const;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   IDL_LongLong     labelAsLongLong()   const;
   IDL_ULongLong    labelAsULongLong()  const;
 #endif
@@ -671,7 +671,7 @@ public:
   void setDefaultULong     (IDL_ULong     v) { v_.ulong_      = v; }
   void setDefaultBoolean   (IDL_Boolean   v) { v_.boolean_    = v; }
   void setDefaultChar      (IDL_Char      v) { v_.char_       = v; }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   void setDefaultLongLong  (IDL_LongLong  v) { v_.longlong_   = v; }
   void setDefaultULongLong (IDL_ULongLong v) { v_.ulonglong_  = v; }
 #endif
@@ -689,7 +689,7 @@ private:
     IDL_ULong        ulong_;
     IDL_Boolean      boolean_;
     IDL_Char         char_;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     IDL_LongLong     longlong_;
     IDL_ULongLong    ulonglong_;
 #endif

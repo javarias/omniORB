@@ -34,6 +34,6 @@
 
 /* Uncomment this to enable lock tracing. See omniORB4/tracedthread.h.*/
 
-/*#define OMNIORB_ENABLE_LOCK_TRACES*/
+/*#define OMNI_ENABLE_LOCK_TRACES*/
 
 #endif

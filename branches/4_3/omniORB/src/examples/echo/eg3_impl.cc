@@ -19,12 +19,8 @@
 
 #include <echo.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr, CORBA::Object_ptr);
 

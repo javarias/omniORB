@@ -30,7 +30,7 @@
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-#if (SIZEOF_WCHAR == 4)
+#if (OMNI_SIZEOF_WCHAR == 4)
 
 class NCS_W_UCS_4 : public omniCodeSet::NCS_W {
 public:
@@ -614,7 +614,7 @@ public:
 static CS_UCS_4_init _CS_UCS_4_init;
 
 
-#endif // (SIZEOF_WCHAR == 4)
+#endif // (OMNI_SIZEOF_WCHAR == 4)
 
 OMNI_NAMESPACE_END(omni)
 

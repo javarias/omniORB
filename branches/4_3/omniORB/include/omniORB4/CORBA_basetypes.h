@@ -28,7 +28,7 @@
 #ifndef __CORBA_BASETYPES_H__
 #define __CORBA_BASETYPES_H__
 
-#ifdef HAS_Cplusplus_Bool
+#ifdef OMNI_HAS_Cplusplus_Bool
 typedef bool                      _CORBA_Boolean;
 #else
 typedef unsigned char             _CORBA_Boolean;
@@ -42,12 +42,12 @@ typedef short                     _CORBA_Short;
 
 typedef unsigned short            _CORBA_UShort;
 
-#if SIZEOF_LONG == 4
+#if OMNI_SIZEOF_LONG == 4
 typedef long                      _CORBA_Long;
 
 typedef unsigned long             _CORBA_ULong;
 
-#elif SIZEOF_INT == 4
+#elif OMNI_SIZEOF_INT == 4
 #  ifndef OMNI_LONG_IS_INT
 #    define OMNI_LONG_IS_INT
 #  endif
@@ -61,13 +61,13 @@ typedef unsigned int              _CORBA_ULong;
 
 typedef _CORBA_WCHAR_DECL         _CORBA_WChar;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 typedef _CORBA_LONGLONG_DECL      _CORBA_LongLong;
 typedef _CORBA_ULONGLONG_DECL     _CORBA_ULongLong;
 #endif
 
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
 #ifndef __VMS
 
@@ -75,7 +75,7 @@ typedef _CORBA_ULONGLONG_DECL     _CORBA_ULongLong;
 typedef float                     _CORBA_Float;
 typedef double                    _CORBA_Double;
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    _CORBA_LongDouble;
 #endif
 
@@ -343,12 +343,12 @@ inline bool operator>(_CORBA_Double const& lhs,
 
 //  Assume long double type is compatible with the CORBA standard.
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    _CORBA_LongDouble;
 #endif
 
 #endif   // VMS float test
-#endif   // !defined(NO_FLOAT)
+#endif   // !defined(OMNI_NO_FLOAT)
 
 class cdrStream;
 

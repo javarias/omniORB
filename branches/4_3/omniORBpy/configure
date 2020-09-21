@@ -4143,7 +4143,7 @@ fi
 ENABLE_ZIOP=$omni_cv_enable_ziop
 
 
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
+if test -n $open_ssl_root; then
     omni_cv_enable_http_crypto=yes
 else
     omni_cv_enable_http_crypto=no

@@ -13,12 +13,8 @@
 
 #include <becho.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 
 class Echo_i : public virtual _sk_Echo {
