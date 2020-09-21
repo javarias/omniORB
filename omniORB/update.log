@@ -1,3 +1,11 @@
+Mon 21 Sep 23:24:27 BST 2020
+============================
+
+- Remove stray #endif.
+
+include/omniORB4/CORBA_sysdep_trad.h
+
+
 Mon 21 Sep 22:46:33 BST 2020
 ============================
 
