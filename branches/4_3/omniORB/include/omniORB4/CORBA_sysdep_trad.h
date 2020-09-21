@@ -3,7 +3,7 @@
 // CORBA_sysdep.h             Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2012 Apasphere Ltd
+//    Copyright (C) 2002-2020 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -393,7 +393,6 @@
 #if defined(__linux__)
 #  define OMNI_SOCKNAME_SIZE_T socklen_t
 #  define OMNI_HAVE_STRTOULL 1
-#  endif
 
 #elif defined(__sunos__)
 #  define OMNI_HAVE_STRTOULL 1
