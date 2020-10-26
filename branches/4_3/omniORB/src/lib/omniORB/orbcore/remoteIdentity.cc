@@ -39,6 +39,10 @@
 #include <exceptiondefs.h>
 #include <giopStream.h>
 
+#ifdef HAVE_STD
+#include <memory>
+#endif
+
 OMNI_NAMESPACE_BEGIN(omni)
 
 //////////////////////////////////////////////////////////////////////
@@ -95,7 +99,8 @@ omniRemoteIdentity::dispatch(omniCallDescriptor& call_desc)
   call_desc.initialiseCall(s);
 
   iop_client->InitialiseRequest();
-
+  call_desc.called(1);
+  
   // Wait for the reply.
   GIOP::ReplyStatusType rc = iop_client->ReceiveReply();
 

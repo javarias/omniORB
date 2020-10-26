@@ -38,6 +38,10 @@
 #include <exceptiondefs.h>
 #include <orbParameters.h>
 
+#ifdef HAVE_STD
+#include <memory>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -152,6 +156,13 @@ omniLocalIdentity::dispatch(omniCallDescriptor& call_desc)
   catch (omniORB::LOCATION_FORWARD&) {
     throw;
   }
+#ifdef HAVE_STD
+  catch (const std::bad_alloc&) {
+    // We keep logging as simple as possible to avoid too much allocation.
+    omniORB::logs(1, "Error: invoke raised std::bad_alloc.");
+    OMNIORB_THROW(NO_MEMORY, NO_MEMORY_BadAlloc, CORBA::COMPLETED_MAYBE);
+  }
+#endif // HAVE_STD
 
   catch (...) {
     if( omniORB::trace(1) ) {
