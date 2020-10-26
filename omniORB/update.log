@@ -1,3 +1,15 @@
+Mon 26 Oct 22:03:22 GMT 2020
+============================
+
+- Convert std::bad_alloc during call marshalling into CORBA::NO_MEMORY.
+
+include/omniORB4/callDescriptor.h
+src/lib/omniORB/orbcore/inProcessIdentity.cc
+src/lib/omniORB/orbcore/localIdentity.cc
+src/lib/omniORB/orbcore/omniObjRef.cc
+src/lib/omniORB/orbcore/remoteIdentity.cc
+
+
 Mon 21 Sep 23:24:27 BST 2020
 ============================
 
