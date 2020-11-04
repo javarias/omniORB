@@ -1,3 +1,11 @@
+Wed  4 Nov 15:26:54 GMT 2020
+============================
+
+- Correctly set OpenSSL cipher list.
+
+src/lib/omniORB/orbcore/ssl/sslContext.cc
+
+
 Mon 26 Oct 22:03:22 GMT 2020
 ============================
 

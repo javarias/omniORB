@@ -184,6 +184,7 @@ sslContext::create_ctx()
     set_CA();
     set_DH();
     set_ephemeralRSA();
+    set_cipher_list();
     set_verify();
     set_info_cb();
   }
