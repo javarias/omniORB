@@ -4854,8 +4854,23 @@ omniPy::
 PyUnlockingCdrStream::put_octet_array(const _CORBA_Octet* b, int size,
 				      omni::alignment_t align)
 {
-  omniPy::InterpreterUnlocker _u;
-  cdrStreamAdapter::put_octet_array(b, size, align);
+  // If the data fits in the stream buffer, just copy it directly
+  // without releasing the GIL. Python 3 tries to make GIL acquisition
+  // "fair", but ends up spinning between threads if multiple try to
+  // acquire the GIL at the same time. We therefore only release it if
+  // marshalling is likely to involve a blocking call.
+
+  omni::ptr_arith_t p1 = outMkr(align);
+  omni::ptr_arith_t p2 = p1 + size;
+
+  if ((void*)p2 <= pd_outb_end) {
+    memcpy((void*)p1, (void*)b, size);
+    pd_outb_mkr = (void*)p2;
+  }
+  else {
+    omniPy::InterpreterUnlocker _u;
+    cdrStreamAdapter::put_octet_array(b, size, align);
+  }
 }
 
 void
@@ -4863,8 +4878,24 @@ omniPy::
 PyUnlockingCdrStream::get_octet_array(_CORBA_Octet* b,int size,
 				      omni::alignment_t align)
 {
-  omniPy::InterpreterUnlocker _u;
-  cdrStreamAdapter::get_octet_array(b, size, align);
+  // If there is sufficient data in the stream buffer, just copy it
+  // directly without releasing the GIL. Python 3 tries to make GIL
+  // acquisition "fair", but ends up spinning between threads if
+  // multiple try to acquire the GIL at the same time.  We therefore
+  // only release it if unmarshalling is likely to involve a blocking
+  // call.
+
+  omni::ptr_arith_t p1 = inMkr(align);
+  omni::ptr_arith_t p2 = p1 + size;
+
+  if ((void*)p2 <= pd_inb_end) {
+    pd_inb_mkr = (void*)p2;
+    memcpy((void*)b, (void*)p1, size);
+  }
+  else {
+    omniPy::InterpreterUnlocker _u;
+    cdrStreamAdapter::get_octet_array(b, size, align);
+  }
 }
   
 void
