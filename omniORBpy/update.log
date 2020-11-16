@@ -1,3 +1,12 @@
+Mon 16 Nov 16:46:05 GMT 2020
+============================
+
+- Avoid unlocking/relocking the GIL during string marshalling, to
+  avoid spinning in Python 3's GIL implementation.
+
+modules/pyMarshal.cc
+
+
 Mon 21 Sep 22:46:33 BST 2020
 ============================
 
