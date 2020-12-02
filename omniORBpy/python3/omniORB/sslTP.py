@@ -48,7 +48,8 @@ Deprecated functions:
 import omniORB
 
 if omniORB.omniorb_dll_path is not None:
-    with os.add_dll_directory(omniorb_dll_path):
+    import os
+    with os.add_dll_directory(omniORB.omniorb_dll_path):
         import _omnipy
         from _omnisslTP import *
 else:
