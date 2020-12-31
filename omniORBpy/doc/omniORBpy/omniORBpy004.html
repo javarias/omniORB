@@ -173,11 +173,11 @@ about timeouts.</p><p><span style="font-family:monospace">supportPerThreadTimeOu
 <span style="font-family:monospace">0</span></p><p>If this parameter is set <span style="font-family:monospace">true</span>, timeouts can be set on a per
 thread basis, as well as globally and per object. Checking per-thread
 storage has a noticeable performance impact, so it is turned off by
-default.</p><p><span style="font-family:monospace">resetTimeoutOnRetries</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+default.</p><p><span style="font-family:monospace">resetTimeOutOnRetries</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>If <span style="font-family:monospace">true</span>, the call timeout is reset when an exception handler
 causes a call to be retried. If <span style="font-family:monospace">false</span>, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
-each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeout</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
+each individual call attempt.</p><p><span style="font-family:monospace">throwTransientOnTimeOut</span> &#XA0;&#XA0; <span style="font-style:italic">default</span> =
 <span style="font-family:monospace">0</span></p><p>omniORB 4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> exception that
 is part of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
@@ -445,7 +445,7 @@ handlers in the same manner as for <span style="font-family:monospace">TRANSIENT
 handlers. There is no default handler, do <span style="font-family:monospace">TIMEOUT</span> exceptions
 are propagated to application code by default.</p><p>omniORB version 4.1 and earlier did not have the <span style="font-family:monospace">CORBA.TIMEOUT</span>
 exception, and threw <span style="font-family:monospace">CORBA.TRANSIENT</span> instead. If the
-<span style="font-family:monospace">throwTransientOnTimeout</span> configuration parameter is set to
+<span style="font-family:monospace">throwTransientOnTimeOut</span> configuration parameter is set to
 <span style="font-family:monospace">1</span>, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.</p><p>The timeout exception handler is used when a CORBA call times out. It
 is <em>not</em> called when an AMI poller operation throws
