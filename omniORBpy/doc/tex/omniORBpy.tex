@@ -1771,14 +1771,14 @@ storage has a noticeable performance impact, so it is turned off by
 default.
 
 
-\confopt{resetTimeoutOnRetries}{0}
+\confopt{resetTimeOutOnRetries}{0}
 
 If \code{true}, the call timeout is reset when an exception handler
 causes a call to be retried. If \code{false}, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.
 
-\confopt{throwTransientOnTimeout}{0}
+\confopt{throwTransientOnTimeOut}{0}
 
 omniORB 4.2 supports the \code{CORBA::TIMEOUT} exception that is part
 of the CORBA Messaging specification. By default, that is the
@@ -2277,7 +2277,7 @@ are propagated to application code by default.
 
 omniORB version 4.1 and earlier did not have the \code{CORBA.TIMEOUT}
 exception, and threw \code{CORBA.TRANSIENT} instead. If the
-\code{throwTransientOnTimeout} configuration parameter is set to
+\code{throwTransientOnTimeOut} configuration parameter is set to
 \code{1}, omniORB 4.2 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.
 
@@ -2843,7 +2843,7 @@ keep to the default mode of opening multiple connections.
 omniORB can associate a timeout with a call, meaning that if the call
 takes too long a \code{CORBA::TIMEOUT} exception\footnote{Or
   \code{CORBA::TRANSIENT} if the backwards-compatibility
-  \code{throwTransientOnTimeout} parameter is set to \code{1}.} is
+  \code{throwTransientOnTimeOut} parameter is set to \code{1}.} is
 thrown. Timeouts can be set for the whole process, for a specific
 thread, or for a specific object reference.
 
