@@ -564,6 +564,10 @@ class StructBase(object):
         if desc is None:
             # Type is not properly registered
             return "<%s instance at 0x%x>" % (cname, id(self))
+
+        while desc[0] == tcInternal.tv_alias:
+            desc = desc[3]
+
         vals = []
         for i in range(4, len(desc), 2):
             attr = desc[i]
