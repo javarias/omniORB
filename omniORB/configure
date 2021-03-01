@@ -9023,7 +9023,7 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
-    "acconfig.h":C) sed 's/#\( *define\| *undef\) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h ;;
+    "acconfig.h":C) sed -e 's/#\( *define) \([A-Z]\)/#\1 OMNI_\2/g' -e 's/#\( *undef) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h ;;
 
   esac
 done # for ac_tag

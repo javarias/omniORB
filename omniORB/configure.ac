@@ -265,7 +265,7 @@ dnl ** Output
 dnl Rewrite the config header to prefix definitions with OMNI, to avoid clashes
 
 AC_CONFIG_COMMANDS([acconfig.h],
-                   [sed 's/#\( *define\| *undef\) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h])
+                   [sed -e 's/#\( *define) \([A-Z]\)/#\1 OMNI_\2/g' -e 's/#\( *undef) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h])
 
 AC_CONFIG_FILES(mk/beforeauto.mk mk/afterauto.mk GNUmakefile)
 AC_CONFIG_FILES(src/tool/omniidl/python2/scripts/omniidl)

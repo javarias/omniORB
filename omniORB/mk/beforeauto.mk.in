@@ -51,7 +51,7 @@ INSTALLIDLDIR    := $(DESTDIR)@datadir@/idl
 #
 
 ifeq (@CROSS_COMPILING@,yes)
-  EmbeddedSystem = 1
+  CrossCompiling = 1
 endif
 
 
@@ -60,7 +60,7 @@ endif
 # Tool bindir to use depends on make target
 #
 
-ifndef EmbeddedSystem
+ifndef CrossCompiling
 
 ifeq ($(MAKECMDGOALS),install)
     TOOLBINDIR = $(INSTALLBINDIR)
@@ -148,12 +148,14 @@ GENERATE_LIB_DEPEND = $(firstword \
 #############################################################################
 #
 # MakeSubdirs is a general rule which runs make in each of SUBDIRS.
-# Unfortunately we have to unset MAKEFLAGS otherwise the -I flags which
-# make passed to this make will be incorrectly passed down to the sub-make.
+# The way make is run in a subshell upset's make's jobserver, so we
+# contrive to pass through -j flags excluding the jobserver.
 #
 
+OMNI_MAKEFLAGS = $(filter-out --jobserver-auth%, $(MAKEFLAGS))
+
 define MakeSubdirs
-(unset MAKEFLAGS; \
+(MAKEFLAGS='$(OMNI_MAKEFLAGS)'; \
  set -e; \
  if [ "$$subdir_makeflags" = "" ]; then \
    subdir_makeflags='$(SUBDIR_MAKEFLAGS)'; \
