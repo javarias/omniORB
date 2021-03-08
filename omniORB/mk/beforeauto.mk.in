@@ -148,14 +148,12 @@ GENERATE_LIB_DEPEND = $(firstword \
 #############################################################################
 #
 # MakeSubdirs is a general rule which runs make in each of SUBDIRS.
-# The way make is run in a subshell upset's make's jobserver, so we
-# contrive to pass through -j flags excluding the jobserver.
+# Unfortunately we have to unset MAKEFLAGS otherwise the -I flags which
+# make passed to this make will be incorrectly passed down to the sub-make.
 #
 
-OMNI_MAKEFLAGS = $(filter-out --jobserver-auth%, $(MAKEFLAGS))
-
 define MakeSubdirs
-(MAKEFLAGS='$(OMNI_MAKEFLAGS)'; \
+(unset MAKEFLAGS; \
  set -e; \
  if [ "$$subdir_makeflags" = "" ]; then \
    subdir_makeflags='$(SUBDIR_MAKEFLAGS)'; \
