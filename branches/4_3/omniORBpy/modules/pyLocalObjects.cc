@@ -389,7 +389,7 @@ Py_ServantActivator::incarnate(const PortableServer::ObjectId& oid,
 #endif
   
   // Do the up-call
-  pyservant = PyEval_CallObject(method, argtuple);
+  pyservant = PyObject_CallObject(method, argtuple);
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
@@ -513,7 +513,7 @@ Py_ServantActivator::etherealize(const PortableServer::ObjectId& oid,
 #endif
   
   // Do the up-call
-  result = PyEval_CallObject(method, argtuple);
+  result = PyObject_CallObject(method, argtuple);
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
@@ -567,7 +567,7 @@ Py_ServantLocator::preinvoke(const PortableServer::ObjectId& oid,
 #endif
   
   // Do the up-call
-  rettuple = PyEval_CallObject(method, argtuple);
+  rettuple = PyObject_CallObject(method, argtuple);
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
@@ -702,7 +702,7 @@ Py_ServantLocator::postinvoke(const PortableServer::ObjectId& oid,
 #endif
 
   // Do the up-call
-  result = PyEval_CallObject(method, argtuple);
+  result = PyObject_CallObject(method, argtuple);
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
@@ -737,7 +737,7 @@ Py_AdapterActivator::unknown_adapter(PortableServer::POA_ptr parent,
 			   omniPy::createPyPOAObject(parent), name);
 
   // Do the up-call
-  pyresult = PyEval_CallObject(method, argtuple);
+  pyresult = PyObject_CallObject(method, argtuple);
   Py_DECREF(method);
   Py_DECREF(argtuple);
 
