@@ -42,7 +42,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-#if defined(HAS_Cplusplus_Namespace)
+#if defined(OMNI_HAS_Cplusplus_Namespace)
 using omniORB::operator==;
 #endif
 

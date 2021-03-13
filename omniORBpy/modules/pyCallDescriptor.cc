@@ -30,7 +30,7 @@
 #include <pyThreadCache.h>
 #include <omniORB4/IOP_C.h>
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
   class cdLockHolder {
@@ -53,7 +53,7 @@ namespace {
     omniPy::InterpreterUnlocker*  ul_;
     omnipyThreadCache::CacheNode* cn_;
   };
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 };
 #endif
 
