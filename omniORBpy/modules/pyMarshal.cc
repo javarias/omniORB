@@ -4673,7 +4673,7 @@ copyArgumentWChar(PyObject* d_o, PyObject* a_o,
 		       omniPy::formatString("Expecting unicode, got %r",
 					    "O", a_o->ob_type));
   }
-  if (PyUnicode_GET_SIZE(a_o) != 1) {
+  if (Unicode_GET_SIZE(a_o) != 1) {
     THROW_PY_BAD_PARAM(BAD_PARAM_WrongPythonType, compstatus,
 		       omniPy::formatString("Expecting unicode of length 1, "
 					    "got %r",

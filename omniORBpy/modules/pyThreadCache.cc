@@ -182,8 +182,8 @@ addNewNode(long id, unsigned int hash)
   // that case, the re-entry will get a valid Python thread state,
   // albeit without a threading.Thread object.
 
-  cn->workerThread = PyEval_CallObject(omniPy::pyWorkerThreadClass,
-				       omniPy::pyEmptyTuple);
+  cn->workerThread = PyObject_CallObject(omniPy::pyWorkerThreadClass,
+				         omniPy::pyEmptyTuple);
   if (!cn->workerThread) {
     if (omniORB::trace(1)) {
       {
@@ -284,8 +284,8 @@ run_undetached(void*)
   PyThreadState_Swap(threadState_);
 #endif
 
-  workerThread_ = PyEval_CallObject(omniPy::pyWorkerThreadClass,
-				    omniPy::pyEmptyTuple);
+  workerThread_ = PyObject_CallObject(omniPy::pyWorkerThreadClass,
+				      omniPy::pyEmptyTuple);
   if (!workerThread_) {
     if (omniORB::trace(2)) {
       omniORB::logs(2, "Exception trying to create WorkerThread for thread "
