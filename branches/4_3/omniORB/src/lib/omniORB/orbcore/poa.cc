@@ -2583,8 +2583,10 @@ omniOrbPOA::getAdapter(const _CORBA_Octet* key, int keysize)
     if (!child || child->pd_dying) {
       if (poa->pd_adapterActivator) {
 	// We need to extract the name properly here.
-	int namelen = k - name;
-	char* thename = new char[namelen + 1];
+	int   namelen = k - name;
+	char* thename = CORBA::string_alloc(namelen);
+	CORBA::String_var name_var(thename);
+        
 	memcpy(thename, name, namelen);
 	thename[namelen] = '\0';
 

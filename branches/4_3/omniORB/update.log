@@ -1,3 +1,11 @@
+Mon 15 Mar 17:34:15 GMT 2021
+============================
+
+- Fix minor leak of adapter name in adapter activator.
+
+src/lib/omniORB/orbcore/poa.cc
+
+
 Sat 13 Mar 22:42:09 GMT 2021
 ============================
 
