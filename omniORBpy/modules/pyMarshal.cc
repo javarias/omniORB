@@ -682,11 +682,25 @@ validateTypeString(PyObject* d_o, PyObject* a_o,
   CORBA::ULong len;
   const char*  str = String_AS_STRING_AND_SIZE(a_o, len);
 
+#if (PY_VERSION_HEX >= 0x03030000) // Python 3.3
+  omniPy::PyRefHolder holder;
+#endif
+  
   if (!str) {
+    omniORB::logs(1, "Failed to convert string to UTF-8. "
+                  "Invalid characters replaced.");
     if (omniORB::trace(1))
       PyErr_Print();
     else
       PyErr_Clear();
+
+#if (PY_VERSION_HEX >= 0x03030000) // Python 3.3
+    // Convert to UTF-8 with replacements for any invalid characters
+    holder = PyUnicode_AsEncodedString(a_o, "utf-8", "replace");
+    if (holder.valid())
+      str = RawString_AS_STRING_AND_SIZE(holder, len);
+    else
+#endif
 
     OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_CannotMapChar, compstatus);
   }
@@ -1888,6 +1902,18 @@ marshalPyObjectString(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   CORBA::ULong size;
   const char*  str = String_AS_STRING_AND_SIZE(a_o, size);
 
+#  if (PY_VERSION_HEX >= 0x03030000) // Python 3.3
+  omniPy::PyRefHolder holder;
+  
+  if (!str) {
+    PyErr_Clear();
+
+    // Convert to UTF-8 with replacements for any invalid characters
+    holder = PyUnicode_AsEncodedString(a_o, "utf-8", "replace");
+    str    = RawString_AS_STRING_AND_SIZE(holder, size);
+  }
+#  endif
+  
   omniPy::ncs_c_utf_8->marshalString(stream, stream.TCS_C(), 0, size, str);
 #endif
 }

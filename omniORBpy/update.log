@@ -1,3 +1,12 @@
+Tue 23 Mar 20:54:20 GMT 2021
+============================
+
+- Replace invalid unicode characters when marshalling, rather than
+  throwing DATA_CONVERSION.
+
+modules/pyMarshal.cc
+
+
 Tue 23 Mar 17:24:00 GMT 2021
 ============================
 
