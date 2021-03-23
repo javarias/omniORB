@@ -682,6 +682,15 @@ validateTypeString(PyObject* d_o, PyObject* a_o,
   CORBA::ULong len;
   const char*  str = String_AS_STRING_AND_SIZE(a_o, len);
 
+  if (!str) {
+    if (omniORB::trace(1))
+      PyErr_Print();
+    else
+      PyErr_Clear();
+
+    OMNIORB_THROW(DATA_CONVERSION, DATA_CONVERSION_CannotMapChar, compstatus);
+  }
+  
   if (max_len > 0 && len > max_len)
     OMNIORB_THROW(MARSHAL, MARSHAL_StringIsTooLong, compstatus);
 
