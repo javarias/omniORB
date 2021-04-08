@@ -1,3 +1,15 @@
+Thu  8 Apr 18:47:56 BST 2021
+============================
+
+- Use correct compression level and buffer size in ZIOP.
+
+src/lib/omniORB/ziop/omniZIOP.cc
+
+- Support -j make flag.
+
+mk/beforeauto.mk.in
+
+
 Mon 15 Mar 17:34:15 GMT 2021
 ============================
 
