@@ -35,6 +35,7 @@
 #include <GIOP_S.h>
 #include <transportRules.h>
 #include <poaimpl.h>
+#include <zlib.h>
 #include "zlibCompressor.h"
 
 OMNI_USING_NAMESPACE(omni)
@@ -290,7 +291,7 @@ setGlobalPolicies(const CORBA::PolicyList& policies)
 #undef min
 
 static inline
-CORBA::Boolean
+Compression::CompressionLevel
 min(Compression::CompressionLevel a, Compression::CompressionLevel b)
 {
   return a < b ? a : b;
@@ -535,11 +536,12 @@ giopCompressorImpl::compressBuffer(giopStream*        stream,
                  g_buf_start[3] == 'P');
 
   // Allocate new buffer
-  giopStream_Buffer* z_buf  = giopStream_Buffer::newBuffer(
-    g_buf_len + ZIOP_HEADER <= giopStream::bufferSize ?
-    giopStream::bufferSize : g_buf_len + ZIOP_HEADER);
+  CORBA::ULong       req_len = GIOP_ZIOP_HEADER + compressBound(g_buf_len);
+  giopStream_Buffer* z_buf   = giopStream_Buffer::newBuffer(
+    req_len <= giopStream::bufferSize ?
+    giopStream::bufferSize : req_len);
 
-  CORBA::ULong  z_buf_len   = z_buf->last - z_buf->start;
+  CORBA::ULong  z_buf_len   = z_buf->end - z_buf->start;
   CORBA::ULong  z_data_len  = z_buf_len - GIOP_ZIOP_HEADER;
   CORBA::Octet* z_buf_start = (CORBA::Octet*)z_buf + z_buf->start;
   CORBA::Octet* z_data      = z_buf_start + GIOP_ZIOP_HEADER;
@@ -620,7 +622,7 @@ giopCompressorImpl::compressorIndex(giopStream*               stream,
     pd_compressors.length(idx+1);
     pd_compressor_ids.length(idx+1);
 
-    pd_compressors[idx]                  = compressor;
+    pd_compressors[idx]                      = compressor;
     pd_compressor_ids[idx].compressor_id     = compressor_id;
     pd_compressor_ids[idx].compression_level = 6;
   }
