@@ -650,8 +650,11 @@ print_tag_policies(IOP::TaggedComponent& c)
           case 9:
             cout << "XAR";
             break;
+          case 101:
+            cout << "ZSTD";
+            break;
           default:
-            cout << "unknown";
+            cout << "unknown (" << compressor_id << ")";
             break;
           }
           cout << ", level " << compression_level << endl;

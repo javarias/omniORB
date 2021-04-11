@@ -90,11 +90,17 @@ OMNIORB_SSL_LIB += $(OPEN_SSL_LIB)
 OMNIORB_SSL_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
 
 
-# To build ZIOP support, EnableZIOP must be defined and ZLIB_ROOT must
-# be set to the path to the zlib install.
+# To build ZIOP support, EnableZIOP must be defined and one or both of
+# the zlib and zstd sections must be defined.
 
 #EnableZIOP = 1
-#ZLIB_ROOT = /cygdrive/c/zlib-1.2.11
 
-ZLIB_CPPFLAGS = -I$(ZLIB_ROOT)
-ZLIB_LIB = $(patsubst %,$(LibPathPattern),$(ZLIB_ROOT)) zdll.lib
+#EnableZIOPZLib = 1
+#ZLIB_ROOT = /cygdrive/c/zlib-1.2.11
+#ZLIB_CPPFLAGS = -DOMNI_ENABLE_ZIOP_ZLIB -I$(ZLIB_ROOT)
+#ZLIB_LIB = $(patsubst %,$(LibPathPattern),$(ZLIB_ROOT)) zdll.lib
+
+#EnableZIOPZStd = 1
+#ZSTD_ROOT = /cygdrive/c/zstd
+#ZSTD_CPPFLAGS = -DOMNI_ENABLE_ZIOP_ZSTD -I$(ZSTD_ROOT)/include
+#ZSTD_LIB = $(patsubst %,$(LibPathPattern),$(ZSTD_ROOT)/lib) zstd.lib

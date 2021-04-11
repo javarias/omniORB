@@ -26,6 +26,15 @@
 /* define if you want mutexes to be traced */
 #undef ENABLE_LOCK_TRACES
 
+/* define to enable ziop */
+#undef ENABLE_ZIOP
+
+/* define to support zlib in ziop */
+#undef ENABLE_ZIOP_ZLIB
+
+/* define to support zstd in ziop */
+#undef ENABLE_ZIOP_ZSTD
+
 /* define if gettimeofday() takes a timezone argument */
 #undef GETTIMEOFDAY_TIMEZONE
 
@@ -254,6 +263,12 @@
 
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
+
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
+
+/* Define to 1 if you have the <zstd.h> header file. */
+#undef HAVE_ZSTD_H
 
 /* define if long is the same type as int */
 #undef LONG_IS_INT

@@ -1,3 +1,29 @@
+Sun 11 Apr 13:53:42 BST 2021
+============================
+
+- Support zstd in ZIOP.
+
+README.unix.txt
+acinclude.m4
+aclocal.m4
+configure.ac
+configure
+idl/compression.idl
+include/omniORB4/acconfig_pre.h.in
+mk/beforeauto.mk.in
+mk/platforms/x86_win32_vs_10.mk
+mk/platforms/x86_win32_vs_11.mk
+mk/platforms/x86_win32_vs_12.mk
+mk/platforms/x86_win32_vs_14.mk
+mk/platforms/x86_win32_vs_15.mk
+mk/platforms/x86_win32_vs_16.mk
+src/lib/omniORB/ziop/dir.mk
+src/lib/omniORB/ziop/omniZIOP.cc
+src/lib/omniORB/ziop/zlibCompressor.cc
+src/lib/omniORB/ziop/zstdCompressor.cc
+src/lib/omniORB/ziop/zstdCompressor.h
+
+
 Thu  8 Apr 18:47:56 BST 2021
 ============================
 
