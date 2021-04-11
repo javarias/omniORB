@@ -17,6 +17,7 @@ mk/platforms/x86_win32_vs_12.mk
 mk/platforms/x86_win32_vs_14.mk
 mk/platforms/x86_win32_vs_15.mk
 mk/platforms/x86_win32_vs_16.mk
+src/examples/ziop/ziop_impl.cc
 src/lib/omniORB/ziop/dir.mk
 src/lib/omniORB/ziop/omniZIOP.cc
 src/lib/omniORB/ziop/zlibCompressor.cc
