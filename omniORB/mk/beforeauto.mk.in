@@ -801,6 +801,14 @@ ifeq (@ENABLE_ZIOP@,yes)
 EnableZIOP = 1
 endif
 
+ifeq (@ENABLE_ZIOP_ZLIB@,yes)
+EnableZIOPZLib = 1
+endif
+
+ifeq (@ENABLE_ZIOP_ZSTD@,yes)
+EnableZIOPZStd = 1
+endif
+
 #
 # Enable HTTP Crypto?
 #

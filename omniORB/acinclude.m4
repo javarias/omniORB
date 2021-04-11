@@ -433,8 +433,24 @@ AC_SUBST(ENABLE_LONGDOUBLE, $omni_cv_enable_longdouble)
 
 dnl Enable ZIOP
 AC_DEFUN([OMNI_ENABLE_ZIOP],
-[AC_CHECK_LIB(z,compressBound,omni_cv_enable_ziop=yes,omni_cv_enable_ziop=no)
-AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
+[AC_CHECK_LIB(z,compressBound,omni_cv_enable_ziop_zlib=yes,omni_cv_enable_ziop_zlib=no)
+AC_CHECK_LIB(zstd,ZSTD_compress,omni_cv_enable_ziop_zstd=yes,omni_cv_enable_ziop_zstd=no)
+omni_cv_enable_ziop="no"
+if test "$omni_cv_enable_ziop_zlib" = "yes"; then
+  omni_cv_enable_ziop="yes"
+  AC_DEFINE(ENABLE_ZIOP_ZLIB,,[define to support zlib in ziop])
+fi
+if test "$omni_cv_enable_ziop_zstd" = "yes"; then
+  omni_cv_enable_ziop="yes"
+  AC_DEFINE(ENABLE_ZIOP_ZSTD,,[define to support zstd in ziop])
+fi
+if test "$omni_cv_enable_ziop" = "yes"; then
+  AC_DEFINE(ENABLE_ZIOP,,[define to enable ziop])
+fi
+AC_SUBST(ENABLE_ZIOP_ZLIB, $omni_cv_enable_ziop_zlib)
+AC_SUBST(ENABLE_ZIOP_ZSTD, $omni_cv_enable_ziop_zstd)
+AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)
+])
 
 dnl Enable HTTP Crypto library
 AC_DEFUN([OMNI_ENABLE_HTTP_CRYPTO],

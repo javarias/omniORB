@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
 //                            Package   : omniORB
-// zlibCompressor.cc          Created on: 2012/10/05
+// zstdCompressor.cc          Created on: 2021/04/08
 //                            Author    : Duncan Grisby (dgrisby)
 //
-//    Copyright (C) 2012 Apasphere Ltd.
+//    Copyright (C) 2012-2021 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -21,12 +21,12 @@
 //    License along with this library. If not, see http://www.gnu.org/licenses/
 //
 // Description:
-//    zlib compressor
+//    zstd compressor
 
 #include <omniORB4/CORBA.h>
 
-#include "zlibCompressor.h"
-#include <zlib.h>
+#include "zstdCompressor.h"
+#include <zstd.h>
 
 
 OMNI_NAMESPACE_BEGIN(omni)
@@ -35,28 +35,28 @@ OMNI_NAMESPACE_BEGIN(omni)
 //
 // Factory
 
-zlibCompressorFactory::~zlibCompressorFactory() {}
+zstdCompressorFactory::~zstdCompressorFactory() {}
 
 Compression::Compressor_ptr
-zlibCompressorFactory::
+zstdCompressorFactory::
 get_compressor(Compression::CompressionLevel compression_level)
 {
-  if (compression_level > 9)
+  if (compression_level > ZSTD_maxCLevel())
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_InvalidCompressionLevel,
                   CORBA::COMPLETED_NO);
 
-  return new zlibCompressor(this, compression_level);
+  return new zstdCompressor(this, compression_level);
 }
 
 Compression::CompressorId
-zlibCompressorFactory::
+zstdCompressorFactory::
 compressor_id()
 {
-  return Compression::COMPRESSORID_ZLIB;
+  return Compression::COMPRESSORID_OMNI_ZSTD;
 }
 
 void
-zlibCompressorFactory::
+zstdCompressorFactory::
 _add_ref()
 {
   omni_tracedmutex_lock l(pd_lock);
@@ -64,7 +64,7 @@ _add_ref()
 }
 
 void
-zlibCompressorFactory::
+zstdCompressorFactory::
 _remove_ref()
 {
   {
@@ -79,104 +79,90 @@ _remove_ref()
 //
 // Compressor
 
-static const char* errReason(int ret)
-{
-  switch (ret) {
-  case Z_MEM_ERROR:
-    return "Not enough memory";
-  case Z_BUF_ERROR:
-    return "Not enough room in output buffer";
-  case Z_STREAM_ERROR:
-    return "Invalid compression level";
-  case Z_DATA_ERROR:
-    return "Data error";
-  default:
-    return "Unknown ZLIB error";
-  }
-}
-
-zlibCompressor::~zlibCompressor() {}
+zstdCompressor::~zstdCompressor() {}
 
 void
-zlibCompressor::
+zstdCompressor::
 compress(const Compression::Buffer& source, Compression::Buffer& target)
 {
   // omniORB pre-populates target with a suitable buffer.
-  uLongf target_len = target.length();
+  size_t target_len = target.length();
 
   if (target_len == 0) {
     // In case application code calls this without pre-populating target.
-    target_len = compressBound(source.length());
+    target_len = ZSTD_compressBound(source.length());
     target.length(target_len);
   }
 
-  const Bytef* src  = (const Bytef*)source.NP_data();
-  Bytef*       dest = (Bytef*)      target.NP_data();
+  const void* src  = source.NP_data();
+  void*       dest = target.NP_data();
   
-  int ret = compress2(dest, &target_len, src, source.length(), pd_level);
-  if (ret == Z_OK) {
-    target.length(target_len);
+  size_t ret = ZSTD_compress(dest, target_len, src, source.length(), pd_level);
+
+  if (!ZSTD_isError(ret)) {
+    target.length(ret);
     {
       omni_tracedmutex_lock l(pd_lock);
-      pd_compressed_bytes   += target_len;
+      pd_compressed_bytes   += ret;
       pd_uncompressed_bytes += source.length();
     }
 
     if (omniORB::trace(25)) {
       omniORB::logger log;
-      log << "Compressed zlib(" << pd_level << ") "
+      log << "Compressed zstd(" << pd_level << ") "
           << source.length() << " -> " << target.length() << "\n";
     }
   }
   else {
-    throw Compression::CompressionException(ret, errReason(ret));
+    throw Compression::CompressionException(ret, ZSTD_getErrorName(ret));
   }
 }
 
 void
-zlibCompressor::
+zstdCompressor::
 decompress(const Compression::Buffer& source, Compression::Buffer& target)
 {
   // target length is initialised with correct uncompressed length.
 
-  const Bytef* src  = (const Bytef*)source.NP_data();
-  Bytef*       dest = (Bytef*)      target.NP_data();
-  uLongf       dlen = target.length();
+  const void* src  = source.NP_data();
+  void*       dest = target.NP_data();
+  size_t      dlen = target.length();
 
-  int ret = uncompress(dest, &dlen, src, source.length());
-  if (ret == Z_OK) {
-    if (dlen != target.length())
-      target.length(dlen);
+  size_t ret = ZSTD_decompress(dest, dlen, src, source.length());
+
+  if (!ZSTD_isError(ret)) {
+    if (ret != target.length())
+      target.length(ret);
 
     if (omniORB::trace(25)) {
       omniORB::logger log;
-      log << "Decompressed zlib "
+      log << "Decompressed zstd "
           << source.length() << " -> " << target.length() << "\n";
     }
     return;
   }
   else {
-    throw Compression::CompressionException(ret, errReason(ret));
+    throw Compression::CompressionException(ret, ZSTD_getErrorName(ret));
   }
 }
 
 
 Compression::CompressorFactory_ptr
-zlibCompressor::
+zstdCompressor::
 compressor_factory()
 {
   return Compression::CompressorFactory::_duplicate(pd_factory);
 }
 
 Compression::CompressionLevel
-zlibCompressor::
+zstdCompressor::
 compression_level()
 {
   return pd_level;
 }
 
 CORBA::ULongLong
-zlibCompressor::
+zstdCompressor::
 compressed_bytes()
 {
   omni_tracedmutex_lock l(pd_lock);
@@ -184,7 +170,7 @@ compressed_bytes()
 }
 
 CORBA::ULongLong
-zlibCompressor::
+zstdCompressor::
 uncompressed_bytes()
 {
   omni_tracedmutex_lock l(pd_lock);
@@ -192,7 +178,7 @@ uncompressed_bytes()
 }
 
 Compression::CompressionRatio
-zlibCompressor::
+zstdCompressor::
 compression_ratio()
 {
   omni_tracedmutex_lock l(pd_lock);
@@ -201,7 +187,7 @@ compression_ratio()
 }
 
 void
-zlibCompressor::
+zstdCompressor::
 _add_ref()
 {
   omni_tracedmutex_lock l(pd_lock);
@@ -209,7 +195,7 @@ _add_ref()
 }
 
 void
-zlibCompressor::
+zstdCompressor::
 _remove_ref()
 {
   {
