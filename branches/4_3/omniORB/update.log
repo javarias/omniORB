@@ -1,3 +1,11 @@
+Fri 28 May 14:03:16 BST 2021
+============================
+
+- Add missing include in omkdepend on win32. Thanks Daniel Laugt.
+
+src/tool/omkdepend/pr.c
+
+
 Sun 11 Apr 13:53:42 BST 2021
 ============================
 
