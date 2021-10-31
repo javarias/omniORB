@@ -42,6 +42,9 @@
 #endif
 #else
 #  define DLL_EXPORT
+#endif
+
+#ifdef OMNI_HAVE_STRINGS_H
 #  include <strings.h>
 #endif
 
