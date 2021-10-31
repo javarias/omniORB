@@ -1,3 +1,17 @@
+Sun 31 Oct 18:09:45 GMT 2021
+============================
+
+- Support Python 3.10.
+
+examples/embed/dir.mk
+mk/python.mk
+modules/codesets/dir.mk
+modules/connections/dir.mk
+modules/dir.mk
+modules/sslTP/dir.mk
+modules/ziop/dir.mk
+
+
 Tue 23 Mar 20:54:20 GMT 2021
 ============================
 
