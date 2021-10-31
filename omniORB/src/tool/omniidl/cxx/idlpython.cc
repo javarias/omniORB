@@ -25,11 +25,11 @@
 //   
 //   Python interface to front-end
 
-#if defined(__VMS)
-#  include <Python.h>
-#else
-#  include PYTHON_INCLUDE
-#endif
+// On Windows, if _DEBUG is defined, some Python versions try to force
+// use of _d.lib libraries that are not actually present.
+#undef _DEBUG
+
+#include <Python.h>
 
 #include <idlsysdep.h>
 #include <idlast.h>

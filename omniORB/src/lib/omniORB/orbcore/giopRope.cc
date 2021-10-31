@@ -247,8 +247,8 @@ giopRope::acquireClient(const omniIOR*      ior,
 	s->StrandList::remove();
 	s->state(giopStrand::ACTIVE);
 	s->StrandList::insert(giopStrand::active);
-	// falls through
       }
+      // falls through
     case giopStrand::ACTIVE:
       {
 	if (s->version.major != v.major || s->version.minor != v.minor) {

@@ -1,11 +1,11 @@
 #include <omniconfig.h>
 
-#ifdef OMNI_CONFIG_TRADITIONAL
+#if defined(__WIN32__)
+#  include "config-windows.h"
 
-#  if defined(__WIN32__)
-#    include "config-windows.h"
+#elif defined(OMNI_CONFIG_TRADITIONAL)
 
-#  elif defined(__VMS)
+#  if defined(__VMS)
 #    include "config-vms.h"
 
 #  elif defined(__Lynx__) || defined(__lynxos__)

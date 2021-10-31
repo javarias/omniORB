@@ -3813,7 +3813,7 @@ DynUnionImpl::seek(CORBA::Long index)
       pd_curr_index = 1;
       return 1;
     }
-    // drop through
+    // falls through
   default:
     pd_curr_index = -1;
     return 0;
