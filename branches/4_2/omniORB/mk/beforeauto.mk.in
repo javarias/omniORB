@@ -1097,11 +1097,8 @@ SharedLibraryFullNameTemplate = lib$$1$$2.$$3.$$4.$(SHAREDLIB_SUFFIX)
 SharedLibrarySoNameTemplate = lib$$1$$2.$$3.$(SHAREDLIB_SUFFIX)
 SharedLibraryLibNameTemplate = lib$$1$$2.$(SHAREDLIB_SUFFIX)
 SharedLibraryPlatformLinkFlagsTemplate = -dynamiclib \
-                                         -install_name $(INSTALLLIBDIR)/$(SharedLibraryFullNameTemplate) \
-                                         -flat_namespace \
-                                         -undefined suppress
-PythonLibraryPlatformLinkFlagsTemplate = -bundle -flat_namespace \
-                                         -undefined suppress
+                                         -install_name $(INSTALLLIBDIR)/$(SharedLibraryFullNameTemplate)
+PythonLibraryPlatformLinkFlagsTemplate = -bundle -undefined dynamic_lookup
 PythonSHAREDLIB_SUFFIX = so
 
 

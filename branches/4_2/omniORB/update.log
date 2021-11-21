@@ -1,7 +1,15 @@
+Sun 21 Nov 14:51:36 GMT 2021
+============================
+
+- No longer use -flat_namespace on Mac OS.
+
+mk/beforeauto.mk.in
+
+
 Sun 21 Nov 11:52:54 GMT 2021
 ============================
 
-- This is omniORB 4.2.5.
+- Updates for 4.2.5.
 
 README.FIRST.txt
 ReleaseNotes.txt
