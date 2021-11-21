@@ -1,3 +1,19 @@
+Sun 21 Nov 11:52:54 GMT 2021
+============================
+
+- This is omniORB 4.2.5.
+
+README.FIRST.txt
+ReleaseNotes.txt
+THIS_IS_OMNIORB_4_2_4
+THIS_IS_OMNIORB_4_2_5
+configure.ac
+configure
+contrib/RPMs/omniORB.spec
+contrib/RPMs/omniORB_new.spec
+mk/version.mk
+
+
 Sun 31 Oct 18:09:45 GMT 2021
 ============================
 
