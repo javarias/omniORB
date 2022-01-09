@@ -1,7 +1,10 @@
-Sun  9 Jan 21:49:31 GMT 2022
+Sun  9 Jan 21:56:25 GMT 2022
 ============================
 
-- This is omniORB 4.3.0.
+- Fix missed support for Python 3.10+.
+
+modules/httpCrypto/dir.mk
+modules/httpTP/dir.mk
 
 
 Sun  9 Jan 15:08:22 GMT 2022
