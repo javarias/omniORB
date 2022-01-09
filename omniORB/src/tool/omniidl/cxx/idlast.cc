@@ -886,11 +886,11 @@ Const(const char* file, int line, IDL_Boolean mainFile,
       }
       break;
     }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case IdlType::tk_longlong:   v_.longlong_   = expr->evalAsLongLong();  break;
   case IdlType::tk_ulonglong:  v_.ulonglong_  = expr->evalAsULongLong(); break;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case IdlType::tk_longdouble: v_.longdouble_ = expr->evalAsLongDouble();break;
 #endif
   case IdlType::tk_wchar:      v_.wchar_      = expr->evalAsWChar();     break;
@@ -969,11 +969,11 @@ CONST_AS(IDL_Boolean,      constAsBoolean,    tk_boolean,    boolean_)
 CONST_AS(IDL_Char,         constAsChar,       tk_char,       char_)
 CONST_AS(IDL_Octet,        constAsOctet,      tk_octet,      octet_)
 CONST_AS(const char*,      constAsString,     tk_string,     string_)
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CONST_AS(IDL_LongLong,     constAsLongLong,   tk_longlong,   longlong_)
 CONST_AS(IDL_ULongLong,    constAsULongLong,  tk_ulonglong,  ulonglong_)
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CONST_AS(IDL_LongDouble,   constAsLongDouble, tk_longdouble, longdouble_)
 #endif
 CONST_AS(IDL_WChar,        constAsWChar,      tk_wchar,      wchar_)
@@ -1419,7 +1419,7 @@ setType(IdlType* type)
   case IdlType::tk_ulong:     v_.ulong_     = value_->evalAsULong();     break;
   case IdlType::tk_boolean:   v_.boolean_   = value_->evalAsBoolean();   break;
   case IdlType::tk_char:      v_.char_      = value_->evalAsChar();      break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case IdlType::tk_longlong:  v_.longlong_  = value_->evalAsLongLong();  break;
   case IdlType::tk_ulonglong: v_.ulonglong_ = value_->evalAsULongLong(); break;
 #endif
@@ -1447,7 +1447,7 @@ LABEL_AS(IDL_UShort,       labelAsUShort,     tk_ushort,     ushort_)
 LABEL_AS(IDL_ULong,        labelAsULong,      tk_ulong,      ulong_)
 LABEL_AS(IDL_Boolean,      labelAsBoolean,    tk_boolean,    boolean_)
 LABEL_AS(IDL_Char,         labelAsChar,       tk_char,       char_)
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 LABEL_AS(IDL_LongLong,     labelAsLongLong,   tk_longlong,   longlong_)
 LABEL_AS(IDL_ULongLong,    labelAsULongLong,  tk_ulonglong,  ulonglong_)
 #endif
@@ -1723,7 +1723,7 @@ finishConstruction(IdlType* switchType, IDL_Boolean constrType,
     UNION_SWITCH(IDL_Boolean, Boolean, 0, defVal==1, defVal=1)
   case IdlType::tk_char:
     UNION_SWITCH(IDL_Char, Char, 0xff, defVal==0, --defVal)
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case IdlType::tk_longlong:
     UNION_SWITCH(IDL_LongLong, LongLong,
 		 _CORBA_LONGLONG_CONST(-0x7fffffffffffffff) - 1,

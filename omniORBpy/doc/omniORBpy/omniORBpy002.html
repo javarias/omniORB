@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>The Basics</title>
 </head>
@@ -32,7 +32,7 @@ follows:</p><div class="lstlisting"><span style="font-size:small"><span style="f
 </span><span style="font-size:small">};</span></div><p>The important difference from the omniORB Echo example is that our
 <span style="font-family:monospace">Echo</span> interface is declared within an IDL module named
 <span style="font-family:monospace">Example</span>. The reason for this will become clear in a moment.</p><p>If you are new to IDL, you can learn about its syntax in Chapter 3 of
-the CORBA specification 2.6&#XA0;[<a href="omniORBpy013.html#corba26-spec">OMG01a</a>]. For the moment, you
+the CORBA specification 2.6&#XA0;[<a href="omniORBpy014.html#corba26-spec">OMG01a</a>]. For the moment, you
 only need to know that the interface consists of a single operation,
 <span style="font-family:monospace">echoString()</span>, which takes a string as an argument and returns a
 copy of the same string.</p><p>The interface is written in a file, called <span style="font-family:monospace">example_echo.idl</span>. It
@@ -79,7 +79,7 @@ be split between different address spaces.</p><p>First, the code:</p><div class=
 </span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small"> (</span><span style="font-size:small">Example__POA</span><span style="font-size:small">.</span><span style="font-size:small">Echo</span><span style="font-size:small">):</span><span style="font-size:small">
 </span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">def</span></span><span style="font-size:small"> </span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">self</span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">):</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  11</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">argv</span><span style="font-size:small">, </span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">ORB_ID</span><span style="font-size:small">)</span><span style="font-size:small">
@@ -94,8 +94,8 @@ be split between different address spaces.</p><p>First, the code:</p><div class=
 </span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small">message</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Hello"</span></span><span style="font-size:small">
 </span><span style="font-size:xx-small">  22</span><span style="font-size:small"> </span><span style="font-size:small">result</span><span style="font-size:small">  = </span><span style="font-size:small">eo</span><span style="font-size:small">.</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">message</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  23</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  24</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">)</span></div><p>The example illustrates several important interactions among the ORB,
-the POA, the servant, and the client. Here are the details:</p>
+</span><span style="font-size:xx-small">  24</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">))</span></div><p>The example illustrates several important interactions among
+the ORB, the POA, the servant, and the client. Here are the details:</p>
 <h3 id="sec14" class="subsection">2.4.1&#XA0;&#XA0;Imports</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 3</span></dt><dd class="dd-description"><br>
 Import the <span style="font-family:monospace">sys</span> module to access <span style="font-family:monospace">sys.argv</span>.</dd><dt class="dt-description"><span style="font-weight:bold">Line 4</span></dt><dd class="dd-description"><br>
@@ -107,7 +107,7 @@ Import the client-side stubs and server-side skeletons generated for
 IDL module <span style="font-family:monospace">Example</span>.</dd></dl>
 <h3 id="sec15" class="subsection">2.4.2&#XA0;&#XA0;Servant class definition</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Lines 7&#X2013;10</span></dt><dd class="dd-description"><br>
-For interface <span style="font-family:monospace">Example::Echo</span>, omniidl produces a skeleton class
+For interface <span style="font-family:monospace">Example::Echo</span>, omniidl generates a skeleton class
 named <span style="font-family:monospace">Example__POA.Echo</span>. Here we define an implementation
 class, <span style="font-family:monospace">Echo_i</span>, which derives from the skeleton class.<p>There is little constraint on how you design your implementation
 class, except that it has to inherit from the skeleton class and must
@@ -133,7 +133,7 @@ must register it with a POA. In this example, we use the <span style="font-style
 POA</span>, rather than creating any child POAs. The Root POA is found with
 <span style="font-family:monospace">orb.resolve_initial_references()</span>.<p>A POA&#X2019;s behaviour is governed by its <span style="font-style:italic">policies</span>. The Root POA has
 suitable policies for many simple servers. Chapter 11 of the CORBA 2.6
-specification [<a href="omniORBpy013.html#corba26-spec">OMG01a</a>] has details of all the POA policies
+specification [<a href="omniORBpy014.html#corba26-spec">OMG01a</a>] has details of all the POA policies
 which are available.</p></dd></dl>
 <h3 id="sec18" class="subsection">2.4.5&#XA0;&#XA0;Object initialisation</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 15</span></dt><dd class="dd-description"><br>
@@ -177,7 +177,7 @@ and return values against the IDL. If the types do not match, it
 raises a <span style="font-family:monospace">CORBA.BAD_PARAM</span> exception, with the minor code
 <span style="font-family:monospace">omniORB.BAD_PARAM_WrongPythonType</span>. With complex parameter
 types, it can be hard to work out exactly what part of a type was
-incorrect so, new in omniORBpy 4.2, the exception contains a list of
+incorrect so in omniORBpy, the exception contains a list of
 information about where exactly a type check failed. The information
 is stored as a list of strings in the <span style="font-family:monospace">_info</span> attribute of the
 exception object, and output as part of the string form of the
@@ -210,7 +210,7 @@ passing the object reference using the CORBA Naming Service.</p>
 </span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small"> (</span><span style="font-size:small">Example__POA</span><span style="font-size:small">.</span><span style="font-size:small">Echo</span><span style="font-size:small">):</span><span style="font-size:small">
 </span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">def</span></span><span style="font-size:small"> </span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">self</span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">):</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  11</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">argv</span><span style="font-size:small">, </span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">ORB_ID</span><span style="font-size:small">)</span><span style="font-size:small">
@@ -219,20 +219,20 @@ passing the object reference using the CORBA Naming Service.</p>
 </span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">ei</span><span style="font-size:small"> = </span><span style="font-size:small">Echo_i</span><span style="font-size:small">()</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">eo</span><span style="font-size:small"> = </span><span style="font-size:small">ei</span><span style="font-size:small">.</span><span style="font-size:small">_this</span><span style="font-size:small">()</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small">.</span><span style="font-size:small">object_to_string</span><span style="font-size:small">(</span><span style="font-size:small">eo</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small">orb</span><span style="font-size:small">.</span><span style="font-size:small">object_to_string</span><span style="font-size:small">(</span><span style="font-size:small">eo</span><span style="font-size:small">))</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  20</span><span style="font-size:small"> </span><span style="font-size:small">poaManager</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">.</span><span style="font-size:small">_get_the_POAManager</span><span style="font-size:small">()</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small">poaManager</span><span style="font-size:small">.</span><span style="font-size:small">activate</span><span style="font-size:small">()</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  22</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  23</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small">.</span><span style="font-size:small">run</span><span style="font-size:small">()</span></div><p>Up until line 18, this example is identical to the colocated case. On
-line 18, the ORB&#X2019;s <span style="font-family:monospace">object_to_string()</span> operation is called. This
-results in a string starting with the signature &#X2018;IOR:&#X2019; and followed by
-some hexadecimal digits. All CORBA 2 compliant ORBs are able to
-convert the string into its internal representation of a so-called
-Interoperable Object Reference (IOR). The IOR contains the location
-information and a key to uniquely identify the object implementation
-in its own address space<sup><a id="text1" href="#note1">1</a></sup>. From the IOR, an object
-reference can be constructed.</p><p>After the POA has been activated, <span style="font-family:monospace">orb.run()</span> is called. Since
+</span><span style="font-size:xx-small">  23</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small">.</span><span style="font-size:small">run</span><span style="font-size:small">()</span></div><p>Up until line 18, this example is identical to the colocated
+case. On line 18, the ORB&#X2019;s <span style="font-family:monospace">object_to_string()</span> operation is
+called. This results in a string starting with the signature &#X2018;IOR:&#X2019;
+and followed by some hexadecimal digits. All CORBA 2 compliant ORBs
+are able to convert the string into its internal representation of a
+so-called Interoperable Object Reference (IOR). The IOR contains the
+location information and a key to uniquely identify the object
+implementation in its own address space<sup><a id="text1" href="#note1">1</a></sup>. From the
+IOR, an object reference can be constructed.</p><p>After the POA has been activated, <span style="font-family:monospace">orb.run()</span> is called. Since
 omniORB is fully multi-threaded, it is not actually necessary to call
 <span style="font-family:monospace">orb.run()</span> for operation dispatch to happen&#X2014;if the main program
 had some other work to do, it could do so, and remote invocations
@@ -256,13 +256,13 @@ rather than exiting immediately when the end-of-file is reached.
 </span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">eo</span><span style="font-size:small"> = </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">Example</span><span style="font-size:small">.</span><span style="font-size:small">Echo</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  13</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  14</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">eo</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Object reference is not an Example::Echo"</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Object reference is not an Example::Echo"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">
 </span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small">message</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Hello from Python"</span></span><span style="font-size:small">
 </span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">result</span><span style="font-size:small">  = </span><span style="font-size:small">eo</span><span style="font-size:small">.</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">message</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:xx-small">  20</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">)</span></div><p>The stringified object reference is passed to the client as a
+</span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">))</span></div><p>The stringified object reference is passed to the client as a
 command-line argument<sup><a id="text2" href="#note2">2</a></sup>. The client uses the ORB&#X2019;s
 <span style="font-family:monospace">string_to_object()</span> function to convert the string into a generic
 object reference (<span style="font-family:monospace">CORBA.Object</span>).</p><p>On line 12, the object&#X2019;s <span style="font-family:monospace">_narrow()</span> function is called to convert
@@ -302,26 +302,30 @@ majority are transient, meaning that the lifetime of the CORBA object
 of its servant object. Persistent objects can live beyond the
 destruction of their servant object, the POA they were created in, and
 even their process. Persistent objects are, of course, only
-contactable when their associated servants are active, or can be
-activated by their POA with a servant manager<sup><a id="text3" href="#note3">3</a></sup>. A reference to
-a persistent object can be published, and will remain valid even if
-the server process is restarted.</p><p>A POA&#X2019;s Lifespan Policy determines whether objects created within it
+contactable when their associated server processes are running, and
+their servants are active or can be activated by their POA with a
+servant manager<sup><a id="text3" href="#note3">3</a></sup>. A reference to a persistent object can
+be published, and will remain valid even if the server process is
+restarted.</p><p>To support persistent objects, the servants must be activated in their
+POA with the same object identifier each time. Also, the server must
+be configured with the same <span style="font-style:italic">endpoint</span> details so it is
+contactable in the same way as previous invocations. See
+chapter&#XA0;<a href="omniORBpy007.html#chap%3Aendpoints">7</a> for details.</p><p>A POA&#X2019;s Lifespan Policy determines whether objects created within it
 are transient or persistent. The Root POA has the <span style="font-family:monospace">TRANSIENT</span>
 policy.</p><p>An alternative to creating persistent objects is to register object
-references in a <span style="font-style:italic">naming service</span> and bind them to fixed
-pathnames. Clients can bind to the object implementations at runtime
-by asking the naming service to resolve the pathnames to the object
+references in a <span style="font-style:italic">naming service</span> and bind them to fixed path
+names. Clients can bind to the object implementations at run time by
+asking the naming service to resolve the path names to the object
 references. CORBA defines a standard naming service, which is a
-component of the Common Object Services (COS)&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>],
+component of the Common Object Services (COS)&#XA0;[<a href="omniORBpy014.html#corbaservices">OMG98</a>],
 that can be used for this purpose. The next section describes an
 example of how to use the COS Naming Service.</p>
 <h2 id="sec27" class="section">2.6&#XA0;&#XA0;Example 3 &#X2014; Using the Naming Service</h2>
 <p>
 <a id="sec:usingNS"></a></p><p>In this example, the object implementation uses the Naming
-Service&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] to pass on the object reference to the
-client. This method is far more practical than using stringified
-object references. The full listings of the server and client are
-below.</p><p>The names used by the Naming service consist of a sequence of
+Service&#XA0;[<a href="omniORBpy014.html#corbaservices">OMG98</a>] to pass on the object reference to the
+client. This method is often more practical than using stringified
+object references.</p><p>The names used by the Naming service consist of a sequence of
 <span style="font-style:italic">name components</span>. Each name component has an <span style="font-style:italic">id</span> and a
 <span style="font-style:italic">kind</span> field, both of which are strings. All name components
 except the last one are bound to <span style="font-style:italic">naming contexts</span>. A naming
@@ -356,10 +360,10 @@ line. If this file is not present, the internal list will be empty and
 <span style="font-family:monospace">resolve_initial_references()</span> returns base <span style="font-family:monospace">CORBA.Object</span>, so
 we should narrow it to the interface we want. In this case, we want
 <span style="font-family:monospace">CosNaming.NamingContext</span><sup><a id="text5" href="#note5">5</a></sup>.</p>
-<h3 id="sec29" class="subsection">2.6.2&#XA0;&#XA0;The Naming Service interface</h3>
+<h3 id="sec29" class="subsection">2.6.2&#XA0;&#XA0;The Naming Service Interface</h3>
 <p>It is beyond the scope of this chapter to describe in detail the
 Naming Service interface. You should consult the CORBA services
-specification&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] (chapter 3).</p>
+specification&#XA0;[<a href="omniORBpy014.html#corbaservices">OMG98</a>] (chapter 3).</p>
 <h3 id="sec30" class="subsection">2.6.3&#XA0;&#XA0;Server code</h3>
 <p>Hopefully, the server code is self-explanatory:</p><div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">#!/usr/bin/env python</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">import</span></span><span style="font-size:small"> </span><span style="font-size:small">sys</span><span style="font-size:small">
@@ -369,7 +373,7 @@ specification&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] (chapte
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Define an implementation of the Echo interface</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small"> (</span><span style="font-size:small">Example__POA</span><span style="font-size:small">.</span><span style="font-size:small">Echo</span><span style="font-size:small">):</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">def</span></span><span style="font-size:small"> </span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">self</span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">):</span><span style="font-size:small">
-</span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">
+</span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"echoString() called with message:"</span></span><span style="font-size:small">, </span><span style="font-size:small">mesg</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Initialise the ORB and find the root POA</span></span></span><span style="font-size:small">
@@ -385,32 +389,32 @@ specification&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] (chapte
 </span><span style="font-size:small">rootContext</span><span style="font-size:small"> = </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">rootContext</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Failed to narrow the root naming context"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Failed to narrow the root naming context"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Bind a context named "test.my_context" to the root context</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">name</span><span style="font-size:small"> = [</span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NameComponent</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"test"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"my_context"</span></span><span style="font-size:small">)]</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small">:</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">testContext</span><span style="font-size:small"> = </span><span style="font-size:small">rootContext</span><span style="font-size:small">.</span><span style="font-size:small">bind_new_context</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"New test context bound"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"New test context bound"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">except</span></span><span style="font-size:small"> </span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">.</span><span style="font-size:small">AlreadyBound</span><span style="font-size:small">, </span><span style="font-size:small">ex</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Test context already exists"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Test context already exists"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">rootContext</span><span style="font-size:small">.</span><span style="font-size:small">resolve</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">testContext</span><span style="font-size:small"> = </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">testContext</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"test.mycontext exists but is not a NamingContext"</span></span><span style="font-size:small">
+</span><span style="font-size:small">        </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"test.mycontext exists but is not a NamingContext"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">        </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Bind the Echo object to the test context</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">name</span><span style="font-size:small"> = [</span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NameComponent</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"ExampleEcho"</span></span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"Object"</span></span><span style="font-size:small">)]</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">try</span></span><span style="font-size:small">:</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">testContext</span><span style="font-size:small">.</span><span style="font-size:small">bind</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">, </span><span style="font-size:small">eo</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"New ExampleEcho object bound"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"New ExampleEcho object bound"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">except</span></span><span style="font-size:small"> </span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">.</span><span style="font-size:small">AlreadyBound</span><span style="font-size:small">:</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">testContext</span><span style="font-size:small">.</span><span style="font-size:small">rebind</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">, </span><span style="font-size:small">eo</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"ExampleEcho binding already existed -- rebound"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"ExampleEcho binding already existed -- rebound"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Activate the POA</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">poaManager</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">.</span><span style="font-size:small">_get_the_POAManager</span><span style="font-size:small">()</span><span style="font-size:small">
@@ -432,7 +436,7 @@ specification&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] (chapte
 </span><span style="font-size:small">rootContext</span><span style="font-size:small"> = </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">rootContext</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Failed to narrow the root naming context"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Failed to narrow the root naming context"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Resolve the name "test.my_context/ExampleEcho.Object"</span></span></span><span style="font-size:small">
@@ -442,21 +446,21 @@ specification&#XA0;[<a href="omniORBpy013.html#corbaservices">OMG98</a>] (chapte
 </span><span style="font-size:small">    </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">rootContext</span><span style="font-size:small">.</span><span style="font-size:small">resolve</span><span style="font-size:small">(</span><span style="font-size:small">name</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">except</span></span><span style="font-size:small"> </span><span style="font-size:small">CosNaming</span><span style="font-size:small">.</span><span style="font-size:small">NamingContext</span><span style="font-size:small">.</span><span style="font-size:small">NotFound</span><span style="font-size:small">, </span><span style="font-size:small">ex</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Name not found"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Name not found"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Narrow the object to an Example::Echo</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">eo</span><span style="font-size:small"> = </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">Example</span><span style="font-size:small">.</span><span style="font-size:small">Echo</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">eo</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"Object reference is not an Example::Echo"</span></span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"Object reference is not an Example::Echo"</span></span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small">sys</span><span style="font-size:small">.</span><span style="font-size:small">exit</span><span style="font-size:small">(1)</span><span style="font-size:small">
 </span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Invoke the echoString operation</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">message</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Hello from Python"</span></span><span style="font-size:small">
 </span><span style="font-size:small">result</span><span style="font-size:small">  = </span><span style="font-size:small">eo</span><span style="font-size:small">.</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">message</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">)</span></div>
+</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'."</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">))</span></div>
 <h2 id="sec32" class="section">2.7&#XA0;&#XA0;Global IDL definitions</h2>
 <p>
 <a id="sec:globalIDL"></a></p><p>As we have seen, the Python mapping maps IDL modules to Python
@@ -484,16 +488,16 @@ section&#XA0;<a href="omniORBpy005.html#sec%3AWbglobal">5.2</a>. The omniORB C++
 </span><span style="font-size:small">
 </span><span style="font-size:small">message</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Hello from Python"</span></span><span style="font-size:small">
 </span><span style="font-size:small">result</span><span style="font-size:small">  = </span><span style="font-size:small">eo</span><span style="font-size:small">.</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">message</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'"</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">)</span></div>
+</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"I said '%s'. The object said '%s'"</span></span><span style="font-size:small"> % (</span><span style="font-size:small">message</span><span style="font-size:small">,</span><span style="font-size:small">result</span><span style="font-size:small">))</span></div>
 <hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note1" href="#text1">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Notice that the object key is not
-globally unique across address spaces.</div></dd><dt class="dt-thefootnotes"><a id="note2" href="#text2">2</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">The code does not check that there is
-actually an IOR on the command line!</div></dd><dt class="dt-thefootnotes"><a id="note3" href="#text3">3</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">The POA itself
-can be activated on demand with an adapter activator.</div></dd><dt class="dt-thefootnotes"><a id="note4" href="#text4">4</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">There are escaping rules to cope
+<a id="note1" href="#text1">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Notice that the
+object key is not globally unique across address spaces.</div></dd><dt class="dt-thefootnotes"><a id="note2" href="#text2">2</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">The code does not check that there is
+actually an IOR on the command line!</div></dd><dt class="dt-thefootnotes"><a id="note3" href="#text3">3</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">The POA itself can be activated on demand
+with an adapter activator.</div></dd><dt class="dt-thefootnotes"><a id="note4" href="#text4">4</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">There are escaping rules to cope
 with id and kind fields which contain &#X2018;.&#X2019; and &#X2018;/&#X2019; characters. See
-chapter&#XA0;<a href="omniORBpy007.html#chap%3Ains">7</a> of this manual, and chapter 3 of the CORBA
+chapter&#XA0;<a href="omniORBpy008.html#chap%3Ains">8</a> of this manual, and chapter 3 of the CORBA
 services specification, as updated for the Interoperable Naming
-Service&#XA0;[<a href="omniORBpy013.html#inschapters">OMG00</a>].</div></dd><dt class="dt-thefootnotes"><a id="note5" href="#text5">5</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">If you are on-the-ball, you
+Service&#XA0;[<a href="omniORBpy014.html#inschapters">OMG00</a>].</div></dd><dt class="dt-thefootnotes"><a id="note5" href="#text5">5</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">If you are on-the-ball, you
 will have noticed that we didn&#X2019;t call <span style="font-family:monospace">_narrow()</span> when resolving the
 Root POA. The reason it is safe to miss it out is given in
 section&#XA0;<a href="omniORBpy003.html#sec%3Anarrowing">3.1</a>.</div></dd></dl>

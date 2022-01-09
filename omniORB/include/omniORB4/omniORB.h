@@ -3,7 +3,7 @@
 // omniORB.h                  Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2002-2020 Apasphere Ltd
+//    Copyright (C) 2002-2014 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -276,8 +276,10 @@ _CORBA_MODULE_BEG
     logger& operator<<(__int64 n);
     logger& operator<<(unsigned __int64 n);
 #endif
+#ifdef OMNI_HAS_Cplusplus_Bool
     logger& operator<<(bool b) { return operator<<((int)b); }
-#ifndef NO_FLOAT
+#endif
+#ifndef OMNI_NO_FLOAT
     logger& operator<<(double n);
     logger& operator<<(float n) { return operator<<((double)n); }
 #endif
@@ -289,14 +291,14 @@ _CORBA_MODULE_BEG
 
     class exceptionStatus {
     public:
-      exceptionStatus(CORBA::CompletionStatus s, _CORBA_ULong m) :
+      exceptionStatus(CORBA::CompletionStatus s, CORBA::ULong m) :
 	status(s), minor(m), minor_string(0) {}
 
       exceptionStatus(CORBA::CompletionStatus s, const char* description) :
 	status(s), minor(0), minor_string(description) {}
 
       CORBA::CompletionStatus status;
-      _CORBA_ULong            minor;
+      CORBA::ULong            minor;
       const char*             minor_string;
     private:
       exceptionStatus();
@@ -616,13 +618,13 @@ _CORBA_MODULE_BEG
 #include <omniORB4/omniORBcompat.h>
 #undef  _INCLUDE_OMNIORBCOMPAT_
 
-#ifndef HAS_Cplusplus_Namespace
+#ifndef OMNI_HAS_Cplusplus_Namespace
   friend class omni;
   friend class CORBA;
 private:
 #endif
 
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
 
 #  define _OMNIORB_EX_ONLY_CD(x)
 

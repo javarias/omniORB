@@ -1,12 +1,23 @@
 dnl -*- M4 -*-
-AC_INIT(omniORBpy, 5.0.0, bugs@omniorb-support.com)
+AC_INIT(omniORBpy, 4.3.0, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
-AC_CONFIG_SRCDIR(python/omniORB/CORBA.py)
+AC_CONFIG_SRCDIR(python3/omniORB/CORBA.py)
 AC_CONFIG_AUX_DIR(bin/scripts)
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
+
+
+dnl ** CFLAGS / CXXFLAGS
+
+if test "${CFLAGS+set}" != set; then
+    CFLAGS="-O"
+fi
+
+if test "${CXXFLAGS+set}" != set; then
+    CXXFLAGS="-O3"
+fi
 
 
 dnl ** Programs
@@ -156,10 +167,10 @@ AC_CONFIG_FILES(
                 modules/sslTP/GNUmakefile
                 modules/connections/GNUmakefile
                 modules/ziop/GNUmakefile
-                python/GNUmakefile
-                python/omniidl_be/GNUmakefile
-                python/COS/GNUmakefile
-                python/omniORB/GNUmakefile
+                python2/GNUmakefile
+                python2/omniidl_be/GNUmakefile
+                python2/COS/GNUmakefile
+                python2/omniORB/GNUmakefile
                 python3/GNUmakefile
                 python3/omniidl_be/GNUmakefile
                 python3/COS/GNUmakefile

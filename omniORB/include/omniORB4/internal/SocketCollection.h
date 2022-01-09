@@ -132,7 +132,7 @@ private:
   SocketHolder**       	pd_prev;
 };
 
-typedef std::vector<SocketHolder*> SocketHolderVec;
+typedef omnivector<SocketHolder*> SocketHolderVec;
 
 
 //

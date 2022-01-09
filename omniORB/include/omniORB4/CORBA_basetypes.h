@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB
+//                            Package   : omniORB2
 // CORBA_basetypes.h          Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2013-2020 Apasphere Ltd
+//    Copyright (C) 2013 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories - Cambridge Ltd
 //
 //    This file is part of the omniORB library
@@ -28,7 +28,11 @@
 #ifndef __CORBA_BASETYPES_H__
 #define __CORBA_BASETYPES_H__
 
+#ifdef OMNI_HAS_Cplusplus_Bool
 typedef bool                      _CORBA_Boolean;
+#else
+typedef unsigned char             _CORBA_Boolean;
+#endif
 
 typedef unsigned char             _CORBA_Char;
 
@@ -38,12 +42,12 @@ typedef short                     _CORBA_Short;
 
 typedef unsigned short            _CORBA_UShort;
 
-#if SIZEOF_LONG == 4
+#if OMNI_SIZEOF_LONG == 4
 typedef long                      _CORBA_Long;
 
 typedef unsigned long             _CORBA_ULong;
 
-#elif SIZEOF_INT == 4
+#elif OMNI_SIZEOF_INT == 4
 #  ifndef OMNI_LONG_IS_INT
 #    define OMNI_LONG_IS_INT
 #  endif
@@ -57,13 +61,13 @@ typedef unsigned int              _CORBA_ULong;
 
 typedef _CORBA_WCHAR_DECL         _CORBA_WChar;
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 typedef _CORBA_LONGLONG_DECL      _CORBA_LongLong;
 typedef _CORBA_ULONGLONG_DECL     _CORBA_ULongLong;
 #endif
 
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
 #ifndef __VMS
 
@@ -71,7 +75,7 @@ typedef _CORBA_ULONGLONG_DECL     _CORBA_ULongLong;
 typedef float                     _CORBA_Float;
 typedef double                    _CORBA_Double;
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    _CORBA_LongDouble;
 #endif
 
@@ -339,11 +343,25 @@ inline bool operator>(_CORBA_Double const& lhs,
 
 //  Assume long double type is compatible with the CORBA standard.
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 typedef _CORBA_LONGDOUBLE_DECL    _CORBA_LongDouble;
 #endif
 
 #endif   // VMS float test
-#endif   // !defined(NO_FLOAT)
+#endif   // !defined(OMNI_NO_FLOAT)
+
+class cdrStream;
+
+extern void _CORBA_new_operator_return_null();
+extern void _CORBA_bound_check_error();
+extern void _CORBA_marshal_sequence_range_check_error(cdrStream&);
+extern _CORBA_Boolean _CORBA_use_nil_ptr_as_nil_objref();
+extern void _CORBA_null_string_ptr(_CORBA_Boolean);
+extern void _CORBA_invoked_nil_pseudo_ref();
+extern void _CORBA_invoked_nil_objref();
+extern _CORBA_Boolean
+_CORBA_use_nil_ptr_as_nil_pseudo_objref(const char* objType);
+extern void _CORBA_bad_param_freebuf();
+
 
 #endif // __CORBA_BASETYPES_H__

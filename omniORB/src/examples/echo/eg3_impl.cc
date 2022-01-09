@@ -19,12 +19,8 @@
 
 #include <echo.hh>
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr, CORBA::Object_ptr);
 
@@ -118,9 +114,6 @@ bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr objref)
     contextName.length(1);
     contextName[0].id   = (const char*) "test";       // string copied
     contextName[0].kind = (const char*) "my_context"; // string copied
-    // Note on kind: The kind field is used to indicate the type
-    // of the object. This is to avoid conventions such as that used
-    // by files (name.type -- e.g. test.ps = postscript etc.)
 
     CosNaming::NamingContext_var testContext;
     try {

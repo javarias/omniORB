@@ -28,7 +28,7 @@
 #ifndef __OMNI_OBJECTADAPTER_H__
 #define __OMNI_OBJECTADAPTER_H__
 
-#include <vector>
+#include <omniORB4/omniutilities.h>
 #include <omniORB4/omniServer.h>
 
 #ifndef OMNIORB_USEHOSTNAME_VAR
@@ -208,7 +208,7 @@ public:
       _CORBA_String_var uri;
       _CORBA_Boolean    no_publish;
     };
-    typedef std::vector<EndpointURI*> EndpointURIList;
+    typedef omnivector<EndpointURI*> EndpointURIList;
     EndpointURIList   endpoints;
     _CORBA_String_var publish;
 

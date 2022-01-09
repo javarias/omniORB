@@ -64,7 +64,6 @@
 % URL-like things:
 \usepackage{omniURLDefs}
 
-
 % Mark-up for configuration options
 \newcommand{\confopt}[2]
   {\vspace{\baselineskip}\par\noindent\code{#1} ~~ \textit{default} =
@@ -72,6 +71,7 @@
 
 \newcommand{\confoptnd}[1]
   {\vspace{\baselineskip}\par\noindent\code{#1}}
+
 
 %BEGIN LATEX
 \makeatletter
@@ -158,14 +158,13 @@
 \pagenumbering{roman}
 \pagestyle{empty}
 
-
 \begin{center}
 
 \vfill
 
 { \Huge
 The omniORBpy version 4.3\\[4mm]
-User's Guide
+Users' Guide
 }
 
 \vfill
@@ -203,7 +202,7 @@ Duncan Grisby\\
 
 omniORBpy is an Object Request Broker (ORB) that implements the CORBA
 2.6 Python mapping~\cite{pythonmapping}. It works in conjunction with
-omniORB for C++, version 4.3.
+omniORB for C++.
 
 This user guide tells you how to use omniORBpy to develop CORBA
 applications using Python. It assumes a basic understanding of CORBA,
@@ -221,7 +220,7 @@ and what you need to do to setup your environment to run it.
 \subsection{Multithreading}
 
 omniORB is fully multithreaded. To achieve low call overhead,
-unnecessary call-multiplexing is eliminated. With the default
+unnecessary call multiplexing is eliminated. With the default
 policies, there is at most one call in-flight in each communication
 channel between two address spaces at any one time. To do this without
 limiting the level of concurrency, new channels connecting the two
@@ -235,7 +234,7 @@ while the other arguments are being marshalled. With GIOP 1.2, large
 messages are fragmented, so the marshaller can start transmission
 before it knows how large the entire message will be.
 
-omniORB also supports a flexible thread pooling policy, and supports
+omniORB also supports a flexible thread pool policy, and supports
 sending multiple interleaved calls on a single connection. This policy
 leads to a small amount of additional call overhead, compared to the
 default thread per connection model, but allows omniORB to scale to
@@ -332,7 +331,7 @@ or, on Windows, the Windows registry.
   variable is not set, omniORB will use the compiled-in pathname to
   locate the file (by default \file{/etc/omniORB.cfg}).
 
-\item On Win32 / Win64 platforms omniORB first checks the environment
+\item On Win32 / Win64 platforms, omniORB first checks the environment
   variable \envvar{OMNIORB_CONFIG} to obtain the pathname of the
   configuration file. If this is not set, it then attempts to obtain
   configuration data in the system registry. It searches for the data
@@ -353,7 +352,8 @@ configuration file or registry should contain an entry of the form
   InitRef = NameService=corbaname::my.host.name
 \end{verbatim}
 
-See section~\ref{sec:corbaname} for full details of corbaname URIs.
+\noindent See section~\ref{sec:corbaname} for full details of
+corbaname URIs.
 
 
 
@@ -468,7 +468,7 @@ First, the code:
  6  
  7  class Echo_i (Example__POA.Echo):
  8      def echoString(self, mesg):
- 9          print "echoString() called with message:", mesg
+ 9          print("echoString() called with message:", mesg)
 10          return mesg
 11  
 12  orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
@@ -483,12 +483,12 @@ First, the code:
 21  message = "Hello"
 22  result  = eo.echoString(message)
 23
-24  print "I said '%s'. The object said '%s'." % (message,result)
+24  print("I said '%s'. The object said '%s'." % (message,result))
 \end{pylisting}
 \lstset{numbers=none,gobble=0}
 
-The example illustrates several important interactions among the ORB,
-the POA, the servant, and the client. Here are the details:
+\noindent The example illustrates several important interactions among
+the ORB, the POA, the servant, and the client. Here are the details:
 
 \subsection{Imports}
 
@@ -525,7 +525,7 @@ IDL module \module{Example}.
 
 \item[Lines 7--10]\mbox{}\\
 %
-For interface \intf{Example::Echo}, omniidl produces a skeleton class
+For interface \intf{Example::Echo}, omniidl generates a skeleton class
 named \type{Example\_\_POA.Echo}. Here we define an implementation
 class, \type{Echo\_i}, which derives from the skeleton class.
 
@@ -651,10 +651,10 @@ IDL definitions.
 
 When operations are called, omniORBpy checks the types of parameters
 and return values against the IDL. If the types do not match, it
-raises a \code{CORBA.BAD\_PARAM} exception, with the minor code
+raises a \code{CORBA.BAD\_\dsc{}PARAM} exception, with the minor code
 \code{omniORB.BAD\_PARAM\_WrongPythonType}. With complex parameter
 types, it can be hard to work out exactly what part of a type was
-incorrect so, new in omniORBpy 4.2, the exception contains a list of
+incorrect so in omniORBpy, the exception contains a list of
 information about where exactly a type check failed. The information
 is stored as a list of strings in the \code{\_info} attribute of the
 exception object, and output as part of the string form of the
@@ -702,7 +702,7 @@ passing the object reference using the CORBA Naming Service.
  6  
  7  class Echo_i (Example__POA.Echo):
  8      def echoString(self, mesg):
- 9          print "echoString() called with message:", mesg
+ 9          print("echoString() called with message:", mesg)
 10          return mesg
 11  
 12  orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
@@ -711,7 +711,7 @@ passing the object reference using the CORBA Naming Service.
 15  ei = Echo_i()
 16  eo = ei._this()
 17  
-18  print orb.object_to_string(eo)
+18  print(orb.object_to_string(eo))
 19  
 20  poaManager = poa._get_the_POAManager()
 21  poaManager.activate()
@@ -720,16 +720,16 @@ passing the object reference using the CORBA Naming Service.
 \end{pylisting}
 \lstset{numbers=none,gobble=0}
 
-Up until line 18, this example is identical to the colocated case. On
-line 18, the ORB's \op{object\_to\_string} operation is called. This
-results in a string starting with the signature `IOR:' and followed by
-some hexadecimal digits. All CORBA 2 compliant ORBs are able to
-convert the string into its internal representation of a so-called
-Interoperable Object Reference (IOR). The IOR contains the location
-information and a key to uniquely identify the object implementation
-in its own address space\footnote{Notice that the object key is not
-globally unique across address spaces.}. From the IOR, an object
-reference can be constructed.
+\noindent Up until line 18, this example is identical to the colocated
+case. On line 18, the ORB's \op{object\_to\_string} operation is
+called. This results in a string starting with the signature `IOR:'
+and followed by some hexadecimal digits. All CORBA 2 compliant ORBs
+are able to convert the string into its internal representation of a
+so-called Interoperable Object Reference (IOR). The IOR contains the
+location information and a key to uniquely identify the object
+implementation in its own address space\footnote{Notice that the
+  object key is not globally unique across address spaces.}. From the
+IOR, an object reference can be constructed.
 
 After the POA has been activated, \op{orb.run} is called. Since
 omniORB is fully multi-threaded, it is not actually necessary to call
@@ -761,13 +761,13 @@ rather than exiting immediately when the end-of-file is reached.
 12  eo = obj._narrow(Example.Echo)
 13  
 14  if eo is None:
-15      print "Object reference is not an Example::Echo"
+15      print("Object reference is not an Example::Echo")
 16      sys.exit(1)
 17  
 18  message = "Hello from Python"
 19  result  = eo.echoString(message)
 20  
-21  print "I said '%s'. The object said '%s'." % (message,result)
+21  print("I said '%s'. The object said '%s'." % (message,result))
 \end{pylisting}
 \lstset{numbers=none,gobble=0}
 
@@ -832,20 +832,27 @@ majority are transient, meaning that the lifetime of the CORBA object
 of its servant object. Persistent objects can live beyond the
 destruction of their servant object, the POA they were created in, and
 even their process. Persistent objects are, of course, only
-contactable when their associated servants are active, or can be
-activated by their POA with a servant manager\footnote{The POA itself
-can be activated on demand with an adapter activator.}. A reference to
-a persistent object can be published, and will remain valid even if
-the server process is restarted.
+contactable when their associated server processes are running, and
+their servants are active or can be activated by their POA with a
+servant manager\footnote{The POA itself can be activated on demand
+  with an adapter activator.}. A reference to a persistent object can
+be published, and will remain valid even if the server process is
+restarted.
+
+To support persistent objects, the servants must be activated in their
+POA with the same object identifier each time. Also, the server must
+be configured with the same \term{endpoint} details so it is
+contactable in the same way as previous invocations. See
+chapter~\ref{chap:endpoints} for details.
 
 A POA's Lifespan Policy determines whether objects created within it
 are transient or persistent. The Root POA has the \code{TRANSIENT}
 policy.
 
 An alternative to creating persistent objects is to register object
-references in a \term{naming service} and bind them to fixed
-pathnames. Clients can bind to the object implementations at runtime
-by asking the naming service to resolve the pathnames to the object
+references in a \term{naming service} and bind them to fixed path
+names. Clients can bind to the object implementations at run time by
+asking the naming service to resolve the path names to the object
 references. CORBA defines a standard naming service, which is a
 component of the Common Object Services (COS)~\cite{corbaservices},
 that can be used for this purpose. The next section describes an
@@ -858,9 +865,8 @@ example of how to use the COS Naming Service.
 
 In this example, the object implementation uses the Naming
 Service~\cite{corbaservices} to pass on the object reference to the
-client.  This method is far more practical than using stringified
-object references. The full listings of the server and client are
-below.
+client.  This method is often more practical than using stringified
+object references.
 
 The names used by the Naming service consist of a sequence of
 \term{name components}. Each name component has an \term{id} and a
@@ -921,7 +927,7 @@ Root POA. The reason it is safe to miss it out is given in
 section~\ref{sec:narrowing}.}.
 
 
-\subsection{The Naming Service interface}
+\subsection{The Naming Service Interface}
 
 It is beyond the scope of this chapter to describe in detail the
 Naming Service interface. You should consult the CORBA services
@@ -940,7 +946,7 @@ import CosNaming, Example, Example__POA
 # Define an implementation of the Echo interface
 class Echo_i (Example__POA.Echo):
     def echoString(self, mesg):
-        print "echoString() called with message:", mesg
+        print("echoString() called with message:", mesg)
         return mesg
 
 # Initialise the ORB and find the root POA
@@ -956,32 +962,32 @@ obj         = orb.resolve_initial_references("NameService")
 rootContext = obj._narrow(CosNaming.NamingContext)
 
 if rootContext is None:
-    print "Failed to narrow the root naming context"
+    print("Failed to narrow the root naming context")
     sys.exit(1)
 
 # Bind a context named "test.my_context" to the root context
 name = [CosNaming.NameComponent("test", "my_context")]
 try:
     testContext = rootContext.bind_new_context(name)
-    print "New test context bound"
+    print("New test context bound")
     
 except CosNaming.NamingContext.AlreadyBound, ex:
-    print "Test context already exists"
+    print("Test context already exists")
     obj = rootContext.resolve(name)
     testContext = obj._narrow(CosNaming.NamingContext)
     if testContext is None:
-        print "test.mycontext exists but is not a NamingContext"
+        print("test.mycontext exists but is not a NamingContext")
         sys.exit(1)
 
 # Bind the Echo object to the test context
 name = [CosNaming.NameComponent("ExampleEcho", "Object")]
 try:
     testContext.bind(name, eo)
-    print "New ExampleEcho object bound"
+    print("New ExampleEcho object bound")
 
 except CosNaming.NamingContext.AlreadyBound:
     testContext.rebind(name, eo)
-    print "ExampleEcho binding already existed -- rebound"
+    print("ExampleEcho binding already existed -- rebound")
 
 # Activate the POA
 poaManager = poa._get_the_POAManager()
@@ -1010,7 +1016,7 @@ obj         = orb.resolve_initial_references("NameService")
 rootContext = obj._narrow(CosNaming.NamingContext)
 
 if rootContext is None:
-    print "Failed to narrow the root naming context"
+    print("Failed to narrow the root naming context")
     sys.exit(1)
 
 # Resolve the name "test.my_context/ExampleEcho.Object"
@@ -1020,21 +1026,21 @@ try:
     obj = rootContext.resolve(name)
 
 except CosNaming.NamingContext.NotFound, ex:
-    print "Name not found"
+    print("Name not found")
     sys.exit(1)
 
 # Narrow the object to an Example::Echo
 eo = obj._narrow(Example.Echo)
 
 if eo is None:
-    print "Object reference is not an Example::Echo"
+    print("Object reference is not an Example::Echo")
     sys.exit(1)
 
 # Invoke the echoString operation
 message = "Hello from Python"
 result  = eo.echoString(message)
 
-print "I said '%s'. The object said '%s'." % (message,result)
+print("I said '%s'. The object said '%s'." % (message,result))
 \end{pylisting}
 
 
@@ -1079,7 +1085,7 @@ eo  = obj._narrow(_GlobalIDL.Echo)
 
 message = "Hello from Python"
 result  = eo.echoString(message)
-print "I said '%s'. The object said '%s'" % (message,result)
+print("I said '%s'. The object said '%s'" % (message,result))
 \end{pylisting}
 
 
@@ -1321,9 +1327,9 @@ standard:
 a = # Acquire an Any from somewhere
 v = a.value(CORBA.TypeCode(CORBA.id(M.S)))
 if v is not None:
-    print v.str
+    print(v.str)
 else:
-    print "The Any does not contain a value compatible with M::S."
+    print("The Any does not contain a value compatible with M::S.")
 \end{pylisting}
 
 
@@ -1411,7 +1417,7 @@ module M {
 \begin{pylisting}
 obj = # an M::Example object reference
 obj.attr1 = "Hello"
-print obj.attr2
+print(obj.attr2)
 \end{pylisting}
 
 Servant classes can similarly provide attribute values using simple
@@ -1771,14 +1777,14 @@ storage has a noticeable performance impact, so it is turned off by
 default.
 
 
-\confopt{resetTimeoutOnRetries}{0}
+\confopt{resetTimeOutOnRetries}{0}
 
 If \code{true}, the call timeout is reset when an exception handler
 causes a call to be retried. If \code{false}, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.
 
-\confopt{throwTransientOnTimeout}{0}
+\confopt{throwTransientOnTimeOut}{0}
 
 omniORB 4.2 and later support the \code{CORBA::TIMEOUT} exception that
 is part of the CORBA Messaging specification. By default, that is the
@@ -1916,15 +1922,13 @@ These parameters affect server-side operations.
 
 \noindent
 \code{endPoint~~~~~~~~~} ~~ \textit{default} = \code{giop:tcp::}\\
-\code{endPointNoListen}\\
 \code{endPointPublish}\\
 \code{endPointNoPublish}\\
-\code{endPointPublishAllIFs}\\[.1ex]
 
 \noindent
 These options determine the end-points the ORB should listen on, and
 the details that should be published in IORs. See
-chapter~\ref{chap:connections} for details.
+chapter~\ref{chap:endpoints} for details.
 
 
 
@@ -2277,7 +2281,7 @@ are propagated to application code by default.
 
 omniORB version 4.1 and earlier did not have the \code{CORBA.TIMEOUT}
 exception, and threw \code{CORBA.TRANSIENT} instead. If the
-\code{throwTransientOnTimeout} configuration parameter is set to
+\code{throwTransientOnTimeOut} configuration parameter is set to
 \code{1}, omniORB 4.3 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.
 
@@ -2533,17 +2537,6 @@ specify a different preprocessor to omnicpp. Beware that line
 directives inserted by other preprocessors are likely to confuse
 omniidl.
 
-\subsubsection{Windows 9x}
-
-The output from the C preprocessor is normally fed to the omniidl
-parser through a pipe. On some Windows 98 machines (but not all!)  the
-pipe does not work, and the preprocessor output is echoed to the
-screen. When this happens, the omniidl parser sees an empty file, and
-produces useless stub files with strange long names. To avoid the
-problem, use the `\cmdline{-T}' option to create a temporary file
-between the two stages.
-
-
 \subsection{Forward-declared interfaces}
 
 If you have an IDL file like:
@@ -2721,10 +2714,10 @@ Generate the Python stubs for a file \file{a.idl}:
 \cmdline{omniidl -bpython -Wbstubs=stubs a.idl}
 \end{quote}
 
-\noindent Generate both Python and C++ stubs for two IDL files:
+\noindent Generate both Python and C++ stubs:
 
 \begin{quote}
-\cmdline{omniidl -bpython -bcxx a.idl b.idl}
+\cmdline{omniidl -bpython -bcxx a.idl}
 \end{quote}
 
 \noindent Just check the IDL files for validity, generating no output:
@@ -2843,7 +2836,7 @@ keep to the default mode of opening multiple connections.
 omniORB can associate a timeout with a call, meaning that if the call
 takes too long a \code{CORBA::TIMEOUT} exception\footnote{Or
   \code{CORBA::TRANSIENT} if the backwards-compatibility
-  \code{throwTransientOnTimeout} parameter is set to \code{1}.} is
+  \code{throwTransientOnTimeOut} parameter is set to \code{1}.} is
 thrown. Timeouts can be set for the whole process, for a specific
 thread, or for a specific object reference.
 
@@ -2853,18 +2846,23 @@ Timeouts are set using functions in the \code{omniORB} module:
 omniORB.setClientCallTimeout(millisecs)
 omniORB.setClientCallTimeout(objref, millisecs)
 omniORB.setClientThreadCallTimeout(millisecs)
+omniORB.setClientThreadCallTDeadline(secs)
 omniORB.setClientConnectTimeout(millisecs)
 \end{pylisting}
 
 \op{setClientCallTimeout} sets either the global timeout or the
 timeout for a specific object reference.
 \op{setClientThreadCallTimeout} sets the timeout for the calling
-thread. Setting any timeout value to zero disables it.
+thread. Alternatively, \op{setClientThreadCallDeadline} sets an
+absolute deadline for calls on thread, specified as a float of the
+number of seconds since the epoch, as returned by \code{time.time()}.
 
 Accessing per-thread state is a relatively expensive operation, so per
 thread timeouts are disabled by default. The
 \code{supportPerThreadTimeOut} parameter must be set \code{true} to
 enable them.
+
+Setting any timeout value to zero disables it.
 
 To choose the timeout value to use for a call, the ORB first looks to
 see if there is a timeout for the object reference, then to the
@@ -3091,13 +3089,13 @@ shutdown inside the omniORB server.
 
 
 
-\section{Transports and endpoints}
-\label{sec:endpoints}
+\chapter{Transports and Endpoints}
+\label{chap:endpoints}
 
 omniORB can support multiple network transports. All platforms
 (usually) have a TCP transport available. Unix platforms support a
 Unix domain socket transport. Platforms with the OpenSSL library
-available can support an SSL transport.
+available can support a TLS/SSL and HTTP(s) transport.
 
 Servers must be configured in two ways with regard to transports: the
 transports and interfaces on which they listen, and the details that
@@ -3137,9 +3135,9 @@ parameter of \code{giop:tcp::}, meaning IORs contain the address of
 the first non-loopback network interface, the ORB listens on all
 interfaces, and the OS chooses a port number.
 
-SSL endpoints have the same format as TCP ones, except `\code{tcp}'
-is replaced with `\code{ssl}'. Unix domain socket endpoints have the
-format:
+TLS/SSL endpoints have the same format as TCP ones, except
+`\code{tcp}' is replaced with `\code{ssl}'. Unix domain socket
+endpoints have the format:
 
 \begin{quote}
 \code{giop:unix:}\textit{<filename>}
@@ -3154,7 +3152,7 @@ with the \code{endPointNoPublish} configuration parameter. See below
 for more details about endpoint publishing.
 
 
-\subsection{Port ranges}
+\section{Port ranges}
 
 Sometimes it is useful to restrict a server to listen on one of a
 range of ports, rather than pinning it to one particular port or
@@ -3166,13 +3164,13 @@ listen on a port between 5000 and 5010 inclusive:
 \code{giop:tcp::5000-5010}
 \end{quote}
 
-omniORB randomly chooses a port in the range. If it finds that the
-chosen port is already occupied, it keeps trying different ports until
-it finds a free one. If all the ports in the range are occupied, it
-throws \code{CORBA.INITIALIZE}.
+\noindent omniORB randomly chooses a port in the range. If it finds
+that the chosen port is already occupied, it keeps trying different
+ports until it finds a free one. If all the ports in the range are
+occupied, it throws \code{CORBA.INITIALIZE}.
 
 
-\subsection{IPv6}
+\section{IPv6}
 
 On platforms where it is available, omniORB supports IPv6. On most
 Unix platforms, IPv6 sockets accept both IPv6 and IPv4 connections, so
@@ -3207,7 +3205,7 @@ somewhat cryptic:
 \noindent To listen for both IPv4 and IPv6 connections on Windows
 versions prior to Vista, both endpoints must be explicitly provided.
 
-\subsubsection{Link local addresses}
+\subsection{Link local addresses}
 
 In IPv6, all network interfaces are assigned a \term{link local}
 address, starting with the digits \code{fe80}. The link local address
@@ -3223,7 +3221,7 @@ considered valid. Servers do not publish link local addresses in their
 IORs.
 
 
-\subsection{Endpoint publishing}
+\section{Endpoint publishing}
 
 For clients to be able to connect to a server, the server publishes
 endpoint information in its IORs (Interoperable Object References).
@@ -3304,7 +3302,7 @@ even if the server is not listening on that endpoint. e.g.:
 
 \vspace{\baselineskip}
 
-\begin{tabular}{p{.25\textwidth}p{.65\textwidth}}
+\begin{tabular}{p{.65\textwidth}}
 \code{giop:tcp:not.my.host:12345}\\
 \code{giop:unix:/not/my/socket-file}\\
 \end{tabular}
@@ -3325,6 +3323,27 @@ setting \code{endPointPublish} to `\code{all(addr)}'. The
 URIs to the \code{endPointPublish} parameter.
 
 
+\subsection{POA-specific endpoint publishing}
+
+It can sometimes to useful to publish different sets of endpoints for
+different objects in the same server. To enable that, you can create a
+POA with the omniORB-specific EndpointPublishPolicy, giving a sequence
+of endpoint strings:
+
+\begin{cxxlisting}
+eps = ["giop:tcp:hostname1:10000",
+       "giop:tcp:hostname2:20000"]
+policy = orb.create_policy(omniPolicy.ENDPOINT_PUBLISH_POLICY_TYPE, eps)
+\end{cxxlisting}
+
+\noindent The endpoints must be fully specified---unlike the global
+publish specifications, an empty port number is \emph{not} filled with
+the chosen listening port.
+
+Note that the publishing policy only affects the \emph{published}
+endpoints---it does not change the global endpoints that the ORB is
+listening on to receive incoming connections.
+
 
 \section{Connection selection and acceptance}
 
@@ -3335,7 +3354,7 @@ clients can connect to particular transports. This is achieved with
 \term{transport rules}.
 
 
-\subsection{Client transport rules}
+\section{Client transport rules}
 \label{sec:clientRule}
 
 The \code{clientTransportRule} parameter is used to filter and
@@ -3350,7 +3369,7 @@ tried. Each rule has the form:
 
 \vspace{\baselineskip}
 
-\begin{tabular}{llp{.5\textwidth}}
+\begin{tabular}{llp{.6\textwidth}}
 1. & \code{localhost} & The address of this machine\\
 
 2. & \textit{w.x.y.z}\code{/}\textit{m1.m2.m3.m4} & An IPv4 address
@@ -3379,7 +3398,8 @@ tried. Each rule has the form:
 2. & \code{tcp}  & Use a TCP transport\\
 3. & \code{ssl}  & Use an SSL transport\\
 4. & \code{unix} & Use a Unix socket transport\\
-5. & \code{bidir}& Connections to this address can be used
+5. & \code{http} & Use an HTTP transport\\
+6. & \code{bidir}& Connections to this address can be used
                    bidirectionally (see section~\ref{sec:bidir})\\
 \end{tabular}
 
@@ -3387,7 +3407,7 @@ tried. Each rule has the form:
 
 \noindent The transport-selecting actions form a prioritised list, so
 an action of `\code{unix,ssl,\dsc{}tcp}' means to use a Unix transport if
-there is one, failing that a SSL transport, failing \emph{that} a TCP
+there is one, failing that an SSL transport, failing \emph{that} a TCP
 transport. In the absence of any explicit rules, the client uses the
 implicit rule of `\code{* unix,ssl,tcp}'.
 
@@ -3417,7 +3437,7 @@ indicate that the connect failed.
 
 
 
-\subsection{Server transport rules}
+\section{Server transport rules}
 \label{sec:serverRule}
 
 Server transport rules have the same format as client transport
@@ -3443,7 +3463,7 @@ client is not on the intranet:
 
 \noindent In the absence of any explicit rules, the server uses the
 implicit rule of `\code{* unix,\dsc{}ssl,tcp}', meaning any kind of
-connection is accepted from any client.
+connection (other than HTTP) is accepted from any client.
 
 
 \section{Bidirectional GIOP}
@@ -3547,18 +3567,23 @@ If need be, create more certificates for servers and clients in the
 same way.
 
 
-\section{HTTP and HTTPS transport}
+\section{HTTP, HTTPS and WebSocket transport}
+\label{sec:httptransport}
 
-omniORB includes an omniORB-specific HTTP and HTTPS transport. It
-works by encapsulating GIOP messages into HTTP messages, which can
-make it easier to transport through firewalls and proxies that
-understand HTTP but not GIOP. It supports the use of HTTP proxies and
-reverse proxies.
+omniORB includes an omniORB-specific HTTP transport. It works by
+encapsulating GIOP messages into HTTP messages, which can make it
+easier to transport through firewalls and proxies that understand HTTP
+but not GIOP. It supports the use of HTTP proxies, reverse proxies and
+load balancers. It can optionally establish WebSocket connections,
+which avoid many of the limitations of pure HTTP, but are not quite as
+widely accepted.
 
 To use the HTTP transport from Python you must import the
 \code{omniORB.httpTP} module before calling \op{CORBA.ORB\_init}.
 
-Normal client-server CORBA calls match the semantics of HTTP---the
+\subsection{HTTP limitations}
+
+Normal client-server CORBA calls match the semantics of HTTP --- the
 client sends a request and blocks waiting for the server to respond,
 meaning that in simple uses, the communication is pure, valid HTTP,
 and can therefore safely pass through proxies. However, there are a
@@ -3583,33 +3608,59 @@ is interpreting the HTTP messages along the communication path:
     does not necessarily match what the server sees. This means that
     codeset information, which is only transmitted on the first call on a
     connection, may be missing from the point of view of the server.
+
+  \item Some web proxies and load balancers routinely close
+    connections after a client has sent a request, without sending the
+    request on to the server. The client therefore sees the connection
+    fail, but cannot know that the server did not receive the
+    request. It therefore has to fail the call with a
+    \code{COMM\_FAILURE} exception with completion status
+    \code{COMPLETED\_MAYBE}. Application code must be prepared to
+    handle the situation.
+    
 \end{itemize}
 
-To avoid these issues with proxies, it is safest to keep
+To minimise these issues with proxies, it is safest to keep
 \code{oneCallPerConnection} set to true, avoid bidirectional GIOP, and
-make use of the \code{defaultCharCodeSet} and \code{defaultWCharCodeSet}
-parameters to choose suitable codesets.
+make use of the \code{defaultCharCodeSet} and
+\code{defaultWCharCodeSet} parameters to choose suitable codesets.
+
+Alternatively, clients can `upgrade' the HTTP connection to a
+WebSockets connection, in which cases messages are sent in a binary
+framing format that \emph{does} permit the use of full GIOP semantics.
+Upgrading an HTTP connection to a WebSockets connection requires that
+all intermediary servers (proxies, load balancers, etc.)  support the
+WebSocket protocol, so there are some environments in which plain HTTP
+communication succeeds but WebSockets fail.
+
 
 \subsection{Endpoint and transport rule specification}
 
 The HTTP transport uses endpoint URIs of the form
 \code{giop:http:}\textit{url}, where the \textit{url} is a full
-\code{http://} or \code{https://} URL. That means the URIs appear to
-duplicate the `http':
+\code{http://}, \code{https://}, \code{ws://} or \code{wss://}
+URL. That means the URIs appear to duplicate the `http':
 
 \begin{quote}
   \code{giop:http:http://server.example.com:8000/call}\\
-  \code{giop:http:https://secure.example.com:443/invoke}
+  \code{giop:http:https://secure.example.com:443/invoke}\\
+  \code{giop:http:ws://websocket.example.com:8080/ws}\\
+  \code{giop:http:wss://websocket-secure.example.com:8443/ws}
 \end{quote}
 
-The path part of the URL can be set to any value. On the client side,
-the client makes an HTTP \code{POST} request to the URL, specifying
-the path; the server checks that the path matches what it expects. The
-ability to specify a path this way can be helpful when configuring
-path-based routing in load balancer configurations.
+\noindent The path part of the URL can be set to any value. On the
+client side, the client makes an HTTP \code{POST} request to the URL,
+specifying the path; the server checks that the path matches what it
+expects. The ability to specify a path this way can be helpful when
+configuring path-based routing in load balancer configurations.
 
 If no port is specified on the server endpoint, the server uses an
 ephemeral port; it does not default to 80 or 443.
+
+Servers always support upgrade of connections to WebSocket. The use of
+a \code{ws://} or \code{wss://} URL determines the URL that is
+published in object references, and thus whether clients will attempt
+to use WebSockets or not.
 
 The transport specification `\code{http}' is not in the default client
 or server transport rules (as described in
@@ -3626,24 +3677,27 @@ requires basic authentication, the \code{httpProxyUsername} and
 \code{httpProxyPassword} parameters can be set.
 
 When connecting through a proxy, the behaviour depends on whether the
-client is connecting to an HTTP or HTTPS server. When connecting to
-HTTP, the request is sent directly to the proxy, and the proxy
-forwards it at an HTTP level. In this situation, it is essential that
-only pure HTTP-compliant messages are sent.
+client is connecting to an HTTP or HTTPS server, and whether it is
+attempting to use WebSockets. When connecting with plain HTTP, the
+request is sent directly to the proxy, and the proxy forwards it at an
+HTTP level. In this situation, it is essential that only pure
+HTTP-compliant messages are sent.
 
-When connecting to an HTTPS server, the client makes a \code{CONNECT}
-request to the proxy. If accepted by the proxy, that opens a
-transparent tunnel through to the server. In that situation, as long
-as nothing else intercepts and attempts to interpret the data, the
-omniORB client is in effect directly connected to the omniORB server,
-and there is more chance that transfers that are not strictly legal
-HTTP will succeed.
+When connecting to an HTTPS server or upgrading the connection to
+WebSockets, the client makes a \code{CONNECT} request to the proxy. If
+accepted by the proxy, that opens a transparent tunnel through to the
+server. In that situation, as long as nothing else intercepts and
+attempts to interpret the data, the omniORB client is in effect
+directly connected to the omniORB server, and there is more chance
+that transfers that are not strictly legal HTTP will succeed.
+
 
 \subsection{HTTPS keys and certificates}
 
 Support for HTTPS uses the same concepts as the SSL transport. For
 each configuration option with a name starting `\code{ssl}', there is
 an equivalent option starting `\code{https}'.
+
 
 \subsection{In-message encryption}
 
@@ -3772,8 +3826,6 @@ The \code{omniConnectionMgmt} library has two functions:
 };
 \end{pylisting}
 
-% *** HERE NOW ***
-
 
 The \op{init} function must be called before \op{CORBA.ORB\_init} in
 every process that is to take part in the connection management.
@@ -3787,8 +3839,6 @@ reference unchanged.
 \subsection{Client-side parameters}
 
 These parameters affect the client side of a connection:
-
-\clearpage % ***
 
 \confoptnd{connection\_id}
 
@@ -3877,6 +3927,8 @@ receives, in order to change its own behaviour.
 
 
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Interoperable Naming Service}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3889,10 +3941,9 @@ is a summary of its facilities.
 \section{Object URIs}
 
 As well as accepting IOR-format strings, \op{orb.string\_to\_object}
-now also supports two new Uniform Resource Identifier
-(URI)~\cite{rfc2396} formats, which can be used to specify objects in
-a convenient human-readable form. The existing IOR-format strings are
-now also considered URIs.
+also supports two Uniform Resource Identifier (URI)~\cite{rfc2396}
+formats, which can be used to specify objects in a convenient
+human-readable form.
 
 \subsection{corbaloc}
 
@@ -3960,21 +4011,75 @@ You can also specify an IIOP version number:
 \corbauri{corbaloc::1.2@myhost.example.com/MyObjectKey}
 \end{quote}
 
-Specifying IIOP versions above 1.0 is slightly risky since higher
-versions make use of various information stored in IORs that is not
-present in a corbaloc URI. It is generally best to contact initial
+\noindent Specifying IIOP versions above 1.0 is slightly risky since
+higher versions make use of various information stored in IORs that is
+not present in a corbaloc URI. It is generally best to contact initial
 corbaloc objects with IIOP 1.0, and rely on higher versions for all
 other object references.
 
 
-\vspace{\baselineskip}
 
-\noindent Alternatively, to use \op{resolve\_initial\_references}, you
-use a URI of the form:
+\subsection{Other transports}
+
+The only transport specified in the CORBA standard is \corbauri{iiop},
+but omniORB also supports the following extensions:
+
+\begin{description}
+
+\item[\corbauri{ssliop}]\mbox{}\\
+Equivalent semantics to \corbauri{iiop}, but the server is contacted
+using SSL / TLS. As with \corbauri{iiop}, the address details are of
+the form \code{\textit{host}:\textit{port}}.
+
+\item[\corbauri{omniunix}]\mbox{}\\
+The omniORB Unix domain socket transport. The address details are of
+the form \code{\textit{filename}}.
+
+\end{description}
+
+
+\subsection{HTTP URLs}
+
+If the omniORB-specific HTTP transport is enabled (see
+section~\ref{sec:httptransport}), then HTTP URLs are also
+supported. The format is
 
 \begin{quote}
-\corbauri{corbaloc:rir:/NameService}
+\textit{scheme}%
+\corbauri{://}%
+<\textit{host}>%
+[\corbauri{:}\textit{port}]%
+\corbauri{/}%
+<\textit{path}>%
+\corbauri{#}%
+<\textit{object key}>
 \end{quote}
+
+\noindent Where \textit{scheme} is one of \corbauri{http},
+\corbauri{https}, \corbauri{ws} or \corbauri{wss}. For example:
+
+\begin{quote}
+\corbauri{http://myhost.example.com/call#MyObjectKey}\\
+\corbauri{wss://myhost.example.com/websocket#MyObjectKey}\\
+\end{quote}
+
+
+\subsection{Resolve initial references}
+
+A \corbauri{corbaloc:} can also specify a call to
+\op{resolve\_initial\_references}. This
+
+\begin{pylisting}
+orb.string_to_object("corbaloc:rir:/NameService");
+\end{pylisting}
+
+\noindent is identical in behaviour to
+
+\begin{pylisting}
+orb.resolve_initial_references("NameService");
+\end{pylisting}
+
+
 
 
 \subsection{corbaname}
@@ -4026,7 +4131,7 @@ the location of a naming service.
 \section{Configuring resolve\_initial\_references}
 \label{sec:insargs}
 
-The INS specifies two standard command line arguments which provide a
+The INS specifies two standard command line arguments that provide a
 portable way of configuring \op{ORB::resolve\_initial\_references}:
 
 
@@ -4084,7 +4189,8 @@ service---you have to use a sub-context, like:
 
 \subsection{NamingContextExt}
 
-omniNames supports the \intf{CosNaming::NamingContextExt} interface:
+omniNames supports the extended \intf{CosNaming::NamingContextExt}
+interface:
 
 \begin{idllisting}
 module CosNaming {
@@ -4107,12 +4213,12 @@ module CosNaming {
 };
 \end{idllisting}
 
-\op{to\_string} and \op{to\_name} convert from \type{CosNaming::Name}
-sequences to flattened strings and vice-versa.  Calling these
-operations involves remote calls to the naming service, so they are
-not particularly efficient. The \module{omniORB.URI} module contains
-equivalent \op{nameToString} and \op{stringToName} functions, which do
-not involve remote calls.
+\noindent \op{to\_string} and \op{to\_name} convert from
+\type{CosNaming::Name} sequences to flattened strings and vice-versa.
+Calling these operations involves remote calls to the naming service,
+so they are not particularly efficient. The \module{omniORB.URI}
+module contains equivalent \op{nameToString} and \op{stringToName}
+functions, which do not involve remote calls.
 
 A \type{CosNaming::Name} is stringified by separating name components
 with `\texttt{/}' characters. The \code{kind} and \code{id} fields of
@@ -4151,9 +4257,9 @@ starts with the default port of 2809, and an object key of
 
 omniMapper is a simple daemon which listens on port 2809 (or any other
 port), and redirects IIOP requests for configured object keys to
-associated persistent IORs. It can be used to make a naming service
-(even an old non-INS aware version of omniNames or other ORB's naming
-service) appear on port 2809 with the object key
+associated persistent object references. It can be used to make a
+naming service (even an old non-INS aware version of omniNames or
+other ORB's naming service) appear on port 2809 with the object key
 `\texttt{NameService}'. The same goes for any other service you may
 wish to specify, such as an interface repository. omniMapper is
 started with a command line of:
@@ -4165,8 +4271,8 @@ started with a command line of:
 \end{quote}
 
 \noindent The \cmdline{-port} option allows you to choose a port other
-than 2809 to listen on. The \cmdline{-config} option specifies a
-location for the configuration file. The default name is
+than the default 2809 to listen on. The \cmdline{-config} option
+specifies a location for the configuration file. The default name is
 \file{/etc/omniMapper.cfg}, or \file{C:\omniMapper.cfg} on
 Windows. omniMapper does not normally print anything; the \cmdline{-v}
 option makes it verbose so it prints configuration information and a
@@ -4185,10 +4291,10 @@ InterfaceRepository IOR:0100...
 \end{verbatim}
 \end{quote}
 
-omniMapper can either be run on a single machine, in much the same way
-as omniNames, or it can be run on \emph{every} machine, with a common
-configuration file. That way, each machine's omniORB configuration
-file could contain the line:
+\noindent omniMapper can either be run on a single machine, in much
+the same way as omniNames, or it can be run on \emph{every} machine,
+with a common configuration file. That way, each machine's omniORB
+configuration file could contain the line:
 
 \begin{quote}
 \begin{verbatim}
@@ -4198,7 +4304,7 @@ ORBDefaultInitRef corbaloc::localhost
 
 
 
-\section{Creating objects with simple object keys}
+\section{Creating objects with plain object keys}
 
 In normal use, omniORB creates object keys containing various
 information including POA names and various non-ASCII characters.
@@ -4209,22 +4315,36 @@ objects with human-friendly keys.
 If you wish to make your objects available with human-friendly URIs,
 there are two options. The first is to use omniMapper as described
 above, in conjunction with a \code{PERSISTENT} POA. The second is to
-create objects with the required keys yourself. You do this with a
-special POA with the name `\texttt{omniINSPOA}', acquired from
-\op{resolve\_initial\_references}. This POA has the \code{USER\_ID}
-and \code{PERSISTENT} policies, and the special property that the
-object keys it creates contain only the object ids given to the POA,
-and no other data. It is a normal POA in all other respects, so you
-can activate/deactivate it, create children, and so on, in the usual
-way.
+create objects with the required keys yourself. You do this using a
+POA with the special property that the object keys it creates contain
+only the object ids given to the POA, and no other data.
 
-Children of the omniINSPOA do not inherit its special properties of
-creating simple object keys. If the omniINSPOA's policies are not
-suitable for your application, you cannot create a POA with different
-policies (such as single threading, for example), and still generate
-simple object keys. Instead, you can activate a servant in the
-omniINSPOA that uses location forwarding to redirect requests to
-objects in a different POA.
+There is a pre-defined POA with the correct policies named
+`\texttt{omniINSPOA}', acquired from
+\op{resolve\_initial\_references}. This POA has the \code{USER\_ID}
+and \code{PERSISTENT} policies. It is a normal POA in all other
+respects, so you can activate/deactivate it, create children, and so
+on, in the usual way. Children of the omniINSPOA do not inherit its
+special properties of creating plain object keys.
+
+If the omniINSPOA's policies are not suitable for your application,
+you can create a different POA, giving it the omniORB-specific `plain
+object keys' policy:
+
+\begin{pylisting}
+policy = orb.create_policy(omniPolicy.PLAIN_OBJECT_KEYS_POLICY_TYPE, True)
+\end{pylisting}
+
+\noindent The other policies must be compatible:
+
+\begin{itemize}
+\item \code{PERSISTENT} lifecycle policy
+\item \code{USER\_ID} id assignment policy
+\item \code{USE\_ACTIVE\_OBJECT\_MAP\_ONLY} request processing policy
+\end{itemize}
+
+\noindent You can choose any thread policy and provide an omniORB
+endpoint publishing policy.
 
 
 
@@ -4248,15 +4368,15 @@ For the ORB to know how to handle strings given to it by the
 application, it must know what code set they are represented with, so
 it can properly translate them if need be.
 
+In Python 3.x, all Python strings are Unicode, so it always behaves as
+if the native char code set is UTF-8.
+
 For Python 2.x, the default is ISO 8859-1 (Latin 1). A different code
 set can be chosen at initialisation time with the
 \code{nativeCharCodeSet} parameter. The supported code sets are
 printed out at initialisation time if the ORB traceLevel is 15 or
 greater. Some applications may need to set the native char code set to
 UTF-8, allowing the full Unicode range to be supported in strings.
-
-In Python 3.x, all Python strings are Unicode, so it always behaves as
-if the native char code set is UTF-8.
 
 wchar and wstring are always represented by the Python Unicode type,
 so there is no need to select a native code set for wchar.
@@ -4267,7 +4387,7 @@ so there is no need to select a native code set for wchar.
 The way code set conversion is meant to work in CORBA communication is
 that each client and server has a \term{native} code set that it uses
 for character data in application code, and supports a number of
-\term{transmission} code sets that is uses for communication. When a
+\term{transmission} code sets that it uses for communication. When a
 client connects to a server, the client picks one of the server's
 transmission code sets to use for the interaction. For that to work,
 the client plainly has to know the server's supported transmission
@@ -4284,6 +4404,11 @@ the server supports. This approach can fail for two reasons:
   \item Some badly-behaved servers that do support code set conversion
     fail to put codeset information in their IORs.
 \end{enumerate}
+
+\noindent Similarly, a badly-behaved client may fail to specify
+codeset information when it first uses a connection to a server,
+meaning that the server does not know the transmission codeset used by
+the client.
 
 The CORBA standard says that if a server has not specified
 transmission code set information, clients must assume that they only

@@ -122,7 +122,7 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
   CASE_CPFN_BIDIR(/*BIDIRECTIONAL_POLICY_TYPE*/   37, BidirectionalPolicy)
 
   // omniORB specific policies
-  CASE_CPFN_OMNI(/*LOCAL_SHORTCUT_POLICY*/   0x41545401, LocalShortcutPolicy)
+  CASE_CPFN_OMNI(/*LOCAL_SHORTCUT_POLICY_TYPE*/ 0x41545401, LocalShortcutPolicy)
 
   case /*ENDPOINT_PUBLISH_POLICY*/ 0x41545402:
     {
@@ -141,7 +141,10 @@ ORB::create_policy(CORBA::PolicyType t, const CORBA::Any& value) {
       }
       break;
     }
+
+  CASE_CPFN_OMNI(/*PLAIN_OBJECT_KEYS_POLICY_TYPE*/ 0x41545403, PlainObjectKeysPolicy)
   }
+
   throw CORBA::PolicyError(CORBA::BAD_POLICY);
 }
 
@@ -154,7 +157,7 @@ static CORBA::TypeCode::_Tracker _0RL_tcTrack(__FILE__);
 static CORBA::TypeCode_ptr _0RL_tc_CORBA_mPolicyErrorCode = CORBA::TypeCode::PR_alias_tc("IDL:omg.org/CORBA/PolicyErrorCode:1.0", "PolicyErrorCode", CORBA::TypeCode::PR_short_tc(), &_0RL_tcTrack);
 
 
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace CORBA { 
   const CORBA::TypeCode_ptr _tc_PolicyErrorCode = _0RL_tc_CORBA_mPolicyErrorCode;
@@ -168,7 +171,7 @@ static CORBA::PR_structMember _0RL_structmember_CORBA_mPolicyError[] = {
 };
 
 static CORBA::TypeCode_ptr _0RL_tc_CORBA_mPolicyError = CORBA::TypeCode::PR_exception_tc("IDL:omg.org/CORBA/PolicyError:1.0", "PolicyError", _0RL_structmember_CORBA_mPolicyError, 1, &_0RL_tcTrack);
-#if defined(HAS_Cplusplus_Namespace) && defined(_MSC_VER)
+#if defined(OMNI_HAS_Cplusplus_Namespace) && defined(_MSC_VER)
 // MSVC++ does not give the constant external linkage otherwise.
 namespace CORBA { 
   const CORBA::TypeCode_ptr _tc_PolicyError = _0RL_tc_CORBA_mPolicyError;
@@ -182,10 +185,12 @@ const CORBA::TypeCode_ptr CORBA::_tc_PolicyError = _0RL_tc_CORBA_mPolicyError;
 static void _0RL_CORBA_mPolicyError_marshal_fn(cdrStream& _s, void* _v)
 {
   const CORBA::PolicyError* _p = (const CORBA::PolicyError*)_v;
+  ::CORBA::Any::PR_marshalExceptionRepoId(_s, _p->_rep_id());
   *_p >>= _s;
 }
 static void _0RL_CORBA_mPolicyError_unmarshal_fn(cdrStream& _s, void*& _v)
 {
+  ::CORBA::Any::PR_unmarshalExceptionRepoId(_s);
   CORBA::PolicyError* _p = new CORBA::PolicyError;
   *_p <<= _s;
   _v = _p;

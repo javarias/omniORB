@@ -42,6 +42,10 @@
 #include <invoker.h>
 #include <interceptors.h>
 
+#ifdef HAVE_STD
+#include <memory>
+#endif
+
 OMNI_USING_NAMESPACE(omni)
 
 
@@ -769,13 +773,23 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
       }
       omni::locationForward(this,ex.get_obj()->_PR_getobj(),ex.is_permanent());
     }
-    
+#ifdef HAVE_STD
+    catch (const std::bad_alloc&) {
+      // We keep logging as simple as possible to avoid too much allocation.
+      omniORB::logs(1, "Error: invoke raised std::bad_alloc.");
+      OMNIORB_THROW(NO_MEMORY, NO_MEMORY_BadAlloc,
+                    call_desc.called() ? CORBA::COMPLETED_YES :
+                                         CORBA::COMPLETED_NO);
+    }
+#endif // HAVE_STD
+
     if (!required_retry &&
 	(retry_after_timeout || orbParameters::resetTimeOutOnRetries)) {
 
       // Reset the timeout next time around
       abs_time.assign(0,0);
     }
+    call_desc.called(0);
   }
 }
 

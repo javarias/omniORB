@@ -162,7 +162,7 @@ public:
   static void logCodeSets();
   // Print out the supported code sets
 
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
   typedef _CORBA_WChar  UniChar; // Unicode code point (UTF-16)
 #else
   typedef _CORBA_UShort UniChar;

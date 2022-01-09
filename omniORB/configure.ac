@@ -1,5 +1,5 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 5.0.0, bugs@omniorb-support.com)
+AC_INIT(omniORB, 4.3.0, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
@@ -8,7 +8,7 @@ AC_CONFIG_AUX_DIR(bin/scripts)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-AC_CONFIG_HEADERS(include/omniORB4/acconfig.h)
+AC_CONFIG_HEADERS(include/omniORB4/acconfig_pre.h)
 
 dnl to prevent error from autoreconf while crosscompiling
 m4_pattern_allow(PKG_CONFIG_LIBDIR)
@@ -20,7 +20,7 @@ if test "${CFLAGS+set}" != set; then
 fi
 
 if test "${CXXFLAGS+set}" != set; then
-    CXXFLAGS="-O2"
+    CXXFLAGS="-O3"
 fi
 
 
@@ -74,7 +74,7 @@ dnl ** Headers
 
 AC_CHECK_HEADERS(errno.h fcntl.h netdb.h signal.h stdlib.h string.h strings.h)
 AC_CHECK_HEADERS(unistd.h nan.h sys/if.h sys/ioctl.h sys/param.h sys/time.h)
-AC_CHECK_HEADERS(sys/poll.h ifaddrs.h)
+AC_CHECK_HEADERS(sys/poll.h ifaddrs.h zlib.h zstd.h)
 AC_HEADER_TIME
 
 
@@ -135,9 +135,9 @@ dnl ** Functions
 AC_LANG(C)
 AC_CHECK_FUNCS(getaddrinfo gethostname getopt getpid gettimeofday)
 AC_CHECK_FUNCS(getnameinfo gmtime gmtime_r inet_ntop)
-AC_CHECK_FUNCS(isinf insinff isinfl localtime localtime_r nanosleep poll)
-AC_CHECK_FUNCS(rand_r sigaction sigvec snprintf strcasecmp strdup)
-AC_CHECK_FUNCS(strerror strftime stricmp strncasecmp strtoul strtoull)
+AC_CHECK_FUNCS(isinf isinff isinfl isnan isnanf isnanl localtime localtime_r)
+AC_CHECK_FUNCS(nanosleep poll rand_r sigaction sigvec snprintf strcasecmp)
+AC_CHECK_FUNCS(strdup strerror strftime stricmp strncasecmp strtoul strtoull)
 AC_CHECK_FUNCS(strtouq uname vprintf vsnprintf)
 AC_FUNC_ALLOCA
 AC_LANG(C++)
@@ -161,7 +161,6 @@ OMNI_DISABLE_ATOMIC
 OMNI_ENABLE_ZIOP
 OMNI_ENABLE_CFNETWORK
 OMNI_ENABLE_HTTP_CRYPTO
-OMNI_ENABLE_CXX11
 
 
 dnl ** Compiler name
@@ -263,8 +262,13 @@ AC_SUBST(PROCESSOR_DEFINE, $proc_def)
 
 dnl ** Output
 
+dnl Rewrite the config header to prefix definitions with OMNI, to avoid clashes
+
+AC_CONFIG_COMMANDS([acconfig.h],
+                   [sed -e 's/#\( *define\) \([A-Z]\)/#\1 OMNI_\2/g' -e 's/#\( *undef\) \([A-Z]\)/#\1 OMNI_\2/g' include/omniORB4/acconfig_pre.h >include/omniORB4/acconfig.h])
+
 AC_CONFIG_FILES(mk/beforeauto.mk mk/afterauto.mk GNUmakefile)
-AC_CONFIG_FILES(src/tool/omniidl/python/scripts/omniidl)
+AC_CONFIG_FILES(src/tool/omniidl/python2/scripts/omniidl)
 AC_CONFIG_FILES(src/tool/omniidl/python3/scripts/omniidl)
 AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/appl/omniMapper/GNUmakefile
@@ -299,13 +303,13 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/codesets/GNUmakefile
                 src/lib/omniORB/GNUmakefile
                 src/lib/omniORB/dynamic/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/dynskel/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/header/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/impl/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/cxx/skel/GNUmakefile
-                src/lib/omniORB/python/omniidl_be/GNUmakefile
-                src/lib/omniORB/python/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/dynskel/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/header/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/impl/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/cxx/skel/GNUmakefile
+                src/lib/omniORB/python2/omniidl_be/GNUmakefile
+                src/lib/omniORB/python2/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/dynskel/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/header/GNUmakefile
@@ -313,7 +317,6 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/GNUmakefile
                 src/lib/omniORB/python3/GNUmakefile
-                src/lib/omniORB/base/GNUmakefile
                 src/lib/omniORB/orbcore/GNUmakefile
                 src/lib/omniORB/orbcore/ssl/GNUmakefile
                 src/lib/omniORB/orbcore/http/GNUmakefile
@@ -332,10 +335,10 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/tool/omniidl/cxx/cccp/GNUmakefile
                 src/tool/omniidl/cxx/GNUmakefile
                 src/tool/omniidl/GNUmakefile
-                src/tool/omniidl/python/GNUmakefile
-                src/tool/omniidl/python/omniidl_be/GNUmakefile
-                src/tool/omniidl/python/omniidl/GNUmakefile
-                src/tool/omniidl/python/scripts/GNUmakefile
+                src/tool/omniidl/python2/GNUmakefile
+                src/tool/omniidl/python2/omniidl_be/GNUmakefile
+                src/tool/omniidl/python2/omniidl/GNUmakefile
+                src/tool/omniidl/python2/scripts/GNUmakefile
                 src/tool/omniidl/python3/GNUmakefile
                 src/tool/omniidl/python3/omniidl_be/GNUmakefile
                 src/tool/omniidl/python3/omniidl/GNUmakefile
@@ -357,13 +360,12 @@ AC_CONFIG_FILES(contrib/GNUmakefile
                 contrib/pkgconfig/GNUmakefile)
 
 AC_OUTPUT([
-contrib/pkgconfig/omnithread.pc
-contrib/pkgconfig/omniBase5.pc
-contrib/pkgconfig/omniORB5.pc
-contrib/pkgconfig/omniDynamic5.pc
-contrib/pkgconfig/omniCOS5.pc
-contrib/pkgconfig/omniCOSDynamic5.pc
-contrib/pkgconfig/omniConnectionMgmt5.pc
-contrib/pkgconfig/omniZIOP5.pc
-contrib/pkgconfig/omniZIOPDynamic5.pc
+contrib/pkgconfig/omnithread3.pc
+contrib/pkgconfig/omniORB4.pc
+contrib/pkgconfig/omniDynamic4.pc
+contrib/pkgconfig/omniCOS4.pc
+contrib/pkgconfig/omniCOSDynamic4.pc
+contrib/pkgconfig/omniConnectionMgmt4.pc
+contrib/pkgconfig/omniZIOP4.pc
+contrib/pkgconfig/omniZIOPDynamic4.pc
 ])

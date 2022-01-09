@@ -13,14 +13,10 @@
 //     of them is absent.
 //       
 //
-#include <omniORB4/CORBA_sysdep.h> // for HAVE_STD
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
+
 #include <stdlib.h>
 #include <omnithread.h>
 

@@ -579,9 +579,9 @@ public:
     return ElemT(pd_data[i],pd_rel);
   }
 
-#if SIZEOF_PTR == SIZEOF_LONG
+#if OMNI_SIZEOF_PTR == OMNI_SIZEOF_LONG
   typedef unsigned long ptr_arith_t;
-#elif SIZEOF_PTR == SIZEOF_INT
+#elif OMNI_SIZEOF_PTR == OMNI_SIZEOF_INT
   typedef unsigned int ptr_arith_t;
 #elif defined (_WIN64)
   typedef size_t ptr_arith_t;

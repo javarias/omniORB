@@ -127,7 +127,7 @@ else """,
             else:
                 if kind == idltype.tk_boolean:
                     to.out("""
-#if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)""")
+#if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)""")
 
                 if n_elements <= SMALL_ARRAY_THRESHOLD:
                     put_op = "put_small_octet_array"

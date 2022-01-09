@@ -24,12 +24,8 @@
 
 #include "omniNames.h"
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 static const TCHAR* WIN32_DISP_NAME = TEXT("omniNames CORBA naming service");
 static const TCHAR* WIN32_SVC_NAME  = TEXT("omninames");

@@ -23,6 +23,8 @@
 // Description:
 //    zlib compressor
 
+#include <omniORB4/CORBA.h>
+
 #include "zlibCompressor.h"
 #include <zlib.h>
 
@@ -119,6 +121,12 @@ compress(const Compression::Buffer& source, Compression::Buffer& target)
       pd_compressed_bytes   += target_len;
       pd_uncompressed_bytes += source.length();
     }
+
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Compressed zlib(" << pd_level << ") "
+          << source.length() << " -> " << target.length() << "\n";
+    }
   }
   else {
     throw Compression::CompressionException(ret, errReason(ret));
@@ -140,6 +148,11 @@ decompress(const Compression::Buffer& source, Compression::Buffer& target)
     if (dlen != target.length())
       target.length(dlen);
 
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Decompressed zlib "
+          << source.length() << " -> " << target.length() << "\n";
+    }
     return;
   }
   else {

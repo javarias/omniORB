@@ -348,7 +348,7 @@ DynAnyImpl::equal(DynamicAny::DynAny_ptr dyn_any)
       CORBA::Object_var b = dyn_any->get_reference();
       return a->_is_equivalent(b);
     }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case CORBA::tk_longdouble:
     {
       // Two identical LongDoubles do not necessarily have the same
@@ -423,7 +423,7 @@ DynAnyImpl::insert_ulong(CORBA::ULong value)
   value >>= doWrite(CORBA::tk_ulong);
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 void
 DynAnyImpl::insert_float(CORBA::Float value)
 {
@@ -490,7 +490,7 @@ DynAnyImpl::insert_typecode(CORBA::TypeCode_ptr value)
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 void
 DynAnyImpl::insert_longlong(CORBA::LongLong value)
 {
@@ -506,7 +506,7 @@ DynAnyImpl::insert_ulonglong(CORBA::ULongLong value)
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 void
 DynAnyImpl::insert_longdouble(CORBA::LongDouble value)
 {
@@ -650,7 +650,7 @@ DynAnyImpl::get_ulong()
   return value;
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 CORBA::Float
 DynAnyImpl::get_float()
 {
@@ -709,7 +709,7 @@ DynAnyImpl::get_typecode()
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::LongLong
 DynAnyImpl::get_longlong()
 {
@@ -729,7 +729,7 @@ DynAnyImpl::get_ulonglong()
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::LongDouble
 DynAnyImpl::get_longdouble()
 {
@@ -845,15 +845,15 @@ SEQUENCE_OPS(short, Short)
 SEQUENCE_OPS(ushort, UShort)
 SEQUENCE_OPS(long, Long)
 SEQUENCE_OPS(ulong, ULong)
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 SEQUENCE_OPS(float, Float)
 SEQUENCE_OPS(double, Double)
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 SEQUENCE_OPS(longlong, LongLong)
 SEQUENCE_OPS(ulonglong, ULongLong)
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 SEQUENCE_OPS(longdouble, LongDouble)
 #endif
 SEQUENCE_OPS(wchar, WChar)
@@ -928,7 +928,7 @@ DynAnyImpl::set_to_initial_value()
   case CORBA::tk_long:       insert_long(0);      break;
   case CORBA::tk_ushort:     insert_ushort(0);    break;
   case CORBA::tk_ulong:      insert_ulong(0);     break;
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   case CORBA::tk_float:      insert_float(0.0);   break;
   case CORBA::tk_double:     insert_double(0.0);  break;
 #endif
@@ -946,11 +946,11 @@ DynAnyImpl::set_to_initial_value()
   case CORBA::tk_string:
     insert_string(_CORBA_String_helper::empty_string);
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:   insert_longlong(0);     break;
   case CORBA::tk_ulonglong:  insert_ulonglong(0);    break;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case CORBA::tk_longdouble: insert_longdouble(0.0); break;
 #endif
   case CORBA::tk_wchar:      insert_wchar(0);        break;
@@ -1441,7 +1441,7 @@ DynAnyConstrBase::insert_ulong(CORBA::ULong value)
   value >>= writeCurrent(CORBA::tk_ulong);
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 void
 DynAnyConstrBase::insert_float(CORBA::Float value)
 {
@@ -1511,7 +1511,7 @@ DynAnyConstrBase::insert_typecode(CORBA::TypeCode_ptr value)
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 void
 DynAnyConstrBase::insert_longlong(CORBA::LongLong value)
 {
@@ -1527,7 +1527,7 @@ DynAnyConstrBase::insert_ulonglong(CORBA::ULongLong value)
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 void
 DynAnyConstrBase::insert_longdouble(CORBA::LongDouble value)
 {
@@ -1680,7 +1680,7 @@ DynAnyConstrBase::get_ulong()
   return value;
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 CORBA::Float
 DynAnyConstrBase::get_float()
 {
@@ -1742,7 +1742,7 @@ DynAnyConstrBase::get_typecode()
   return CORBA::TypeCode::unmarshalTypeCode(readCurrent(CORBA::tk_TypeCode));
 }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::LongLong
 DynAnyConstrBase::get_longlong()
 {
@@ -1764,7 +1764,7 @@ DynAnyConstrBase::get_ulonglong()
 #endif
 
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::LongDouble
 DynAnyConstrBase::get_longdouble()
 {
@@ -1939,15 +1939,15 @@ INSERT_SEQ_OP(short,      Short,      2, 2)
 INSERT_SEQ_OP(ushort,     UShort,     2, 2)
 INSERT_SEQ_OP(long,       Long,       4, 4)
 INSERT_SEQ_OP(ulong,      ULong,      4, 4)
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 INSERT_SEQ_OP(float,      Float,      4, 4)
 INSERT_SEQ_OP(double,     Double,     8, 8)
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 INSERT_SEQ_OP(longlong,   LongLong,   8, 8)
 INSERT_SEQ_OP(ulonglong,  ULongLong,  8, 8)
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 INSERT_SEQ_OP(longdouble, LongDouble, 8, 16)
 #endif
 
@@ -2106,15 +2106,15 @@ GET_SEQ_OP(short,      Short,      2, 2)
 GET_SEQ_OP(ushort,     UShort,     2, 2)
 GET_SEQ_OP(long,       Long,       4, 4)
 GET_SEQ_OP(ulong,      ULong,      4, 4)
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 GET_SEQ_OP(float,      Float,      4, 4)
 GET_SEQ_OP(double,     Double,     8, 8)
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 GET_SEQ_OP(longlong,   LongLong,   8, 8)
 GET_SEQ_OP(ulonglong,  ULongLong,  8, 8)
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 GET_SEQ_OP(longdouble, LongDouble, 8, 16)
 #endif
 
@@ -2660,7 +2660,7 @@ DynStructImpl::prepareSequenceWrite(CORBA::TCKind kind, CORBA::ULong len)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -2680,7 +2680,7 @@ DynStructImpl::prepareSequenceRead(CORBA::TCKind kind)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -2802,7 +2802,7 @@ DynUnionDisc::insert_ulong(CORBA::ULong value)
   if( pd_union )  pd_union->discriminatorHasChanged();
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 void
 DynUnionDisc::insert_float(CORBA::Float value)
 {
@@ -2849,7 +2849,7 @@ DynUnionDisc::insert_typecode(CORBA::TypeCode_ptr value)
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 void
 DynUnionDisc::insert_longlong(CORBA::LongLong value)
 {
@@ -2868,7 +2868,7 @@ DynUnionDisc::insert_ulonglong(CORBA::ULongLong value)
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 void
 DynUnionDisc::insert_longdouble(CORBA::LongDouble value)
 {
@@ -2968,7 +2968,7 @@ DynUnionDisc::set_value(TypeCode_union::Discriminator v)
   case CORBA::tk_ulong:
     insert_ulong((CORBA::ULong)v);
     break;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
     insert_longlong((CORBA::LongLong)v);
     break;
@@ -3323,7 +3323,7 @@ DynUnionImpl::insert_ulong(CORBA::ULong value)
   discriminatorHasChanged();
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 void
 DynUnionImpl::insert_float(CORBA::Float value)
 {
@@ -3397,7 +3397,7 @@ DynUnionImpl::insert_typecode(CORBA::TypeCode_ptr value)
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 void
 DynUnionImpl::insert_longlong(CORBA::LongLong value)
 {
@@ -3416,7 +3416,7 @@ DynUnionImpl::insert_ulonglong(CORBA::ULongLong value)
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 void
 DynUnionImpl::insert_longdouble(CORBA::LongDouble value)
 {
@@ -3569,7 +3569,7 @@ DynUnionImpl::get_ulong()
   return value;
 }
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 CORBA::Float
 DynUnionImpl::get_float()
 {
@@ -3629,7 +3629,7 @@ DynUnionImpl::get_typecode()
 
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::LongLong
 DynUnionImpl::get_longlong()
 {
@@ -3650,7 +3650,7 @@ DynUnionImpl::get_ulonglong()
 }
 #endif
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 CORBA::LongDouble
 DynUnionImpl::get_longdouble()
 {
@@ -3779,15 +3779,15 @@ UNION_SEQUENCE_OPS(short, Short)
 UNION_SEQUENCE_OPS(ushort, UShort)
 UNION_SEQUENCE_OPS(long, Long)
 UNION_SEQUENCE_OPS(ulong, ULong)
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 UNION_SEQUENCE_OPS(float, Float)
 UNION_SEQUENCE_OPS(double, Double)
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 UNION_SEQUENCE_OPS(longlong, LongLong)
 UNION_SEQUENCE_OPS(ulonglong, ULongLong)
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 UNION_SEQUENCE_OPS(longdouble, LongDouble)
 #endif
 UNION_SEQUENCE_OPS(wchar, WChar)
@@ -3813,7 +3813,7 @@ DynUnionImpl::seek(CORBA::Long index)
       pd_curr_index = 1;
       return 1;
     }
-    // drop through
+    // falls through
   default:
     pd_curr_index = -1;
     return 0;
@@ -4410,7 +4410,7 @@ DynSequenceImpl::prepareSequenceWrite(CORBA::TCKind kind, CORBA::ULong len)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -4435,7 +4435,7 @@ DynSequenceImpl::prepareSequenceRead(CORBA::TCKind kind)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -4668,7 +4668,7 @@ DynArrayImpl::prepareSequenceWrite(CORBA::TCKind kind, CORBA::ULong len)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -4694,7 +4694,7 @@ DynArrayImpl::prepareSequenceRead(CORBA::TCKind kind)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -5097,7 +5097,7 @@ DynValueImpl::prepareSequenceWrite(CORBA::TCKind kind, CORBA::ULong len)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -5117,7 +5117,7 @@ DynValueImpl::prepareSequenceRead(CORBA::TCKind kind)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -5412,7 +5412,7 @@ DynValueBoxImpl::prepareSequenceWrite(CORBA::TCKind kind, CORBA::ULong len)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -5432,7 +5432,7 @@ DynValueBoxImpl::prepareSequenceRead(CORBA::TCKind kind)
     return SEQ_COMPONENT;
   }
   throw DynamicAny::DynAny::TypeMismatch();
-#ifdef NEED_DUMMY_RETURN
+#ifdef OMNI_NEED_DUMMY_RETURN
   return SEQ_COMPONENT;
 #endif
 }
@@ -5598,14 +5598,14 @@ internal_create_dyn_any(TypeCode_base* tc, CORBA::Boolean is_root)
   case CORBA::tk_long:
   case CORBA::tk_ushort:
   case CORBA::tk_ulong:
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
   case CORBA::tk_ulonglong:
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   case CORBA::tk_float:
   case CORBA::tk_double:
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case CORBA::tk_longdouble:
 #endif
 #endif
@@ -5729,14 +5729,14 @@ factory_create_dyn_any_from_type_code(CORBA::TypeCode_ptr tc)
   case CORBA::tk_long:
   case CORBA::tk_ushort:
   case CORBA::tk_ulong:
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
   case CORBA::tk_ulonglong:
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   case CORBA::tk_float:
   case CORBA::tk_double:
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   case CORBA::tk_longdouble:
 #endif
 #endif

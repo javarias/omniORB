@@ -106,8 +106,8 @@ cdrStream::declareArrayLength(omni::alignment_t, size_t)
 
 
 /////////////////////////////////////////////////////////////////////////////
-#ifdef HAS_LongDouble
-#  if SIZEOF_LONG_DOUBLE == 12
+#ifdef OMNI_HAS_LongDouble
+#  if OMNI_SIZEOF_LONG_DOUBLE == 12
 #    ifndef __x86__
 #      error "12-byte long double only supported for x86"
 #    endif
@@ -206,8 +206,8 @@ cdrStream::unmarshalLongDouble()
   return a;
 }
 
-#  endif // SIZEOF_LONG_DOUBLE == 12
-#endif // HAS_LongDouble
+#  endif // OMNI_SIZEOF_LONG_DOUBLE == 12
+#endif // OMNI_HAS_LongDouble
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -229,15 +229,15 @@ fetchReserveMarshalFns(UShort,     omni::ALIGN_2)
 fetchReserveMarshalFns(Long,       omni::ALIGN_4)
 fetchReserveMarshalFns(ULong,      omni::ALIGN_4)
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 fetchReserveMarshalFns(LongLong,   omni::ALIGN_8)
 fetchReserveMarshalFns(ULongLong,  omni::ALIGN_8)
 #endif
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 fetchReserveMarshalFns(Double,     omni::ALIGN_8)
 
-#  if defined(HAS_LongDouble) && defined(HAS_LongLong)
+#  if defined(OMNI_HAS_LongDouble) && defined(OMNI_HAS_LongLong)
 fetchReserveMarshalFns(LongDouble, omni::ALIGN_8)
 #  endif
 

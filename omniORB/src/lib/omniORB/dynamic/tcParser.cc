@@ -81,8 +81,6 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 
 	switch( tc->NP_kind() ) {
 
-	  //?? Some of these could be faster (Any, TypeCode, objref ...)
-
 	case CORBA::tk_char:
 	  {
 	    if (ibuf.TCS_C() == obuf.TCS_C()) {
@@ -115,7 +113,13 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 	  }
 
 	case CORBA::tk_any:
-	  { CORBA::Any d; d <<= ibuf; d >>= obuf; break; }
+          {
+            CORBA::TypeCode_member atc;
+            atc <<= ibuf;
+            atc >>= obuf;
+            fastCopyUsingTC(ToTcBase(atc), ibuf, obuf);
+            break;
+          }
 
 	case CORBA::tk_Principal:
 	  {
@@ -190,6 +194,23 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 	      fastCopyUsingTC(tc->NP_member_type(i), ibuf, obuf);
 	    break;
 	  }
+
+        case CORBA::tk_except:
+          {
+            // Exceptions are passed on the wire as repo id followed by
+            // members. We trust the id in the TypeCode rather than
+            // looking at the one marshalled with the buffer.
+            CORBA::Any::PR_unmarshalExceptionRepoId(ibuf);
+            CORBA::Any::PR_marshalExceptionRepoId(obuf, tc->NP_id());
+
+            CORBA::ULong nmembers = tc->NP_member_count();
+
+            // Copy the individual elements.
+            for (CORBA::ULong i=0; i < nmembers; i++)
+              fastCopyUsingTC(tc->NP_member_type(i), ibuf, obuf);
+
+            break;
+          }
 
 	case CORBA::tk_sequence:
 	  {
@@ -354,19 +375,25 @@ void copyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
     case CORBA::tk_enum:
       { CORBA::ULong d;   d <<= ibuf; d >>= obuf; return; }
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     case CORBA::tk_longlong:
       { CORBA::LongLong d;    d <<= ibuf; d >>= obuf; return; }
     case CORBA::tk_ulonglong:
       { CORBA::ULongLong d;   d <<= ibuf; d >>= obuf; return; }
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     case CORBA::tk_longdouble:
       { CORBA::LongDouble d;  d <<= ibuf; d >>= obuf; return; }
 #endif
 
     case CORBA::tk_any:
-      { CORBA::Any d;     d <<= ibuf; d >>= obuf; return; }
+      {
+        CORBA::TypeCode_member atc;
+        atc <<= ibuf;
+        atc >>= obuf;
+        copyUsingTC(ToTcBase(atc), ibuf, obuf);
+        return;
+      }
 
     // COMPLEX TYPES
     case CORBA::tk_char:
@@ -466,10 +493,11 @@ void copyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
     
     case CORBA::tk_except:
       {
-	// Exceptions are passed on the wire as repo id followed
-	// by members - but for contents of Any we are only interested
-	// in members. Therefore we copy the members only here, and
-	// the stubs/GIOP_S code deals with the repo id.
+	// Exceptions are passed on the wire as repo id followed by
+	// members. We trust the id in the TypeCode rather than
+	// looking at the one marshalled with the buffer.
+        CORBA::Any::PR_unmarshalExceptionRepoId(ibuf);
+        CORBA::Any::PR_marshalExceptionRepoId(obuf, tc->NP_id());
 
 	CORBA::ULong nmembers = tc->NP_member_count();
 
@@ -595,7 +623,12 @@ void skipUsingTC(TypeCode_base* tc, cdrStream& buf)
 	  }
 
 	case CORBA::tk_any:
-	  { CORBA::Any d; d <<= buf; break; }
+          {
+            CORBA::TypeCode_member atc;
+            atc <<= buf;
+            skipUsingTC(ToTcBase(atc), buf);
+            break;
+          }
 
 	case CORBA::tk_Principal:
 	case CORBA::tk_string:

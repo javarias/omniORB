@@ -50,7 +50,7 @@
 #include <omniIdentity.h>
 #include <SocketCollection.h>
 
-#ifdef HAVE_SIGNAL_H
+#ifdef OMNI_HAVE_SIGNAL_H
 #  include <signal.h>
 #  include <errno.h>
 #endif
@@ -837,18 +837,18 @@ OMNI_NAMESPACE_BEGIN(omni)
 //            Hooked initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
 
-static std::vector<omniInitialiser*>*& the_hooked_list()
+static omnivector<omniInitialiser*>*& the_hooked_list()
 {
-  static std::vector<omniInitialiser*>* the_list = 0;
-  if (!the_list) the_list = new std::vector<omniInitialiser*>;
+  static omnivector<omniInitialiser*>* the_list = 0;
+  if (!the_list) the_list = new omnivector<omniInitialiser*>;
   return the_list;
 }
 
 class omni_hooked_initialiser : public omniInitialiser {
 public:
   void attach() {
-    std::vector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
-    std::vector<omniInitialiser*>::iterator last = the_hooked_list()->end();
+    omnivector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
+    omnivector<omniInitialiser*>::iterator last = the_hooked_list()->end();
 
     for (; i != last; i++) {
       (*i)->attach();
@@ -856,8 +856,8 @@ public:
   }
 
   void detach() {
-    std::vector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
-    std::vector<omniInitialiser*>::iterator last = the_hooked_list()->end();
+    omnivector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
+    omnivector<omniInitialiser*>::iterator last = the_hooked_list()->end();
 
     for (; i != last; i++) {
       (*i)->detach();
@@ -865,7 +865,7 @@ public:
   }
 
   virtual ~omni_hooked_initialiser() {
-    std::vector<omniInitialiser*>*& the_list = the_hooked_list();
+    omnivector<omniInitialiser*>*& the_list = the_hooked_list();
     delete the_list;
     the_list = 0;
   }
@@ -1103,11 +1103,11 @@ public:
   void attach() {
 
 #if !defined(__CIAO__)
-# if defined(HAVE_SIGACTION)
+# if defined(OMNI_HAVE_SIGACTION)
 
     struct sigaction act;
     sigemptyset(&act.sa_mask);
-#  ifdef HAVE_SIG_IGN
+#  ifdef OMNI_HAVE_SIG_IGN
     act.sa_handler = SIG_IGN;
 #  else
     act.sa_handler = (void (*)())0;
@@ -1120,7 +1120,7 @@ public:
 	  "SIG_IGN handler for signal SIGPIPE. (errno = " << errno << ")\n";
       }
     }
-# elif defined(HAVE_SIGVEC)
+# elif defined(OMNI_HAVE_SIGVEC)
     struct sigvec act;
     act.sv_mask = 0;
     act.sv_handler = SIG_IGN;
@@ -1132,7 +1132,7 @@ public:
 	  "SIG_IGN handler for signal SIGPIPE. (errno = " << errno << ")\n";
       }
     }
-# endif // HAVE_SIGACTION
+# endif // OMNI_HAVE_SIGACTION
 #endif // __CIAO__
 
     orbAsyncInvoker = new omniAsyncInvoker();

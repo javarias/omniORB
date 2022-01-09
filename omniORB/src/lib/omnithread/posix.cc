@@ -78,12 +78,12 @@
 #include <omnithread.h>
 #include <omniconfig.h>
 
-#if (defined(HAVE_SYS_TIME_H) || defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__)
+#if (defined(OMNI_HAVE_SYS_TIME_H) || defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__)
 // typedef of struct timeval and gettimeofday();
 #include <sys/time.h>
 #endif
 
-#if (defined(HAVE_UNISTD_H) || defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__)
+#if (defined(OMNI_HAVE_UNISTD_H) || defined(__GLIBC__) && __GLIBC__ >= 2) || defined(__SCO_VERSION__) || defined(__aix__) || defined (__cygwin__) || defined(__darwin__) || defined(__macos__)
 #include <unistd.h>
 #endif
 
@@ -770,7 +770,13 @@ omni_thread::exit(void* return_value)
 	DB(cerr << "omni_thread::exit: thread " << me->id() << " detached "
 	   << me->detached << " return value " << return_value << endl);
 
-	if (me->_values) {
+	if (me->detached) {
+	  delete me;
+	}
+	else if (me->_values) {
+	  // Delete per-thread state here, to ensure value destructors
+	  // are executed by this thread.
+	  
 	  for (key_t i=0; i < me->_value_alloc; i++) {
 	    if (me->_values[i]) {
 	      delete me->_values[i];
@@ -778,10 +784,8 @@ omni_thread::exit(void* return_value)
 	  }
 	  delete [] me->_values;
 	  me->_values = 0;
+	  me->_value_alloc = 0;
 	}
-
-	if (me->detached)
-	  delete me;
       }
     else
       {

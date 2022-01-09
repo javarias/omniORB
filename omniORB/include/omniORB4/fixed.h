@@ -79,7 +79,7 @@ public:
     CORBA::Fixed(val) { PR_setLimits(idl_digits, idl_scale); }
 
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   _omni_Fixed(CORBA::LongLong val) :
     CORBA::Fixed(val) { PR_setLimits(idl_digits, idl_scale); }
 
@@ -87,12 +87,12 @@ public:
     CORBA::Fixed(val) { PR_setLimits(idl_digits, idl_scale); }
 
 #endif
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
   _omni_Fixed(CORBA::Double val) :
     CORBA::Fixed(val) { PR_setLimits(idl_digits, idl_scale); }
 
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   _omni_Fixed(CORBA::LongDouble val) :
     CORBA::Fixed(val) { PR_setLimits(idl_digits, idl_scale); }
 

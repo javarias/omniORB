@@ -35,7 +35,17 @@
 #include <GIOP_S.h>
 #include <transportRules.h>
 #include <poaimpl.h>
-#include "zlibCompressor.h"
+
+#ifdef OMNI_ENABLE_ZIOP_ZSTD
+#  include <zstd.h>
+#  include "zstdCompressor.h"
+#endif
+
+#ifdef OMNI_ENABLE_ZIOP_ZLIB
+#  include <zlib.h>
+#  include "zlibCompressor.h"
+#endif
+
 
 OMNI_USING_NAMESPACE(omni)
 
@@ -275,10 +285,22 @@ setGlobalPolicies(const CORBA::PolicyList& policies)
   // Set defaults
   g_compression_enabled = 1;
 
-  g_compressor_ids.length(1);
-  g_compressor_ids[0].compressor_id     = Compression::COMPRESSORID_ZLIB;
-  g_compressor_ids[0].compression_level = 6;
+  CORBA::ULong idx = 0;
 
+#ifdef OMNI_ENABLE_ZIOP_ZSTD
+  g_compressor_ids.length(idx+1);
+  g_compressor_ids[idx].compressor_id     = Compression::COMPRESSORID_OMNI_ZSTD;
+  g_compressor_ids[idx].compression_level = 3;
+  ++idx;
+#endif
+  
+#ifdef OMNI_ENABLE_ZIOP_ZLIB
+  g_compressor_ids.length(idx+1);
+  g_compressor_ids[idx].compressor_id     = Compression::COMPRESSORID_ZLIB;
+  g_compressor_ids[idx].compression_level = 6;
+  ++idx;
+#endif
+  
   decodePolicies(policies,
                  g_compression_enabled,
                  g_compressor_ids,
@@ -290,7 +312,7 @@ setGlobalPolicies(const CORBA::PolicyList& policies)
 #undef min
 
 static inline
-CORBA::Boolean
+Compression::CompressionLevel
 min(Compression::CompressionLevel a, Compression::CompressionLevel b)
 {
   return a < b ? a : b;
@@ -535,11 +557,21 @@ giopCompressorImpl::compressBuffer(giopStream*        stream,
                  g_buf_start[3] == 'P');
 
   // Allocate new buffer
-  giopStream_Buffer* z_buf  = giopStream_Buffer::newBuffer(
-    g_buf_len + ZIOP_HEADER <= giopStream::bufferSize ?
-    giopStream::bufferSize : g_buf_len + ZIOP_HEADER);
+  CORBA::ULong req_len;
 
-  CORBA::ULong  z_buf_len   = z_buf->last - z_buf->start;
+#ifdef OMNI_ENABLE_ZIOP_ZSTD
+  // zstd's worst case is worse than zlib's, so we use that to choose
+  // the buffer size.
+  req_len = GIOP_ZIOP_HEADER + ZSTD_COMPRESSBOUND(g_buf_len);
+#else
+  req_len = GIOP_ZIOP_HEADER + compressBound(g_buf_len);
+#endif
+
+  giopStream_Buffer* z_buf = giopStream_Buffer::newBuffer(
+    req_len <= giopStream::bufferSize ?
+    giopStream::bufferSize : req_len);
+
+  CORBA::ULong  z_buf_len   = z_buf->end - z_buf->start;
   CORBA::ULong  z_data_len  = z_buf_len - GIOP_ZIOP_HEADER;
   CORBA::Octet* z_buf_start = (CORBA::Octet*)z_buf + z_buf->start;
   CORBA::Octet* z_data      = z_buf_start + GIOP_ZIOP_HEADER;
@@ -620,7 +652,7 @@ giopCompressorImpl::compressorIndex(giopStream*               stream,
     pd_compressors.length(idx+1);
     pd_compressor_ids.length(idx+1);
 
-    pd_compressors[idx]                  = compressor;
+    pd_compressors[idx]                      = compressor;
     pd_compressor_ids[idx].compressor_id     = compressor_id;
     pd_compressor_ids[idx].compression_level = 6;
   }
@@ -1123,8 +1155,19 @@ public:
   void attach() {
     the_manager = new omniCompressionManager();
     
-    Compression::CompressorFactory_var zf = new zlibCompressorFactory();
+    Compression::CompressorFactory_var zf;
+
+#ifdef OMNI_ENABLE_ZIOP_ZSTD
+    omniORB::logs(10, "Register zstd compressor.");
+    zf = new zstdCompressorFactory();
     the_manager->register_factory(zf);
+#endif
+
+#ifdef OMNI_ENABLE_ZIOP_ZLIB
+    omniORB::logs(10, "Register zlib compressor.");
+    zf = new zlibCompressorFactory();
+    the_manager->register_factory(zf);
+#endif
 
     giopStream::compressorFactory = new giopCompressorFactoryImpl();
 

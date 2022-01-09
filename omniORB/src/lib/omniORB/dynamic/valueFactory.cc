@@ -33,7 +33,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
 
@@ -55,7 +55,7 @@ namespace {
     virtual ~valueFactoryTableTracker();
   };
 
-#ifdef HAS_Cplusplus_Namespace
+#ifdef OMNI_HAS_Cplusplus_Namespace
 };
 #endif
 
@@ -267,7 +267,7 @@ create_for_unmarshal(const char* id, CORBA::ULong hashval)
     try {
       r = f->create_for_unmarshal();
     }
-#ifdef HAS_Cplusplus_catch_exception_by_base
+#ifdef OMNI_HAS_Cplusplus_catch_exception_by_base
     catch (CORBA::SystemException& ex) {
       f->_remove_ref();
       throw;

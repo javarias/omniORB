@@ -43,7 +43,7 @@ OMNI_USING_NAMESPACE(omni)
 
 #define BOMB_OUT()  throw *(int*)0
 
-#ifdef OMNIORB_ENABLE_LOCK_TRACES
+#ifdef OMNI_ENABLE_LOCK_TRACES
 
 static const char* bug_msg =
   " This is probably a bug in omniORB. Please submit a report\n"
@@ -428,10 +428,10 @@ omni_tracedcondition::broadcast()
 }
 
 
-#endif  // ifdef OMNIORB_ENABLE_LOCK_TRACES
+#endif  // ifdef OMNI_ENABLE_LOCK_TRACES
 
 #if defined __vxWorks__
-#  ifndef OMNIORB_ENABLE_LOCK_TRACES
+#  ifndef OMNI_ENABLE_LOCK_TRACES
 void _dummy_TRACEDTHREAD_workaround_for_bug_in_munch_2_cdtor_c_ () {}
-#  endif  // ifndef OMNIORB_ENABLE_LOCK_TRACES
+#  endif  // ifndef OMNI_ENABLE_LOCK_TRACES
 #endif // __vxWorks__

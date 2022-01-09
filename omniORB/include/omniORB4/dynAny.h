@@ -80,18 +80,18 @@ _CORBA_MODULE_BEG
     virtual void insert_ushort    (CORBA::UShort       	   value) = 0;
     virtual void insert_long      (CORBA::Long         	   value) = 0;
     virtual void insert_ulong     (CORBA::ULong        	   value) = 0;
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
     virtual void insert_float     (CORBA::Float        	   value) = 0;
     virtual void insert_double    (CORBA::Double       	   value) = 0;
 #endif
     virtual void insert_string    (const char*         	   value) = 0;
     virtual void insert_reference (CORBA::Object_ptr   	   value) = 0;
     virtual void insert_typecode  (CORBA::TypeCode_ptr 	   value) = 0;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     virtual void insert_longlong  (CORBA::LongLong     	   value) = 0;
     virtual void insert_ulonglong (CORBA::ULongLong    	   value) = 0;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     virtual void insert_longdouble(CORBA::LongDouble   	   value) = 0;
 #endif
     virtual void insert_wchar     (CORBA::WChar        	   value) = 0;
@@ -108,18 +108,18 @@ _CORBA_MODULE_BEG
     virtual CORBA::UShort           get_ushort()     = 0;
     virtual CORBA::Long             get_long()       = 0;
     virtual CORBA::ULong            get_ulong()      = 0;
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
     virtual CORBA::Float            get_float()      = 0;
     virtual CORBA::Double           get_double()     = 0;
 #endif				
     virtual char*                   get_string()     = 0;
     virtual CORBA::Object_ptr       get_reference()  = 0;
     virtual CORBA::TypeCode_ptr     get_typecode()   = 0;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     virtual CORBA::LongLong         get_longlong()   = 0;
     virtual CORBA::ULongLong        get_ulonglong()  = 0;
 #endif				
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     virtual CORBA::LongDouble       get_longdouble() = 0;
 #endif				
     virtual CORBA::WChar  	    get_wchar()      = 0;
@@ -137,15 +137,15 @@ _CORBA_MODULE_BEG
     virtual void insert_ushort_seq    (CORBA::UShortSeq&     value) = 0;
     virtual void insert_long_seq      (CORBA::LongSeq&       value) = 0;
     virtual void insert_ulong_seq     (CORBA::ULongSeq&      value) = 0;
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
     virtual void insert_float_seq     (CORBA::FloatSeq&      value) = 0;
     virtual void insert_double_seq    (CORBA::DoubleSeq&     value) = 0;
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     virtual void insert_longlong_seq  (CORBA::LongLongSeq&   value) = 0;
     virtual void insert_ulonglong_seq (CORBA::ULongLongSeq&  value) = 0;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     virtual void insert_longdouble_seq(CORBA::LongDoubleSeq& value) = 0;
 #endif
     virtual void insert_wchar_seq     (CORBA::WCharSeq&      value) = 0;
@@ -157,15 +157,15 @@ _CORBA_MODULE_BEG
     virtual CORBA::UShortSeq*     get_ushort_seq()     = 0;
     virtual CORBA::LongSeq*       get_long_seq()       = 0;
     virtual CORBA::ULongSeq* 	  get_ulong_seq()      = 0;
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
     virtual CORBA::FloatSeq* 	  get_float_seq()      = 0;
     virtual CORBA::DoubleSeq*     get_double_seq()     = 0;
 #endif
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     virtual CORBA::LongLongSeq*   get_longlong_seq()   = 0;
     virtual CORBA::ULongLongSeq*  get_ulonglong_seq()  = 0;
 #endif
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
     virtual CORBA::LongDoubleSeq* get_longdouble_seq() = 0;
 #endif
     virtual CORBA::WCharSeq*      get_wchar_seq()      = 0;

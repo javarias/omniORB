@@ -132,7 +132,7 @@ available for your native platform. To cross-compile, use these steps:
 
     cd build-cross
     ../configure CC=cross-cc CXX=cross-cxx \
-                 --prefix=/home/example/cross-inst
+                 --prefix=/home/example/cross-inst \
                  --build=x86_64-unknown-linux-gnu \
                  --host=arm-unknown-linux-gnu
 

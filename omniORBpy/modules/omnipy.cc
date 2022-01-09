@@ -710,8 +710,10 @@ extern "C" {
   PyMODINIT_FUNC
   PyInit__omnipy(void)
   {
+#if (PY_VERSION_HEX < 0x03070000)
     // Make sure Python is running multi-threaded
     PyEval_InitThreads();
+#endif
 
     PyObject* m = PyModule_Create(&omnipymodule);
     if (!m)

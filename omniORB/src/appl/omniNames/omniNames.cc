@@ -34,12 +34,8 @@
 #include "omniNames.h"
 
 
-#ifdef HAVE_STD
-#  include <iostream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#endif
+#include <iostream>
+using namespace std;
 
 #ifdef __WIN32__
 #  include <io.h>

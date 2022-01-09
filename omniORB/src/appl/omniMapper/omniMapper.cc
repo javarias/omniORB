@@ -24,14 +24,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#ifdef HAVE_STD
-#  include <iostream>
-#  include <fstream>
-   using namespace std;
-#else
-#  include <iostream.h>
-#  include <fstream.h>
-#endif
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 static void
 usage()
@@ -226,11 +221,11 @@ main(int argc, char** argv)
   for (int i=1; i < argc; i++) {
 
     if (!strcmp(argv[i], "-port")) {
-      if (argc < i+1) usage();
+      if (argc < i+2) usage();
       port = atoi(argv[++i]);
     }
     else if (!strcmp(argv[i], "-config")) {
-      if (argc < i+1) usage();
+      if (argc < i+2) usage();
       configFile = argv[++i];
     }
     else if (!strcmp(argv[i], "-v")) {

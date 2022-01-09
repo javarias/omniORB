@@ -56,41 +56,41 @@ typedef unsigned char U_CHAR;
 #include <signal.h>
 
 /* The following symbols should be autoconfigured:
-	HAVE_FCNTL_H
-	HAVE_STDLIB_H
-	HAVE_SYS_TIME_H
-	HAVE_UNISTD_H
-	STDC_HEADERS
-	TIME_WITH_SYS_TIME
+	OMNI_HAVE_FCNTL_H
+	OMNI_HAVE_STDLIB_H
+	OMNI_HAVE_SYS_TIME_H
+	OMNI_HAVE_UNISTD_H
+	OMNI_STDC_HEADERS
+	OMNI_TIME_WITH_SYS_TIME
    In the mean time, we'll get by with approximations based
    on existing GCC configuration symbols.  */
 
 #ifdef POSIX
-# ifndef HAVE_STDLIB_H
-# define HAVE_STDLIB_H 1
+# ifndef OMNI_HAVE_STDLIB_H
+# define OMNI_HAVE_STDLIB_H 1
 # endif
-# ifndef HAVE_UNISTD_H
-# define HAVE_UNISTD_H 1
+# ifndef OMNI_HAVE_UNISTD_H
+# define OMNI_HAVE_UNISTD_H 1
 # endif
-# ifndef STDC_HEADERS
-# define STDC_HEADERS 1
+# ifndef OMNI_STDC_HEADERS
+# define OMNI_STDC_HEADERS 1
 # endif
 #endif /* defined (POSIX) */
 
 #if defined (POSIX) || (defined (USG) && !defined (VMS))
-# ifndef HAVE_FCNTL_H
-# define HAVE_FCNTL_H 1
+# ifndef OMNI_HAVE_FCNTL_H
+# define OMNI_HAVE_FCNTL_H 1
 # endif
 #endif
 
 #ifndef RLIMIT_STACK
 # include <time.h>
 #else
-# if TIME_WITH_SYS_TIME
+# if OMNI_TIME_WITH_SYS_TIME
 #  include <sys/time.h>
 #  include <time.h>
 # else
-#  if HAVE_SYS_TIME_H
+#  if OMNI_HAVE_SYS_TIME_H
 #   include <sys/time.h>
 #  else
 #   include <time.h>
@@ -99,19 +99,19 @@ typedef unsigned char U_CHAR;
 # include <sys/resource.h>
 #endif
 
-#if HAVE_FCNTL_H
+#if OMNI_HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 
 #include <errno.h>
 
-#if HAVE_STDLIB_H
+#if OMNI_HAVE_STDLIB_H
 # include <stdlib.h>
 #else
 char *getenv ();
 #endif
 
-#if STDC_HEADERS
+#if OMNI_STDC_HEADERS
 # include <string.h>
 # ifndef bcmp
 # define bcmp(a, b, n) memcmp (a, b, n)
@@ -122,7 +122,7 @@ char *getenv ();
 # ifndef bzero
 # define bzero(d, n) memset (d, 0, n)
 # endif
-#else /* !STDC_HEADERS */
+#else /* !OMNI_STDC_HEADERS */
 
 # if !defined (BSTRING) && (defined (USG) || defined (VMS))
 
@@ -168,7 +168,7 @@ my_bzero (b, length)
 #  endif /* !defined (bzero) */
 
 # endif /* !defined (BSTRING) && (defined (USG) || defined (VMS)) */
-#endif /* ! STDC_HEADERS */
+#endif /* ! OMNI_STDC_HEADERS */
 
 #if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
 # define __attribute__(x)
@@ -182,7 +182,7 @@ my_bzero (b, length)
 # endif
 #endif
 
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 # include <stdarg.h>
 # define VA_START(va_list, var) va_start (va_list, var)
 # define PRINTF_ALIST(msg) char *msg, ...
@@ -208,7 +208,7 @@ my_bzero (b, length)
 #define PRINTF_PROTO_2(ARGS) PRINTF_PROTO(ARGS, 2, 3)
 #define PRINTF_PROTO_3(ARGS) PRINTF_PROTO(ARGS, 3, 4)
 
-#if HAVE_UNISTD_H
+#if OMNI_HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
@@ -300,10 +300,10 @@ static void hack_vms_include_specification ();
 
 extern char *version_string;
 #ifndef VMS
-#ifndef HAVE_STRERROR
+#ifndef OMNI_HAVE_STRERROR
 extern int sys_nerr;
 extern char *sys_errlist[];
-#else	/* HAVE_STRERROR */
+#else	/* OMNI_HAVE_STRERROR */
 #ifndef DONT_DECLARE_STRERROR
 char *strerror ();
 #endif
@@ -8770,7 +8770,7 @@ my_strerror (errnum)
   char *result;
 
 #ifndef VMS
-#ifndef HAVE_STRERROR
+#ifndef OMNI_HAVE_STRERROR
   result = (char *) ((errnum < sys_nerr) ? sys_errlist[errnum] : 0);
 #else
   result = strerror (errnum);
@@ -8896,7 +8896,7 @@ vwarning (msg, args)
 }
 
 static void
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 error_with_line (int line, PRINTF_ALIST (msg))
 #else
 error_with_line (line, PRINTF_ALIST (msg))
@@ -8936,7 +8936,7 @@ verror_with_line (line, msg, args)
 }
 
 static void
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 warning_with_line (int line, PRINTF_ALIST (msg))
 #else
 warning_with_line (line, PRINTF_ALIST (msg))
@@ -9002,7 +9002,7 @@ pedwarn (PRINTF_ALIST (msg))
 }
 
 void
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 pedwarn_with_line (int line, PRINTF_ALIST (msg))
 #else
 pedwarn_with_line (line, PRINTF_ALIST (msg))
@@ -9024,7 +9024,7 @@ pedwarn_with_line (line, PRINTF_ALIST (msg))
    giving specified file name and line number, not current.  */
 
 static void
-#if defined (__STDC__) && defined (HAVE_VPRINTF)
+#if defined (__STDC__) && defined (OMNI_HAVE_VPRINTF)
 pedwarn_with_file_and_line (char *file, int line, PRINTF_ALIST (msg))
 #else
 pedwarn_with_file_and_line (file, line, PRINTF_ALIST (msg))

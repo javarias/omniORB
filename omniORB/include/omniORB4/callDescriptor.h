@@ -89,6 +89,7 @@ public:
       pd_is_oneway(oneway),
       pd_is_upcall(is_upcall_),
       pd_contains_values(0),
+      pd_called(0),
       pd_first_address_used(0),
       pd_current_address(0),
       pd_objref(0),
@@ -169,6 +170,8 @@ public:
   inline const char* const* user_excns()   { return pd_user_excns;   }
   inline int n_user_excns()                { return pd_n_user_excns; }
   inline _CORBA_Boolean is_upcall() const  { return pd_is_upcall;    }
+  inline _CORBA_Boolean called() const     { return pd_called;       }
+  inline void called(_CORBA_Boolean c)     { pd_called = c;          }
 
   inline _CORBA_Boolean haslocalCallFn() const {
     return (pd_local_call) ? 1 : 0;
@@ -248,6 +251,7 @@ private:
   _CORBA_Boolean               pd_is_oneway;
   _CORBA_Boolean               pd_is_upcall;
   _CORBA_Boolean               pd_contains_values;
+  _CORBA_Boolean               pd_called;
 
   const _OMNI_NS(giopAddress)* pd_first_address_used;
   const _OMNI_NS(giopAddress)* pd_current_address;

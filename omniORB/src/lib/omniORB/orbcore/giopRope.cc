@@ -247,8 +247,8 @@ giopRope::acquireClient(const omniIOR*      ior,
 	s->StrandList::remove();
 	s->state(giopStrand::ACTIVE);
 	s->StrandList::insert(giopStrand::active);
-	// falls through
       }
+      // falls through
     case giopStrand::ACTIVE:
       {
 	if (s->version.major != v.major || s->version.minor != v.minor) {
@@ -895,7 +895,7 @@ giopRope::filterAndSortAddressList()
 
   // For each address, find the rule that is applicable. Record the
   // rules priority in the priority list.
-  std::vector<CORBA::ULong> priority_list;
+  omnivector<CORBA::ULong> priority_list;
 
   CORBA::ULong index;
   CORBA::ULong total = pd_addresses.size();

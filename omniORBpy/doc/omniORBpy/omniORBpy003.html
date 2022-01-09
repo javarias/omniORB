@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Python language mapping issues</title>
 </head>
@@ -12,7 +12,7 @@
 <a href="omniORBpy004.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
 <h1 id="sec33" class="chapter">Chapter&#XA0;3&#XA0;&#XA0;Python language mapping issues</h1>
-<p>omniORBpy adheres to the standard Python mapping&#XA0;[<a href="omniORBpy013.html#pythonmapping">OMG01b</a>],
+<p>omniORBpy adheres to the standard Python mapping&#XA0;[<a href="omniORBpy014.html#pythonmapping">OMG01b</a>],
 so there is no need to describe the mapping here. This chapter
 outlines a number of issues which are not addressed by the standard
 (or are optional), and how they are resolved in omniORBpy.</p>
@@ -171,9 +171,9 @@ TypeCode. The following code is guaranteed to be safe, but is not
 standard:</p><div class="lstlisting"><span style="font-size:small">a</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># Acquire an Any from somewhere</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">v</span><span style="font-size:small"> = </span><span style="font-size:small">a</span><span style="font-size:small">.</span><span style="font-size:small">value</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">TypeCode</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">.</span><span style="font-size:small">id</span><span style="font-size:small">(</span><span style="font-size:small">M</span><span style="font-size:small">.</span><span style="font-size:small">S</span><span style="font-size:small">)))</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> </span><span style="font-size:small">v</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">is</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">not</span></span><span style="font-size:small"> </span><span style="font-size:small">None</span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small">v</span><span style="font-size:small">.</span><span style="font-size:small">str</span><span style="font-size:small">
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small">v</span><span style="font-size:small">.</span><span style="font-size:small">str</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-size:small">"The Any does not contain a value compatible with M::S."</span></span></div>
+</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"The Any does not contain a value compatible with M::S."</span></span><span style="font-size:small">)</span></div>
 <h3 id="sec37" class="subsection">3.2.1&#XA0;&#XA0;Any helper module</h3>
 <p>omniORBpy provides an alternative, non-standard way of constructing
 and deconstructing Anys that is often more convenient to use in Python
@@ -221,7 +221,7 @@ using properties:</p><div class="lstlisting"><span style="font-size:small"><span
 </span><span style="font-size:small">  };</span><span style="font-size:small">
 </span><span style="font-size:small">};</span></div><div class="lstlisting"><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small"># an M::Example object reference</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">attr1</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Hello"</span></span><span style="font-size:small">
-</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">attr2</span></div><p>Servant classes can similarly provide attribute values using simple
+</span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">.</span><span style="font-size:small">attr2</span><span style="font-size:small">)</span></div><p>Servant classes can similarly provide attribute values using simple
 Python object attributes or properties. When invoking an attribute
 getter or setter, omniORBpy first looks for a method with the standard
 <span style="font-family:monospace">_get_</span> or <span style="font-family:monospace">_set_</span> name. If that is not found, a simple

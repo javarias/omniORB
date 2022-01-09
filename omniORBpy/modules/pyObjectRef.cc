@@ -42,7 +42,7 @@
 
 OMNI_USING_NAMESPACE(omni)
 
-#if defined(HAS_Cplusplus_Namespace)
+#if defined(OMNI_HAS_Cplusplus_Namespace)
 using omniORB::operator==;
 #endif
 
@@ -343,8 +343,8 @@ omniPy::createLocalObjRef(const char*         mostDerivedRepoId,
   {
     omniObjRef* objref;
 
-    std::vector<omniObjRef*>::iterator i    = entry->objRefs().begin();
-    std::vector<omniObjRef*>::iterator last = entry->objRefs().end();
+    omnivector<omniObjRef*>::iterator i    = entry->objRefs().begin();
+    omnivector<omniObjRef*>::iterator last = entry->objRefs().end();
 
     for (; i != last; i++) {
       objref = *i;

@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>C++ language mapping</title>
 </head>
@@ -14,11 +14,11 @@
 <h1 id="sec47" class="chapter">Chapter&#XA0;3&#XA0;&#XA0;C++ language mapping</h1>
 <p>Now that you are familiar with the basics, it is important to
 familiarise yourself with the standard IDL to C++ language mapping.
-The mapping is described in detail in&#XA0;[<a href="omniORB016.html#cxxmapping">OMG03</a>]. If you have
+The mapping is described in detail in&#XA0;[<a href="omniORB017.html#cxxmapping">OMG03</a>]. If you have
 not done so, you should obtain a copy of the document and use that as
 the programming guide to omniORB.</p><p>The specification is not an easy read. The alternative is to use one
 of the books on CORBA programming. For instance, Henning and Vinoski&#X2019;s
-&#X2018;Advanced CORBA Programming with C++&#X2019;&#XA0;[<a href="omniORB016.html#henning1999">HV99</a>] includes many
+&#X2018;Advanced CORBA Programming with C++&#X2019;&#XA0;[<a href="omniORB017.html#henning1999">HV99</a>] includes many
 example code fragments to illustrate how to use the C++ mapping.</p>
 <h2 id="sec48" class="section">3.1&#XA0;&#XA0;omniORB 2 BOA compatibility</h2>
 <p>
@@ -97,9 +97,9 @@ can be accessed through the <span style="font-family:monospace">GIOP_C</span> in
 types that are passed by pointer, which cause the Any to take
 ownership of the inserted sequence. In omniORB 4.0 and earlier, the
 sequence was immediately marshalled into the Any&#X2019;s internal buffer,
-and the sequence was deleted. In omniORB 4.1, the sequence pointer
-is stored by the Any, and the sequence is deleted later when the Any
-is destroyed.<p>For most uses, this change is not visible to application code.
+and the sequence was deleted. Since omniORB 4.1, the sequence
+pointer is stored by the Any, and the sequence is deleted later when
+the Any is destroyed.<p>For most uses, this change is not visible to application code.
 However, if a sequence is constructed using an application-supplied
 buffer with the release flag set to <span style="font-family:monospace">false</span> (meaning that the
 application continues to own the buffer), it is now important that
@@ -111,17 +111,47 @@ accessing deleted data. To avoid this situation, use the alternative
 Any insertion operator using a const reference, which copies the
 sequence.</p></li></ol>
 <h2 id="sec51" class="section">3.4&#XA0;&#XA0;omniORB 4.1 compatibility</h2>
-<p>omniORB 4.3 is source-code compatible with omniORB 4.1 with one
-exception:</p><ol class="enumerate" type=1><li class="li-enumerate">When omniORB 4.1 and earlier detected a timeout condition, they
+<p>omniORB 4.3 is source-code compatible with omniORB 4.1 with two
+exceptions:</p><ol class="enumerate" type=1><li class="li-enumerate">When omniORB 4.1 and earlier detected a timeout condition, they
 would throw the <span style="font-family:monospace">CORBA::TRANSIENT</span> system exception. omniORB
 4.2 and later support the <span style="font-family:monospace">CORBA::TIMEOUT</span> system exception
 that was introduced with the CORBA Messaging specification.
 Application code that caught <span style="font-family:monospace">CORBA::TRANSIENT</span> to handle
-timeout situations should be updated to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
+timeouts should be changed to catch <span style="font-family:monospace">CORBA::TIMEOUT</span>
 instead. Alternatively, to avoid code changes, omniORB can be
 configured to throw <span style="font-family:monospace">CORBA::TRANSIENT</span> for timeouts, by setting
-the <span style="font-family:monospace">throwTransientOnTimeout</span> parameter to <span style="font-family:monospace">1</span>. See
-section&#XA0;<a href="omniORB004.html#sec%3Aclientconf">4.4</a>.</li></ol>
+the <span style="font-family:monospace">throwTransientOnTimeOut</span> parameter to <span style="font-family:monospace">1</span>. See
+section&#XA0;<a href="omniORB004.html#sec%3Aclientconf">4.4</a>.</li><li class="li-enumerate"><span style="font-family:monospace">sslContext</span> has moved to the <span style="font-family:monospace">omni</span> namespace.</li></ol>
+<h2 id="sec52" class="section">3.5&#XA0;&#XA0;omniORB 4.2 compatibility</h2>
+<p>omniORB 4.3 is source-code compatible with omniORB 4.2, with one
+exception:</p><ol class="enumerate" type=1><li class="li-enumerate"><span style="font-family:monospace">sslContext</span> has moved to the <span style="font-family:monospace">omni</span> namespace.</li></ol>
+<h2 id="sec53" class="section">3.6&#XA0;&#XA0;Interoperability</h2>
+<p>In general, all versions of omniORB interoperate with each other, and
+with other CORBA implementations. There are a number of configuration
+options that can be set to work around interoperability with other
+CORBA implementations, described in section&#XA0;<a href="omniORB004.html#sec%3Ainterop_opts">4.6</a>.</p>
+<h3 id="sec54" class="subsection">3.6.1&#XA0;&#XA0;Exceptions in Anys</h3>
+<p>Normally, exceptions&#X2014;both system exceptions and user-defined
+exceptions&#X2014;are thrown by server operations and caught by clients.
+When that occurs, the GIOP protocol is completely clear that the
+exception is marshalled as the exception&#X2019;s repository id, followed by
+the exception&#X2019;s data members.</p><p>It is not permitted to specify an Exception as a normal operation
+parameter or within a constructed IDL type, but it <em>is</em> permitted
+to insert an Exception into an Any, and transmit that in an operation
+parameter. In that case, when the Any is marshalled, first the
+TypeCode is sent, and then the data value. It is somewhat ambiguous in
+the GIOP specification whether the value part of an Exception sent
+this way should contain the repository id, or not &#X2014; the id is
+contained in the TypeCode, so sending it as part of the value too is
+redundant.</p><p>Versions of omniORB for C++ prior to 4.3 did not send the Exception
+repository id in the value part of an Any. All versions of omniORBpy
+<em>do</em> send it, as do some other CORBA implementations. For
+interoperability, omniORB 4.3 has changed to send the repository id.
+This means that it is compatible with omniORBpy and other ORBs, but
+that it is <em>incompatible</em> with previous versions of omniORB for
+C++. The <span style="font-family:monospace">exceptionIdInAny</span> configuration parameter can be set to
+<span style="font-family:monospace">false</span> to revert to the prior behaviour if interoperability with
+earlier omniORB versions is required.</p>
 <hr>
 <a href="omniORB002.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>

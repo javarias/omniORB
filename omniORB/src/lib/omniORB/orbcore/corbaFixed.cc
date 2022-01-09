@@ -88,7 +88,7 @@ CORBA::Fixed::Fixed(CORBA::ULong val) :
 
 #endif
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
 CORBA::Fixed::Fixed(CORBA::LongLong val) :
   pd_digits(0), pd_scale(0), pd_negative(0), pd_idl_digits(0), pd_idl_scale(0)
@@ -116,7 +116,7 @@ CORBA::Fixed::Fixed(CORBA::ULongLong val) :
 
 #endif
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
 CORBA::Fixed::Fixed(CORBA::Double val) :
   pd_idl_digits(0), pd_idl_scale(0)
@@ -136,7 +136,7 @@ CORBA::Fixed::Fixed(CORBA::Double val) :
 #endif
 
 
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
 
 CORBA::Fixed::Fixed(CORBA::LongDouble val) :
   pd_idl_digits(0), pd_idl_scale(0)
@@ -200,7 +200,7 @@ CORBA::Fixed::~Fixed()
 }
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 CORBA::Fixed::operator CORBA::LongLong() const
 {
   CORBA::LongLong r = 0, s;
@@ -244,9 +244,9 @@ CORBA::Fixed::operator CORBA::Long() const
 #endif
 
 
-#ifndef NO_FLOAT
+#ifndef OMNI_NO_FLOAT
 
-#  ifdef HAS_LongDouble
+#  ifdef OMNI_HAS_LongDouble
 
 CORBA::Fixed::operator CORBA::LongDouble() const
 {

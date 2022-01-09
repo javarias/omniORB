@@ -80,7 +80,7 @@ IDL_WChar* idl_wstrcat(IDL_WChar* a, const IDL_WChar* b)
   return r;
 }
 
-#ifndef HAVE_STRCASECMP
+#ifndef OMNI_HAVE_STRCASECMP
 #include <ctype.h>
 
 int strcasecmp(const char* s1, const char* s2)
@@ -96,7 +96,7 @@ int strcasecmp(const char* s1, const char* s2)
 #endif
 
 
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
 
 #  if defined(_MSC_VER)
 
@@ -142,7 +142,7 @@ idl_strtoul(const char* text, int base)
   return ull;
 }
 
-#  elif defined(HAVE_STRTOUL) && SIZEOF_LONG == 8
+#  elif defined(OMNI_HAVE_STRTOUL) && OMNI_SIZEOF_LONG == 8
 
 IdlIntLiteral
 idl_strtoul(const char* text, int base)
@@ -150,7 +150,7 @@ idl_strtoul(const char* text, int base)
   return strtoul(text, 0, base);
 }
 
-#  elif defined(HAVE_STRTOUQ)
+#  elif defined(OMNI_HAVE_STRTOUQ)
 
 IdlIntLiteral
 idl_strtoul(const char* text, int base)
@@ -158,7 +158,7 @@ idl_strtoul(const char* text, int base)
   return strtouq(text, 0, base);
 }
 
-#  elif defined(HAVE_STRTOULL)
+#  elif defined(OMNI_HAVE_STRTOULL)
 
 IdlIntLiteral
 idl_strtoul(const char* text, int base)

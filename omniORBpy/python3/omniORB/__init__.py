@@ -564,6 +564,10 @@ class StructBase(object):
         if desc is None:
             # Type is not properly registered
             return "<%s instance at 0x%x>" % (cname, id(self))
+
+        while desc[0] == tcInternal.tv_alias:
+            desc = desc[3]
+
         vals = []
         for i in range(4, len(desc), 2):
             attr = desc[i]
@@ -878,59 +882,43 @@ class fixedConstructor(object):
 # *** Depends on threading module internals ***
 
 _thr_init = threading.Thread.__init__
-
-try:
-    _thr_id = threading._get_ident
-except AttributeError:
-    _thr_id = threading.get_ident
-
+_thr_id   = threading.get_ident
 _thr_act  = threading._active
-_thr_acq  = threading._active_limbo_lock.acquire
-_thr_rel  = threading._active_limbo_lock.release
-
-def_id = id
+_thr_lock = threading._active_limbo_lock
 
 class WorkerThread(threading.Thread):
 
     hooks = []
 
     def __init__(self):
-        id = _thr_id()
-        _thr_init(self, name="omniORB-%d" % id)
+        ident = _thr_id()
+        _thr_init(self, name="omniORB-%d" % ident, daemon=True)
 
-        if hasattr(self, "_started"):
-            self._started.set()
-        elif hasattr(self._Thread__started, 'set'):
-            self._Thread__started.set()
-        else:
-            self._Thread__started = 1
+        self._started.set()
+        self._set_ident()
 
-        self.id = id
-        _thr_acq()
+        with _thr_lock:
+            _thr_act[self._ident] = self
 
-        if id in _thr_act:
-            self.add = 0
-        else:
-            self.add = 1
-            _thr_act[id] = self
-
-        _thr_rel()
-        if self.add:
-            for hook in self.hooks:
-                hook(WTHREAD_CREATED, self)
+        for hook in self.hooks:
+            hook(WTHREAD_CREATED, self)
 
     def delete(self):
-        if self.add:
-            for hook in self.hooks:
-                hook(WTHREAD_DELETED, self)
-            _thr_acq()
-            try:
-                del _thr_act[self.id]
-            finally:
-                _thr_rel()
+        for hook in self.hooks:
+            hook(WTHREAD_DELETED, self)
 
-    def _set_daemon(self): return 1
-    def join(self):        assert 0, "cannot join an omniORB WorkerThread"
+        with _thr_lock:
+            del _thr_act[self._ident]
+
+    def is_alive(self):
+        assert not self._is_stopped and self._started.is_set()
+        return True
+
+    def _set_daemon(self):
+        return 1
+
+    def join(self):
+        assert 0, "cannot join an omniORB WorkerThread"
 
 
 # omniThreadHook is used to release a dummy omni_thread C++ object

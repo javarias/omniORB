@@ -1,13 +1,13 @@
 # dir.mk for omniORB.
 #
 
-PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python")')
+PYSUBDIR = $(shell $(PYTHON) -c 'import sys; sys.stdout.write(sys.version[0] == "3" and "python3" or "python2")')
 
-ifndef EmbeddedSystem
+ifndef CrossCompiling
 SUBDIRS = $(PYSUBDIR)
 endif
 
-SUBDIRS += base orbcore
+SUBDIRS += orbcore
 
 ifndef OrbCoreOnly
 SUBDIRS += dynamic codesets connections

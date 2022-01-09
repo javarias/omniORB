@@ -36,16 +36,11 @@
 #include <omniORB4/IOP.h>
 #include <omniORB4/omniURI.h>
 
-#ifdef HAVE_STD
-#  include <iostream>
-#  include <iomanip>
-   using namespace std;
-#else
-#  include <iostream.h>
-#  include <iomanip.h>
-#endif
+#include <iostream>
+#include <iomanip>
+using namespace std;
 
-#ifdef HAVE_UNISTD_H
+#ifdef OMNI_HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 
@@ -81,7 +76,7 @@ static void usage(char* progname)
 }
 
 
-#ifdef HAVE_GETOPT
+#ifdef OMNI_HAVE_GETOPT
 
 extern char* optarg;
 extern int optind;
@@ -140,7 +135,7 @@ getopt(int num_args, char* const* args, const char* optstring)
   return '?';
 }
 
-#endif  // !HAVE_GETOPT
+#endif  // !OMNI_HAVE_GETOPT
 
 
 #define POA_NAME_SEP            '\xff'
@@ -655,8 +650,11 @@ print_tag_policies(IOP::TaggedComponent& c)
           case 9:
             cout << "XAR";
             break;
+          case 101:
+            cout << "ZSTD";
+            break;
           default:
-            cout << "unknown";
+            cout << "unknown (" << compressor_id << ")";
             break;
           }
           cout << ", level " << compression_level << endl;

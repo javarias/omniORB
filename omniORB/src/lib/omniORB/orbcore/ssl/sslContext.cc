@@ -184,6 +184,7 @@ sslContext::create_ctx()
     set_CA();
     set_DH();
     set_ephemeralRSA();
+    set_cipher_list();
     set_verify();
     set_info_cb();
   }
@@ -276,7 +277,9 @@ sslContext::set_method() {
 /////////////////////////////////////////////////////////////////////////
 void
 sslContext::set_supported_versions() {
-  SSL_CTX_set_options(pd_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+  SSL_CTX_set_options(pd_ctx,
+                      SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 |
+                      SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
 }
 
 /////////////////////////////////////////////////////////////////////////

@@ -55,16 +55,21 @@ int main(int argc, char** argv)
     PortableServer::POAManager_var pman = root_poa->the_POAManager();
     pman->activate();
 
-    // Create a new POA with ZIOP policies
-    Compression::CompressorIdLevelList ids;
-    ids.length(1);
-    ids[0].compressor_id     = Compression::COMPRESSORID_ZLIB;
-    ids[0].compression_level = 6;
-
     CORBA::PolicyList pl;
-    pl.length(2);
-    pl[0] = omniZIOP::create_compression_enabling_policy(1);
-    pl[1] = omniZIOP::create_compression_id_level_list_policy(ids);
+
+    // Set global policies to enable all compressors.
+    omniZIOP::setGlobalPolicies(pl);
+
+    // // Use this code to create a new POA with ZIOP policies
+    // Compression::CompressorIdLevelList ids;
+    // ids.length(1);
+    // ids[0].compressor_id     = Compression::COMPRESSORID_ZLIB;
+    // ids[0].compression_level = 6;
+
+    // CORBA::PolicyList pl;
+    // pl.length(2);
+    // pl[0] = omniZIOP::create_compression_enabling_policy(1);
+    // pl[1] = omniZIOP::create_compression_id_level_list_policy(ids);
 
     PortableServer::POA_var poa = root_poa->create_POA("my poa", pman, pl);
       

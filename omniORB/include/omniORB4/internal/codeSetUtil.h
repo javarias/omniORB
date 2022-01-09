@@ -80,7 +80,7 @@ public:
   }
 
   static inline omniCodeSet::UniChar* allocU(_CORBA_ULong len) {
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
     omniCodeSet::UniChar* buf = _CORBA_WString_helper::alloc(len - 1);
 #else
     omniCodeSet::UniChar* buf = new omniCodeSet::UniChar[len];
@@ -90,7 +90,7 @@ public:
   }
 
   static inline void freeU(omniCodeSet::UniChar* buf) {
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
     _CORBA_WString_helper::dealloc(buf);
 #else
     delete [] buf;

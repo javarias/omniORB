@@ -35,7 +35,7 @@
 ////////////////////////////////////////////////////////////////////////
 //  Platform feature selection
 
-#if !defined(OMNI_DISABLE_IPV6) && defined(HAVE_STRUCT_SOCKADDR_IN6) && defined(HAVE_STRUCT_SOCKADDR_STORAGE) && defined(HAVE_GETADDRINFO) && defined(HAVE_GETNAMEINFO)
+#if !defined(OMNI_DISABLE_IPV6) && defined(OMNI_HAVE_STRUCT_SOCKADDR_IN6) && defined(OMNI_HAVE_STRUCT_SOCKADDR_STORAGE) && defined(OMNI_HAVE_GETADDRINFO) && defined(OMNI_HAVE_GETNAMEINFO)
 #  define OMNI_SUPPORT_IPV6
 #  define OMNI_SOCKADDR_STORAGE sockaddr_storage
 #else
@@ -47,13 +47,8 @@
 #define OMNI_IPV6_SOCKETS_ACCEPT_IPV4_CONNECTIONS
 #define OMNIORB_HOSTNAME_MAX 512
 
-#ifdef HAVE_POLL
+#ifdef OMNI_HAVE_POLL
 #   define USE_POLL
-#endif
-
-// Darwin implementation of poll() appears to be broken
-#if defined(__darwin__)
-#   undef USE_POLL
 #endif
 
 #if defined(__hpux__)
@@ -102,6 +97,7 @@
 #  define CLOSESOCKET(sock)    closesocket(sock)
 #  define SHUTDOWNSOCKET(sock) ::shutdown(sock,2)
 #  define ERRNO                ::WSAGetLastError()
+#  define SET_ERRNO(v)         ::WSASetLastError(v)
 #  define RC_EINPROGRESS       WSAEWOULDBLOCK
 #  define RC_EINTR             WSAEINTR
 #  define RC_EBADF             WSAENOTSOCK
@@ -174,6 +170,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 #  endif
 
 #  define ERRNO              errno
+#  define SET_ERRNO(v)       errno = v
 #  define RC_EINTR           EINTR
 #  define RC_EINPROGRESS     EINPROGRESS
 #  if defined (__vxWorks__)

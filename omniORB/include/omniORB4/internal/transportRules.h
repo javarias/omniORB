@@ -77,7 +77,7 @@ public:
     RuleType& operator=(const RuleType&);
   };
 
-  typedef std::vector<RuleType*> RuleTypes;
+  typedef omnivector<RuleType*> RuleTypes;
 
   static void addRuleType(RuleType*);
 
@@ -116,7 +116,7 @@ public:
     CORBA::StringSeq action_;
   };
 
-  typedef std::vector<RuleActionPair*> RuleActionPairs;
+  typedef omnivector<RuleActionPair*> RuleActionPairs;
 
   inline void addRule(Rule* r, const CORBA::StringSeq& a)
   {

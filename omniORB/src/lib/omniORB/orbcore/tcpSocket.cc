@@ -360,7 +360,7 @@ tcpSocket::Bind(const char*   	      	 host,
     CORBA::ULong   addrs_len = 0;
     CORBA::Boolean set_host  = 0;
 
-    const std::vector<const char*>* ifaddrs
+    const omnivector<const char*>* ifaddrs
       = giopTransportImpl::getInterfaceAddress(transport_type);
 
     if (ifaddrs && !ifaddrs->empty()) {
@@ -369,7 +369,7 @@ tcpSocket::Bind(const char*   	      	 host,
       const char* loopback4 = 0;
       const char* loopback6 = 0;
 
-      std::vector<const char*>::const_iterator i;
+      omnivector<const char*>::const_iterator i;
       for (i = ifaddrs->begin(); i != ifaddrs->end(); i++) {
 
 	if (passive_host == IPv4PASSIVE && !LibcWrapper::isip4addr(*i))
@@ -611,6 +611,7 @@ doConnect(const char*   	 host,
     }
     else if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -629,6 +630,7 @@ doConnect(const char*   	 host,
 
     if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -857,6 +859,7 @@ tcpSocket::Connect(const char*        host,
     }
     else if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -876,6 +879,7 @@ tcpSocket::Connect(const char*        host,
 
     if (rc == RC_SOCKET_ERROR) {
       if (ERRNO == RC_EINTR) {
+	SET_ERRNO(0);
 	continue;
       }
       else {
@@ -993,7 +997,7 @@ tcpSocket::setCloseOnExec(SocketHandle_t sock)
 char*
 tcpSocket::addrToString(sockaddr* addr)
 {
-#if defined(HAVE_INET_NTOP)
+#if defined(OMNI_HAVE_INET_NTOP)
 
   char dest[80];
   const char* addrstr;
@@ -1013,7 +1017,7 @@ tcpSocket::addrToString(sockaddr* addr)
 
   return CORBA::string_dup(addrstr);
 
-#elif defined (HAVE_GETNAMEINFO)
+#elif defined (OMNI_HAVE_GETNAMEINFO)
 
   char dest[80];
   socklen_t addrlen = 0;
@@ -1059,7 +1063,7 @@ tcpSocket::addrToString(sockaddr* addr)
 char*
 tcpSocket::addrToURI(sockaddr* addr, const char* prefix)
 {
-#if defined(HAVE_INET_NTOP)
+#if defined(OMNI_HAVE_INET_NTOP)
 
   char dest[80];
   int port;
@@ -1088,7 +1092,7 @@ tcpSocket::addrToURI(sockaddr* addr, const char* prefix)
 
   return omniURI::buildURI(prefix, addrstr, port);
 
-#elif defined (HAVE_GETNAMEINFO)
+#elif defined (OMNI_HAVE_GETNAMEINFO)
 
   char dest[80];
   int port;

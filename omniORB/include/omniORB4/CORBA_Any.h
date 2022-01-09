@@ -53,14 +53,14 @@ public:
   void operator<<=(UShort u);
   void operator<<=(Long l);
   void operator<<=(ULong u);
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   void operator<<=(LongLong  l);
   void operator<<=(ULongLong u);
 #endif
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
   void operator<<=(Float f);
   void operator<<=(Double d);
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   void operator<<=(LongDouble l);
 #endif
 #endif
@@ -131,14 +131,14 @@ public:
   Boolean operator>>=(UShort& u) const;
   Boolean operator>>=(Long& l) const;
   Boolean operator>>=(ULong& u) const;
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   Boolean operator>>=(LongLong&  l) const;
   Boolean operator>>=(ULongLong& u) const;
 #endif
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
   Boolean operator>>=(Float& f) const;
   Boolean operator>>=(Double& d) const;
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   Boolean operator>>=(LongDouble& l) const;
 #endif
 #endif
@@ -312,6 +312,8 @@ public:
   cdrAnyMemoryStream& PR_streamToWrite();
   // Clear the contents and allocate a memory stream for writing into.
 
+  static void PR_marshalExceptionRepoId(cdrStream& s, const char* repo_id);
+  static void PR_unmarshalExceptionRepoId(cdrStream& s);
 
   void PR_clearData();
   // Clear the contents ready to insert a different value.

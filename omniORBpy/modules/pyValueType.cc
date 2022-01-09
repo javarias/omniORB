@@ -89,6 +89,72 @@ public:
     }
   }
 
+  omni::s_size_t addValueBox(PyObject* d_o, PyObject* obj,
+                             omni::s_size_t current)
+  {
+    // Look to see if the value has been marshalled before. If so,
+    // return its offset; if not, add it to the table and return -1.
+
+    PyObject* key = PyLong_FromVoidPtr(obj); // id(obj)
+
+    // Multiple distinct CORBA types map to the same Python types as
+    // each other. If the caller passes a single Python object as two
+    // valueboxes that should have different types, we must not send
+    // an indirection. For cases where this sort of type overlap can
+    // occur, we build a dict key as a tuple of kind and value id.
+    CORBA::TCKind tk = (CORBA::TCKind)omniPy::descriptorToTK(d_o);
+
+    while (tk == CORBA::tk_alias) {
+      d_o = PyTuple_GET_ITEM(d_o, 3);
+      tk  = (CORBA::TCKind)omniPy::descriptorToTK(d_o);
+    }
+    
+    switch (tk) {
+    case CORBA::tk_short:
+    case CORBA::tk_long:
+    case CORBA::tk_ushort:
+    case CORBA::tk_ulong:
+    case CORBA::tk_float:
+    case CORBA::tk_double:
+    case CORBA::tk_boolean:
+    case CORBA::tk_char:
+    case CORBA::tk_octet:
+    case CORBA::tk_longlong:
+    case CORBA::tk_ulonglong:
+    case CORBA::tk_longdouble:
+    case CORBA::tk_wchar:
+    case CORBA::tk_wstring: // kept distinct from string
+      {
+        // Make a tuple of the form (id(obj), tk)
+        PyObject* ktuple = PyTuple_New(2);
+        PyTuple_SET_ITEM(ktuple, 0, key);
+        PyTuple_SET_ITEM(ktuple, 1, Int_FromLong(tk));
+        key = ktuple;
+      }
+      break;
+    default:
+      // Key of just id(obj) is sufficient. The default case is here
+      // to avoid compiler warnings.
+      break;
+    }
+
+    PyObject* val = PyDict_GetItem(dict_, key);
+
+    if (val) {
+      OMNIORB_ASSERT(Int_Check(val));
+      omni::s_size_t pos = Int_AsSsize_t(val);
+      Py_DECREF(key);
+      return pos;
+    }
+    else {
+      PyObject* val = Int_FromSsize_t(current);
+      PyDict_SetItem(dict_, key, val);
+      Py_DECREF(val);
+      Py_DECREF(key);
+      return -1;
+    }
+  }
+
   omni::s_size_t addRepoIds(PyObject* obj, omni::s_size_t current)
   {
     // Caller is marshalling a repoid or a list of repoids stored in a
@@ -381,7 +447,7 @@ marshalIndirection(cdrStream& stream, omni::s_size_t pos)
   OMNIORB_ASSERT(offset < -4 || stream.currentOutputPtr() == 0);
   // In a counting stream, the currentOutputPtr is always zero.
 
-#if (SIZEOF_PTR == 8)
+#if (OMNI_SIZEOF_PTR == 8)
   if (offset < -0x7fffffff - 1) {
     // Value is more than 2GB earlier in the stream!
     OMNIORB_THROW(MARSHAL, MARSHAL_InvalidIndirection,
@@ -602,7 +668,9 @@ marshalPyObjectValueBox(cdrStream& stream, PyObject* d_o, PyObject* a_o)
 
   stream.alignOutput(omni::ALIGN_4);
 
-  omni::s_size_t pos = tracker->addValue(a_o, stream.currentOutputPtr());
+  PyObject*      boxed_d_o = PyTuple_GET_ITEM(d_o, 4);
+  omni::s_size_t pos       = tracker->addValueBox(boxed_d_o, a_o,
+                                                  stream.currentOutputPtr());
 
   if (pos != -1) {
     marshalIndirection(stream, pos);
@@ -646,7 +714,7 @@ marshalPyObjectValueBox(cdrStream& stream, PyObject* d_o, PyObject* a_o)
   if (cstreamp)
     cstreamp->startOutputValueBody();
 
-  omniPy::marshalPyObject(stream, PyTuple_GET_ITEM(d_o, 4), a_o);
+  omniPy::marshalPyObject(stream, boxed_d_o, a_o);
 
   if (cstreamp)
     cstreamp->endOutputValue();

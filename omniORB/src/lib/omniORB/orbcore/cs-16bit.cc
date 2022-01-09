@@ -45,7 +45,7 @@ omniCodeSet::NCS_W_16bit::marshalWChar(cdrStream& stream,
 
   if (tcs->fastMarshalWChar(stream, this, wc)) return;
 
-#if (SIZEOF_WCHAR == 4)
+#if (OMNI_SIZEOF_WCHAR == 4)
   if (wc > 0xffff)
     OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
 		  (CORBA::CompletionStatus)stream.completion());
@@ -81,7 +81,7 @@ omniCodeSet::NCS_W_16bit::marshalWString(cdrStream&          stream,
 
   for (_CORBA_ULong i=0; i<=len; i++) {
     wc = ws[i];
-#if (SIZEOF_WCHAR == 4)
+#if (OMNI_SIZEOF_WCHAR == 4)
     if (wc > 0xffff) 
       OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
 		    (CORBA::CompletionStatus)stream.completion());
@@ -304,7 +304,7 @@ omniCodeSet::TCS_W_16bit::fastMarshalWChar(cdrStream&          stream,
 					   _CORBA_WChar        wc)
 {
   if (ncs->id() == id()) { // Null transformation
-#if (SIZEOF_WCHAR == 4)
+#if (OMNI_SIZEOF_WCHAR == 4)
     if (wc > 0xffff)
       OMNIORB_THROW(BAD_PARAM, BAD_PARAM_WCharOutOfRange, 
 		    (CORBA::CompletionStatus)stream.completion());
@@ -347,7 +347,7 @@ omniCodeSet::TCS_W_16bit::fastMarshalWString(cdrStream&          stream,
     stream.declareArrayLength(omni::ALIGN_4, mlen+4);
     mlen >>= stream;
 
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
     if (stream.marshal_byte_swap()) {
       _CORBA_UShort tc;
       for (_CORBA_ULong i=0; i<len; i++) {
@@ -437,7 +437,7 @@ omniCodeSet::TCS_W_16bit::fastUnmarshalWString(cdrStream&          stream,
     ws = omniCodeSetUtil::allocW(len + 1);
     omniCodeSetUtil::HolderW wh(ws);
 
-#if (SIZEOF_WCHAR == 2)
+#if (OMNI_SIZEOF_WCHAR == 2)
     stream.unmarshalArrayUShort((_CORBA_UShort*)ws, len);
 #else
     _CORBA_UShort tc;

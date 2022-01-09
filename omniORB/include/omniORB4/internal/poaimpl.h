@@ -166,6 +166,7 @@ public:
     unsigned implicit_activation    : 1;
     unsigned bidirectional_accept   : 1;
     unsigned local_shortcut         : 1;
+    unsigned plain_object_keys      : 1;
   };
 
   inline _CORBA_Boolean acceptBiDirectional() const { 
@@ -411,7 +412,7 @@ private:
   // May be 0.
   //  Mutable.  Protected by <poa_lock>.
 
-  std::vector<const char*>             pd_adptrActvtnsInProgress;
+  omnivector<const char*>              pd_adptrActvtnsInProgress;
   // List of names of child POAs which we are in the process
   // of activating using AdapterActivators.  This is likely to
   // be empty most of the time!

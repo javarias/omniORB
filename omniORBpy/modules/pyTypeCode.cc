@@ -272,7 +272,7 @@ r_marshalTypeCode(cdrStream&           stream,
     case CORBA::tk_any:
     case CORBA::tk_TypeCode:
     case CORBA::tk_Principal:
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
     case CORBA::tk_longlong:
     case CORBA::tk_ulonglong:
 #endif
@@ -760,7 +760,7 @@ r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
   case CORBA::tk_any:
   case CORBA::tk_TypeCode:
   case CORBA::tk_Principal:
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   case CORBA::tk_longlong:
   case CORBA::tk_ulonglong:
 #endif

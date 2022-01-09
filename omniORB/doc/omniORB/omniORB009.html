@@ -2,173 +2,113 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
-<title>Interceptors</title>
+<title>Code set conversion</title>
 </head>
 <body >
 <a href="omniORB008.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB010.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec146" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Interceptors</h1>
+<h1 id="sec144" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Code set conversion</h1>
 <p>
-<a id="chap:interceptors"></a></p><p>omniORB supports interceptors that allow the application to insert
-processing in various points along the call chain, and in various
-other locations. It does not (yet) support the standard Portable
-Interceptors API.</p><p>The interceptor interfaces are defined in a single header,
-<span style="font-family:monospace">include/omniORB4/omniInterceptors.h</span>. Each interception point
-consists of a singleton object with <span style="font-family:monospace">add()</span> and <span style="font-family:monospace">remove()</span> methods,
-and the definition of an &#X2018;interceptor info&#X2019; class. For example:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">omniInterceptors</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  ...</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">clientSendRequest_T</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">GIOP_C</span><span style="font-size:small">&amp;                 </span><span style="font-size:small">giop_c</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">IOP</span><span style="font-size:small">::</span><span style="font-size:small">ServiceContextList</span><span style="font-size:small"> </span><span style="font-size:small">service_contexts</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">info_T</span><span style="font-size:small">(</span><span style="font-size:small">GIOP_C</span><span style="font-size:small">&amp; </span><span style="font-size:small">c</span><span style="font-size:small">) : </span><span style="font-size:small">giop_c</span><span style="font-size:small">(</span><span style="font-size:small">c</span><span style="font-size:small">), </span><span style="font-size:small">service_contexts</span><span style="font-size:small">(5) {}</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">private</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">info_T</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">info_T</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small">&amp;);</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small">info_T</span><span style="font-size:small">&amp; </span><span style="font-size:small"><span style="font-weight:bold">operator</span></span><span style="font-size:small">=(</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small">&amp;);</span><span style="font-size:small">
-</span><span style="font-size:small">    };</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">typedef</span></span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Boolean</span><span style="font-size:small"> (*</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">)(</span><span style="font-size:small">info_T</span><span style="font-size:small">&amp; </span><span style="font-size:small">info</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">add</span><span style="font-size:small">(</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">remove</span><span style="font-size:small">(</span><span style="font-size:small">interceptFunc</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:small">  };</span><span style="font-size:small">
-</span><span style="font-size:small">  ...</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><p>You can see that the interceptors themselves are functions
-that take the <span style="font-family:monospace">info_T</span> object as their argument and return
-boolean. Interceptors are called in the order they are registered;
-normally, all interceptor functions return <span style="font-family:monospace">true</span>, meaning that
-processing should continue with subsequent interceptors. If an
-interceptor returns <span style="font-family:monospace">false</span>, later interceptors are not
-called. You should only do that if you really know what you are doing.</p><p>Notice that the <span style="font-family:monospace">info_T</span> contains references to omniORB internal
-data types. The definitions of these types can be found in other
-header files within <span style="font-family:monospace">include/omniORB4</span> and
-<span style="font-family:monospace">include/omniORB4/internal</span>.</p>
-<h2 id="sec147" class="section">9.1&#XA0;&#XA0;Interceptor registration</h2>
-<p>All the interceptor singletons are registered within another singleton
-object of class <span style="font-family:monospace">omniInterceptors</span>. You retrieve a pointer to the
-object with the <span style="font-family:monospace">omniORB::getInterceptors()</span> function, which
-must be called after the ORB has been initialised with
-<span style="font-family:monospace">CORBA::ORB_init()</span>, but before the ORB is used. The code to
-register an interceptor looks, for example, like:</p><div class="lstlisting"><span style="font-size:small">omniInterceptors</span><span style="font-size:small">* </span><span style="font-size:small">interceptors</span><span style="font-size:small"> = </span><span style="font-size:small">omniORB</span><span style="font-size:small">::</span><span style="font-size:small">getInterceptors</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">interceptors</span><span style="font-size:small">-&gt;</span><span style="font-size:small">clientSendRequest</span><span style="font-size:small">.</span><span style="font-size:small">add</span><span style="font-size:small">(</span><span style="font-size:small">myInterceptorFunc</span><span style="font-size:small">);</span></div>
-<h2 id="sec148" class="section">9.2&#XA0;&#XA0;Available interceptors</h2>
-<p>The following interceptors are available:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold">encodeIOR</span></dt><dd class="dd-description"><br>
-Called when encoding an IOR to represent an object reference. This
-interception point allows the application to insert extra profile
-components into IORs. Note that you must understand and adhere to the
-rules about data stored in IORs, otherwise the IORs created may be
-invalid. omniORB itself uses this interceptor to insert various items,
-so you can see an example of its use in the
-<span style="font-family:monospace">insertSupportedComponents()</span> function defined in
-<span style="font-family:monospace">src/lib/omniORB/orbcore/ior.cc</span>.</dd><dt class="dt-description"><span style="font-weight:bold">decodeIOR</span></dt><dd class="dd-description"><br>
-Called when decoding an IOR. The application can use this to get out
-whatever information they put into IORs with encodeIOR. Again, see
-<span style="font-family:monospace">extractSupportedComponents()</span> in
-<span style="font-family:monospace">src/lib/omniORB/orbcore/ior.cc</span> for an example.</dd><dt class="dt-description"><span style="font-weight:bold">clientOpenConnection</span></dt><dd class="dd-description"><br>
-Called as a client opens a new connection to a server, after the
-connection is opened but before it is used to send a request. The
-interceptor function can set the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">reject</span> member
-to <span style="font-family:monospace">true</span> to cause the client to immediately close the new
-connection and throw CORBA::TRANSIENT to the calling code. In that
-case, the interceptor function can also set the <span style="font-family:monospace">why</span> member to
-provide a message that is logged.</dd><dt class="dt-description"><span style="font-weight:bold">clientSendRequest</span></dt><dd class="dd-description"><br>
-Called just before a request header is sent over the network. The
-application can use it to insert service contexts in the header. See
-the <span style="font-family:monospace">setCodeSetServiceContext()</span> function in
-<span style="font-family:monospace">src/lib/omniORB/orbcore/cdrStream.cc</span> for an example of its use.</dd><dt class="dt-description"><span style="font-weight:bold">clientReceiveReply</span></dt><dd class="dd-description"><br>
-Called as the client receives a reply, just after unmarshalling the
-reply header. Called for normal replies and exceptions.</dd><dt class="dt-description"><span style="font-weight:bold">serverAcceptConnection</span></dt><dd class="dd-description"><br>
-Called when a server accepts a new incoming connection, but before it
-reads any data from it. The interceptor function can set the
-<span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">reject</span> member to <span style="font-family:monospace">true</span> to cause the
-server to immediately close the new connection. In that case, the
-interceptor function can also set the <span style="font-family:monospace">why</span> member to provide a
-message that is logged.</dd><dt class="dt-description"><span style="font-weight:bold">serverReceiveRequest</span></dt><dd class="dd-description"><br>
-Called when the server receives a request, just after unmarshalling
-the request header. See the <span style="font-family:monospace">getCodeSetServiceContext()</span> function in
-<span style="font-family:monospace">src/lib/omniORB/orbcore/cdrStream.cc</span> for an example.</dd><dt class="dt-description"><span style="font-weight:bold">serverSendReply</span></dt><dd class="dd-description"><br>
-Called just before the server marshals a reply header.</dd><dt class="dt-description"><span style="font-weight:bold">serverSendException</span></dt><dd class="dd-description"><br>
-Called just before the server marshals an exception reply header.</dd><dt class="dt-description"><span style="font-weight:bold">createRope</span></dt><dd class="dd-description"><br>
-Called when the ORB is about to create a &#X2018;rope&#X2019; that encapsulates a
-bundle of connections (&#X2018;strands&#X2019;) to a remote address space. It allows
-application code to override omniORB&#X2019;s normal connection management.</dd><dt class="dt-description"><span style="font-weight:bold">createIdentity</span></dt><dd class="dd-description"><br>
-Called when the ORB is about to create an &#X2018;identity&#X2019; object to
-represent a CORBA object. It allows application code to provide its
-own identity implementations. It is very unlikely that an application
-will need to do this.</dd><dt class="dt-description"><span style="font-weight:bold">createORBServer</span></dt><dd class="dd-description"><br>
-Used internally by the ORB to register different kinds of server. At
-present, only a GIOP server is registered. It is very unlikely that
-application code will need to do this.</dd><dt class="dt-description"><span style="font-weight:bold">createThread</span></dt><dd class="dd-description"><br>
-Called whenever the ORB creates a thread. The <span style="font-family:monospace">info_T</span> class for
-this interceptor is<div class="lstlisting"><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">info_T</span><span style="font-size:small"> {</span><span style="font-size:small">
-</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small"> </span><span style="font-size:small">run</span><span style="font-size:small">() = 0;</span><span style="font-size:small">
-</span><span style="font-size:small">      </span><span style="font-size:small"><span style="font-weight:bold">virtual</span></span><span style="font-size:small"> </span><span style="font-size:small">omni_thread</span><span style="font-size:small">* </span><span style="font-size:small">self</span><span style="font-size:small">() = 0;</span><span style="font-size:small">
-</span><span style="font-size:small">    };</span></div><p>The interceptor is called in the context of the newly created thread.
-The function <em>must</em> call the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">run()</span> method, to
-pass control to the thread body. <span style="font-family:monospace">run()</span> returns just before the
-thread exits. This arrangement allows the interceptor to initialise
-some per-thread state before the thread body runs, then release it
-just before the thread exits.</p><p>The <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">self()</span> method returns a pointer to the
-<span style="font-family:monospace">omni_thread</span> object for the thread, equivalent to calling
-<span style="font-family:monospace">omni_thread::self()</span>.</p></dd><dt class="dt-description"><span style="font-weight:bold">assignUpcallThread</span></dt><dd class="dd-description"><br>
-The ORB maintains a general thread pool, from which threads are drawn
-for various purposes. One purpose is for performing upcalls to
-application code, in response to incoming CORBA calls. The
-<span style="font-family:monospace">assignUpcallThread</span> interceptor is called when a thread is
-assigned to perform upcalls. In the thread per connection model, the
-thread stays assigned to performing upcalls for the entire lifetime of
-the underlying network connection; in the thread pool model, threads
-are assigned for upcalls on a per call basis, so this interceptor is
-triggered for every incoming call<sup><a id="text15" href="#note15">1</a></sup>. As with the <span style="font-family:monospace">createThread</span> interceptor, the
-interceptor function must call the <span style="font-family:monospace">info_T</span>&#X2019;s <span style="font-family:monospace">run()</span> method to
-pass control to the upcall.<p>When a thread finishes its assignment of processing upcalls, it
-returns to the pool (even in thread per connection mode), so the same
-thread can be reassigned to perform more upcalls, or reused for a
-different purpose.</p></dd><dt class="dt-description"><span style="font-weight:bold">assignAMIThread</span></dt><dd class="dd-description"><br>
-Asynchronous Method Invocation (AMI) uses threads to perform outgoing
-calls. The <span style="font-family:monospace">assignAMIThread</span> interceptor is called when a thread
-is assigned to perform AMI calls. As with the other thread
-interceptors, the interceptor function must call the <span style="font-family:monospace">info_T</span>&#X2019;s
-<span style="font-family:monospace">run()</span> method to pass control to the AMI call.<p>Unlike the other interceptors, the interceptor functions for
-<span style="font-family:monospace">createThread</span>, <span style="font-family:monospace">assignUpcallThread</span> and
-<span style="font-family:monospace">assignAMIThread</span> have no return values. Interceptor chaining is
-performed by calls through the <span style="font-family:monospace">info_T::run()</span> method, rather than
-by visiting interceptor functions in turn.</p></dd></dl>
-<h2 id="sec149" class="section">9.3&#XA0;&#XA0;Server-side call interceptor</h2>
-<p>Calls can be intercepted on the server just before the upcall into
-application code. This interceptor is registered with omniORB&#X2019;s
-<span style="font-family:monospace">callDescriptor</span> class, which is responsible for encapsulating
-the state of a call. Unlike the transport-related
-<span style="font-family:monospace">serverReceiveRequest</span>, <span style="font-family:monospace">serverSendReply</span> and
-<span style="font-family:monospace">serverSendException</span> interceptors, the <span style="font-family:monospace">callDescriptor</span>
-interceptor is invoked for <em>all</em> calls, even ones from colocated
-clients in the same address space.</p><p>The types used for the call interceptor are defined in
-<span style="font-family:monospace">include/omniORB4/callDescriptor.h</span>. The interceptor takes the
-form of a bare function with two parameters. The first parameter is a
-pointer to the <span style="font-family:monospace">callDescriptor</span>; the second is a pointer to
-<span style="font-family:monospace">omniServant</span>, which is the base class of all servant
-classes. The interceptor function must call the
-<span style="font-family:monospace">callDescriptor</span>&#X2019;s <span style="font-family:monospace">interceptedCall()</span> method to pass on the
-call.</p><p>This interception point allows access to various parts of omniORB&#X2019;s
-call machinery. The <span style="font-family:monospace">callDescriptor</span> includes access to the
-operation name and, if cast to the concrete subclass defined by the
-IDL compiler, the call arguments and return values too.</p>
+<a id="chap:codesets"></a></p><p>omniORB supports full code set negotiation, used to select and
+translate between different character code sets when transmitting
+chars, strings, wchars and wstrings. The support is mostly transparent
+to application code, but there are a number of options that can be
+selected. This chapter covers the options, and also gives some
+pointers about how to implement your own code sets, in case the ones
+that come with omniORB are not sufficient.</p>
+<h2 id="sec145" class="section">9.1&#XA0;&#XA0;Native code sets</h2>
+<p>For the ORB to know how to handle strings and wstrings given to it by
+the application, it must know what code set they are represented
+with, so it can properly translate them if need be. The defaults are
+ISO 8859-1 (Latin 1) for char and string, and UTF-16 for wchar and
+wstring. Different code sets can be chosen at initialisation time with
+the <span style="font-family:monospace">nativeCharCodeSet</span> and <span style="font-family:monospace">nativeWCharCodeSet</span>
+parameters. The supported code sets are printed out at initialisation
+time if the ORB traceLevel is 15 or greater.</p><p>For many applications, the defaults are fine. The most common
+non-default choice is to set the native char code set to UTF-8,
+allowing the full Unicode range to be supported in strings.</p><p>Note that the default for wchar is always UTF-16, even on Unix
+platforms where wchar is a 32-bit type. Select the UCS-4 code set to
+select characters outside the basic multilingual plane without having
+to use UTF-16 surrogates<sup><a id="text14" href="#note14">1</a></sup>.</p>
+<h2 id="sec146" class="section">9.2&#XA0;&#XA0;Default code sets</h2>
+<p>The way code set conversion is meant to work in CORBA communication is
+that each client and server has a <span style="font-style:italic">native</span> code set that it uses
+for character data in application code, and supports a number of
+<span style="font-style:italic">transmission</span> code sets that it uses for communication. When a
+client connects to a server, the client picks one of the server&#X2019;s
+transmission code sets to use for the interaction. For that to work,
+the client plainly has to know the server&#X2019;s supported transmission
+code sets.</p><p>Code set information from servers is embedded in IORs. A client with
+an IOR from a server should therefore know what transmission code sets
+the server supports. This approach can fail for two reasons:</p><ol class="enumerate" type=1><li class="li-enumerate">
+A <span style="font-family:monospace">corbaloc</span> URI (see chapter&#XA0;<a href="omniORB008.html#chap%3Ains">8</a>) does
+not contain any code set information.</li><li class="li-enumerate">Some badly-behaved servers that do support code set conversion
+fail to put codeset information in their IORs.
+</li></ol><p>Similarly, a badly-behaved client may fail to specify
+codeset information when it first uses a connection to a server,
+meaning that the server does not know the transmission codeset used by
+the client.</p><p>The CORBA standard says that if a server has not specified
+transmission code set information, clients must assume that they only
+support ISO-8859-1 for char and string, and do not support wchar and
+wstring at all. Similarly, a server that does not receive codeset
+information from a client must assume that the client is using
+ISO-8859-1 for char and string, and will not send wchar and wstring.
+The effect is that <span style="font-family:monospace">DATA_CONVERSION</span> or <span style="font-family:monospace">BAD_PARAM</span>
+exceptions are thrown.</p><p>To avoid these issues, omniORB allows you to configure <span style="font-style:italic">default</span>
+code sets that are assumed to be supported by the other end of the
+communication, if they are not otherwise known. Set
+<span style="font-family:monospace">defaultCharCodeSet</span> for char and string data, and
+<span style="font-family:monospace">defaultWCharCodeSet</span> for wchar and wstring data.</p>
+<h2 id="sec147" class="section">9.3&#XA0;&#XA0;Code set library</h2>
+<p>To save space in the main ORB core library, most of the code set
+implementations are in a separate library named omniCodeSets4. To use
+the extra code sets, you must link your application with that
+library. On most platforms, if you are using dynamic linking,
+specifying the omniCodeSets4 library in the link command is sufficient
+to have it initialised, and for the code sets to be available. With
+static linking, or platforms with less intelligent dynamic linkers,
+you must force the linker to initialise the library. You do that by
+including the <span style="font-family:monospace">omniORB4/optionalFeatures.h</span> header. By default,
+that header enables several optional features. Look at the file
+contents to see how to turn off particular features.</p>
+<h2 id="sec148" class="section">9.4&#XA0;&#XA0;Implementing new code sets</h2>
+<p>It is quite easy to implement new code sets, if you need support for
+code sets (or marshalling formats) that do not come with the omniORB
+distribution. There are extensive comments in the headers and ORB code
+that explain how to implement a code set; this section just serves to
+point you in the right direction.</p><p>The main definitions for the code set support are in
+<span style="font-family:monospace">include/omniORB4/codeSets.h</span>. That defines a set of base classes
+use to implement code sets, plus some derived classes that use look-up
+tables to convert simple 8-bit and 16-bit code sets to Unicode.</p><p>When sending or receiving string data, there are a total of four code
+sets in action: a native char code set, a transmission char code set,
+a native wchar code set, and a transmission wchar code set. The native
+code sets are as described above; the transmission code sets are the
+ones selected to communicate with a remote machine. They are
+responsible for understanding the GIOP marshalling formats, as well as
+the code sets themselves. Each of the four code sets has an object
+associated with it which contains methods for converting data.</p><p>There are two ways in which a string/wstring can be transmitted or
+received. If the transmission code set in action knows how to deal
+directly with the native code set (the trivial case being that they
+are the same code set, but more complex cases are possible too), the
+transmission code set object can directly marshal or unmarshal the
+data into or out of the application buffer. If the transmission code
+set does not know how to handle the native code set, it converts the
+string/wstring into UTF-16, and passes that to the native code set
+object (or vice-versa). All code set implementations must therefore
+know how to convert to and from UTF-16.</p><p>With this explanation, the classes in <span style="font-family:monospace">codeSets.h</span> should be easy
+to understand. The next place to look is in the various existing code
+set implementations, which are files of the form <span style="font-family:monospace">cs-*.cc</span> in the
+<span style="font-family:monospace">src/lib/omniORB/orbcore</span> and <span style="font-family:monospace">src/lib/omniORB/codesets</span>.
+Note how all the 8-bit code sets (the ISO 8859-* family) consist
+entirely of data and no code, since they are driven by look-up tables.</p>
 <hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note15" href="#text15">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Except that with the
-<span style="font-family:monospace">threadPoolWatchConnection</span> parameter set <span style="font-family:monospace">true</span>, a thread
-can perform multiple upcalls even when thread pool mode is
-active.</div></dd></dl>
+<a id="note14" href="#text14">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">If you have no idea what this means,
+don&#X2019;t worry&#X2014;you&#X2019;re better off not knowing unless you <em>really</em>
+have to.</div></dd></dl>
 <hr>
 <a href="omniORB008.html"><img src="previous_motif.svg" alt="Previous"></a>
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>

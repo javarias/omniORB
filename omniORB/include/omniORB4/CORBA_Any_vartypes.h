@@ -117,7 +117,7 @@ public:
   inline void operator<<=(ULong u) {
     *pd_data <<= u;
   }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   inline void operator<<=(LongLong l) {
     *pd_data <<= l;
   }
@@ -125,14 +125,14 @@ public:
     *pd_data <<= u;
   }
 #endif
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
   inline void operator<<=(Float f) {
     *pd_data <<= f;
   }
   inline void operator<<=(Double d) {
     *pd_data <<= d;
   }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   inline void operator<<=(LongDouble d) {
     *pd_data <<= d;
   }
@@ -191,7 +191,7 @@ public:
   inline Boolean operator>>=(ULong& u) const {
     return (*pd_data >>= u);
   }
-#ifdef HAS_LongLong
+#ifdef OMNI_HAS_LongLong
   inline Boolean operator>>=(LongLong& l) const {
     return (*pd_data >>= l);
   }
@@ -199,14 +199,14 @@ public:
     return (*pd_data >>= u);
   }
 #endif
-#if !defined(NO_FLOAT)
+#if !defined(OMNI_NO_FLOAT)
   inline Boolean operator>>=(Float& f) const {
     return (*pd_data >>= f);
   }
   inline Boolean operator>>=(Double& d) const {
     return (*pd_data >>= d);
   }
-#ifdef HAS_LongDouble
+#ifdef OMNI_HAS_LongDouble
   inline Boolean operator>>=(LongDouble& d) const {
     return (*pd_data >>= d);
   }

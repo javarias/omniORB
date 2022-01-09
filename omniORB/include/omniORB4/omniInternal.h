@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB
+//                            Package   : omniORB2
 // omniInternal.h             Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2017 Apasphere Ltd
+//    Copyright (C) 2003-2009 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -31,17 +31,16 @@
 
 #include <stddef.h>
 
-#if !defined(__atmos__) && !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__) && !defined(__vxWorks__)
-#include <strings.h>
-#include <string.h>
+#if !defined(_WIN32) && !defined(__VMS) && !defined(__rtems__) && !defined(__vxWorks__)
+#  include <strings.h>
+#  include <string.h>
 #else
-#include <string.h>
+#  include <string.h>
 #endif
 #include <omniORB4/CORBA_sysdep.h>
 #include <omnithread.h>
 #include <omniORB4/finalCleanup.h>
 #include <omniORB4/CORBA_basetypes.h>
-#include <omniORB4/errorFuncs.h>
 #include <omniORB4/seqTemplatedecls.h>
 #include <omniORB4/templatedecls.h>
 #include <omniORB4/valueTemplatedecls.h>

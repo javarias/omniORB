@@ -131,7 +131,7 @@ sslTransportImpl::addToIOR(const char* param, IORPublish* eps) {
 }
 
 /////////////////////////////////////////////////////////////////////////
-const std::vector<const char*>* 
+const omnivector<const char*>* 
 sslTransportImpl::getInterfaceAddress() {
   return giopTransportImpl::getInterfaceAddress("giop:tcp");
 }

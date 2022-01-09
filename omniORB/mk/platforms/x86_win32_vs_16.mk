@@ -18,11 +18,11 @@ ABSTOP = $(shell cd $(TOP); pwd)
 #
 # Python set-up
 #
-# You must set a path to a Python interpreter, either version 2.7 or
-# version 3.5 or later.
+# You must set a path to a Python interpreter, ideally version 3.5 or
+# later, but obsolete version 2.7 is still supported.
 
+#PYTHON = /cygdrive/c/Python310/python
 #PYTHON = /cygdrive/c/Python27/python
-#PYTHON = /cygdrive/c/Python37/python
 
 
 # Use the following set of flags to build and use multithreaded DLLs
@@ -91,12 +91,17 @@ OMNIORB_SSL_LIB += $(OPEN_SSL_LIB)
 OMNIORB_SSL_CPPFLAGS += $(OPEN_SSL_CPPFLAGS)
 
 
-# To build ZIOP support, EnableZIOP must be defined and ZLIB_ROOT must
-# be set to the path to the zlib install. See also the
-# OMNIORB_ENABLE_ZIOP define in include/omniORB4/CORBA_sysdep_trad.h.
+# To build ZIOP support, EnableZIOP must be defined and one or both of
+# the zlib and zstd sections must be defined.
 
 #EnableZIOP = 1
-#ZLIB_ROOT = /cygdrive/c/zlib-1.2.11
 
-ZLIB_CPPFLAGS = -I$(ZLIB_ROOT)
-ZLIB_LIB = $(patsubst %,$(LibPathPattern),$(ZLIB_ROOT)) zdll.lib
+#EnableZIOPZLib = 1
+#ZLIB_ROOT = /cygdrive/c/zlib-1.2.11
+#ZLIB_CPPFLAGS = -DOMNI_ENABLE_ZIOP_ZLIB -I$(ZLIB_ROOT)
+#ZLIB_LIB = $(patsubst %,$(LibPathPattern),$(ZLIB_ROOT)) zdll.lib
+
+#EnableZIOPZStd = 1
+#ZSTD_ROOT = /cygdrive/c/zstd
+#ZSTD_CPPFLAGS = -DOMNI_ENABLE_ZIOP_ZSTD -I$(ZSTD_ROOT)/include
+#ZSTD_LIB = $(patsubst %,$(LibPathPattern),$(ZSTD_ROOT)/lib) zstd.lib

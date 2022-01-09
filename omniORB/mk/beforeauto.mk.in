@@ -51,7 +51,7 @@ INSTALLIDLDIR    := $(DESTDIR)@datadir@/idl
 #
 
 ifeq (@CROSS_COMPILING@,yes)
-  EmbeddedSystem = 1
+  CrossCompiling = 1
 endif
 
 
@@ -60,7 +60,7 @@ endif
 # Tool bindir to use depends on make target
 #
 
-ifndef EmbeddedSystem
+ifndef CrossCompiling
 
 ifeq ($(MAKECMDGOALS),install)
     TOOLBINDIR = $(INSTALLBINDIR)
@@ -152,8 +152,10 @@ GENERATE_LIB_DEPEND = $(firstword \
 # make passed to this make will be incorrectly passed down to the sub-make.
 #
 
+OMNI_MAKEFLAGS = $(filter -j%, $(MAKEFLAGS))
+
 define MakeSubdirs
-(unset MAKEFLAGS; \
+(MAKEFLAGS='$(OMNI_MAKEFLAGS)'; \
  set -e; \
  if [ "$$subdir_makeflags" = "" ]; then \
    subdir_makeflags='$(SUBDIR_MAKEFLAGS)'; \
@@ -469,17 +471,11 @@ OMNITHREAD_PLATFORM_LIB = $(filter-out $(patsubst %,$(LibSearchPattern),\
 
 CorbaImplementation = OMNIORB
 
-lib_depend := $(patsubst %,$(LibPattern),omniBase$(OMNIORB_MAJOR_VERSION))
-omniBase_lib_depend := $(GENERATE_LIB_DEPEND)
-
 lib_depend := $(patsubst %,$(LibPattern),omniORB$(OMNIORB_MAJOR_VERSION))
 omniORB_lib_depend := $(GENERATE_LIB_DEPEND)
 
 lib_depend := $(patsubst %,$(LibPattern),omniDynamic$(OMNIORB_MAJOR_VERSION))
 omniDynamic_lib_depend := $(GENERATE_LIB_DEPEND)
-
-OMNIORB_BASE_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
-                        omniBase$(OMNIORB_MAJOR_VERSION))
 
 OMNIORB_DLL_NAME = $(patsubst %,$(LibSearchPattern),\
                    omniORB$(OMNIORB_MAJOR_VERSION))
@@ -494,11 +490,11 @@ OMNIORB_CPPFLAGS = -D__OMNIORB$(OMNIORB_MAJOR_VERSION)__ \
 
 OMNIORB_IDL_OUTPUTDIR_PATTERN = -C%
 
-OMNIORB_LIB = $(OMNIORB_BASE_DLL_NAME) $(OMNIORB_DLL_NAME) $(OMNIORB_DYNAMIC_DLL_NAME)
-OMNIORB_LIB_NODYN = $(OMNIORB_BASE_DLL_NAME) $(OMNIORB_DLL_NAME)
+OMNIORB_LIB = $(OMNIORB_DLL_NAME) $(OMNIORB_DYNAMIC_DLL_NAME)
+OMNIORB_LIB_NODYN = $(OMNIORB_DLL_NAME)
 
-OMNIORB_LIB_NODYN_DEPEND = $(omniBase_lib_depend) $(omniORB_lib_depend)
-OMNIORB_LIB_DEPEND = $(omniBase_lib_depend) $(omniORB_lib_depend) $(omniDynamic_lib_depend)
+OMNIORB_LIB_NODYN_DEPEND = $(omniORB_lib_depend)
+OMNIORB_LIB_DEPEND = $(omniORB_lib_depend) $(omniDynamic_lib_depend)
 
 OMNIORB_STATIC_STUB_OBJS = \
 	$(CORBA_INTERFACES:%=$(CORBA_STUB_DIR)/%SK.o)
@@ -805,17 +801,18 @@ ifeq (@ENABLE_ZIOP@,yes)
 EnableZIOP = 1
 endif
 
-#
-# Enable C++11 mapping?
-#
-ifeq (@ENABLE_CXX11@,yes)
-EnableCXX11 = 1
+ifeq (@ENABLE_ZIOP_ZLIB@,yes)
+EnableZIOPZLib = 1
 endif
 
+ifeq (@ENABLE_ZIOP_ZSTD@,yes)
+EnableZIOPZStd = 1
+endif
 
 #
 # Enable HTTP Crypto?
 #
+
 ifeq (@ENABLE_HTTP_CRYPTO@,yes)
 EnableHTTPCrypto = 1
 endif
@@ -1137,11 +1134,8 @@ SharedLibraryFullNameTemplate = lib$$1$$2.$$3.$$4.$(SHAREDLIB_SUFFIX)
 SharedLibrarySoNameTemplate = lib$$1$$2.$$3.$(SHAREDLIB_SUFFIX)
 SharedLibraryLibNameTemplate = lib$$1$$2.$(SHAREDLIB_SUFFIX)
 SharedLibraryPlatformLinkFlagsTemplate = -dynamiclib \
-                                         -install_name $(INSTALLLIBDIR)/$(SharedLibraryFullNameTemplate) \
-                                         -flat_namespace \
-                                         -undefined suppress
-PythonLibraryPlatformLinkFlagsTemplate = -bundle -flat_namespace \
-                                         -undefined suppress
+                                         -install_name $(INSTALLLIBDIR)/$(SharedLibraryFullNameTemplate)
+PythonLibraryPlatformLinkFlagsTemplate = -bundle -undefined dynamic_lookup
 PythonSHAREDLIB_SUFFIX = so
 
 

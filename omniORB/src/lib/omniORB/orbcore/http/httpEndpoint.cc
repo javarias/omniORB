@@ -138,7 +138,7 @@ publish_one(const char*              publish_spec,
       ps_port = ep_port;
 
     prefix = prefixForScheme(ps_scheme);
-    to_add = omniURI::buildURI(prefix, ps_host, ps_port, ep_path);
+    to_add = omniURI::buildURI(prefix, ps_host, ps_port, ps_path);
   }
   else if (no_publish) {
     // Suppress all the other options
