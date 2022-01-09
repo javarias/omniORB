@@ -29,27 +29,29 @@
 #ifndef __SSLTRANSPORTIMPL_H__
 #define __SSLTRANSPORTIMPL_H__
 
-OMNI_NAMESPACE_BEGIN(omni)
-
 class sslContext;
 
+OMNI_NAMESPACE_BEGIN(omni)
+
 class sslTransportImpl : public giopTransportImpl {
-public:
+ public:
 
   giopEndpoint*  toEndpoint(const char* param);
   giopAddress*   toAddress(const char* param);
   CORBA::Boolean isValid(const char* param);
   CORBA::Boolean addToIOR(const char* param, IORPublish* eps);
   sslContext*    getContext() const { return pd_ctx; }
-  const std::vector<const char*>* getInterfaceAddress();
+  const omnivector<const char*>* getInterfaceAddress();
 
   sslTransportImpl(sslContext* ctx);
   ~sslTransportImpl();
 
   static omni_time_t sslAcceptTimeOut;
 
-private:
-  sslContext* pd_ctx;
+ private:
+
+  sslContext*  pd_ctx;
+
 
   sslTransportImpl();
   sslTransportImpl(const sslTransportImpl&);

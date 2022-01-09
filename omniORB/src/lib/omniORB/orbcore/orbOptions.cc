@@ -42,8 +42,8 @@ orbOptions::findHandler(const char* k) {
 
   //  if (!pd_handlers_sorted) sortHandlers();
 
-  std::vector<orbOptions::Handler*>::iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::iterator last = pd_handlers.end();
   
   for (; i != last; i++) {
     if (strcmp((*i)->key(),k) == 0)
@@ -95,8 +95,8 @@ orbOptions::registerHandler(orbOptions::Handler& h) {
 ////////////////////////////////////////////////////////////////////////
 void
 orbOptions::reset() {
-  std::vector<HandlerValuePair*>::iterator i = pd_values.begin();
-  std::vector<HandlerValuePair*>::iterator last = pd_values.end();
+  omnivector<HandlerValuePair*>::iterator i = pd_values.begin();
+  omnivector<HandlerValuePair*>::iterator last = pd_values.end();
 
   for (; i != last; i++) {
     delete (*i);
@@ -106,10 +106,10 @@ orbOptions::reset() {
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::visit() {
+orbOptions::visit() OMNI_THROW_SPEC(orbOptions::BadParam) {
 
-  std::vector<HandlerValuePair*>::iterator i = pd_values.begin();
-  std::vector<HandlerValuePair*>::iterator last = pd_values.end();
+  omnivector<HandlerValuePair*>::iterator i = pd_values.begin();
+  omnivector<HandlerValuePair*>::iterator last = pd_values.end();
   
   for (; i != last; i++) {
     (*i)->handler_->visit((*i)->value_,(*i)->source_);
@@ -120,8 +120,9 @@ orbOptions::visit() {
 void
 orbOptions::addOption(const char* key,
 		      const char* value,
-		      orbOptions::Source source) {
-
+		      orbOptions::Source source)
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
   orbOptions::Handler* handler = findHandler(key);
@@ -147,8 +148,9 @@ orbOptions::addOption(const char* key,
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::addOptions(const char* options[][2]) {
-
+orbOptions::addOptions(const char* options[][2])
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   for (int i=0; options[i][0]; i++) {
     addOption(options[i][0],options[i][1],fromArray);
   }
@@ -168,12 +170,13 @@ orbOptions::move_args(int& argc,char **argv,int idx,int nargs)
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::extractInitOptions(int& argc,char** argv) {
-
+orbOptions::extractInitOptions(int& argc,char** argv) 
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
-  std::vector<orbOptions::Handler*>::iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::iterator last = pd_handlers.end();
 
   for (; i != last; i++) {
 
@@ -232,8 +235,9 @@ orbOptions::extractInitOptions(int& argc,char** argv) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::getTraceLevel(int argc, char** argv) {
-
+orbOptions::getTraceLevel(int argc, char** argv)
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   int i;
   for (i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBtraceLevel")) {
@@ -274,8 +278,9 @@ orbOptions::getTraceLevel(int argc, char** argv) {
 
 ////////////////////////////////////////////////////////////////////////
 const char*
-orbOptions::getConfigFileName(int argc, char** argv, const char* fname) {
-
+orbOptions::getConfigFileName(int argc, char** argv, const char* fname)
+  OMNI_THROW_SPEC (orbOptions::Unknown,orbOptions::BadParam)
+{
   for (int i=0; i<argc; i++) {
     if (!strcmp(argv[i], "-ORBconfigFile")) {
       if (i+1 == argc) {
@@ -291,12 +296,13 @@ orbOptions::getConfigFileName(int argc, char** argv, const char* fname) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-orbOptions::importFromEnv() {
-  
+orbOptions::importFromEnv()
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   if (!pd_handlers_sorted) sortHandlers();
 
-  std::vector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
 
   for (; i != last; i++) {
     CORBA::String_var envkey;
@@ -317,8 +323,8 @@ orbOptions::usage() const {
 
   result->length(pd_handlers.size());
   
-  std::vector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
 
   int j = 0;
   for (; i != last; i++) {
@@ -343,8 +349,8 @@ orbOptions::usageArgv() const {
 
   result->length(pd_handlers.size());
   
-  std::vector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
 
   int j = 0;
   for (; i != last; i++) {
@@ -366,8 +372,8 @@ orbOptions::dumpSpecified() const {
   sequenceString_var result(new sequenceString(pd_values.size()));
   result->length(pd_values.size());
 
-  std::vector<HandlerValuePair*>::const_iterator i = pd_values.begin();
-  std::vector<HandlerValuePair*>::const_iterator last = pd_values.end();
+  omnivector<HandlerValuePair*>::const_iterator i = pd_values.begin();
+  omnivector<HandlerValuePair*>::const_iterator last = pd_values.end();
 
   int j = 0;
   for (; i != last; i++,j++) {
@@ -390,8 +396,8 @@ orbOptions::dumpCurrentSet() const {
 
   sequenceString_var result(new sequenceString());
 
-  std::vector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
-  std::vector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
+  omnivector<orbOptions::Handler*>::const_iterator i = pd_handlers.begin();
+  omnivector<orbOptions::Handler*>::const_iterator last = pd_handlers.end();
 
   for (; i != last; i++) {
     (*i)->dump(result.inout());
@@ -427,9 +433,8 @@ CORBA::Boolean
 orbOptions::getULong(const char* value, CORBA::ULong& result) {
 
   unsigned long v;
-  char* end;
-  v = strtoul(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
+  v = strtoul(value,0,10);
+  if (v == ULONG_MAX && errno == ERANGE) return 0;
   result = v;
   return 1;
 }
@@ -439,33 +444,10 @@ CORBA::Boolean
 orbOptions::getLong(const char* value, CORBA::Long& result) {
 
   long v;
-  char* end;
-  v = strtol(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
+  v = strtol(value,0,10);
+  if (v == LONG_MAX && errno == ERANGE) return 0;
   result = v;
   return 1;
-}
-
-////////////////////////////////////////////////////////////////////////
-CORBA::Boolean
-orbOptions::getSizeT(const char* value, size_t& result) {
-
-#if defined (_WIN64)
-  __int64 v;
-  char* end;
-  v = _strtoui64(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
-  result = v;
-  return 1;
-
-#else
-  size_t v;
-  char* end;
-  v = strtoul(value, &end, 10);
-  if (errno == ERANGE || end == value || *end != '\0') return 0;
-  result = v;
-  return 1;
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -488,7 +470,7 @@ orbOptions::addKVBoolean(const char* key, CORBA::Boolean value,
 ////////////////////////////////////////////////////////////////////////
 void
 orbOptions::addKVULong(const char* key, CORBA::ULong value,
-                       orbOptions::sequenceString& result) {
+			 orbOptions::sequenceString& result) {
 
   CORBA::String_var kv;
   CORBA::ULong l;
@@ -513,28 +495,6 @@ orbOptions::addKVLong(const char* key, CORBA::Long value,
   l = strlen(key) + 16;
   kv = CORBA::string_alloc(l);
   sprintf(kv,"%s = %ld",key,(long)value);
-
-  l = result.length();
-  result.length(l+1);
-  result[l] = kv._retn();
-}
-
-////////////////////////////////////////////////////////////////////////
-void
-orbOptions::addKVSizeT(const char* key, size_t value,
-                       orbOptions::sequenceString& result) {
-
-  CORBA::String_var kv;
-  CORBA::ULong l;
-
-  l = strlen(key) + 26;
-  kv = CORBA::string_alloc(l);
-
-#if defined (_WIN64)
-  sprintf(kv,"%s = %I64u",key,(unsigned __int64)value);
-#else
-  sprintf(kv,"%s = %lu",key,(unsigned long)value);
-#endif
 
   l = result.length();
   result.length(l+1);

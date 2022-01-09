@@ -3,7 +3,7 @@
 // tcpSocket.h                Created on: 4 June 2010
 //                            Author    : Duncan Grisby
 //
-//    Copyright (C) 2010-2018 Apasphere Ltd.
+//    Copyright (C) 2010-2011 Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -49,11 +49,6 @@
 
 #ifdef HAVE_POLL
 #   define USE_POLL
-#endif
-
-// Darwin implementation of poll() appears to be broken
-#if defined(__darwin__)
-#   undef USE_POLL
 #endif
 
 #if defined(__hpux__)
@@ -102,6 +97,7 @@
 #  define CLOSESOCKET(sock)    closesocket(sock)
 #  define SHUTDOWNSOCKET(sock) ::shutdown(sock,2)
 #  define ERRNO                ::WSAGetLastError()
+#  define SET_ERRNO(v)         ::WSASetLastError(v)
 #  define RC_EINPROGRESS       WSAEWOULDBLOCK
 #  define RC_EINTR             WSAEINTR
 #  define RC_EBADF             WSAENOTSOCK
@@ -130,6 +126,7 @@
 #  include <unistd.h>
 #  include <sys/types.h>
 #  include <errno.h>
+#  include <libcWrapper.h>
 
 #  if defined(USE_POLL)
 #    include <poll.h>
@@ -174,6 +171,7 @@ extern "C" int select (int,fd_set*,fd_set*,fd_set*,struct timeval *);
 #  endif
 
 #  define ERRNO              errno
+#  define SET_ERRNO(v)       errno = v
 #  define RC_EINTR           EINTR
 #  define RC_EINPROGRESS     EINPROGRESS
 #  if defined (__vxWorks__)
@@ -208,15 +206,13 @@ typedef int SocketHandle_t;
 class tcpSocket {
 public:
 
-  static SocketHandle_t Bind(const char*              host,
-                             CORBA::UShort            port_min,
-                             CORBA::UShort            port_max,
-                             const char*              transport_type,
-                             char*&                   bound_host,
-                             CORBA::UShort&           bound_port,
-                             orbServer::EndpointList& endpoints,
-                             const char*              uri_prefix  = 0,
-                             const char*              path_suffix = 0);
+  static SocketHandle_t Bind(const char*   	      host,
+			     CORBA::UShort 	      port_min,
+			     CORBA::UShort 	      port_max,
+			     const char*   	      transport_type,
+			     char*&  	              bound_host,
+			     CORBA::UShort&           bound_port,
+			     orbServer::EndpointList& endpoints);
   // Create a socket and bind() and listen().
   //
   // If host is null or empty string, bind to all interfaces;
@@ -238,20 +234,13 @@ public:
   //
   // endpoints is populated with all the endpoints that result from
   // the socket.
-  //
-  // If non-zero, uri_prefix is used as the prefix of URIs added to
-  // endpoints; if zero, transport_type is used as the prefix.
-  // 
-  // If non-zero, path_suffix is a path to append to the endpoint
-  // URIs.
 
 
-  static SocketHandle_t Connect(const char*        host,
-                                CORBA::UShort      port,
-                                const omni_time_t& deadline,
-                                CORBA::ULong       strand_flags,
-                                const char*        transport_type,
-                                CORBA::Boolean&    timed_out);
+  static SocketHandle_t Connect(const char*   	   host,
+				CORBA::UShort 	   port,
+				const omni_time_t& deadline,
+				CORBA::ULong  	   strand_flags,
+				CORBA::Boolean&    timed_out);
   // Connect to specified host and port.
   //
   // If deadline is set, connect attempt can time out.
@@ -265,7 +254,7 @@ public:
 
   static inline void
   logConnectFailure(const char*            message,
-                    LibcWrapper::AddrInfo* ai)
+		    LibcWrapper::AddrInfo* ai)
   {
     if (omniORB::trace(25)) {
       omniORB::logger log;
@@ -274,7 +263,7 @@ public:
       
       CORBA::UShort port = addrToPort(ai->addr());
       if (port)
-        log << ":" << port;
+	log << ":" << port;
 
       log << "\n";
     }
@@ -282,30 +271,30 @@ public:
 
   static inline void
   logConnectFailure(const char*   message,
-                    const char*   host,
-                    CORBA::UShort port=0)
+		    const char*   host,
+		    CORBA::UShort port=0)
   {
     if (omniORB::trace(25)) {
       omniORB::logger log;
       log << message << ": " << host;
       if (port)
-        log << ":" << port;
+	log << ":" << port;
       log << "\n";
     }
   }
 
 
   static inline int setAndCheckTimeout(const omni_time_t& deadline,
-                                       struct timeval&    t)
+				       struct timeval&    t)
   {
     if (deadline) {
       if (setTimeout(deadline, t)) {
         // Already timed out.
-        return 1;
+	return 1;
       }
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
       if (t.tv_sec > (time_t)orbParameters::scanGranularity) {
-        t.tv_sec = (time_t)orbParameters::scanGranularity;
+	t.tv_sec = (time_t)orbParameters::scanGranularity;
       }
 #endif
     }

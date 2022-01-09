@@ -109,7 +109,6 @@ omniCallHandle::upcall(omniServant* servant, omniCallDescriptor& desc)
   OMNIORB_ASSERT(pd_localId);
   desc.poa(pd_poa);
   desc.localId(pd_localId);
-  desc.callHandle(this);
 
   _OMNI_NS(poaCurrentStackInsert) insert(&desc, pd_self_thread);
 

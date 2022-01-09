@@ -168,37 +168,22 @@ catch (const CORBA::exc& ex) { \
 // object reference types. To provide a Python mapping for these, a
 // function must be provided that takes a CORBA::Object_ptr and
 // returns a suitable PyObject. Functions are registered by appending
-// PyCapsule objects (Python 3) or PyCObjects (Python 2) to the list
-// _omnipy.pseudoFns. The objects must contain pointers to functions
-// with this signature:
+// PyCObjects to the list _omnipy.pseudoFns. The CObjects must contain
+// pointers to functions with this signature:
 
 typedef PyObject* (*omniORBpyPseudoFn)(const CORBA::Object_ptr);
 
 
 // Extensions may register functions to translate Python Policy
 // objects to C++ CORBA::Policy objects. _omnipy.policyFns is a
-// dictionary mapping CORBA::PolicyType to PyCapsules / PyCObjects
-// containing function pointers. Functions take a policy value
-// (i.e. the value inside the Python Policy object, not the Policy
-// object itself), and must return a valid CORBA::Policy object,
-// CORBA::Policy::_nil, or throw a CORBA::SystemException.
+// dictionary mapping CORBA::PolicyType to PyCObjects containing
+// functions pointers. Functions take a policy value (i.e. the value
+// inside the Python Policy object, not the Policy object itself), and
+// must return a valid CORBA::Policy object, CORBA::Policy::_nil, or
+// throw a CORBA::SystemException.
 
 typedef CORBA::Policy_ptr (*omniORBpyPolicyFn)(PyObject*);
 
-
-// Transport implementations may register functions to return extra
-// connection details for the omniORB.currentCallInfo()
-// function. _omnipy.callInfoFns is a dictionary mapping transport
-// name string to PyCapsules / PyCObjects containing function
-// pointers. The functions take a dict object to populate and a
-// giopConnection object for the transport's connection. The function
-// can add extra members to the dict.
-
-OMNI_NAMESPACE_BEGIN(omni)
-class giopConnection;
-OMNI_NAMESPACE_END(omni)
-
-typedef void (*omniORBpyCallInfoFn)(PyObject*, _OMNI_NS(giopConnection)*);
 
 
 #endif // _omniORBpy_h_

@@ -104,19 +104,6 @@ omni_defaultTransientExcHandler(void*,
     if (secs) omni_thread::sleep(secs,0);
     return 1;
   }
-  else if (ex.minor() == TRANSIENT_Renegotiate && n_retries < 2) {
-    if (omniORB::trace(10)) {
-      omniORB::logger log;
-      if (op)
-        log << "Invocation '" << op << "'";
-      else
-        log << "LocateRequest";
-
-      log << " requires renegotiation. "
-          << n_retries << " retries.\n";
-    }
-    return 1;
-  }
   return 0;
 }
 

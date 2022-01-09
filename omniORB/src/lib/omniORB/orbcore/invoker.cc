@@ -875,8 +875,9 @@ public:
 			1,
 			"-ORBidleThreadTimeout < n > 0 sec >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v == 0) {
       throw orbOptions::BadParam(key(),value,
@@ -904,8 +905,9 @@ public:
 			1,
 			"-ORBmaxServerThreadPoolSize < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
@@ -933,8 +935,9 @@ public:
 			1,
 			"-ORBmaxClientThreadPoolSize < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,

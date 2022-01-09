@@ -47,7 +47,6 @@ PyInterpreterState* omniPy::pyInterpreter;
 PyObject* omniPy::py_omnipymodule;	// The _omnipy extension
 PyObject* omniPy::py_pseudoFns;         //  pseudoFns
 PyObject* omniPy::py_policyFns;         //  policyFns
-PyObject* omniPy::py_callInfoFns;       //  callInfoFns
 PyObject* omniPy::pyCORBAmodule;	// The CORBA module
 PyObject* omniPy::pyCORBAsysExcMap;	//  The system exception map
 PyObject* omniPy::pyCORBAORBClass;	//  ORB class
@@ -668,12 +667,6 @@ extern "C" {
     omniPy::py_policyFns = PyDict_New();
     PyDict_SetItemString(d, (char*)"policyFns", omniPy::py_policyFns);
     Py_DECREF(omniPy::py_policyFns);
-
-    // Empty dict for external transport modules to register
-    // additional call info functions.
-    omniPy::py_callInfoFns = PyDict_New();
-    PyDict_SetItemString(d, (char*)"callInfoFns", omniPy::py_callInfoFns);
-    Py_DECREF(omniPy::py_callInfoFns);
 
     // Codesets
     omniPy::ncs_c_utf_8 = omniCodeSet::getNCS_C("UTF-8");

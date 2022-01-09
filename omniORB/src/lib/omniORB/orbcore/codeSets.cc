@@ -646,7 +646,7 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
   if (ver.minor < 1) {
     // Code set service context is only defined from  GIOP 1.1 onwards
     if (!d.tcs_selected) {
-      d.tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1, ver);
+      d.tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1,ver);
       d.tcs_w = 0;
     }
     info.giop_s.TCS_C(d.tcs_c);
@@ -681,9 +681,9 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
 	// Client do not specify wchar TCS.
 	tcs_w = 0;
       }
-      d.version      = ver;
-      d.tcs_c        = tcs_c;
-      d.tcs_w        = tcs_w;
+      d.version = ver;
+      d.tcs_c = tcs_c;
+      d.tcs_w = tcs_w;
       d.tcs_selected = 1;
 
       if (omniORB::trace(25)) {
@@ -697,19 +697,11 @@ getCodeSetServiceContext(omniInterceptors::serverReceiveRequest_T::info_T& info)
   }
 
   if (!d.tcs_selected) {
-    // In the absence of any codeset negotiation, the specification
-    // says we should choose ISO-8859-1 as the transmission code set
-    // for char, and nothing for wchar. We allow that to be
-    // overridden.
-    d.version.major = ver.major;
-    d.version.minor = ver.minor;
-
-    tcs_c = d.tcs_c = orbParameters::defaultCharCodeSet;
-    tcs_w = d.tcs_w = orbParameters::defaultWCharCodeSet;
-
-    if (!tcs_c)
-      tcs_c = d.tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1,ver);
-
+    // In the absence of any codeset negotiation, we choose 
+    // ISO-8859-1 as the transmission code set for char
+    d.version.major = ver.major; d.version.minor = ver.minor;
+    tcs_c = d.tcs_c = omniCodeSet::getTCS_C(omniCodeSet::ID_8859_1,ver);
+    tcs_w = d.tcs_w = 0;
     d.tcs_selected = 1;
   }
 
@@ -746,8 +738,9 @@ public:
 			1,
 			"-ORBnativeCharCodeSet <code set name, e.g. ISO-8859-1>") {}
 
-  void visit(const char* value,orbOptions::Source) {
-    
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::NCS_C* v = omniCodeSet::getNCS_C(value);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -778,8 +771,9 @@ public:
 			1,
 			"-ORBnativeWCharCodeSet <code set name, e.g. UTF-16>") {}
 
-  void visit(const char* value,orbOptions::Source) {
-    
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::NCS_W* v = omniCodeSet::getNCS_W(value);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -811,7 +805,9 @@ public:
 			1,
 			"-ORBdefaultCharCodeSet <code set name, e.g. ISO-8859-1>") {}
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::TCS_C* v = omniCodeSet::getTCS_C(value, omniCodeSetUtil::GIOP12);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);
@@ -842,7 +838,9 @@ public:
 			1,
 			"-ORBdefaultWCharCodeSet <code set name, e.g. UTF-16>") {}
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniCodeSet::TCS_W* v = omniCodeSet::getTCS_W(value, omniCodeSetUtil::GIOP12);
     if (!v) {
       throw orbOptions::BadParam(key(),value,unknown_code_set_msg);

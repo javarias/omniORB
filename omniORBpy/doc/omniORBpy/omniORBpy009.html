@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Interceptors</title>
 </head>
@@ -11,13 +11,13 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy010.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec123" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Interceptors</h1>
+<h1 id="sec118" class="chapter">Chapter&#XA0;9&#XA0;&#XA0;Interceptors</h1>
 <p>
 <a id="chap:interceptors"></a></p><p>omniORBpy has limited interceptor support. Interceptors permit the
 application to insert processing at various points along the call
 chain, as requests are processed. The Portable Interceptors API is not
 supported.</p>
-<h2 id="sec124" class="section">9.1&#XA0;&#XA0;Request interceptors</h2>
+<h2 id="sec119" class="section">9.1&#XA0;&#XA0;Request interceptors</h2>
 <p>Interceptors for incoming and outgoing requests are registered using
 functions in the <span style="font-family:monospace">omniORB.interceptors</span> module:</p><div class="lstlisting"><span style="font-size:small">  </span><span style="font-size:small">addClientSendRequest</span><span style="font-size:small">()</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small">addClientReceiveReply</span><span style="font-size:small">()</span><span style="font-size:small">
@@ -43,7 +43,7 @@ above, by appending to the list. Encapsulations are created with
 <span style="font-family:monospace">omniORB.cdrMarshal()</span>.</p><p>Interceptor registration functions may only be called before the ORB
 is initialised. Attempting to call them later results in a
 <span style="font-family:monospace">BAD_INV_ORDER</span> exception.</p>
-<h2 id="sec125" class="section">9.2&#XA0;&#XA0;Thread interceptors</h2>
+<h2 id="sec120" class="section">9.2&#XA0;&#XA0;Thread interceptors</h2>
 <p>Thread interceptors are registered using functions in the
 <span style="font-family:monospace">omniORB.interceptors</span> module:</p><div class="lstlisting"><span style="font-size:small">  </span><span style="font-size:small">addAssignUpcallThread</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small">addAssignAMIThread</span></div><p>To register thread interceptors, call the relevant registration

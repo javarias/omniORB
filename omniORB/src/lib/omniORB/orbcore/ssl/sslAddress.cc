@@ -3,7 +3,7 @@
 // sslAddress.cc              Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2019 Apasphere Ltd
+//    Copyright (C) 2003-2013 Apasphere Ltd
 //    Copyright (C) 2001      AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -31,7 +31,6 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/omniURI.h>
-#include <omniORB4/connectionInfo.h>
 #include <orbParameters.h>
 #include <giopStrandFlags.h>
 #include <SocketCollection.h>
@@ -47,18 +46,9 @@ OMNI_EXPORT_LINK_FORCE_SYMBOL(sslAddress);
 OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
-sslAddress::sslAddress(const IIOP::Address& address,
-                       sslContext*          ctx)
-  : pd_address(address), pd_orig_host(address.host), pd_ctx(ctx)
-{
-  pd_address_string = omniURI::buildURI("giop:ssl", address.host, address.port);
-}
+sslAddress::sslAddress(const IIOP::Address& address, sslContext* ctx) : 
+  pd_address(address), pd_ctx(ctx) {
 
-sslAddress::sslAddress(const IIOP::Address& address,
-                       const char*          orig_host,
-                       sslContext*          ctx)
-  : pd_address(address), pd_orig_host(orig_host), pd_ctx(ctx)
-{
   pd_address_string = omniURI::buildURI("giop:ssl", address.host, address.port);
 }
 
@@ -93,7 +83,7 @@ sslAddress::duplicate(const char* host) const {
   addr.host = host;
   addr.port = pd_address.port;
 
-  return new sslAddress(addr, pd_orig_host, pd_ctx);
+  return new sslAddress(addr, pd_ctx);
 }
 
 
@@ -106,47 +96,34 @@ sslAddress::Connect(const omni_time_t& deadline,
   if (pd_address.port == 0) return 0;
 
   SocketHandle_t sock = tcpSocket::Connect(pd_address.host, pd_address.port,
-                                           deadline, strand_flags, "giop:ssl",
-                                           timed_out);
+					   deadline, strand_flags, timed_out);
   if (sock == RC_SOCKET_ERROR)
     return 0;
 
-  CORBA::String_var addr_str(omniURI::buildURI("", pd_address.host,
-                                               pd_address.port));
-  
   if (tcpSocket::setNonBlocking(sock) == RC_INVALID_SOCKET) {
     tcpSocket::logConnectFailure("Failed to set socket to non-blocking mode",
 				 pd_address.host, pd_address.port);
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return 0;
   }
 
-  ::SSL* ssl = pd_ctx->ssl_new();
+  ::SSL* ssl = SSL_new(pd_ctx->get_SSL_CTX());
   SSL_set_fd(ssl, sock);
   SSL_set_connect_state(ssl);
 
-  // Set TLS SNI (Server Name Indication) extension.
-  if (!LibcWrapper::isipaddr(pd_orig_host))
-    SSL_set_tlsext_host_name(ssl, (const char*)pd_orig_host);
+  if (!LibcWrapper::isipaddr(pd_address.host))
+    SSL_set_tlsext_host_name(ssl, (const char*)pd_address.host);
   
   struct timeval t;
   int rc;
 
   // Do the SSL handshake...
-  if (omniORB::trace(25)) {
-    omniORB::logger log;
-    log << "TLS connect to " << addr_str << "\n";
-  }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_CONNECT, 0, addr_str);
-    
   while (1) {
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out.
       tcpSocket::logConnectFailure("Timed out before SSL handshake",
 				   pd_address.host, pd_address.port);
-      ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1, addr_str);
       SSL_free(ssl);
       CLOSESOCKET(sock);
       timed_out = 1;
@@ -166,7 +143,6 @@ sslAddress::Connect(const omni_time_t& deadline,
 	  CLOSESOCKET(sock);
 	  return 0;
 	}
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECTED, 0, addr_str);
 	return new sslActiveConnection(sock,ssl);
       }
 
@@ -178,8 +154,6 @@ sslAddress::Connect(const omni_time_t& deadline,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
 	  tcpSocket::logConnectFailure("Timed out during SSL handshake",
 				       pd_address.host, pd_address.port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
-                              addr_str);
 	  SSL_free(ssl);
 	  CLOSESOCKET(sock);
 	  timed_out = 1;
@@ -197,8 +171,6 @@ sslAddress::Connect(const omni_time_t& deadline,
 #if !defined(USE_FAKE_INTERRUPTABLE_RECV)
 	  tcpSocket::logConnectFailure("Timed out during SSL handshake",
 				       pd_address.host, pd_address.port);
-          ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_TIMED_OUT, 1,
-                              addr_str);
 	  SSL_free(ssl);
 	  CLOSESOCKET(sock);
 	  timed_out = 1;
@@ -216,16 +188,13 @@ sslAddress::Connect(const omni_time_t& deadline,
       // otherwise falls through
     case SSL_ERROR_SSL:
       {
-        char buf[128];
-        ERR_error_string_n(ERR_get_error(),buf,128);
-
 	if (omniORB::trace(10)) {
 	  omniORB::logger log;
+	  char buf[128];
+	  ERR_error_string_n(ERR_get_error(),buf,128);
 	  log << "OpenSSL error connecting to " << pd_address.host
-              << ":" << pd_address.port << " : " << (const char*) buf << "\n";
+	      << ": " << (const char*) buf << "\n";
 	}
-        ConnectionInfo::set(ConnectionInfo::TLS_CONNECT_FAILED, 1,
-                            addr_str, buf);        
 	SSL_free(ssl);
 	CLOSESOCKET(sock);
 	return 0;

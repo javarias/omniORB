@@ -29,7 +29,6 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/omniURI.h>
-#include <omniORB4/connectionInfo.h>
 #include <SocketCollection.h>
 #include <orbParameters.h>
 #include <objectAdapter.h>
@@ -314,11 +313,7 @@ tcpEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     pd_new_conn_socket = RC_INVALID_SOCKET;
     if (!Select()) break;
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
-      tcpConnection* nc = new tcpConnection(pd_new_conn_socket, this);
-
-      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION, 0,
-                          nc->peeraddress());
-      return nc;
+      return new tcpConnection(pd_new_conn_socket, this);
     }
     if (pd_poked)
       return 0;

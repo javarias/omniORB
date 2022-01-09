@@ -29,7 +29,7 @@
 #ifndef __OMNIORB_OBJECTTABLE_H__
 #define __OMNIORB_OBJECTTABLE_H__
 
-#include <vector>
+#include <omniORB4/omniutilities.h>
 #include <localIdentity.h>
 
 #ifdef _core_attr
@@ -182,7 +182,7 @@ public:
   // the object adapter which owns this list.
 
 
-  inline std::vector<omniObjRef*>& objRefs() {
+  inline omnivector<omniObjRef*>& objRefs() {
     ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
     return pd_objRefs;
   }
@@ -215,7 +215,7 @@ private:
   // it is likely to be a long list.
   //  Protected by the adapter which owns this object.
 
-  std::vector<omniObjRef*> pd_objRefs;
+  omnivector<omniObjRef*> pd_objRefs;
   // List of objrefs holding a reference to this object table entry.
   // Used to avoid the overhead of creating new objrefs for common
   // operations like Servant::_this() and POA::*_to_reference().

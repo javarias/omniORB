@@ -70,7 +70,6 @@ endif
 ORB_SRCS =  \
 	    anonObject.cc \
 	    callDescriptor.cc \
-	    connectionInfo.cc \
 	    constants.cc \
 	    corbaObject.cc \
 	    corbaBoa.cc \
@@ -90,6 +89,7 @@ ORB_SRCS =  \
             omniIdentity.cc \
 	    localIdentity.cc \
 	    localObject.cc \
+	    logIOstream.cc \
             minorCode.cc \
 	    objectAdapter.cc \
 	    omniInternal.cc \
@@ -193,6 +193,15 @@ ifndef ETSKernel
 endif
 endif
 
+##########################################################################
+ifdef Cygwin
+# there's a bug in gcc 3.2 (build 20020927) that makes gcc crash
+# when optimizing this file ...
+static/Namingstub.o: CXXDEBUGFLAGS = -O0
+shared/Namingstub.o: CXXDEBUGFLAGS = -O0
+endif
+
+
 #########################################################################
 
 ORB_OBJS      = $(ORB_SRCS:.cc=.o)
@@ -203,7 +212,7 @@ vpath %.cc $(CXXVPATH)
 LIB_NAME     := omniORB
 LIB_VERSION  := $(OMNIORB_VERSION)
 LIB_OBJS     := $(ORB_OBJS)
-LIB_IMPORTS  := $(OMNITHREAD_LIB) $(OMNIORB_BASE_DLL_NAME) $(EXTRA_LIBS)
+LIB_IMPORTS  := $(OMNITHREAD_LIB) $(EXTRA_LIBS)
 LIB_SHARED_ONLY_OBJS := $(SHARED_ONLY_OBJS)
 
 include $(BASE_OMNI_TREE)/mk/mklib.mk
@@ -252,9 +261,6 @@ ifdef OPEN_SSL_ROOT
 SUBDIRS += ssl
 
   endif
-
-SUBDIRS += http
-
 endif
 
 all::

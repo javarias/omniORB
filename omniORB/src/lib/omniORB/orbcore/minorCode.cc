@@ -64,7 +64,6 @@ minorCodeLookup INV_OBJREF_LookupTable[] = {
 };
 
 minorCodeLookup NO_PERMISSION_LookupTable[] = { 
-  DECLARE_NO_PERMISSION_minors(DeclareLookupEntry,OMNI_COMMA),
   { 0, 0 } 
 };
 

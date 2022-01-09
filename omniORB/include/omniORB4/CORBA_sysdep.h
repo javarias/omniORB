@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB
+//                            Package   : omniORB2
 // CORBA_sysdep.h             Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2017 Apasphere Ltd
+//    Copyright (C) 2003-2012 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -62,13 +62,10 @@
 
 #if SIZEOF_PTR == SIZEOF_LONG
 typedef unsigned long omni_ptr_arith_t;
-typedef long omni_s_size_t;
 #elif SIZEOF_PTR == SIZEOF_INT
 typedef unsigned int omni_ptr_arith_t;
-typedef int omni_s_size_t;
 #elif defined (_WIN64)
 typedef size_t omni_ptr_arith_t;
-typedef __int64 omni_s_size_t;
 #else
 #error "No suitable type to do pointer arithmetic"
 #endif
@@ -84,7 +81,6 @@ typedef __int64 omni_s_size_t;
 #else
 #  define UnixArchitecture 1
 #endif
-
 
 //
 // Processor dependencies
@@ -449,6 +445,20 @@ typedef __int64 omni_s_size_t;
 // Only used when the source tree is patched with DEC C++ 5.6 workarounds
 #  define OMNI_CONSTRTYPE_FIX_VAR(T) typedef T::_var_type T##_var;
 #endif
+
+
+//
+// Suppress throw specifications that are not valid from C++-17. Note
+// that we keep them for older compilers because removing them may
+// break ABI compatibility.
+
+#if __cplusplus >= 201703L
+#  define OMNI_THROW_SPEC(...)
+#else
+#  define OMNI_THROW_SPEC throw
+#endif
+
+
 
 // #define ENABLE_CLIENT_IR_SUPPORT
 // Define ENABLE_CLIENT_IR_SUPPORT to use as client to an Interface Repository

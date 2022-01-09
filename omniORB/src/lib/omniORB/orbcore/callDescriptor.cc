@@ -166,16 +166,6 @@ omniCallDescriptor::removeInterceptor(omniCallDescriptor::LocalCallFn fn)
   }
 }
 
-omniCallDescriptor*
-omniCallDescriptor::current()
-{
-  omniCurrent* c = omniCurrent::get();
-  if (c)
-    return c->callDescriptor();
-  else
-    return 0;
-}
-
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////// omniAsyncCallDescriptor ////////////////////

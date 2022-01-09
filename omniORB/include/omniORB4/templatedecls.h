@@ -4,7 +4,6 @@
 //                            Author    : Sai Lai Lo (sll)
 //
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
-//    Copyright (C) 2018      Apasphere Ltd.
 //
 //    This file is part of the omniORB library
 //
@@ -791,63 +790,40 @@ class _CORBA_ConstrType_Fix_Var {
 public:
   typedef _CORBA_ConstrType_Fix_Var<T> T_var;
 
-  inline _CORBA_ConstrType_Fix_Var() : pd_data(0) {}
-  inline _CORBA_ConstrType_Fix_Var(T* p) : pd_data(p) { }
-  inline _CORBA_ConstrType_Fix_Var(const T& d) {
-    pd_data = new T;
-    if( !pd_data )  _CORBA_new_operator_return_null();
-    *pd_data = d;
-  }
+  inline _CORBA_ConstrType_Fix_Var()  {}
+  inline _CORBA_ConstrType_Fix_Var(T* p) { pd_data = *p; delete p; }
+  inline _CORBA_ConstrType_Fix_Var(const T& d) { pd_data = d; }
   inline _CORBA_ConstrType_Fix_Var(const T_var& p) {
-    if( !p.pd_data )  pd_data = 0;
-    else {
-      pd_data = new T;
-      if( !pd_data )  _CORBA_new_operator_return_null();
-      *pd_data = *p.pd_data;
-    }
+    pd_data = p.pd_data;
   }
-  inline ~_CORBA_ConstrType_Fix_Var()  { if( pd_data )  delete pd_data; }
-
+  inline ~_CORBA_ConstrType_Fix_Var()  {}
   inline T_var& operator= (T* p) {
-    if( p != pd_data ) {
-      if( pd_data )  delete pd_data;
-      pd_data = p;
+    if (p != &pd_data) {
+      pd_data = *p;
+      delete p;
     }
     return *this;
   }
   inline T_var& operator= (const T_var& p) {
-    if( &p == this )  return *this;
-    if( p.pd_data ) {
-      if( !pd_data ) {
-	pd_data = new T;
-	if( !pd_data )  _CORBA_new_operator_return_null();
-      }
-      *pd_data = *p.pd_data;
-    }
-    else {
-      if( pd_data )  delete pd_data;
-      pd_data = 0;
-    }
+    if (&p != this)
+      pd_data = p.pd_data;
+
     return *this;
   }
   inline T_var& operator= (const T& p) {
-    if( &p == pd_data )  return *this;
+    if (&p != &pd_data)
+      pd_data = p;
 
-    if( !pd_data ) {
-      pd_data = new T;
-      if( !pd_data )  _CORBA_new_operator_return_null();
-    }
-    *pd_data = p;
     return *this;
   }
-  inline T* operator->() const { return (T*) pd_data; }
+  inline T* operator->() const { return (T*) &pd_data; }
 
   //#if defined(__GNUG__) && __GNUG__ == 2 && __GNUC_MINOR__ == 7
 #if defined(__GNUG__)
-  inline operator T& () const       { return (T&) *pd_data; }
+  inline operator T& () const       { return (T&) pd_data; }
 #else
-  inline operator const T& () const { return *pd_data; }
-  inline operator T& ()             { return *pd_data; }
+  inline operator const T& () const { return pd_data; }
+  inline operator T& ()             { return pd_data; }
 #endif
   // This conversion operator is necessary to support the implicit conversion
   // when this var type is used as the IN or INOUT argument of an operation.
@@ -860,13 +836,13 @@ public:
   // inline operator const T* () const { return pd_data; }
   // inline operator T* () { return pd_data; }
 
-  const T& in() const { return *pd_data; }
-  T& inout() { return *pd_data; }
-  T& out() { return *pd_data; }
-  T _retn() { return *pd_data; }
+  const T& in() const { return pd_data; }
+  T& inout() { return pd_data; }
+  T& out() { return pd_data; }
+  T _retn() { return pd_data; }
 
 protected:
-  T* pd_data;
+  T pd_data;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -881,8 +857,8 @@ class _CORBA_ConstrType_Variable_Var {
 public:
   typedef _CORBA_ConstrType_Variable_Var<T> T_var;
 
-  inline _CORBA_ConstrType_Variable_Var() : pd_data(0) { }
-  inline _CORBA_ConstrType_Variable_Var(T* p) : pd_data(p) { }
+  inline _CORBA_ConstrType_Variable_Var() { pd_data = 0; }
+  inline _CORBA_ConstrType_Variable_Var(T* p) { pd_data = p; }
   inline _CORBA_ConstrType_Variable_Var(const T_var& p) {
     if( !p.pd_data )  pd_data = 0;
     else {
@@ -895,10 +871,8 @@ public:
   inline ~_CORBA_ConstrType_Variable_Var() {  if( pd_data )  delete pd_data; }
 
   inline T_var& operator= (T* p) {
-    if( p != pd_data ) {
-      if( pd_data )  delete pd_data;
-      pd_data = p;
-    }
+    if( pd_data )  delete pd_data;
+    pd_data = p;
     return *this;
   }
 

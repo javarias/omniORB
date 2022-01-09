@@ -436,16 +436,6 @@ AC_DEFUN([OMNI_ENABLE_ZIOP],
 [AC_CHECK_LIB(z,compressBound,omni_cv_enable_ziop=yes,omni_cv_enable_ziop=no)
 AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
 
-dnl Enable HTTP Crypto library
-AC_DEFUN([OMNI_ENABLE_HTTP_CRYPTO],
-[
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
-    omni_cv_enable_http_crypto=yes
-else
-    omni_cv_enable_http_crypto=no
-fi
-AC_SUBST(ENABLE_HTTP_CRYPTO, $omni_cv_enable_http_crypto)])
-
 dnl Atomic operations
 
 AC_DEFUN([OMNI_SYNC_ADD_SUB_FETCH],
@@ -486,20 +476,6 @@ fi
 ])
 
 
-AC_DEFUN([OMNI_ENABLE_CXX11],
-[AC_CACHE_CHECK(whether to support the C++11 mapping,
-omni_cv_enable_cxx11,
-[AC_ARG_ENABLE(cxx11,
-               AC_HELP_STRING([--enable-cxx11],
-                  [enable C++11 mapping (default disable-cxx11)]),
-               omni_cv_enable_cxx11=$enableval,
-               omni_cv_enable_cxx11=no)
-])
-AC_SUBST(ENABLE_CXX11, $omni_cv_enable_cxx11)
-if test "$omni_cv_enable_cxx11" = "yes"; then
-  AC_DEFINE(OMNIORB_ENABLE_CXX11,,[define if you want to support the C++11 mapping])
-fi
-])
 dnl Mac / iOS CFNetwork
 
 AC_DEFUN([OMNI_ENABLE_CFNETWORK],
@@ -517,17 +493,6 @@ fi
 AC_SUBST(OMNI_USE_CFNETWORK_CONNECT, $omni_cv_enable_cfnetwork)
 ])
 
-
-dnl Fix pypy pythondir
-AC_DEFUN([OMNI_FIX_PYTHONDIR],
-  [pyplat=`$PYTHON -c "import sys, platform; sys.stdout.write(platform.python_implementation())"`
-   if test "x$pyplat" = "xPyPy"
-   then
-     echo "Fix PyPy pythondir to $am_cv_python_pyexecdir"
-     am_cv_python_pythondir=$am_cv_python_pyexecdir
-     pythondir=$am_cv_python_pyexecdir
-   fi
-])
 
 
 dnl

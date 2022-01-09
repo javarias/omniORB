@@ -31,7 +31,7 @@
 OMNI_NAMESPACE_BEGIN(omni)
 
 // See the description of this variable in omniInternal.h
-const char* omniORB_4_3 = "omniORB version 4.3.x";
+const char* omniORB_4_2 = "omniORB version 4.2.x";
 
 const CORBA::ULong omniORB_TAG_ORB_TYPE = 0x41545400; // ATT\x00
 
@@ -90,7 +90,6 @@ const IOP::ComponentId IOP::TAG_OMNIORB_BIDIR         	      = 0x41545401;
 const IOP::ComponentId IOP::TAG_OMNIORB_UNIX_TRANS    	      = 0x41545402;
 const IOP::ComponentId IOP::TAG_OMNIORB_PERSISTENT_ID 	      = 0x41545403;
 const IOP::ComponentId IOP::TAG_OMNIORB_RESTRICTED_CONNECTION = 0x41545404;
-const IOP::ComponentId IOP::TAG_OMNIORB_HTTP_TRANS    	      = 0x41545405;
 
 
 static struct {
@@ -130,7 +129,6 @@ static struct {
   { IOP::TAG_OMNIORB_UNIX_TRANS, "TAG_OMNIORB_UNIX_TRANS" },
   { IOP::TAG_OMNIORB_PERSISTENT_ID, "TAG_OMNIORB_PERSISTENT_ID" },
   { IOP::TAG_OMNIORB_RESTRICTED_CONNECTION, "TAG_OMNIORB_RESTRICTED_CONNECTION" },
-  { IOP::TAG_OMNIORB_HTTP_TRANS, "TAG_OMNIORB_HTTP_TRANS" },
   { 0, 0 }
 };
 

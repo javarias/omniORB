@@ -89,7 +89,7 @@ struct OutputTableEntry {
     const char*        	    repoId;
     const _omni_ValueIds*   repoIds;
   };
-  omni::s_size_t       	    position;
+  CORBA::Long          	    position;
   omni::ptr_arith_t         hashbase;
   OutputTableEntry*    	    next;
 };
@@ -117,7 +117,7 @@ struct InputTableEntry {
     _omni_ValueIds*   repoIds;
     InputTableEntry*  indirect;
   };
-  omni::s_size_t      position;
+  CORBA::Long         position;
   InputTableEntry*    next;
 };
 
@@ -211,9 +211,9 @@ resizeTable()
 }
 
 
-omni::s_size_t
+CORBA::Long
 OutputValueTracker::
-addValue(const CORBA::ValueBase* val, omni::s_size_t current)
+addValue(const CORBA::ValueBase* val, CORBA::Long current)
 {
   OutputTableEntry* e;
 
@@ -230,9 +230,9 @@ addValue(const CORBA::ValueBase* val, omni::s_size_t current)
   return -1;
 }
 
-omni::s_size_t
+CORBA::Long
 OutputValueTracker::
-addRepoId(const char* repoId, CORBA::ULong hashval, omni::s_size_t current)
+addRepoId(const char* repoId, CORBA::ULong hashval, CORBA::Long current)
 {
   OutputTableEntry* e;
 
@@ -249,9 +249,9 @@ addRepoId(const char* repoId, CORBA::ULong hashval, omni::s_size_t current)
 }
 
 
-omni::s_size_t
+CORBA::Long
 OutputValueTracker::
-addRepoIds(const _omni_ValueIds* repoIds, omni::s_size_t current)
+addRepoIds(const _omni_ValueIds* repoIds, CORBA::Long current)
 {
   OutputTableEntry* e;
 
@@ -359,7 +359,7 @@ resizeTable()
 
 void
 InputValueTracker::
-addValue(CORBA::ValueBase* val, omni::s_size_t current)
+addValue(CORBA::ValueBase* val, CORBA::Long current)
 {
   add();
   CORBA::ULong hashval = current % pd_table_size;
@@ -368,7 +368,7 @@ addValue(CORBA::ValueBase* val, omni::s_size_t current)
 
 void
 InputValueTracker::
-addRepoId(char* repoId, omni::s_size_t current)
+addRepoId(char* repoId, CORBA::Long current)
 {
   add();
   CORBA::ULong hashval = current % pd_table_size;
@@ -377,7 +377,7 @@ addRepoId(char* repoId, omni::s_size_t current)
 
 void
 InputValueTracker::
-addRepoIds(_omni_ValueIds* repoIds, omni::s_size_t current)
+addRepoIds(_omni_ValueIds* repoIds, CORBA::Long current)
 {
   add();
   CORBA::ULong hashval = current % pd_table_size;
@@ -386,8 +386,8 @@ addRepoIds(_omni_ValueIds* repoIds, omni::s_size_t current)
 
 CORBA::ValueBase*
 InputValueTracker::
-lookupValue(omni::s_size_t pos,
-	    omni::s_size_t current,
+lookupValue(CORBA::Long pos,
+	    CORBA::Long current,
 	    CORBA::CompletionStatus comp)
 {
   CORBA::ULong hashval = pos % pd_table_size;
@@ -411,8 +411,8 @@ lookupValue(omni::s_size_t pos,
 
 const char*
 InputValueTracker::
-lookupRepoId(omni::s_size_t pos,
-	     omni::s_size_t current,
+lookupRepoId(CORBA::Long pos,
+	     CORBA::Long current,
 	     CORBA::CompletionStatus comp)
 {
   CORBA::ULong hashval = pos % pd_table_size;
@@ -436,8 +436,8 @@ lookupRepoId(omni::s_size_t pos,
 
 const _omni_ValueIds*
 InputValueTracker::
-lookupRepoIds(omni::s_size_t pos,
-	      omni::s_size_t current,
+lookupRepoIds(CORBA::Long pos,
+	      CORBA::Long current,
 	      CORBA::CompletionStatus comp)
 {
   CORBA::ULong hashval = pos % pd_table_size;

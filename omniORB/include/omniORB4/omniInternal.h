@@ -1,9 +1,9 @@
 // -*- Mode: C++; -*-
-//                            Package   : omniORB
+//                            Package   : omniORB2
 // omniInternal.h             Created on: 6/2/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2017 Apasphere Ltd
+//    Copyright (C) 2003-2009 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -41,7 +41,6 @@
 #include <omnithread.h>
 #include <omniORB4/finalCleanup.h>
 #include <omniORB4/CORBA_basetypes.h>
-#include <omniORB4/errorFuncs.h>
 #include <omniORB4/seqTemplatedecls.h>
 #include <omniORB4/templatedecls.h>
 #include <omniORB4/valueTemplatedecls.h>
@@ -80,8 +79,8 @@ class omniObjAdapter;
 //   the variable name stays the same with compatible shared library, e.g.
 //   2.5.1.
 //
-extern _core_attr const char* omniORB_4_3;
-extern _dyn_attr  const char* omniORB_4_3_dyn;
+extern _core_attr const char* omniORB_4_2;
+extern _dyn_attr  const char* omniORB_4_2_dyn;
 extern _core_attr const _CORBA_ULong omniORB_TAG_ORB_TYPE; // ATT\x00
 
 class Strand;
@@ -100,7 +99,6 @@ _CORBA_MODULE omni
 _CORBA_MODULE_BEG
 
   typedef omni_ptr_arith_t ptr_arith_t;
-  typedef omni_s_size_t    s_size_t;
 
   enum alignment_t { ALIGN_1 = 1, ALIGN_2 = 2, ALIGN_4 = 4, ALIGN_8 = 8 };
 
@@ -134,9 +132,8 @@ _CORBA_MODULE_BEG
   _CORBA_MODULE_FN inline _CORBA_ULong hash(const _CORBA_Octet* key,
 					    int keysize)
   {
-    // FNV-1a hash
-    _CORBA_ULong n = 0x811c9dc5;
-    while (keysize--) n = (n ^ *key++) * 0x1000193;
+    _CORBA_ULong n = 0;
+    while( keysize-- )  n = ((n << 5) ^ (n >> 27)) ^ *key++;
     return n;
   }
   // Computes a hash of the object key.  The caller must ensure

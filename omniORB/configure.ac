@@ -1,5 +1,5 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 5.0.0, bugs@omniorb-support.com)
+AC_INIT(omniORB, 4.2.5, bugs@omniorb-support.com)
 
 AC_PREREQ(2.52)
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
@@ -34,7 +34,6 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 AM_PATH_PYTHON
-OMNI_FIX_PYTHONDIR
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
@@ -134,11 +133,10 @@ dnl ** Functions
 
 AC_LANG(C)
 AC_CHECK_FUNCS(getaddrinfo gethostname getopt getpid gettimeofday)
-AC_CHECK_FUNCS(getnameinfo gmtime gmtime_r inet_ntop)
-AC_CHECK_FUNCS(isinf insinff isinfl localtime localtime_r nanosleep poll)
-AC_CHECK_FUNCS(rand_r sigaction sigvec snprintf strcasecmp strdup)
-AC_CHECK_FUNCS(strerror strftime stricmp strncasecmp strtoul strtoull)
-AC_CHECK_FUNCS(strtouq uname vprintf vsnprintf)
+AC_CHECK_FUNCS(getnameinfo inet_ntop)
+AC_CHECK_FUNCS(isinf insinff isinfl localtime nanosleep poll rand_r sigaction)
+AC_CHECK_FUNCS(sigvec snprintf strcasecmp strdup strerror strftime stricmp)
+AC_CHECK_FUNCS(strncasecmp strtoul strtoull strtouq uname vprintf vsnprintf)
 AC_FUNC_ALLOCA
 AC_LANG(C++)
 
@@ -160,8 +158,6 @@ OMNI_DISABLE_LONGDOUBLE
 OMNI_DISABLE_ATOMIC
 OMNI_ENABLE_ZIOP
 OMNI_ENABLE_CFNETWORK
-OMNI_ENABLE_HTTP_CRYPTO
-OMNI_ENABLE_CXX11
 
 
 dnl ** Compiler name
@@ -313,14 +309,11 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/cxx/skel/GNUmakefile
                 src/lib/omniORB/python3/omniidl_be/GNUmakefile
                 src/lib/omniORB/python3/GNUmakefile
-                src/lib/omniORB/base/GNUmakefile
                 src/lib/omniORB/orbcore/GNUmakefile
                 src/lib/omniORB/orbcore/ssl/GNUmakefile
-                src/lib/omniORB/orbcore/http/GNUmakefile
                 src/lib/omniORB/connections/GNUmakefile
                 src/lib/omniORB/ziop/GNUmakefile
                 src/lib/omniORB/ziopdynamic/GNUmakefile
-                src/lib/omniORB/httpcrypto/GNUmakefile
                 src/lib/omnithread/GNUmakefile
                 src/services/GNUmakefile
                 src/services/mklib/GNUmakefile
@@ -357,13 +350,12 @@ AC_CONFIG_FILES(contrib/GNUmakefile
                 contrib/pkgconfig/GNUmakefile)
 
 AC_OUTPUT([
-contrib/pkgconfig/omnithread.pc
-contrib/pkgconfig/omniBase5.pc
-contrib/pkgconfig/omniORB5.pc
-contrib/pkgconfig/omniDynamic5.pc
-contrib/pkgconfig/omniCOS5.pc
-contrib/pkgconfig/omniCOSDynamic5.pc
-contrib/pkgconfig/omniConnectionMgmt5.pc
-contrib/pkgconfig/omniZIOP5.pc
-contrib/pkgconfig/omniZIOPDynamic5.pc
+contrib/pkgconfig/omnithread3.pc
+contrib/pkgconfig/omniORB4.pc
+contrib/pkgconfig/omniDynamic4.pc
+contrib/pkgconfig/omniCOS4.pc
+contrib/pkgconfig/omniCOSDynamic4.pc
+contrib/pkgconfig/omniConnectionMgmt4.pc
+contrib/pkgconfig/omniZIOP4.pc
+contrib/pkgconfig/omniZIOPDynamic4.pc
 ])

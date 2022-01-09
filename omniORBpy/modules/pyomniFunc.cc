@@ -29,53 +29,10 @@
 #include <omnipy.h>
 #include <pyThreadCache.h>
 #include <omniORB4/giopEndpoint.h>
-#include <omniORB4/callDescriptor.h>
-#include <omniORB4/callHandle.h>
-#include <omniORB4/connectionInfo.h>
 
-OMNI_NAMESPACE_BEGIN(omni)
-
-class PyConnectionInfo : public ConnectionInfo {
-public:
-  inline PyConnectionInfo(PyObject* fn) : fn_(fn)
-  {
-    Py_INCREF(fn_);
-  }
-
-  inline ~PyConnectionInfo() {
-    Py_DECREF(fn_);
-  }
-  
-  void event(ConnectionEvent evt,
-             CORBA::Boolean  is_error,
-             const char*     addr,
-             const char*     info)
-  {
-    omnipyThreadCache::lock _t;
-
-    omniPy::PyRefHolder r(PyObject_CallFunction(fn_, (char*)"kOss",
-                                                (unsigned long)evt,
-                                                (is_error ? Py_True : Py_False),
-                                                addr, info));
-    if (!r.valid()) {
-      if (omniORB::trace(1)) {
-        omniORB::logs(1, "Python connection info callback failed. "
-                      "Traceback follows:");
-        PyErr_Print();
-      }
-      else {
-	PyErr_Clear();
-      }
-    }
-  }
-
-private:
-  PyObject* fn_;
-};
-
-OMNI_NAMESPACE_END(omni)
 
 OMNI_USING_NAMESPACE(omni);
+
 
 static PyObject* transientEHtuple   = 0;
 static PyObject* timeoutEHtuple     = 0;
@@ -859,12 +816,12 @@ extern "C" {
     if (!PyArg_ParseTuple(args, (char*)""))
       return 0;
 
-    const std::vector<const char*>* ifaddrs
+    const omnivector<const char*>* ifaddrs
       = omni::giopTransportImpl::getInterfaceAddress("giop:tcp");
 
     PyObject* pyaddrs = PyList_New(ifaddrs->size());
 
-    std::vector<const char*>::const_iterator i;
+    omnivector<const char*>::const_iterator i;
     int j;
 
     for (i = ifaddrs->begin(), j=0; i != ifaddrs->end(); i++, j++) {
@@ -926,173 +883,6 @@ extern "C" {
     return Py_None;
   }
 
-  static char currentCallInfo_doc [] =
-  "currentCallInfo()\n"
-  "\n"
-  "Within a thread that is handling an incoming call, returns a dict\n"
-  "containing information about the 'current' call. It contains members:\n"
-  "\n"
-  "  operation     - the name of the operation being called\n"
-  "  my_address    - the endpoint URI that is serving the call\n"
-  "  peer_address  - the endpoint URI for the caller\n"
-  "  peer_identity - if the transport supports it, the identity of the caller\n"
-  "\n"
-  "Plus potentially transport-specific additional members.\n"
-  "\n"
-  "Returns None if called outside of the context of an incoming remote call.\n";
-
-  static inline void
-  setDictEntryIfValid(PyObject* d, const char* name, const char* val)
-  {
-    if (val) {
-      PyObject* s = String_FromString(val);
-      PyDict_SetItemString(d, (char*)name, s);
-      Py_DECREF(s);
-    }
-  }
-  
-  static PyObject* pyomni_currentCallInfo(PyObject* self, PyObject* args)
-  {
-    if (!PyArg_ParseTuple(args, (char*)""))
-      return 0;
-    
-    omniCallDescriptor* cd = omniCallDescriptor::current();
-
-    if (!cd) {
-      Py_INCREF(Py_None);
-      return Py_None;
-    }
-    
-    omniCallHandle* ch   = cd->callHandle();
-    giopConnection* conn = ch ? ch->connection() : 0;
-
-    omniPy::PyRefHolder r(PyDict_New());
-
-    setDictEntryIfValid(r, "operation", cd->op());
-
-    if (conn) {
-      const char* my_addr = conn->myaddress();
-
-      setDictEntryIfValid(r, "my_address",    my_addr);
-      setDictEntryIfValid(r, "peer_address",  conn->peeraddress());
-      setDictEntryIfValid(r, "peer_identity", conn->peeridentity());
-
-      if (my_addr && !strncmp(my_addr, "giop:", 5)) {
-        const char* transport = my_addr + 5;
-        const char* colon     = strchr(transport, ':');
-        if (colon) {
-          omniPy::PyRefHolder pyt(String_FromStringAndSize(transport,
-                                                           colon - transport));
-          PyObject* pyf = PyDict_GetItem(omniPy::py_callInfoFns, pyt);
-
-          if (pyf) {
-            omniORBpyCallInfoFn fn = 0;
-
-#if (PY_VERSION_HEX <= 0x03000000)
-            if (PyCObject_Check(pyf)) {
-              fn = (omniORBpyCallInfoFn)PyCObject_AsVoidPtr(pyf);
-            }
-            else {
-              omniORB::logs(1, "WARNING: Entry in _omnipy.callInfoFns "
-                            "is not a PyCObject.");
-            }
-#else
-            if (PyCapsule_CheckExact(pyf)) {
-              fn = (omniORBpyCallInfoFn)PyCapsule_GetPointer(pyf, 0);
-            }
-            else {
-              omniORB::logs(1, "WARNING: Entry in _omnipy.callInfoFns "
-                            "is not a PyCapsule.");
-            }
-#endif
-            if (fn)
-              fn(r, conn);
-          }
-        }
-      }
-    }
-    return r.retn();
-  }
-
-  static char registerConnectionInfoFn_doc [] =
-  "registerConnectionInfoFn(fn)\n"
-  "\n"
-  "Register a function to receive connection information. Each time a\n"
-  "connection event occurs, the function will be called:\n"
-  "\n"
-  "  fn(event, is_error, address, info)\n"
-  "\n"
-  "Where event is a numeric event identifier (defined in\n"
-  "omniORB.ConnectionEvent), is_error is true if the reported event is\n"
-  "an error, false if it is purely informational, address is an\n"
-  "address string, and info is a string with additional event-specific\n"
-  "information or None.\n";
-  
-  static PyObject* pyomni_registerConnectionInfoFn(PyObject* self,
-                                                   PyObject* args)
-  {
-    PyObject* fn;
-    
-    if (!PyArg_ParseTuple(args, (char*)"O", &fn))
-      return 0;
-
-    if (ConnectionInfo::singleton)
-      delete ConnectionInfo::singleton;
-
-    if (fn == Py_None)
-      ConnectionInfo::singleton = 0;
-    else
-      ConnectionInfo::singleton = new PyConnectionInfo(fn);
-
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-  
-  static char traceConnectionInfo_doc [] =
-  "traceConnectionInfo(enable, errors_only=False)\n"
-  "\n"
-  "Enable or disable logging of connection info to the omniORB logger.\n"
-  "If enabling and errors_only is True, only error conditions are logged;\n"
-  "otherwise, all events are logged.\n";
-  
-  static PyObject* pyomni_traceConnectionInfo(PyObject* self,
-                                              PyObject* args)
-  {
-    int on;
-    int err_only = 0;
-    
-    if (!PyArg_ParseTuple(args, (char*)"i|i", &on, &err_only))
-      return 0;
-
-    if (ConnectionInfo::singleton)
-      delete ConnectionInfo::singleton;
-
-    if (on)
-      ConnectionInfo::singleton = new LoggingConnectionInfo(err_only);
-    else
-      ConnectionInfo::singleton = 0;
-
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-
-  static char connectionEventToString_doc [] =
-  "connectionEventToString(event)\n"
-  "\n"
-  "Return a string corresponding to the numeric connection event.\n";
-
-  static PyObject* pyomni_connectionEventToString(PyObject* self,
-                                                  PyObject* args)
-  {
-    unsigned long evt;
-    if (!PyArg_ParseTuple(args, (char*)"k", &evt))
-      return 0;
-
-    return String_FromString(
-      ConnectionInfo::toString((ConnectionInfo::ConnectionEvent)evt));
-  }
-
-  
   static PyMethodDef pyomni_methods[] = {
     {(char*)"installTransientExceptionHandler",
      pyomni_installTransientExceptionHandler,
@@ -1178,22 +968,6 @@ extern "C" {
      pyomni_locationForward,
      METH_VARARGS, locationForward_doc},
 
-    {(char*)"currentCallInfo",
-     pyomni_currentCallInfo,
-     METH_VARARGS, currentCallInfo_doc},
-    
-    {(char*)"registerConnectionInfoFn",
-     pyomni_registerConnectionInfoFn,
-     METH_VARARGS, registerConnectionInfoFn_doc},
-    
-    {(char*)"traceConnectionInfo",
-     pyomni_traceConnectionInfo,
-     METH_VARARGS, traceConnectionInfo_doc},
-    
-    {(char*)"connectionEventToString",
-     pyomni_connectionEventToString,
-     METH_VARARGS, connectionEventToString_doc},
-    
     {NULL,NULL}
   };
 }

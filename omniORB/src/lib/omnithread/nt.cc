@@ -764,20 +764,25 @@ omni_thread::exit(void* return_value)
 	DB(cerr << "omni_thread::exit: thread " << me->id() << " detached "
 	   << me->detached << " return value " << return_value << endl);
 
-	if (me->_values) {
-	  for (key_t i=0; i < me->_value_alloc; i++) {
-	    if (me->_values[i]) {
-	      delete me->_values[i];
-	    }
-	  }
-	  delete [] me->_values;
-	  me->_values = 0;
-	}
-
 	if (me->detached) {
 	  delete me;
-	} else {
+	}
+	else {
 	  me->return_val = return_value;
+
+	  if (me->_values) {
+	    // Delete per-thread state here, to ensure value destructors
+	    // are executed by this thread.
+	  
+	    for (key_t i=0; i < me->_value_alloc; i++) {
+	      if (me->_values[i]) {
+		delete me->_values[i];
+	      }
+	    }
+	    delete [] me->_values;
+	    me->_values = 0;
+	    me->_value_alloc = 0;
+	  }
 	}
       }
     else
@@ -807,16 +812,9 @@ omni_thread::self(void)
     me = TlsGetValue(self_tls_index);
 
     if (me == 0) {
-      DB(cerr << "omni_thread::self: called with a non-omnithread. NULL is returned." << endl);
+      DB(cerr << "omni_thread::self: called with a non-ominthread. NULL is returned." << endl);
     }
     return (omni_thread*)me;
-}
-
-
-unsigned long
-omni_thread::plat_id()
-{
-    return GetCurrentThreadId();
 }
 
 

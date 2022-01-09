@@ -61,9 +61,7 @@ String_AS_STRING_AND_SIZE(PyObject* obj, CORBA::ULong& size)
 
 #  define Int_Check(o)                      PyInt_Check(o)
 #  define Int_FromLong(l)                   PyInt_FromLong(l)
-#  define Int_FromSsize_t(l)                PyInt_FromSsize_t(l)
 #  define Int_AS_LONG(o)                    PyInt_AS_LONG(o)
-#  define Int_AsSsize_t(o)                  PyInt_AsSsize_t(o)
 
 #else // Python 3
 
@@ -132,9 +130,7 @@ RawString_AS_STRING_AND_SIZE(PyObject* obj, CORBA::ULong& size)
 
 #  define Int_Check(o)                     PyLong_Check(o)
 #  define Int_FromLong(l)                  PyLong_FromLong(l)
-#  define Int_FromSsize_t(l)               PyLong_FromSsize_t(l)
 #  define Int_AS_LONG(o)                   PyLong_AsLong(o)
-#  define Int_AsSsize_t(o)                 PyLong_AsSsize_t(o)
 
 #endif
 

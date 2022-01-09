@@ -226,8 +226,8 @@ giopServer::addBiDirStrand(giopStrand* s,giopActiveCollection* watcher) {
 
       CORBA::Boolean matched = 0;
       {
-	std::vector<giopActiveCollection*>::iterator i = pd_bidir_collections.begin();
-	std::vector<giopActiveCollection*>::iterator last = pd_bidir_collections.end();
+	omnivector<giopActiveCollection*>::iterator i = pd_bidir_collections.begin();
+	omnivector<giopActiveCollection*>::iterator last = pd_bidir_collections.end();
 	while (i != last) {
 	  if ((*i) == watcher) {
 	    matched = 1;
@@ -364,7 +364,7 @@ giopServer::activate()
     task->insert(pd_rendezvousers);
   }
 
-  std::vector<giopStrand*>::iterator j;
+  omnivector<giopStrand*>::iterator j;
   j = pd_bidir_strands.begin();
 
   while (j != pd_bidir_strands.end()) {
@@ -406,7 +406,7 @@ giopServer::activate()
   }
 
   {
-    std::vector<giopActiveCollection*>::iterator i;
+    omnivector<giopActiveCollection*>::iterator i;
     i = pd_bidir_collections.begin();
 
     while (i != pd_bidir_collections.end()) {
@@ -649,7 +649,7 @@ giopServer::deactivate()
 	<< " bidirectional connections...\n";
     }
 
-    std::vector<giopStrand*>::iterator i = pd_bidir_strands.begin();
+    omnivector<giopStrand*>::iterator i = pd_bidir_strands.begin();
     while (i != pd_bidir_strands.end()) {
       giopStrand* g = *i;
       pd_bidir_strands.erase(i);
@@ -1052,7 +1052,7 @@ giopServer::removeConnectionAndWorker(giopWorker* w)
     // is therefore safe to delete this record.
     pd_lock.lock();
 
-    CORBA::ULong   workers;
+    int workers;
     CORBA::Boolean singleshot = w->singleshot();
 
     if (singleshot)
@@ -1388,8 +1388,9 @@ public:
 			"-ORBthreadPerConnectionPolicy < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1416,8 +1417,9 @@ public:
 			1,
 			"-ORBthreadPerConnectionUpperLimit < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
@@ -1445,8 +1447,9 @@ public:
 			1,
 			"-ORBthreadPerConnectionLowerLimit < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
@@ -1473,8 +1476,9 @@ public:
 			1,
 			"-ORBmaxServerThreadPerConnection < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
@@ -1504,8 +1508,9 @@ public:
 			"-ORBthreadPoolWatchConnection < n >= 0 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1533,8 +1538,9 @@ public:
 			"-ORBconnectionWatchImmediate < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1562,8 +1568,9 @@ public:
 			1,
 			"-ORBlistenBacklog < n >= 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,

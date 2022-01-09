@@ -43,7 +43,6 @@
 class omniObjRef;
 class omniServant;
 class omniCurrent;
-class omniCallHandle;
 
 OMNI_NAMESPACE_BEGIN(omni)
 class omniOrbPOA;
@@ -93,8 +92,7 @@ public:
       pd_current_address(0),
       pd_objref(0),
       pd_poa(0),
-      pd_localId(0),
-      pd_callHandle(0)
+      pd_localId(0)
   {}
 
   virtual ~omniCallDescriptor() {}
@@ -217,17 +215,12 @@ public:
   // Current support //
   /////////////////////
 
-  static omniCallDescriptor* current();
-  // Return the call descriptor for the current thread.
-  
   inline void objref(omniObjRef* o)           { pd_objref = o; }
   inline omniObjRef* objref()                 { return pd_objref; }
   inline void poa(_OMNI_NS(omniOrbPOA*) poa_) { pd_poa = poa_; }
   inline _OMNI_NS(omniOrbPOA*) poa()          { return pd_poa; }
   inline void localId(omniLocalIdentity* lid) { pd_localId = lid; }
   inline omniLocalIdentity* localId()         { return pd_localId; }
-  inline void callHandle(omniCallHandle* ch)  { pd_callHandle = ch; }
-  inline omniCallHandle* callHandle()         { return pd_callHandle; }
 
 
   //////////////////////////////
@@ -276,8 +269,7 @@ private:
 
   _OMNI_NS(omniOrbPOA*)        pd_poa;
   omniLocalIdentity*           pd_localId;
-  omniCallHandle*              pd_callHandle;
-  // Always set on the way through the POA during an upcall.
+  // Both always set on the way through the POA during an upcall.
 
   ////////////////////////////
   // Deadline for this call //

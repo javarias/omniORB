@@ -28,7 +28,6 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
-#include <omniORB4/connectionInfo.h>
 #include <orbParameters.h>
 #include <SocketCollection.h>
 #include <objectAdapter.h>
@@ -210,8 +209,6 @@ unixEndpoint::Bind() {
   pd_addresses.length(1);
   pd_addresses[0] = unixConnection::unToString(pd_filename);
 
-  ConnectionInfo::set(ConnectionInfo::BIND, 0, pd_addresses[0]);
-  
   // Never block in accept
   tcpSocket::setNonBlocking(pd_socket);
 
@@ -265,12 +262,7 @@ unixEndpoint::AcceptAndMonitor(giopConnection::notifyReadable_t func,
     pd_new_conn_socket = RC_INVALID_SOCKET;
     if (!Select()) break;
     if (pd_new_conn_socket != RC_INVALID_SOCKET) {
-      unixConnection* nc = new unixConnection(pd_new_conn_socket, this,
-                                              pd_filename, 0);
-
-      ConnectionInfo::set(ConnectionInfo::ACCEPTED_CONNECTION, 0,
-                          nc->peeraddress());
-      return nc;
+      return  new unixConnection(pd_new_conn_socket,this,pd_filename,0);
     }
     if (pd_poked)
       return 0;

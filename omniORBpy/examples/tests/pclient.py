@@ -7,9 +7,9 @@ import PerfTest
 cycles = 10000
 
 def doTests(orb, poa, io):
-    l = list(range(200))
+    l = range(200)
 
-    print("single long:    ", end=' ')
+    print "single long:    ",
     sys.stdout.flush()
 
     i = cycles
@@ -18,11 +18,11 @@ def doTests(orb, poa, io):
         r = io.op0(i)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    s = bytes(l)
+    s = "".join(map(chr, l))
 
-    print("octet sequence: ", end=' ')
+    print "octet sequence: ",
     sys.stdout.flush()
 
     i = cycles
@@ -31,9 +31,9 @@ def doTests(orb, poa, io):
         r = io.op1(s)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("octet array:    ", end=' ')
+    print "octet array:    ",
     sys.stdout.flush()
 
     i = cycles
@@ -42,10 +42,10 @@ def doTests(orb, poa, io):
         r = io.op2(s)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
 
-    print("short sequence: ", end=' ')
+    print "short sequence: ",
     sys.stdout.flush()
 
     i = cycles
@@ -54,9 +54,9 @@ def doTests(orb, poa, io):
         r = io.op3(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("short array:    ", end=' ')
+    print "short array:    ",
     sys.stdout.flush()
 
     i = cycles
@@ -65,10 +65,10 @@ def doTests(orb, poa, io):
         r = io.op4(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
 
-    print("long sequence:  ", end=' ')
+    print "long sequence:  ",
     sys.stdout.flush()
 
     i = cycles
@@ -77,9 +77,9 @@ def doTests(orb, poa, io):
         r = io.op5(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("long array:     ", end=' ')
+    print "long array:     ",
     sys.stdout.flush()
 
     i = cycles
@@ -88,9 +88,9 @@ def doTests(orb, poa, io):
         r = io.op6(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("ulong sequence: ", end=' ')
+    print "ulong sequence: ",
     sys.stdout.flush()
 
     i = cycles
@@ -99,9 +99,9 @@ def doTests(orb, poa, io):
         r = io.op7(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("ulong array:    ", end=' ')
+    print "ulong array:    ",
     sys.stdout.flush()
 
     i = cycles
@@ -110,11 +110,11 @@ def doTests(orb, poa, io):
         r = io.op8(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    u = list(map(int, l))
+    u = map(long, l)
 
-    print("ulong sequence: ", end=' ')
+    print "ulong sequence: ",
     sys.stdout.flush()
 
     i = cycles
@@ -123,9 +123,9 @@ def doTests(orb, poa, io):
         r = io.op7(u)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("ulong array:    ", end=' ')
+    print "ulong array:    ",
     sys.stdout.flush()
 
     i = cycles
@@ -134,9 +134,9 @@ def doTests(orb, poa, io):
         r = io.op8(u)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("double sequence:", end=' ')
+    print "double sequence:",
     sys.stdout.flush()
 
     i = cycles
@@ -145,9 +145,9 @@ def doTests(orb, poa, io):
         r = io.op9(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("double array:   ", end=' ')
+    print "double array:   ",
     sys.stdout.flush()
 
     i = cycles
@@ -156,11 +156,11 @@ def doTests(orb, poa, io):
         r = io.opa(l)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    d = list(map(float, l))
+    d = map(float, l)
 
-    print("double sequence:", end=' ')
+    print "double sequence:",
     sys.stdout.flush()
 
     i = cycles
@@ -169,9 +169,9 @@ def doTests(orb, poa, io):
         r = io.op9(d)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
-    print("double array:   ", end=' ')
+    print "double array:   ",
     sys.stdout.flush()
 
     i = cycles
@@ -180,7 +180,7 @@ def doTests(orb, poa, io):
         r = io.opa(d)
         i = i - 1
     a = time.time()
-    print(a-b)
+    print a-b
 
 
 

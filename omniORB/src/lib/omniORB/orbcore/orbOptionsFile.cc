@@ -54,8 +54,9 @@ invalid_syntax_error(const char* filename, int lineno,
 static CORBA::Boolean parseOldConfigOption(orbOptions& opt, char* line);
 
 CORBA::Boolean
-orbOptions::importFromFile(const char* filename) {
-
+orbOptions::importFromFile(const char* filename)
+  OMNI_THROW_SPEC (orbOptions::Unknown, orbOptions::BadParam)
+{
   FILE* file;
   CORBA::String_var line(CORBA::string_alloc(LINEBUFSIZE));
   unsigned int lnum = 0;

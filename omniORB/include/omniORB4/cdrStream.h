@@ -3,7 +3,7 @@
 // cdrStream.h                Created on: 11/1/99
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2020 Apasphere Ltd
+//    Copyright (C) 2003-2013 Apasphere Ltd
 //    Copyright (C) 1999      AT&T Laboratories, Cambridge
 //
 //    This file is part of the omniORB library
@@ -154,7 +154,11 @@ public:
 
   inline _CORBA_Boolean unmarshalBoolean() {
     _CORBA_Octet o = unmarshalOctet();
+#ifdef HAS_Cplusplus_Bool
     return o ? true : false;
+#else
+    return (_CORBA_Boolean)o;
+#endif
   }
 
 
@@ -515,14 +519,14 @@ public:
   // <nitems> of size <itemSize>. The initial alignment of the data
   // starts at <align>. Return false otherwise.
 
-  virtual size_t currentInputPtr() const = 0;
+  virtual _CORBA_ULong currentInputPtr() const = 0;
   // Return a value that represents the position of the next byte in
   // the input stream. Later bytes in the stream has a higher return
   // value. The absolute value of the return value has no meaning.
   // The only use of this function is to compute the distance between
   // two bytes in the stream.
 
-  virtual size_t currentOutputPtr() const = 0;
+  virtual _CORBA_ULong currentOutputPtr() const = 0;
   // Return a value that represents the position of the next byte in
   // the output stream. Later bytes in the stream have a higher return
   // value.  The absolute value of the return value has no meaning.
@@ -590,7 +594,7 @@ public:
   inline void
   unmarshalArrayBoolean(_CORBA_Boolean* a, int length)
   {
-#if (SIZEOF_BOOL == 1)
+#if !defined(HAS_Cplusplus_Bool) || (SIZEOF_BOOL == 1)
     get_octet_array((_CORBA_Char*)a, length, omni::ALIGN_1);
 #else
     for (int i = 0; i < length; i++)
@@ -754,17 +758,10 @@ protected:
   void* pd_inb_end;
   void* pd_inb_mkr;
 
-  inline omni::ptr_arith_t inEnd() const
-  {
-    return (omni::ptr_arith_t)pd_inb_end;
-  }
+  inline omni::ptr_arith_t inEnd() { return (omni::ptr_arith_t)pd_inb_end; }
+  inline omni::ptr_arith_t inMkr() { return (omni::ptr_arith_t)pd_inb_mkr; }
 
-  inline omni::ptr_arith_t inMkr() const
-  {
-    return (omni::ptr_arith_t)pd_inb_mkr;
-  }
-
-  inline omni::ptr_arith_t inMkr(omni::alignment_t align) const
+  inline omni::ptr_arith_t inMkr(omni::alignment_t align)
   {
     return omni::align_to((omni::ptr_arith_t)pd_inb_mkr, align);
   }
@@ -784,17 +781,10 @@ protected:
   void* pd_outb_end;
   void* pd_outb_mkr;
 
-  inline omni::ptr_arith_t outEnd() const
-  {
-    return (omni::ptr_arith_t)pd_outb_end;
-  }
+  inline omni::ptr_arith_t outEnd() { return (omni::ptr_arith_t)pd_outb_end; }
+  inline omni::ptr_arith_t outMkr() { return (omni::ptr_arith_t)pd_outb_mkr; }
 
-  inline omni::ptr_arith_t outMkr() const
-  {
-    return (omni::ptr_arith_t)pd_outb_mkr;
-  }
-
-  inline omni::ptr_arith_t outMkr(omni::alignment_t align) const
+  inline omni::ptr_arith_t outMkr(omni::alignment_t align)
   {
     return omni::align_to((omni::ptr_arith_t)pd_outb_mkr, align);
   }
@@ -969,8 +959,12 @@ void operator<<=(char& a, cdrStream& s);
 void operator>>=(unsigned char  a, cdrStream& s);
 void operator<<=(unsigned char& a, cdrStream& s);
 
+#ifdef HAS_Cplusplus_Bool
+
 void operator>>=(bool  a, cdrStream& s);
 void operator<<=(bool& a, cdrStream& s);
+
+#endif
 
 
 //
@@ -1068,8 +1062,8 @@ public:
   _CORBA_Boolean reserveOutputSpaceForPrimitiveType(omni::alignment_t,size_t);
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t,size_t);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
 private:
   _CORBA_Boolean reserveOutputSpace(omni::alignment_t,size_t);
@@ -1157,8 +1151,8 @@ public:
 
   void fetchInputData(omni::alignment_t,size_t);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   virtual void* ptrToClass(int* cptr);
   static inline cdrCountingStream* downcast(cdrStream* s) {
@@ -1229,8 +1223,8 @@ protected:
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t align,
 					 size_t required);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   _CORBA_ULong completion();
 
@@ -1355,8 +1349,8 @@ public:
   _CORBA_Boolean maybeReserveOutputSpace(omni::alignment_t align,
 					 size_t required);
 
-  size_t currentInputPtr() const;
-  size_t currentOutputPtr() const;
+  _CORBA_ULong currentInputPtr() const;
+  _CORBA_ULong currentOutputPtr() const;
 
   _CORBA_ULong completion();
 

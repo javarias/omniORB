@@ -7,19 +7,13 @@ ifndef EmbeddedSystem
 SUBDIRS = $(PYSUBDIR)
 endif
 
-SUBDIRS += base orbcore
+SUBDIRS += orbcore
 
 ifndef OrbCoreOnly
 SUBDIRS += dynamic codesets connections
 
 ifdef EnableZIOP
 SUBDIRS += ziop ziopdynamic
-endif
-
-ifdef EnableHTTPCrypto
-ifdef OPEN_SSL_ROOT
-SUBDIRS += httpcrypto
-endif
 endif
 
 endif

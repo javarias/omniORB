@@ -1,7 +1,7 @@
-omniORBpy 4.3
+omniORBpy 4.2
 =============
 
-This is the omniORBpy 4.3.x development branch.
+This is omniORBpy 4.2.5.
 
 omniORBpy is a robust high-performance CORBA ORB for Python.
 
@@ -12,7 +12,7 @@ may find at
 
 
 omniORBpy makes use of the C++ omniORB library. omniORBpy version
-4.3.x can only be used with omniORB 4.3.x.
+4.2.x can only be used with omniORB 4.2.x.
 
 omniORBpy is currently available for many Unix platforms and Windows.
 It has been ported to a number of other operating systems by outside
@@ -60,7 +60,7 @@ use variables CC, CXX and PYTHON, e.g.:
 
 If you do not have Autoconf support on your platform (e.g. on
 Windows), you must install the omniORBpy source in the $TOP/src/lib
-directory of a working omniORB 4.3 tree. Make sure the directory is
+directory of a working omniORB 4.2 tree. Make sure the directory is
 called omniORBpy -- if you downloaded a release archive you must
 rename the directory to remove the version from the directory name.
 
@@ -82,7 +82,7 @@ add this path:
   export PYTHONPATH=$PYTHONPATH:$PREFIX/lib/pythonX.Y/site-packages
 
 replacing pythonX.Y with the version of Python you are using,
-e.g. python3.7
+e.g. python2.7
 
 With the non Autoconf build, you must add two directories to
 PYTHONPATH:

@@ -2,7 +2,7 @@
 <html >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.32">
+<meta name="generator" content="hevea 2.34">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Code set conversion</title>
 </head>
@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy009.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec118" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Code set conversion</h1>
+<h1 id="sec113" class="chapter">Chapter&#XA0;8&#XA0;&#XA0;Code set conversion</h1>
 <p>
 <a id="chap:codesets"></a></p><p>omniORB supports full code set negotiation, used to select and
 translate between different character sets, for the transmission of
@@ -20,7 +20,7 @@ to application code, but there are a number of options that can be
 selected. This chapter covers the options, and also gives some
 pointers about how to implement your own code sets, in case the ones
 that come with omniORB are not sufficient.</p>
-<h2 id="sec119" class="section">8.1&#XA0;&#XA0;Native code set</h2>
+<h2 id="sec114" class="section">8.1&#XA0;&#XA0;Native code set</h2>
 <p>For the ORB to know how to handle strings given to it by the
 application, it must know what code set they are represented with, so
 it can properly translate them if need be.</p><p>For Python 2.x, the default is ISO 8859-1 (Latin 1). A different code
@@ -31,7 +31,7 @@ greater. Some applications may need to set the native char code set to
 UTF-8, allowing the full Unicode range to be supported in strings.</p><p>In Python 3.x, all Python strings are Unicode, so it always behaves as
 if the native char code set is UTF-8.</p><p>wchar and wstring are always represented by the Python Unicode type,
 so there is no need to select a native code set for wchar.</p>
-<h2 id="sec120" class="section">8.2&#XA0;&#XA0;Default code sets</h2>
+<h2 id="sec115" class="section">8.2&#XA0;&#XA0;Default code sets</h2>
 <p>The way code set conversion is meant to work in CORBA communication is
 that each client and server has a <span style="font-style:italic">native</span> code set that it uses
 for character data in application code, and supports a number of
@@ -53,12 +53,12 @@ wstring at all. The effect is that client code receives
 code sets that are used as a server&#X2019;s transmission code sets if they
 are not otherwise known. Set <span style="font-family:monospace">defaultCharCodeSet</span> for char and
 string data, and <span style="font-family:monospace">defaultWCharCodeSet</span> for wchar and wstring data.</p>
-<h2 id="sec121" class="section">8.3&#XA0;&#XA0;Code set library</h2>
+<h2 id="sec116" class="section">8.3&#XA0;&#XA0;Code set library</h2>
 <p>To save space in the main ORB core library, most of the code set
 implementations are in a separate library. To load it from Python, you
 must import the <span style="font-family:monospace">omniORB.codesets</span> module before calling
 <span style="font-family:monospace">CORBA.ORB_init()</span>.</p>
-<h2 id="sec122" class="section">8.4&#XA0;&#XA0;Implementing new code sets</h2>
+<h2 id="sec117" class="section">8.4&#XA0;&#XA0;Implementing new code sets</h2>
 <p>Code sets must currently be implemented in C++. See the omniORB for
 C++ documentation for details.</p>
 <hr>

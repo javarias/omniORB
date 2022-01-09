@@ -216,7 +216,6 @@ public:
   static PyObject* py_omnipymodule;    	// _omnipy module
   static PyObject* py_pseudoFns;        //  pseudoFns
   static PyObject* py_policyFns;        //  policyFns
-  static PyObject* py_callInfoFns;      //  calInfoFns
   static PyObject* pyCORBAmodule;      	// CORBA module
   static PyObject* pyCORBAsysExcMap;   	//  The system exception map
   static PyObject* pyCORBAORBClass;    	//  ORB class
@@ -299,6 +298,7 @@ public:
   static void initFixed          (PyObject* d);
   static void initCallDescriptor (PyObject* d);
   static void initServant        (PyObject* d);
+  static void initTypeCode       (PyObject* d);
 
 
   ////////////////////////////////////////////////////////////////////////////
@@ -376,11 +376,6 @@ public:
 
     // Pointer operator used in some Python macros like PyInt_Check.
     inline PyObject* operator->()      { return obj_; }
-
-#ifdef PYPY_VERSION
-    // PyPy defines macros taking a void* rather than a PyObject*
-    inline operator void*()            { return obj_; }
-#endif
 
   private:
     PyObject* obj_;

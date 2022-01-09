@@ -48,8 +48,13 @@
   //                                                                    //
   // generateNewKey()                                                   //
   //   generate a new key. The key is guaranteed to be temporally       //
-  //   unique.                                                          //
+  //   unique. On OSs that provide unique process IDs, e.g. unices,     //
+  //   the key is guaranteed to be unique among all keys ever generated //
+  //   on the same machine.                                             //
   _CORBA_MODULE_FN void generateNewKey(objectKey &k);                   //
+  //                                                                    //
+  // Return a fixed key value that always hash to 0.                    //
+  _CORBA_MODULE_FN objectKey nullkey();                                 //
   //                                                                    //
   // Return non-zero if the keys are the same                           //
   _CORBA_MODULE_OP int operator==(const objectKey &k1,                  //

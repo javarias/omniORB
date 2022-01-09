@@ -351,7 +351,7 @@ giopConnection::gatekeeperCheckSpecific(giopStrand* strand)
 
 
 ////////////////////////////////////////////////////////////////////////
-const std::vector<const char*>*
+const omnivector<const char*>*
 giopTransportImpl::getInterfaceAddress(const char* t) {
 
   giopTransportImpl* impl = implHead();
@@ -408,7 +408,9 @@ public:
 			"-ORBunixTransportDirectory <dir name>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbParameters::unixTransportDirectory = value;
   }
 
@@ -442,8 +444,9 @@ public:
 			"-ORBunixTransportPermission <mode bits in octal radix>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     unsigned int v;
     if( sscanf(value,"%o",&v) != 1 ) {
       throw orbOptions::BadParam(key(),value,

@@ -3,7 +3,7 @@
 # sslTP.py                   Created on: 2002/09/06
 #                            Author    : Duncan Grisby (dgrisby)
 #
-#    Copyright (C) 2002-2018 Apasphere Ltd.
+#    Copyright (C) 2002-2013 Apasphere Ltd.
 #
 #    This file is part of the omniORBpy library
 #
@@ -32,15 +32,7 @@ CORBA.ORB_init() to make the SSL transport available.
 
 Functions:
 
-  set_CA()
-  set_key()
-  set_cipher_list()
-  reinit()
-
-Deprecated functions:
-
   certificate_authority_file()
-  certificate_authority_path()
   key_file()
   key_file_password()
 """

@@ -2,7 +2,7 @@
 //				Package : omnithread
 // omnithread.h			Created : 7/94 tjr
 //
-//    Copyright (C) 2002-2018 Apasphere Ltd
+//    Copyright (C) 2002-2011 Apasphere Ltd
 //    Copyright (C) 1994-1997 Olivetti & Oracle Research Laboratory
 //
 //    This file is part of the omnithread library
@@ -34,6 +34,8 @@
 
 #ifndef __omnithread_h_
 #define __omnithread_h_
+
+#include <omniORB4/CORBA_sysdep.h>
 
 class omni_mutex;
 class omni_condition;
@@ -700,10 +702,6 @@ public:
 
   int id() { return _id; }
   // return unique thread id within the current process.
-
-  static unsigned long plat_id();
-  // return a platform-specific thread identifier for any thread, not
-  // just ones created with omni_thread.
 
 
   // This class plus the instance of it declared below allows us to execute

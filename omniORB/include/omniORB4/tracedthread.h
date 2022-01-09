@@ -133,9 +133,6 @@
 // giopStream::dumpbuf::lock
 //   Ensures only one thread is dumping a buffer at a time.
 //
-// httpCrypto::httpCryptoManager_AES_RSA_impl::pd_lock
-//   Protects state of crypto manager.
-//
 // initRefs ba_lock
 //   Protects bootstrap agent.
 //

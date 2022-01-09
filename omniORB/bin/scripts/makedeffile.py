@@ -56,7 +56,7 @@
 # Class variable and function symbols start with two ??  and class
 # static variable and static function symbols start with one ?.
 
-import re, sys, os, os.path
+import re, sys, os, os.path, string
 
 def usage(argv):
     sys.stderr.write("%s <lib file> <library name> <version> <def file>\n" %
@@ -70,8 +70,9 @@ def main(argv):
         sys.exit(1)
 
     cmd = "DUMPBIN.EXE /SYMBOLS %s /OUT:%s" % (libfile, deffile)
-    print(cmd)
+    print cmd
     os.system(cmd)
+    dumped = open(deffile, "r")
 
     definitions = {}
 
@@ -80,37 +81,39 @@ def main(argv):
 
     exclude = re.compile(r"deleting destructor[^(]+\(unsigned int\)|anonymous namespace")
 
-    with open(deffile, "r") as dumped:
-        while 1:
-            line = dumped.readline()
-            if line == "":
-                break
+    while 1:
+        line = dumped.readline()
+        if line == "":
+            break
 
-            match = linere1.search(line) or linere2.search(line)
-            if match:
-                symbol = match.group(1)
-                args   = match.group(2)
+        match = linere1.search(line) or linere2.search(line)
+        if match:
+            symbol = match.group(1)
+            args   = match.group(2)
+            if exclude.search(args):
+                continue
 
-                if "std@" in symbol or exclude.search(args):
-                    continue
+            definitions[symbol] = None
 
-                definitions[symbol] = None
+    dumped.close()
 
-    symbols = sorted(definitions.keys())
+    symbols = definitions.keys()
+    symbols.sort()
 
-    print("Output %d symbols." % len(symbols))
+    print "Output %d symbols." % len(symbols)
 
-    with open(deffile, "w") as out:
-        if binname[4:].lower() == ".exe":
-            out.write("NAME %s\n" % binname)
-        else:
-            out.write("LIBRARY %s\n" % binname)
+    out = open(deffile, "w")
+    if string.lower(binname[4:]) == ".exe":
+        out.write("NAME %s\n" % binname)
+    else:
+        out.write("LIBRARY %s\n" % binname)
+    out.write("VERSION %s\n" % version)
+    out.write("EXPORTS\n")
 
-        out.write("VERSION %s\n" % version)
-        out.write("EXPORTS\n")
+    for s in symbols:
+        out.write(s + "\n")
 
-        for s in symbols:
-            out.write(s + "\n")
+    out.close()
 
 
 if __name__ == "__main__":

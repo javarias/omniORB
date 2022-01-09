@@ -837,18 +837,18 @@ OMNI_NAMESPACE_BEGIN(omni)
 //            Hooked initialiser                                           //
 /////////////////////////////////////////////////////////////////////////////
 
-static std::vector<omniInitialiser*>*& the_hooked_list()
+static omnivector<omniInitialiser*>*& the_hooked_list()
 {
-  static std::vector<omniInitialiser*>* the_list = 0;
-  if (!the_list) the_list = new std::vector<omniInitialiser*>;
+  static omnivector<omniInitialiser*>* the_list = 0;
+  if (!the_list) the_list = new omnivector<omniInitialiser*>;
   return the_list;
 }
 
 class omni_hooked_initialiser : public omniInitialiser {
 public:
   void attach() {
-    std::vector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
-    std::vector<omniInitialiser*>::iterator last = the_hooked_list()->end();
+    omnivector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
+    omnivector<omniInitialiser*>::iterator last = the_hooked_list()->end();
 
     for (; i != last; i++) {
       (*i)->attach();
@@ -856,8 +856,8 @@ public:
   }
 
   void detach() {
-    std::vector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
-    std::vector<omniInitialiser*>::iterator last = the_hooked_list()->end();
+    omnivector<omniInitialiser*>::iterator i    = the_hooked_list()->begin();
+    omnivector<omniInitialiser*>::iterator last = the_hooked_list()->end();
 
     for (; i != last; i++) {
       (*i)->detach();
@@ -865,7 +865,7 @@ public:
   }
 
   virtual ~omni_hooked_initialiser() {
-    std::vector<omniInitialiser*>*& the_list = the_hooked_list();
+    omnivector<omniInitialiser*>*& the_list = the_hooked_list();
     delete the_list;
     the_list = 0;
   }
@@ -915,8 +915,9 @@ public:
 			1) {}
 
 
-  void visit(const char*,orbOptions::Source) {
-
+  void visit(const char*,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbOptions::sequenceString_var usage;
     usage = orbOptions::singleton().usageArgv();
 
@@ -945,8 +946,9 @@ public:
 			"-ORBid " ORB_ID_STRING " (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     if (!isValidId(value)) {
       throw orbOptions::BadParam(key(),value,"id is not " ORB_ID_STRING);
     }
@@ -977,8 +979,9 @@ public:
 			"-ORBdumpConfiguration < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1006,8 +1009,9 @@ public:
 			"-ORBlcdMode < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1036,7 +1040,9 @@ public:
 			"-ORBprincipal <GIOP 1.0 principal string>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong l = (CORBA::ULong)strlen(value) + 1;
     omni::myPrincipalID.length(l);
     for (CORBA::ULong i = 0; i < l; i++)
@@ -1071,7 +1077,9 @@ public:
 			"-ORBconfigFile <filename>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     // Do nothing -- already handled before normal arguments are processed
   }
 

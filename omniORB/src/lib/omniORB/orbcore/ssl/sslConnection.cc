@@ -28,7 +28,6 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
-#include <omniORB4/connectionInfo.h>
 #include <orbParameters.h>
 #include <SocketCollection.h>
 #include <tcpSocket.h>
@@ -47,47 +46,37 @@ OMNI_NAMESPACE_BEGIN(omni)
 
 /////////////////////////////////////////////////////////////////////////
 static inline CORBA::Boolean
-handleErrorSyscall(int ret, int ssl_err, const char* peer, CORBA::Boolean send)
+handleErrorSyscall(int ret, int ssl_err, const char* peer, const char* kind)
 {
   int errno_val = ERRNO;
   if (RC_TRY_AGAIN(errno_val))
     return 1;
 
-  const char* kind = send ? "send" : "recv";
-
-  ConnectionInfo::ConnectionEvent evt =
-    send ? ConnectionInfo::SEND_FAILED : ConnectionInfo::RECV_FAILED;
-
   int err_err = ERR_get_error();
   if (err_err) {
     while (err_err) {
-      char buf[128];
-      ERR_error_string_n(err_err, buf, 128);
-
       if (omniORB::trace(10)) {
+        char buf[128];
+        ERR_error_string_n(err_err, buf, 128);
+
         omniORB::logger log;
         log << peer << " " << kind << " error: " << (const char*)buf << "\n";
       }
-      ConnectionInfo::set(evt, 1, peer, buf);
-      
       err_err = ERR_get_error();
     }
   }
-  else {
-    if (omniORB::trace(10)) {
-      omniORB::logger log;
-      log << peer << " " << kind;
+  else if (omniORB::trace(10)) {
+    omniORB::logger log;
+    log << peer << " " << kind;
 
-      if (ssl_err == SSL_ERROR_ZERO_RETURN)
-        log << " connection has been closed.\n";
-      else if (ret == 0)
-        log << " observed an EOF that violates the protocol.\n";
-      else if (ret == -1)
-        log << " received an I/O error (" << errno_val << ").\n";
-      else
-        log << " unexepctedly returned " << ret << ".\n";
-    }
-    ConnectionInfo::set(evt, 1, peer);
+    if (ssl_err == SSL_ERROR_ZERO_RETURN)
+      log << " connection has been closed.\n";
+    else if (ret == 0)
+      log << " observed an EOF that violates the protocol.\n";
+    else if (ret == -1)
+      log << " received an I/O error (" << errno_val << ").\n";
+    else
+      log << " unexepctedly returned " << ret << ".\n";
   }
   return 0;
 }
@@ -115,7 +104,6 @@ sslConnection::Send(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
 	// Already timed out.
-        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
       }
       else {
@@ -125,16 +113,14 @@ sslConnection::Send(void* buf, size_t sz,
 
 	if (tx == 0) {
 	  // Timed out
-          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1,
-                              pd_peeraddress);
 	  return 0;
 	}
 	else if (tx == RC_SOCKET_ERROR) {
 	  if (ERRNO == RC_EINTR) {
+	    SET_ERRNO(0);
 	    continue;
           }
 	  else {
-            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
 	    return -1;
 	  }
 	}
@@ -165,7 +151,7 @@ sslConnection::Send(void* buf, size_t sz,
     case SSL_ERROR_SSL:
     case SSL_ERROR_ZERO_RETURN:
     case SSL_ERROR_SYSCALL:
-      if (handleErrorSyscall(tx, ssl_err, pd_peeraddress, 1))
+      if (handleErrorSyscall(tx, ssl_err, pd_peeraddress, "send"))
         continue;
       else
         return -1;
@@ -207,7 +193,6 @@ sslConnection::Recv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
-      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
       return 0;
     }
 
@@ -220,16 +205,15 @@ sslConnection::Recv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
 	continue;
 #else
-        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
 #endif
       }
       else if (rx == RC_SOCKET_ERROR) {
 	if (ERRNO == RC_EINTR) {
+	  SET_ERRNO(0);
 	  continue;
         }
 	else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
 	  return -1;
 	}
       }
@@ -259,7 +243,7 @@ sslConnection::Recv(void* buf, size_t sz,
     case SSL_ERROR_SSL:
     case SSL_ERROR_ZERO_RETURN:
     case SSL_ERROR_SYSCALL:
-      if (handleErrorSyscall(rx, ssl_err, pd_peeraddress, 0))
+      if (handleErrorSyscall(rx, ssl_err, pd_peeraddress, "recv"))
         continue;
       else
         return -1;
@@ -324,13 +308,12 @@ _CORBA_Boolean
 sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
 {
   // Perform SSL accept
-  CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
 
   if (omniORB::trace(25)) {
     omniORB::logger log;
-    log << "Perform TLS accept for new incoming connection " << peer << "\n";
+    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
+    log << "Perform SSL accept for new incoming connection " << peer << "\n";
   }
-  ConnectionInfo::set(ConnectionInfo::TRY_TLS_ACCEPT, 0, peer);
 
   omni_time_t deadline;
   struct timeval tv;
@@ -358,7 +341,6 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_NONE:
       tcpSocket::setBlocking(pd_socket);
       pd_handshake_ok = 1;
-      ConnectionInfo::set(ConnectionInfo::TLS_ACCEPTED, 0, peer);
       setPeerDetails();
       return 1;
 
@@ -385,25 +367,22 @@ sslConnection::gatekeeperCheckSpecific(giopStrand* strand)
     case SSL_ERROR_SSL:
     case SSL_ERROR_ZERO_RETURN:
       {
-        char buf[128];
-        ERR_error_string_n(ERR_get_error(), buf, 128);
-
-        if (omniORB::trace(10)) {
-          omniORB::logger log;
-          log << "OpenSSL error detected in SSL accept from "
-              << peer << " : " << (const char*) buf << "\n";
-        }
-        ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_FAILED, 1, peer, buf);
+	if (omniORB::trace(10)) {
+	  omniORB::logger log;
+	  char buf[128];
+	  ERR_error_string_n(ERR_get_error(), buf, 128);
+	  CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
+	  log << "OpenSSL error detected in SSL accept from "
+	      << peer << " : " << (const char*) buf << "\n";
+	}
 	go = 0;
       }
     }
   }
-  if (timeout) {
-    if (omniORB::trace(10)) {
-      omniORB::logger log;
-      log << "Timeout in SSL accept from " << peer << "\n";
-    }
-    ConnectionInfo::set(ConnectionInfo::TLS_ACCEPT_TIMED_OUT, 1, peer);
+  if (timeout && omniORB::trace(10)) {
+    omniORB::logger log;
+    CORBA::String_var peer = tcpSocket::peerToURI(pd_socket, "giop:ssl");
+    log << "Timeout in SSL accept from " << peer << "\n";
   }
   return 0;
 }
@@ -436,6 +415,7 @@ sslConnection::sslConnection(SocketHandle_t sock,::SSL* ssl,
   tcpSocket::setCloseOnExec(sock);
 
   belong_to->addSocket(this);
+  setPeerDetails();
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -459,7 +439,6 @@ sslConnection::~sslConnection() {
   }
 
   CLOSESOCKET(pd_socket);
-  ConnectionInfo::set(ConnectionInfo::CLOSED, 0, pd_peeraddress);
 }
 
 
@@ -472,31 +451,12 @@ sslConnection::setPeerDetails() {
   if (pd_peerdetails)
     return;
 
-  X509*           peer_cert = SSL_get_peer_certificate(pd_ssl);
+  X509           *peer_cert = SSL_get_peer_certificate(pd_ssl);
   CORBA::Boolean  verified  = 0;
 
   if (peer_cert) {
     verified       = SSL_get_verify_result(pd_ssl) == X509_V_OK;
     pd_peerdetails = new sslContext::PeerDetails(pd_ssl, peer_cert, verified);
-
-    if (ConnectionInfo::singleton) {
-      // Get PEM form of certificate
-      BIO* mem_bio = BIO_new(BIO_s_mem());
-      if (PEM_write_bio_X509(mem_bio, peer_cert)) {
-        BIO_write(mem_bio, "", 1);
-
-        BUF_MEM* bm;
-        BIO_get_mem_ptr(mem_bio, &bm);
-        ConnectionInfo::set(ConnectionInfo::TLS_PEER_CERT, 0,
-                            pd_peeraddress, (const char*)bm->data);
-      }
-      BIO_free_all(mem_bio);
-    }
-    
-    ConnectionInfo::set(verified ?
-                        ConnectionInfo::TLS_PEER_VERIFIED :
-                        ConnectionInfo::TLS_PEER_NOT_VERIFIED,
-                        0, pd_peeraddress);
 
     int lastpos = -1;
 
@@ -539,14 +499,6 @@ sslConnection::setPeerDetails() {
 
     try {
       pd_peeridentity = stream.unmarshalString();
-
-      if (omniORB::trace(25)) {
-        omniORB::logger log;
-        log << "TLS peer identity for " << pd_peeraddress
-            << " : " << pd_peeridentity << "\n";
-      }
-      ConnectionInfo::set(ConnectionInfo::TLS_PEER_IDENTITY, 0,
-                          pd_peeraddress, pd_peeridentity);
     }
     catch (CORBA::SystemException &ex) {
       if (omniORB::trace(2)) {
@@ -555,9 +507,6 @@ sslConnection::setPeerDetails() {
 	    << ex._name() << ")\n";
       }
     }
-  }
-  else {
-    pd_peerdetails = new sslContext::PeerDetails(pd_ssl, 0, 0);
   }
 }
 

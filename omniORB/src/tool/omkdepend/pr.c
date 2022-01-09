@@ -26,6 +26,9 @@ in this Software without prior written authorization from the X Consortium.
 
 */
 
+#ifdef __WIN32__
+#  include "gnuwin32.h"
+#endif
 #include "def.h"
 
 extern struct	inclist	inclist[ MAXFILES ],

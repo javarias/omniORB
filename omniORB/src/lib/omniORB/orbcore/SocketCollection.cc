@@ -192,7 +192,7 @@ SocketCollection::Select() {
   tcpSocket::setTimeout(pd_abs_time, timeout);
 
   if ((timeout.tv_sec == 0 && timeout.tv_usec == 0) ||
-      (unsigned long)timeout.tv_sec > scan_interval.s) {
+      timeout.tv_sec > scan_interval.s) {
 
     // Time to scan the socket list...
 
@@ -399,7 +399,8 @@ void SocketCollection::wakeUp()
 
 void
 SocketHolder::setSelectable(int            now,
-			    CORBA::Boolean data_in_buffer)
+			    CORBA::Boolean data_in_buffer,
+			    CORBA::Boolean deprecated_hold_lock)
 {
   OMNIORB_ASSERT(pd_belong_to);
   omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
@@ -785,7 +786,8 @@ void SocketCollection::wakeUp()
 
 void
 SocketHolder::setSelectable(int            now,
-			    CORBA::Boolean data_in_buffer)
+			    CORBA::Boolean data_in_buffer,
+			    CORBA::Boolean deprecated_hold_lock)
 {
   OMNIORB_ASSERT(pd_belong_to);
   omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);
@@ -1168,7 +1170,8 @@ void SocketCollection::wakeUp()
 
 void
 SocketHolder::setSelectable(int            now,
-			    CORBA::Boolean data_in_buffer)
+			    CORBA::Boolean data_in_buffer,
+			    CORBA::Boolean deprecated_hold_lock)
 {
   OMNIORB_ASSERT(pd_belong_to);
   omni_tracedmutex_lock l(pd_belong_to->pd_collection_lock);

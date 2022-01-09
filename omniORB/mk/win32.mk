@@ -273,7 +273,7 @@ DUMPBIN.EXE /SYMBOLS $$symreflib | \
 egrep '^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +\(\) +External +\| +\?[^ ]*|^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +External +\| +\?[^?][^ ]*'|\
 egrep -v 'deleting destructor[^(]+\(unsigned int\)' | \
 egrep -v 'anonymous namespace' | \
-egrep -v 'std@' | \
+egrep -v '@std@' | \
 cut -d'|' -f2 | \
 cut -d' ' -f2 | $(SORT) -u >> $$defname; \
 set +x;
@@ -659,21 +659,3 @@ OMNIORB_SSL_LIB = $(patsubst %,$(DLLSearchPattern),omnisslTP$(OMNIORB_SSL_MAJOR_
 
 lib_depend := $(patsubst %,$(DLLPattern),omnisslTP$(OMNIORB_SSL_MAJOR_VERSION)$(OMNIORB_SSL_MINOR_VERSION)$(OMNIORB_SSL_MICRO_VERSION))
 OMNIORB_SSL_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
-
-
-# omniORB HTTP transport
-OMNIORB_HTTP_LIB = $(patsubst %,$(DLLSearchPattern),omnihttpTP$(OMNIORB_MAJOR_VERSION)$(OMNIORB_MINOR_VERSION)$(OMNIORB_MICRO_VERSION))
-
-lib_depend := $(patsubst %,$(DLLPattern),omnihttpTP$(OMNIORB_MAJOR_VERSION)$(OMNIORB_MINOR_VERSION)$(OMNIORB_MICRO_VERSION))
-OMNIORB_HTTP_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
-OMNIORB_HTTP_LIB += $(OMNIORB_SSL_LIB)
-
-
-# omniORB HTTP crypto library -- enabled if OpenSSL is configured
-EnableHTTPCrypto = 1
-
-OMNIORB_HTTP_CRYPTO_LIB = $(patsubst %,$(DLLSearchPattern),omnihttpCrypto$(OMNIORB_MAJOR_VERSION)$(OMNIORB_MINOR_VERSION)$(OMNIORB_MICRO_VERSION))
-
-lib_depend := $(patsubst %,$(DLLPattern),omnihttpCrypto$(OMNIORB_MAJOR_VERSION)$(OMNIORB_MINOR_VERSION)$(OMNIORB_MICRO_VERSION))
-OMNIORB_HTTP_CRYPTO_LIB_DEPEND := $(GENERATE_LIB_DEPEND)
-OMNIORB_HTTP_CRYPTO_LIB += $(OMNIORB_HTTP_LIB)

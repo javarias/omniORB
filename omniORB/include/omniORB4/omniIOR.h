@@ -242,8 +242,8 @@ public:
   static void  unmarshal_TAG_SSL_SEC_TRANS(const IOP::TaggedComponent&,
 					   omniIOR&);
   static void  add_TAG_SSL_SEC_TRANS(const IIOP::Address&,
-				     _CORBA_UShort         supports,
-				     _CORBA_UShort         requires,
+				     _CORBA_UShort         target_supports,
+				     _CORBA_UShort         target_requires,
                                      _OMNI_NS(IORPublish)* eps);
 
   ////
@@ -260,12 +260,6 @@ public:
   static void  unmarshal_TAG_OMNIORB_UNIX_TRANS(const IOP::TaggedComponent&,
 						omniIOR&);
   static void  add_TAG_OMNIORB_UNIX_TRANS(const char*           filename,
-                                          _OMNI_NS(IORPublish)* eps);
-
-  ////
-  static void  unmarshal_TAG_OMNIORB_HTTP_TRANS(const IOP::TaggedComponent&,
-						omniIOR&);
-  static void  add_TAG_OMNIORB_HTTP_TRANS(const char*           url,
                                           _OMNI_NS(IORPublish)* eps);
 
   ////

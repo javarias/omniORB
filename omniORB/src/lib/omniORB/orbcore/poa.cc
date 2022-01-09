@@ -911,7 +911,7 @@ omniOrbPOA::activate_object(PortableServer::Servant p_servant)
     // Check the servant's list of activations, to ensure that it
     // isn't already active in this POA.
 
-    std::vector<omniObjTableEntry*>::const_iterator i, last;
+    omnivector<omniObjTableEntry*>::const_iterator i, last;
     i    = p_servant->_activations().begin();
     last = p_servant->_activations().end();
 
@@ -1022,7 +1022,7 @@ omniOrbPOA::activate_object_with_id(const PortableServer::ObjectId& oid,
       // Check the servant's list of activations, to ensure that it
       // isn't already active in this POA.
 
-      std::vector<omniObjTableEntry*>::const_iterator i, last;
+      omnivector<omniObjTableEntry*>::const_iterator i, last;
       i    = p_servant->_activations().begin();
       last = p_servant->_activations().end();
 
@@ -1257,7 +1257,7 @@ omniOrbPOA::servant_to_id(PortableServer::Servant p_servant)
     // Search the servants activations, to see if it is activated in
     // this poa.
 
-    std::vector<omniObjTableEntry*>::const_iterator i, last;
+    omnivector<omniObjTableEntry*>::const_iterator i, last;
     i    = p_servant->_activations().begin();
     last = p_servant->_activations().end();
 
@@ -1334,7 +1334,7 @@ omniOrbPOA::servant_to_reference(PortableServer::Servant p_servant)
     // Search the servants identities, to see if it is
     // activated in this poa.
 
-    std::vector<omniObjTableEntry*>::const_iterator i, last;
+    omnivector<omniObjTableEntry*>::const_iterator i, last;
     i    = p_servant->_activations().begin();
     last = p_servant->_activations().end();
 
@@ -2408,7 +2408,7 @@ omniOrbPOA::servant__this(PortableServer::Servant p_servant,
     // Search the servants activations, to see if it is activated in
     // this poa.
 
-    std::vector<omniObjTableEntry*>::const_iterator i, last;
+    omnivector<omniObjTableEntry*>::const_iterator i, last;
     i    = p_servant->_activations().begin();
     last = p_servant->_activations().end();
 
@@ -2585,8 +2585,10 @@ omniOrbPOA::getAdapter(const _CORBA_Octet* key, int keysize)
     if( !child || child->pd_dying ) {
       if( poa->pd_adapterActivator ) {
 	// We need to extract the name properly here.
-	int namelen = k - name;
-	char* thename = new char[namelen + 1];
+	int   namelen = k - name;
+	char* thename = CORBA::string_alloc(namelen);
+	CORBA::String_var name_var(thename);
+        
 	memcpy(thename, name, namelen);
 	thename[namelen] = '\0';
 
@@ -3248,7 +3250,7 @@ omniOrbPOA::dispatch_to_sa(omniCallHandle& handle,
   if( !pd_policy.multiple_id ) {
     // Check the servant is not already active in this poa.
 
-    std::vector<omniObjTableEntry*>::const_iterator i, last;
+    omnivector<omniObjTableEntry*>::const_iterator i, last;
     i    = servant->_activations().begin();
     last = servant->_activations().end();
 
@@ -3502,7 +3504,7 @@ omniOrbPOA::finish_adapteractivating_child(const char* name)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(poa_lock, 1);
 
-  std::vector<const char*>::iterator i, last;
+  omnivector<const char*>::iterator i, last;
   i = pd_adptrActvtnsInProgress.begin();
   last = pd_adptrActvtnsInProgress.end();
 
@@ -3521,7 +3523,7 @@ omniOrbPOA::is_adapteractivating_child(const char* name)
 {
   ASSERT_OMNI_TRACEDMUTEX_HELD(poa_lock, 1);
 
-  std::vector<const char*>::iterator i, last;
+  omnivector<const char*>::iterator i, last;
   i = pd_adptrActvtnsInProgress.begin();
   last = pd_adptrActvtnsInProgress.end();
 
@@ -3918,8 +3920,9 @@ public:
 			1,
 			"-ORBpoaHoldRequestTimeout < n >= 0 in msec >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -3946,8 +3949,9 @@ public:
 			1,
 			"-ORBpoaUniquePersistentSystemIds < 0 | 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

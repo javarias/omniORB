@@ -28,7 +28,6 @@
 
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
-#include <omniORB4/connectionInfo.h>
 #include <unix/unixConnection.h>
 #include <unix/unixAddress.h>
 #include <stdio.h>
@@ -83,7 +82,6 @@ unixAddress::Connect(const omni_time_t& deadline,
   struct sockaddr_un raddr;
   int                rc;
   SocketHandle_t     sock;
-  CORBA::String_var  addr_str;
 
   if ((sock = socket(AF_LOCAL,SOCK_STREAM,0)) == RC_INVALID_SOCKET) {
     return 0;
@@ -95,16 +93,10 @@ unixAddress::Connect(const omni_time_t& deadline,
 
 #if !defined(USE_NONBLOCKING_CONNECT)
 
-  if (ConnectionInfo::singleton) {
-    addr_str = unixConnection::unToString(pd_filename);
-    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
-  }
   if (::connect(sock, (struct sockaddr *)&raddr,
                 sizeof(raddr)) == RC_SOCKET_ERROR) {
 
     omniORB::logs(25, "Failed to connect to Unix socket.");
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
-
     CLOSESOCKET(sock);
     return 0;
   }
@@ -117,18 +109,12 @@ unixAddress::Connect(const omni_time_t& deadline,
     return 0;
   }
 
-  if (ConnectionInfo::singleton) {
-    addr_str = unixConnection::unToString(pd_filename);
-    ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
-  }
   if (::connect(sock,(struct sockaddr *)&raddr,
                 sizeof(raddr)) == RC_SOCKET_ERROR) {
 
     int err = ERRNO;
     if (err && err != RC_EINPROGRESS) {
       omniORB::logs(25, "Failed to connect to Unix socket.");
-      ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
-
       CLOSESOCKET(sock);
       return 0;
     }
@@ -140,7 +126,6 @@ unixAddress::Connect(const omni_time_t& deadline,
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
       omniORB::logs(25, "Timed out connecting to Unix socket.");
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return 0;
@@ -154,7 +139,6 @@ unixAddress::Connect(const omni_time_t& deadline,
       continue;
 #else
       omniORB::logs(25, "Timed out connecting to Unix socket.");
-      ConnectionInfo::set(ConnectionInfo::CONNECT_TIMED_OUT, 1, addr_str);
       CLOSESOCKET(sock);
       timed_out = 1;
       return 0;
@@ -167,7 +151,6 @@ unixAddress::Connect(const omni_time_t& deadline,
       else {
         omniORB::logs(25, "Failed to connect to Unix socket "
                       "(waiting for writable socket)");
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return 0;
       }
@@ -184,7 +167,6 @@ unixAddress::Connect(const omni_time_t& deadline,
       }
       else {
 	omniORB::logs(25, "Failed to connect to Unix socket (no peer name).");
-        ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
 	CLOSESOCKET(sock);
 	return 0;
       }
@@ -196,11 +178,9 @@ unixAddress::Connect(const omni_time_t& deadline,
 
   if (tcpSocket::setBlocking(sock) == RC_INVALID_SOCKET) {
     omniORB::logs(25, "Failed to set Unix socket to blocking mode");
-    ConnectionInfo::set(ConnectionInfo::CONNECT_FAILED, 1, addr_str);
     CLOSESOCKET(sock);
     return 0;
   }
-  ConnectionInfo::set(ConnectionInfo::CONNECTED, 0, addr_str);
   return new unixActiveConnection(sock, pd_filename);
 }
 

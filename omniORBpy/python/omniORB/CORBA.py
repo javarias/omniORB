@@ -418,7 +418,6 @@ class ORB(object):
 
     def destroy(self):
         self._obj.destroy()
-        omniORB.orb = None
 
 
     # TypeCode operations

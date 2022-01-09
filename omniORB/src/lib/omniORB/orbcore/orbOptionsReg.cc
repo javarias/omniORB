@@ -47,7 +47,8 @@ static void parseConfigReg(orbOptions& opt, HKEY rootkey);
 static void parseOldConfigReg(orbOptions& opt, HKEY rootkey);
 
 CORBA::Boolean
-orbOptions::importFromRegistry() {
+orbOptions::importFromRegistry() throw (orbOptions::Unknown,
+					orbOptions::BadParam) {
 
   char* rootregname;
   HKEY  rootkey;

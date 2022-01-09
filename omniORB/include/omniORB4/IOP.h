@@ -172,7 +172,6 @@ public:
   static _core_attr const ComponentId TAG_OMNIORB_UNIX_TRANS;
   static _core_attr const ComponentId TAG_OMNIORB_PERSISTENT_ID;
   static _core_attr const ComponentId TAG_OMNIORB_RESTRICTED_CONNECTION;
-  static _core_attr const ComponentId TAG_OMNIORB_HTTP_TRANS;
 
 
   static const char* ComponentIDtoName(ComponentId);

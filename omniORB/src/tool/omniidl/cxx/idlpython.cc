@@ -1473,15 +1473,13 @@ extern "C" {
     return Py_None;
   }
 
-#ifndef PYPY_VERSION
   static PyObject* IdlPyRunInteractiveLoop(PyObject* self, PyObject* args)
   {
     PyRun_InteractiveLoop(stdin, (char*)"<stdin>");
     Py_INCREF(Py_None);
     return Py_None;
   }
-#endif
-  
+
   static PyObject* IdlPyCaseSensitive(PyObject* self, PyObject* args)
   {
     if (!PyArg_ParseTuple(args, (char*)"")) return 0;
@@ -1520,9 +1518,7 @@ extern "C" {
     {(char*)"noForwardWarning",   IdlPyNoForwardWarning,   METH_VARARGS},
     {(char*)"keepComments",       IdlPyKeepComments,       METH_VARARGS},
     {(char*)"relativeScopedName", IdlPyRelativeScopedName, METH_VARARGS},
-#ifndef PYPY_VERSION
     {(char*)"runInteractiveLoop", IdlPyRunInteractiveLoop, METH_VARARGS},
-#endif
     {(char*)"caseSensitive",      IdlPyCaseSensitive,      METH_VARARGS},
     {(char*)"platformDefines",    IdlPyPlatformDefines,    METH_VARARGS},
     {(char*)"alwaysTempFile",     IdlPyAlwaysTempFile,     METH_VARARGS},

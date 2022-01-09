@@ -374,28 +374,6 @@ AC_DEFUN([OMNI_ENABLE_ZIOP],
 [AC_CHECK_LIB(z,compressBound,omni_cv_enable_ziop=yes,omni_cv_enable_ziop=no)
 AC_SUBST(ENABLE_ZIOP, $omni_cv_enable_ziop)])
 
-dnl Enable HTTP Crypto library
-AC_DEFUN([OMNI_ENABLE_HTTP_CRYPTO],
-[
-if test -n $open_ssl_root -a $ac_cv_cxx_have_std = "yes"; then
-    omni_cv_enable_http_crypto=yes
-else
-    omni_cv_enable_http_crypto=no
-fi
-AC_SUBST(ENABLE_HTTP_CRYPTO, $omni_cv_enable_http_crypto)])
-
-
-dnl Fix pypy pythondir
-AC_DEFUN([OMNI_FIX_PYTHONDIR],
-  [pyplat=`$PYTHON -c "import sys, platform; sys.stdout.write(platform.python_implementation())"`
-   if test "x$pyplat" = "xPyPy"
-   then
-     echo "Fix PyPy pythondir to $am_cv_python_pyexecdir"
-     am_cv_python_pythondir=$am_cv_python_pyexecdir
-     pythondir=$am_cv_python_pyexecdir
-   fi
-])
-
 
 dnl
 dnl Tests from http://www.gnu.org/software/ac-archive/

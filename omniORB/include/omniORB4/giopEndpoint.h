@@ -29,7 +29,7 @@
 #ifndef __GIOPENDPOINT_H__
 #define __GIOPENDPOINT_H__
 
-#include <vector>
+#include <omniORB4/omniutilities.h>
 
 OMNI_NAMESPACE_BEGIN(omni)
 
@@ -151,10 +151,10 @@ private:
   _CORBA_Boolean pd_dedicated_thread_in_upcall;
   // Initialised to 0. Read and write by giopServer exclusively.
 
-  _CORBA_ULong   pd_n_workers;
+  int            pd_n_workers;
   // Initialised to 0. Read and write by giopServer exclusively.
 
-  _CORBA_ULong   pd_max_workers;
+  int            pd_max_workers;
   // Initialised to 0. Read and write by giopServer and interceptors.
 
   _CORBA_Boolean pd_has_hit_n_workers_limit;
@@ -229,7 +229,7 @@ private:
 
 };
 
-typedef std::vector<giopAddress*>  giopAddressList;
+typedef omnivector<giopAddress*>  giopAddressList;
 
 
 class giopEndpoint {
@@ -319,7 +319,7 @@ private:
   _CORBA_Boolean pd_no_publish;
 };
 
-typedef std::vector<giopEndpoint*>  giopEndpointList;
+typedef omnivector<giopEndpoint*>  giopEndpointList;
 
 
 class giopActiveConnection {
@@ -393,7 +393,7 @@ public:
   virtual _CORBA_Boolean addToIOR(const char* param, IORPublish* eps) = 0;
   // Make this endpoint part of the IORs created by this ORB.
 
-  virtual const std::vector<const char*>* getInterfaceAddress() = 0;
+  virtual const omnivector<const char*>* getInterfaceAddress() = 0;
   // Get the addresses of all the interfaces that can be used to talk to
   // this host using this transport.
 
@@ -401,7 +401,7 @@ public:
   // Initialise the transport implementation. Called once the 1st time
   // ORB_init() is called.
 
-  static const std::vector<const char*>* getInterfaceAddress(const char* type);
+  static const omnivector<const char*>* getInterfaceAddress(const char* type);
   // Get the addresses of all the interfaces that belongs to the transport
   // type <type>. These addresses can be used to talk to this host.
   // e.g. type == "giop:tcp" causes the tcp transport implementation to

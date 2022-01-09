@@ -60,12 +60,6 @@
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* Define to 1 if you have the `gmtime' function. */
-#undef HAVE_GMTIME
-
-/* Define to 1 if you have the `gmtime_r' function. */
-#undef HAVE_GMTIME_R
-
 /* Define to 1 if you have the <ifaddrs.h> header file. */
 #undef HAVE_IFADDRS_H
 
@@ -89,9 +83,6 @@
 
 /* Define to 1 if you have the `localtime' function. */
 #undef HAVE_LOCALTIME
-
-/* Define to 1 if you have the `localtime_r' function. */
-#undef HAVE_LOCALTIME_R
 
 /* define if the compiler supports member constants */
 #undef HAVE_MEMBER_CONSTANTS
@@ -230,9 +221,6 @@
 
 /* define if you want to disable long double support */
 #undef OMNIORB_DISABLE_LONGDOUBLE
-
-/* define if you want to support the C++11 mapping */
-#undef OMNIORB_ENABLE_CXX11
 
 /* define if you want mutexes to be traced */
 #undef OMNIORB_ENABLE_LOCK_TRACES

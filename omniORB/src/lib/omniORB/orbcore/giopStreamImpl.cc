@@ -50,7 +50,7 @@ GIOP::Version orbParameters::maxGIOPVersion = { 1, 2 };
 //
 //  Valid values = 1.0 | 1.1 | 1.2
 
-size_t orbParameters::giopMaxMsgSize = 2048 * 1024;
+CORBA::ULong orbParameters::giopMaxMsgSize = 2048 * 1024;
 //   This value defines the ORB-wide limit on the size of GIOP message 
 //   (excluding the header). If this limit is exceeded, the ORB will
 //   refuse to send or receive the message and raise a MARSHAL exception.
@@ -249,8 +249,9 @@ public:
 			1,
 			"-ORBmaxGIOPVersion < 1.0 | 1.1 | 1.2 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     unsigned int ma, mi;
     if ( sscanf(value, "%u.%u", &ma, &mi) != 2 || ma > 255 || mi > 255) {
 
@@ -278,40 +279,23 @@ public:
 
   giopMaxMsgSizeHandler() : 
     orbOptions::Handler("giopMaxMsgSize",
-			"giopMaxMsgSize = n >= 8192 or n == 0",
+			"giopMaxMsgSize = n >= 8192",
 			1,
-			"-ORBgiopMaxMsgSize < n >= 8192 or n == 0 >") {}
+			"-ORBgiopMaxMsgSize < n >= 8192 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
-    size_t v;
-    
-    if (!orbOptions::getSizeT(value,v) || (v && v < 8192)) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
+    CORBA::ULong v;
+    if (!orbOptions::getULong(value,v) || v < 8192) {
       throw orbOptions::BadParam(key(),value,
-				 "Invalid value, expect n >= 8192 or n == 0");
+				 "Invalid value, expect n >= 8192");
     }
-    if (v) {
-      orbParameters::giopMaxMsgSize = v;
-    }
-    else {
-      // Set to maximum signed value, to aid indirection code that
-      // calculates negative values.
-
-#if (SIZEOF_LONG == SIZEOF_PTR)
-      orbParameters::giopMaxMsgSize = LONG_MAX;
-#elif (SIZEOF_INT == SIZEOF_PTR)
-      orbParameters::giopMaxMsgSize = INT_MAX;
-#elif defined (_WIN64)
-      orbParameters::giopMaxMsgSize = _I64_MAX;
-#else
-#error "No suitable integer type available to calculate maximum" \
-  " message size"
-#endif
-    }
+    orbParameters::giopMaxMsgSize = v;
   }
 
   void dump(orbOptions::sequenceString& result) {
-    orbOptions::addKVSizeT(key(),orbParameters::giopMaxMsgSize,
+    orbOptions::addKVULong(key(),orbParameters::giopMaxMsgSize,
 			   result);
   }
 
@@ -329,8 +313,9 @@ public:
 			1,
 			"-ORBclientCallTimeOutPeriod < n >= 0 in msecs >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -360,8 +345,9 @@ public:
 			1,
 			"-ORBsupportPerThreadTimeOut < 0 | 1 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -388,8 +374,9 @@ public:
 			1,
 			"-ORBclientConnectTimeOutPeriod < n >= 0 in msecs >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -421,8 +408,9 @@ public:
 			1,
 			"-ORBserverCallTimeOutPeriod < n >= 0 in msecs >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -452,8 +440,9 @@ public:
 			1,
 			"-ORBmaxInterleavedCallsPerConnection < n > 0 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || v < 1) {
       throw orbOptions::BadParam(key(),value,
@@ -484,8 +473,9 @@ public:
 			1,
 			"-ORBgiopTargetAddressMode < 0 | 1 | 2 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,targetaddress_msg);
@@ -535,8 +525,9 @@ public:
 			"-ORBstrictIIOP < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

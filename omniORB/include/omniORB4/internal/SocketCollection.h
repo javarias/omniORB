@@ -63,7 +63,8 @@ public:
   virtual ~SocketHolder();
 
   void setSelectable(int now,
-		     CORBA::Boolean data_in_buffer);
+		     CORBA::Boolean data_in_buffer,
+		     CORBA::Boolean deprecated_hold_lock=0);
   // Indicate that this socket should be watched for readability.
   //
   // If now is 1, immediately make the socket selectable (if the
@@ -76,6 +77,11 @@ public:
   //
   // If data_in_buffer is true, the socket is considered to already
   // have data available to read.
+  //
+  // deprecated_hold_lock used to be used to indicate that the caller
+  // already held the associated SocketCollection's lock during a
+  // notifyReadable callback. The lock is no longer held in callbacks,
+  // but the parameter is retained for backwards compatibility.
 
   void clearSelectable();
   // Indicate that this socket should not be watched any more.
@@ -132,7 +138,7 @@ private:
   SocketHolder**       	pd_prev;
 };
 
-typedef std::vector<SocketHolder*> SocketHolderVec;
+typedef omnivector<SocketHolder*> SocketHolderVec;
 
 
 //

@@ -164,7 +164,7 @@
 \vfill
 
 { \Huge
-The omniORBpy version 4.3\\[4mm]
+The omniORBpy version 4.2\\[4mm]
 User's Guide
 }
 
@@ -203,7 +203,7 @@ Duncan Grisby\\
 
 omniORBpy is an Object Request Broker (ORB) that implements the CORBA
 2.6 Python mapping~\cite{pythonmapping}. It works in conjunction with
-omniORB for C++, version 4.3.
+omniORB for C++, version 4.2.
 
 This user guide tells you how to use omniORBpy to develop CORBA
 applications using Python. It assumes a basic understanding of CORBA,
@@ -260,7 +260,7 @@ The following is a list of the most significant missing features.
 \item For some very dynamic uses of CORBA, you may need an Interface
   Repository. omniORB does not have its own one, but it can act as a
   client to an IfR. The omniifr project
-  (\weburl{https://github.com/omniorb/omniifr}) aims to create an IfR
+  (\url{https://github.com/omniorb/omniifr}) aims to create an IfR
   for omniORB.
 
 \item omniORB supports interceptors, but not the standard Portable
@@ -1771,17 +1771,17 @@ storage has a noticeable performance impact, so it is turned off by
 default.
 
 
-\confopt{resetTimeoutOnRetries}{0}
+\confopt{resetTimeOutOnRetries}{0}
 
 If \code{true}, the call timeout is reset when an exception handler
 causes a call to be retried. If \code{false}, the timeout is not
 reset, and therefore applies to the call as a whole, rather than to
 each individual call attempt.
 
-\confopt{throwTransientOnTimeout}{0}
+\confopt{throwTransientOnTimeOut}{0}
 
-omniORB 4.2 and later support the \code{CORBA::TIMEOUT} exception that
-is part of the CORBA Messaging specification. By default, that is the
+omniORB 4.2 supports the \code{CORBA::TIMEOUT} exception that is part
+of the CORBA Messaging specification. By default, that is the
 exception thrown when timeouts occur. Previous omniORB releases did
 not have the \code{CORBA::TIMEOUT} exception, and instead used
 \code{CORBA::TRANSIENT}. If this parameter is set \code{true}, omniORB
@@ -2277,8 +2277,8 @@ are propagated to application code by default.
 
 omniORB version 4.1 and earlier did not have the \code{CORBA.TIMEOUT}
 exception, and threw \code{CORBA.TRANSIENT} instead. If the
-\code{throwTransientOnTimeout} configuration parameter is set to
-\code{1}, omniORB 4.3 reverts to this behaviour, and calls the
+\code{throwTransientOnTimeOut} configuration parameter is set to
+\code{1}, omniORB 4.2 reverts to this behaviour, and calls the
 transient exception handler instead of the timeout exception handler.
 
 The timeout exception handler is used when a CORBA call times out. It
@@ -2843,7 +2843,7 @@ keep to the default mode of opening multiple connections.
 omniORB can associate a timeout with a call, meaning that if the call
 takes too long a \code{CORBA::TIMEOUT} exception\footnote{Or
   \code{CORBA::TRANSIENT} if the backwards-compatibility
-  \code{throwTransientOnTimeout} parameter is set to \code{1}.} is
+  \code{throwTransientOnTimeOut} parameter is set to \code{1}.} is
 thrown. Timeouts can be set for the whole process, for a specific
 thread, or for a specific object reference.
 
@@ -3158,7 +3158,7 @@ for more details about endpoint publishing.
 
 Sometimes it is useful to restrict a server to listen on one of a
 range of ports, rather than pinning it to one particular port or
-allowing the OS to choose an ephemeral port. omniORB 4.2 introduced
+allowing the OS to choose an ephemeral port. omniORB 4.2 introduces
 the ability to specify a range of ports using a hyphen. e.g.\ to
 listen on a port between 5000 and 5010 inclusive:
 
@@ -3545,146 +3545,6 @@ certificate file before the \verb|-----BEGIN CERTIFICATE-----| marker.
 
 If need be, create more certificates for servers and clients in the
 same way.
-
-
-\section{HTTP and HTTPS transport}
-
-omniORB includes an omniORB-specific HTTP and HTTPS transport. It
-works by encapsulating GIOP messages into HTTP messages, which can
-make it easier to transport through firewalls and proxies that
-understand HTTP but not GIOP. It supports the use of HTTP proxies and
-reverse proxies.
-
-To use the HTTP transport from Python you must import the
-\code{omniORB.httpTP} module before calling \op{CORBA.ORB\_init}.
-
-Normal client-server CORBA calls match the semantics of HTTP---the
-client sends a request and blocks waiting for the server to respond,
-meaning that in simple uses, the communication is pure, valid HTTP,
-and can therefore safely pass through proxies. However, there are a
-number of situations in which GIOP semantics do not match HTTP. In
-these cases, the communication works if an omniORB client is connected
-directly to an omniORB server, but can fail if a proxy or other system
-is interpreting the HTTP messages along the communication path:
-
-\begin{itemize}
-
-  \item If the \code{oneCallPerConnection} configuration parameter is
-    set to the non-default value of false, a multi-threaded client can
-    send multiple concurrent calls on a single connection, meaning
-    multiple HTTP requests are made without waiting for each to
-    receive a reply.
-
-  \item If bidirectional GIOP is enabled, the server can send a
-    message to the client that is not in response to a client request.
-
-  \item Web proxies can choose to open new connections at any time,
-    and therefore the client's idea of the lifetime of a connection
-    does not necessarily match what the server sees. This means that
-    codeset information, which is only transmitted on the first call on a
-    connection, may be missing from the point of view of the server.
-\end{itemize}
-
-To avoid these issues with proxies, it is safest to keep
-\code{oneCallPerConnection} set to true, avoid bidirectional GIOP, and
-make use of the \code{defaultCharCodeSet} and \code{defaultWCharCodeSet}
-parameters to choose suitable codesets.
-
-\subsection{Endpoint and transport rule specification}
-
-The HTTP transport uses endpoint URIs of the form
-\code{giop:http:}\textit{url}, where the \textit{url} is a full
-\code{http://} or \code{https://} URL. That means the URIs appear to
-duplicate the `http':
-
-\begin{quote}
-  \code{giop:http:http://server.example.com:8000/call}\\
-  \code{giop:http:https://secure.example.com:443/invoke}
-\end{quote}
-
-The path part of the URL can be set to any value. On the client side,
-the client makes an HTTP \code{POST} request to the URL, specifying
-the path; the server checks that the path matches what it expects. The
-ability to specify a path this way can be helpful when configuring
-path-based routing in load balancer configurations.
-
-If no port is specified on the server endpoint, the server uses an
-ephemeral port; it does not default to 80 or 443.
-
-The transport specification `\code{http}' is not in the default client
-or server transport rules (as described in
-section~\ref{sec:clientRule}). To enable the use of HTTP, the client
-and server transport rules could for example contain `\code{*
-  unix,tcp,ssl,http}'.
-
-
-\subsection{HTTP proxies}
-
-Clients can connect via a web proxy. The \code{httpProxy}
-configuration can be set to an http or https proxy URL. If the proxy
-requires basic authentication, the \code{httpProxyUsername} and
-\code{httpProxyPassword} parameters can be set.
-
-When connecting through a proxy, the behaviour depends on whether the
-client is connecting to an HTTP or HTTPS server. When connecting to
-HTTP, the request is sent directly to the proxy, and the proxy
-forwards it at an HTTP level. In this situation, it is essential that
-only pure HTTP-compliant messages are sent.
-
-When connecting to an HTTPS server, the client makes a \code{CONNECT}
-request to the proxy. If accepted by the proxy, that opens a
-transparent tunnel through to the server. In that situation, as long
-as nothing else intercepts and attempts to interpret the data, the
-omniORB client is in effect directly connected to the omniORB server,
-and there is more chance that transfers that are not strictly legal
-HTTP will succeed.
-
-\subsection{HTTPS keys and certificates}
-
-Support for HTTPS uses the same concepts as the SSL transport. For
-each configuration option with a name starting `\code{ssl}', there is
-an equivalent option starting `\code{https}'.
-
-\subsection{In-message encryption}
-
-In some environments, the use of HTTPS is not sufficient to guarantee
-end-to-end security between client and server. There are at least two
-situations in which that can arise:
-
-\begin{itemize}
-  \item Some transparent web proxies intercept HTTPS connections and
-    act as a decrypting man-in-the-middle. For that to work, the
-    client and server must accept the proxy's certificates of course,
-    but that may be the only way for the client to connect to the
-    server.
-
-  \item On the server side, it can be useful to have a load balancer
-    that performs HTTPS off-load in front of the server. In that case,
-    the client connects with HTTPS, but the server sees a plain HTTP
-    connection.
-\end{itemize}
-
-To ensure message security in those cases, the HTTP transport supports
-in-message encryption. Import \code{omniORB.httpCrypto} to enable the
-an encryption implementation that uses AES-256 for message encryption
-and RSA with pre-shared public keys for key transfer. To use it, on
-the server side, registering the public keys of two known clients:
-
-\begin{pylisting}
-from omniORB import httpCrypto
-httpCrypto.init("server-ident", "server_private.pem", True)
-httpCrypto.addClient("client-ident1", "client1_public.pem", True)
-httpCrypto.addClient("client-ident2", "client2_public.pem", True)
-\end{pylisting}
-
-\noindent and on the client:
-
-\begin{pylisting}
-from omniORB import httpCrypto
-httpCrypto.init("client-ident1", "client1_private.pem", True)
-httpCrypto.addServer("http://server.example.com:8000/call",
-                     "server_public.pem", True)
-\end{pylisting}
 
 
 \section{ZIOP}
@@ -4578,11 +4438,11 @@ trying to share plain values with values inside Anys.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{chap:ami}
 
-omniORB 4.2 and later support Asynchronous Method Invocation, AMI, as
-defined in the CORBA Messaging specification. It supports both the
-polling and callback models of asynchronous calls. Note that omniORB
-does not support the other parts of the Messaging specification such
-as Quality of Service, Routing and Persistent requests.
+omniORB 4.2 supports Asynchronous Method Invocation, AMI, as defined
+in the CORBA Messaging specification. It supports both the polling and
+callback models of asynchronous calls. Note that omniORB does not
+support the other parts of the Messaging specification such as Quality
+of Service, Routing and Persistent requests.
 
 While omniORB mainly targets the 2.6 version of the CORBA
 specification, the AMI support follows the CORBA Messaging

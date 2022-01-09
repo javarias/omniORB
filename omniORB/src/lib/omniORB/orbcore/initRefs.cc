@@ -282,10 +282,10 @@ struct resolvePseudoEntry {
   // Using default copy constructor
 };
 
-static std::vector<resolvePseudoEntry>*& thePseudoFnList()
+static omnivector<resolvePseudoEntry>*& thePseudoFnList()
 {
-  static std::vector<resolvePseudoEntry>* the_list = 0;
-  if (the_list == 0) the_list = new std::vector<resolvePseudoEntry>;
+  static omnivector<resolvePseudoEntry>* the_list = 0;
+  if (the_list == 0) the_list = new omnivector<resolvePseudoEntry>;
   return the_list;
 }
 
@@ -308,8 +308,8 @@ resolvePseudo(const char* id, unsigned int cycles)
   // since holding a reference there would prevent the objects from
   // being released properly when they have been destroyed.
 
-  std::vector<resolvePseudoEntry>::iterator i    = thePseudoFnList()->begin();
-  std::vector<resolvePseudoEntry>::iterator last = thePseudoFnList()->end();
+  omnivector<resolvePseudoEntry>::iterator i    = thePseudoFnList()->begin();
+  omnivector<resolvePseudoEntry>::iterator last = thePseudoFnList()->end();
   
   for (; i != last; i++) {
     if (!strcmp(id, (*i).id))
@@ -737,7 +737,9 @@ public:
 			"-ORBDefaultInitRef <Default URI> (standard option)") {}
 
 
-  void visit(const char* value,orbOptions::Source src) {
+  void visit(const char* value,orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     if (src == orbOptions::fromArgv || src == orbOptions::fromArray) {
       omniInitialReferences::setDefaultInitRefFromArgs(value);
     }
@@ -770,8 +772,9 @@ public:
 			"-ORBInitRef <ObjectID>=<ObjectURI> (standard option)") {}
 
 
-  void visit(const char* value, orbOptions::Source src) {
-
+  void visit(const char* value, orbOptions::Source src)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     unsigned int slen = strlen(value) + 1;
     CORBA::String_var id(CORBA::string_alloc(slen));
     CORBA::String_var uri(CORBA::string_alloc(slen));
@@ -823,8 +826,9 @@ public:
 			"-ORBsupportBootstrapAgent < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -852,8 +856,9 @@ public:
 			"-ORBbootstrapAgentPort < 1-65535 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v) || !(v >=1 && v <=65535) ) {
       throw orbOptions::BadParam(key(),value,
@@ -881,8 +886,9 @@ public:
 			"-ORBbootstrapAgentHostname <hostname>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     orbParameters::bootstrapAgentHostname = value;
   }
 
@@ -914,7 +920,7 @@ public:
   virtual
 #endif
   ~omni_initRefs_initialiser() {
-    std::vector<resolvePseudoEntry>*& the_list = thePseudoFnList();
+    omnivector<resolvePseudoEntry>*& the_list = thePseudoFnList();
     delete the_list;
     the_list = 0;
   }

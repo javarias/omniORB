@@ -3,7 +3,7 @@
 // sslAddress.h               Created on: 29 May 2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2013-2019 Apasphere Ltd
+//    Copyright (C) 2013 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -50,13 +50,8 @@ class sslAddress : public giopAddress {
 
  private:
   IIOP::Address      pd_address;
-  CORBA::String_var  pd_orig_host;
   CORBA::String_var  pd_address_string;
   sslContext*        pd_ctx;
-
-  sslAddress(const IIOP::Address& address,
-             const char*          orig_host,
-             sslContext*          ctx);
 
   sslAddress();
   sslAddress(const sslAddress&);

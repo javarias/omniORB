@@ -29,7 +29,6 @@
 #include <omniORB4/CORBA.h>
 #include <omniORB4/giopEndpoint.h>
 #include <omniORB4/omniURI.h>
-#include <omniORB4/connectionInfo.h>
 #include <orbParameters.h>
 #include <SocketCollection.h>
 #include <tcpSocket.h>
@@ -66,7 +65,6 @@ tcpConnection::Send(void* buf, size_t sz,
     if (deadline) {
       if (tcpSocket::setTimeout(deadline, t)) {
 	// Already timed out.
-        ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
       }
       else {
@@ -76,16 +74,14 @@ tcpConnection::Send(void* buf, size_t sz,
 
 	if (tx == 0) {
 	  // Timed out
-          ConnectionInfo::set(ConnectionInfo::SEND_TIMED_OUT, 1,
-                              pd_peeraddress);
 	  return 0;
 	}
 	else if (tx == RC_SOCKET_ERROR) {
 	  if (ERRNO == RC_EINTR) {
+	    SET_ERRNO(0);
 	    continue;
           }
 	  else {
-            ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
 	    return -1;
 	  }
 	}
@@ -99,18 +95,13 @@ tcpConnection::Send(void* buf, size_t sz,
     // we block here.
     if ((tx = ::send(pd_socket,(char*)buf,sz,0)) == RC_SOCKET_ERROR) {
       int err = ERRNO;
-      if (RC_TRY_AGAIN(err)) {
+      if (RC_TRY_AGAIN(err))
 	continue;
-      }
-      else {
-        ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
+      else
 	return -1;
-      }
     }
-    else if (tx == 0) {
-      ConnectionInfo::set(ConnectionInfo::SEND_FAILED, 1, pd_peeraddress);
+    else if (tx == 0)
       return -1;
-    }
 
     break;
 
@@ -137,7 +128,6 @@ tcpConnection::Recv(void* buf, size_t sz,
 
     if (tcpSocket::setAndCheckTimeout(deadline, t)) {
       // Already timed out
-      ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
       return 0;
     }
 
@@ -150,16 +140,15 @@ tcpConnection::Recv(void* buf, size_t sz,
 #if defined(USE_FAKE_INTERRUPTABLE_RECV)
 	continue;
 #else
-        ConnectionInfo::set(ConnectionInfo::RECV_TIMED_OUT, 1, pd_peeraddress);
 	return 0;
 #endif
       }
       else if (rx == RC_SOCKET_ERROR) {
 	if (ERRNO == RC_EINTR) {
+	  SET_ERRNO(0);
 	  continue;
         }
 	else {
-          ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
 	  return -1;
 	}
       }
@@ -172,18 +161,13 @@ tcpConnection::Recv(void* buf, size_t sz,
     // we block here.
     if ((rx = ::recv(pd_socket,(char*)buf,sz,0)) == RC_SOCKET_ERROR) {
       int err = ERRNO;
-      if (RC_TRY_AGAIN(err)) {
+      if (RC_TRY_AGAIN(err))
 	continue;
-      }
-      else {
-        ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
+      else
 	return -1;
-      }
     }
-    else if (rx == 0) {
-      ConnectionInfo::set(ConnectionInfo::RECV_FAILED, 1, pd_peeraddress);
+    else if (rx == 0)
       return -1;
-    }
 
     break;
 
@@ -247,7 +231,6 @@ tcpConnection::~tcpConnection() {
   clearSelectable();
   pd_belong_to->removeSocket(this);
   CLOSESOCKET(pd_socket);
-  ConnectionInfo::set(ConnectionInfo::CLOSED, 0, pd_peeraddress);
 }
 
 /////////////////////////////////////////////////////////////////////////

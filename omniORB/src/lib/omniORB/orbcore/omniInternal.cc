@@ -627,8 +627,8 @@ omniObjTableEntry::loseRef(omniObjRef* objref)
   if (objref) {
     CORBA::Boolean reference_found = 0;
 
-    std::vector<omniObjRef*>::iterator i    = pd_objRefs.begin();
-    std::vector<omniObjRef*>::iterator last = pd_objRefs.end();
+    omnivector<omniObjRef*>::iterator i    = pd_objRefs.begin();
+    omnivector<omniObjRef*>::iterator last = pd_objRefs.end();
 
     for (; i != last; i++) {
       if (*i == objref) {
@@ -930,8 +930,8 @@ omni::createLocalObjRef(const char* mostDerivedRepoId,
   {
     omniObjRef* objref;
 
-    std::vector<omniObjRef*>::iterator i    = entry->objRefs().begin();
-    std::vector<omniObjRef*>::iterator last = entry->objRefs().end();
+    omnivector<omniObjRef*>::iterator i    = entry->objRefs().begin();
+    omnivector<omniObjRef*>::iterator last = entry->objRefs().end();
 
     for (; i != last; i++) {
       objref = *i;
@@ -1141,8 +1141,9 @@ public:
 			1,
 			"-ORBtraceLevel < n >= 0 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1173,8 +1174,9 @@ public:
 			"-ORBtraceExceptions < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1202,8 +1204,9 @@ public:
 			"-ORBtraceInvocations < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1231,8 +1234,9 @@ public:
 			"-ORBtraceInvocationReturns < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1260,8 +1264,9 @@ public:
 			"-ORBtraceThreadId < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1289,8 +1294,9 @@ public:
 			"-ORBtraceTime < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1318,8 +1324,9 @@ public:
 			"-ORBtraceLocking < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1347,7 +1354,9 @@ public:
 			"-ORBtraceFile <filename>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniORB::setLogFilename(value);
   }
 
@@ -1369,8 +1378,9 @@ public:
 			1,
 			"-ORBobjectTableSize < n >= 0 >") {}
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::ULong v;
     if (!orbOptions::getULong(value,v)) {
       throw orbOptions::BadParam(key(),value,orbOptions::expect_ulong_msg);
@@ -1398,8 +1408,9 @@ public:
 			"-ORBabortOnInternalError < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1428,8 +1439,9 @@ public:
 			"-ORBabortOnNativeException < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1470,8 +1482,9 @@ public:
 			"-ORBthrowTransientOnTimeOut < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,
@@ -1586,15 +1599,15 @@ OMNI_NAMESPACE_END(omni)
 //            Nil object reference list                                    //
 /////////////////////////////////////////////////////////////////////////////
 
-static std::vector<CORBA::Object_ptr>*& nilObjectList() {
-  static std::vector<CORBA::Object_ptr>* the_list = 0;
-  if (!the_list) the_list = new std::vector<CORBA::Object_ptr>;
+static omnivector<CORBA::Object_ptr>*& nilObjectList() {
+  static omnivector<CORBA::Object_ptr>* the_list = 0;
+  if (!the_list) the_list = new omnivector<CORBA::Object_ptr>;
   return the_list;
 }
 
-static std::vector<omniTrackedObject*>*& trackedList() {
-  static std::vector<omniTrackedObject*>* the_list = 0;
-  if (!the_list) the_list = new std::vector<omniTrackedObject*>;
+static omnivector<omniTrackedObject*>*& trackedList() {
+  static omnivector<omniTrackedObject*>* the_list = 0;
+  if (!the_list) the_list = new omnivector<omniTrackedObject*>;
   return the_list;
 }
 
@@ -1637,7 +1650,7 @@ _omniFinalCleanup::~_omniFinalCleanup()
   }
   omniORB::logs(15, "Final clean-up");
   int nils = 0;
-  std::vector<CORBA::Object_ptr>::iterator i = nilObjectList()->begin();
+  omnivector<CORBA::Object_ptr>::iterator i = nilObjectList()->begin();
   for (; i != nilObjectList()->end(); i++, nils++)
     delete *i;
 
@@ -1645,7 +1658,7 @@ _omniFinalCleanup::~_omniFinalCleanup()
   nilObjectList() = 0;
 
   int tracked = 0;
-  std::vector<omniTrackedObject*>::iterator j = trackedList()->begin();
+  omnivector<omniTrackedObject*>::iterator j = trackedList()->begin();
   for (; j != trackedList()->end(); j++, tracked++)
     delete *j;
 

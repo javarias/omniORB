@@ -53,11 +53,11 @@
 
 OMNI_NAMESPACE_BEGIN(omni)
 
-static char                              initialised = 0;
-static int                               num_active_oas = 0;
-static omni_tracedmutex                  oa_lock("oa_lock");
-static std::vector<_OMNI_NS(orbServer)*> oa_servers;
-static orbServer::EndpointList           oa_endpoints;
+static char                             initialised = 0;
+static int                              num_active_oas = 0;
+static omni_tracedmutex                 oa_lock("oa_lock");
+static omnivector<_OMNI_NS(orbServer)*> oa_servers;
+static orbServer::EndpointList          oa_endpoints;
 
 omni_tracedmutex omniObjAdapter::sd_detachedObjectLock(
   "omniObjAdapter::sd_detachedObjectLock");
@@ -122,7 +122,7 @@ instantiate_endpoint(const char*              uri,
     l << "Instantiate endpoint '" << uri << "'"
       << (no_publish ? " (no publish)" : "") << "\n";
   }
-  std::vector<orbServer*>::iterator j,last;
+  omnivector<orbServer*>::iterator j,last;
   CORBA::Boolean ok = 0;
   j = oa_servers.begin();
   last = oa_servers.end();
@@ -221,7 +221,7 @@ publish_endpoints(const char* publish_spec,
 	pspecs.length(psi);
 
 	// Time to actually publish something
-	std::vector<orbServer*>::iterator j,last;
+	omnivector<orbServer*>::iterator j,last;
 	j = oa_servers.begin();
 	last = oa_servers.end();
 	for (; j != last; ++j) {
@@ -387,7 +387,7 @@ omniObjAdapter::shutdown()
 
   if ( !oa_servers.empty() ) {
 
-    std::vector<orbServer*>::iterator j,last;
+    omnivector<orbServer*>::iterator j,last;
     j = oa_servers.begin();
     last = oa_servers.end();
     for ( ; j != last; j++ ) {
@@ -417,7 +417,7 @@ omniObjAdapter::adapterActive()
 
     if ( !oa_servers.empty() ) {
 
-      std::vector<orbServer*>::iterator j,last;
+      omnivector<orbServer*>::iterator j,last;
       j = oa_servers.begin();
       last = oa_servers.end();
       for ( ; j != last; j++ ) {
@@ -444,7 +444,7 @@ omniObjAdapter::adapterInactive()
 
     if ( !oa_servers.empty() ) {
 
-      std::vector<orbServer*>::iterator j,last;
+      omnivector<orbServer*>::iterator j,last;
       j = oa_servers.begin();
       last = oa_servers.end();
       for ( ; j != last; j++ ) {
@@ -625,8 +625,9 @@ public:
 "                          * may not be supported on the platform.\n") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -667,8 +668,9 @@ public:
 			"-ORBendPointNoPublish <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 1;
@@ -703,7 +705,9 @@ public:
 			"-ORBendPointPublish <publish options>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::options.publish = value;
   }
 
@@ -726,8 +730,9 @@ public:
 			"-ORBendPointNoListen <endpoint uri>") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
-
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     omniObjAdapter::Options::EndpointURI* opt;
     opt = new omniObjAdapter::Options::EndpointURI();
     opt->no_publish = 0;
@@ -759,7 +764,9 @@ public:
 			"-ORBendPointPublishAllIFs < 0 | 1 >") {}
 
 
-  void visit(const char* value,orbOptions::Source) {
+  void visit(const char* value,orbOptions::Source)
+    OMNI_THROW_SPEC (orbOptions::BadParam)
+  {
     CORBA::Boolean v;
     if (!orbOptions::getBoolean(value,v)) {
       throw orbOptions::BadParam(key(),value,

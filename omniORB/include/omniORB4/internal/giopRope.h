@@ -220,22 +220,21 @@ public:
   friend class omni_giopbidir_initialiser;
 
  protected:
-  int                       pd_refcount;
-  giopAddressList           pd_addresses;     // Addresses of the remote server
-  giopAddressList           pd_dead_addresses;// Addresses to delete when safe
-  size_t                    pd_ior_addr_size; // Number of addresses in IOR
-  std::vector<CORBA::ULong> pd_addresses_order;
-  size_t                    pd_address_in_use;
-  CORBA::ULong              pd_maxStrands;
-  CORBA::Boolean            pd_oneCallPerConnection;
-  int                       pd_nwaiting;
-  omni_tracedcondition      pd_cond;
-  CORBA::ULong              pd_flags;      // Selected flags in use
-  CORBA::ULong              pd_ior_flags;  // Flags requested in IOR
-  CORBA::Boolean            pd_offerBiDir; // State of orbParameters::
-                                           // offerBiDir... at time of creation.
-  CORBA::Boolean            pd_addrs_filtered;
-  CORBA::Boolean            pd_filtering;
+  int                      pd_refcount;
+  giopAddressList          pd_addresses;     // Addresses of the remote server
+  size_t                   pd_ior_addr_size; // Number of addresses in IOR
+  omnivector<CORBA::ULong> pd_addresses_order;
+  size_t                   pd_address_in_use;
+  CORBA::ULong             pd_maxStrands;
+  CORBA::Boolean           pd_oneCallPerConnection;
+  int                      pd_nwaiting;
+  omni_tracedcondition     pd_cond;
+  CORBA::ULong             pd_flags;      // Selected flags in use
+  CORBA::ULong             pd_ior_flags;  // Flags requested in IOR
+  CORBA::Boolean           pd_offerBiDir; // State of orbParameters::
+                                          // offerBiDir... at time of creation.
+  CORBA::Boolean           pd_addrs_filtered;
+  CORBA::Boolean           pd_filtering;
 
   static _core_attr RopeLink ropes;
   // All ropes created by selectRope are linked together by this list.
@@ -261,13 +260,6 @@ public:
   //
   // Caller holds omniTransportLock.
 
-  void deleteDeadAddresses(giopStrand* strand);
-  // Delete any dead giopAddress objects in pd_dead_addresses that are
-  // not in use by any active strands. If non-zero, strand is a
-  // pointer to a strand that is not considered active.
-  //
-  // Caller holds omniTransportLock.
-  
  private:
   giopRope();
   giopRope(const giopRope&);
