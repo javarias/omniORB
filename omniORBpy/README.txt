@@ -1,7 +1,7 @@
 omniORBpy 4.3
 =============
 
-This is omniORBpy 4.3.0 beta 1.
+This is omniORBpy 4.3.0.
 
 omniORBpy is a robust high-performance CORBA ORB for Python.
 
