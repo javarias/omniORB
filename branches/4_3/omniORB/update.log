@@ -1,3 +1,20 @@
+Sun  9 Jan 21:42:12 GMT 2022
+============================
+
+- Bump suggested Python version to 3.10 in platform makefiles.
+
+mk/platforms/x86_win32_vs_10.mk
+mk/platforms/x86_win32_vs_11.mk
+mk/platforms/x86_win32_vs_12.mk
+mk/platforms/x86_win32_vs_14.mk
+mk/platforms/x86_win32_vs_15.mk
+mk/platforms/x86_win32_vs_16.mk
+
+- Fix VC++ build error.
+
+src/tool/omniidl/cxx/dir.mk
+
+
 Sun  9 Jan 15:08:22 GMT 2022
 ============================
 
