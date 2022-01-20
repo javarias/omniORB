@@ -730,7 +730,7 @@ tcpSocket::Connect(const char*        host,
 
   CORBA::String_var addr_str;
   if (ConnectionInfo::singleton) {
-    addr_str = tcpSocket::addrToURI(ai->addr(), transport_type);
+    addr_str = omniURI::buildURI(transport_type, host, port);
     ConnectionInfo::set(ConnectionInfo::TRY_CONNECT, 0, addr_str);
   }
 

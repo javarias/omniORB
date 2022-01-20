@@ -1,3 +1,12 @@
+Thu 20 Jan 14:08:56 GMT 2022
+============================
+
+- Fix Mac CFNetwork build.
+
+mk/beforeauto.mk.in
+src/lib/omniORB/orbcore/tcpSocket.cc
+
+
 Sun  9 Jan 21:59:37 GMT 2022
 ============================
 
