@@ -444,13 +444,22 @@ giopRope::releaseClient(IOP_C* iop_c)
       // re-insert the GIOP_C and start the strand's idle counter so
       // it can be scavenged.
       
-      if (omniORB::trace(25)) {
-        omniORB::logger log;
-        log << "Strand " << (void*)s
-            << " in bi-directional client rope is dying.\n";
+      if (giopStreamList::is_empty(s->clients)) {
+        if (omniORB::trace(25)) {
+          omniORB::logger log;
+          log << "Strand " << (void*)s
+              << " in bi-directional client rope is dying.\n";
+        }
+        giop_c->giopStreamList::insert(s->clients);
+        s->startIdleCounter();
       }
-      giop_c->giopStreamList::insert(s->clients);
-      s->startIdleCounter();
+      else {
+        if (omniORB::trace(25)) {
+          omniORB::logger log;
+          log << "Strand " << (void*)s << " in bi-directional client rope "
+              << "is dying, but has other clients.\n";
+        }
+      }
     }
     else {
       remove = 1;
