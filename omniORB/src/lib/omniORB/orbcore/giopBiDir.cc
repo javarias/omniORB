@@ -407,7 +407,7 @@ BiDirServerRope::decrRefCount() {
     for (; p != &pd_strands; p = p->next) {
       giopStrand* g = (giopStrand*)p;
       if (g->state() != giopStrand::DYING) {
-	if (omniORB::trace(30)) {
+	if (omniORB::trace(25)) {
 	  omniORB::logger l;
 	  l << "Bi-directional rope is no longer referenced; strand "
 	    << (void*)g << " is a candidate for scavenging.\n";

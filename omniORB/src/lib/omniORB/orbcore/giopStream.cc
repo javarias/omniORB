@@ -730,10 +730,10 @@ giopStream::errorOnReceive(int rc, const char* filename, CORBA::ULong lineno,
   pd_strand->state(giopStrand::DYING);
   if (buf) giopStream_Buffer::deleteBuffer(buf);
 
-  if (pd_strand->state() == giopStrand::DYING &&
-      pd_strand->isBiDir() && pd_strand->isClient()) {
+  if (pd_strand->isBiDir() && pd_strand->isClient() &&
+      giopStreamList::is_empty(pd_strand->clients)) {
 
-    if (omniORB::trace(30)) {
+    if (omniORB::trace(25)) {
       omniORB::logger l;
       l << "Error on client receiving from bi-directional connection on strand "
 	<< (void*)pd_strand << ". Will scavenge it.\n";
@@ -1181,18 +1181,15 @@ giopStream::errorOnSend(int rc, const char* filename, CORBA::ULong lineno,
   if (rc == 0) {
     // Timeout on send.
     // We do not use the return code from the function.
-    pd_strand->state(giopStrand::DYING);
     retry = 0;
     minor = TRANSIENT_CallTimedout;
   }
-  else {
-    pd_strand->state(giopStrand::DYING);
-  }
+  pd_strand->state(giopStrand::DYING);
 
-  if (pd_strand->state() == giopStrand::DYING &&
-      pd_strand->isBiDir() && pd_strand->isClient()) {
+  if (pd_strand->isBiDir() && pd_strand->isClient() &&
+      giopStreamList::is_empty(pd_strand->clients)) {
 
-    if (omniORB::trace(30)) {
+    if (omniORB::trace(25)) {
       omniORB::logger l;
       l << "Error on client sending to bi-directional connection on strand "
 	<< (void*)pd_strand << ". Will scavenge it.\n";
