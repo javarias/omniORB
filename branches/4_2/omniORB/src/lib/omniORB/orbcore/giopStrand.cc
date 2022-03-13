@@ -529,6 +529,14 @@ giopStrand::releaseServer(IOP_S* iop_s)
       }
     }
   }
+  else if (isBiDir() && pd_state == DYING) {
+    if (omniORB::trace(25)) {
+      omniORB::logger log;
+      log << "Bi-directional strand " << (void*)this
+          << " is dying after handling a callback.\n";
+    }
+    startIdleCounter();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -607,7 +615,7 @@ Scavenger::removeIdle(StrandList& src,StrandList& dest,
 
     if ( s->idlebeats >= 0 ) {
 
-      if (omniORB::trace(30)) {
+      if (omniORB::trace(29)) {
 	omniORB::logger log;
 	log << "Scavenger reduce idle count for strand "
 	    << (void*)s << " to " << (s->idlebeats - 1) << "\n";
