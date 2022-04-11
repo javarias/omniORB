@@ -806,9 +806,11 @@ public:
   AddressSeq     tls_addrs;
   CORBA::UShort  tls_supports;
   CORBA::UShort  tls_requires;
+  CORBA::UShort  ssl_port;
   CORBA::Boolean csi_enabled;
 
-  inline IORPublish() : tls_supports(0), tls_requires(0), csi_enabled(0)
+  inline IORPublish()
+    : tls_supports(0), tls_requires(0), ssl_port(0), csi_enabled(0)
   {
     address.port = 0;
   }
@@ -917,15 +919,29 @@ omniIOR::add_TAG_SSL_SEC_TRANS(const IIOP::Address& address,
   }
 
   if (strlen(eps->address.host) == 0) {
+    // No IIOP host address, so set it to this SSL host (with port 0).
     eps->address.host = address.host;
   }
   else if (strcmp(eps->address.host, address.host) != 0) {
     // The address does not match the IIOP address. Cannot add as an
     // SSL address. Enable the minimal CSI support.
     eps->csi_enabled = 1;
+
+    // If there is an existing SSL endpoint with the required port
+    // (but a different host), we add an alternate IIOP address for
+    // this host. omniORB clients do not use this, but other ORBs
+    // (e.g. JacORB) do.
+    if (eps->ssl_port && eps->ssl_port == address.port) {
+      IIOP::Address alternate;
+      alternate.host = address.host;
+      alternate.port = 0;
+      add_TAG_ALTERNATE_IIOP_ADDRESS(alternate, eps);
+    }
+
     return;
   }
-
+  eps->ssl_port = address.port;
+  
   cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
   target_supports >>= s;
   target_requires >>= s;
