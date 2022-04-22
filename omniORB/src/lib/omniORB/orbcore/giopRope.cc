@@ -903,7 +903,9 @@ giopRope::filterAndSortAddressList()
   }
 
   // For each address, find the rule that is applicable. Record the
-  // rules priority in the priority list.
+  // priority in the priority list. The priority is based on transport
+  // rule number, followed by transport's position in the rule,
+  // followed by original address position in the IOR.
   omnivector<CORBA::ULong> priority_list;
 
   CORBA::ULong index;
@@ -919,10 +921,10 @@ giopRope::filterAndSortAddressList()
     }
 
     CORBA::StringSeq actions;
-    CORBA::ULong     matchedRule;
+    CORBA::ULong     matched_rule;
 
     if (transportRules::clientRules().match(ga->address(),
-                                            actions, matchedRule)) {
+                                            actions, matched_rule)) {
 
       const char* transport = strchr(ga->type(),':');
       OMNIORB_ASSERT(transport);
@@ -936,7 +938,7 @@ giopRope::filterAndSortAddressList()
       for (i = 0; i < actions.length(); i++) {
 	size_t len = strlen(actions[i]);
 	if (strncmp(actions[i],transport,len) == 0) {
-	  priority = (matchedRule << 16) + i;
+	  priority = (matched_rule << 20) + (i << 12) + index;
 	  matched  = 1;
 	}
 	else if (strcmp(actions[i],"none") == 0) {
