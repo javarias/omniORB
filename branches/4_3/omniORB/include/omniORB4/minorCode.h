@@ -629,9 +629,17 @@ enum TIMEOUT_minor {
 //
 // Exception access / lookup
 
-inline CORBA::Boolean is_COMM_FAILURE_minor(CORBA::ULong w) {
-  return (w >= COMM_FAILURE_MarshalArguments &&
-	  w <= COMM_FAILURE_WaitingForReply);
+inline CORBA::Boolean is_COMM_FAILURE_minor(CORBA::ULong m) {
+  return (m >= COMM_FAILURE_MarshalArguments &&
+	  m <= COMM_FAILURE_WaitingForReply);
+}
+
+inline CORBA::Boolean is_OMG_minor(CORBA::ULong m) {
+  return (m & 0xffff0000) == 0x4f4d0000;
+}
+
+inline CORBA::Boolean is_omniORB_minor(CORBA::ULong m) {
+  return (m & 0xffff0000) == 0x41540000;
 }
 
 

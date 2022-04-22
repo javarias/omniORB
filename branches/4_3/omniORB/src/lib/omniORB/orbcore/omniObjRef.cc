@@ -750,7 +750,9 @@ omniObjRef::_invoke(omniCallDescriptor& call_desc, CORBA::Boolean do_assert)
       retry_after_timeout = 1;
     }
     catch (CORBA::OBJECT_NOT_EXIST& ex) {
-      if (fwd) {
+      if (fwd && (is_OMG_minor(ex.minor())     ||
+                  is_omniORB_minor(ex.minor()) ||
+                  ex.minor() == 0)) {
 	RECOVER_FORWARD;
       }
       else if (!_omni_callSystemExceptionHandler(this, retries++, ex,
