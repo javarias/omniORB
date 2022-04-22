@@ -1,3 +1,27 @@
+Fri 22 Apr 21:02:55 BST 2022
+============================
+
+- Only reset location forwarded reference on OBJECT_NOT_EXIST with a
+  standard minor code.
+
+include/omniORB4/minorCode.h
+src/lib/omniORB/orbcore/omniObjRef.cc
+
+- Allow endpoints in endpoint override policy to be updated.
+
+include/omniORB4/omniPolicy.h
+src/lib/omniORB/orbcore/ior.cc
+src/lib/omniORB/orbcore/omniPolicy.cc
+
+- Retain address order for equal-priority endpoints.
+
+src/lib/omniORB/orbcore/giopRope.cc
+
+- Handle objects activated during adapter activation.
+
+src/lib/omniORB/orbcore/poa.cc
+
+
 Mon 11 Apr 18:41:08 BST 2022
 ============================
 

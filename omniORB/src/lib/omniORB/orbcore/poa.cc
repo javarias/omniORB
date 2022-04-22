@@ -1748,12 +1748,61 @@ omniOrbPOA::dispatch(omniCallHandle& handle,
   switch (pd_policy.req_processing) {
   case RPP_ACTIVE_OBJ_MAP:
     {
-      omni_tracedmutex_lock sync(*omni::internalLock);
-      switch (pd_rq_state) {
+      omni::internalLock->lock();
+
+      // To have reached here, the object did not exist when we first
+      // looked for it. It may have been activated by now. If we are
+      // HOLDING, wait in case the object is activated while held...
+      
+      while (pd_rq_state == (int) PortableServer::POAManager::HOLDING) {
+        if (omniORB::trace(15)) {
+          omniORB::logger l;
+          l << "POA(" << (char*)pd_name << ") in HOLDING state; waiting...\n";
+        }
+        if (orbParameters::poaHoldRequestTimeout) {
+          unsigned long sec, nsec;
+          omni_thread::get_time(
+            &sec, &nsec,
+            orbParameters::poaHoldRequestTimeout/1000,
+            (orbParameters::poaHoldRequestTimeout%1000)*1000000);
+
+          if (!pd_signal->timedwait(sec, nsec)) {
+            omni::internalLock->unlock();
+            if (orbParameters::throwTransientOnTimeOut) {
+              OMNIORB_THROW(TRANSIENT,
+                            TRANSIENT_CallTimedout,
+                            CORBA::COMPLETED_NO);
+            }
+            else {
+              OMNIORB_THROW(TIMEOUT,
+                            TIMEOUT_CallTimedOutOnServer,
+                            CORBA::COMPLETED_NO);
+            }
+          }
+        }
+        else {
+          pd_signal->wait();
+        }
+      }
+
+      // Is there now an active object?
+      CORBA::ULong       hash = omni::hash(key, keysize);
+      omniLocalIdentity* id   = omniObjTable::locateActive(key, keysize,
+                                                           hash, 1);
+      if (id) {
+        id->dispatch(handle);
+
+        // omni::internalLock has been released.
+        return;
+      }
+
+      int rq_state = pd_rq_state;
+
+      omni::internalLock->unlock();
+
+      switch (rq_state) {
       case (int) PortableServer::POAManager::HOLDING:
-	// *** We should block here until we leave the HOLDING state,
-	// then check if the object now exists. For now we fall
-	// through as if ACTIVE...
+        OMNIORB_ASSERT(0);
 	  
       case (int) PortableServer::POAManager::ACTIVE:
 	OMNIORB_THROW(OBJECT_NOT_EXIST,
