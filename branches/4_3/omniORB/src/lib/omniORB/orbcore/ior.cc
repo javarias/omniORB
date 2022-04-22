@@ -826,10 +826,41 @@ _CORBA_Unbounded_Sequence_Octet orbParameters::persistentId;
 OMNI_NAMESPACE_END(omni)
 
 
+void
+omniPolicy::EndPointPublishPolicy::update(const EndPointPublishPolicyValue& v)
+{
+  for (CORBA::ULong idx=0; idx != v.length(); ++idx) {
+    if (!giopEndpoint::strIsValidEndpoint(v[idx])) {
+      
+      if (omniORB::trace(1)) {
+        omniORB::logger log;
+        log << "Invalid endPoint '" << v[idx]
+            << "' in EndPointPublishPolicy\n";
+      }
+      throw CORBA::PolicyError(CORBA::BAD_POLICY_VALUE);
+    }
+  }
+
+  omni_tracedmutex_lock l(*omni::internalLock);
+
+  if (pd_eps)
+    delete pd_eps;
+
+  pd_eps   = 0;
+  pd_value = v;
+}
+
 IORPublish*
 omniPolicy::EndPointPublishPolicy::getEPs()
 {
+  ASSERT_OMNI_TRACEDMUTEX_HELD(*omni::internalLock, 1);
+
   if (!pd_eps) {
+    if (pd_value.length() == 0) {
+      omniORB::logs(20, "Override of published endpoints disabled");
+      return 0;
+    }
+
     omniORB::logs(20, "Override published endpoints:");
 
     pd_eps = new IORPublish;
@@ -1128,7 +1159,10 @@ insertSupportedComponents(omniInterceptors::encodeIOR_T::info_T& info)
           OMNIORB_THROW(INV_POLICY, INV_POLICY_InvalidPolicyType,
                         CORBA::COMPLETED_NO);
 
-        eps = epp->getEPs();
+        IORPublish* override_eps = epp->getEPs();
+        if (override_eps)
+          eps = override_eps;
+
         break;
       }
     }

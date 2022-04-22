@@ -156,7 +156,7 @@ omniPolicy::create_local_shortcut_policy(LocalShortcutPolicyValue v)
 //
 // EndPoint publishing
 
-// EndPointPublishPolicy::getEPs and EndPointPublishPolicy destructor
+// EndPointPublishPolicy::getEPs, update, and EndPointPublishPolicy destructor
 // are implemented in ior.cc, alongside the declaration of IORPublish.
 
 omniPolicy::EndPointPublishPolicy::

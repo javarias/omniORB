@@ -85,6 +85,9 @@ public:
   virtual CORBA::Policy_ptr copy();
   virtual const EndPointPublishPolicyValue& value() { return pd_value; }
 
+  void update(const EndPointPublishPolicyValue& v);
+  // Update the endpoints for existing POAs with this policy object.
+  
   virtual void* _ptrToObjRef(const char* repoId);
 
   _OMNI_NS(IORPublish)* getEPs();
