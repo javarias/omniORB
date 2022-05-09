@@ -133,8 +133,8 @@ getContextsAndCallInterceptors(PyObject*                fnlist,
   omniPy::PyRefHolder argtuple(PyTuple_New(pass_peer_info ? 3 : 2));
 
   PyObject* sctuple = PyTuple_New(sclen);
-  PyTuple_SET_ITEM(argtuple, 0, String_FromString(opname));
-  PyTuple_SET_ITEM(argtuple, 1, sctuple);
+  PyTuple_SET_ITEM(argtuple.obj(), 0, String_FromString(opname));
+  PyTuple_SET_ITEM(argtuple.obj(), 1, sctuple);
 
   if (pass_peer_info) {
     PyObject* peer_info = PyDict_New();
@@ -159,7 +159,7 @@ getContextsAndCallInterceptors(PyObject*                fnlist,
     PyDict_SetItemString(peer_info, "identity", value);
     Py_DECREF(value);
 
-    PyTuple_SET_ITEM(argtuple, 2, peer_info);
+    PyTuple_SET_ITEM(argtuple.obj(), 2, peer_info);
   }
 
   for (i=0; i < sclen; i++) {
@@ -365,9 +365,9 @@ assignThreadFn(infoT& info, PyObject* fns)
   }
 
   // Reverse-iterate over functions
-  for (i = PyList_GET_SIZE(post_list) - 1; i >= 0; --i) {
+  for (i = PyList_GET_SIZE(post_list.obj()) - 1; i >= 0; --i) {
 
-    PyObject* gen    = PyList_GET_ITEM(post_list, i);
+    PyObject* gen    = PyList_GET_ITEM(post_list.obj(), i);
     PyObject* result = PyIter_Next(gen);
 
     if (result) {

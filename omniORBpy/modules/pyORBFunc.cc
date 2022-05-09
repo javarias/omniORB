@@ -341,7 +341,7 @@ omniPy::createPyORBObject(CORBA::ORB_ptr orb)
   self->base.obj = CORBA::Object::_duplicate(orb);
 
   omniPy::PyRefHolder args(PyTuple_New(1));
-  PyTuple_SET_ITEM(args, 0, (PyObject*)self);
+  PyTuple_SET_ITEM(args.obj(), 0, (PyObject*)self);
 
   return PyObject_CallObject(omniPy::pyCORBAORBClass, args);
 }

@@ -311,7 +311,7 @@ omniPy::getLocalObjectForPyObject(PyObject* pyobj)
 {
   PyRefHolder pyrepoId(PyObject_GetAttrString(pyobj,(char*)"_NP_RepositoryId"));
 
-  if (!(pyrepoId.valid() && String_Check(pyrepoId)))
+  if (!(pyrepoId.valid() && String_Check(pyrepoId.obj())))
     return 0;
 
   const char* repoId = String_AS_STRING(pyrepoId.obj());
