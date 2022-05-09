@@ -1207,8 +1207,8 @@ public:
 
     inline void init()
     {
-      in_l_  = PyTuple_GET_SIZE(in_d_);
-      out_l_ = is_oneway() ? -1 : PyTuple_GET_SIZE(out_d_);
+      in_l_  = PyTuple_GET_SIZE(in_d_.obj());
+      out_l_ = is_oneway() ? -1 : PyTuple_GET_SIZE(out_d_.obj());
     }
 
     PyObject* makePoller();

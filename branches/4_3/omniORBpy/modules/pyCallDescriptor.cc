@@ -661,8 +661,8 @@ omniPy::Py_omniCallDescriptor::initialiseCall(cdrStream&)
 
   for (int i=0; i < in_l_; i++) {
     try {
-      omniPy::validateType(PyTuple_GET_ITEM(in_d_,i),
-                           PyTuple_GET_ITEM(args_,i),
+      omniPy::validateType(PyTuple_GET_ITEM(in_d_.obj(),i),
+                           PyTuple_GET_ITEM(args_.obj(),i),
                            CORBA::COMPLETED_NO);
     }
     catch (Py_BAD_PARAM& bp) {
@@ -692,10 +692,11 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
 
     for (i=0; i < in_l_; i++)
       omniPy::marshalPyObject(stream,
-                              PyTuple_GET_ITEM(in_d_,i),
-                              PyTuple_GET_ITEM(args_,i));
+                              PyTuple_GET_ITEM(in_d_.obj(),i),
+                              PyTuple_GET_ITEM(args_.obj(),i));
     if (ctxt_d_.valid())
-      omniPy::marshalContext(stream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
+      omniPy::marshalContext(stream, ctxt_d_,
+                             PyTuple_GET_ITEM(args_.obj(), i));
   }
   else {
     cdLockHolder _l(this);
@@ -706,10 +707,11 @@ omniPy::Py_omniCallDescriptor::marshalArguments(cdrStream& stream)
     try {
       for (i=0; i < in_l_; i++)
         omniPy::marshalPyObject(pystream,
-                                PyTuple_GET_ITEM(in_d_,i),
-                                PyTuple_GET_ITEM(args_,i));
+                                PyTuple_GET_ITEM(in_d_.obj(),i),
+                                PyTuple_GET_ITEM(args_.obj(),i));
       if (ctxt_d_.valid())
-        omniPy::marshalContext(pystream, ctxt_d_, PyTuple_GET_ITEM(args_, i));
+        omniPy::marshalContext(pystream, ctxt_d_,
+                               PyTuple_GET_ITEM(args_.obj(), i));
     }
     catch (...) {
       in_marshal_ = 0;
@@ -736,7 +738,7 @@ omniPy::Py_omniCallDescriptor::unmarshalReturnedValues(cdrStream& stream)
 
     if (out_l_ == 1)
       result_ = omniPy::unmarshalPyObject(pystream,
-                                          PyTuple_GET_ITEM(out_d_, 0));
+                                          PyTuple_GET_ITEM(out_d_.obj(), 0));
     else {
       result_ = PyTuple_New(out_l_);
       if (!result_.valid())
@@ -744,9 +746,9 @@ omniPy::Py_omniCallDescriptor::unmarshalReturnedValues(cdrStream& stream)
                       (CORBA::CompletionStatus)stream.completion());
 
       for (int i=0; i < out_l_; i++) {
-        PyTuple_SET_ITEM(result_, i,
+        PyTuple_SET_ITEM(result_.obj(), i,
                          omniPy::unmarshalPyObject(pystream,
-                                                   PyTuple_GET_ITEM(out_d_,
+                                                   PyTuple_GET_ITEM(out_d_.obj(),
                                                                     i)));
       }
     }
@@ -832,12 +834,12 @@ omniPy::Py_omniCallDescriptor::completeCallback()
 
     if (!exceptionOccurred()) {
       method = PyObject_GetAttrString(callback_, (char*)op());
-      if (PyTuple_Check(result_)) {
+      if (PyTuple_Check(result_.obj())) {
         args = result_.dup();
       }
       else {
         args = PyTuple_New(1);
-        PyTuple_SET_ITEM(args, 0, result_.dup());
+        PyTuple_SET_ITEM(args.obj(), 0, result_.dup());
       }
     }
     else {
@@ -852,7 +854,7 @@ omniPy::Py_omniCallDescriptor::completeCallback()
         PyObject* eh = PyObject_CallFunctionObjArgs(ehc, (PyObject*)poller, 0);
         if (eh) {
           args = PyTuple_New(1);
-          PyTuple_SET_ITEM(args, 0, eh);
+          PyTuple_SET_ITEM(args.obj(), 0, eh);
         }
       }
     }
@@ -953,12 +955,13 @@ omniPy::Py_omniCallDescriptor::unmarshalArguments(cdrStream& stream)
 
   int i;
   for (i=0; i < in_l_; i++) {
-    PyTuple_SET_ITEM(args_, i,
+    PyTuple_SET_ITEM(args_.obj(), i,
                      omniPy::unmarshalPyObject(pystream,
-                                               PyTuple_GET_ITEM(in_d_, i)));
+                                               PyTuple_GET_ITEM(in_d_.obj(),
+                                                                i)));
   }
   if (ctxt_d_.valid())
-    PyTuple_SET_ITEM(args_, i, omniPy::unmarshalContext(pystream));
+    PyTuple_SET_ITEM(args_.obj(), i, omniPy::unmarshalContext(pystream));
 }
 
 void
@@ -977,7 +980,7 @@ omniPy::Py_omniCallDescriptor::setAndValidateReturnedValues(PyObject* result)
   }
   else if (out_l_ == 1) {
     try {
-      omniPy::validateType(PyTuple_GET_ITEM(out_d_,0),
+      omniPy::validateType(PyTuple_GET_ITEM(out_d_.obj(),0),
                            result,
                            CORBA::COMPLETED_MAYBE);
     }
@@ -998,7 +1001,7 @@ omniPy::Py_omniCallDescriptor::setAndValidateReturnedValues(PyObject* result)
 
     for (int i=0; i < out_l_; i++) {
       try {
-        omniPy::validateType(PyTuple_GET_ITEM(out_d_,i),
+        omniPy::validateType(PyTuple_GET_ITEM(out_d_.obj(),i),
                              PyTuple_GET_ITEM(result,i),
                              CORBA::COMPLETED_MAYBE);
       }
@@ -1019,14 +1022,14 @@ omniPy::Py_omniCallDescriptor::marshalReturnedValues(cdrStream& stream)
 
   if (out_l_ == 1) {
     omniPy::marshalPyObject(pystream,
-                            PyTuple_GET_ITEM(out_d_, 0),
+                            PyTuple_GET_ITEM(out_d_.obj(), 0),
                             result_);
   }
   else {
     for (int i=0; i < out_l_; i++) {
       omniPy::marshalPyObject(pystream,
-                              PyTuple_GET_ITEM(out_d_,i),
-                              PyTuple_GET_ITEM(result_,i));
+                              PyTuple_GET_ITEM(out_d_.obj(),i),
+                              PyTuple_GET_ITEM(result_.obj(),i));
     }
   }
 }

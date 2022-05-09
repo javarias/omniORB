@@ -154,7 +154,7 @@ omniPy::createPyCorbaObjRef(const char*             targetRepoId,
   OMNIORB_ASSERT(objrefClass); // Couldn't even find CORBA.Object!
 
   omniPy::PyRefHolder args(PyTuple_New(1));
-  PyTuple_SET_ITEM(args, 0, createPyObjRefObject(objref));
+  PyTuple_SET_ITEM(args.obj(), 0, createPyObjRefObject(objref));
 
   PyObject* pyobjref = PyObject_CallObject(objrefClass, args);
 

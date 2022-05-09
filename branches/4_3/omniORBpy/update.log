@@ -1,3 +1,20 @@
+Mon  9 May 11:31:36 BST 2022
+============================
+
+- Fix compile errors with Python 3.11 due to its use of reinterpret_cast.
+
+modules/omnipy.h
+modules/pyCallDescriptor.cc
+modules/pyInterceptors.cc
+modules/pyLocalObjects.cc
+modules/pyMarshal.cc
+modules/pyORBFunc.cc
+modules/pyObjectRef.cc
+modules/pyPOACurrentFunc.cc
+modules/pyPOAFunc.cc
+modules/pyPOAManagerFunc.cc
+
+
 Sun  9 Jan 21:59:37 GMT 2022
 ============================
 

@@ -126,19 +126,19 @@ createPolicyObject(PortableServer::POA_ptr poa, PyObject* pypolicy)
 
     case 0x41545402: // EndPointPublishPolicy
       {
-        if (!PyList_Check(pyvalue))
+        if (!PyList_Check(pyvalue.obj()))
           THROW_PY_BAD_PARAM(BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO,
                              omniPy::formatString("EndPointPublishPolicy value "
                                                   "should be a list of "
                                                   "strings, not %r", "O",
                                                   pyvalue->ob_type));
 
-        CORBA::ULong     len = PyList_GET_SIZE(pyvalue);
+        CORBA::ULong     len = PyList_GET_SIZE(pyvalue.obj());
         CORBA::StringSeq seq(len);
         seq.length(len);
 
         for (CORBA::ULong idx=0; idx != len; ++idx) {
-          PyObject* item = PyList_GET_ITEM(pyvalue, idx);
+          PyObject* item = PyList_GET_ITEM(pyvalue.obj(), idx);
 
           if (!String_Check(item))
             THROW_PY_BAD_PARAM(BAD_PARAM_WrongPythonType, CORBA::COMPLETED_NO,
@@ -1127,7 +1127,7 @@ omniPy::createPyPOAObject(PortableServer::POA_ptr poa)
   self->base.obj = CORBA::Object::_duplicate(poa);
 
   omniPy::PyRefHolder args(PyTuple_New(1));
-  PyTuple_SET_ITEM(args, 0, (PyObject*)self);
+  PyTuple_SET_ITEM(args.obj(), 0, (PyObject*)self);
 
   return PyObject_CallObject(omniPy::pyPOAClass, args);
 }
