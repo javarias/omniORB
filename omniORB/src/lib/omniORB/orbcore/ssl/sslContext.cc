@@ -386,6 +386,13 @@ sslContext::set_privatekey() {
 void
 sslContext::set_DH() {
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+
+  // OpenSSL 3 recommends using the "auto" DH parameters
+  SSL_CTX_set_dh_auto(pd_ctx, 1);
+
+#else
+  
   DH* dh = DH_new();
   if (dh == 0) {
     OMNIORB_THROW(INITIALIZE, INITIALIZE_TransportError, CORBA::COMPLETED_NO);
@@ -439,6 +446,8 @@ sslContext::set_DH() {
   
   SSL_CTX_set_tmp_dh(pd_ctx, dh);
   DH_free(dh);
+
+#endif  // OpenSSL versions before 3
 }
 
 /////////////////////////////////////////////////////////////////////////
