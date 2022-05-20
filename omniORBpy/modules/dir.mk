@@ -53,6 +53,8 @@ DIR_CPPFLAGS += $(patsubst %,-I%/include/omniORB4/internal,$(IMPORT_TREES))
 
 all:: pydistdate.hh
 
+omnipy.o: pydistdate.hh
+
 pydistdate.hh: ../update.log
 	$(PYTHON) $(BASE_OMNI_TREE)/bin/scripts/distdate.py OMNIORBPY <$^ >pydistdate.hh
 

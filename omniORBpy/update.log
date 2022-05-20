@@ -1,3 +1,11 @@
+Fri 20 May 19:11:27 BST 2022
+============================
+
+- Fix for parallel build: omnipy.o depends on pydistdate.hh
+
+modules/dir.mk
+
+
 Mon  9 May 11:31:36 BST 2022
 ============================
 
