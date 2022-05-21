@@ -1469,3 +1469,25 @@ CORBA::Any::PR_unmarshalExceptionRepoId(cdrStream& s)
     s.skipInput(len);
   }
 }
+
+void
+CORBA::Any::NP_unmarshalExceptionDataOnly(cdrStream& s)
+{
+  // Copy the data members of an exception, where the repository id is
+  // not in the source stream.
+  
+  PR_clearData();
+  pd_mbuf = new cdrAnyMemoryStream;
+
+  TypeCode_base* tc = TypeCode_indirect::strip(ToTcBase_Checked(get(pd_tc)));
+  OMNIORB_ASSERT(tc->NP_kind() == CORBA::tk_except);
+
+  PR_marshalExceptionRepoId(*pd_mbuf, tc->NP_id());
+
+  CORBA::ULong nmembers = tc->NP_member_count();
+
+  // Copy the individual elements.
+  for (CORBA::ULong i=0; i < nmembers; i++)
+    tcParser::copyStreamToStream(tc->NP_member_type(i), s, *pd_mbuf);
+}
+

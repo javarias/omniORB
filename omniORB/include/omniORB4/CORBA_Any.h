@@ -314,6 +314,7 @@ public:
 
   static void PR_marshalExceptionRepoId(cdrStream& s, const char* repo_id);
   static void PR_unmarshalExceptionRepoId(cdrStream& s);
+  void NP_unmarshalExceptionDataOnly(cdrStream& s);
 
   void PR_clearData();
   // Clear the contents ready to insert a different value.

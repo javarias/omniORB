@@ -136,7 +136,7 @@ userException(cdrStream& s, IOP_C* iop_client, const char* repoId)
       // Unmarshal the exception into an Any.
       CORBA::Any* newAny = new CORBA::Any(exType, 0);
       try {
-	newAny->NP_unmarshalDataOnly(s);
+	newAny->NP_unmarshalExceptionDataOnly(s);
       }
       catch(...) {
 	delete newAny;
@@ -148,9 +148,16 @@ userException(cdrStream& s, IOP_C* iop_client, const char* repoId)
 	new CORBA::UnknownUserException(newAny);
 
       pd_environment->exception(ex);
+
+      if (iop_client)
+        iop_client->RequestCompleted();
+
       return;
     }
   }
+  if (iop_client)
+    iop_client->RequestCompleted();
+
   OMNIORB_THROW(UNKNOWN, UNKNOWN_UserException, CORBA::COMPLETED_MAYBE);
 }
 
