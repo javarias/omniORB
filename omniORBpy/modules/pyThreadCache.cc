@@ -230,6 +230,19 @@ threadExit(CacheNode* cn)
     }
   }
 
+#if PY_VERSION_HEX >= 0x03070000
+  if (_Py_IsFinalizing()) {
+    // Python is stopping, so too late to access the GIL
+    if (omniORB::trace(20)) {
+      omniORB::logger l;
+      l << "Python is finalizing; not deleting state for thread id " << cn->id
+        << " (thread exit)\n";
+    }
+    delete cn;
+    return;
+  }
+#endif
+
   // Acquire Python thread lock and remove Python-world things
   PyEval_RestoreThread(cn->threadState);
 

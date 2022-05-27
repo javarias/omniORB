@@ -1,3 +1,11 @@
+Fri 27 May 14:37:34 BST 2022
+============================
+
+- Do not call into Python during thread exit if Python is finalising.
+
+modules/pyThreadCache.cc
+
+
 Fri 20 May 19:11:27 BST 2022
 ============================
 
