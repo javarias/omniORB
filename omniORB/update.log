@@ -1,3 +1,11 @@
+Sun 26 Jun 16:13:07 BST 2022
+============================
+
+- Use correct define name for disabling long double.
+
+src/lib/omniORB/dir.mk
+
+
 Sun 26 Jun 15:43:29 BST 2022
 ============================
 

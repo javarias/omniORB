@@ -93,7 +93,7 @@ endif
 ######################################################################
 
 ifdef DisableLongDouble
-UNDEFINES = -UHAS_LongDouble
+UNDEFINES = -UOMNI_HAS_LongDouble
 endif
 
 OMNIORB_IDL += -p$(BASE_OMNI_TREE)/src/lib/omniORB/$(PYSUBDIR) -I$(BASE_OMNI_TREE)/idl -Wbdebug
