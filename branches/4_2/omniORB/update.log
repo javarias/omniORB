@@ -1,3 +1,11 @@
+Sun 26 Jun 15:43:29 BST 2022
+============================
+
+- Log invocation returns from BOA.
+
+src/lib/omniORB/orbcore/corbaBoa.cc
+
+
 Sun 13 Mar 15:44:43 GMT 2022
 ============================
 
