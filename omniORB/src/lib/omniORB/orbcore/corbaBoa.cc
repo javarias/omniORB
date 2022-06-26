@@ -599,8 +599,8 @@ omniOrbBOA::dispatch(omniCallHandle& handle, omniLocalIdentity* id)
 
   if( omniORB::traceInvocations ) {
     omniORB::logger l;
-    l << "Dispatching remote call \'" 
-      << handle.operation_name() << "\' to: "
+    l << "Dispatching remote call '" 
+      << handle.operation_name() << "' to: "
       << id << '\n';
   }
 
@@ -610,6 +610,12 @@ omniOrbBOA::dispatch(omniCallHandle& handle, omniLocalIdentity* id)
       OMNIORB_THROW(BAD_OPERATION,BAD_OPERATION_UnRecognisedOperationName,
 		    CORBA::COMPLETED_NO);
     }
+  }
+  if( omniORB::traceInvocationReturns ) {
+    omniORB::logger l;
+    l << "Return from remote call '"
+      << handle.operation_name() << "' to: "
+      << id << '\n';
   }
 }
 
