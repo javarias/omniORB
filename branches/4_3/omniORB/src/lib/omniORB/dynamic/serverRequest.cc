@@ -258,7 +258,7 @@ public:
   }
 
   void _NP_marshal(cdrStream& s) const {
-    value.NP_marshalDataOnly(s);
+    value.NP_marshalExceptionDataOnly(s);
   }
 
 private:

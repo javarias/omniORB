@@ -1,3 +1,14 @@
+Mon 25 Jul 21:18:46 BST 2022
+============================
+
+- Properly handle exceptions in DSI and DynAny when exceptionIdInAny is true.
+
+include/omniORB4/CORBA_Any.h
+src/lib/omniORB/dynamic/any.cc
+src/lib/omniORB/dynamic/dynAny.cc
+src/lib/omniORB/dynamic/serverRequest.cc
+
+
 Sun 26 Jun 16:13:07 BST 2022
 ============================
 

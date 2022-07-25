@@ -2207,6 +2207,11 @@ DynAnyConstrBase::copy_to(cdrAnyMemoryStream& mbs)
 {
   if( pd_n_in_buf != pd_first_in_comp )  return 0;
 
+  // Marshal exception repoId if necessary
+  TypeCode_base* atc = actualTc();
+  if (atc->kind() == CORBA::tk_except)
+    CORBA::Any::PR_marshalExceptionRepoId(mbs, atc->NP_id());
+  
   cdrAnyMemoryStream src(pd_buf);
   pd_read_index = -1;
 
@@ -2237,6 +2242,10 @@ DynAnyConstrBase::copy_from(cdrAnyMemoryStream& mbs)
   pd_buf.rewindPtrs();
   pd_read_index = 0;
 
+  // Skip exception repoId if necessary
+  if (tckind() == CORBA::tk_except)
+    CORBA::Any::PR_unmarshalExceptionRepoId(mbs);
+  
   unsigned i;
   try {
     // Copy components into the buffer.
