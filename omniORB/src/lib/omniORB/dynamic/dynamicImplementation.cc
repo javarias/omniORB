@@ -101,18 +101,6 @@ PortableServer::DynamicImplementation::_is_a(const char* logical_type_id)
 #ifdef OMNI_HAS_Cplusplus_Namespace
 namespace {
 #endif
-  class DSIPostInvoker {
-  public:
-    inline DSIPostInvoker(omniCallHandle::PostInvokeHook* hook)
-      : pd_hook(hook) {}
-    inline ~DSIPostInvoker() {
-      if (pd_hook)
-	pd_hook->postinvoke();
-    }
-  private:
-    omniCallHandle::PostInvokeHook* pd_hook;
-  };
-
   class DSIMainThreadTask : public omniTask {
   public:
     inline DSIMainThreadTask(PortableServer::DynamicImplementation* servant,
@@ -156,6 +144,16 @@ namespace {
 
 
 
+static inline void
+callPostInvokeHook(omniCallHandle::PostInvokeHook*& hook)
+{
+  if (hook) {
+    omniCallHandle::PostInvokeHook* h = hook;
+    hook = 0;
+    h->postinvoke();
+  }
+}
+
 _CORBA_Boolean
 PortableServer::DynamicImplementation::_dispatch(omniCallHandle& handle)
 {
@@ -172,9 +170,9 @@ PortableServer::DynamicImplementation::_dispatch(omniCallHandle& handle)
   sreq.calldesc()->poa(handle.poa());
   sreq.calldesc()->localId(handle.localId());
 
-  {
-    DSIPostInvoker postinvoker(handle.postinvoke_hook());
+  omniCallHandle::PostInvokeHook* hook = handle.postinvoke_hook();
 
+  try {
     if (!handle.mainthread_mu()) {
       // Upcall into application
       poaCurrentStackInsert insert(sreq.calldesc());
@@ -187,6 +185,11 @@ PortableServer::DynamicImplementation::_dispatch(omniCallHandle& handle)
       int i = orbAsyncInvoker->insert(&mtt); OMNIORB_ASSERT(i);
       mtt.wait();
     }
+    callPostInvokeHook(hook);
+  }
+  catch (...) {
+    callPostInvokeHook(hook);
+    throw;
   }
 
   // It is legal for the caller to ask for no response even if the
