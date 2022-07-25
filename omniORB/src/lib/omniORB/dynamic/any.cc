@@ -1425,7 +1425,7 @@ CORBA::Any::value() const
     // that this will result in invalid data if we contain a
     // valuetype, since valuetypes do not get marshalled into the
     // memory buffer like other types. This value() method was
-    // deprecated before valuetypes were specifified, so we consider
+    // deprecated before valuetypes were specified, so we consider
     // this an acceptable limitation.
     cdrAnyMemoryStream* mbuf = new cdrAnyMemoryStream;
 
@@ -1491,3 +1491,21 @@ CORBA::Any::NP_unmarshalExceptionDataOnly(cdrStream& s)
     tcParser::copyStreamToStream(tc->NP_member_type(i), s, *pd_mbuf);
 }
 
+void
+CORBA::Any::NP_marshalExceptionDataOnly(cdrStream& s) const
+{
+  // Copy the data members of an exception, where the repository id
+  // should not be marshalled to the stream.
+
+  TypeCode_base* tc = TypeCode_indirect::strip(ToTcBase_Checked(get(pd_tc)));
+  OMNIORB_ASSERT(tc->NP_kind() == CORBA::tk_except);
+
+  cdrAnyMemoryStream src(PR_streamToRead(), 1);
+  PR_unmarshalExceptionRepoId(src);
+  
+  CORBA::ULong nmembers = tc->NP_member_count();
+
+  // Copy the individual elements.
+  for (CORBA::ULong i=0; i < nmembers; i++)
+    tcParser::copyStreamToStream(tc->NP_member_type(i), src, s);
+}
