@@ -1,3 +1,13 @@
+Mon 25 Jul 21:15:03 BST 2022
+============================
+
+- Allow ServantLocator postinvoke to throw exceptions with C++11
+  compliant compilers.
+
+src/lib/omniORB/dynamic/dynamicImplementation.cc
+src/lib/omniORB/orbcore/callHandle.cc
+
+
 Sun 26 Jun 15:43:29 BST 2022
 ============================
 
