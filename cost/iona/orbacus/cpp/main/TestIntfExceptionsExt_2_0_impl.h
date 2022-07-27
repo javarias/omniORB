@@ -20,58 +20,31 @@ public:
     TestIntfExceptionsExt_2_0_impl();
 
     virtual void
-    op_PERSIST_STORE_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_PERSIST_STORE_Ex();
 
     virtual void
-    op_FREE_MEM_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_FREE_MEM_Ex();
 
     virtual void
-    op_INV_IDENT_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INV_IDENT_Ex();
 
     virtual void
-    op_INV_FLAG_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INV_FLAG_Ex();
 
     virtual void
-    op_INTF_REPOS_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INTF_REPOS_Ex();
 
     virtual void
-    op_BAD_CONTEXT_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_BAD_CONTEXT_Ex();
 
     virtual void
-    op_TRANSACTION_REQUIRED_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_TRANSACTION_REQUIRED_Ex();
 
     virtual void
-    op_TRANSACTION_ROLLEDBACK_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_TRANSACTION_ROLLEDBACK_Ex();
 
     virtual void
-    op_INVALID_TRANSACTION_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INVALID_TRANSACTION_Ex();
 };
 
 #endif

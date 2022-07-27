@@ -26,8 +26,7 @@ public:
 
     Test_impl(CORBA::ORB_ptr, PortableServer::POA_ptr);
 
-    virtual void aMethod()
-	throw(CORBA::SystemException);
+    virtual void aMethod();
 
     virtual PortableServer::POA_ptr
     _default_POA();

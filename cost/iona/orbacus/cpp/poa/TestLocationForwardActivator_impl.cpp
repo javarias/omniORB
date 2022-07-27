@@ -32,7 +32,6 @@ TestLocationForwardActivator_impl::setActivatedServant(ServantBase* servant)
 Servant
 TestLocationForwardActivator_impl::incarnate(const ObjectId& /*oid*/,
                                              POA_ptr /*poa*/)
-    throw(ForwardRequest, SystemException)
 {
     activate_ = !activate_;
     if(!activate_)
@@ -46,7 +45,6 @@ TestLocationForwardActivator_impl::etherealize(const ObjectId& /*oid*/,
                                                Servant /*servant*/,
                                                Boolean /*cleanup*/,
                                                Boolean /*remaining*/)
-    throw(SystemException)
 {
 }
 

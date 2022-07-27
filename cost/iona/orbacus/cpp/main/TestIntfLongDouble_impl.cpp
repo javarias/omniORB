@@ -22,9 +22,6 @@ TestIntfLongDouble_impl::TestIntfLongDouble_impl()
 
 LongDouble
 TestIntfLongDouble_impl::attrLongDouble()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aLongDouble;
 }
@@ -33,9 +30,6 @@ void
 TestIntfLongDouble_impl::attrLongDouble(
     LongDouble val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aLongDouble = val;
 }
@@ -46,9 +40,6 @@ TestIntfLongDouble_impl::opLongDouble(
     LongDouble& a1,
     LongDouble& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aLongDouble = a0 + a1;
     a1 = a2 = m_aLongDouble;
@@ -61,10 +52,6 @@ TestIntfLongDouble_impl::opLongDoubleEx(
     LongDouble& a1,
     LongDouble&
 )
-    throw (
-	ORBTest_LongDouble::ExLongDouble,
-	CORBA::SystemException
-    )
 {
     m_aLongDouble = a0 + a1;
     throw ORBTest_LongDouble::ExLongDouble(m_aLongDouble);

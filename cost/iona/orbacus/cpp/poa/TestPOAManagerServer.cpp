@@ -40,8 +40,6 @@ public:
     // Mapping for PortableServer::POAManager
     //
     virtual void activate()
-        throw(POAManagerProxy::AdapterInactive,
-              CORBA::SystemException)
     {
         try
         {
@@ -54,8 +52,6 @@ public:
     }
     
     virtual void hold_requests(CORBA::Boolean a)
-        throw(POAManagerProxy::AdapterInactive,
-              CORBA::SystemException)
     {
         try
         {
@@ -69,8 +65,6 @@ public:
 
     
     virtual void discard_requests(CORBA::Boolean a)
-        throw(POAManagerProxy::AdapterInactive,
-              CORBA::SystemException)
     {
         try
         {
@@ -83,8 +77,6 @@ public:
     }
     
     virtual void deactivate(CORBA::Boolean a, CORBA::Boolean b)
-        throw(POAManagerProxy::AdapterInactive,
-              CORBA::SystemException)
     {
         try
         {
@@ -97,7 +89,6 @@ public:
     }
     
     virtual POAManagerProxy::State get_state()
-        throw(CORBA::SystemException)
     {
         return (POAManagerProxy::State)manager_ -> get_state();
     }

@@ -22,11 +22,9 @@ public:
     TestServer_impl(CORBA::ORB_ptr, const TestInfoSeq&);
     ~TestServer_impl();
 
-    virtual TestInfoSeq* get_info()
-	throw(CORBA::SystemException);
+    virtual TestInfoSeq* get_info();
 
-    virtual void deactivate()
-	throw(CORBA::SystemException);
+    virtual void deactivate();
 };
 
 #endif

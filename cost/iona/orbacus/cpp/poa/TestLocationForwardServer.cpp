@@ -41,19 +41,16 @@ public:
 
     virtual void
     setForwardRequest(CORBA::Object_ptr obj)
-        throw(SystemException)
     {
 	activator_ -> setForwardRequest(obj);
     }
 
     virtual Object_ptr get_servant()
-        throw(SystemException)
     {
         return Object::_duplicate(servant_);
     }
 
     virtual void deactivate()
-        throw(SystemException)
     {
         orb_ -> shutdown(false);
     }

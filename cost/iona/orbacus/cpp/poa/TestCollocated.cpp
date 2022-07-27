@@ -49,7 +49,6 @@ public:
                       POA_ptr /*poa*/,
                       const char* /*operation*/,
                       PortableServer::ServantLocator::Cookie& /*the_cookie*/)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         //cout << "Locator: preinvoke for `" << oidString << "'" << endl;
@@ -68,7 +67,6 @@ public:
                     const char* /*operation*/,
                     PortableServer::ServantLocator::Cookie /*the_cookie*/,
                     Servant /*the_servant*/)
-        throw(SystemException)
     {
         //String_var oidString = ObjectId_to_string(oid);
         //cout << "Locator: postinvoke for `" << oidString << "'" << endl;
@@ -104,7 +102,6 @@ public:
     }
 
     Servant incarnate(const ObjectId& oid, POA_ptr /*poa*/)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         //cout << "Activator - Incarnating " << oidString << endl;
@@ -127,7 +124,6 @@ public:
                      Servant servant,
                      Boolean /*cleanup*/,
                      Boolean remaining)
-        throw(SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         //cout << "Activator - Etherealizing " << oidString << endl;

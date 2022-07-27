@@ -21,30 +21,24 @@ public:
     TestIntfExceptionsExt_2_3_impl();
 
     virtual void
-    op_CODESET_INCOMPATIBLE_Ex()
-        throw (CORBA::SystemException);
+    op_CODESET_INCOMPATIBLE_Ex();
 
 #ifndef HAVE_NO_CORBA_2_4
 
     virtual void
-    op_REBIND_Ex()
-        throw (CORBA::SystemException);
+    op_REBIND_Ex();
 
     virtual void
-    op_TIMEOUT_Ex()
-        throw (CORBA::SystemException);
+    op_TIMEOUT_Ex();
 
     virtual void
-    op_TRANSACTION_UNAVAILABLE_Ex()
-        throw (CORBA::SystemException);
+    op_TRANSACTION_UNAVAILABLE_Ex();
 
     virtual void
-    op_TRANSACTION_MODE_Ex()
-        throw (CORBA::SystemException);
+    op_TRANSACTION_MODE_Ex();
 
     virtual void
-    op_BAD_QOS_Ex()
-        throw (CORBA::SystemException);
+    op_BAD_QOS_Ex();
 
 #endif
 

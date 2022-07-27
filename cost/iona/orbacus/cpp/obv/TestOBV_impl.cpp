@@ -59,35 +59,30 @@ TestOBV_impl::~TestOBV_impl()
 
 ValueBase*
 TestOBV_impl::get_null_valuebase()
-    throw(SystemException)
 {
     return (ValueBase*)0;
 }
 
 void
 TestOBV_impl::set_null_valuebase(ValueBase* v)
-    throw(SystemException)
 {
     TEST(v == 0);
 }
 
 TestValueSub*
 TestOBV_impl::get_null_valuesub()
-    throw(SystemException)
 {
     return (TestValueSub*)0;
 }
 
 void
 TestOBV_impl::set_null_valuesub(TestValueSub* v)
-    throw(SystemException)
 {
     TEST(v == 0);
 }
 
 TestAbsValue1*
 TestOBV_impl::get_abs_value1()
-    throw(SystemException)
 {
     add_ref(value_);
     return value_;
@@ -95,7 +90,6 @@ TestOBV_impl::get_abs_value1()
 
 void
 TestOBV_impl::set_abs_value1(TestAbsValue1* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     TestValue* value = TestValue::_downcast(v);
@@ -106,7 +100,6 @@ TestOBV_impl::set_abs_value1(TestAbsValue1* v)
 
 TestAbsValue2*
 TestOBV_impl::get_abs_value2()
-    throw(SystemException)
 {
     add_ref(valueSub_);
     return valueSub_;
@@ -114,7 +107,6 @@ TestOBV_impl::get_abs_value2()
 
 void
 TestOBV_impl::set_abs_value2(TestAbsValue2* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     TestValueSub* value = TestValueSub::_downcast(v);
@@ -127,7 +119,6 @@ TestOBV_impl::set_abs_value2(TestAbsValue2* v)
 
 TestValue*
 TestOBV_impl::get_value()
-    throw(SystemException)
 {
     add_ref(value_);
     return value_;
@@ -135,7 +126,6 @@ TestOBV_impl::get_value()
 
 void
 TestOBV_impl::set_value(TestValue* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     v -> ping1();
@@ -144,7 +134,6 @@ TestOBV_impl::set_value(TestValue* v)
 
 TestValueSub*
 TestOBV_impl::get_valuesub()
-    throw(SystemException)
 {
     add_ref(valueSub_);
     return valueSub_;
@@ -152,7 +141,6 @@ TestOBV_impl::get_valuesub()
 
 void
 TestOBV_impl::set_valuesub(TestValueSub* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     v -> ping1();
@@ -163,7 +151,6 @@ TestOBV_impl::set_valuesub(TestValueSub* v)
 
 TestValue*
 TestOBV_impl::get_valuesub_as_value()
-    throw(SystemException)
 {
     add_ref(valueSub_);
     return valueSub_;
@@ -171,7 +158,6 @@ TestOBV_impl::get_valuesub_as_value()
 
 void
 TestOBV_impl::set_valuesub_as_value(TestValue* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     TestValueSub* value = TestValueSub::_downcast(v);
@@ -184,7 +170,6 @@ TestOBV_impl::set_valuesub_as_value(TestValue* v)
 
 void
 TestOBV_impl::get_two_values(TestValue_out v1, TestValue_out v2)
-    throw(SystemException)
 {
     add_ref(value_);
     add_ref(value_);
@@ -194,7 +179,6 @@ TestOBV_impl::get_two_values(TestValue_out v1, TestValue_out v2)
 
 void
 TestOBV_impl::set_two_values(TestValue* v1, TestValue* v2)
-    throw(SystemException)
 {
     TEST(v1 != 0);
     TEST(v2 != 0);
@@ -206,7 +190,6 @@ TestOBV_impl::set_two_values(TestValue* v1, TestValue* v2)
 
 void
 TestOBV_impl::get_two_valuesubs_as_values(TestValue_out v1, TestValue_out v2)
-    throw(SystemException)
 {
     //
     // Lookup the factory and create two distinct TestValueSub instances
@@ -224,7 +207,6 @@ TestOBV_impl::get_two_valuesubs_as_values(TestValue_out v1, TestValue_out v2)
 
 void
 TestOBV_impl::set_two_valuesubs_as_values(TestValue* v1, TestValue* v2)
-    throw(SystemException)
 {
     TEST(v1 != 0);
     TEST(v2 != 0);
@@ -244,7 +226,6 @@ TestOBV_impl::set_two_valuesubs_as_values(TestValue* v1, TestValue* v2)
 #ifndef HAVE_NO_CUSTOM_VALUETYPE
 TestCustom*
 TestOBV_impl::get_custom()
-    throw(SystemException)
 {
     add_ref(custom_);
     return custom_;
@@ -252,7 +233,6 @@ TestOBV_impl::get_custom()
 
 void
 TestOBV_impl::set_custom(TestCustom* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     v -> ping1();
@@ -264,7 +244,6 @@ TestOBV_impl::set_custom(TestCustom* v)
 
 TestAbsValue1*
 TestOBV_impl::get_abs_custom()
-    throw(SystemException)
 {
     add_ref(custom_);
     return custom_;
@@ -272,7 +251,6 @@ TestOBV_impl::get_abs_custom()
 
 void
 TestOBV_impl::set_abs_custom(TestAbsValue1* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     v -> ping1();
@@ -287,7 +265,6 @@ TestOBV_impl::set_abs_custom(TestAbsValue1* v)
 
 void
 TestOBV_impl::get_node(TestNode_out v, ULong& count)
-    throw(SystemException)
 {
     add_ref(node_);
     v = node_.in();
@@ -296,7 +273,6 @@ TestOBV_impl::get_node(TestNode_out v, ULong& count)
 
 void
 TestOBV_impl::set_node(TestNode* v)
-    throw(SystemException)
 {
     TEST(v != 0);
     TEST(v -> compute_count() == node_ -> compute_count());
@@ -304,14 +280,12 @@ TestOBV_impl::set_node(TestNode* v)
 
 TestStringBox*
 TestOBV_impl::get_string_box(const char* value)
-    throw(SystemException)
 {
     return new TestStringBox(value);
 }
 
 void
 TestOBV_impl::set_string_box(TestStringBox* b, const char* value)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(strcmp(b -> _value(), value) == 0);
@@ -319,7 +293,6 @@ TestOBV_impl::set_string_box(TestStringBox* b, const char* value)
 
 TestULongBox*
 TestOBV_impl::get_ulong_box(ULong value)
-    throw(SystemException)
 {
     return new TestULongBox(value);
 }
@@ -327,7 +300,6 @@ TestOBV_impl::get_ulong_box(ULong value)
 void
 TestOBV_impl::set_ulong_box(TestULongBox* b,
                             ULong value)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(b -> _value() == value);
@@ -335,7 +307,6 @@ TestOBV_impl::set_ulong_box(TestULongBox* b,
 
 TestFixStructBox*
 TestOBV_impl::get_fix_struct_box(const TestFixStruct& value)
-    throw(SystemException)
 {
     return new TestFixStructBox(value);
 }
@@ -343,7 +314,6 @@ TestOBV_impl::get_fix_struct_box(const TestFixStruct& value)
 void
 TestOBV_impl::set_fix_struct_box(TestFixStructBox* b,
                                  const TestFixStruct& value)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(b -> x() == value.x);
@@ -353,7 +323,6 @@ TestOBV_impl::set_fix_struct_box(TestFixStructBox* b,
 
 TestVarStructBox*
 TestOBV_impl::get_var_struct_box(const TestVarStruct& value)
-    throw(SystemException)
 {
     return new TestVarStructBox(value);
 }
@@ -361,7 +330,6 @@ TestOBV_impl::get_var_struct_box(const TestVarStruct& value)
 void
 TestOBV_impl::set_var_struct_box(TestVarStructBox* b,
                                  const TestVarStruct& value)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(strcmp(b -> name(), value.name) == 0);
@@ -370,14 +338,12 @@ TestOBV_impl::set_var_struct_box(TestVarStructBox* b,
 
 TestFixUnionBox*
 TestOBV_impl::get_fix_union_box(const TestFixUnion& value)
-    throw(SystemException)
 {
     return new TestFixUnionBox(value);
 }
 
 void
 TestOBV_impl::set_fix_union_box(TestFixUnionBox* b, const TestFixUnion& value)
-    throw(SystemException)
 {
     TEST(b != 0);
 
@@ -395,14 +361,12 @@ TestOBV_impl::set_fix_union_box(TestFixUnionBox* b, const TestFixUnion& value)
 
 TestVarUnionBox*
 TestOBV_impl::get_var_union_box(const TestVarUnion& value)
-    throw(SystemException)
 {
     return new TestVarUnionBox(value);
 }
 
 void
 TestOBV_impl::set_var_union_box(TestVarUnionBox* b, const TestVarUnion& value)
-    throw(SystemException)
 {
     TEST(b != 0);
 
@@ -426,7 +390,6 @@ TestOBV_impl::set_var_union_box(TestVarUnionBox* b, const TestVarUnion& value)
 
 TestAnonSeqBox*
 TestOBV_impl::get_anon_seq_box(ULong length)
-    throw(SystemException)
 {
     TestAnonSeqBox* result = new TestAnonSeqBox;
     result -> length(length);
@@ -437,7 +400,6 @@ TestOBV_impl::get_anon_seq_box(ULong length)
 
 void
 TestOBV_impl::set_anon_seq_box(TestAnonSeqBox* b, ULong length)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(b -> length() == length);
@@ -447,7 +409,6 @@ TestOBV_impl::set_anon_seq_box(TestAnonSeqBox* b, ULong length)
 
 TestStringSeqBox*
 TestOBV_impl::get_string_seq_box(const TestStringSeq& value)
-    throw(SystemException)
 {
     return new TestStringSeqBox(value);
 }
@@ -455,7 +416,6 @@ TestOBV_impl::get_string_seq_box(const TestStringSeq& value)
 void
 TestOBV_impl::set_string_seq_box(TestStringSeqBox* b,
                                  const TestStringSeq& value)
-    throw(SystemException)
 {
     TEST(b != 0);
     TEST(b -> length() == value.length());
@@ -465,14 +425,12 @@ TestOBV_impl::set_string_seq_box(TestStringSeqBox* b,
 
 TestAbstract_ptr
 TestOBV_impl::get_ai_interface()
-    throw(SystemException)
 {
     return TestAbstract::_duplicate(absInterface_);
 }
 
 void 
 TestOBV_impl::set_ai_interface(TestAbstract_ptr a)
-    throw(SystemException)
 {
     if(!is_nil(a))
     {
@@ -490,7 +448,6 @@ TestOBV_impl::set_ai_interface(TestAbstract_ptr a)
 
 Any*
 TestOBV_impl::get_ai_interface_any()
-    throw(SystemException)
 {
     Any* result = new Any;
     *result <<= absInterface_;
@@ -513,7 +470,6 @@ TestOBV_impl::get_ai_interface_any()
 
 void 
 TestOBV_impl::set_ai_interface_any(const Any& a)
-    throw(SystemException)
 {
     //
     // Test remote any extraction
@@ -530,14 +486,12 @@ TestOBV_impl::set_ai_interface_any(const Any& a)
 
 TestAbstract_ptr
 TestOBV_impl::get_ai_value()
-    throw(SystemException)
 {
     return TestAbstract::_duplicate(absValue_);
 }
 
 void
 TestOBV_impl::set_ai_value(TestAbstract_ptr a)
-    throw(SystemException)
 {
     if(!is_nil(a))
     {
@@ -558,7 +512,6 @@ TestOBV_impl::set_ai_value(TestAbstract_ptr a)
 
 Any*
 TestOBV_impl::get_ai_value_any()
-    throw(SystemException)
 {
     Any* result = new Any;
     *result <<= absValue_;
@@ -581,7 +534,6 @@ TestOBV_impl::get_ai_value_any()
 
 void 
 TestOBV_impl::set_ai_value_any(const Any& a)
-    throw(SystemException)
 {
     //
     // Test remote any extraction
@@ -599,7 +551,6 @@ TestOBV_impl::set_ai_value_any(const Any& a)
 
 TestTruncBase*
 TestOBV_impl::get_trunc1()
-    throw(SystemException)
 {
     //
     // This test addresses several issues:
@@ -622,7 +573,6 @@ TestOBV_impl::get_trunc1()
 
 TestTruncBase*
 TestOBV_impl::get_trunc2()
-    throw(SystemException)
 {
     //
     // This test addresses several issues:
@@ -663,7 +613,6 @@ TestOBV_impl::get_trunc2()
 
 Any*
 TestOBV_impl::get_value_any()
-    throw(SystemException)
 {
     TestValue_var v = get_value();
     Any* result = new Any;
@@ -673,7 +622,6 @@ TestOBV_impl::get_value_any()
 
 Any*
 TestOBV_impl::get_valuesub_any()
-    throw(SystemException)
 {
     TestValueSub_var v = get_valuesub();
     Any* result = new Any;
@@ -683,7 +631,6 @@ TestOBV_impl::get_valuesub_any()
 
 Any*
 TestOBV_impl::get_valuesub_as_value_any()
-    throw(SystemException)
 {
     //
     // Widen TestValueSub to TestValue - the any will contain
@@ -698,7 +645,6 @@ TestOBV_impl::get_valuesub_as_value_any()
 #ifndef HAVE_NO_CUSTOM_VALUETYPE
 Any*
 TestOBV_impl::get_custom_any()
-    throw(SystemException)
 {
     TestCustom_var v = get_custom();
     Any* result = new Any;
@@ -709,7 +655,6 @@ TestOBV_impl::get_custom_any()
 
 Any*
 TestOBV_impl::get_trunc1_any()
-    throw(SystemException)
 {
     TestTruncBase_var v = get_trunc1();
     TestTrunc1* t1 = TestTrunc1::_downcast(v);
@@ -721,7 +666,6 @@ TestOBV_impl::get_trunc1_any()
 
 Any*
 TestOBV_impl::get_trunc1_as_base_any()
-    throw(SystemException)
 {
     //
     // Widen TestTrunc1 to TestTruncBase - the any will contain
@@ -735,7 +679,6 @@ TestOBV_impl::get_trunc1_as_base_any()
 
 Any*
 TestOBV_impl::get_trunc2_any()
-    throw(SystemException)
 {
     TestTruncBase_var v = get_trunc2();
     TestTrunc2* t2 = TestTrunc2::_downcast(v);
@@ -746,7 +689,6 @@ TestOBV_impl::get_trunc2_any()
 
 Any*
 TestOBV_impl::get_trunc2_as_base_any()
-    throw(SystemException)
 {
     //
     // Widen TestTrunc2 to TestTruncBase - the any will contain
@@ -760,14 +702,12 @@ TestOBV_impl::get_trunc2_as_base_any()
 
 void
 TestOBV_impl::remarshal_any(const Any&)
-    throw(SystemException)
 {
     // nothing to do
 }
 
 void
 TestOBV_impl::get_two_value_anys(Any_out a1, Any_out a2)
-    throw(SystemException)
 {
     TestValue_var v = get_value();
     Any_var av1 = new Any();
@@ -780,7 +720,6 @@ TestOBV_impl::get_two_value_anys(Any_out a1, Any_out a2)
 
 void
 TestOBV_impl::set_two_value_anys(const Any& a1, const Any& a2)
-    throw(SystemException)
 {
     TestValue* v1;
     TestValue* v2;
@@ -793,7 +732,6 @@ TestOBV_impl::set_two_value_anys(const Any& a1, const Any& a2)
 
 TestValueInterface*
 TestOBV_impl::get_value_as_value()
-    throw(SystemException)
 {
     add_ref(valueInterface_);
     return valueInterface_;
@@ -801,7 +739,6 @@ TestOBV_impl::get_value_as_value()
 
 TestInterface_ptr
 TestOBV_impl::get_value_as_interface()
-    throw(SystemException)
 {
     TestValueInterface_impl* impl =
         dynamic_cast<TestValueInterface_impl*>(valueInterface_.in());
@@ -811,7 +748,6 @@ TestOBV_impl::get_value_as_interface()
 
 void
 TestOBV_impl::deactivate()
-    throw(SystemException)
 {
     orb_ -> shutdown(false);
 }

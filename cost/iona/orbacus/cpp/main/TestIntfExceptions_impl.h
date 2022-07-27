@@ -21,130 +21,67 @@ public:
     TestIntfExceptions_impl();
 
     virtual void
-    op_UNKNOWN_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_UNKNOWN_Ex();
 
     virtual void
-    op_BAD_PARAM_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_BAD_PARAM_Ex();
 
     virtual void
-    op_NO_MEMORY_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_NO_MEMORY_Ex();
 
     virtual void
-    op_IMP_LIMIT_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_IMP_LIMIT_Ex();
 
     virtual void
-    op_COMM_FAILURE_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_COMM_FAILURE_Ex();
 
     virtual void
-    op_INV_OBJREF_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INV_OBJREF_Ex();
 
     virtual void
-    op_NO_PERMISSION_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_NO_PERMISSION_Ex();
 
     virtual void
-    op_INTERNAL_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INTERNAL_Ex();
 
     virtual void
-    op_MARSHAL_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_MARSHAL_Ex();
 
     virtual void
-    op_INITIALIZE_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INITIALIZE_Ex();
 
     virtual void
-    op_NO_IMPLEMENT_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_NO_IMPLEMENT_Ex();
 
     virtual void
-    op_BAD_TYPECODE_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_BAD_TYPECODE_Ex();
 
     virtual void
-    op_BAD_OPERATION_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_BAD_OPERATION_Ex();
 
     virtual void
-    op_NO_RESOURCES_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_NO_RESOURCES_Ex();
 
     virtual void
-    op_NO_RESPONSE_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_NO_RESPONSE_Ex();
 
     virtual void
-    op_BAD_INV_ORDER_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_BAD_INV_ORDER_Ex();
 
     virtual void
-    op_TRANSIENT_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_TRANSIENT_Ex();
 
     virtual void
-    op_OBJ_ADAPTER_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_OBJ_ADAPTER_Ex();
 
     virtual void
-    op_DATA_CONVERSION_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_DATA_CONVERSION_Ex();
 
     virtual void
-    op_OBJECT_NOT_EXIST_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_OBJECT_NOT_EXIST_Ex();
 
     virtual void
-    op_INV_POLICY_Ex()
-        throw (
-	    CORBA::SystemException
-	);
+    op_INV_POLICY_Ex();
 };
 
 #endif

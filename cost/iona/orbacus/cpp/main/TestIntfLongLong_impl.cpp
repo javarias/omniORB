@@ -22,7 +22,6 @@ TestIntfLongLong_impl::TestIntfLongLong_impl()
 
 LongLong
 TestIntfLongLong_impl::attrLongLong()
-    throw (CORBA::SystemException)
 {
     return m_aLongLong;
 }
@@ -31,7 +30,6 @@ void
 TestIntfLongLong_impl::attrLongLong(
     LongLong val
 )
-    throw (CORBA::SystemException)
 {
     m_aLongLong = val;
 }
@@ -42,7 +40,6 @@ TestIntfLongLong_impl::opLongLong(
     LongLong& a1,
     LongLong& a2
 )
-    throw (CORBA::SystemException)
 {
     m_aLongLong = a0 + a1;
     a1 = a2 = m_aLongLong;
@@ -55,8 +52,6 @@ TestIntfLongLong_impl::opLongLongEx(
     LongLong& a1,
     LongLong&
 )
-    throw (ORBTest_LongLong::ExLongLong,
-	   CORBA::SystemException)
 {
     m_aLongLong = a0 + a1;
     throw ORBTest_LongLong::ExLongLong(m_aLongLong);
@@ -65,7 +60,6 @@ TestIntfLongLong_impl::opLongLongEx(
 
 ULongLong
 TestIntfLongLong_impl::attrULongLong()
-    throw (CORBA::SystemException)
 {
     return m_aULongLong;
 }
@@ -74,7 +68,6 @@ void
 TestIntfLongLong_impl::attrULongLong(
     ULongLong val
 )
-    throw (CORBA::SystemException)
 {
     m_aULongLong = val;
 }
@@ -85,7 +78,6 @@ TestIntfLongLong_impl::opULongLong(
     ULongLong& a1,
     ULongLong& a2
 )
-    throw (CORBA::SystemException)
 {
     m_aULongLong = a0 + a1;
     a1 = a2 = m_aULongLong;
@@ -98,8 +90,6 @@ TestIntfLongLong_impl::opULongLongEx(
     ULongLong& a1,
     ULongLong&
 )
-    throw (ORBTest_LongLong::ExULongLong,
-	   CORBA::SystemException)
 {
     m_aULongLong = a0 + a1;
     throw ORBTest_LongLong::ExULongLong(m_aULongLong);

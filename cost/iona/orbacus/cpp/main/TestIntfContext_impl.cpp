@@ -25,7 +25,6 @@ TestIntfContext_impl::opContext(
     const char* pattern,
     Context_ptr ctx
 )
-    throw (CORBA::SystemException)
 {
 #if defined(__GNUC__) && defined(__OPTIMIZE__) // COMPILERFIX
     volatile int dummy = 1;

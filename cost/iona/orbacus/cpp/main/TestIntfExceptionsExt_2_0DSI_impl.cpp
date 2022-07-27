@@ -34,7 +34,6 @@ CORBA::Boolean
 TestIntfExceptionsExt_2_0DSI_impl::_is_a(
     const char* name
 )
-    throw (CORBA::SystemException)
 {
     if (strcmp(name, "IDL:ORBTest_ExceptionsExt_2_0/Intf:1.0") == 0)
     {
@@ -50,7 +49,6 @@ void
 TestIntfExceptionsExt_2_0DSI_impl::invoke(
     ServerRequest_ptr request
 )
-    throw ()
 {
     String_var name = request->operation();
 

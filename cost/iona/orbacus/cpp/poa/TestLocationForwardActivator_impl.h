@@ -30,17 +30,14 @@ public:
     //
     PortableServer::Servant
     incarnate(const PortableServer::ObjectId&,
-	      PortableServer::POA_ptr)
-        throw(PortableServer::ForwardRequest,
-              CORBA::SystemException);
+	      PortableServer::POA_ptr);
 
     void
     etherealize(const PortableServer::ObjectId&,
 		PortableServer::POA_ptr,
 		PortableServer::Servant,
 		CORBA::Boolean,
-		CORBA::Boolean)
-        throw(CORBA::SystemException);
+		CORBA::Boolean);
 
     //
     // Internal methods

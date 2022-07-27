@@ -26,18 +26,12 @@ void
 TestIntfFixed_impl::attrFixed(
     const ORBTest_Fixed::TestFixed& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixed = val;
 }
 
 ORBTest_Fixed::TestFixed
 TestIntfFixed_impl::attrFixed()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aFixed;
 }
@@ -49,9 +43,6 @@ TestIntfFixed_impl::opFixed(
     ORBTest_Fixed::TestFixed& a1,
     ORBTest_Fixed::TestFixed_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixed = a0 + a1;
     a1 = a2 = m_aFixed;
@@ -64,10 +55,6 @@ TestIntfFixed_impl::opFixedEx(
     ORBTest_Fixed::TestFixed& a1,
     ORBTest_Fixed::TestFixed_out
 )
-    throw (
-	ORBTest_Fixed::ExFixed,
-	CORBA::SystemException
-    )
 {
     m_aFixed = a0 + a1;
     throw ORBTest_Fixed::ExFixed(m_aFixed);

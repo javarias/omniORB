@@ -98,14 +98,12 @@ TestIntf_impl::TestIntf_impl(
 
 void
 TestIntf_impl::deactivate()
-    throw (CORBA::SystemException)
 {
     m_orb->shutdown(false);
 }
 
 Boolean
 TestIntf_impl::concurrent_request_execution()
-    throw (CORBA::SystemException)
 {
     return false;
 }
@@ -693,7 +691,6 @@ TestIntf_impl::TestIntfExceptionsExt_2_3Initializer::init(
 
 ORBTest::TestCaseList*
 TestIntf_impl::get_test_case_list()
-    throw (CORBA::SystemException)
 {
     int num_test_cases = (
 	sizeof(test_case_initializers) / sizeof(TestCaseInitializer*)

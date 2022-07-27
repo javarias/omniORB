@@ -45,25 +45,21 @@ public:
     // Standard IDL to C++ Mapping
     //
     virtual Long value()
-        throw(CORBA::SystemException)
     {
         return value_;
     }
 
     virtual CORBA::PolicyType policy_type()
-        throw(CORBA::SystemException)
     {
         return MY_CLIENT_POLICY_ID;
     }
 
     virtual CORBA::Policy_ptr copy()
-        throw(CORBA::SystemException)
     {
         return Policy::_duplicate(this);
     }
 
     virtual void destroy()
-        throw(CORBA::SystemException)
     {
     }
 };

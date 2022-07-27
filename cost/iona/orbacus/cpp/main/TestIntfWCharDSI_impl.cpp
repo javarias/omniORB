@@ -36,7 +36,6 @@ CORBA::Boolean
 TestIntfWCharDSI_impl::_is_a(
     const char* name
 )
-    throw (CORBA::SystemException)
 {
     if (strcmp(name, "IDL:ORBTest_WChar/Intf:1.0") == 0)
     {
@@ -52,7 +51,6 @@ void
 TestIntfWCharDSI_impl::invoke(
     ServerRequest_ptr request
 )
-    throw ()
 {
     String_var name = request->operation();
 

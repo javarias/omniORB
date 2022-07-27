@@ -24,8 +24,7 @@ public:
     opContext(
 	const char* pattern,
 	CORBA::Context_ptr
-    )
-        throw (CORBA::SystemException);
+    );
 };
 
 #endif

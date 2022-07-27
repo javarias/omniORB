@@ -22,39 +22,26 @@ public:
     TestIntfLongDouble_impl();
 
     virtual CORBA::LongDouble
-    attrLongDouble()
-        throw (
-	    CORBA::SystemException
-	);
+    attrLongDouble();
 
     virtual void
     attrLongDouble(
 	CORBA::LongDouble
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::LongDouble
     opLongDouble(
 	CORBA::LongDouble,
 	CORBA::LongDouble&,
 	CORBA::LongDouble_out
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::LongDouble
     opLongDoubleEx(
 	CORBA::LongDouble,
 	CORBA::LongDouble&,
 	CORBA::LongDouble_out
-    )
-        throw (
-	    ORBTest_LongDouble::ExLongDouble,
-	    CORBA::SystemException
-	);
+    );
 };
 
 #endif

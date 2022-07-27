@@ -37,7 +37,6 @@ public:
                       POA_ptr /*poa*/,
                       const char* operation,
                       PortableServer::ServantLocator::Cookie& /*the_cookie*/)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         //cout << endl << "preinvoke: id = `" << oidString << "' op = `"
@@ -51,7 +50,6 @@ public:
                     const char* operation,
                     PortableServer::ServantLocator::Cookie /*the_cookie*/,
                     Servant the_servant)
-        throw(SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         //cout << "postinvoke: id = `" << oidString << "' op = `"
@@ -72,7 +70,6 @@ public:
     }
 
     Servant incarnate(const ObjectId& oid, POA_ptr /*poa*/)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
         return new TestRef_impl(orb_, oidString, true);
@@ -83,7 +80,6 @@ public:
                      Servant servant,
                      Boolean /*cleanup*/,
                      Boolean remaining)
-        throw(SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
 

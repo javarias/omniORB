@@ -22,39 +22,26 @@ public:
     TestIntfFixed_impl();
 
     virtual ORBTest_Fixed::TestFixed
-    attrFixed()
-        throw (
-	    CORBA::SystemException
-	);
+    attrFixed();
 
     virtual void
     attrFixed(
 	const ORBTest_Fixed::TestFixed&
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual ORBTest_Fixed::TestFixed
     opFixed(
 	const ORBTest_Fixed::TestFixed&,
 	ORBTest_Fixed::TestFixed&,
 	ORBTest_Fixed::TestFixed_out
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual ORBTest_Fixed::TestFixed
     opFixedEx(
 	const ORBTest_Fixed::TestFixed&,
 	ORBTest_Fixed::TestFixed&,
 	ORBTest_Fixed::TestFixed_out
-    )
-        throw (
-	    ORBTest_Fixed::ExFixed,
-	    CORBA::SystemException
-	);
+    );
 };
 
 #endif

@@ -32,7 +32,6 @@ TestOBVColo_impl::~TestOBVColo_impl()
 //
 void
 TestOBVColo_impl::set_expected_count(Long count)
-    throw(SystemException)
 {
     count_ = count;
 }
@@ -42,14 +41,12 @@ TestOBVColo_impl::set_expected_count(Long count)
 //
 TestValue*
 TestOBVColo_impl::test_value_attribute()
-    throw(SystemException)
 {
     return 0;
 }
 
 void
 TestOBVColo_impl::test_value_attribute(TestValue* a)
-    throw(SystemException)
 {
     if(a != 0)
     {
@@ -65,7 +62,6 @@ TestOBVColo_impl::test_value_attribute(TestValue* a)
 TestValue*
 TestOBVColo_impl::test_value_op(TestValue* v1, TestValue*& v2,
                                 TestValue_out v3)
-    throw(SystemException)
 {
     if(v1 != 0)
     {
@@ -91,14 +87,12 @@ TestOBVColo_impl::test_value_op(TestValue* v1, TestValue*& v2,
 //
 TestOBVColo::SV*
 TestOBVColo_impl::test_value_struct_attribute()
-    throw(SystemException)
 {
     return new TestOBVColo::SV;
 }
 
 void
 TestOBVColo_impl::test_value_struct_attribute(const TestOBVColo::SV& a)
-    throw(SystemException)
 {
     if(a.val.in() != 0)
     {
@@ -112,7 +106,6 @@ TestOBVColo_impl::test_value_struct_attribute(const TestOBVColo::SV& a)
 //
 TestOBVColo::SV*
 TestOBVColo_impl::test_value_struct_op(const TestOBVColo::SV& s1, TestOBVColo::SV& s2, TestOBVColo::SV_out s3)
-    throw(SystemException)
 {
     if(s1.val.in() != 0)
     {
@@ -132,7 +125,6 @@ TestOBVColo_impl::test_value_struct_op(const TestOBVColo::SV& s1, TestOBVColo::S
 //
 TestOBVColo::UV*
 TestOBVColo_impl::test_value_union_attribute()
-    throw(SystemException)
 {
     TestOBVColo::UV* result = new TestOBVColo::UV;
     result -> val(0);
@@ -141,7 +133,6 @@ TestOBVColo_impl::test_value_union_attribute()
 
 void
 TestOBVColo_impl::test_value_union_attribute(const TestOBVColo::UV& a)
-    throw(SystemException)
 {
     TEST(a._d() == false);
 
@@ -157,7 +148,6 @@ TestOBVColo_impl::test_value_union_attribute(const TestOBVColo::UV& a)
 //
 TestOBVColo::UV*
 TestOBVColo_impl::test_value_union_op(const TestOBVColo::UV& u1, TestOBVColo::UV& u2, TestOBVColo::UV_out u3)
-    throw(SystemException)
 {
     TEST(u1._d() == false);
     TEST(u2._d() == false);
@@ -180,7 +170,6 @@ TestOBVColo_impl::test_value_union_op(const TestOBVColo::UV& u1, TestOBVColo::UV
 //
 TestOBVColo::VSeq*
 TestOBVColo_impl::test_value_seq_attribute()
-    throw(SystemException)
 {
     TestOBVColo::VSeq* result = new TestOBVColo::VSeq;
     result -> length(5);
@@ -189,7 +178,6 @@ TestOBVColo_impl::test_value_seq_attribute()
 
 void
 TestOBVColo_impl::test_value_seq_attribute(const TestOBVColo::VSeq& a)
-    throw(SystemException)
 {
     ULong i;
     for(i = 0 ; i < a.length() ; i++)
@@ -212,7 +200,6 @@ TestOBVColo::VSeq*
 TestOBVColo_impl::test_value_seq_op(const TestOBVColo::VSeq& s1,
                                     TestOBVColo::VSeq& s2,
                                     TestOBVColo::VSeq_out s3)
-    throw(SystemException)
 {
     ULong i;
     for(i = 0 ; i < s1.length() ; i++)
@@ -243,14 +230,12 @@ TestOBVColo_impl::test_value_seq_op(const TestOBVColo::VSeq& s1,
 //
 TestAbstract_ptr
 TestOBVColo_impl::test_abstract_attribute()
-    throw(SystemException)
 {
     return TestAbstract::_nil();
 }
 
 void
 TestOBVColo_impl::test_abstract_attribute(TestAbstract_ptr a)
-    throw(SystemException)
 {
     if(!is_nil(a))
     {
@@ -271,7 +256,6 @@ TestOBVColo_impl::test_abstract_attribute(TestAbstract_ptr a)
 //
 void
 TestOBVColo_impl::test_abstract_op(TestAbstract_ptr a)
-    throw(SystemException)
 {
     if(!is_nil(a))
     {

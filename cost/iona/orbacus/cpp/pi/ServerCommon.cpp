@@ -53,7 +53,6 @@ ServerInterceptorProxy_impl::destroy()
 void
 ServerInterceptorProxy_impl::receive_request_service_contexts(
     ServerRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ >= 0);
     
@@ -64,7 +63,6 @@ ServerInterceptorProxy_impl::receive_request_service_contexts(
 
 void
 ServerInterceptorProxy_impl::receive_request(ServerRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ > 0);
     if(!is_nil(interceptor_))
@@ -82,7 +80,6 @@ ServerInterceptorProxy_impl::send_reply(ServerRequestInfo_ptr ri)
 
 void
 ServerInterceptorProxy_impl::send_other(ServerRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ > 0);
     count_--;
@@ -92,7 +89,6 @@ ServerInterceptorProxy_impl::send_other(ServerRequestInfo_ptr ri)
 
 void
 ServerInterceptorProxy_impl::send_exception(ServerRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ > 0);
     count_--;

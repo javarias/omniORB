@@ -38,7 +38,6 @@ CORBA::Boolean
 TestIntfLongDoubleDSI_impl::_is_a(
     const char* name
 )
-    throw (CORBA::SystemException)
 {
     if (strcmp(name, "IDL:ORBTest_LongDouble/Intf:1.0") == 0)
     {
@@ -54,7 +53,6 @@ void
 TestIntfLongDoubleDSI_impl::invoke(
     ServerRequest_ptr request
 )
-    throw ()
 {
     String_var name = request->operation();
 

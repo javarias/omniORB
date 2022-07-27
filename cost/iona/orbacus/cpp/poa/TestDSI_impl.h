@@ -32,10 +32,9 @@ public:
     _primary_interface(const PortableServer::ObjectId&,
 		       PortableServer::POA_ptr);
 
-    virtual CORBA::Boolean _is_a(const char*)
-	throw(CORBA::SystemException);
+    virtual CORBA::Boolean _is_a(const char*);
 
-    virtual void invoke(CORBA::ServerRequest_ptr) throw();
+    virtual void invoke(CORBA::ServerRequest_ptr);
 
     virtual PortableServer::POA_ptr
     _default_POA();

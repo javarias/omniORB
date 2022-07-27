@@ -63,7 +63,6 @@ TestDSI_impl::_primary_interface(const PortableServer::ObjectId&,
 
 CORBA::Boolean
 TestDSI_impl::_is_a(const char* id)
-    throw(CORBA::SystemException)
 {
     if(strcmp(id, "IDL:Test:1.0") == 0)
 	return true;
@@ -73,7 +72,6 @@ TestDSI_impl::_is_a(const char* id)
 
 void
 TestDSI_impl::invoke(CORBA::ServerRequest_ptr request)
-    throw()
 {
     String_var name = request -> operation();
 

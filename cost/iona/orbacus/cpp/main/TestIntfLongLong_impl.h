@@ -23,74 +23,48 @@ public:
     TestIntfLongLong_impl();
 
     virtual CORBA::LongLong
-    attrLongLong()
-        throw (
-	    CORBA::SystemException
-	);
+    attrLongLong();
 
     virtual void
     attrLongLong(
 	CORBA::LongLong
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::LongLong
     opLongLong(
 	CORBA::LongLong,
 	CORBA::LongLong&,
 	CORBA::LongLong_out
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::LongLong
     opLongLongEx(
 	CORBA::LongLong,
 	CORBA::LongLong&,
 	CORBA::LongLong_out
-    )
-        throw (
-	    ORBTest_LongLong::ExLongLong,
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::ULongLong
-    attrULongLong()
-        throw (
-	    CORBA::SystemException
-	);
+    attrULongLong();
 
     virtual void
     attrULongLong(
 	CORBA::ULongLong
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::ULongLong
     opULongLong(
 	CORBA::ULongLong,
 	CORBA::ULongLong&,
 	CORBA::ULongLong_out
-    )
-        throw (
-	    CORBA::SystemException
-	);
+    );
 
     virtual CORBA::ULongLong
     opULongLongEx(
 	CORBA::ULongLong,
 	CORBA::ULongLong&,
 	CORBA::ULongLong_out
-    )
-        throw (
-	    ORBTest_LongLong::ExULongLong,
-	    CORBA::SystemException
-	);
+    );
 
 };
 

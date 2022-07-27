@@ -42,27 +42,19 @@ public:
 
     virtual void
     receive_request_service_contexts(
-        PortableInterceptor::ServerRequestInfo_ptr ri)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+        PortableInterceptor::ServerRequestInfo_ptr ri);
 
     virtual void
-    receive_request(PortableInterceptor::ServerRequestInfo_ptr ri)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    receive_request(PortableInterceptor::ServerRequestInfo_ptr ri);
 
     virtual void
     send_reply(PortableInterceptor::ServerRequestInfo_ptr ri);
 
     virtual void
-    send_other(PortableInterceptor::ServerRequestInfo_ptr ri)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    send_other(PortableInterceptor::ServerRequestInfo_ptr ri);
 
     virtual void
-    send_exception(PortableInterceptor::ServerRequestInfo_ptr ri)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    send_exception(PortableInterceptor::ServerRequestInfo_ptr ri);
 
     void _OB_changeInterceptor(
         PortableInterceptor::ServerRequestInterceptor_ptr);

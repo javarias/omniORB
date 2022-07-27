@@ -27,7 +27,6 @@ TestLocationForward_impl::TestLocationForward_impl(
 
 void
 TestLocationForward_impl::deactivate_servant()
-    throw(SystemException)
 {
     ObjectId_var oid;
     POA_var poa;

@@ -19,8 +19,7 @@ public:
     
     TestLocationForward_impl(CORBA::ORB_ptr orb, PortableServer::POA_ptr);
 
-    virtual void deactivate_servant()
-        throw(CORBA::SystemException);
+    virtual void deactivate_servant();
 };
 
 #endif

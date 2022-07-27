@@ -27,14 +27,12 @@ public:
     //
     // IDL:TestAbstract/abstract_op:1.0
     //
-    virtual void abstract_op()
-        throw(CORBA::SystemException);
+    virtual void abstract_op();
 
     //
     // IDL:TestAbstractSub/sub_op:1.0
     //
-    virtual void sub_op()
-        throw(CORBA::SystemException);
+    virtual void sub_op();
 };
 
 #endif

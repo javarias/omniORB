@@ -32,7 +32,6 @@ TestAbstractSub_impl::~TestAbstractSub_impl()
 //
 void
 TestAbstractSub_impl::abstract_op()
-    throw(SystemException)
 {
 }
 
@@ -41,6 +40,5 @@ TestAbstractSub_impl::abstract_op()
 //
 void
 TestAbstractSub_impl::sub_op()
-    throw(SystemException)
 {
 }

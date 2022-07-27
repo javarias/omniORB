@@ -35,7 +35,6 @@ public:
     }
 
     Servant incarnate(const ObjectId& oid, POA_ptr poa)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
 
@@ -73,7 +72,6 @@ public:
                      Servant servant,
                      Boolean /*cleanup*/,
                      Boolean remaining)
-        throw(SystemException)
     {
         if(!remaining)
         {

@@ -49,7 +49,6 @@ public:
     bool isValid() { return valid_; }
 
     Servant incarnate(const ObjectId& /*oid*/, POA_ptr /*poa*/)
-        throw(ForwardRequest, SystemException)
     {
         return 0;
     }
@@ -59,7 +58,6 @@ public:
                      Servant servant,
                      Boolean /*cleanup*/,
                      Boolean remaining)
-        throw(SystemException)
     {
         TEST(TestUtil_Compare(oid_, oid));
         TEST(poa_ -> _is_equivalent(poa));

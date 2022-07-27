@@ -26,27 +26,17 @@ TestIntfBasic_impl::TestIntfBasic_impl()
 
 void
 TestIntfBasic_impl::opVoid()
-    throw (
-	CORBA::SystemException
-    )
 {
 }
 
 void
 TestIntfBasic_impl::opVoidEx()
-    throw (
-	ORBTest_Basic::ExVoid,
-	SystemException
-    )
 {
     throw ORBTest_Basic::ExVoid();
 }
 
 Short
 TestIntfBasic_impl::attrShort()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aShort;
 }
@@ -55,9 +45,6 @@ void
 TestIntfBasic_impl::attrShort(
     Short val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aShort = val;
 }
@@ -68,9 +55,6 @@ TestIntfBasic_impl::opShort(
     Short& a1,
     Short& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aShort = a0 + a1;
     a1 = a2 = m_aShort;
@@ -83,10 +67,6 @@ TestIntfBasic_impl::opShortEx(
     Short& a1,
     Short&
 )
-    throw (
-	ORBTest_Basic::ExShort,
-	SystemException
-    )
 {
 #if defined(__GNUC__) && defined(__OPTIMIZE__) // COMPILERFIX
     volatile int i = 1;
@@ -100,9 +80,6 @@ TestIntfBasic_impl::opShortEx(
 
 Long
 TestIntfBasic_impl::attrLong()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aLong;
 }
@@ -111,9 +88,6 @@ void
 TestIntfBasic_impl::attrLong(
     Long val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aLong = val;
 }
@@ -124,9 +98,6 @@ TestIntfBasic_impl::opLong(
     Long& a1,
     Long& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aLong = a0 + a1;
     a1 = a2 = m_aLong;
@@ -139,10 +110,6 @@ TestIntfBasic_impl::opLongEx(
     Long& a1,
     Long&
 )
-    throw (
-	ORBTest_Basic::ExLong,
-	CORBA::SystemException
-    )
 {
     m_aLong = a0 + a1;
     throw ORBTest_Basic::ExLong(m_aLong);
@@ -151,9 +118,6 @@ TestIntfBasic_impl::opLongEx(
 
 UShort
 TestIntfBasic_impl::attrUShort()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aUShort;
 }
@@ -162,9 +126,6 @@ void
 TestIntfBasic_impl::attrUShort(
     UShort val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aUShort = val;
 }
@@ -175,9 +136,6 @@ TestIntfBasic_impl::opUShort(
     UShort& a1,
     UShort& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aUShort = a0 + a1;
     a1 = a2 = m_aUShort;
@@ -190,10 +148,6 @@ TestIntfBasic_impl::opUShortEx(
     UShort& a1,
     UShort&
 )
-    throw (
-	ORBTest_Basic::ExUShort,
-	CORBA::SystemException
-    )
 {
     m_aUShort = a0 + a1;
     throw ORBTest_Basic::ExUShort(m_aUShort);
@@ -202,9 +156,6 @@ TestIntfBasic_impl::opUShortEx(
 
 ULong
 TestIntfBasic_impl::attrULong()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aULong;
 }
@@ -213,9 +164,6 @@ void
 TestIntfBasic_impl::attrULong(
     ULong val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aULong = val;
 }
@@ -226,9 +174,6 @@ TestIntfBasic_impl::opULong(
     ULong& a1,
     ULong& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aULong = a0 + a1;
     a1 = a2 = m_aULong;
@@ -241,10 +186,6 @@ TestIntfBasic_impl::opULongEx(
     ULong& a1,
     ULong&
 )
-    throw (
-	ORBTest_Basic::ExULong,
-	CORBA::SystemException
-    )
 {
     m_aULong = a0 + a1;
     throw ORBTest_Basic::ExULong(m_aULong);
@@ -253,9 +194,6 @@ TestIntfBasic_impl::opULongEx(
 
 Float
 TestIntfBasic_impl::attrFloat()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aFloat;
 }
@@ -264,9 +202,6 @@ void
 TestIntfBasic_impl::attrFloat(
     Float val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFloat = val;
 }
@@ -277,9 +212,6 @@ TestIntfBasic_impl::opFloat(
     Float& a1,
     Float& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFloat = a0 + a1;
     a1 = a2 = m_aFloat;
@@ -292,10 +224,6 @@ TestIntfBasic_impl::opFloatEx(
     Float& a1,
     Float&
 )
-    throw (
-	ORBTest_Basic::ExFloat,
-	CORBA::SystemException
-    )
 {
     m_aFloat = a0 + a1;
     throw ORBTest_Basic::ExFloat(m_aFloat);
@@ -304,9 +232,6 @@ TestIntfBasic_impl::opFloatEx(
 
 Double
 TestIntfBasic_impl::attrDouble()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aDouble;
 }
@@ -315,9 +240,6 @@ void
 TestIntfBasic_impl::attrDouble(
     Double val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aDouble = val;
 }
@@ -328,9 +250,6 @@ TestIntfBasic_impl::opDouble(
     Double& a1,
     Double& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aDouble = a0 + a1;
     a1 = a2 = m_aDouble;
@@ -343,10 +262,6 @@ TestIntfBasic_impl::opDoubleEx(
     Double& a1,
     Double&
 )
-    throw (
-	ORBTest_Basic::ExDouble,
-	CORBA::SystemException
-    )
 {
     m_aDouble = a0 + a1;
     throw ORBTest_Basic::ExDouble(m_aDouble);
@@ -355,9 +270,6 @@ TestIntfBasic_impl::opDoubleEx(
 
 Boolean
 TestIntfBasic_impl::attrBoolean()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aBoolean;
 }
@@ -366,9 +278,6 @@ void
 TestIntfBasic_impl::attrBoolean(
     Boolean val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aBoolean = val;
 }
@@ -379,9 +288,6 @@ TestIntfBasic_impl::opBoolean(
     Boolean& a1,
     Boolean& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aBoolean = a0 && a1;
     a1 = a2 = m_aBoolean;
@@ -394,10 +300,6 @@ TestIntfBasic_impl::opBooleanEx(
     Boolean& a1,
     Boolean&
 )
-    throw (
-	ORBTest_Basic::ExBoolean,
-	CORBA::SystemException
-    )
 {
     m_aBoolean = a0 && a1;
     throw ORBTest_Basic::ExBoolean(m_aBoolean);
@@ -406,9 +308,6 @@ TestIntfBasic_impl::opBooleanEx(
 
 Char
 TestIntfBasic_impl::attrChar()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aChar;
 }
@@ -417,9 +316,6 @@ void
 TestIntfBasic_impl::attrChar(
     Char val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aChar = val;
 }
@@ -430,9 +326,6 @@ TestIntfBasic_impl::opChar(
     Char& a1,
     Char& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aChar = a0 + a1;
     a1 = a2 = m_aChar;
@@ -445,10 +338,6 @@ TestIntfBasic_impl::opCharEx(
     Char& a1,
     Char&
 )
-    throw (
-	ORBTest_Basic::ExChar,
-	CORBA::SystemException
-    )
 {
     m_aChar = a0 + a1;
     throw ORBTest_Basic::ExChar(m_aChar);
@@ -457,9 +346,6 @@ TestIntfBasic_impl::opCharEx(
 
 Octet
 TestIntfBasic_impl::attrOctet()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aOctet;
 }
@@ -468,9 +354,6 @@ void
 TestIntfBasic_impl::attrOctet(
     Octet val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aOctet = val;
 }
@@ -481,9 +364,6 @@ TestIntfBasic_impl::opOctet(
     Octet& a1,
     Octet& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aOctet = a0 + a1;
     a1 = a2 = m_aOctet;
@@ -496,10 +376,6 @@ TestIntfBasic_impl::opOctetEx(
     Octet& a1,
     Octet&
 )
-    throw (
-	ORBTest_Basic::ExOctet,
-	CORBA::SystemException
-    )
 {
     m_aOctet = a0 + a1;
     throw ORBTest_Basic::ExOctet(m_aOctet);
@@ -508,9 +384,6 @@ TestIntfBasic_impl::opOctetEx(
 
 char*
 TestIntfBasic_impl::attrString()
-    throw (
-	CORBA::SystemException
-    )
 {
     return string_dup(m_aString);
 }
@@ -519,9 +392,6 @@ void
 TestIntfBasic_impl::attrString(
     const char* val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aString = val;
 }
@@ -532,9 +402,6 @@ TestIntfBasic_impl::opString(
     char*& a1,
     String_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aString = string_alloc(strlen(a0) + strlen(a1));
     strcpy(m_aString.inout(), a0);
@@ -551,10 +418,6 @@ TestIntfBasic_impl::opStringEx(
     char*& a1,
     String_out
 )
-    throw (
-	ORBTest_Basic::ExString,
-	CORBA::SystemException
-    )
 {
     m_aString = string_alloc(strlen(a0) + strlen(a1));
     strcpy(m_aString.inout(), a0);
@@ -565,9 +428,6 @@ TestIntfBasic_impl::opStringEx(
 
 Any*
 TestIntfBasic_impl::attrAny()
-    throw (
-	CORBA::SystemException
-    )
 {
     return new Any(m_aAny);
 }
@@ -576,9 +436,6 @@ void
 TestIntfBasic_impl::attrAny(
     const Any& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aAny = val;
 }
@@ -589,9 +446,6 @@ TestIntfBasic_impl::opAny(
     Any& a1,
     Any_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aAny = a0;
     a1 = m_aAny;
@@ -605,10 +459,6 @@ TestIntfBasic_impl::opAnyEx(
     Any&,
     Any_out
 )
-    throw (
-	ORBTest_Basic::ExAny,
-	CORBA::SystemException
-    )
 {
     m_aAny = a0;
     throw ORBTest_Basic::ExAny(m_aAny);
@@ -617,9 +467,6 @@ TestIntfBasic_impl::opAnyEx(
 
 ORBTest_Basic::TestEnum
 TestIntfBasic_impl::attrTestEnum()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aTestEnum;
 }
@@ -628,9 +475,6 @@ void
 TestIntfBasic_impl::attrTestEnum(
     ORBTest_Basic::TestEnum val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aTestEnum = val;
 }
@@ -641,9 +485,6 @@ TestIntfBasic_impl::opTestEnum(
     ORBTest_Basic::TestEnum& a1,
     ORBTest_Basic::TestEnum& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aTestEnum = a0;
     a1 = a2 = m_aTestEnum;
@@ -656,10 +497,6 @@ TestIntfBasic_impl::opTestEnumEx(
     ORBTest_Basic::TestEnum&,
     ORBTest_Basic::TestEnum&
 )
-    throw (
-	ORBTest_Basic::ExTestEnum,
-	CORBA::SystemException
-    )
 {
     m_aTestEnum = a0;
     throw ORBTest_Basic::ExTestEnum(m_aTestEnum);
@@ -669,9 +506,6 @@ TestIntfBasic_impl::opTestEnumEx(
 
 ORBTest_Basic::Intf_ptr
 TestIntfBasic_impl::attrIntf()
-    throw (
-	CORBA::SystemException
-    )
 {
     return ORBTest_Basic::Intf::_duplicate(m_aTestIntfBasic);
 }
@@ -680,7 +514,6 @@ void
 TestIntfBasic_impl::attrIntf(
     ORBTest_Basic::Intf_ptr val
 )
-    throw (CORBA::SystemException)
 {
     m_aTestIntfBasic = ORBTest_Basic::Intf::_duplicate(val);
 }
@@ -691,9 +524,6 @@ TestIntfBasic_impl::opIntf(
     ORBTest_Basic::Intf_ptr& a1,
     ORBTest_Basic::Intf_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aTestIntfBasic = ORBTest_Basic::Intf::_duplicate(a0);
     release(a1);
@@ -708,10 +538,6 @@ TestIntfBasic_impl::opIntfEx(
     ORBTest_Basic::Intf_ptr&,
     ORBTest_Basic::Intf_out
 )
-    throw (
-	ORBTest_Basic::ExIntf,
-	CORBA::SystemException
-    )
 {
     m_aTestIntfBasic = ORBTest_Basic::Intf::_duplicate(a0); throw ORBTest_Basic::ExIntf(m_aTestIntfBasic);
     return ORBTest_Basic::Intf::_nil(); // Some compilers need this
@@ -719,9 +545,6 @@ TestIntfBasic_impl::opIntfEx(
 
 ORBTest_Basic::FixedStruct
 TestIntfBasic_impl::attrFixedStruct()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aFixedStruct;
 }
@@ -730,9 +553,6 @@ void
 TestIntfBasic_impl::attrFixedStruct(
     const ORBTest_Basic::FixedStruct& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedStruct = val;
 }
@@ -743,9 +563,6 @@ TestIntfBasic_impl::opFixedStruct(
     ORBTest_Basic::FixedStruct& a1,
     ORBTest_Basic::FixedStruct& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedStruct = a0;
     a1 = a2 = m_aFixedStruct;
@@ -758,10 +575,6 @@ TestIntfBasic_impl::opFixedStructEx(
     ORBTest_Basic::FixedStruct&,
     ORBTest_Basic::FixedStruct&
 )
-    throw (
-	ORBTest_Basic::ExFixedStruct,
-	CORBA::SystemException
-    )
 {
     m_aFixedStruct = a0;
     throw ORBTest_Basic::ExFixedStruct(m_aFixedStruct);
@@ -771,9 +584,6 @@ TestIntfBasic_impl::opFixedStructEx(
 
 ORBTest_Basic::VariableStruct*
 TestIntfBasic_impl::attrVariableStruct()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::VariableStruct(m_aVariableStruct)
@@ -784,9 +594,6 @@ void
 TestIntfBasic_impl::attrVariableStruct(
     const ORBTest_Basic::VariableStruct& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableStruct = val;
 }
@@ -797,9 +604,6 @@ TestIntfBasic_impl::opVariableStruct(
     ORBTest_Basic::VariableStruct& a1,
     ORBTest_Basic::VariableStruct_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableStruct = a0;
     a1 = m_aVariableStruct;
@@ -815,10 +619,6 @@ TestIntfBasic_impl::opVariableStructEx(
     ORBTest_Basic::VariableStruct&,
     ORBTest_Basic::VariableStruct_out
 )
-    throw (
-	ORBTest_Basic::ExVariableStruct,
-	CORBA::SystemException
-    )
 {
     m_aVariableStruct = a0;
     throw ORBTest_Basic::ExVariableStruct(m_aVariableStruct);
@@ -828,9 +628,6 @@ TestIntfBasic_impl::opVariableStructEx(
 
 ORBTest_Basic::FixedUnion
 TestIntfBasic_impl::attrFixedUnion()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aFixedUnion;
 }
@@ -839,9 +636,6 @@ void
 TestIntfBasic_impl::attrFixedUnion(
     const ORBTest_Basic::FixedUnion& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedUnion = val;
 }
@@ -852,9 +646,6 @@ TestIntfBasic_impl::opFixedUnion(
     ORBTest_Basic::FixedUnion& a1,
     ORBTest_Basic::FixedUnion& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedUnion = a0;
     a1 = a2 = m_aFixedUnion;
@@ -867,10 +658,6 @@ TestIntfBasic_impl::opFixedUnionEx(
     ORBTest_Basic::FixedUnion&,
     ORBTest_Basic::FixedUnion&
 )
-    throw (
-	ORBTest_Basic::ExFixedUnion,
-	CORBA::SystemException
-    )
 {
     m_aFixedUnion = a0;
     throw ORBTest_Basic::ExFixedUnion(m_aFixedUnion);
@@ -880,9 +667,6 @@ TestIntfBasic_impl::opFixedUnionEx(
 
 ORBTest_Basic::VariableUnion*
 TestIntfBasic_impl::attrVariableUnion()
-    throw (
-	CORBA::SystemException
-    )
 {
     return new ORBTest_Basic::VariableUnion(m_aVariableUnion);
 }
@@ -891,9 +675,6 @@ void
 TestIntfBasic_impl::attrVariableUnion(
     const ORBTest_Basic::VariableUnion& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableUnion = val;
 }
@@ -904,9 +685,6 @@ TestIntfBasic_impl::opVariableUnion(
     ORBTest_Basic::VariableUnion& a1,
     ORBTest_Basic::VariableUnion_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableUnion = a0;
     a1 = m_aVariableUnion;
@@ -920,10 +698,6 @@ TestIntfBasic_impl::opVariableUnionEx(
     ORBTest_Basic::VariableUnion&,
     ORBTest_Basic::VariableUnion_out
 )
-    throw (
-	ORBTest_Basic::ExVariableUnion,
-	CORBA::SystemException
-    )
 {
     m_aVariableUnion = a0;
     throw ORBTest_Basic::ExVariableUnion(m_aVariableUnion);
@@ -933,9 +707,6 @@ TestIntfBasic_impl::opVariableUnionEx(
 
 ORBTest_Basic::StringSequence*
 TestIntfBasic_impl::attrStringSequence()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::StringSequence(m_aStringSequence)
@@ -946,9 +717,6 @@ void
 TestIntfBasic_impl::attrStringSequence(
     const ORBTest_Basic::StringSequence& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aStringSequence = val;
 }
@@ -959,9 +727,6 @@ TestIntfBasic_impl::opStringSequence(
     ORBTest_Basic::StringSequence& a1,
     ORBTest_Basic::StringSequence_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aStringSequence = a0;
     m_aStringSequence.length(a0.length() + a1.length());
@@ -979,10 +744,6 @@ TestIntfBasic_impl::opStringSequenceEx(
     ORBTest_Basic::StringSequence& a1,
     ORBTest_Basic::StringSequence_out
 )
-    throw (
-	ORBTest_Basic::ExStringSequence,
-	CORBA::SystemException
-    )
 {
     m_aStringSequence = a0;
     m_aStringSequence.length(a0.length() + a1.length());
@@ -996,9 +757,6 @@ TestIntfBasic_impl::opStringSequenceEx(
 
 ORBTest_Basic::FixedArray_slice*
 TestIntfBasic_impl::attrFixedArray()
-    throw (
-	CORBA::SystemException
-    )
 {
     return ORBTest_Basic::FixedArray_dup(m_aFixedArray);
 }
@@ -1007,9 +765,6 @@ void
 TestIntfBasic_impl::attrFixedArray(
     const ORBTest_Basic::FixedArray val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::FixedArray_copy(m_aFixedArray, val);
 }
@@ -1020,9 +775,6 @@ TestIntfBasic_impl::opFixedArray(
     ORBTest_Basic::FixedArray a1,
     ORBTest_Basic::FixedArray a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::FixedArray_copy(m_aFixedArray, a0);
     ORBTest_Basic::FixedArray_copy(a1, m_aFixedArray);
@@ -1036,10 +788,6 @@ TestIntfBasic_impl::opFixedArrayEx(
     ORBTest_Basic::FixedArray,
     ORBTest_Basic::FixedArray
 )
-    throw (
-	ORBTest_Basic::ExFixedArray,
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::FixedArray_copy(m_aFixedArray, a0);
     throw ORBTest_Basic::ExFixedArray(m_aFixedArray);
@@ -1049,9 +797,6 @@ TestIntfBasic_impl::opFixedArrayEx(
 
 ORBTest_Basic::VariableArray_slice*
 TestIntfBasic_impl::attrVariableArray()
-    throw (
-	CORBA::SystemException
-    )
 {
     return ORBTest_Basic::VariableArray_dup(m_aVariableArray);
 }
@@ -1060,9 +805,6 @@ void
 TestIntfBasic_impl::attrVariableArray(
     const ORBTest_Basic::VariableArray val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::VariableArray_copy(m_aVariableArray, val);
 }
@@ -1073,9 +815,6 @@ TestIntfBasic_impl::opVariableArray(
     ORBTest_Basic::VariableArray a1,
     ORBTest_Basic::VariableArray_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::VariableArray_copy(m_aVariableArray, a0);
     ORBTest_Basic::VariableArray_copy(a1, m_aVariableArray);
@@ -1089,10 +828,6 @@ TestIntfBasic_impl::opVariableArrayEx(
     ORBTest_Basic::VariableArray,
     ORBTest_Basic::VariableArray_out
 )
-    throw (
-	ORBTest_Basic::ExVariableArray,
-	CORBA::SystemException
-    )
 {
     ORBTest_Basic::VariableArray_copy(m_aVariableArray, a0);
     throw ORBTest_Basic::ExVariableArray(m_aVariableArray);
@@ -1102,9 +837,6 @@ TestIntfBasic_impl::opVariableArrayEx(
 
 ORBTest_Basic::FixedArraySequence*
 TestIntfBasic_impl::attrFixedArraySequence()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::FixedArraySequence(
@@ -1117,9 +849,6 @@ void
 TestIntfBasic_impl::attrFixedArraySequence(
     const ORBTest_Basic::FixedArraySequence& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedArraySequence = val;
 }
@@ -1130,9 +859,6 @@ TestIntfBasic_impl::opFixedArraySequence(
     ORBTest_Basic::FixedArraySequence& a1,
     ORBTest_Basic::FixedArraySequence_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedArraySequence.length(a0.length() + a1.length());
     
@@ -1174,10 +900,6 @@ TestIntfBasic_impl::opFixedArraySequenceEx(
     ORBTest_Basic::FixedArraySequence& a1,
     ORBTest_Basic::FixedArraySequence_out
 )
-    throw (
-	ORBTest_Basic::ExFixedArraySequence,
-	CORBA::SystemException
-    )
 {
     m_aFixedArraySequence.length(a0.length() + a1.length());
     
@@ -1211,9 +933,6 @@ TestIntfBasic_impl::opFixedArraySequenceEx(
 
 ORBTest_Basic::VariableArraySequence*
 TestIntfBasic_impl::attrVariableArraySequence()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::VariableArraySequence(
@@ -1226,9 +945,6 @@ void
 TestIntfBasic_impl::attrVariableArraySequence(
     const ORBTest_Basic::VariableArraySequence& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableArraySequence = val;
 }
@@ -1239,9 +955,6 @@ TestIntfBasic_impl::opVariableArraySequence(
     ORBTest_Basic::VariableArraySequence& a1,
     ORBTest_Basic::VariableArraySequence_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableArraySequence.length(a0.length() + a1.length());
     
@@ -1283,10 +996,6 @@ TestIntfBasic_impl::opVariableArraySequenceEx(
     ORBTest_Basic::VariableArraySequence& a1,
     ORBTest_Basic::VariableArraySequence_out
 )
-    throw (
-	ORBTest_Basic::ExVariableArraySequence,
-	CORBA::SystemException
-    )
 {
     m_aVariableArraySequence.length(a0.length() + a1.length());
     
@@ -1321,9 +1030,6 @@ TestIntfBasic_impl::opVariableArraySequenceEx(
 
 ORBTest_Basic::FixedArrayBoundSequence*
 TestIntfBasic_impl::attrFixedArrayBoundSequence()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::FixedArrayBoundSequence(
@@ -1336,9 +1042,6 @@ void
 TestIntfBasic_impl::attrFixedArrayBoundSequence(
     const ORBTest_Basic::FixedArrayBoundSequence& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedArrayBoundSequence = val;
 }
@@ -1349,9 +1052,6 @@ TestIntfBasic_impl::opFixedArrayBoundSequence(
     ORBTest_Basic::FixedArrayBoundSequence& a1,
     ORBTest_Basic::FixedArrayBoundSequence_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aFixedArrayBoundSequence.length(a0.length() + a1.length());
     
@@ -1394,10 +1094,6 @@ TestIntfBasic_impl::opFixedArrayBoundSequenceEx(
     ORBTest_Basic::FixedArrayBoundSequence& a1,
     ORBTest_Basic::FixedArrayBoundSequence_out a2
 )
-    throw (
-	ORBTest_Basic::ExFixedArrayBoundSequence,
-	CORBA::SystemException
-    )
 {
     m_aFixedArrayBoundSequence.length(a0.length() + a1.length());
     
@@ -1440,9 +1136,6 @@ TestIntfBasic_impl::opFixedArrayBoundSequenceEx(
 
 ORBTest_Basic::VariableArrayBoundSequence*
 TestIntfBasic_impl::attrVariableArrayBoundSequence()
-    throw (
-	CORBA::SystemException
-    )
 {
     return (
 	new ORBTest_Basic::VariableArrayBoundSequence(
@@ -1456,9 +1149,6 @@ TestIntfBasic_impl::
 attrVariableArrayBoundSequence(
     const ORBTest_Basic::VariableArrayBoundSequence& val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableArrayBoundSequence = val;
 }
@@ -1469,9 +1159,6 @@ TestIntfBasic_impl::opVariableArrayBoundSequence(
     ORBTest_Basic::VariableArrayBoundSequence& a1,
     ORBTest_Basic::VariableArrayBoundSequence_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aVariableArrayBoundSequence.length(a0.length() + a1.length());
     
@@ -1514,10 +1201,6 @@ TestIntfBasic_impl::opVariableArrayBoundSequenceEx(
     ORBTest_Basic::VariableArrayBoundSequence& a1,
     ORBTest_Basic::VariableArrayBoundSequence_out a2
 )
-    throw (
-	ORBTest_Basic::ExVariableArrayBoundSequence,
-	CORBA::SystemException
-    )
 {
     m_aVariableArrayBoundSequence.length(a0.length() + a1.length());
     
@@ -1561,10 +1244,6 @@ TestIntfBasic_impl::opVariableArrayBoundSequenceEx(
 
 void
 TestIntfBasic_impl::opExRecursiveStruct()
-    throw (
-	ORBTest_Basic::ExRecursiveStruct,
-	CORBA::SystemException
-    )
 {
     m_aRecursiveStruct.s = CORBA::string_dup("test");
     m_aRecursiveStruct.i = 2;

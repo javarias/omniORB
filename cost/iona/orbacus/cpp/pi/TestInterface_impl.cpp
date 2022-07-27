@@ -52,7 +52,6 @@ TestInterface_impl::~TestInterface_impl()
 //
 void
 TestInterface_impl::noargs()
-    throw(SystemException)
 {
 }
 
@@ -61,7 +60,6 @@ TestInterface_impl::noargs()
 //
 void
 TestInterface_impl::noargs_oneway()
-    throw(SystemException)
 {
 }
 
@@ -70,7 +68,6 @@ TestInterface_impl::noargs_oneway()
 //
 void
 TestInterface_impl::systemexception()
-    throw(SystemException)
 {
     throw NO_IMPLEMENT();
 }
@@ -80,8 +77,6 @@ TestInterface_impl::systemexception()
 //
 void
 TestInterface_impl::userexception()
-    throw(TestInterface::user,
-          SystemException)
 {
     throw TestInterface::user();
 }
@@ -91,7 +86,6 @@ TestInterface_impl::userexception()
 //
 void
 TestInterface_impl::location_forward()
-    throw(SystemException)
 {
     TEST(false);
 }
@@ -101,7 +95,6 @@ TestInterface_impl::location_forward()
 //
 void
 TestInterface_impl::test_service_context()
-    throw(SystemException)
 {
     //
     // Test: get_slot
@@ -123,14 +116,12 @@ TestInterface_impl::test_service_context()
 //
 char*
 TestInterface_impl::string_attrib()
-    throw(SystemException)
 {
     return string_dup("TEST");
 }
 
 void
 TestInterface_impl::string_attrib(const char* param)
-    throw(SystemException)
 {
     TEST(strcmp(param, "TEST") == 0);
 }
@@ -140,7 +131,6 @@ TestInterface_impl::string_attrib(const char* param)
 //
 void
 TestInterface_impl::one_string_in(const char* param)
-    throw(SystemException)
 {
     TEST(strcmp(param, "TEST") == 0);
 }
@@ -150,7 +140,6 @@ TestInterface_impl::one_string_in(const char* param)
 //
 void
 TestInterface_impl::one_string_inout(char*& param)
-    throw(SystemException)
 {
     TEST(strcmp(param, "TESTINOUT") == 0);
     string_free(param);
@@ -162,7 +151,6 @@ TestInterface_impl::one_string_inout(char*& param)
 //
 void
 TestInterface_impl::one_string_out(String_out param)
-    throw(SystemException)
 {
     param = string_dup("TEST");
 }
@@ -172,7 +160,6 @@ TestInterface_impl::one_string_out(String_out param)
 //
 char*
 TestInterface_impl::one_string_return()
-    throw(SystemException)
 {
     return string_dup("TEST");
 }
@@ -182,7 +169,6 @@ TestInterface_impl::one_string_return()
 //
 TestInterface::s*
 TestInterface_impl::struct_attrib()
-    throw(SystemException)
 {
     TestInterface::s* r = new TestInterface::s;
     r -> sval = string_dup("TEST");
@@ -191,7 +177,6 @@ TestInterface_impl::struct_attrib()
 
 void
 TestInterface_impl::struct_attrib(const TestInterface::s& param)
-    throw(SystemException)
 {
     TEST(strcmp(param.sval, "TEST") == 0);
 }
@@ -201,7 +186,6 @@ TestInterface_impl::struct_attrib(const TestInterface::s& param)
 //
 void
 TestInterface_impl::one_struct_in(const TestInterface::s& param)
-    throw(SystemException)
 {
     TEST(strcmp(param.sval, "TEST") == 0);
 }
@@ -211,7 +195,6 @@ TestInterface_impl::one_struct_in(const TestInterface::s& param)
 //
 void
 TestInterface_impl::one_struct_inout(TestInterface::s& param)
-    throw(SystemException)
 {
     param.sval = string_dup("TEST");
 }
@@ -221,7 +204,6 @@ TestInterface_impl::one_struct_inout(TestInterface::s& param)
 //
 void
 TestInterface_impl::one_struct_out(TestInterface::s_out param)
-    throw(SystemException)
 {
     param = new TestInterface::s;
     param -> sval = string_dup("TEST");
@@ -232,7 +214,6 @@ TestInterface_impl::one_struct_out(TestInterface::s_out param)
 //
 TestInterface::s*
 TestInterface_impl::one_struct_return()
-    throw(SystemException)
 {
     TestInterface::s* r = new TestInterface::s;
     r -> sval = string_dup("TEST");
@@ -244,7 +225,6 @@ TestInterface_impl::one_struct_return()
 //
 void
 TestInterface_impl::deactivate()
-    throw(SystemException)
 {
     orb_ -> shutdown(false);
 }

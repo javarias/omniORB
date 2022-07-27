@@ -35,14 +35,12 @@ public:
     virtual CORBA::Boolean
     _is_a(
 	const char*
-    )
-	throw(CORBA::SystemException);
+    );
 
     virtual void
     invoke(
 	CORBA::ServerRequest_ptr
-    )
-	throw();
+    );
 };
 
 #endif

@@ -36,8 +36,7 @@ public:
     //
     // IDL:TestInterface/get_count:1.0
     //
-    virtual CORBA::Long get_count()
-        throw(CORBA::SystemException);
+    virtual CORBA::Long get_count();
 
     //
     // IDL:TestValueInterface/value_op:1.0

@@ -52,7 +52,6 @@ ClientInterceptorProxy_impl::destroy()
 
 void
 ClientInterceptorProxy_impl::send_request(ClientRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ == 0);
     
@@ -78,7 +77,6 @@ ClientInterceptorProxy_impl::receive_reply(ClientRequestInfo_ptr ri)
 
 void
 ClientInterceptorProxy_impl::receive_other(ClientRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ == 1);
     count_--;
@@ -88,7 +86,6 @@ ClientInterceptorProxy_impl::receive_other(ClientRequestInfo_ptr ri)
 
 void
 ClientInterceptorProxy_impl::receive_exception(ClientRequestInfo_ptr ri)
-    throw(ForwardRequest, SystemException)
 {
     TEST(count_ == 1);
     count_--;

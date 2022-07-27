@@ -41,9 +41,7 @@ public:
     destroy();
 
     virtual void
-    send_request(PortableInterceptor::ClientRequestInfo_ptr)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    send_request(PortableInterceptor::ClientRequestInfo_ptr);
 
     virtual void
     send_poll(PortableInterceptor::ClientRequestInfo_ptr);
@@ -52,14 +50,10 @@ public:
     receive_reply(PortableInterceptor::ClientRequestInfo_ptr);
 
     virtual void
-    receive_other(PortableInterceptor::ClientRequestInfo_ptr)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    receive_other(PortableInterceptor::ClientRequestInfo_ptr);
 
     virtual void
-    receive_exception(PortableInterceptor::ClientRequestInfo_ptr)
-	throw(PortableInterceptor::ForwardRequest,
-	      CORBA::SystemException);
+    receive_exception(PortableInterceptor::ClientRequestInfo_ptr);
 
     void _OB_changeInterceptor(
         PortableInterceptor::ClientRequestInterceptor_ptr);

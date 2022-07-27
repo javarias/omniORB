@@ -56,9 +56,6 @@ TestIntfWChar_impl::TestIntfWChar_impl()
 
 WChar
 TestIntfWChar_impl::attrWChar()
-    throw (
-	CORBA::SystemException
-    )
 {
     return m_aWChar;
 }
@@ -68,9 +65,6 @@ void
 TestIntfWChar_impl::attrWChar(
     WChar val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aWChar = val;
 }
@@ -81,9 +75,6 @@ TestIntfWChar_impl::opWChar(
     WChar& a1,
     WChar& a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aWChar = a0 + a1;
     a1 = a2 = m_aWChar;
@@ -96,10 +87,6 @@ TestIntfWChar_impl::opWCharEx(
     WChar& a1,
     WChar&
 )
-    throw (
-	ORBTest_WChar::ExWChar,
-	CORBA::SystemException
-    )
 {
     m_aWChar = a0 + a1;
     throw ORBTest_WChar::ExWChar(m_aWChar);
@@ -108,9 +95,6 @@ TestIntfWChar_impl::opWCharEx(
 
 wchar_t*
 TestIntfWChar_impl::attrWString()
-    throw (
-	CORBA::SystemException
-    )
 {
     return wstring_dup(m_aWString);
 }
@@ -119,9 +103,6 @@ void
 TestIntfWChar_impl::attrWString(
     const wchar_t* val
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aWString = val;
 }
@@ -132,9 +113,6 @@ TestIntfWChar_impl::opWString(
     wchar_t*& a1,
     WString_out a2
 )
-    throw (
-	CORBA::SystemException
-    )
 {
     m_aWString = wstring_alloc(mywcslen(a0) + mywcslen(a1));
     mywcscpy(m_aWString.inout(), a0);
@@ -151,10 +129,6 @@ TestIntfWChar_impl::opWStringEx(
     wchar_t*& a1,
     WString_out
 )
-    throw (
-	ORBTest_WChar::ExWString,
-	CORBA::SystemException
-    )
 {
     m_aWString = wstring_alloc(mywcslen(a0) + mywcslen(a1));
     mywcscpy(m_aWString.inout(), a0);

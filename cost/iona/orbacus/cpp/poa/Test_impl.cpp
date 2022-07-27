@@ -55,7 +55,6 @@ Test_impl::Test_impl(ORB_ptr orb, POA_ptr poa)
 
 void
 Test_impl::aMethod()
-    throw(SystemException)
 {
     if(compare_)
     {

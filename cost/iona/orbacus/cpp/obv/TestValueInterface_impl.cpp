@@ -44,7 +44,6 @@ TestValueInterface_impl::_copy_value()
 //
 Long
 TestValueInterface_impl::get_count()
-    throw(SystemException)
 {
     return count();
 }

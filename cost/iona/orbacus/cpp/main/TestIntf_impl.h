@@ -334,16 +334,13 @@ public:
     );
 
     virtual CORBA::Boolean
-    concurrent_request_execution()
-        throw (CORBA::SystemException);
+    concurrent_request_execution();
 
     virtual void
-    deactivate()
-        throw (CORBA::SystemException);
+    deactivate();
 
     virtual ORBTest::TestCaseList*
-    get_test_case_list()
-	throw (CORBA::SystemException);
+    get_test_case_list();
 };
 
 #endif

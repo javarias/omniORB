@@ -28,14 +28,12 @@ TestServer_impl::~TestServer_impl()
 
 TestInfoSeq*
 TestServer_impl::get_info()
-    throw(SystemException)
 {
     return new TestInfoSeq(info_);
 }
 
 void
 TestServer_impl::deactivate()
-    throw(SystemException)
 {
     if(!CORBA::is_nil(orb_))
     {

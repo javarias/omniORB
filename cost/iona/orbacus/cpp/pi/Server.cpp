@@ -49,7 +49,6 @@ public:
               PortableServer::POA_ptr poa,
               const char* operation,
               PortableServer::ServantLocator::Cookie& the_cookie)
-        throw(PortableServer::ForwardRequest, SystemException)
     {
         String_var oidString = PortableServer::ObjectId_to_string(oid);
 
@@ -90,7 +89,6 @@ public:
                const char* /*operation*/,
                PortableServer::ServantLocator::Cookie /*the_cookie*/,
                PortableServer::Servant /*the_servant*/)
-        throw(SystemException)
     {
     }
 };
@@ -1465,25 +1463,21 @@ public:
     // Standard IDL to C++ Mapping
     //
     virtual Long value()
-        throw(CORBA::SystemException)
     {
         return value_;
     }
 
     virtual CORBA::PolicyType policy_type()
-        throw(CORBA::SystemException)
     {
         return MY_SERVER_POLICY_ID;
     }
 
     virtual CORBA::Policy_ptr copy()
-        throw(CORBA::SystemException)
     {
         return Policy::_duplicate(this);
     }
 
     virtual void destroy()
-        throw(CORBA::SystemException)
     {
     }
 };
@@ -1498,7 +1492,6 @@ public:
     //
     virtual CORBA::Policy_ptr
     create_policy(CORBA::PolicyType type, const CORBA::Any& any)
-	throw(PolicyError)
     {
         if(type == MY_SERVER_POLICY_ID)
         {

@@ -49,7 +49,6 @@ public:
 	      POA_ptr /*poa*/,
 	      const char* operation,
 	      PortableServer::ServantLocator::Cookie& the_cookie)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = PortableServer::ObjectId_to_string(oid);
 
@@ -96,7 +95,6 @@ public:
 	       const char* operation,
 	       PortableServer::ServantLocator::Cookie the_cookie,
 	       Servant /*the_servant*/)
-        throw(SystemException)
     {
 
         //

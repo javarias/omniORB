@@ -75,7 +75,6 @@ public:
     }
 
     virtual Boolean unknown_adapter(POA_ptr parent, const char* name)
-        throw(SystemException)
     {
         TEST(strcmp(name, expectedName_) == 0);
         invoked_ = true;
@@ -177,7 +176,6 @@ public:
     }
 
     Servant incarnate(const ObjectId& oid, POA_ptr poa)
-        throw(ForwardRequest, SystemException)
     {
         String_var oidString = ObjectId_to_string(oid);
 
@@ -213,7 +211,6 @@ public:
                      Servant servant,
                      Boolean /*cleanup*/,
                      Boolean remaining)
-        throw(SystemException)
     {
         if(!remaining)
         {
@@ -251,7 +248,6 @@ public:
     }
 
     virtual Boolean unknown_adapter(POA_ptr parent, const char* name)
-        throw(SystemException)
     {
         if(strcmp(name, "poa3") == 0)
         {

@@ -48,7 +48,6 @@ TestRef_impl::_remove_ref()
 
 void
 TestRef_impl::aMethod()
-    throw(SystemException)
 {
     Object_var currentObj;
 

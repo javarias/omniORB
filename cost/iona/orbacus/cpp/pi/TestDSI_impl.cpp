@@ -51,7 +51,6 @@ TestInterfaceDSI_impl::_primary_interface(
 
 Boolean
 TestInterfaceDSI_impl::_is_a(const char* name)
-    throw(SystemException)
 {
     if(strcmp(name, "IDL:TestInterface:1.0") == 0)
     {
@@ -63,7 +62,6 @@ TestInterfaceDSI_impl::_is_a(const char* name)
 
 void
 TestInterfaceDSI_impl::invoke(ServerRequest_ptr request)
-    throw()
 {
     String_var name = request -> operation();
 
