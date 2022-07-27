@@ -1,3 +1,13 @@
+Wed 27 Jul 10:53:43 BST 2022
+============================
+
+- Rearrangement of directory structure.
+
+tests/omniorb
+tests/orbacus
+legacy/...
+
+
 Wed 27 Jul 10:22:29 BST 2022
 ============================
 
