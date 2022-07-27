@@ -1,8 +1,7 @@
 # This is an example test configuration file.
-# It is actually a python module got imported by test-controller.py
+# It is actually a python module that is imported by test-controller.py
 # and remote-executor.py.
 #
-
 
 ### conf_verbose
 # Set to 1 to get more info on the progress of the testsuite.
@@ -18,7 +17,7 @@ conf_build_test = 0
 # Set to 1 to see all the output from the test programs. Set to 0 to
 # keep quiet unless the test programs fail. In that case, the program output
 # will be dump to stdout regardless of the setting of this variable.
-conf_dump_program_output = 1
+conf_dump_program_output = 0
 
 ### conf_host_list
 # This is a sequence of sequence. Each element is a sequence of strings

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-#
+#    Copyright (C) 2022 Apasphere Ltd.
 #    Copyright (C) 2001 AT&T Laboratories Cambridge Ltd.
 #
 #    This file is part of the OMNI Testsuite.
@@ -20,44 +20,43 @@
 #    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 #    02111-1307, USA
 #
-#
-# Author: Christof Meerwald
-#
-import getopt, os, string, sys, thread, threading, time
-
+import getopt, os, sys, threading
 from stat import *
 
 try:
-    import CORBA, omniORB
-except ImportError , msg:
-    print 'Error: unable to load omniORBpy. You must install omniORBpy and\n'+\
+    import omniORB
+    CORBA = omniORB.CORBA
+
+except ImportError as msg:
+    print('Error: unable to load omniORBpy. You must install omniORBpy and\n'+\
           '       set the environment variable PYTHONPATH to include\n' +\
-          '       <top>/lib/python and <top>/lib/<arch> directories where\n' +\
+          '       <top>/lib/python<version>/site-packages, where\n' +\
           '       <top> is the top level directory of the omniORBpy\n' +\
-          '       installation and <arch> is the subdirectory containing\n' +\
-          '       the shared libraries for your platform.\n' +\
-          '       On most unix platforms, you may also have to set the\n' +\
+          '       installation.\n' +\
+          '       On most Unix platforms, you may also have to set the\n' +\
           '       environment variable LD_LIBRARY_PATH or equivalent to\n' +\
-          '       include <top>/lib/<arch>.\n' +\
-          '       The error was "' + str(msg) + '"\n'
+          '       include <top>/lib.\n' +\
+          '       The error was "' + str(msg) + '"\n')
     sys.exit(1)
+          
 
 script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 try:
     omniORB.importIDL(os.path.join(script_dir,'TestSuite.idl'))
-except ImportError, msg:
-    print 'Error: unable to invoke omniidl. You must install omniORBpy and\n'+\
-          '       make sure that the binary directory, i.e. <top>/bin/<arch>\n'+\
-          '       is included in the PATH (or Path on win32) environment variable.\n'+\
+
+except (ImportError, OSError) as msg:
+    print('Error: unable to invoke omniidl. You must install omniORBpy and\n'+\
+          '       make sure that the binary directory, i.e. <top>/bin\n'+\
+          '       is included in the PATH environment variable.\n'+\
           '       <top> is the top level directory of the omniORBpy\n' +\
-          '       installation and <arch> is the subdirectory containing\n' +\
-          '       the executables for your platform.\n' +\
-          '       The error was "' + str(msg) + '"\n'
+          '       installation.\n' +\
+          '       The error was "' + str(msg) + '"\n')
     sys.exit(1)
 
-TestSuite = sys.modules["TestSuite"]
-TestSuite__POA = sys.modules["TestSuite__POA"]
+
+TestSuite      = sys.modules['TestSuite']
+TestSuite__POA = sys.modules['TestSuite__POA']
 
 
 class TimeoutError(Exception):
@@ -73,23 +72,21 @@ class BuildHasFailed(Exception):
 
 class OutputListener_i(TestSuite__POA.TestOutputListener):
     def __init__(self, event=None):
-        self._program_obj = None
-        self._program_lock = thread.allocate_lock()
-        self._program_lock.acquire()
-        if event == None:
+        self._program_obj  = None
+
+        if event is None:
             self._event = threading.Event()
         else:
             self._event = event
 
         self._program_output = []
-        self._aborted = 0
-        self._return_code = None
+        self._aborted        = 0
+        self._return_code    = None
+        self._oserror_code   = None
 
 
     def set_program(self, program_obj):
         self._program_obj = program_obj
-        self._program_lock.release()
-
 
     def get_program_output(self):
         return self._program_output
@@ -101,45 +98,34 @@ class OutputListener_i(TestSuite__POA.TestOutputListener):
         return self._aborted
 
     def wait_for_termination(self, timeout=None):
-        if (timeout == None):
-            timeout = 2**30
         self._event.wait(timeout)
-        return self._event.isSet()
+        return self._event.is_set()
 
 
     def on_stdout(self, l):
         self._program_output.append(l)
-        if (conf_dump_program_output):
-            print string.rstrip(l)
+        if conf_dump_program_output:
+            print(l.rstrip())
 
     def on_stderr(self, l):
         self._program_output.append(l)
-        if (conf_dump_program_output):
-            print string.rstrip(l)
+        if conf_dump_program_output:
+            print(l.rstrip())
 
     def on_exit(self, return_code, oserror_code):
-        self._return_code = return_code
+        self._return_code  = return_code
         self._oserror_code = oserror_code
+
         if not return_code:
             self.on_successful_exit()
         else:
             self.on_unsuccessful_exit(return_code, oserror_code)
 
-        self._program_lock.acquire()
         self._program_obj.destroy()
-        self._program_lock.release()
 
         # deactivate the object
         poa.deactivate_object(poa.servant_to_id(self))
 
-        self._event.set()
-
-
-    def on_abort(self, reason, gdb_port, client_port):
-        sys.stdout.writelines(self._program_output)
-        print reason, gdb_port, client_port
-
-        self._aborted = 1
         self._event.set()
 
 
@@ -174,16 +160,16 @@ class TestServerOutputListener_i(TestOutputListener_i):
 
         if l == 'SERVER READY\n':
             # tell the main application that the server is ready
-            if not self._startup_event.isSet():
+            if not self._startup_event.is_set():
                 self._startup_event.set()
         elif l[:4] == 'IOR:':
             # only look for an IOR until server has completed startup
-            if not self._startup_event.isSet():
+            if not self._startup_event.is_set():
                 self._ior = l[:-1]
 
     def wait_for_startup(self, timeout):
         self._startup_event.wait(timeout)
-        if not self._startup_event.isSet():
+        if not self._startup_event.is_set():
             raise TimeoutError()
 
         return self._ior
@@ -196,34 +182,33 @@ class TestClientOutputListener_i(TestOutputListener_i):
 
 class Executor_Cache:
     def __init__(self):
-        # initialize the cache
         self._cache = {}
 
     def __getitem__(self, hostname):
-        if self._cache.has_key(hostname):
+        if hostname in self._cache:
             return self._cache[hostname]
         else:
             try:
-                objloc = 'corbaloc::' + hostname + ':' + \
-                         conf_executor_port + '/' + conf_executor_id;
-                obj = orb.string_to_object(objloc) 
+                objloc   = 'corbaloc::' + hostname + ':' + \
+                           conf_executor_port + '/' + conf_executor_id
+                obj      = orb.string_to_object(objloc) 
                 executor = obj._narrow(TestSuite.RemoteExecutor)
+
                 # test whether the executor object exists
                 if not executor._non_existent():
-                    # hmm, we just extend the proxy object with a
-                    # readable name...
                     executor.name = hostname
                     self._cache[hostname] = executor
                     return executor
+
             except CORBA.Exception:
                 pass
 
             # the executor object doesn't exist...
-            # maybe we should try to execute one on the host...
-            print 'Error: unable to contact the RemoteExecutor on machine\n'+\
+            print('Error: unable to contact the RemoteExecutor on machine\n'+\
                   '       ' + hostname + ', port ' + conf_executor_port+'.\n'+\
                   '       If you have not done so, please run remote-executor.py on\n'+\
-                  '       the machine first.\n'
+                  '       the machine first.\n')
+
             raise RemoteExecutor_NOT_EXIST()
 
 
@@ -274,17 +259,19 @@ def get_string(l, i):
 
 def build_test(executor, basedir, subdir):
     if conf_verbose:
-        print 'Building %s on %s' % (subdir, executor.name)
+        print('Building %s on %s' % (subdir, executor.name))
 
     listener_impl = BuildOutputListener_i()
-    listener_obj = listener_impl._this()
+    listener_obj  = listener_impl._this()
 
     directory = os.path.join(basedir,subdir)
-    buildcmd = conf_build_test_cmd
-    cmd     = 'sh'
-    cmdargs = ['-c', 'if [ ! -d %s ]; then mkdir %s; fi && cd %s && %s' % \
-               (directory, directory, directory, buildcmd)]
-    program_obj = executor.execute_program(cmd, cmdargs, 0, listener_obj)
+    buildcmd  = conf_build_test_cmd
+
+    cmd       = 'sh'
+    cmdargs   = ['-c', 'if [ ! -d %s ]; then mkdir %s; fi && cd %s && %s' %
+                 (directory, directory, directory, buildcmd)]
+
+    program_obj = executor.execute_program(cmd, cmdargs, listener_obj)
     listener_impl.set_program(program_obj)
 
     # wait for the remote program to terminate...
@@ -294,42 +281,43 @@ def build_test(executor, basedir, subdir):
     return_code, oserror_code = listener_impl.get_return_code()
     if return_code:
         if return_code >= 0:
-            print 'Building "%s" failed on %s with code %d.' % (subdir,
+            print('Building "%s" failed on %s with code %d.' % (subdir,
                                                                 executor.name,
-                                                                return_code)
+                                                                return_code))
         else:
-            print 'Caught signal %d while building "%s" on %s.' % (oserror_code,
+            print('Caught signal %d while building "%s" on %s.' % (oserror_code,
                                                                    subdir,
-                                                                   executor.name)
+                                                                   executor.name))
 
-        print '>>> make (%s) output follows:' % (subdir,)
+        print('>>> make (%s) output follows:' % (subdir,))
         sys.stdout.writelines(listener_impl.get_program_output())
-        print '<<<'
+        print('<<<')
 
     return return_code
 
 
 def run_test(test_name, subdir, timeout, programs):
     if conf_verbose:
-        print 'Running %s: %s' % (subdir, test_name)
+        print('Running %s: %s' % (subdir, test_name))
 
-    listeners = []
-    program_objs = []
+    listeners     = []
+    program_objs  = []
     program_names = []
-    ior_string = ''
+    ior_string    = ''
 
     try:
         # start up the server programs
         for executor_obj, basedir, progname, args in programs[:-1]:
             listener_impl = TestServerOutputListener_i()
-            listener_obj = listener_impl._this()
+            listener_obj  = listener_impl._this()
 
-            #args = []
-            if ior_string != '':
+            if ior_string:
                 args[0:0] = ['-i', ior_string]
 
-            directory = os.path.join(basedir,subdir)
-            program_obj = executor_obj.execute_program('%s' % (os.path.join(directory, progname),), args, 0, listener_obj)
+            directory   = os.path.join(basedir,subdir)
+            program_obj = executor_obj.execute_program(
+                os.path.join(directory, progname), args, listener_obj)
+
             listener_impl.set_program(program_obj)
 
             listeners.append(listener_impl)
@@ -346,78 +334,84 @@ def run_test(test_name, subdir, timeout, programs):
         executor_obj, basedir, progname, args = programs[-1]
 
         listener_impl = TestClientOutputListener_i()
-        listener_obj = listener_impl._this()
+        listener_obj  = listener_impl._this()
 
-        #args = []
         if ior_string != '':
             args[0:0] = ['-i', ior_string]
 
-        directory = os.path.join(basedir,subdir)
-        program_obj = executor_obj.execute_program('%s' % (os.path.join(directory, progname),), args, 0, listener_obj)
+        directory   = os.path.join(basedir,subdir)
+        program_obj = executor_obj.execute_program(
+            os.path.join(directory, progname), args, listener_obj)
+
         listener_impl.set_program(program_obj)
 
 
         if not listener_impl.wait_for_termination(timeout):
             # client hasn't terminated within the given timeout, so we have to
             # kill it...
-            print '%s/%s: Timeout running "%s/%s" (on %s)' % (subdir, test_name, subdir, progname, executor_obj.name)
+            print('%s/%s: Timeout running "%s/%s" (on %s)' %
+                  (subdir, test_name, subdir, progname, executor_obj.name))
+
             program_obj.terminate_program()
             listener_impl.wait_for_termination()
-
-        if listener_impl.get_aborted():
-            # TODO
-            sys.exit(1)
 
         this_return_code, oserror_code = listener_impl.get_return_code()
         if this_return_code:
             if this_return_code < 0:
-                print '%s/%s: Client "%s/%s" (on %s) caught signal %d' % (subdir, test_name, subdir, progname, executor_obj.name, oserror_code)
+                print('%s/%s: Client "%s/%s" (on %s) caught signal %d' %
+                      (subdir, test_name, subdir, progname,
+                       executor_obj.name, oserror_code))
             else:
-                print '%s/%s: Client "%s/%s" (on %s) exited with code %d' % (subdir, test_name, subdir, progname, executor_obj.name, this_return_code)
+                print('%s/%s: Client "%s/%s" (on %s) exited with code %d' %
+                      (subdir, test_name, subdir, progname,
+                       executor_obj.name, this_return_code))
 
         return_code = this_return_code
 
     except TimeoutError:
         # no client has been started...
         listener_impl = None
-        return_code = 1
+        return_code   = 1
 
-        print '%s/%s: Timeout starting server "%s/%s" (on %s)' % (subdir, test_name, subdir, progname, executor_obj.name)
+        print('%s/%s: Timeout starting server "%s/%s" (on %s)' %
+              (subdir, test_name, subdir, progname, executor_obj.name))
 
 
     # now we try to shutdown the servers...
-    for i in range(0, len(program_objs)):
-        if listeners[i].get_aborted():
-            # TODO
-            sys.exit(1)
-
+    for program_obj, program_name, listener in zip(program_objs, program_names,
+                                                   listeners):
         try:
-            program_objs[i].terminate_program()
-            listeners[i].wait_for_termination()
+            program_obj.terminate_program()
+            listener.wait_for_termination()
+
         except CORBA.OBJECT_NOT_EXIST:
             # just ignore the exception, it means that the program has already
             # terminated
             pass
 
-        this_return_code, oserror_code = listeners[i].get_return_code()
+        this_return_code, oserror_code = listener.get_return_code()
         if this_return_code:
             if this_return_code < 0:
-                print '%s/%s: Server "%s/%s" caught signal %d' % (subdir, test_name, subdir, program_names[i], oserror_code)
+                print('%s/%s: Server "%s/%s" caught signal %d' %
+                      (subdir, test_name, subdir, program_name, oserror_code))
             else:
-                print '%s/%s: Server "%s/%s" exited with code %d' % (subdir, test_name, subdir, program_names[i], this_return_code)
+                print('%s/%s: Server "%s/%s" exited with code %d' %
+                      (subdir, test_name, subdir, program_name,
+                       this_return_code))
         return_code = return_code or this_return_code
 
     # check if anything went wrong
     if return_code:
-        if listener_impl != None:
-            print '>>> Client (%s/%s) output follows:' % (subdir, progname)
+        if listener_impl is not None:
+            print('>>> Client (%s/%s) output follows:' % (subdir, progname))
             sys.stdout.writelines(listener_impl.get_program_output())
-            print '<<<'
+            print('<<<')
 
-        for i in range(0, len(listeners)):
-            print '>>> Server %d (%s/%s) output follows:' % (i, subdir, program_names[i])
+        for i in range(len(listeners)):
+            print('>>> Server %d (%s/%s) output follows:' %
+                  (i, subdir, program_names[i]))
             sys.stdout.writelines(listeners[i].get_program_output())
-            print '<<<'
+            print('<<<')
 
 
 def usage():
@@ -436,53 +430,57 @@ def usage():
 optlist, args = getopt.getopt(sys.argv[1:], 'c:i:vh?',
                               ['host-configuration=',
                                'iterations=',
-                               'skip-build-test',
+                               'build-test',
                                'verbose',
                                'help'])
 
-conf_testsrc_dir = os.path.dirname(script_dir)
-conf_host_configuration = os.path.join(script_dir,'testconf.py')
-conf_build_test_cmd = 'make all'
-conf_priority = 'common'
-conf_verbose = 1
-conf_dump_program_output = 1
-conf_iterations=1
-conf_build_test  = 0
-conf_executor_id   = "RemoteExecutor"
-conf_executor_port = '9000'
-conf_host_list = []
+conf_testsrc_dir         = os.path.dirname(script_dir)
+conf_host_configuration  = os.path.join(script_dir, 'testconf.py')
+conf_build_test_cmd      = 'make all'
+conf_priority            = 'common'
+conf_verbose             = 1
+conf_dump_program_output = 0
+conf_iterations          = 1
+conf_build_test          = 0
+conf_executor_id         = "RemoteExecutor"
+conf_executor_port       = '9000'
+conf_host_list           = []
+conf_test_entries        = []
 
 # First check if the user has specified a differnt configuration file
 for name, value in optlist:
-    if (name == '-c') or (name == '--host-configuration'):
+    if name in ('-c', '--host-configuration'):
         conf_host_configuration = value
 
 try:
-    execfile(conf_host_configuration)
+    exec(compile(open(conf_host_configuration, "rb").read(),
+                 conf_host_configuration, 'exec'), globals())
 except:
-    if ( conf_host_configuration != os.path.join(script_dir,'testconf.py') ):
-        print 'Error: unable to load the configuration file ' + \
-              conf_host_configuration + '.\n'
+    if conf_host_configuration != os.path.join(script_dir,'testconf.py'):
+        print('Error: unable to load the configuration file ' + \
+              conf_host_configuration + '.\n')
         sys.exit(1)
     else:
-        print 'Warning: no configuration file has been imported.'
-    pass
+        print('Warning: no configuration file has been imported.')
     
 
 for name, value in optlist:
-    if (name == '-?') or (name == '-h') or (name == '--help'):
+    if name in ('-?', '-h', '--help'):
         usage()
-    elif (name == '-v') or (name == '--verbose'):
+
+    elif name in ('-v', '--verbose'):
         conf_verbose = 1
-    elif (name == '-i') or (name == '--iterations'):
-        conf_iterations = string.atoi(value)
-    elif (name == '--skip-build-test'):
-        conf_build_test = 0
+
+    elif name in ('-i', '--iterations'):
+        conf_iterations = int(value)
+
+    elif name == '--build-test':
+        conf_build_test = True
 
 if len(conf_host_list) == 0:
     for i in range(3):
-        conf_host_list.append(['localhost',conf_testsrc_dir])
-    
+        conf_host_list.append(['localhost', conf_testsrc_dir])
+
 
 execution_hosts = []
 
@@ -492,14 +490,13 @@ for host_config in conf_host_list:
     execution_hosts.append(host_config[0])
 
 # Initialise the ORB
-orb = CORBA.ORB_init([''], CORBA.ORB_ID)
+orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
 
 # Find the root POA
 poa = orb.resolve_initial_references("RootPOA")
 
 # Activate the POA
-poaManager = poa._get_the_POAManager()
-poaManager.activate()
+poa.the_POAManager.activate()
 
 
 executors = Executor_Cache()
@@ -509,25 +506,24 @@ executors = Executor_Cache()
 if conf_build_test:
     built_hosts = []
 
-    priority_tests = string.split(conf_priority, ',')
+    priority_tests = conf_priority.split(',')
     for subdir in priority_tests:
         for host in execution_hosts:
             if host not in built_hosts:
                 try:
-                    build_test(executors[host],host_configuration[host],
-                               subdir)
+                    build_test(executors[host], host_configuration[host], subdir)
+
                 except (BuildHasFailed, RemoteExecutor_NOT_EXIST):
                     # build stage has failed.
                     # Or cannot contact one or more RemoteExecutor
                     orb.shutdown(1)
                     sys.exit(1)
+
                 built_hosts.append(host)
-
-
 
 subdirs = []
 entries = conf_test_entries
-if len(entries) == 0:
+if not entries:
     entries = os.listdir(conf_testsrc_dir)
 
 # get all subdirs of the testsuite directory
@@ -535,14 +531,12 @@ for entry in entries:
     pathname = os.path.join(conf_testsrc_dir, entry)
 
     statbuf = os.stat(pathname)
-    if S_ISDIR(statbuf[ST_MODE]):
+    if S_ISDIR(statbuf[ST_MODE]) and entry != "_template_":
         subdirs.append(entry)
-
 
 subdirs.sort()
 
 while conf_iterations >= 0:
-    # TODO: ...
     if conf_iterations > 1:
         conf_iterations = conf_iterations - 1
     elif conf_iterations == 1:
@@ -554,7 +548,6 @@ while conf_iterations >= 0:
 
         try:
             conf_file = open(os.path.join(pathname, 'TEST_CONFIG'))
-
 
             # First of all, we need to build the tests on all execution hosts
             if conf_build_test:
@@ -581,14 +574,16 @@ while conf_iterations >= 0:
                 if (l[:1] != '#') and (l != '\n'):
                     i = 0
                     test_name, i = get_string(l, i)
-                    timeout, i = get_string(l, i)
+                    timeout,   i = get_string(l, i)
 
                     # read program names/arguemts
                     program_names = []
+
                     cmd, i = get_string(l, i)
                     while i >= 0:
-                        k = 0
+                        k    = 0
                         args = []
+
                         progname, k = get_string(cmd, k)
                         while k >= 0:
                             arg, k = get_string(cmd, k)
@@ -616,7 +611,7 @@ while conf_iterations >= 0:
                         i = i + 1
 
                     try:
-                        timeout = string.atoi(timeout)
+                        timeout = int(timeout)
                     except ValueError:
                         # TODO
                         timeout = 60
@@ -626,6 +621,7 @@ while conf_iterations >= 0:
                 l = conf_file.readline()
 
             conf_file.close()
+
         except IOError:
             # no config file here, so just ignore that directory...
             pass

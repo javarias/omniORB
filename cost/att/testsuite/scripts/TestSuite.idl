@@ -1,5 +1,6 @@
 //
 //    Copyright (C) 2001 AT&T Laboratories Cambridge Ltd.
+//    Copyright (C) 2022 Apasphere Ltd.
 //
 //    This file is part of the OMNI Testsuite.
 //
@@ -19,10 +20,6 @@
 //    02111-1307, USA
 //
 //
-/*
- * Copyright (c) 2000 AT&T
- * Author: Christof Meerwald
- */
 
 module TestSuite
 {
@@ -38,11 +35,9 @@ module TestSuite
     /**
      * @param name program name to execute
      * @param args program arguments
-     * @param gdb if program should be executed under the control of gdb
      * @param listener callback interface object
      */
-    RemoteProgram execute_program(in string name, in string_seq args,
-				  in boolean gdb,
+    RemoteProgram execute_program(in string command, in string_seq args,
 				  in TestOutputListener listener);
   };
 
@@ -53,7 +48,6 @@ module TestSuite
      * Terminate the program.
      */
     void terminate_program();
-
     void destroy();
   };
 
@@ -61,7 +55,6 @@ module TestSuite
   interface TestOutputListener
   {
     void on_stdout(in string l);
-
     void on_stderr(in string l);
 
     /**
@@ -69,11 +62,5 @@ module TestSuite
      * @param oserror_code OS specific program exit code (signal, ...)
      */
     void on_exit(in short exit_code, in long oserror_code);
-
-    /**
-     * Not used yet...
-     */
-    void on_abort(in long reason, in unsigned short gdb_port,
-		  in unsigned short client_port);
   };
 };

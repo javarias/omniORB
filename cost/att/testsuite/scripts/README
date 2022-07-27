@@ -17,7 +17,7 @@ On Windows you need a recent version of the Python Win32 Extensions
 Usage: remote-executor.py -n <namingcontext> [-v] [<name>]
 
        -n | --executor-namecontext=
-              the remote-executor will register it's object reference as
+              the remote-executor will register its object reference as
               "<namingcontext>/<name>.executor"
 
        -v | --verbose
@@ -46,7 +46,7 @@ Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
               command to build the base program; the string "$PLATFORM"
               is replaced with the platform name given in the test-host
               configuration
-              (default: "omake export")
+              (default: "make all")
 
        -B | --builddir-base=
               build directory for the base program (relative to the
@@ -89,9 +89,6 @@ Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
               given in the test-host configuration and the string "$TEST"
               is replaced with the current test subdirectory
               (default: "build/$PLATFORM/testsuite/$TEST")
-
-       -u | --update
-              update the base program/testsuite (cvs update, make)
 
        -v | --verbose
               be more verbose...

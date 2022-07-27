@@ -1,3 +1,43 @@
+Wed 27 Jul 10:22:29 BST 2022
+============================
+
+- Updates for modern compiler versions.
+
+att/testsuite/basic_tests/attrObjRefclt.cc
+att/testsuite/basic_tests/multiEcho_i.cc
+att/testsuite/basic_tests/nullecho.cc
+att/testsuite/basic_tests/tiesrv.cc
+att/testsuite/basic_tests/tstexcept_i.cc
+att/testsuite/dynany/t_dynany.cc
+att/testsuite/exchandlers/server.cc
+att/testsuite/giopTests/fragClient.cc
+att/testsuite/mk/omniorb.mk
+att/testsuite/ssl_tests/fragClient.cc
+att/testsuite/ssl_tests/fragClient2.cc
+att/testsuite/ssl_tests/fragServer.cc
+att/testsuite/ssl_tests/limitClient1.cc
+att/testsuite/timeout_tests/client1.cc
+att/testsuite/timeout_tests/client2.cc
+att/testsuite/userexceptions/ssiserver.cc
+
+- In-date certificates from omniORB examples.
+
+att/testsuite/ssl_tests/client.pem
+att/testsuite/ssl_tests/root.pem
+att/testsuite/ssl_tests/server.pem
+
+- Python 3 required for testing scripts.
+
+att/testsuite/scripts/README
+att/testsuite/scripts/TestSuite.idl
+att/testsuite/scripts/execcomm.py
+att/testsuite/scripts/local-executor.py
+att/testsuite/scripts/ppopen.py
+att/testsuite/scripts/remote-executor.py
+att/testsuite/scripts/test-controller.py
+att/testsuite/scripts/testconf.py
+
+
 Wed 27 Jul 10:18:53 BST 2022
 ============================
 
