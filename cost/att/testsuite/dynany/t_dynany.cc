@@ -2621,7 +2621,7 @@ test_error_handling(TestDataT& testData)
   return 0;
 }
 
-main(int argc, char**argv)
+int main(int argc, char**argv)
 {
   orb = CORBA::ORB_init(argc,argv);
 

@@ -5,6 +5,7 @@
 #include <omniORB4/sslContext.h>
 
 using namespace std;
+using namespace omni;
 
 
 class MyApp : public OmniTestApp {
@@ -72,7 +73,7 @@ MyApp::main(int argc, char** argv)
   OMNI_SIMPLE_CLIENT_INIT(FragTest, foo);
 
 #if 1
-  for (int count=0; count < maxLength_; count++) {
+  for (CORBA::ULong count=0; count < maxLength_; count++) {
     MyApp::test(foo);
   }
 #else
@@ -121,8 +122,8 @@ MyApp::set_args(int& argc, char**& argv) {
   if (argc > 6) {
     memcpy(my_argv+3,argv+6,sizeof(char*)*(argc-6));
   }
-  my_argv[my_argc - 2] = "-ORBendPoint";
-  my_argv[my_argc - 1] = "giop:ssl::";
+  my_argv[my_argc - 2] = (char*)"-ORBendPoint";
+  my_argv[my_argc - 1] = (char*)"giop:ssl::";
 
   argc = my_argc;
   argv = my_argv;

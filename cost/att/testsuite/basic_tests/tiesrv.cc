@@ -53,6 +53,7 @@ using namespace std;
 class multiEcho_i {
 public:
   multiEcho_i() {}
+  virtual ~multiEcho_i() {}
   virtual char * echoString(const char *mesg);
   virtual CORBA::Long echoLong(CORBA::Long arg1);
   virtual CORBA::Char echoChar(CORBA::Char arg1);

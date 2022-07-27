@@ -61,8 +61,8 @@ MyApp::set_args(int& argc, char**& argv) {
   for (int i=0; i < argc; i++) {
     my_argv[i] = argv[i];
   }
-  my_argv[my_argc - 2] = "-ORBclientCallTimeOutPeriod";
-  my_argv[my_argc - 1] = "1500";  // timeout 1.5 seconds
+  my_argv[my_argc - 2] = (char*)"-ORBclientCallTimeOutPeriod";
+  my_argv[my_argc - 1] = (char*)"1500";  // timeout 1.5 seconds
   argc = my_argc;
   argv = my_argv;
 

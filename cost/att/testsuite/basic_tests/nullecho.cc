@@ -62,7 +62,7 @@ MyApp::main(int argc, char** argv)
   OMNI_SIMPLE_CLIENT_INIT(Echo, e);
 
 
-  char *srcstr = "";
+  const char *srcstr = "";
   char *echostr;
   int size;
 

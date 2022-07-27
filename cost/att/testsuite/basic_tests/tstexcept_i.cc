@@ -40,12 +40,12 @@ class Texcept_i : public POA_Texcept,
 {
 public:
   Texcept_i() {}
-  virtual void trigger(CORBA::Boolean yes) throw(Terrmsg);
+  virtual void trigger(CORBA::Boolean yes);
 
 };
 
 void
-Texcept_i::trigger(CORBA::Boolean yes) throw(Terrmsg) {
+Texcept_i::trigger(CORBA::Boolean yes) {
   if (!yes)
     return;
   else {

@@ -28,7 +28,7 @@ Echo_i::echoString(const char *mesg) {
   if (++count == 20)
   {
     cerr << "Server exit. (Might blow up!)" << endl;
-    exit(0);
+    _Exit(0);
   }
 
   char *p = CORBA::string_dup(mesg);

@@ -58,6 +58,7 @@ class Foo_i
       throw Foo::MyEx2();
       break;
     }
+    return 0; // never reached
   }
 
 

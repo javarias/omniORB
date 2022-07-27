@@ -67,7 +67,7 @@ MyApp::main(int argc, char** argv)
 {
   OMNI_SIMPLE_CLIENT_INIT(FragTest, foo);
 
-  for (int count=0; count < maxLength_; count++) {
+  for (CORBA::ULong count=0; count < maxLength_; count++) {
     MyApp::test(foo);
   }
 

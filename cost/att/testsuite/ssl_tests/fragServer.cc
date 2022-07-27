@@ -10,6 +10,7 @@
 #include <omniORB4/sslContext.h>
 
 using namespace std;
+using namespace omni;
 
 
 class FragTest_i : public POA_FragTest,
@@ -88,8 +89,8 @@ MyApp::set_args(int& argc, char**& argv) {
   if (argc > 4) {
     memcpy(my_argv+1,argv+4,sizeof(char*)*(argc-4));
   }
-  my_argv[my_argc - 2] = "-ORBendPoint";
-  my_argv[my_argc - 1] = "giop:ssl::";
+  my_argv[my_argc - 2] = (char*)"-ORBendPoint";
+  my_argv[my_argc - 1] = (char*)"giop:ssl::";
 
   argc = my_argc;
   argv = my_argv;

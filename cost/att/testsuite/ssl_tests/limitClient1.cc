@@ -9,6 +9,7 @@
 #endif
 
 using namespace std;
+using namespace omni;
 
 
 class MyApp : public OmniTestApp {
@@ -163,8 +164,8 @@ MyApp::set_args(int& argc, char**& argv) {
   if (argc > 6) {
     memcpy(my_argv+3,argv+6,sizeof(char*)*(argc-6));
   }
-  my_argv[my_argc - 2] = "-ORBendPoint";
-  my_argv[my_argc - 1] = "giop:ssl::";
+  my_argv[my_argc - 2] = (char*)"-ORBendPoint";
+  my_argv[my_argc - 1] = (char*)"giop:ssl::";
 
   argc = my_argc;
   argv = my_argv;

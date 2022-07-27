@@ -129,7 +129,6 @@ MyApp::main(int argc, char** argv)
 #endif
 
   void* rc;
-  int status;
 
   worker1->join(&rc);
   worker2->join(&rc);
@@ -144,9 +143,6 @@ MyApp::main(int argc, char** argv)
   worker10->join(&rc);
 #endif
 
-  if (!status) {
-    test_complete();
-  }
-  return status;
+  test_complete();
+  return 0;
 }
-
