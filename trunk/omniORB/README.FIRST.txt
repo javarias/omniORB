@@ -2,6 +2,12 @@ READ ME FIRST!
 
 This is omniORB 5.0.x development branch.
 
+DO NOT USE THIS!  Use the latest branch from branches.
+
+This is a very incomplete reorganisation of omniORB's structure. It is
+out of date and likely to be broken in many ways.
+
+
 omniORB is copyright Apasphere Ltd, AT&T Laboratories Cambridge and
 others. It is free software. The programs in omniORB are distributed
 under the GNU General Public Licence as published by the Free Software

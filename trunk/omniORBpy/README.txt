@@ -1,7 +1,13 @@
-omniORBpy 4.3
-=============
+omniORBpy 5.0.x
+===============
 
-This is the omniORBpy 4.3.x development branch.
+This is the omniORBpy 5.0.x development branch.
+
+DO NOT USE THIS!  Use the latest branch from branches.
+
+This is a very incomplete reorganisation of omniORB's structure. It is
+out of date and likely to be broken in many ways.
+
 
 omniORBpy is a robust high-performance CORBA ORB for Python.
 
