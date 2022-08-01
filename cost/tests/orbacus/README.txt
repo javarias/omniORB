@@ -1,7 +1,15 @@
+ORBacus testsuite
+=================
+
+This is the ORBacus C++ testsuite, contributed to the OMG COST project
+by Iona. The code here is all licensed under the terms of the GNU
+Lesser Public License, available in COPYING.LIB.
+
+
 1. Setting up
 
 In order to configure the tests you have to create a file config/Make.rules
-that reflects your system configuration. For ORBacus 4.1, Mico, omniorb and
+that reflects your system configuration. For ORBacus 4.1, Mico, omniORB and
 Orbix2000 2.0 templates are provided that should help setting everything up.
 These files are located in the config folder. Just copy one of them to
 config/Make.rules if you have one of these ORBs and then edit this file to

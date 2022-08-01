@@ -447,7 +447,7 @@ conf_executor_port       = '9000'
 conf_host_list           = []
 conf_test_entries        = []
 
-# First check if the user has specified a differnt configuration file
+# First check if the user has specified a different configuration file
 for name, value in optlist:
     if name in ('-c', '--host-configuration'):
         conf_host_configuration = value

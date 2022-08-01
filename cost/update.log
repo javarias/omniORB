@@ -1,3 +1,23 @@
+Mon  1 Aug 10:13:40 BST 2022
+============================
+
+- Updated documentation.
+
+tests/COPYING.LIB
+tests/README.txt
+tests/omniorb/README.txt
+tests/omniorb/README
+tests/omniorb/basic_tests/conclt.cc
+tests/omniorb/conclt.cc
+tests/omniorb/env
+tests/omniorb/scripts/README.txt
+tests/omniorb/scripts/README
+tests/omniorb/scripts/test-controller.py
+tests/omniorb/update.log
+tests/orbacus/README.txt
+tests/orbacus/README
+
+
 Wed 27 Jul 10:53:43 BST 2022
 ============================
 

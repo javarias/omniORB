@@ -8,7 +8,7 @@ WARNING!
 
 The remote-executor can be asked to execute any command on your
 machine. The security risk should be obvious. You should never run
-this script on a machine that is outside your firewall.
+this script on a machine that can be reached by untrusted clients.
 
 
 On Windows you need a recent version of the Python Win32 Extensions
@@ -32,7 +32,7 @@ test-controller.py
 ==================
 
 Test controller program. The defaults are set up to make it most
-easily useable for the omniORB testsuite, but it isn't limited to
+easily usable for the omniORB testsuite, but it isn't limited to
 omniORB or the omniORB testsuite.
 
 Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
@@ -41,6 +41,21 @@ Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
        [-t <build-test>] [-T <builddir-test>] [-p <priority-tests>]
        [-u] [-v] <host> <host>...
 
+
+       -c | --host-configuration=
+              testhost configuration file (see testconf.py)
+
+       -d | --local-testsrc-dir=
+              testsuite source directory on the local machine; this is
+              used for accessing the test configuration files
+              (e.g. "/mnt/scratch/chm/omni/src/testsuite")
+
+       -i | --iterations=
+              number of iterations the tests should be run; default is 1
+              (use 0 for infinite iterations)
+
+       -n | --executor-namecontext=
+              namecontext of the remote executor objects
 
        -b | --build-base=
               command to build the base program; the string "$PLATFORM"
@@ -54,21 +69,6 @@ Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
               the string "$PLATFORM" is replaced with the platform name
               given in the test-host configuration
               (default: "build/$PLATFORM")
-
-       -c | --host-configuration=
-              testhost configuration file (see testhost.conf)
-
-       -d | --local-testsrc-dir=
-              testsuite source directory on the local machine; this is
-              used for accessing the test configuration files
-              (e.g. "/mnt/scratch/chm/omni/src/testsuite")
-
-       -i | --iterations=
-              number of iterations the tests should be run; default is 1
-              (use 0 for infinite iterations)
-
-       -n | --executor-namecontext=
-              namecontext of the remote executor objects
 
        -p | --priority=
               comma-separated list of test subdirectories which should be
@@ -99,13 +99,3 @@ Usage: ./test-controller.py -d <local-testsrc-dir> -n <namingcontext>
               following specified hosts. (If only one hostname is given,
               all programs are executed on this host.) A remote-executor
               is assumed to be already running on a specified host.
-
-
-
-testhost.conf
-=============
-
-Host configuration file. It contains a list of hosts (one host per
-line) with their base omni directory and their platform name.
-
-e.g.: anu /mnt/scratch/chm/omni i586_linux_2.0_glibc2.1

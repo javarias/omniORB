@@ -1,9 +1,0 @@
-All the documentation on how to configure and run this testsuite is
-available on the wiki pages at
-
-  http://cost.omg.org/~wikiweb/MoinMoin/wiki-moinmoin/moin.cgi/AttContribution
-
-
-Note that the testsuite tests features that are not available in
-omniORB 3. If you wish to test omniORB 3, check out the
-omniORB3_testsuite CVS tag.

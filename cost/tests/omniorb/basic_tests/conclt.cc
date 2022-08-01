@@ -103,7 +103,8 @@ MyApp::main(int argc, char** argv)
   worker* worker8 =  new worker("worker 8:",Echo::_duplicate(e));
   worker* worker9 =  new worker("worker 9:",Echo::_duplicate(e));
   worker* worker10 =  new worker("worker 10:",Echo::_duplicate(e));
-  //  contact("main",e);
+
+  contact("main",e);
 
   void* rc;
   int status = 0;
