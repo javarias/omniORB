@@ -266,13 +266,14 @@ symrefdir=$${debug:+debug}; \
 symreflib=$(SharedLibrarySymbolRefLibraryTemplate); \
 if [ ! -f $$symreflib ]; then echo "Cannot find reference static library $$symreflib"; return 1; fi;  \
 set -x; \
-echo "LIBRARY $$dllbase" > $$defname; \
+echo "LIBRARY $$dllname" > $$defname; \
 echo "VERSION $$version" >> $$defname; \
 echo "EXPORTS" >> $$defname; \
 DUMPBIN.EXE /SYMBOLS $$symreflib | \
 egrep '^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +\(\) +External +\| +\?[^ ]*|^[^ ]+ +[^ ]+ +SECT[^ ]+ +[^ ]+ +External +\| +\?[^?][^ ]*'|\
 egrep -v 'deleting destructor[^(]+\(unsigned int\)' | \
 egrep -v 'anonymous namespace' | \
+egrep -v 'lambda_' | \
 egrep -v 'std@' | \
 cut -d'|' -f2 | \
 cut -d' ' -f2 | $(SORT) -u >> $$defname; \
