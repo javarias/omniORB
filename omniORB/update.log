@@ -1,3 +1,15 @@
+Mon  2 Jan 17:08:19 GMT 2023
+============================
+
+- Platform file for Visual Studio 2022 / 17; allow parallel build on
+  Windows.
+
+config/config.mk
+mk/beforedir.mk
+mk/platforms/x86_win32_vs_16.mk
+mk/platforms/x86_win32_vs_17.mk
+
+
 Mon  2 Jan 15:28:34 GMT 2023
 ============================
 

@@ -6,6 +6,7 @@
 # Uncomment one of the following platform lines to build for the
 # target platform
 #
+#  x86_win32_vs_17           x86 Windows, MS VC++ 17.x (2022)
 #  x86_win32_vs_16           x86 Windows, MS VC++ 16.x (2019)
 #  x86_win32_vs_15           x86 Windows, MS VC++ 15.x (2017)
 #  x86_win32_vs_14           x86 Windows, MS VC++ 14.x (2015)
@@ -21,6 +22,7 @@
 # You should also look at <top>/mk/platforms/$(platform).mk and if necessary
 # edit the make variables, such as CC and CXX, in the file.
 
+#platform = x86_win32_vs_17
 #platform = x86_win32_vs_16
 #platform = x86_win32_vs_15
 #platform = x86_win32_vs_14

@@ -148,8 +148,10 @@ endif
 # omake passed to this make will be incorrectly passed down to the sub-make.
 #
 
+OMNI_MAKEFLAGS = $(filter --jobserver% -j%, $(MAKEFLAGS))
+
 define MakeSubdirs
-(unset MAKEFLAGS; \
+(MAKEFLAGS='$(OMNI_MAKEFLAGS)'; \
  set -e; \
  if [ "$$subdir_makeflags" = "" ]; then \
    subdir_makeflags='$(SUBDIR_MAKEFLAGS)'; \
