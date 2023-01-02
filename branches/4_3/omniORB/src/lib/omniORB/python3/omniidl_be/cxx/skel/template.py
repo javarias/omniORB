@@ -41,7 +41,7 @@ boilerplate = """\
 
 OMNI_USING_NAMESPACE(omni)
 
-static const char* @prefix@_library_version = @library@;
+OMNI_MAYBE_UNUSED static const char* @prefix@_library_version = @library@;
 
 
 """

@@ -3,7 +3,7 @@
 // CORBA_sysdep.h             Created on: 30/1/96
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2012 Apasphere Ltd
+//    Copyright (C) 2003-2022 Apasphere Ltd
 //    Copyright (C) 1996-1999 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -97,6 +97,19 @@ typedef __int64 omni_s_size_t;
 #  else
 #    define OMNI_MIXED_ENDIAN_DOUBLE
 #  endif
+#endif
+
+
+//
+// Attributes
+// 
+
+#if __cplusplus >= 201703L
+#  define OMNI_MAYBE_UNUSED [[maybe_unused]]
+
+#else
+#  define OMNI_MAYBE_UNUSED
+
 #endif
 
 

@@ -1,3 +1,13 @@
+Mon  2 Jan 15:28:34 GMT 2023
+============================
+
+- Use [[maybe_unused]] attribute on static omniORB library symbol reference.
+
+include/omniORB4/CORBA_sysdep.h
+src/lib/omniORB/python2/omniidl_be/cxx/skel/template.py
+src/lib/omniORB/python3/omniidl_be/cxx/skel/template.py
+
+
 Thu 13 Oct 18:41:57 BST 2022
 ============================
 
