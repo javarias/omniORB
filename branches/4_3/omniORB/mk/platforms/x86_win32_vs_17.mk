@@ -1,12 +1,12 @@
 #
-# x86_win32_vc16.mk - make variables and rules specific to
-#                     Visual Studio 16 / 2019
+# x86_win32_vc17.mk - make variables and rules specific to
+#                     Visual Studio 17 / 2022
 #
 
 WindowsNT = 1
 x86Processor = 1
 
-compiler_version_suffix=_vc16
+compiler_version_suffix=_vc17
 
 WINVER = 0x0501
 
