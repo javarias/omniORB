@@ -21,7 +21,7 @@ ABSTOP = $(shell cd $(TOP); pwd)
 # You must set a path to a Python interpreter, ideally version 3.5 or
 # later, but obsolete version 2.7 is still supported.
 
-#PYTHON = /cygdrive/c/Python310/python
+#PYTHON = /cygdrive/c/Program\ Files/Python311/python
 #PYTHON = /cygdrive/c/Python27/python
 
 

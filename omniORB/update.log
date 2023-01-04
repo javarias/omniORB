@@ -1,3 +1,26 @@
+Wed  4 Jan 19:06:45 GMT 2023
+============================
+
+- Build Windows wrapper executables during build; support Python
+  install in a path containing spaces.
+
+bin/x86_win32/clwrapper.exe
+bin/x86_win32/libwrapper.exe
+bin/x86_win32/linkwrapper.exe
+bin/x86_win32/oidlwrapper.exe
+bin/x86_win32/omkdepend.exe
+mk/platforms/x86_win32_vs_17.mk
+mk/python.mk
+src/tool/dir.mk
+src/tool/omniidl/cxx/dir.mk
+src/tool/win32/GNUmakefile
+src/tool/win32/clwrapper.c
+src/tool/win32/dir.mk
+src/tool/win32/linkwrapper.c
+src/tool/win32/oidlwrapper.c
+src/tool/win32/pathmapping.h
+
+
 Mon  2 Jan 17:08:19 GMT 2023
 ============================
 

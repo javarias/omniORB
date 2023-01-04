@@ -190,14 +190,12 @@ ifdef Win32Platform
 
 DIR_CPPFLAGS += -DMSDOS -DOMNIIDL_EXECUTABLE
 
-PYLIBDIR := $(PYPREFIX)/libs $(PYPREFIX)/lib/x86_win32
-
 ifdef MinGW32Build
-PYLIB     := -lpython$(subst .,,$(PYVERSION))
-CXXLINKOPTIONS += $(patsubst %,-L%,$(PYLIBDIR))
+PYLIB := -lpython$(subst .,,$(PYVERSION))
+CXXLINKOPTIONS += -L"$(PYPREFIX)/libs" -L"$(PYPREFIX)/lib/x86_win32"
 else
-PYLIB     := python$(subst .,,$(PYVERSION)).lib
-CXXLINKOPTIONS += $(patsubst %,-libpath:%,$(PYLIBDIR))
+PYLIB := python$(subst .,,$(PYVERSION)).lib
+CXXLINKOPTIONS += -libpath:"$(PYPREFIX)/libs" -libpath:"$(PYPREFIX)/lib/x86_win32"
 endif
 
 omniidl = $(patsubst %,$(BinPattern),omniidl)
