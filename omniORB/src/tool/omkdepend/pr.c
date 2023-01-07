@@ -83,9 +83,9 @@ void add_include(struct filepointer *filep,
 	}
 }
 
-void recursive_pr_include(head, file, base)
-	register struct inclist	*head;
-	register char	*file, *base;
+void recursive_pr_include(struct inclist *head,
+                          char *file,
+                          char *base)
 {
 	register int	i;
 
@@ -98,12 +98,12 @@ void recursive_pr_include(head, file, base)
 		recursive_pr_include(head->i_list[ i ], file, base);
 }
 
-void pr(ip, file, base)
-	register struct inclist  *ip;
-	char	*file, *base;
+void pr(struct inclist *ip,
+	char *file,
+        char *base)
 {
 	static char	*lastfile;
-	register int	len, i;
+	register int	i;
 	char	buf[ BUFSIZ ];
 #ifdef WIN32
 	char *transfile = TranslateFileNameD2U(ip->i_file,0);
