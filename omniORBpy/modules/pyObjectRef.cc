@@ -223,7 +223,7 @@ omniPy::createPyPseudoObjRef(const CORBA::Object_ptr objref)
       if (ret)
 	return ret;
     }
-  };
+  }
 
   try {
     // Use OMNIORB_THROW to get a nice trace message
@@ -299,7 +299,7 @@ omniPy::createObjRef(const char*    	targetRepoId,
 
     for (CORBA::ULong index = 0; index < extra.length(); index++) {
 
-      if (extra[index]->compid == IOP::TAG_OMNIORB_PERSISTENT_ID)
+      if (extra[index]->compid == IOP::TAG_OMNIORB_PERSISTENT_ID) {
 
 	if (!id->inThisAddressSpace()) {
 
@@ -319,6 +319,7 @@ omniPy::createObjRef(const char*    	targetRepoId,
 	  releaseObjRef(objref);
 	  objref = new_objref;
 	}
+      }
       break;
     }
   }

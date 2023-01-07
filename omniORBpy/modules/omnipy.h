@@ -189,15 +189,17 @@ private:
 
 
 #define THROW_PY_BAD_PARAM(minor, completion, message) \
-  Py_BAD_PARAM::raise(__FILE__, __LINE__, minor, completion, message);
+  Py_BAD_PARAM::raise(__FILE__, __LINE__, minor, completion, message)
 
 
 // Useful macro
 #define RAISE_PY_BAD_PARAM_IF(x,minor) \
-  if (x) { \
-    CORBA::BAD_PARAM _ex(minor, CORBA::COMPLETED_NO); \
-    return omniPy::handleSystemException(_ex); \
-  }
+  do { \
+    if (x) { \
+      CORBA::BAD_PARAM _ex(minor, CORBA::COMPLETED_NO); \
+      return omniPy::handleSystemException(_ex); \
+    } \
+  } while(0)
 
 class omniPy {
 public:
@@ -477,7 +479,7 @@ public:
           ) {
         THROW_PY_BAD_PARAM(BAD_PARAM_WrongPythonType, completion,
                            formatString("Value %s out of range for ULong",
-                                        "O", obj))
+                                        "O", obj));
       }
       return (CORBA::ULong)v;
     }
@@ -1458,7 +1460,7 @@ public:
         InterpreterUnlocker u;
         s_.clearValueTracker();
       }
-    };
+    }
   private:
     cdrStream& s_;
   };

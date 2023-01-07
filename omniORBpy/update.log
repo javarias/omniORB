@@ -1,3 +1,15 @@
+Sat  7 Jan 17:33:53 GMT 2023
+============================
+
+- Avoid some compiler warnings.
+
+modules/omnipy.cc
+modules/omnipy.h
+modules/pyFixed.cc
+modules/pyObjectRef.cc
+modules/pyTypeCode.cc
+
+
 Wed  4 Jan 19:06:45 GMT 2023
 ============================
 

@@ -208,7 +208,7 @@ extern "C" {
   }
 
 #define OMNIPY_ATTR(x) \
-  PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)x);
+  PyObject_GetAttrString(omniPy::pyomniORBmodule, (char*)x)
 
   static PyObject*
   omnipy_registerPyObjects(PyObject* self, PyObject* args)
