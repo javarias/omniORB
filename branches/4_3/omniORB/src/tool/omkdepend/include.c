@@ -38,24 +38,21 @@ extern boolean warn_multiple;
 
 void remove_dotdot(char* path);
 
-int isdot(p)
-	register char	*p;
+static int isdot(char *p)
 {
 	if(p && *p++ == '.' && *p++ == '\0')
 		return(TRUE);
 	return(FALSE);
 }
 
-int isdotdot(p)
-	register char	*p;
+static int isdotdot(char *p)
 {
 	if(p && *p++ == '.' && *p++ == '.' && *p++ == '\0')
 		return(TRUE);
 	return(FALSE);
 }
 
-int issymbolic(dir, component)
-	register char	*dir, *component;
+static int issymbolic(char *dir, char *component)
 {
 #ifdef S_IFLNK
 	struct stat	st;
@@ -77,10 +74,7 @@ int issymbolic(dir, component)
 }
 
 
-struct inclist *inc_path(file, include, dot)
-	register char	*file,
-			*include;
-	boolean	dot;
+struct inclist *inc_path(char *file, char *include, boolean dot)
 {
 	static char	path[ BUFSIZ ];
 	register char		**pp, *p;
@@ -167,8 +161,7 @@ struct inclist *inc_path(file, include, dot)
  * Any of the 'x/..' sequences within the name can be eliminated.
  * (but only if 'x' is not a symbolic link!!)
  */
-void remove_dotdot(path)
-	char	*path;
+void remove_dotdot(char *path)
 {
 	register char	*end, *from, *to, **cp;
 	char		*components[ MAXFILES ],
@@ -239,8 +232,7 @@ void remove_dotdot(path)
 /*
  * Add an include file to the list of those included by 'file'.
  */
-struct inclist *newinclude(newfile, incstring)
-	register char	*newfile, *incstring;
+struct inclist *newinclude(char *newfile, char *incstring)
 {
 	register struct inclist	*ip;
 
@@ -260,8 +252,7 @@ struct inclist *newinclude(newfile, incstring)
 	return(ip);
 }
 
-void included_by(ip, newfile)
-	register struct inclist	*ip, *newfile;
+void included_by(struct inclist *ip, struct inclist *newfile)
 {
 	register int i;
 

@@ -2088,8 +2088,7 @@ static char *lexptr;
 /* maybe needs to actually deal with floating point numbers */
 
 static int
-parse_number (olen)
-     int olen;
+parse_number (int olen)
 {
   register char *p = lexptr;
   register int c;
@@ -2497,9 +2496,7 @@ yylex ()
    after the zeros.  A value of 0 does not mean end of string.  */
 
 HOST_WIDE_INT
-parse_escape (string_ptr, result_mask)
-     char **string_ptr;
-     HOST_WIDE_INT result_mask;
+parse_escape (char **string_ptr, HOST_WIDE_INT result_mask)
 {
   register int c = *(*string_ptr)++;
   switch (c)
@@ -2595,8 +2592,7 @@ parse_escape (string_ptr, result_mask)
 }
 
 static void
-yyerror (s)
-     char *s;
+yyerror (char *s)
 {
   error ("%s", s);
   skip_evaluation = 0;
@@ -2611,9 +2607,7 @@ integer_overflow ()
 }
 
 static HOST_WIDE_INT
-left_shift (a, b)
-     struct constant *a;
-     unsigned HOST_WIDE_INT b;
+left_shift (struct constant *a, unsigned HOST_WIDE_INT b)
 {
    /* It's unclear from the C standard whether shifts can overflow.
       The following code ignores overflow; perhaps a C standard
@@ -2625,9 +2619,7 @@ left_shift (a, b)
 }
 
 static HOST_WIDE_INT
-right_shift (a, b)
-     struct constant *a;
-     unsigned HOST_WIDE_INT b;
+right_shift (struct constant *a, unsigned HOST_WIDE_INT b)
 {
   if (b >= HOST_BITS_PER_WIDE_INT)
     return a->signedp ? a->value >> (HOST_BITS_PER_WIDE_INT - 1) : 0;
@@ -2647,8 +2639,7 @@ right_shift (a, b)
    this function is called.  */
 
 HOST_WIDE_INT
-parse_c_expression (string)
-     char *string;
+parse_c_expression (char *string)
 {
   lexptr = string;
 
@@ -2681,9 +2672,7 @@ static void initialize_random_junk PROTO((void));
 
 /* Main program for testing purposes.  */
 int
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   int n, c;
   char buf[1024];
@@ -2790,27 +2779,24 @@ warning (PRINTF_ALIST (msg))
 }
 
 int
-check_assertion (name, sym_length, tokens_specified, tokens)
-     U_CHAR *name;
-     int sym_length;
-     int tokens_specified;
-     struct arglist *tokens;
+check_assertion (U_CHAR *name,
+                 int sym_length,
+                 int tokens_specified,
+                 struct arglist *tokens)
 {
   return 0;
 }
 
 struct hashnode *
-lookup (name, len, hash)
-     U_CHAR *name;
-     int len;
-     int hash;
+lookup (U_CHAR *name,
+        int len,
+        int hash)
 {
   return (DEFAULT_SIGNED_CHAR) ? 0 : ((struct hashnode *) -1);
 }
 
 GENERIC_PTR
-xmalloc (size)
-     size_t size;
+xmalloc (size_t size)
 {
   return (GENERIC_PTR) malloc (size);
 }
