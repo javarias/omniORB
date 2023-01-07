@@ -733,7 +733,7 @@ skipString(cdrStream& stream)
 }
 
 
-PyObject*
+static PyObject*
 r_unmarshalTypeCode(cdrStream& stream, OffsetDescriptorMap& odm)
 {
   PyObject* d_o = 0; // Descriptor object to build
