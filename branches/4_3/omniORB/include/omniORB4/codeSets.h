@@ -389,7 +389,7 @@ public:
 	pd_fromU(fromU_)
     { }
 
-    virtual ~NCS_C_8bit() {};
+    virtual ~NCS_C_8bit() {}
 
   private:
     const UniChar*      pd_toU;

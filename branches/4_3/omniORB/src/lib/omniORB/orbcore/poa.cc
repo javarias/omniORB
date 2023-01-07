@@ -1830,7 +1830,7 @@ omniOrbPOA::dispatch(omniCallHandle& handle,
     if (pd_policy.retain_servants)  dispatch_to_sa(handle, key, keysize);
     else                             dispatch_to_sl(handle, key, keysize);
     break;
-  };
+  }
 }
 
 
@@ -2564,7 +2564,7 @@ omniOrbPOA::omniINSPOA()
       ::initialise_poa();
 
     omniOrbPOA::Policies policy;
-    policy.threading           	= omniOrbPOA::TP_ORB_CTRL;;
+    policy.threading           	= omniOrbPOA::TP_ORB_CTRL;
     policy.transient           	= 0;
     policy.multiple_id         	= 0;
     policy.user_assigned_id    	= 1;

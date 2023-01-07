@@ -163,11 +163,12 @@ const char* CORBA::BOA::_PD_repoId = "IDL:omg.org/CORBA/BOA:1.0";
 //////////////////////////////////////////////////////////////////////
 
 #define CHECK_NOT_NIL_OR_DESTROYED()  \
-  if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();  \
-  if( pd_state == DESTROYED )  \
-    OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_BOANotInitialised, \
-		  CORBA::COMPLETED_NO);  \
-
+  do { \
+    if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref(); \
+    if( pd_state == DESTROYED )  \
+      OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_BOANotInitialised, \
+                    CORBA::COMPLETED_NO); \
+  } while(0)
 
 omniOrbBOA::~omniOrbBOA()
 {

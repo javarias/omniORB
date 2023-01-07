@@ -406,7 +406,7 @@ unmarshalHeaderAndBody(cdrStream&           stream,
   CORBA::Boolean        truncating = 0;
   const char*           repoId     = 0;
   const _omni_ValueIds* repoIds    = 0;
-  CORBA::ValueBase*     result;
+  CORBA::ValueBase*     result     = 0;
 
   if ((tag & REPOID_MASK) == REPOID_LIST) {
     CORBA::ULong count;

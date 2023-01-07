@@ -1,3 +1,46 @@
+Sat  7 Jan 16:38:00 GMT 2023
+============================
+
+- Update some archaic C in old third-party tools.
+
+src/tool/omkdepend/cppsetup.c
+src/tool/omkdepend/def.h
+src/tool/omkdepend/ifparser.c
+src/tool/omkdepend/ifparser.h
+src/tool/omkdepend/include.c
+src/tool/omkdepend/main.c
+src/tool/omkdepend/parse.c
+src/tool/omkdepend/pr.c
+src/tool/omniidl/cxx/cccp/cccp.c
+src/tool/omniidl/cxx/cccp/cexp.c
+
+- Avoid some warnings.
+
+include/omniORB4/CORBA_BOA.h
+include/omniORB4/CORBA_Exception.h
+include/omniORB4/CORBA_Principal.h
+include/omniORB4/CORBA_TypeCode.h
+include/omniORB4/codeSets.h
+include/omniORB4/internal/tcpSocket.h
+include/omniORB4/seqTemplatedecls.h
+include/omniORB4/valueTemplatedecls.h
+include/omniORB4/wstringtypes.h
+src/lib/omniORB/dynamic/tcParser.cc
+src/lib/omniORB/dynamic/valueFactory.cc
+src/lib/omniORB/dynamic/valueType.cc
+src/lib/omniORB/orbcore/GIOP_C.cc
+src/lib/omniORB/orbcore/corbaBoa.cc
+src/lib/omniORB/orbcore/corbaOrb.cc
+src/lib/omniORB/orbcore/giopServer.cc
+src/lib/omniORB/orbcore/invoker.cc
+src/lib/omniORB/orbcore/poa.cc
+src/lib/omniORB/orbcore/tcpSocket.cc
+src/lib/omniORB/orbcore/uri.cc
+src/tool/omniidl/cxx/idlscope.cc
+src/tool/omniidl/cxx/idlscope.h
+src/tool/omniidl/cxx/idltype.h
+
+
 Wed  4 Jan 19:06:45 GMT 2023
 ============================
 

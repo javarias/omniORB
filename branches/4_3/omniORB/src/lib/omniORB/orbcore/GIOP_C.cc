@@ -211,7 +211,7 @@ GIOP_C::UnMarshallSystemException()
     break;
   default:
     OMNIORB_THROW(UNKNOWN,UNKNOWN_SystemException,CORBA::COMPLETED_YES);
-  };
+  }
 
   OMNIORB_FOR_EACH_SYS_EXCEPTION(CHECK_AND_IF_MATCH_THROW_SYSTEM_EXCEPTION)
 

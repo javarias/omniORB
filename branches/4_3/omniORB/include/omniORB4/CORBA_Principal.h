@@ -51,7 +51,7 @@ public:
   inline PrincipalID& operator = (const PrincipalID& seq) {
     _CORBA_Unbounded_Sequence_Octet::operator=(seq);
     return *this;
-  };
+  }
 };
 
 class Principal {
