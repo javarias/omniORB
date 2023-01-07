@@ -315,7 +315,7 @@ protected:
   // These operators are placed here to avoid them being used externally
   TypeCode(const TypeCode& tc);
   TypeCode& operator=(const TypeCode& tc);
-  TypeCode() { pd_magic = PR_magic; };
+  TypeCode() { pd_magic = PR_magic; }
 
   _CORBA_ULong pd_magic;
 };

@@ -57,7 +57,7 @@ static inline void dealloc(_CORBA_WChar* s) {
 
 static inline int len(const _CORBA_WChar* s) {
   int i;
-  for (i=0; *s; s++, i++) {};
+  for (i=0; *s; s++, i++) {}
   return i;
 }
 

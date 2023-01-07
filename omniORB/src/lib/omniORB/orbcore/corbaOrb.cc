@@ -377,11 +377,13 @@ CORBA::ORB_init(int& argc, char** argv, const char* orb_identifier,
 //////////////////////////////////////////////////////////////////////
 
 #define CHECK_NOT_NIL_SHUTDOWN_OR_DESTROYED()  \
-  if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref();  \
-  if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch, CORBA::COMPLETED_NO);  \
-  if( pd_shutdown  )  OMNIORB_THROW(BAD_INV_ORDER, \
-                                    BAD_INV_ORDER_ORBHasShutdown, \
-                                    CORBA::COMPLETED_NO);  \
+  do { \
+    if( _NP_is_nil() )  _CORBA_invoked_nil_pseudo_ref(); \
+    if( pd_destroyed )  OMNIORB_THROW(OBJECT_NOT_EXIST,OBJECT_NOT_EXIST_NoMatch, CORBA::COMPLETED_NO); \
+    if( pd_shutdown  )  OMNIORB_THROW(BAD_INV_ORDER, \
+                                      BAD_INV_ORDER_ORBHasShutdown, \
+                                      CORBA::COMPLETED_NO); \
+  } while(0)
 
 CORBA::Boolean
 omniOrbORB::all_destroyed()

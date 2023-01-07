@@ -758,9 +758,9 @@ omniAsyncInvoker::~omniAsyncInvoker()
       omni_thread::get_time(deadline, timeout);
 
       if (omniORB::trace(25)) {
-        omniORB::logger l;
-        l << "Wait for " << pd_total_threads << " invoker thread"
-          << plural(pd_total_threads) << " to finish.\n";
+        omniORB::logger log;
+        log << "Wait for " << pd_total_threads << " invoker thread"
+            << plural(pd_total_threads) << " to finish.\n";
       }
 
       int go = 1;

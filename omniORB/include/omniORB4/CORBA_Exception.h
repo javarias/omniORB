@@ -96,7 +96,7 @@ protected:
   insertExceptionToAny     pd_insertToAnyFn;
   insertExceptionToAnyNCP  pd_insertToAnyFnNCP;
 
-#if _MSC_VER      // Copy ctor has to be public for catch on this
+#ifdef _MSC_VER      // Copy ctor has to be public for catch on this
   // base class to work when a derived class is thrown.
 public:
 #endif
@@ -230,7 +230,7 @@ OMNIORB_FOR_EACH_SYS_EXCEPTION(OMNIORB_DECLARE_SYS_EXCEPTION)
   protected:
     inline UserException() {}
 
-#if _MSC_VER      // Copy ctor has to be public for catch on this
+#ifdef _MSC_VER      // Copy ctor has to be public for catch on this
     // base class to work when a derived class is thrown.
   public:
 #endif

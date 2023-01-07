@@ -611,15 +611,15 @@ public:
 
   class RirObjAddr : public ObjAddr {
   public:
-    RirObjAddr(const char*& c) {};
-    virtual ~RirObjAddr()      {};
+    RirObjAddr(const char*& c) {}
+    virtual ~RirObjAddr()      {}
     ObjAddr::AddrKind kind()   { return ObjAddr::rir; }
   };
 
   class IiopObjAddr : public ObjAddr {
   public:
     IiopObjAddr(const char*& c);
-    virtual ~IiopObjAddr() {};
+    virtual ~IiopObjAddr() {}
 
     ObjAddr::AddrKind kind() { return ObjAddr::iiop; }
 
@@ -637,7 +637,7 @@ public:
 
   class SsliopObjAddr : public IiopObjAddr {
   public:
-    SsliopObjAddr(const char*& c) : IiopObjAddr(c) {};
+    SsliopObjAddr(const char*& c) : IiopObjAddr(c) {}
 
     ObjAddr::AddrKind kind() { return ObjAddr::ssliop; }
     
@@ -647,7 +647,7 @@ public:
   class UiopObjAddr : public ObjAddr {
   public:
     UiopObjAddr(const char*& c);
-    virtual ~UiopObjAddr() {};
+    virtual ~UiopObjAddr() {}
 
     ObjAddr::AddrKind kind() { return ObjAddr::uiop; }
 
@@ -665,7 +665,7 @@ public:
   class Parsed {
   public:
     Parsed(const char*& c, const char* def_key);
-    ~Parsed() {};
+    ~Parsed() {}
 
     ObjAddrList       addrList_;
     unsigned int      addr_count_;
@@ -966,8 +966,8 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 
 	      CORBA::ULong index = tagged_components.length();
 	      tagged_components.length(index+1);
-	      IOP::TaggedComponent& c = tagged_components[index];
-	      c.tag = IOP::TAG_SSL_SEC_TRANS;
+	      IOP::TaggedComponent& comp = tagged_components[index];
+	      comp.tag = IOP::TAG_SSL_SEC_TRANS;
 	      cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
 	      CORBA::UShort zero = 0;
 	      zero >>= s;
@@ -977,7 +977,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
 	      CORBA::Octet* p;
 	      CORBA::ULong max, len;
 	      s.getOctetStream(p,max,len);
-	      c.component_data.replace(max,len,p,1);
+	      comp.component_data.replace(max,len,p,1);
             }
 	  }
 	  break;
@@ -995,8 +995,8 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
             UiopObjAddr* uiop_addr = (UiopObjAddr*)addr;
             CORBA::ULong index = tagged_components.length();
             tagged_components.length(index+1);
-            IOP::TaggedComponent& c = tagged_components[index];
-            c.tag = IOP::TAG_OMNIORB_UNIX_TRANS;
+            IOP::TaggedComponent& comp = tagged_components[index];
+            comp.tag = IOP::TAG_OMNIORB_UNIX_TRANS;
             cdrEncapsulationStream s(CORBA::ULong(0),CORBA::Boolean(1));
             s.marshalRawString(self);
             s.marshalRawString(uiop_addr->filename());
@@ -1004,7 +1004,7 @@ corbalocURIHandler::locToObject(const char*& c, unsigned int cycles,
             CORBA::Octet* p;
 	    CORBA::ULong max, len;
 	    s.getOctetStream(p,max,len);
-            c.component_data.replace(max,len,p,1);
+            comp.component_data.replace(max,len,p,1);
 	  }
 	  break;
 	default:

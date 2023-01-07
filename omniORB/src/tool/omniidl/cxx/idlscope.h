@@ -45,7 +45,7 @@ public:
     }
 
     inline const char* identifier() const { return identifier_; }
-    inline Fragment*   next()       const { return next_; };
+    inline Fragment*   next()       const { return next_; }
 
   protected:
     Fragment* next_;

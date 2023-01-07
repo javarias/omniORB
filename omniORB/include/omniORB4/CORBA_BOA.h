@@ -51,7 +51,7 @@ public://??
   inline ReferenceData& operator = (const ReferenceData& seq) {
     _CORBA_Unbounded_Sequence_Octet::operator=(seq);
     return *this;
-  };
+  }
 };
 
 

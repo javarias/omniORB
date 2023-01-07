@@ -2101,7 +2101,7 @@ public:
   inline T_seq &operator= (const T_seq& s) {
     Base_T_seq::operator= (s);
     return *this;
-  };
+  }
 
   // CORBA 2.3 additions
   inline void replace(_CORBA_ULong max, _CORBA_ULong len, T** data,

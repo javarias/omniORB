@@ -188,10 +188,10 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
 	    // Copy the value, using the type for the selected member,
 	    // unless we have an implicit default, in which case no
 	    // value is copied.
-	    CORBA::Long i =
+	    CORBA::Long idx =
 	      ((TypeCode_union*)tc)->NP_index_from_discriminator(discrim);
-	    if( i >= 0 )
-	      fastCopyUsingTC(tc->NP_member_type(i), ibuf, obuf);
+	    if( idx >= 0 )
+	      fastCopyUsingTC(tc->NP_member_type(idx), ibuf, obuf);
 	    break;
 	  }
 
@@ -206,8 +206,8 @@ inline void fastCopyUsingTC(TypeCode_base* tc, cdrStream& ibuf, cdrStream& obuf)
             CORBA::ULong nmembers = tc->NP_member_count();
 
             // Copy the individual elements.
-            for (CORBA::ULong i=0; i < nmembers; i++)
-              fastCopyUsingTC(tc->NP_member_type(i), ibuf, obuf);
+            for (CORBA::ULong idx=0; idx < nmembers; idx++)
+              fastCopyUsingTC(tc->NP_member_type(idx), ibuf, obuf);
 
             break;
           }

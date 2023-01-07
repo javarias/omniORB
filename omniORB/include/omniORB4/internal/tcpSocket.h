@@ -430,7 +430,7 @@ public:
 };
 
 
-OMNI_NAMESPACE_END(omni);
+OMNI_NAMESPACE_END(omni)
 
 
 #endif // __TCPSOCKET_h__

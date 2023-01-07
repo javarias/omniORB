@@ -87,7 +87,7 @@ public:
   };
 
   IdlType(Kind k) : kind_(k), local_(0) { }
-  virtual ~IdlType() {};
+  virtual ~IdlType() {}
 
   Kind        kind()         const { return kind_; }
   const char* kindAsString() const;

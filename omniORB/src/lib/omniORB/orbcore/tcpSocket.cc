@@ -446,9 +446,9 @@ tcpSocket::Bind(const char*   	      	 host,
 	omniORB::logger log;
 	log << "My hostname is '" << self << "'.\n";
       }
-      LibcWrapper::AddrInfo_var ai;
-      ai = LibcWrapper::getAddrInfo(self, bound_port);
-      if ((LibcWrapper::AddrInfo*)ai == 0) {
+      LibcWrapper::AddrInfo_var aiv;
+      aiv = LibcWrapper::getAddrInfo(self, bound_port);
+      if ((LibcWrapper::AddrInfo*)aiv == 0) {
 	if (omniORB::trace(1)) {
 	  omniORB::logger log;
 	  log << "Cannot get the address of my hostname '"
@@ -457,7 +457,7 @@ tcpSocket::Bind(const char*   	      	 host,
 	CLOSESOCKET(sock);
 	return RC_INVALID_SOCKET;
       }
-      bound_host = ai->asString();
+      bound_host = aiv->asString();
       endpoints.length(1);
       endpoints[0] = omniURI::buildURI(uri_prefix,
 				       bound_host, bound_port,

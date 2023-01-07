@@ -56,7 +56,7 @@ namespace {
   };
 
 #ifdef OMNI_HAS_Cplusplus_Namespace
-};
+}
 #endif
 
 

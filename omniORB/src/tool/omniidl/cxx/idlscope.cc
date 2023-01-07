@@ -38,7 +38,7 @@
 Scope* Scope::global_  = 0;
 Scope* Scope::current_ = 0;
 
-int n_builtins = 0;
+static int n_builtins = 0;
 static Decl** builtins = 0;
 
 
@@ -644,7 +644,7 @@ findScopedName(const ScopedName* sn, const char* file, int line) const
 	    delete [] ssn;
 
 	    for (; el; el = el->tail()) {
-	      char* ssn = el->head()->container()->scopedName()->toString();
+	      ssn = el->head()->container()->scopedName()->toString();
 	      IdlErrorCont(el->head()->file(), el->head()->line(),
 			   "('%s' defined in '%s')",
 			   el->head()->identifier(), ssn);
