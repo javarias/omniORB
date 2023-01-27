@@ -80,16 +80,14 @@ cdrStream::unmarshalRawString() {
     OMNIORB_THROW(MARSHAL, MARSHAL_PassEndOfMessage,
 		  (CORBA::CompletionStatus)completion());
 
-  char* s = _CORBA_String_helper::alloc(len - 1);
-  get_octet_array((_CORBA_Octet*)s, len);
+  _CORBA_String_var s(_CORBA_String_helper::alloc(len - 1));
+  get_octet_array((_CORBA_Octet*)s.inout(), len);
 
-  if (s[len-1] != '\0') {
-    _CORBA_String_helper::dealloc(s);
+  if (s[len-1] != '\0')
     OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
 		  (CORBA::CompletionStatus)completion());
-  }
 
-  return s;
+  return s._retn();
 }
 
 #ifndef Swap32
