@@ -83,9 +83,11 @@ cdrStream::unmarshalRawString() {
   char* s = _CORBA_String_helper::alloc(len - 1);
   get_octet_array((_CORBA_Octet*)s, len);
 
-  if (s[len-1] != '\0')
+  if (s[len-1] != '\0') {
+    _CORBA_String_helper::dealloc(s);
     OMNIORB_THROW(MARSHAL,MARSHAL_StringNotEndWithNull,
 		  (CORBA::CompletionStatus)completion());
+  }
 
   return s;
 }
