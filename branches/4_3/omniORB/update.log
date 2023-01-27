@@ -1,3 +1,11 @@
+Fri 27 Jan 10:04:28 GMT 2023
+============================
+
+- Obscure memory leak when a received raw string does not end with null.
+
+src/lib/omniORB/orbcore/corbaString.cc
+
+
 Sat  7 Jan 16:38:00 GMT 2023
 ============================
 
