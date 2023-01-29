@@ -50,8 +50,8 @@ CORBA::Boolean
 orbOptions::importFromRegistry() throw (orbOptions::Unknown,
 					orbOptions::BadParam) {
 
-  char* rootregname;
-  HKEY  rootkey;
+  const char* rootregname;
+  HKEY        rootkey;
 
   rootregname = NEW_REGKEY;
   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,rootregname,0,
