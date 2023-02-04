@@ -1,3 +1,12 @@
+Sat  4 Feb 12:56:28 GMT 2023
+============================
+
+- Apple compiler does not define __VFP_FP__ on ARM, but the CPU uses
+  VFP floating point format.
+
+include/omniORB4/CORBA_sysdep.h
+
+
 Sun 29 Jan 15:58:24 GMT 2023
 ============================
 
