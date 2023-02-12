@@ -1,3 +1,12 @@
+Sun 12 Feb 15:34:32 GMT 2023
+============================
+
+- Correctly initialise base hash when there are no callables in a file.
+
+src/lib/omniORB/python2/omniidl_be/cxx/descriptor.py
+src/lib/omniORB/python3/omniidl_be/cxx/descriptor.py
+
+
 Sat  4 Feb 12:56:28 GMT 2023
 ============================
 

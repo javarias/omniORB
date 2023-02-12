@@ -94,14 +94,25 @@ private_prefix = config.state['Private Prefix']
 class HashVisitor(idlvisitor.AstVisitor):
 
     def __init__(self):
-        self.base_initialised = 0
-    
+        self.base_initialised   = 0
+        self.use_interface_name = 0
+
     def visitAST(self, node):
         for declaration in node.declarations():
             if self.base_initialised:
                 return
             if ast.shouldGenerateCodeForDecl(declaration):
                 declaration.accept(self)
+
+        if not self.base_initialised:
+            # No callables in the whole file!
+            self.use_interface_name = 1
+
+            for declaration in node.declarations():
+                if self.base_initialised:
+                    return
+                if ast.shouldGenerateCodeForDecl(declaration):
+                    declaration.accept(self)
 
     def visitModule(self, node):
         for definition in node.definitions():
@@ -110,6 +121,11 @@ class HashVisitor(idlvisitor.AstVisitor):
             definition.accept(self)
 
     def visitInterface(self, node):
+        if self.use_interface_name:
+            name = node.scopedName()
+            self.initialise_base(name)
+            return
+
         if node.callables() != []:
             name = node.scopedName()
 
