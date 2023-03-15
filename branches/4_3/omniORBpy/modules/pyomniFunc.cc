@@ -227,7 +227,7 @@ omniPy::ensureOmniThread()
 					  (char*)"");
 #endif
   if (!current) {
-    omniORB::logs(1, "Unexpected exception calling threading.currentThread.");
+    omniORB::logs(1, "Unexpected exception calling threading.current_thread.");
     if (omniORB::trace(1)) PyErr_Print();
     PyErr_Clear();
     return 0;
