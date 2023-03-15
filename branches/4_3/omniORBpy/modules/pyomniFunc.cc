@@ -217,9 +217,15 @@ omniPy::ensureOmniThread()
     return 0;
   }
 
+#if (PY_VERSION_HEX < 0x03000000)
   PyObject* current = PyObject_CallMethod(threading,
 					  (char*)"currentThread",
 					  (char*)"");
+#else
+  PyObject* current = PyObject_CallMethod(threading,
+					  (char*)"current_thread",
+					  (char*)"");
+#endif
   if (!current) {
     omniORB::logs(1, "Unexpected exception calling threading.currentThread.");
     if (omniORB::trace(1)) PyErr_Print();
