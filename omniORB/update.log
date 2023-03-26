@@ -1,3 +1,12 @@
+Sun 26 Mar 18:53:16 BST 2023
+============================
+
+- Properly marshal huge sequences.
+
+include/omniORB4/cdrStream.h
+include/omniORB4/seqTemplatedefns.h
+
+
 Sun 12 Feb 15:34:32 GMT 2023
 ============================
 
