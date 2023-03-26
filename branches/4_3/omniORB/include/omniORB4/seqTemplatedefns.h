@@ -88,16 +88,17 @@ inline
 void
 _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator>>= (cdrStream& s) const
 {
-  if (s.marshal_byte_swap()) {
+  if (elmSize != 1 && s.marshal_byte_swap()) {
     Base_T_seq::operator>>=(s);
     return;
   }
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*elmSize,
-		    (omni::alignment_t)elmAlignment);
+
+  s.put_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 }
 
 
@@ -115,9 +116,10 @@ _CORBA_Unbounded_Sequence_w_FixSizeElement<T,elmSize,elmAlignment>::operator<<= 
   }
   Base_T_seq::length(l);
   if (l==0) return;
-  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*elmSize,
-		    (omni::alignment_t)elmAlignment);
+
+  s.get_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 
   if (s.unmarshal_byte_swap() && elmAlignment != 1) {
     if (elmSize == 2) {
@@ -170,9 +172,10 @@ _CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator>>
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*elmSize,
-		    (omni::alignment_t)elmAlignment);
+
+  s.put_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 }
 
 
@@ -190,9 +193,10 @@ _CORBA_Bounded_Sequence_w_FixSizeElement<T,max,elmSize,elmAlignment>::operator<<
   }
   Base_T_seq::length(l);
   if (l==0) return;
-  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*elmSize,
-		    (omni::alignment_t)elmAlignment);
+
+  s.get_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 
   if (s.unmarshal_byte_swap() && elmAlignment != 1) {
     if (elmSize == 2) {
@@ -311,7 +315,7 @@ _CORBA_Sequence_Boolean::operator>>= (cdrStream& s) const
   l >>= s;
   if (l==0) return;
 # if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
-  s.put_octet_array((_CORBA_Octet*)this->pd_buf,l);
+  s.put_large_octet_array((_CORBA_Octet*)this->pd_buf, (size_t)l);
 # else
   for ( _CORBA_ULong i = 0; i < l; i++ )
     s.marshalBoolean(this->pd_buf[i]);
@@ -332,7 +336,7 @@ _CORBA_Sequence_Boolean::operator<<= (cdrStream& s)
   this->length(l);
   if (l==0) return;
 # if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
-  s.get_octet_array((_CORBA_Octet*)this->pd_buf,l);
+  s.get_large_octet_array((_CORBA_Octet*)this->pd_buf, (size_t)l);
 # else
   for ( _CORBA_ULong i = 0; i < l; i++ )
     this->pd_buf[i] = s.unmarshalBoolean();
@@ -347,7 +351,7 @@ _CORBA_Sequence_Octet::operator>>= (cdrStream& s) const
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-  s.put_octet_array(this->pd_buf,l);
+  s.put_large_octet_array(this->pd_buf, (size_t)l);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -363,7 +367,7 @@ _CORBA_Sequence_Octet::operator<<= (cdrStream& s)
   }
   this->length(l);
   if (l==0) return;
-  s.get_octet_array(this->pd_buf,l);
+  s.get_large_octet_array(this->pd_buf, (size_t)l);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -503,7 +507,8 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator>>=(cdrStream& s) co
   this->pd_len >>= s;
   if (this->pd_len==0) return;
 # if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
-  s.put_octet_array((_CORBA_Octet*)this->pd_buf,(int)this->pd_len*dimension);
+  s.put_large_octet_array((_CORBA_Octet*)this->pd_buf,
+                          (size_t)this->pd_len * (size_t)dimension);
 # else
   for (_CORBA_ULong i=0; i<this->pd_len; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
@@ -527,7 +532,8 @@ _CORBA_Sequence_Array_Boolean<T,T_slice,dimension>::operator<<=(cdrStream& s)
   this->length(l);
   if (l==0) return;
 # if !defined(OMNI_HAS_Cplusplus_Bool) || (OMNI_SIZEOF_BOOL == 1)
-  s.get_octet_array((_CORBA_Octet*)this->pd_buf,(int)l*dimension);
+  s.get_large_octet_array((_CORBA_Octet*)this->pd_buf,
+                          (size_t)l * (size_t)dimension);
 # else
   for (_CORBA_ULong i=0; i<l; i++) {
     for (_CORBA_ULong j=0; j<dimension; j++) {
@@ -543,7 +549,8 @@ _CORBA_Sequence_Array_Octet<T,T_slice,dimension>::operator>>=(cdrStream& s) cons
 {
   this->pd_len >>= s;
   if (this->pd_len==0) return;
-  s.put_octet_array((_CORBA_Octet*)this->pd_buf,(int)this->pd_len*dimension);
+  s.put_large_octet_array((_CORBA_Octet*)this->pd_buf,
+                          (size_t)this->pd_len * (size_t)dimension);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -559,7 +566,8 @@ _CORBA_Sequence_Array_Octet<T,T_slice,dimension>::operator<<=(cdrStream& s)
   }
   this->length(l);
   if (l==0) return;
-  s.get_octet_array((_CORBA_Octet*)this->pd_buf,(int)l*dimension);
+  s.get_large_octet_array((_CORBA_Octet*)this->pd_buf,
+                          (size_t)l * (size_t)dimension);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -608,9 +616,9 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*dimension*elmSize,
-		    (omni::alignment_t)elmAlignment);
+  s.put_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)dimension * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 }
 
 
@@ -628,9 +636,9 @@ _CORBA_Unbounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,elmSiz
   }
   Base_T_seq::length(l);
   if (l==0) return;
-  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*dimension*elmSize,
-		    (omni::alignment_t)elmAlignment);
+  s.get_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)dimension * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 
   if (s.unmarshal_byte_swap() && elmAlignment != 1) {
     l *= dimension;
@@ -686,9 +694,9 @@ _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmS
   _CORBA_ULong l = Base_T_seq::length();
   l >>= s;
   if (l==0) return;
-  s.put_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*dimension*elmSize,
-		    (omni::alignment_t)elmAlignment);
+  s.put_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)dimension * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 }
 
 
@@ -706,9 +714,9 @@ _CORBA_Bounded_Sequence_Array_w_FixSizeElement<T,T_slice,Telm,dimension,max,elmS
   }
   Base_T_seq::length(l);
   if (l==0) return;
-  s.get_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
-		    (int)l*dimension*elmSize,
-		    (omni::alignment_t)elmAlignment);
+  s.get_large_octet_array((_CORBA_Octet*)Base_T_seq::NP_data(),
+                          (size_t)l * (size_t)dimension * (size_t)elmSize,
+                          (omni::alignment_t)elmAlignment);
 
   if (s.unmarshal_byte_swap() && elmAlignment != 1) {
     l *= dimension;

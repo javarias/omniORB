@@ -489,6 +489,18 @@ public:
   // <size> must be a multiple of <align>.
   // For instance, if <align> == omni::ALIGN_8 then <size> % 8 == 0.
 
+  inline void put_large_octet_array(const _CORBA_Octet* b, size_t size,
+                                    omni::alignment_t align=omni::ALIGN_1) {
+    const size_t batch = 0x7ffffff8;
+
+    while (size > batch) {
+      put_octet_array(b, (int)batch, align);
+      b    += batch;
+      size -= batch;
+    }
+    put_octet_array(b, (int)size, align);
+  }
+
   inline void put_small_octet_array(const _CORBA_Octet* b, int size) {
     omni::ptr_arith_t p1 = (omni::ptr_arith_t)pd_outb_mkr;
     omni::ptr_arith_t p2 = p1 + size;
@@ -508,6 +520,18 @@ public:
   virtual void get_octet_array(_CORBA_Octet* b, int size,
 			       omni::alignment_t align=omni::ALIGN_1) = 0;
   // Get array of octets.
+
+  inline void get_large_octet_array(_CORBA_Octet* b, size_t size,
+                                    omni::alignment_t align=omni::ALIGN_1) {
+    const size_t batch = 0x7ffffff8;
+
+    while (size > batch) {
+      get_octet_array(b, (int)batch, align);
+      b    += batch;
+      size -= batch;
+    }
+    get_octet_array(b, (int)size, align);
+  }
 
   virtual void skipInput(_CORBA_ULong size) = 0;
   // Skip <size> bytes from the input stream.
