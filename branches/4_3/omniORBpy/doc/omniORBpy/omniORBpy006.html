@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Connection and Thread Management</title>
 </head>
@@ -11,11 +11,11 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy007.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec70" class="chapter">Chapter&#XA0;6&#XA0;&#XA0;Connection and Thread Management</h1>
+<h1 id="sec70" class="chapter">Chapter&#XA0;6&#X2003;Connection and Thread Management</h1>
 <p>
 <a id="chap:connections"></a></p><p>This chapter describes how omniORB manages threads and network
 connections.</p>
-<h2 id="sec71" class="section">6.1&#XA0;&#XA0;Background</h2>
+<h2 id="sec71" class="section">6.1&#X2003;Background</h2>
 <p>In CORBA, the ORB is the &#X2018;middleware&#X2019; that allows a client to invoke
 an operation on an object without regard to its implementation or
 location. In order to invoke an operation on an object, a client needs
@@ -41,7 +41,7 @@ underlying network connections. Instead, ORBs are free to implement
 implicit binding by a variety of means.</p><p>The rest of this chapter describes how omniORB manages network
 connections and the programming interface to fine tune the management
 policy.</p>
-<h2 id="sec72" class="section">6.2&#XA0;&#XA0;The model</h2>
+<h2 id="sec72" class="section">6.2&#X2003;The model</h2>
 <p>omniORB is designed from the ground up to be fully multi-threaded. The
 objective is to maximise the degree of concurrency and at the same
 time eliminate any unnecessary thread overhead. Another objective is
@@ -54,7 +54,7 @@ sometimes be beneficial to conserve operating system resources such as
 threads and network connections by multiplexing at the ORB
 level. omniORB has various options that control its multiplexing
 behaviour.</p>
-<h2 id="sec73" class="section">6.3&#XA0;&#XA0;Client side behaviour</h2>
+<h2 id="sec73" class="section">6.3&#X2003;Client side behaviour</h2>
 <p>On the client side of a connection, the thread that invokes on a proxy
 object drives the GIOP protocol directly and blocks on the connection
 to receive the reply. The first time the client makes a call to a
@@ -84,7 +84,7 @@ to become free.</p><p>Note that some server-side ORBs, including omniORB version
 version 4.0, are unable to deal with concurrent calls multiplexed on a
 single connection, so they serialise the calls. It is usually best to
 keep to the default mode of opening multiple connections.</p>
-<h3 id="sec74" class="subsection">6.3.1&#XA0;&#XA0;Client side timeouts</h3>
+<h3 id="sec74" class="subsection">6.3.1&#X2003;Client side timeouts</h3>
 <p>
 <a id="sec:timeoutAPI"></a></p><p>omniORB can associate a timeout with a call, meaning that if the call
 takes too long a <span style="font-family:monospace">CORBA::TIMEOUT</span> exception<sup><a id="text12" href="#note12">2</a></sup> is
@@ -141,13 +141,13 @@ taken on timed-out connection attempts exceeds 10 seconds, the call
 will time out.</p><p>This kind of configuration is useful where calls may take a long time
 to complete (so call timeouts are long), but a fast indication of
 connection failure is required.</p>
-<h2 id="sec77" class="section">6.4&#XA0;&#XA0;Server side behaviour</h2>
+<h2 id="sec77" class="section">6.4&#X2003;Server side behaviour</h2>
 <p>The server side has two primary modes of operation: thread per
 connection and thread pooling. It is able to dynamically transition
 between the two modes, and it supports a hybrid scheme that behaves
 mostly like thread pooling, but has the same fast turn-around for
 sequences of calls as thread per connection.</p>
-<h3 id="sec78" class="subsection">6.4.1&#XA0;&#XA0;Thread per connection mode</h3>
+<h3 id="sec78" class="subsection">6.4.1&#X2003;Thread per connection mode</h3>
 <p>In thread per connection mode (the default, and the only option in
 omniORB versions before 4.0), each connection has a single thread
 dedicated to it. The thread blocks waiting for a request. When it
@@ -169,7 +169,7 @@ the number of threads that can be allocated to a single connection
 containing concurrent calls. Setting the parameter to 1 mimics the
 behaviour of omniORB versions before 4.0, that did not support
 calls multiplexed on one connection.</p>
-<h3 id="sec79" class="subsection">6.4.2&#XA0;&#XA0;Thread pool mode</h3>
+<h3 id="sec79" class="subsection">6.4.2&#X2003;Thread pool mode</h3>
 <p>
 <a id="sec:watchConn"></a></p><p>In thread pool mode, selected by setting the
 <span style="font-family:monospace">threadPerConnectionPolicy</span> parameter to zero, a single thread
@@ -199,7 +199,7 @@ to the default value of 1, only the last thread servicing a connection
 will watch it when it finishes a request. Setting the parameter to a
 larger number allows the last <em>n</em> connections to watch the
 connection.</p>
-<h3 id="sec80" class="subsection">6.4.3&#XA0;&#XA0;Policy transition</h3>
+<h3 id="sec80" class="subsection">6.4.3&#X2003;Policy transition</h3>
 <p>If the server is dealing with a relatively small number of
 connections, it is most efficient to use thread per connection mode.
 If the number of connections becomes too large, however, operating
@@ -223,7 +223,7 @@ connections falls below 30, thread per connection is reactivated and
 new connections receive their own dedicated threads (up to the limit
 of 50 again). Once again, existing connections in thread pool mode
 stay in that mode until they are closed.</p>
-<h2 id="sec81" class="section">6.5&#XA0;&#XA0;Idle connection shutdown</h2>
+<h2 id="sec81" class="section">6.5&#X2003;Idle connection shutdown</h2>
 <p>
 <a id="sec:connShutdown"></a></p><p>It is wasteful to leave a connection open when it has been left unused
 for a considerable time. Too many idle connections could block out new
@@ -243,7 +243,7 @@ connections are considered candidates for closure immediately after
 they are opened. That can mean that the connections are closed before
 any calls have been sent through them. If oneway calls are used, such
 connection closure can result in silent loss of calls.</p>
-<h3 id="sec82" class="subsection">6.5.1&#XA0;&#XA0;Interoperability Considerations</h3>
+<h3 id="sec82" class="subsection">6.5.1&#X2003;Interoperability Considerations</h3>
 <p>The IIOP specification allows both the client and the server to
 shutdown a connection unilaterally. When one end is about to shutdown
 a connection, it should send a <span style="font-family:monospace">CloseConnection</span> message to the
@@ -262,8 +262,7 @@ these ORBs seeing a <span style="font-family:monospace">COMM_FAILURE</span> occa
 to an omniORB server. The work-around is either to catch the exception
 in the application code and retry, or to turn off the idle connection
 shutdown inside the omniORB server.</p>
-<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note11" href="#text11">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">GIOP 1.2 supports
+<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes"><a id="note11" href="#text11">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">GIOP 1.2 supports
 &#X2018;bidirectional GIOP&#X2019;, which permits the r&#XF4;les to be reversed.</div></dd><dt class="dt-thefootnotes"><a id="note12" href="#text12">2</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Or
 <span style="font-family:monospace">CORBA::TRANSIENT</span> if the backwards-compatibility
 <span style="font-family:monospace">throwTransientOnTimeOut</span> parameter is set to <span style="font-family:monospace">1</span>.</div></dd></dl>

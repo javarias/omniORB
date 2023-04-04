@@ -3669,6 +3669,26 @@ and server transport rules could for example contain `\code{*
   unix,tcp,ssl,http}'.
 
 
+\subsection{Client connections}
+
+As with all other transports, a client can connect to a server that
+uses the HTTP transport using an IOR in string form, or an object
+reference received from another CORBA call. Clients can \emph{also}
+connect by giving a suitable URL to \code{ORB::string\_to\_object()}.
+
+In this case, the URL should be a simple plain URL, not a
+\code{corbaloc} URI. The URL path must match the patch in the server's
+endpoint specification. The CORBA object key should follow a \code{\#}
+character:
+
+\begin{pylisting}
+  obj = orb.string_to_object("https://server.host.com/call#obj_key");
+\end{pylisting}
+
+For this to work, the server should publish objects with plain object
+keys, as described in section~\ref{sec:plainkeys}.
+
+
 \subsection{HTTP proxies}
 
 Clients can connect via a web proxy. The \code{httpProxy}
@@ -4305,6 +4325,7 @@ ORBDefaultInitRef corbaloc::localhost
 
 
 \section{Creating objects with plain object keys}
+\label{sec:plainkeys}
 
 In normal use, omniORB creates object keys containing various
 information including POA names and various non-ASCII characters.
