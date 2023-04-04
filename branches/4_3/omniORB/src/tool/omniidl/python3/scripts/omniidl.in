@@ -4,7 +4,7 @@
 # omniidl.in                Created on: 1999/10/29
 #			    Author    : Duncan Grisby (dpg1)
 #
-#    Copyright (C) 2014 Apasphere Ltd
+#    Copyright (C) 2014-2023 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -28,10 +28,10 @@
 
 import sys
 
-if sys.hexversion < 0x10502f0:
+if sys.hexversion < 0x20700f0:
     sys.stderr.write("\n\n")
     sys.stderr.write("omniidl: WARNING!!\n\n")
-    sys.stderr.write("omniidl: Python version 1.5.2 or later is required.\n")
+    sys.stderr.write("omniidl: Python version 2.7 or later is required.\n")
     sys.stderr.write("omniidl: " + sys.executable + " is version " + \
                      sys.version + "\n")
     sys.stderr.write("omniidl: Execution is likely to fail.\n")
@@ -44,7 +44,8 @@ pylibdir   = archlibdir = None
 binarchdir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 # Try a path based on the installation prefix
-sppath = "@prefix@/lib/python" + sys.version[:3] + "/site-packages"
+py_version = ".".join(sys.version.split(".")[:2])
+sppath = "@prefix@/lib/python" + py_version + "/site-packages"
 
 if os.path.isdir(sppath):
     sys.path.append(sppath)
@@ -56,9 +57,9 @@ if binarchdir != "":
     treedir, bin     = os.path.split(bindir)
     if bin == "bin":
         pylibdir    = os.path.join(treedir, "lib", "python")
-        vpylibdir   = pylibdir + sys.version[:3] + "/site-packages"
+        vpylibdir   = pylibdir + py_version + "/site-packages"
         vpylib64dir = (os.path.join(treedir, "lib64", "python") +
-                       sys.version[:3] + "/site-packages")
+                       py_version + "/site-packages")
         archlibdir  = os.path.join(treedir, "lib", archname)
 
         if os.path.isdir(pylibdir):
@@ -75,9 +76,9 @@ if binarchdir != "":
 
     elif archname == "bin":
         pylibdir    = os.path.join(bindir, "lib", "python")
-        vpylibdir   = pylibdir + sys.version[:3] + "/site-packages"
+        vpylibdir   = pylibdir + py_version + "/site-packages"
         vpylib64dir = (os.path.join(bindir, "lib64", "python") +
-                       sys.version[:3] + "/site-packages")
+                       py_version + "/site-packages")
         archlibdir  = os.path.join(bindir, "lib")
 
         if os.path.isdir(pylibdir):
@@ -93,9 +94,9 @@ if binarchdir != "":
             sys.path.insert(0, archlibdir)
 
 # Last chance, try a path based on the installation prefixes
-sys.path.append("@prefix@/lib/python" + sys.version[:3] + "/site-packages")
+sys.path.append("@prefix@/lib/python" + py_version + "/site-packages")
 
-paths = [ "@exec_prefix@/lib/python" + sys.version[:3] + "/site-packages",
+paths = [ "@exec_prefix@/lib/python" + py_version + "/site-packages",
           "@pythondir@",
           "@pyexecdir@" ]
 
@@ -103,7 +104,9 @@ paths = [ "@exec_prefix@/lib/python" + sys.version[:3] + "/site-packages",
 # Autoconf insists on making our life difficult...
 for path in paths:
     path = path.replace("${exec_prefix}", "@exec_prefix@")
+    path = path.replace("${PYTHON_EXEC_PREFIX}", "@exec_prefix@")
     path = path.replace("${prefix}", "@prefix@")
+    path = path.replace("${PYTHON_PREFIX}", "@prefix@")
     sys.path.append(path)
 
 try:

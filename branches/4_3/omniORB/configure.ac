@@ -1,7 +1,7 @@
 dnl -*- M4 -*-
-AC_INIT(omniORB, 4.3.0, bugs@omniorb-support.com)
+AC_INIT([omniORB],[4.3.0],[bugs@omniorb-support.com])
 
-AC_PREREQ(2.52)
+AC_PREREQ([2.71])
 AC_CONFIG_SRCDIR(bin/scripts/omkdirhier)
 AC_CONFIG_AUX_DIR(bin/scripts)
 
@@ -75,7 +75,6 @@ dnl ** Headers
 AC_CHECK_HEADERS(errno.h fcntl.h netdb.h signal.h stdlib.h string.h strings.h)
 AC_CHECK_HEADERS(unistd.h nan.h sys/if.h sys/ioctl.h sys/param.h sys/time.h)
 AC_CHECK_HEADERS(sys/poll.h ifaddrs.h zlib.h zstd.h)
-AC_HEADER_TIME
 
 
 dnl ** Integer representation
@@ -288,6 +287,7 @@ AC_CONFIG_FILES(src/appl/GNUmakefile
                 src/examples/GNUmakefile
                 src/examples/dsi/GNUmakefile
                 src/examples/echo/GNUmakefile
+                src/examples/http_echo/GNUmakefile
                 src/examples/poa/GNUmakefile
                 src/examples/poa/implicit_activation/GNUmakefile
                 src/examples/poa/persistent_objref/GNUmakefile
@@ -359,7 +359,7 @@ AC_CONFIG_FILES(etc/init.d/omniNames)
 AC_CONFIG_FILES(contrib/GNUmakefile
                 contrib/pkgconfig/GNUmakefile)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 contrib/pkgconfig/omnithread3.pc
 contrib/pkgconfig/omniORB4.pc
 contrib/pkgconfig/omniDynamic4.pc
@@ -369,3 +369,4 @@ contrib/pkgconfig/omniConnectionMgmt4.pc
 contrib/pkgconfig/omniZIOP4.pc
 contrib/pkgconfig/omniZIOPDynamic4.pc
 ])
+AC_OUTPUT
