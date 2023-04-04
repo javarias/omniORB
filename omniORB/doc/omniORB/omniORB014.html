@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>Interface Type Checking</title>
 </head>
@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB015.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec186" class="chapter">Chapter&#XA0;14&#XA0;&#XA0;Interface Type Checking</h1>
+<h1 id="sec187" class="chapter">Chapter&#XA0;14&#X2003;Interface Type Checking</h1>
 <p>
 <a id="ch_intf"></a></p><p>This chapter describes the mechanism used by omniORB to ensure type
 safety when object references are exchanged across the network. This
@@ -20,7 +20,7 @@ programming interface visible at the application level. However, for
 the sake of diagnosing the problem when there is a type violation, it
 is useful to understand the underlying mechanism in order to interpret
 the error conditions reported by the ORB.</p>
-<h2 id="sec187" class="section">14.1&#XA0;&#XA0;Introduction</h2>
+<h2 id="sec188" class="section">14.1&#X2003;Introduction</h2>
 <p>In GIOP/IIOP, an object reference is encoded as an Interoperable
 Object Reference (IOR) when it is sent across a network connection.
 The IOR contains a Repository ID (RepoId) and one or more
@@ -51,7 +51,7 @@ RepoId field of an IOR. It is up to the receiving end to work out the
 real type of the object. omniORB never sends out null strings as
 RepoIds, but it may receive null RepoIds from other ORBs. In that
 case, it will use the mechanism described below to ensure type safety.</p>
-<h2 id="sec188" class="section">14.2&#XA0;&#XA0;Interface Inheritance</h2>
+<h2 id="sec189" class="section">14.2&#X2003;Interface Inheritance</h2>
 <p>When the ORB receives an IOR of interface type B when it expects the
 type to be A, it must find out if B inherits from A. When the ORB has
 no local knowledge of the type B, it must work out the type of B
@@ -81,17 +81,16 @@ if B reports that it is not an A. Consider the following example:</p><div class=
 </span><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">C</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small">A</span><span style="font-size:small">      </span><span style="font-size:small">op1</span><span style="font-size:small">();</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">Object</span></span><span style="font-size:small"> </span><span style="font-size:small">op2</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:small">};</span></div><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">   2</span><span style="font-size:small"> </span><span style="font-size:small">C_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objC</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//... an object reference from somewhere;</span></span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">   3</span><span style="font-size:small"> </span><span style="font-size:small">A_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objA</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   4</span><span style="font-size:small"> </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objR</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   5</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">objA</span><span style="font-size:small"> =  </span><span style="font-size:small">objC</span><span style="font-size:small">-&gt;</span><span style="font-size:small">op1</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small">objA</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_non_existent</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">objR</span><span style="font-size:small"> =  </span><span style="font-size:small">objC</span><span style="font-size:small">-&gt;</span><span style="font-size:small">op2</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">objA</span><span style="font-size:small"> =  </span><span style="font-size:small">A</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">objR</span><span style="font-size:small">);</span></div><p>If the stubs of A,B,C,D are linked into the executable and:</p><dl class="description"><dt class="dt-description">
-<span style="font-weight:bold">Case 1</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a B. Lines 6&#X2013;10
+</span><span style="font-size:small">};</span></div><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// C++</span></span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">   2</span><span style="font-size:small">C_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objC</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//... an object reference from somewhere;</span></span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">   3</span><span style="font-size:small">A_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objA</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   4</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small"> </span><span style="font-size:small">objR</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   5</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   6</span><span style="font-size:small">objA</span><span style="font-size:small"> =  </span><span style="font-size:small">objC</span><span style="font-size:small">-&gt;</span><span style="font-size:small">op1</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   7</span><span style="font-size:small">objA</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_non_existent</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   8</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small">objR</span><span style="font-size:small"> =  </span><span style="font-size:small">objC</span><span style="font-size:small">-&gt;</span><span style="font-size:small">op2</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  10</span><span style="font-size:small">objA</span><span style="font-size:small"> =  </span><span style="font-size:small">A</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">objR</span><span style="font-size:small">);</span></div><p>If the stubs of A,B,C,D are linked into the executable and:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold">Case 1</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a B. Lines 6&#X2013;10
 complete successfully. The remote object is only contacted at line 7.</dd><dt class="dt-description"><span style="font-weight:bold">Case 2</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a D. This condition
 only occurs if the runtime of the remote end is buggy. Even though the
 IDL definitions show that D is not derived from A, omniORB gives it
@@ -100,8 +99,7 @@ interface that is derived from both A and D. At line 7, the object is
 contacted to ask if it is an A. The answer is no, so a
 <span style="font-family:monospace">CORBA::INV_OBJREF</span> exception is raised. At line 10, the narrow
 operation will fail, and objA will be set to nil.
-</dd></dl><p>If only the stubs of A are linked into the executable and:</p><dl class="description"><dt class="dt-description">
-<span style="font-weight:bold">Case 1</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a B. Lines 6&#X2013;10
+</dd></dl><p>If only the stubs of A are linked into the executable and:</p><dl class="description"><dt class="dt-description"><span style="font-weight:bold">Case 1</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a B. Lines 6&#X2013;10
 complete successfully. When lines 7 and 10 are executed, the object is
 contacted to ask if it is an A.</dd><dt class="dt-description"><span style="font-weight:bold">Case 2</span></dt><dd class="dd-description"> <span style="font-family:monospace">C::op1()</span> and <span style="font-family:monospace">C::op2()</span> return a D. This condition
 only occurs if the runtime of the remote end is buggy. Line 6
@@ -110,8 +108,7 @@ contacted to ask if it is an A. If the answer is no, a
 <span style="font-family:monospace">CORBA::INV_OBJREF</span> exception is raised. At line 10, the narrow
 operation will fail, and objA will be set to nil.
 </dd></dl>
-<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note16" href="#text16">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">For further
+<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes"><a id="note16" href="#text16">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">For further
 details of the repository ID formats, see section 10.6 in the CORBA
 2.6 specification.</div></dd></dl>
 <hr>

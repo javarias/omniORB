@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Introduction</title>
 </head>
@@ -10,7 +10,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy002.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec1" class="chapter">Chapter&#XA0;1&#XA0;&#XA0;Introduction</h1>
+<h1 id="sec1" class="chapter">Chapter&#XA0;1&#X2003;Introduction</h1>
 <p>omniORBpy is an Object Request Broker (ORB) that implements the CORBA
 2.6 Python mapping&#XA0;[<a href="omniORBpy014.html#pythonmapping">OMG01b</a>]. It works in conjunction with
 omniORB for C++.</p><p>This user guide tells you how to use omniORBpy to develop CORBA
@@ -19,8 +19,8 @@ and of the Python mapping. Unlike most CORBA standards, the Python
 mapping document is small, and quite easy to follow.</p><p>This manual contains all you need to know about omniORB in order to
 use omniORBpy. Some sections are repeated from the omniORB manual.</p><p>In this chapter, we give an overview of the main features of omniORBpy
 and what you need to do to setup your environment to run it.</p>
-<h2 id="sec2" class="section">1.1&#XA0;&#XA0;Features</h2>
-<h3 id="sec3" class="subsection">1.1.1&#XA0;&#XA0;Multithreading</h3>
+<h2 id="sec2" class="section">1.1&#X2003;Features</h2>
+<h3 id="sec3" class="subsection">1.1.1&#X2003;Multithreading</h3>
 <p>omniORB is fully multithreaded. To achieve low call overhead,
 unnecessary call multiplexing is eliminated. With the default
 policies, there is at most one call in-flight in each communication
@@ -39,12 +39,12 @@ sending multiple interleaved calls on a single connection. This policy
 leads to a small amount of additional call overhead, compared to the
 default thread per connection model, but allows omniORB to scale to
 extremely large numbers of concurrent clients.</p>
-<h3 id="sec4" class="subsection">1.1.2&#XA0;&#XA0;Portability</h3>
+<h3 id="sec4" class="subsection">1.1.2&#X2003;Portability</h3>
 <p>omniORB has always been designed to be portable. It runs on many
 flavours of Unix, Windows, several embedded operating systems, and
 relatively obscure systems such as OpenVMS and Fujitsu-Siemens BS2000.
 It is designed to be easy to port to new platforms.</p>
-<h3 id="sec5" class="subsection">1.1.3&#XA0;&#XA0;Missing features</h3>
+<h3 id="sec5" class="subsection">1.1.3&#X2003;Missing features</h3>
 <p>
 <a id="sec:missing"></a></p><p>omniORB is not a complete implementation of the CORBA 2.6 core.
 The following is a list of the most significant missing features.</p><ul class="itemize"><li class="li-itemize">For some very dynamic uses of CORBA, you may need an Interface
@@ -56,13 +56,13 @@ Interceptor API. Interceptor facilities available from Python code
 are quite limited.</li><li class="li-itemize">DII, DSI and DynAny are not available in Python, but Python&#X2019;s
 normal dynamic features can be used to write code with the same
 sorts of dynamic characteristics.</li></ul>
-<h2 id="sec6" class="section">1.2&#XA0;&#XA0;Setting up your environment</h2>
+<h2 id="sec6" class="section">1.2&#X2003;Setting up your environment</h2>
 <p>
 <a id="sec:setup"></a></p><p>omniORBpy relies on the omniORB C++ libraries. If you are building
 from source, you must first build omniORB itself, as detailed in the
 omniORB documentation. After that, you can build the omniORBpy
 distribution, according to the instructions in the release notes.</p>
-<h3 id="sec7" class="subsection">1.2.1&#XA0;&#XA0;Paths</h3>
+<h3 id="sec7" class="subsection">1.2.1&#X2003;Paths</h3>
 <p>With an Autoconf build (the norm on Unix platforms), omniORBpy is
 usually installed into a location that Python will find it.</p><p>Otherwise, you must tell Python where to find it. You must add two
 directories to the <span style="font-family:monospace">PYTHONPATH</span> environment variable. The
@@ -76,7 +76,7 @@ omniORB tree.)</p><p>You should also add the <span style="font-family:monospace"
 to your <span style="font-family:monospace">PATH</span>, so you can run the IDL compiler, omniidl.
 Finally, add the <span style="font-family:monospace">lib/</span><span style="font-family:monospace">$</span><span style="font-family:monospace">FARCH</span> directory to
 <span style="font-family:monospace">LD_LIBRARY_PATH</span>, so the omniORB core library can be found.</p>
-<h3 id="sec8" class="subsection">1.2.2&#XA0;&#XA0;Configuration</h3>
+<h3 id="sec8" class="subsection">1.2.2&#X2003;Configuration</h3>
 <p>Once omniORBpy is installed in a suitable location, you must configure
 it according to your required setup. The configuration can be set with
 a configuration file, environment variables, command-line arguments

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>Packaging stubs into DLLs</title>
 </head>
@@ -11,12 +11,12 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB016.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec189" class="chapter">Chapter&#XA0;15&#XA0;&#XA0;Packaging stubs into DLLs</h1>
+<h1 id="sec190" class="chapter">Chapter&#XA0;15&#X2003;Packaging stubs into DLLs</h1>
 <p>
 <a id="chap:dlls"></a></p><p>omniORB&#X2019;s stubs can be packaged into shared libraries or DLLs. On Unix
 platforms this is mostly painless, but on Windows things are slightly
 more tricky.</p>
-<h2 id="sec190" class="section">15.1&#XA0;&#XA0;Dynamic loading and unloading</h2>
+<h2 id="sec191" class="section">15.1&#X2003;Dynamic loading and unloading</h2>
 <p>As long as your platform supports running static initialisers and
 destructors as libraries are loaded and unloaded, you can package
 stubs into shared libraries / DLLs, and load them dynamically at
@@ -31,12 +31,12 @@ compiling the stub files. Unfortunately, with that define set, there
 is a risk that object reference _vars at global scope will segfault
 as they are unloaded. You must not create _vars at global scope if
 you are using <span style="font-family:monospace">OMNI_UNLOADABLE_STUBS</span>.</p>
-<h2 id="sec191" class="section">15.2&#XA0;&#XA0;Windows DLLs</h2>
+<h2 id="sec192" class="section">15.2&#X2003;Windows DLLs</h2>
 <p>On Unix platforms, the linker figures out how to link the symbols
 exported by a library in to the running program. On Windows,
 unfortunately, you have to tell the linker where symbols are coming
 from. This causes all manner of difficulties.</p>
-<h3 id="sec192" class="subsection">15.2.1&#XA0;&#XA0;Exporting symbols</h3>
+<h3 id="sec193" class="subsection">15.2.1&#X2003;Exporting symbols</h3>
 <p>To (statically) link with a DLL file in Windows, you link with a LIB
 file which references the symbols exported from the DLL. To build the
 LIB and DLL files, the correct symbols must be exported. One way to do
@@ -50,13 +50,12 @@ a Python script named <span style="font-family:monospace">makedeffile.py</span> 
 Visual C++, and processes its output to extract the necessary symbols.
 Although it is designed for exporting the symbols from omniORB stub
 files, it can actually be used for arbitrary C++ code. To use it to
-create a DLL from a single source file, use the following steps:</p><ol class="enumerate" type=1><li class="li-enumerate">
-Compile the source:<p><span style="font-family:monospace">cl -c -O2 -MD -GX -Fofoo.o -Tpfoo.cc</span></p></li><li class="li-enumerate">Build a static library (It probably won&#X2019;t work on its own due to
+create a DLL from a single source file, use the following steps:</p><ol class="enumerate" type=1><li class="li-enumerate">Compile the source:<p><span style="font-family:monospace">cl -c -O2 -MD -GX -Fofoo.o -Tpfoo.cc</span></p></li><li class="li-enumerate">Build a static library (It probably won&#X2019;t work on its own due to
 the -MD switch to cl, but we just need it to get the symbols
 out):<p><span style="font-family:monospace">lib -out:foo_static.lib foo.o</span></p></li><li class="li-enumerate">Use the script to build a .def file:<p><span style="font-family:monospace">makedeffile.py foo_static.lib foo 1.0 foo.def</span></p></li><li class="li-enumerate">Build the .dll and .lib with the def file.<p><span style="font-family:monospace">link -out:foo.dll -dll -def:foo.def -implib:foo.lib foo.o</span>
 </p></li></ol><p>Of course, you can link together many separate C++ files, rather than
 just the one shown here.</p>
-<h3 id="sec193" class="subsection">15.2.2&#XA0;&#XA0;Importing constant symbols</h3>
+<h3 id="sec194" class="subsection">15.2.2&#X2003;Importing constant symbols</h3>
 <p>As if exporting the symbols from a DLL was not complicated enough, any
 constant values exported by a DLL have to be explicitly
 <em>imported</em> into the code using them. omniORB&#X2019;s stub files declare

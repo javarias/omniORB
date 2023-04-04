@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORB.css">
 <title>The Basics</title>
 </head>
@@ -11,7 +11,7 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORB003.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec8" class="chapter">Chapter&#XA0;2&#XA0;&#XA0;The Basics</h1>
+<h1 id="sec8" class="chapter">Chapter&#XA0;2&#X2003;The Basics</h1>
 <p>
 <a id="chap:basics"></a></p><p>In this chapter, we go through three examples to illustrate the
 practical steps to use omniORB. By going through the source code of
@@ -22,7 +22,7 @@ should be familiar with.</p><p>If you have experience with using other ORBs, you
 through this chapter because it provides important information about
 the features and APIs that are necessarily omniORB specific. With the
 Portable Object Adapter, there are very few omniORB specific details.</p>
-<h2 id="sec9" class="section">2.1&#XA0;&#XA0;The Echo Object Example</h2>
+<h2 id="sec9" class="section">2.1&#X2003;The Echo Object Example</h2>
 <p>Our example is an object which has only one method. The method simply
 echos the argument string. We have to:</p><ol class="enumerate" type=1><li class="li-enumerate">define the object interface in IDL
 </li><li class="li-enumerate">use the IDL compiler to generate the stub code, which provides
@@ -31,7 +31,7 @@ the object mapping as defined in the CORBA specification
 </li><li class="li-enumerate">write the client code.</li></ol><p>These examples are in the <span style="font-family:monospace">src/examples/echo</span> directory of the
 omniORB distribution; there are several other examples in
 <span style="font-family:monospace">src/examples</span>.</p>
-<h2 id="sec10" class="section">2.2&#XA0;&#XA0;Specifying the Echo interface in IDL</h2>
+<h2 id="sec10" class="section">2.2&#X2003;Specifying the Echo interface in IDL</h2>
 <p>We define an object interface, called <span style="font-family:monospace">Echo</span>, as follows:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">interface</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">in</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">string</span></span><span style="font-size:small"> </span><span style="font-size:small">mesg</span><span style="font-size:small">);</span><span style="font-size:small">
 </span><span style="font-size:small">};</span></div><p>If you are new to IDL, you can learn about its syntax in Chapter 3 of
@@ -50,13 +50,12 @@ your interfaces by defining them inside <span style="font-family:monospace">modu
 course, this does not eliminate the chance of a name clash unless some
 form of naming convention is agreed globally. Nevertheless, a
 well-chosen module name can help a lot.</p>
-<h2 id="sec11" class="section">2.3&#XA0;&#XA0;Generating the C++ stubs</h2>
+<h2 id="sec11" class="section">2.3&#X2003;Generating the C++ stubs</h2>
 <p>From the IDL file, we use the IDL compiler to produce the C++ mapping
 of the interface. The IDL compiler for omniORB is called omniidl.
 Given the IDL file, omniidl produces two stub files: a C++ header file
 and a C++ source file. For example, from the file <span style="font-family:monospace">echo.idl</span>, the
-following files are produced:</p><ul class="itemize"><li class="li-itemize">
-<span style="font-family:monospace">echo.hh</span>
+following files are produced:</p><ul class="itemize"><li class="li-itemize"><span style="font-family:monospace">echo.hh</span>
 </li><li class="li-itemize"><span style="font-family:monospace">echoSK.cc</span>
 </li></ul><p>omniidl must be invoked with the <span style="font-family:monospace">-bcxx</span> argument to
 tell it to generate C++ stubs. The following command line generates
@@ -71,7 +70,7 @@ the stubs. You won&#X2019;t find the stubs in your working directory because
 all stubs are written into the <span style="font-family:monospace">stub</span> directory at the top level
 of your build tree.</p><p>The full arguments to omniidl are detailed in
 chapter&#XA0;<a href="omniORB005.html#chap%3Aomniidl">5</a>.</p>
-<h2 id="sec12" class="section">2.4&#XA0;&#XA0;Object References and Servants</h2>
+<h2 id="sec12" class="section">2.4&#X2003;Object References and Servants</h2>
 <p>We contact a CORBA object through an <span style="font-style:italic">object reference</span>. The
 actual implementation of a CORBA object is termed a <span style="font-style:italic">servant</span>.</p><p>Object references and servants are quite separate entities, and it is
 important not to confuse the two. Client code deals purely with object
@@ -80,7 +79,7 @@ must deal with both object references and servants. omniORB uses
 distinct C++ types for object references and servants, so the C++
 compiler will complain if you use a servant when an object reference
 is expected, or vice-versa.</p>
-<h2 id="sec13" class="section">2.5&#XA0;&#XA0;A quick look at the C++ mapping</h2>
+<h2 id="sec13" class="section">2.5&#X2003;A quick look at the C++ mapping</h2>
 <p>The C++ stubs conform to the standard mapping defined in the CORBA
 specification&#XA0;[<a href="omniORB017.html#cxxmapping">OMG03</a>]. Sadly, since it pre-dates the C++
 standard library, the C++ language mapping is quite hard to use,
@@ -89,13 +88,12 @@ specification or, better, a book about using CORBA from C++. Reading
 the code generated by omniidl is hard-going, and it is difficult to
 distinguish the parts you need to know from the implementation
 details.</p>
-<h3 id="sec14" class="subsection">2.5.1&#XA0;&#XA0;Mapping overview</h3>
-<p>For interface <span style="font-family:monospace">Echo</span>, omniidl generates four things of note:</p><ul class="itemize"><li class="li-itemize">
-class <span style="font-family:monospace">Echo</span>, containing static functions and type
+<h3 id="sec14" class="subsection">2.5.1&#X2003;Mapping overview</h3>
+<p>For interface <span style="font-family:monospace">Echo</span>, omniidl generates four things of note:</p><ul class="itemize"><li class="li-itemize">class <span style="font-family:monospace">Echo</span>, containing static functions and type
 definitions</li><li class="li-itemize"><span style="font-family:monospace">Echo_ptr</span>, an <em>object reference</em> type with pointer
 semantics</li><li class="li-itemize"><span style="font-family:monospace">Echo_var</span>, a memory management helper for
 <span style="font-family:monospace">Echo_ptr</span></li><li class="li-itemize">class <span style="font-family:monospace">POA_Echo</span>, the server-side <em>skeleton</em> class</li></ul>
-<h3 id="sec15" class="subsection">2.5.2&#XA0;&#XA0;Interface scope type</h3>
+<h3 id="sec15" class="subsection">2.5.2&#X2003;Interface scope type</h3>
 <p>A C++ class <span style="font-family:monospace">Echo</span> is defined to hold a number of static
 functions and type definitions. It looks like this:</p><div class="lstlisting"><span style="font-size:small"><span style="font-weight:bold">class</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo</span><span style="font-size:small"> {</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">public</span></span><span style="font-size:small">:</span><span style="font-size:small">
@@ -108,7 +106,7 @@ functions and type definitions. It looks like this:</p><div class="lstlisting"><
 </span><span style="font-size:small">};</span></div><p>The <span style="font-family:monospace">_ptr_type</span> and <span style="font-family:monospace">_var_type</span> typedefs are there to
 facilitate template programming. The static functions are described
 below.</p>
-<h3 id="sec16" class="subsection">2.5.3&#XA0;&#XA0;Object reference pointer type</h3>
+<h3 id="sec16" class="subsection">2.5.3&#X2003;Object reference pointer type</h3>
 <p>For interface <span style="font-family:monospace">Echo</span>, the mapping defines the object reference
 type <span style="font-family:monospace">Echo_ptr</span> which has pointer semantics. The <span style="font-family:monospace">_ptr</span>
 type provides access to the interface&#X2019;s operations. The concrete type
@@ -125,7 +123,7 @@ perform arithmetic or relational operations including testing for
 equality using <span style="font-family:monospace">operator==</span>.</p><p>In some CORBA implementations, <span style="font-family:monospace">Echo_ptr</span> is a typedef to
 <span style="font-family:monospace">Echo*</span>. In omniORB, it is not&#X2014;the object reference type is
 distinct from class <span style="font-family:monospace">Echo</span>.</p>
-<h4 id="sec17" class="subsubsection">2.5.3.1&#XA0;&#XA0;Nil object reference</h4>
+<h4 id="sec17" class="subsubsection">2.5.3.1&#X2003;Nil object reference</h4>
 <p>Object references can be <em>nil</em>. To obtain a nil object reference
 for interface <span style="font-family:monospace">Echo</span>, call <span style="font-family:monospace">Echo::_nil()</span>. To test if an
 object reference is nil, use <span style="font-family:monospace">CORBA::_is_nil()</span>:</p><div class="lstlisting"><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Boolean</span><span style="font-size:small"> </span><span style="font-size:small">true_result</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">is_nil</span><span style="font-size:small">(</span><span style="font-size:small">Echo</span><span style="font-size:small">::</span><span style="font-size:small">_nil</span><span style="font-size:small">());</span></div><p><span style="font-family:monospace">Echo::_nil()</span> is the only compliant way to obtain a nil Echo
@@ -133,7 +131,7 @@ reference, and <span style="font-family:monospace">CORBA::is_nil()</span> is the
 if an object reference is nil. You should not use the equality
 <span style="font-family:monospace">operator==</span>. Many C++ ORBs use the null pointer to represent a
 nil object reference, but <em>omniORB does not</em>.</p>
-<h4 id="sec18" class="subsubsection">2.5.3.2&#XA0;&#XA0;Object reference lifecycle</h4>
+<h4 id="sec18" class="subsubsection">2.5.3.2&#X2003;Object reference lifecycle</h4>
 <p>Object references are reference counted. That is, the opaque C++
 objects on the client side that implement <span style="font-family:monospace">Echo_ptr</span> are
 reference counted, so they are deleted when the count goes to zero.
@@ -179,7 +177,7 @@ operation can be called using the arrow (&#X2018;<span style="font-family:monosp
 </span><span style="font-size:small">a</span><span style="font-size:small"> = </span><span style="font-size:small">Echo</span><span style="font-size:small">::</span><span style="font-size:small">_duplicate</span><span style="font-size:small">(</span><span style="font-size:small">p</span><span style="font-size:small">);     </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// release old object reference</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">                             </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// a now holds a copy of p.</span></span></span></div><p>The mappings of many other IDL data types include <span style="font-family:monospace">_var</span> types
 with similar semantics.</p>
-<h4 id="sec19" class="subsubsection">2.5.3.3&#XA0;&#XA0;Object reference inheritance</h4>
+<h4 id="sec19" class="subsubsection">2.5.3.3&#X2003;Object reference inheritance</h4>
 <p>All CORBA objects inherit from the generic object
 <span style="font-family:monospace">CORBA::Object</span>. <span style="font-family:monospace">CORBA::Object_ptr</span> is the object
 reference type for base <span style="font-family:monospace">CORBA::Object</span>. Object references can be
@@ -196,7 +194,7 @@ duplication of the object reference, so the result must be released.
 Note also that <span style="font-family:monospace">_narrow()</span> may involve a remote call to check the
 type of the object, so it may throw CORBA system exceptions such as
 <span style="font-family:monospace">TRANSIENT</span> or <span style="font-family:monospace">OBJECT_NOT_EXIST</span>.</p>
-<h4 id="sec20" class="subsubsection">2.5.3.4&#XA0;&#XA0;Object reference equivalence</h4>
+<h4 id="sec20" class="subsubsection">2.5.3.4&#X2003;Object reference equivalence</h4>
 <p>As described above, the equality <span style="font-family:monospace">operator==</span> should not be used
 on object references. To test if two object references are equivalent,
 the member function <span style="font-family:monospace">_is_equivalent()</span> of the generic object
@@ -210,7 +208,7 @@ possible to construct situations in which two object references refer
 to the same object, but <span style="font-family:monospace">_is_equivalent()</span> does not consider them
 equivalent. If you need a strong sense of object identity, you must
 implement it with explicit IDL operations.</p>
-<h3 id="sec21" class="subsection">2.5.4&#XA0;&#XA0;Servant Object Implementation</h3>
+<h3 id="sec21" class="subsection">2.5.4&#X2003;Servant Object Implementation</h3>
 <p>
 <a id="stubobjimpl"></a></p><p>For each object interface, a <span style="font-style:italic">skeleton</span> class is generated. In
 our example, the POA specification says that the skeleton class for
@@ -240,7 +238,7 @@ The <span style="font-family:monospace">_this()</span> function returns an objec
 object, provided the POA policies permit it. The returned value must
 be deallocated via <span style="font-family:monospace">CORBA::release()</span>. See
 section&#XA0;<a href="#objeg1">2.8</a> for an example of how this function is used.</dd></dl>
-<h2 id="sec22" class="section">2.6&#XA0;&#XA0;Writing the servant implementation</h2>
+<h2 id="sec22" class="section">2.6&#X2003;Writing the servant implementation</h2>
 <p>
 <a id="objimpl"></a></p><p>You define a class to provide the servant implementation. There is
 little constraint on how you design your implementation class except
@@ -294,27 +292,27 @@ Servants are usually instantiated on the heap, i.e. using the
 automatic variables. If you do that, it is vital to make sure that the
 servant has been deactivated, and thus released by the POA, before the
 variable goes out of scope and is destroyed.</dd></dl>
-<h2 id="sec23" class="section">2.7&#XA0;&#XA0;Writing the client</h2>
+<h2 id="sec23" class="section">2.7&#X2003;Writing the client</h2>
 <p>Here is an example of how an <span style="font-family:monospace">Echo_ptr</span> object reference is
-used.</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">   2</span><span style="font-size:small"> </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   3</span><span style="font-size:small"> </span><span style="font-size:small">{</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   4</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">Echo_var</span><span style="font-size:small"> </span><span style="font-size:small">e</span><span style="font-size:small"> = </span><span style="font-size:small">Echo</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   5</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">is_nil</span><span style="font-size:small">(</span><span style="font-size:small">e</span><span style="font-size:small">)) {</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"cannot invoke on a nil object reference."</span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">  }</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  11</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">src</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"Hello!"</span></span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  13</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">dest</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  14</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">dest</span><span style="font-size:small"> = </span><span style="font-size:small">e</span><span style="font-size:small">-&gt;</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">src</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"I said, \""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">src</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"\"."</span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small">       &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">" The Object said,\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">dest</span><span style="font-size:small"> &lt;&lt;</span><span style="font-size:small"><span style="font-size:small">"\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">}</span></div><p>The <span style="font-family:monospace">hello()</span> function accepts a generic object reference. The
+used.</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"><span style="font-weight:bold">void</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">   2</span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_ptr</span><span style="font-size:small"> </span><span style="font-size:small">obj</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   3</span><span style="font-size:small">{</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   4</span><span style="font-size:small">  </span><span style="font-size:small">Echo_var</span><span style="font-size:small"> </span><span style="font-size:small">e</span><span style="font-size:small"> = </span><span style="font-size:small">Echo</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   5</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   6</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">if</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">is_nil</span><span style="font-size:small">(</span><span style="font-size:small">e</span><span style="font-size:small">)) {</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   7</span><span style="font-size:small">    </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"cannot invoke on a nil object reference."</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">   8</span><span style="font-size:small">         &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  10</span><span style="font-size:small">  }</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  11</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  12</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">src</span><span style="font-size:small"> = (</span><span style="font-size:small"><span style="font-weight:bold">const</span></span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">*) </span><span style="font-size:small"><span style="font-size:small">"Hello!"</span></span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  13</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">dest</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  14</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  15</span><span style="font-size:small">  </span><span style="font-size:small">dest</span><span style="font-size:small"> = </span><span style="font-size:small">e</span><span style="font-size:small">-&gt;</span><span style="font-size:small">echoString</span><span style="font-size:small">(</span><span style="font-size:small">src</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  16</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  17</span><span style="font-size:small">  </span><span style="font-size:small">cout</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"I said, \""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">src</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">"\"."</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">  18</span><span style="font-size:small">       &lt;&lt; </span><span style="font-size:small"><span style="font-size:small">" The Object said,\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">dest</span><span style="font-size:small"> &lt;&lt;</span><span style="font-size:small"><span style="font-size:small">"\""</span></span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  19</span><span style="font-size:small">}</span></div><p>The <span style="font-family:monospace">hello()</span> function accepts a generic object reference. The
 object reference (<span style="font-family:monospace">obj</span>) is narrowed to <span style="font-family:monospace">Echo_ptr</span>. If the
 object reference returned by <span style="font-family:monospace">Echo::_narrow()</span> is not nil, the
 operation <span style="font-family:monospace">echoString()</span> is invoked. Finally, both the argument to
@@ -343,36 +341,36 @@ non-basic data types. One should use automatic variables whenever
 possible both to avoid memory leaks and to maximise performance.
 However, when one has to allocate data items on the heap, it is a good
 practice to use the <span style="font-family:monospace">T_var</span> types to manage the heap storage.</p>
-<h2 id="sec24" class="section">2.8&#XA0;&#XA0;Example 1 &#X2014; Colocated Client and Servant</h2>
+<h2 id="sec24" class="section">2.8&#X2003;Example 1 &#X2014; Colocated Client and Servant</h2>
 <p>
 <a id="objeg1"></a></p><p>Having introduced the client and the object implementation, we can now
 describe how to link up the two via the ORB and POA. In this section,
 we describe an example in which both the client and the object
 implementation are in the same address space. In the next two
 sections, we shall describe the case where the two are in different
-address spaces.</p><p>The code for this example is reproduced below:</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small">
-</span><span style="font-size:xx-small">   2</span><span style="font-size:small"> </span><span style="font-size:small">main</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small"> **</span><span style="font-size:small">argv</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   3</span><span style="font-size:small"> </span><span style="font-size:small">{</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   4</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_ptr</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"omniORB4"</span></span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   5</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small">       </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"RootPOA"</span></span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA_var</span><span style="font-size:small"> </span><span style="font-size:small">poa</span><span style="font-size:small"> = </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">Servant_var</span><span style="font-size:small">&lt;</span><span style="font-size:small">Echo_i</span><span style="font-size:small">&gt; </span><span style="font-size:small">myecho</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">ObjectId_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoid</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate_object</span><span style="font-size:small">(</span><span style="font-size:small">myecho</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  11</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">Echo_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoref</span><span style="font-size:small"> = </span><span style="font-size:small">myecho</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_this</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  13</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  14</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POAManager_var</span><span style="font-size:small"> </span><span style="font-size:small">pman</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">the_POAManager</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">pman</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">myechoref</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  20</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small">}</span></div><p>The example illustrates several important interactions among the ORB,
+address spaces.</p><p>The code for this example is reproduced below:</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small">
+</span><span style="font-size:xx-small">   2</span><span style="font-size:small">main</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small"> **</span><span style="font-size:small">argv</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   3</span><span style="font-size:small">{</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   4</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_ptr</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-size:small">"omniORB4"</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   5</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   6</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small">       </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"RootPOA"</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   7</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA_var</span><span style="font-size:small"> </span><span style="font-size:small">poa</span><span style="font-size:small"> = </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   8</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">Servant_var</span><span style="font-size:small">&lt;</span><span style="font-size:small">Echo_i</span><span style="font-size:small">&gt; </span><span style="font-size:small">myecho</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  10</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">ObjectId_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoid</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate_object</span><span style="font-size:small">(</span><span style="font-size:small">myecho</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  11</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  12</span><span style="font-size:small">  </span><span style="font-size:small">Echo_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoref</span><span style="font-size:small"> = </span><span style="font-size:small">myecho</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_this</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  13</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  14</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POAManager_var</span><span style="font-size:small"> </span><span style="font-size:small">pman</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">the_POAManager</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  15</span><span style="font-size:small">  </span><span style="font-size:small">pman</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  16</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  17</span><span style="font-size:small">  </span><span style="font-size:small">hello</span><span style="font-size:small">(</span><span style="font-size:small">myechoref</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  18</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  19</span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  20</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  21</span><span style="font-size:small">}</span></div><p>The example illustrates several important interactions among the ORB,
 the POA, the servant, and the client. Here are the details:</p>
-<h3 id="sec25" class="subsection">2.8.1&#XA0;&#XA0;ORB initialisation</h3>
+<h3 id="sec25" class="subsection">2.8.1&#X2003;ORB initialisation</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 4</span></dt><dd class="dd-description"><br>
 The ORB is initialised by calling the <span style="font-family:monospace">CORBA::ORB_init()</span>
 function. The function uses the optional 3rd argument to determine
@@ -384,7 +382,7 @@ processes any that start &#X2018;<span style="font-family:monospace">-ORB</span>
 from the list, so application code does not have to deal with them.</p><p>If any error occurs during ORB initialisation, such as invalid ORB
 arguments, or an invalid configuration file, the
 <span style="font-family:monospace">CORBA::INITIALIZE</span> system exception is raised.</p></dd></dl>
-<h3 id="sec26" class="subsection">2.8.2&#XA0;&#XA0;Obtaining the Root POA</h3>
+<h3 id="sec26" class="subsection">2.8.2&#X2003;Obtaining the Root POA</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Lines 6&#X2013;7</span></dt><dd class="dd-description"><br>
 To activate our servant object and make it available to clients, we
 must register it with a POA. In this example, we use the <span style="font-style:italic">Root
@@ -396,7 +394,7 @@ suitable policies for many simple servers, and closely matches the
 &#X2018;policies&#X2019; used by omniORB 2&#X2019;s BOA. See Chapter 11 of the CORBA 2.6
 specification[<a href="omniORB017.html#corba26-spec">OMG01</a>] for details of all the POA policies
 which are available.</p></dd></dl>
-<h3 id="sec27" class="subsection">2.8.3&#XA0;&#XA0;Object initialisation</h3>
+<h3 id="sec27" class="subsection">2.8.3&#X2003;Object initialisation</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 9</span></dt><dd class="dd-description"><br>
 An instance of the Echo servant is initialised using the <span style="font-family:monospace">new</span>
 operator. The <span style="font-family:monospace">PortableServer::Servant_var&lt;&gt;</span> template is
@@ -422,7 +420,7 @@ local calls in the same way as remote ones. This optimisation is
 applicable not only to object references returned by <span style="font-family:monospace">_this()</span>, but
 to any object references that are passed around within the same
 address space or received from other address spaces via remote calls.</p></dd></dl>
-<h3 id="sec28" class="subsection">2.8.4&#XA0;&#XA0;Activating the POA</h3>
+<h3 id="sec28" class="subsection">2.8.4&#X2003;Activating the POA</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Lines 14&#X2013;15</span></dt><dd class="dd-description"><br>
 POAs are initially in the <span style="font-style:italic">holding</span> state, meaning that incoming
 requests are blocked. Lines 15 and 16 acquire a reference to the POA&#X2019;s
@@ -430,19 +428,19 @@ POA manager, and use it to put the POA into the <span style="font-style:italic">
 Incoming requests are now served. <span style="font-weight:bold">Failing to activate the POA
 is one of the most common programming mistakes. If your program
 appears deadlocked, make sure you activated the POA!</span></dd></dl>
-<h3 id="sec29" class="subsection">2.8.5&#XA0;&#XA0;Performing a call</h3>
+<h3 id="sec29" class="subsection">2.8.5&#X2003;Performing a call</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 17</span></dt><dd class="dd-description"><br>
 At long last, we can call <span style="font-family:monospace">hello()</span> with this object reference. The
 argument is widened implicitly to the generic object reference
 <span style="font-family:monospace">CORBA::Object_ptr</span>.</dd></dl>
-<h3 id="sec30" class="subsection">2.8.6&#XA0;&#XA0;ORB destruction</h3>
+<h3 id="sec30" class="subsection">2.8.6&#X2003;ORB destruction</h3>
 <dl class="description"><dt class="dt-description"><span style="font-weight:bold">Line 19</span></dt><dd class="dd-description"><br>
 Shutdown the ORB permanently. This call causes the ORB to release all
 its resources, e.g. internal threads, and also to deactivate any
 servant objects which are currently active. When it deactivates the
 <span style="font-family:monospace">Echo_i</span> instance, the servant&#X2019;s reference count drops to zero,
 so the servant is deleted.</dd></dl>
-<h2 id="sec31" class="section">2.9&#XA0;&#XA0;Example 2 &#X2014; Different Address Spaces</h2>
+<h2 id="sec31" class="section">2.9&#X2003;Example 2 &#X2014; Different Address Spaces</h2>
 <p>In this example, the client and the object implementation reside in
 two different address spaces. The code of this example is almost the
 same as the previous example. The only difference is the extra work
@@ -454,31 +452,31 @@ command-line argument. The string is then converted by the client
 into a proper object reference. This method is used in this
 example. In the next example, we shall introduce a better way of
 passing the object reference using the CORBA Naming Service.</p>
-<h3 id="sec32" class="subsection">2.9.1&#XA0;&#XA0;Making a Stringified Object Reference</h3>
+<h3 id="sec32" class="subsection">2.9.1&#X2003;Making a Stringified Object Reference</h3>
 <p>The <span style="font-family:monospace">main()</span> function of the server side is reproduced below. The
 full listing (<span style="font-family:monospace">eg2_impl.cc</span>) can be found at the end of this
-chapter.</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"> </span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">main</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">** </span><span style="font-size:small">argv</span><span style="font-size:small">)</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   2</span><span style="font-size:small"> </span><span style="font-size:small">{</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   3</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_var</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   4</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   5</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small">       </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"RootPOA"</span></span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   6</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA_var</span><span style="font-size:small"> </span><span style="font-size:small">poa</span><span style="font-size:small"> = </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   7</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">   8</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">Servant_var</span><span style="font-size:small">&lt;</span><span style="font-size:small">Echo_i</span><span style="font-size:small">&gt; </span><span style="font-size:small">myecho</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">   9</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  10</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">ObjectId_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoid</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate_object</span><span style="font-size:small">(</span><span style="font-size:small">myecho</span><span style="font-size:small">);</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  11</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  12</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">myecho</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_this</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  13</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">sior</span><span style="font-size:small">(</span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">object_to_string</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">));</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  14</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">sior</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  15</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  16</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POAManager_var</span><span style="font-size:small"> </span><span style="font-size:small">pman</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">the_POAManager</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  17</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">pman</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  18</span><span style="font-size:small"> </span><span style="font-size:small">
-</span><span style="font-size:xx-small">  19</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">run</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  20</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  21</span><span style="font-size:small"> </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
-</span><span style="font-size:xx-small">  22</span><span style="font-size:small"> </span><span style="font-size:small">}</span></div><p>The stringified object reference is obtained by calling the ORB&#X2019;s
+chapter.</p><div class="lstlisting"><span style="font-size:xx-small">   1</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">main</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-weight:bold">int</span></span><span style="font-size:small"> </span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small"><span style="font-weight:bold">char</span></span><span style="font-size:small">** </span><span style="font-size:small">argv</span><span style="font-size:small">)</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   2</span><span style="font-size:small">{</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   3</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_var</span><span style="font-size:small"> </span><span style="font-size:small">orb</span><span style="font-size:small"> = </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">ORB_init</span><span style="font-size:small">(</span><span style="font-size:small">argc</span><span style="font-size:small">, </span><span style="font-size:small">argv</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   4</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   5</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">Object_var</span><span style="font-size:small">       </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">resolve_initial_references</span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"RootPOA"</span></span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   6</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA_var</span><span style="font-size:small"> </span><span style="font-size:small">poa</span><span style="font-size:small"> = </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POA</span><span style="font-size:small">::</span><span style="font-size:small">_narrow</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   7</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   8</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">Servant_var</span><span style="font-size:small">&lt;</span><span style="font-size:small">Echo_i</span><span style="font-size:small">&gt; </span><span style="font-size:small">myecho</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-weight:bold">new</span></span><span style="font-size:small"> </span><span style="font-size:small">Echo_i</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">   9</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  10</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">ObjectId_var</span><span style="font-size:small"> </span><span style="font-size:small">myechoid</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate_object</span><span style="font-size:small">(</span><span style="font-size:small">myecho</span><span style="font-size:small">);</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  11</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  12</span><span style="font-size:small">  </span><span style="font-size:small">obj</span><span style="font-size:small"> = </span><span style="font-size:small">myecho</span><span style="font-size:small">-&gt;</span><span style="font-size:small">_this</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  13</span><span style="font-size:small">  </span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">String_var</span><span style="font-size:small"> </span><span style="font-size:small">sior</span><span style="font-size:small">(</span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">object_to_string</span><span style="font-size:small">(</span><span style="font-size:small">obj</span><span style="font-size:small">));</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  14</span><span style="font-size:small">  </span><span style="font-size:small">cerr</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">sior</span><span style="font-size:small"> &lt;&lt; </span><span style="font-size:small">endl</span><span style="font-size:small">;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  15</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  16</span><span style="font-size:small">  </span><span style="font-size:small">PortableServer</span><span style="font-size:small">::</span><span style="font-size:small">POAManager_var</span><span style="font-size:small"> </span><span style="font-size:small">pman</span><span style="font-size:small"> = </span><span style="font-size:small">poa</span><span style="font-size:small">-&gt;</span><span style="font-size:small">the_POAManager</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  17</span><span style="font-size:small">  </span><span style="font-size:small">pman</span><span style="font-size:small">-&gt;</span><span style="font-size:small">activate</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  18</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  19</span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">run</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  20</span><span style="font-size:small">  </span><span style="font-size:small">orb</span><span style="font-size:small">-&gt;</span><span style="font-size:small">destroy</span><span style="font-size:small">();</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  21</span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
+</span><span style="font-size:xx-small">  22</span><span style="font-size:small">}</span></div><p>The stringified object reference is obtained by calling the ORB&#X2019;s
 <span style="font-family:monospace">object_to_string()</span> function (line 13). This results in a
 string starting with the signature &#X2018;<span style="font-family:monospace">IOR:</span>&#X2019; and followed by quite
 a lot of hexadecimal digits. All CORBA compliant ORBs are able to
@@ -487,7 +485,7 @@ Interoperable Object Reference (IOR). The IOR contains the location
 information and a key to uniquely identify the object implementation
 in its own address space. From the IOR, an object reference can be
 constructed.</p>
-<h3 id="sec33" class="subsection">2.9.2&#XA0;&#XA0;Client: Using a Stringified Object Reference</h3>
+<h3 id="sec33" class="subsection">2.9.2&#X2003;Client: Using a Stringified Object Reference</h3>
 <p>
 <a id="clnt2"></a></p><p>The stringified object reference is passed to the client as a
 command-line argument. The client uses the ORB&#X2019;s
@@ -501,7 +499,7 @@ be found at the end of this chapter.</p><div class="lstlisting"><span style="fon
 </span><span style="font-size:small"><span style="font-weight:bold">catch</span></span><span style="font-size:small"> (</span><span style="font-size:small">CORBA</span><span style="font-size:small">::</span><span style="font-size:small">TRANSIENT</span><span style="font-size:small">&amp;) {</span><span style="font-size:small">
 </span><span style="font-size:small">  ... </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// code to handle transient exception...</span></span></span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec34" class="subsection">2.9.3&#XA0;&#XA0;Catching System Exceptions</h3>
+<h3 id="sec34" class="subsection">2.9.3&#X2003;Catching System Exceptions</h3>
 <p>When omniORB detects an error condition, it may raise a system
 exception. The CORBA specification defines a series of exceptions
 covering most of the error conditions that an ORB may encounter. The
@@ -513,7 +511,7 @@ the call, usually meaning the server is not running.</p><p>All system exceptions
 Unless you have a truly ancient C++ compiler, a single catch of
 <span style="font-family:monospace">CORBA::SystemException</span> will catch all the different system
 exceptions.</p>
-<h3 id="sec35" class="subsection">2.9.4&#XA0;&#XA0;Lifetime of a CORBA object</h3>
+<h3 id="sec35" class="subsection">2.9.4&#X2003;Lifetime of a CORBA object</h3>
 <p>CORBA objects are either <span style="font-style:italic">transient</span> or <span style="font-style:italic">persistent</span>. The
 majority are transient, meaning that the lifetime of the CORBA object
 (as contacted through an object reference) is the same as the lifetime
@@ -538,7 +536,7 @@ references. CORBA defines a standard naming service, which is a
 component of the Common Object Services (COS)&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>],
 that can be used for this purpose. The next section describes an
 example of how to use the COS Naming Service.</p>
-<h2 id="sec36" class="section">2.10&#XA0;&#XA0;Example 3 &#X2014; Using the Naming Service</h2>
+<h2 id="sec36" class="section">2.10&#X2003;Example 3 &#X2014; Using the Naming Service</h2>
 <p>In this example, the object implementation uses the Naming
 Service&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>] to pass on the object reference to the
 client. This method is often more practical than using stringified
@@ -561,7 +559,7 @@ must match for a name lookup to succeed. In this example, the kind
 values for <span style="font-family:monospace">test</span> and <span style="font-family:monospace">Echo</span> are chosen to be
 &#X2018;<span style="font-family:monospace">my_context</span>&#X2019; and &#X2018;<span style="font-family:monospace">Object</span>&#X2019; respectively. This is an
 arbitrary choice as there is no standardised set of kind values.</p>
-<h3 id="sec37" class="subsection">2.10.1&#XA0;&#XA0;Obtaining the Root Context Object Reference</h3>
+<h3 id="sec37" class="subsection">2.10.1&#X2003;Obtaining the Root Context Object Reference</h3>
 <p>
 <a id="resolveinit"></a></p><p>The initial contact with the Naming Service can be established via the
 <span style="font-style:italic">root</span> context. The object reference to the root context is
@@ -577,13 +575,13 @@ information provided in the configuration file <span style="font-family:monospac
 given on the command line. If this file is not present, the internal
 list will be empty and <span style="font-family:monospace">resolve_initial_references()</span> will raise a
 <span style="font-family:monospace">CORBA::ORB::InvalidName</span> exception.</p>
-<h3 id="sec38" class="subsection">2.10.2&#XA0;&#XA0;The Naming Service Interface</h3>
+<h3 id="sec38" class="subsection">2.10.2&#X2003;The Naming Service Interface</h3>
 <p>It is beyond the scope of this chapter to describe in detail the
 Naming Service interface. You should consult the CORBA services
 specification&#XA0;[<a href="omniORB017.html#corbaservices">OMG98</a>] (chapter 3). The code listed in
 <span style="font-family:monospace">eg3_impl.cc</span> and <span style="font-family:monospace">eg3_clt.cc</span> are good examples of how the
 service can be used.</p>
-<h2 id="sec39" class="section">2.11&#XA0;&#XA0;Example 4 &#X2014; Using tie implementation templates</h2>
+<h2 id="sec39" class="section">2.11&#X2003;Example 4 &#X2014; Using tie implementation templates</h2>
 <p>
 <a id="sec:tie"></a></p><p>omniORB supports <span style="font-style:italic">tie</span> implementation templates as an alternative
 way of providing servant classes. If you use the <span style="font-family:monospace">-Wbtp</span> option
@@ -610,8 +608,8 @@ object goes out of scope. The tie constructor has an optional boolean
 argument (defaulted to <span style="font-family:monospace">true</span>) which indicates whether or not it
 should delete the servant object. For full details of using tie
 templates, see the CORBA C++ mapping specification.</p>
-<h2 id="sec40" class="section">2.12&#XA0;&#XA0;Source Listings</h2>
-<h3 id="sec41" class="subsection">2.12.1&#XA0;&#XA0;eg1.cc</h3>
+<h2 id="sec40" class="section">2.12&#X2003;Source Listings</h2>
+<h3 id="sec41" class="subsection">2.12.1&#X2003;eg1.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg1.cc - This is the source code of example 1 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//          "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -714,7 +712,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec42" class="subsection">2.12.2&#XA0;&#XA0;eg2_impl.cc</h3>
+<h3 id="sec42" class="subsection">2.12.2&#X2003;eg2_impl.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg2_impl.cc - This is the source code of example 2 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//               "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -781,7 +779,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec43" class="subsection">2.12.3&#XA0;&#XA0;eg2_clt.cc</h3>
+<h3 id="sec43" class="subsection">2.12.3&#X2003;eg2_clt.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg2_clt.cc - This is the source code of example 2 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -845,7 +843,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 0;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec44" class="subsection">2.12.4&#XA0;&#XA0;eg3_impl.cc</h3>
+<h3 id="sec44" class="subsection">2.12.4&#X2003;eg3_impl.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg3_impl.cc - This is the source code of example 3 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//               "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -1013,7 +1011,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 1;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec45" class="subsection">2.12.5&#XA0;&#XA0;eg3_clt.cc</h3>
+<h3 id="sec45" class="subsection">2.12.5&#X2003;eg3_clt.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg3_clt.cc - This is the source code of example 3 used in Chapter 2</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//              "The Basics" of the omniORB user guide.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -1096,7 +1094,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 1;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<h3 id="sec46" class="subsection">2.12.6&#XA0;&#XA0;eg3_tieimpl.cc</h3>
+<h3 id="sec46" class="subsection">2.12.6&#X2003;eg3_tieimpl.cc</h3>
 <div class="lstlisting"><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">// eg3_tieimpl.cc - This example is similar to eg3_impl.cc except that</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//                  the tie implementation skeleton is used.</span></span></span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-style:italic"><span style="font-size:small">//</span></span></span><span style="font-size:small">
@@ -1272,8 +1270,7 @@ templates, see the CORBA C++ mapping specification.</p>
 </span><span style="font-size:small">  }</span><span style="font-size:small">
 </span><span style="font-size:small">  </span><span style="font-size:small"><span style="font-weight:bold">return</span></span><span style="font-size:small"> 1;</span><span style="font-size:small">
 </span><span style="font-size:small">}</span></div>
-<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note1" href="#text1">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Rather than
+<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes"><a id="note1" href="#text1">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Rather than
 deriving from the skeleton class, an alternative is to use a
 <span style="font-style:italic">tie</span> template, described in section&#XA0;<a href="#sec%3Atie">2.11</a>.</div></dd><dt class="dt-thefootnotes"><a id="note2" href="#text2">2</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">In the previous 1.0 version of the C++
 mapping, servant reference counting was optional, chosen by inheriting

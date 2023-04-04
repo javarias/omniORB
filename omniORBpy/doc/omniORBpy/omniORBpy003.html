@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<meta name="generator" content="hevea 2.34">
+<meta name="generator" content="hevea 2.36">
 <link rel="stylesheet" type="text/css" href="omniORBpy.css">
 <title>Python language mapping issues</title>
 </head>
@@ -11,12 +11,12 @@
 <a href="index.html"><img src="contents_motif.svg" alt="Up"></a>
 <a href="omniORBpy004.html"><img src="next_motif.svg" alt="Next"></a>
 <hr>
-<h1 id="sec33" class="chapter">Chapter&#XA0;3&#XA0;&#XA0;Python language mapping issues</h1>
+<h1 id="sec33" class="chapter">Chapter&#XA0;3&#X2003;Python language mapping issues</h1>
 <p>omniORBpy adheres to the standard Python mapping&#XA0;[<a href="omniORBpy014.html#pythonmapping">OMG01b</a>],
 so there is no need to describe the mapping here. This chapter
 outlines a number of issues which are not addressed by the standard
 (or are optional), and how they are resolved in omniORBpy.</p>
-<h2 id="sec34" class="section">3.1&#XA0;&#XA0;Narrowing object references</h2>
+<h2 id="sec34" class="section">3.1&#X2003;Narrowing object references</h2>
 <p>
 <a id="sec:narrowing"></a></p><p>As explained in chapter&#XA0;<a href="omniORBpy002.html#chap%3Abasics">2</a>, whenever you receive an
 object reference declared to be base <span style="font-family:monospace">CORBA::Object</span>, such as
@@ -32,7 +32,7 @@ it is simple and that it is guaranteed to work with all Python ORBs.</p><p>The d
 references is that much of the time it is guaranteed not to be
 necessary. If you understand the situations in which narrowing
 <em>is</em> necessary, you can avoid spurious narrowing.</p>
-<h3 id="sec35" class="subsection">3.1.1&#XA0;&#XA0;The gory details</h3>
+<h3 id="sec35" class="subsection">3.1.1&#X2003;The gory details</h3>
 <p>When object references are transmitted (or stored in stringified
 IORs), they contain a single type identifier string, termed the
 <span style="font-style:italic">repository id</span>. Normally, the repository id represents the most
@@ -72,7 +72,7 @@ value is <span style="font-family:monospace">M1::A</span>.</p><p>omniORBpy uses 
 repository ids to determine the type of the object reference it
 creates. The object reference has either the type of the received
 reference, or the target type, according to this table:</p><div class="center">
-<table border=1  style="border-spacing:0;" class="cellpadding1"><tr><td style="text-align:left;border:solid 1px;white-space:nowrap"  colspan=2><span style="font-weight:bold">Case</span></td><td style="vertical-align:top;text-align:left;border:solid 1px;white-space:nowrap" > <span style="font-weight:bold">Objref Type</span></td></tr>
+<table border=1  style="border-spacing:0;" class="cellpadding1"><tr><td style="text-align:left;border:solid 1px;white-space:nowrap"  colspan=2><span style="font-weight:bold">Case</span></td><td style="vertical-align:top;text-align:left;border:solid 1px;white-space:nowrap" > <span style="width:0px;text-align:left;" class="lrbox makebox"><span style="font-weight:bold">Objref Type</span></span></td></tr>
 <tr><td style="vertical-align:top;text-align:left;border:solid 1px;white-space:nowrap" >
 1.</td><td style="vertical-align:top;text-align:left;border:solid 1px;" >The received id is the same as the target id</td><td style="vertical-align:top;text-align:left;border:solid 1px;white-space:nowrap" >received</td></tr>
 <tr><td style="vertical-align:top;text-align:left;border:solid 1px;white-space:nowrap" >
@@ -122,7 +122,7 @@ target type, or something derived from it, although the object it
 refers to may turn out to be invalid. The fact that omniORBpy often
 <em>is</em> able figure out a more derived type than the target is only
 useful when using the Python interactive command line.</p>
-<h2 id="sec36" class="section">3.2&#XA0;&#XA0;Support for Any values</h2>
+<h2 id="sec36" class="section">3.2&#X2003;Support for Any values</h2>
 <p>In statically typed languages, such as C++, Anys can only be used with
 built-in types and IDL-declared types for which stubs have been
 generated. If, for example, a C++ program receives an Any containing a
@@ -174,14 +174,13 @@ standard:</p><div class="lstlisting"><span style="font-size:small">a</span><span
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small">v</span><span style="font-size:small">.</span><span style="font-size:small">str</span><span style="font-size:small">)</span><span style="font-size:small">
 </span><span style="font-size:small"><span style="font-weight:bold">else</span></span><span style="font-size:small">:</span><span style="font-size:small">
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">print</span></span><span style="font-size:small">(</span><span style="font-size:small"><span style="font-size:small">"The Any does not contain a value compatible with M::S."</span></span><span style="font-size:small">)</span></div>
-<h3 id="sec37" class="subsection">3.2.1&#XA0;&#XA0;Any helper module</h3>
+<h3 id="sec37" class="subsection">3.2.1&#X2003;Any helper module</h3>
 <p>omniORBpy provides an alternative, non-standard way of constructing
 and deconstructing Anys that is often more convenient to use in Python
 programs. It uses Python&#X2019;s own dynamic typing to infer the TypeCodes
 to use. The <span style="font-family:monospace">omniORB.any</span> module contains two functions,
 <span style="font-family:monospace">to_any()</span> and <span style="font-family:monospace">from_any()</span>.</p><p><span style="font-family:monospace">to_any()</span> takes a Python object and tries to return it inside an
-Any. It uses the following rules:</p><ul class="itemize"><li class="li-itemize">
-Python strings are represented as CORBA strings.
+Any. It uses the following rules:</p><ul class="itemize"><li class="li-itemize">Python strings are represented as CORBA strings.
 </li><li class="li-itemize">Python unicode objects are represented as CORBA wstrings.
 </li><li class="li-itemize">Python integers are represented as CORBA longs.</li><li class="li-itemize">Python long integers are represented as a CORBA integer type
 taken from long, unsigned long, long long, unsigned long, depending on
@@ -197,7 +196,7 @@ argument and extracts its contents using the same rules as
 <span style="font-family:monospace">to_any()</span>. By default, CORBA structs are extracted to dictionaries;
 if the optional <span style="font-family:monospace">keep_structs</span> argument is set true, they are
 instead left as instances of the CORBA struct classes.</p>
-<h2 id="sec38" class="section">3.3&#XA0;&#XA0;Interface Repository stubs</h2>
+<h2 id="sec38" class="section">3.3&#X2003;Interface Repository stubs</h2>
 <p>
 <a id="sec:ifrstubs"></a></p><p>The Interface Repository interfaces are declared in IDL module
 <span style="font-family:monospace">CORBA</span> so, according to the Python mapping, the stubs for them
@@ -209,7 +208,7 @@ define the <span style="font-family:monospace">OMNIORBPY_IMPORT_IR_STUBS</span> 
 Alternatively, you can import the stubs at run-time by calling the
 <span style="font-family:monospace">omniORB.importIRStubs()</span> function. In both cases, the stubs become
 available in the Python <span style="font-family:monospace">CORBA</span> module.</p>
-<h2 id="sec39" class="section">3.4&#XA0;&#XA0;IDL attributes</h2>
+<h2 id="sec39" class="section">3.4&#X2003;IDL attributes</h2>
 <p>
 <a id="sec:attributes"></a></p><p>The Python language mapping says that IDL attributes map to methods
 with names prefixed <span style="font-family:monospace">_get_</span> and <span style="font-family:monospace">_set_</span>. omniORBpy
@@ -230,8 +229,7 @@ implementation of the <span style="font-family:monospace">M::Example</span> inte
 </span><span style="font-size:small">    </span><span style="font-size:small"><span style="font-weight:bold">def</span></span><span style="font-size:small"> </span><span style="font-size:small">__init__</span><span style="font-size:small">(</span><span style="font-size:small">self</span><span style="font-size:small">):</span><span style="font-size:small">
 </span><span style="font-size:small">        </span><span style="font-size:small">self</span><span style="font-size:small">.</span><span style="font-size:small">attr1</span><span style="font-size:small"> = </span><span style="font-size:small"><span style="font-size:small">"Test"</span></span><span style="font-size:small">
 </span><span style="font-size:small">        </span><span style="font-size:small">self</span><span style="font-size:small">.</span><span style="font-size:small">attr2</span><span style="font-size:small"> = 1234</span></div>
-<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes">
-<a id="note6" href="#text6">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">It
+<hr class="footnoterule"><dl class="thefootnotes"><dt class="dt-thefootnotes"><a id="note6" href="#text6">1</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">It
 is possible to change the repository id strings associated with
 particular interfaces using the <span style="font-family:monospace">ID</span>, <span style="font-family:monospace">version</span> and
 <span style="font-family:monospace">prefix</span> pragmas.</div></dd><dt class="dt-thefootnotes"><a id="note7" href="#text7">2</a></dt><dd class="dd-thefootnotes"><div class="footnotetext">Unless you are invoking pseudo
