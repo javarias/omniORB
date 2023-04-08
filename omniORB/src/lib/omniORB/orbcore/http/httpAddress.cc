@@ -128,10 +128,12 @@ httpAddress::httpAddress(const char*          url,
 void
 httpAddress::setAddrString()
 {
-  const char* prefix = pd_secure ? "giop:http:https://" : "giop:http:http://";
+  CORBA::String_var addr = omniURI::buildURI("giop:http", pd_address.host,
+                                             pd_address.port);
+  pd_address_string = CORBA::string_alloc(strlen(addr) + strlen(pd_url) + 1);
 
-  pd_address_string = omniURI::buildURI(prefix, pd_address.host,
-                                        pd_address.port, pd_path);
+  sprintf((char*)pd_address_string, "%s#%s",
+          (const char*)addr, (const char*)pd_url);
 }
 
 /////////////////////////////////////////////////////////////////////////

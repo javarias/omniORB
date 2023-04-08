@@ -185,6 +185,7 @@ public:
   //
   //   giop:tcp:<hostname>:<port no.>
   //   giop:ssl:<hostname>:<port no.>
+  //   giop:http:<hostname>:<port no.>#<full url>
   //   giop:unix:<filename>
   //   giop:fd:<file no.>
   //

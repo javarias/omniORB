@@ -3,7 +3,7 @@
 // transportRule.cc           Created on: 21/08/2001
 //                            Author    : Sai Lai Lo (sll)
 //
-//    Copyright (C) 2003-2013 Apasphere Ltd
+//    Copyright (C) 2003-2023 Apasphere Ltd
 //    Copyright (C) 2001 AT&T Laboratories Cambridge
 //
 //    This file is part of the omniORB library
@@ -158,8 +158,13 @@ static char* extractHost(const char* endpoint)
   if (p) {
     ++p;
     CORBA::UShort     port;
-    CORBA::String_var host = omniURI::extractHostPort(p, port, 0);
+    const char*       rest;
+    CORBA::String_var host = omniURI::extractHostPort(p, port, &rest);
 
+    if (!(const char*)host ||
+        !(*rest == '\0' || *rest == '#'))
+      return 0;
+    
     if (LibcWrapper::isip4addr(host)) {
       return host._retn();
     }

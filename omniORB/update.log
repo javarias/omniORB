@@ -1,3 +1,13 @@
+Sat  8 Apr 18:05:53 BST 2023
+============================
+
+- Crash in transport rules extracting host part of http URLs.
+
+include/omniORB4/giopEndpoint.h
+src/lib/omniORB/orbcore/http/httpAddress.cc
+src/lib/omniORB/orbcore/transportRules.cc
+
+
 Tue  4 Apr 16:00:28 BST 2023
 ============================
 
