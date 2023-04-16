@@ -1,3 +1,16 @@
+Sun 16 Apr 15:20:35 BST 2023
+============================
+
+- Avoid setting possibly-incorrect processor define (__arm__ instead
+  of __arm64__). Update autoconf and Python version support.
+
+configure.ac
+configure
+include/omniORB4/CORBA_sysdep.h
+include/omniconfig.h.in
+mk/beforeauto.mk.in
+
+
 Sat  8 Apr 18:05:53 BST 2023
 ============================
 
