@@ -74,7 +74,6 @@ dnl ** Headers
 AC_CHECK_HEADERS(errno.h fcntl.h netdb.h signal.h stdlib.h string.h strings.h)
 AC_CHECK_HEADERS(unistd.h nan.h sys/if.h sys/ioctl.h sys/param.h sys/time.h)
 AC_CHECK_HEADERS(sys/poll.h ifaddrs.h)
-AC_HEADER_TIME
 
 
 dnl ** Integer representation
@@ -247,6 +246,7 @@ case "$host" in
   alpha*)   proc_name="AlphaProcessor";   proc_def="__alpha__";;
   m68k-*)   proc_name="m68kProcessor";    proc_def="__m68k__";;
   mips*)    proc_name="IndigoProcessor";  proc_def="__mips__";;
+  arm64-*)  proc_name="Arm64Processor";   proc_def="__arm64__";;
   arm-*)    proc_name="ArmProcessor";     proc_def="__arm__";;
   s390-*)   proc_name="s390Processor";    proc_def="__s390__";;
   ia64-*)   proc_name="ia64Processor";    proc_def="__ia64__";;
@@ -349,7 +349,7 @@ AC_CONFIG_FILES(etc/init.d/omniNames)
 AC_CONFIG_FILES(contrib/GNUmakefile
                 contrib/pkgconfig/GNUmakefile)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 contrib/pkgconfig/omnithread3.pc
 contrib/pkgconfig/omniORB4.pc
 contrib/pkgconfig/omniDynamic4.pc
@@ -359,3 +359,4 @@ contrib/pkgconfig/omniConnectionMgmt4.pc
 contrib/pkgconfig/omniZIOP4.pc
 contrib/pkgconfig/omniZIOPDynamic4.pc
 ])
+AC_OUTPUT

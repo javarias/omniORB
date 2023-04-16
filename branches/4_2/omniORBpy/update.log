@@ -1,3 +1,16 @@
+Sun 16 Apr 15:07:18 BST 2023
+============================
+
+- Avoid setting possibly-incorrect processor define (__arm__ instead
+  of __arm64__). Update autoconf and Python version support.
+
+acinclude.m4
+aclocal.m4
+configure.ac
+configure
+mk/beforeauto.mk.in
+
+
 Sun  9 Jan 14:51:38 GMT 2022
 ============================
 
