@@ -814,7 +814,6 @@ endif
 
 ###################
 ifdef Linux
-IMPORT_CPPFLAGS += -D__linux__
 OMNITHREAD_POSIX_CPPFLAGS = -DNoNanoSleep -DPthreadDraftVersion=10
 OMNITHREAD_CPPFLAGS = -D_REENTRANT
 OMNITHREAD_LIB += -lpthread
@@ -836,7 +835,6 @@ endif
 
 ###################
 ifdef SunOS
-IMPORT_CPPFLAGS += -D__sunos__
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=10
 OMNITHREAD_CPPFLAGS = -DUsePthread -D_REENTRANT $(CXXMTFLAG)
 SOCKET_LIB = -lsocket -lnsl
@@ -867,8 +865,6 @@ endif
 
 ###################
 ifdef OSF1
-IMPORT_CPPFLAGS          += -D__osf1__
-
 ifeq (@OSVERSION@,3)
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=4 -DNoNanoSleep
 else
@@ -914,7 +910,6 @@ endif
 
 ###################
 ifdef HPUX
-IMPORT_CPPFLAGS += -D__hpux__
 INSTLIBFLAGS     = -m 0755
 
 ifeq (@OSVERSION@,10)
@@ -976,7 +971,6 @@ endif
 
 ###################
 ifdef NextStep
-IMPORT_CPPFLAGS += -D__nextstep__
 
 ThreadSystem = Mach
 OMNITHREAD_CPPFLAGS = -D_REENTRANT
@@ -988,8 +982,6 @@ endif
 
 ###################
 ifdef IRIX
-IMPORT_CPPFLAGS += -D__irix__
-
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=10 \
 			    -DPthreadSupportThreadPriority
 OMNITHREAD_LIB += -lpthread
@@ -1011,8 +1003,6 @@ endif
 ###################
 ifdef AIX
 ifndef Compiler_GCC		# Assuming XlC compiler
-
-IMPORT_CPPFLAGS += -D__aix__
 
 CMAKEDEPEND     += -D_AIX
 CXXMAKEDEPEND   += -D_AIX
@@ -1039,7 +1029,6 @@ endif
 
 ifdef Compiler_GCC
 
-IMPORT_CPPFLAGS += -D__aix__
 CMAKEDEPEND     += -D_AIX
 CXXMAKEDEPEND   += -D_AIX
 CXXLINKOPTIONS  += -Wl,-brtl -Wl,-blibpath:/lib:/usr/lib:$(prefix)/lib
@@ -1099,8 +1088,6 @@ endif	# AIX
 
 ###################
 ifdef Darwin
-IMPORT_CPPFLAGS += -D__darwin__
-
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=10 \
                             -DPthreadSupportThreadPriority -DNoNanoSleep
 
@@ -1135,8 +1122,6 @@ endif
 
 ###################
 ifdef FreeBSD
-IMPORT_CPPFLAGS += -D__freebsd__
-
 OMNITHREAD_CPPFLAGS = -D_REENTRANT -D_THREAD_SAFE
 OMNITHREAD_POSIX_CPPFLAGS = -DUsePthread -DPthreadDraftVersion=10
 OMNITHREAD_LIB += -pthread
@@ -1144,8 +1129,6 @@ endif
 
 ###################
 ifdef NetBSD
-IMPORT_CPPFLAGS += -D__netbsd__
-
 OMNITHREAD_CPPFLAGS = -D_REENTRANT
 OMNITHREAD_POSIX_CPPFLAGS = -DUsePthread -DPthreadDraftVersion=10
 OMNITHREAD_LIB += -pthread
@@ -1153,8 +1136,6 @@ endif
 
 ###################
 ifdef OpenBSD
-IMPORT_CPPFLAGS += -D__openbsd__
-
 OMNITHREAD_CPPFLAGS = -D_REENTRANT -D_THREAD_SAFE
 OMNITHREAD_POSIX_CPPFLAGS = -DUsePthread -DPthreadDraftVersion=10
 OMNITHREAD_LIB += -pthread
@@ -1162,8 +1143,6 @@ endif
 
 ###################
 ifdef OSR5
-IMPORT_CPPFLAGS += -D__osr5__
-
 COPTIONS = -fpcc-struct-return
 
 OMNITHREAD_POSIX_CPPFLAGS = -DPthreadDraftVersion=6 \
@@ -1175,7 +1154,6 @@ ifdef Cygwin
 MKDIRHIER = mkdir -p
 extralibs += -L$(PYPREFIX)/lib/python$(PYVERSION)/config \
  -lpython$(PYVERSION).dll
-IMPORT_CPPFLAGS += -D__cygwin__
 SHAREDLIB_CPPFLAGS =
 OMNITHREAD_POSIX_CPPFLAGS = -DNoNanoSleep -DPthreadDraftVersion=10
 OMNITHREAD_CPPFLAGS = -D_REENTRANT
@@ -1217,57 +1195,6 @@ SharedLibraryFullNameTemplate = lib$$1$$2.$(SHAREDLIB_SUFFIX).$$3.$$4
 SharedLibrarySoNameTemplate   = lib$$1$$2.$(SHAREDLIB_SUFFIX).$$3
 SharedLibraryLibNameTemplate  = lib$$1$$2.$(SHAREDLIB_SUFFIX)
 
-endif
-
-
-
-###########################################################################
-#
-# Processor
-#
-
-ifdef x86Processor
-IMPORT_CPPFLAGS += -D__x86__
-endif
-
-ifdef x8664Processor
-IMPORT_CPPFLAGS += -D__x86_64__
-endif
-
-ifdef SparcProcessor
-IMPORT_CPPFLAGS += -D__sparc__
-endif
-
-ifdef AlphaProcessor
-IMPORT_CPPFLAGS += -D__alpha__
-endif
-
-ifdef m68kProcessor
-IMPORT_CPPFLAGS += -D__m68k__
-endif
-
-ifdef IndigoProcessor
-IMPORT_CPPFLAGS += -D__mips__
-endif
-
-ifdef ArmProcessor
-IMPORT_CPPFLAGS += -D__arm__
-endif
-
-ifdef s390Processor
-IMPORT_CPPFLAGS += -D__s390__
-endif
-
-ifdef ia64Processor
-IMPORT_CPPFLAGS += -D__ia64__
-endif
-
-ifdef HppaProcessor
-IMPORT_CPPFLAGS += -D__hppa__
-endif
-
-ifdef PowerPCProcessor
-IMPORT_CPPFLAGS += -D__powerpc__
 endif
 
 
