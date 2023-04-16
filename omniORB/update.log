@@ -1,3 +1,24 @@
+Sun 16 Apr 15:07:18 BST 2023
+============================
+
+- Avoid setting possibly-incorrect processor define (__arm__ instead
+  of __arm64__). Update autoconf and Python version support.
+
+acinclude.m4
+aclocal.m4
+configure.ac
+configure
+include/omniORB4/CORBA_sysdep.h
+include/omniORB4/acconfig.h.in
+include/omniconfig.h.in
+mk/beforeauto.mk.in
+src/tool/omniidl/cxx/cccp/cccp.c
+src/tool/omniidl/python/scripts/omniidl.in
+src/tool/omniidl/python/scripts/omniidlrun.py
+src/tool/omniidl/python3/scripts/omniidl.in
+src/tool/omniidl/python3/scripts/omniidlrun.py
+
+
 Sat  4 Feb 12:56:28 GMT 2023
 ============================
 

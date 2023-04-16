@@ -4,6 +4,7 @@
 # omniidlrun.py             Created on: 1999/10/29
 #			    Author    : Duncan Grisby (dpg1)
 #
+#    Copyright (C) 2014-2023 Apasphere Ltd
 #    Copyright (C) 1999 AT&T Laboratories Cambridge
 #
 #  This file is part of omniidl.
@@ -27,10 +28,10 @@
 
 import sys
 
-if sys.hexversion < 0x10502f0:
+if sys.hexversion < 0x20700f0:
     sys.stderr.write("\n\n")
     sys.stderr.write("omniidl: WARNING!!\n\n")
-    sys.stderr.write("omniidl: Python version 1.5.2 or later is required.\n")
+    sys.stderr.write("omniidl: Python version 2.7 or later is required.\n")
     sys.stderr.write("omniidl: " + sys.executable + " is version " + \
                      sys.version + "\n")
     sys.stderr.write("omniidl: Execution is likely to fail.\n")
