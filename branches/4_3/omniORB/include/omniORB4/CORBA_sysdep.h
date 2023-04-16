@@ -92,7 +92,7 @@ typedef __int64 omni_s_size_t;
 // __VFP_FP__ means that the floating point format in use is that of the ARM 
 // VFP unit, which is native-endian IEEE-754.
 #if defined(__arm__)
-#  if defined(__armv5teb__) || defined(__VFP_FP__) || defined(__aarch64__)
+#  if defined(__armv5teb__) || defined(__VFP_FP__) || defined(__aarch64__) || defined(__arm64__)
 #    define NO_OMNI_MIXED_ENDIAN_DOUBLE
 #  else
 #    define OMNI_MIXED_ENDIAN_DOUBLE

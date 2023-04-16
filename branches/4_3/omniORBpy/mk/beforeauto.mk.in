@@ -42,17 +42,17 @@ endif
 # Directories for installation
 #
 
-prefix        	 := @prefix@
-exec_prefix   	 := @exec_prefix@
+prefix             := @prefix@
+exec_prefix        := @exec_prefix@
 PYTHON_PREFIX      := @prefix@
 PYTHON_EXEC_PREFIX := @exec_prefix@
-INSTALLTARGET 	 := 1
-INSTALLINCDIR 	 := $(DESTDIR)@includedir@
-INSTALLBINDIR 	 := $(DESTDIR)@bindir@
-INSTALLLIBDIR 	 := $(DESTDIR)@libdir@
-INSTALLPYTHONDIR := $(DESTDIR)@pythondir@
-INSTALLPYEXECDIR := $(DESTDIR)@pyexecdir@
-INSTALLIDLDIR    := $(DESTDIR)@datadir@/idl
+INSTALLTARGET      := 1
+INSTALLINCDIR      := $(DESTDIR)@includedir@
+INSTALLBINDIR      := $(DESTDIR)@bindir@
+INSTALLLIBDIR      := $(DESTDIR)@libdir@
+INSTALLPYTHONDIR   := $(DESTDIR)@pythondir@
+INSTALLPYEXECDIR   := $(DESTDIR)@pyexecdir@
+INSTALLIDLDIR      := $(DESTDIR)@datadir@/idl
 
 #############################################################################
 #

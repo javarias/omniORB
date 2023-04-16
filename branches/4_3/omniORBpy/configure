@@ -642,9 +642,9 @@ pkgpyexecdir
 pyexecdir
 pkgpythondir
 pythondir
-PYTHON_PLATFORM
 PYTHON_EXEC_PREFIX
 PYTHON_PREFIX
+PYTHON_PLATFORM
 PYTHON_VERSION
 PYTHON
 SET_MAKE
@@ -713,6 +713,9 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_python_sys_prefix
+with_python_prefix
+with_python_exec_prefix
 with_omniorb
 with_openssl
 '
@@ -1355,6 +1358,11 @@ if test -n "$ac_init_help"; then
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-python-sys-prefix
+                          use Python's sys.prefix and sys.exec_prefix values
+  --with-python_prefix    override the default PYTHON_PREFIX
+  --with-python_exec_prefix
+                          override the default PYTHON_EXEC_PREFIX
   --with-omniorb          omniORB root directory
   --with-openssl          OpenSSL root directory (default none)
 
@@ -4503,31 +4511,23 @@ test -n "$PYTHON" || PYTHON=":"
 
 
   if test "$PYTHON" = :; then
-      as_fn_error $? "no suitable Python interpreter found" "$LINENO" 5
+        as_fn_error $? "no suitable Python interpreter found" "$LINENO" 5
   else
 
-
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON version" >&5
+              { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON version" >&5
 printf %s "checking for $am_display_PYTHON version... " >&6; }
 if test ${am_cv_python_version+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  am_cv_python_version=`$PYTHON -c "import sys; sys.stdout.write(sys.version[:3])"`
+  am_cv_python_version=`$PYTHON -c "import sys; print ('%u.%u' % sys.version_info[:2])"`
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_version" >&5
 printf "%s\n" "$am_cv_python_version" >&6; }
   PYTHON_VERSION=$am_cv_python_version
 
 
-
-  PYTHON_PREFIX='${prefix}'
-
-  PYTHON_EXEC_PREFIX='${exec_prefix}'
-
-
-
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON platform" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON platform" >&5
 printf %s "checking for $am_display_PYTHON platform... " >&6; }
 if test ${am_cv_python_platform+y}
 then :
@@ -4540,7 +4540,143 @@ printf "%s\n" "$am_cv_python_platform" >&6; }
   PYTHON_PLATFORM=$am_cv_python_platform
 
 
-  # Just factor out some code duplication.
+                            if test "x$prefix" = xNONE; then
+    am__usable_prefix=$ac_default_prefix
+  else
+    am__usable_prefix=$prefix
+  fi
+
+  # Allow user to request using sys.* values from Python,
+  # instead of the GNU $prefix values.
+
+# Check whether --with-python-sys-prefix was given.
+if test ${with_python_sys_prefix+y}
+then :
+  withval=$with_python_sys_prefix; am_use_python_sys=:
+else $as_nop
+  am_use_python_sys=false
+fi
+
+
+  # Allow user to override whatever the default Python prefix is.
+
+# Check whether --with-python_prefix was given.
+if test ${with_python_prefix+y}
+then :
+  withval=$with_python_prefix; am_python_prefix_subst=$withval
+   am_cv_python_prefix=$withval
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for explicit $am_display_PYTHON prefix" >&5
+printf %s "checking for explicit $am_display_PYTHON prefix... " >&6; }
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_prefix" >&5
+printf "%s\n" "$am_cv_python_prefix" >&6; }
+else $as_nop
+
+   if $am_use_python_sys; then
+     # using python sys.prefix value, not GNU
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for python default $am_display_PYTHON prefix" >&5
+printf %s "checking for python default $am_display_PYTHON prefix... " >&6; }
+if test ${am_cv_python_prefix+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  am_cv_python_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.prefix)"`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_prefix" >&5
+printf "%s\n" "$am_cv_python_prefix" >&6; }
+
+               case $am_cv_python_prefix in
+     $am__usable_prefix*)
+       am__strip_prefix=`echo "$am__usable_prefix" | sed 's|.|.|g'`
+       am_python_prefix_subst=`echo "$am_cv_python_prefix" | sed "s,^$am__strip_prefix,\\${prefix},"`
+       ;;
+     *)
+       am_python_prefix_subst=$am_cv_python_prefix
+       ;;
+     esac
+   else # using GNU prefix value, not python sys.prefix
+     am_python_prefix_subst='${prefix}'
+     am_python_prefix=$am_python_prefix_subst
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GNU default $am_display_PYTHON prefix" >&5
+printf %s "checking for GNU default $am_display_PYTHON prefix... " >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_python_prefix" >&5
+printf "%s\n" "$am_python_prefix" >&6; }
+   fi
+fi
+
+  # Substituting python_prefix_subst value.
+  PYTHON_PREFIX=$am_python_prefix_subst
+
+
+  # emacs-page Now do it all over again for Python exec_prefix, but with yet
+  # another conditional: fall back to regular prefix if that was specified.
+
+# Check whether --with-python_exec_prefix was given.
+if test ${with_python_exec_prefix+y}
+then :
+  withval=$with_python_exec_prefix; am_python_exec_prefix_subst=$withval
+   am_cv_python_exec_prefix=$withval
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for explicit $am_display_PYTHON exec_prefix" >&5
+printf %s "checking for explicit $am_display_PYTHON exec_prefix... " >&6; }
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_exec_prefix" >&5
+printf "%s\n" "$am_cv_python_exec_prefix" >&6; }
+else $as_nop
+
+   # no explicit --with-python_exec_prefix, but if
+   # --with-python_prefix was given, use its value for python_exec_prefix too.
+   if test -n "$with_python_prefix"
+then :
+  am_python_exec_prefix_subst=$with_python_prefix
+    am_cv_python_exec_prefix=$with_python_prefix
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for python_prefix-given $am_display_PYTHON exec_prefix" >&5
+printf %s "checking for python_prefix-given $am_display_PYTHON exec_prefix... " >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_exec_prefix" >&5
+printf "%s\n" "$am_cv_python_exec_prefix" >&6; }
+else $as_nop
+
+    # Set am__usable_exec_prefix whether using GNU or Python values,
+    # since we use that variable for pyexecdir.
+    if test "x$exec_prefix" = xNONE; then
+      am__usable_exec_prefix=$am__usable_prefix
+    else
+      am__usable_exec_prefix=$exec_prefix
+    fi
+    #
+    if $am_use_python_sys; then # using python sys.exec_prefix, not GNU
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for python default $am_display_PYTHON exec_prefix" >&5
+printf %s "checking for python default $am_display_PYTHON exec_prefix... " >&6; }
+if test ${am_cv_python_exec_prefix+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  am_cv_python_exec_prefix=`$PYTHON -c "import sys; sys.stdout.write(sys.exec_prefix)"`
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_exec_prefix" >&5
+printf "%s\n" "$am_cv_python_exec_prefix" >&6; }
+                        case $am_cv_python_exec_prefix in
+      $am__usable_exec_prefix*)
+        am__strip_prefix=`echo "$am__usable_exec_prefix" | sed 's|.|.|g'`
+        am_python_exec_prefix_subst=`echo "$am_cv_python_exec_prefix" | sed "s,^$am__strip_prefix,\\${exec_prefix},"`
+        ;;
+      *)
+        am_python_exec_prefix_subst=$am_cv_python_exec_prefix
+        ;;
+     esac
+   else # using GNU $exec_prefix, not python sys.exec_prefix
+     am_python_exec_prefix_subst='${exec_prefix}'
+     am_python_exec_prefix=$am_python_exec_prefix_subst
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GNU default $am_display_PYTHON exec_prefix" >&5
+printf %s "checking for GNU default $am_display_PYTHON exec_prefix... " >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_python_exec_prefix" >&5
+printf "%s\n" "$am_python_exec_prefix" >&6; }
+   fi
+fi
+fi
+
+  # Substituting python_exec_prefix_subst.
+  PYTHON_EXEC_PREFIX=$am_python_exec_prefix_subst
+
+
+  # Factor out some code duplication into this shell variable.
   am_python_setup_sysconfig="\
 import sys
 # Prefer sysconfig over distutils.sysconfig, for better compatibility
@@ -4561,40 +4697,39 @@ except ImportError:
     pass"
 
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON script directory" >&5
-printf %s "checking for $am_display_PYTHON script directory... " >&6; }
+              { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON script directory (pythondir)" >&5
+printf %s "checking for $am_display_PYTHON script directory (pythondir)... " >&6; }
 if test ${am_cv_python_pythondir+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  if test "x$prefix" = xNONE
-     then
-       am_py_prefix=$ac_default_prefix
-     else
-       am_py_prefix=$prefix
-     fi
-     am_cv_python_pythondir=`$PYTHON -c "
+  if test "x$am_cv_python_prefix" = x; then
+     am_py_prefix=$am__usable_prefix
+   else
+     am_py_prefix=$am_cv_python_prefix
+   fi
+   am_cv_python_pythondir=`$PYTHON -c "
 $am_python_setup_sysconfig
 if can_use_sysconfig:
-    sitedir = sysconfig.get_path('purelib', vars={'base':'$am_py_prefix'})
+  sitedir = sysconfig.get_path('purelib', vars={'base':'$am_py_prefix'})
 else:
-    from distutils import sysconfig
-    sitedir = sysconfig.get_python_lib(0, 0, prefix='$am_py_prefix')
+  from distutils import sysconfig
+  sitedir = sysconfig.get_python_lib(0, 0, prefix='$am_py_prefix')
 sys.stdout.write(sitedir)"`
-     case $am_cv_python_pythondir in
-     $am_py_prefix*)
-       am__strip_prefix=`echo "$am_py_prefix" | sed 's|.|.|g'`
-       am_cv_python_pythondir=`echo "$am_cv_python_pythondir" | sed "s,^$am__strip_prefix,$PYTHON_PREFIX,"`
-       ;;
-     *)
-       case $am_py_prefix in
-         /usr|/System*) ;;
-         *)
-	  am_cv_python_pythondir=$PYTHON_PREFIX/lib/python$PYTHON_VERSION/site-packages
-	  ;;
-       esac
-       ;;
+   #
+   case $am_cv_python_pythondir in
+   $am_py_prefix*)
+     am__strip_prefix=`echo "$am_py_prefix" | sed 's|.|.|g'`
+     am_cv_python_pythondir=`echo "$am_cv_python_pythondir" | sed "s,^$am__strip_prefix,\\${PYTHON_PREFIX},"`
+     ;;
+   *)
+     case $am_py_prefix in
+       /usr|/System*) ;;
+       *) am_cv_python_pythondir="\${PYTHON_PREFIX}/lib/python$PYTHON_VERSION/site-packages"
+          ;;
      esac
+     ;;
+   esac
 
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_pythondir" >&5
@@ -4602,44 +4737,42 @@ printf "%s\n" "$am_cv_python_pythondir" >&6; }
   pythondir=$am_cv_python_pythondir
 
 
+          pkgpythondir=\${pythondir}/$PACKAGE
 
-  pkgpythondir=\${pythondir}/$PACKAGE
 
-
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON extension module directory" >&5
-printf %s "checking for $am_display_PYTHON extension module directory... " >&6; }
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $am_display_PYTHON extension module directory (pyexecdir)" >&5
+printf %s "checking for $am_display_PYTHON extension module directory (pyexecdir)... " >&6; }
 if test ${am_cv_python_pyexecdir+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  if test "x$exec_prefix" = xNONE
-     then
-       am_py_exec_prefix=$am_py_prefix
-     else
-       am_py_exec_prefix=$exec_prefix
-     fi
-     am_cv_python_pyexecdir=`$PYTHON -c "
+  if test "x$am_cv_python_exec_prefix" = x; then
+     am_py_exec_prefix=$am__usable_exec_prefix
+   else
+     am_py_exec_prefix=$am_cv_python_exec_prefix
+   fi
+   am_cv_python_pyexecdir=`$PYTHON -c "
 $am_python_setup_sysconfig
 if can_use_sysconfig:
-    sitedir = sysconfig.get_path('platlib', vars={'platbase':'$am_py_prefix'})
+  sitedir = sysconfig.get_path('platlib', vars={'platbase':'$am_py_exec_prefix'})
 else:
-    from distutils import sysconfig
-    sitedir = sysconfig.get_python_lib(1, 0, prefix='$am_py_prefix')
+  from distutils import sysconfig
+  sitedir = sysconfig.get_python_lib(1, 0, prefix='$am_py_exec_prefix')
 sys.stdout.write(sitedir)"`
-     case $am_cv_python_pyexecdir in
-     $am_py_exec_prefix*)
-       am__strip_prefix=`echo "$am_py_exec_prefix" | sed 's|.|.|g'`
-       am_cv_python_pyexecdir=`echo "$am_cv_python_pyexecdir" | sed "s,^$am__strip_prefix,$PYTHON_EXEC_PREFIX,"`
-       ;;
-     *)
-       case $am_py_exec_prefix in
-         /usr|/System*) ;;
-         *)
-	   am_cv_python_pyexecdir=$PYTHON_EXEC_PREFIX/lib/python$PYTHON_VERSION/site-packages
-	   ;;
-       esac
-       ;;
+   #
+   case $am_cv_python_pyexecdir in
+   $am_py_exec_prefix*)
+     am__strip_prefix=`echo "$am_py_exec_prefix" | sed 's|.|.|g'`
+     am_cv_python_pyexecdir=`echo "$am_cv_python_pyexecdir" | sed "s,^$am__strip_prefix,\\${PYTHON_EXEC_PREFIX},"`
+     ;;
+   *)
+     case $am_py_exec_prefix in
+       /usr|/System*) ;;
+       *) am_cv_python_pyexecdir="\${PYTHON_EXEC_PREFIX}/lib/python$PYTHON_VERSION/site-packages"
+          ;;
      esac
+     ;;
+   esac
 
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $am_cv_python_pyexecdir" >&5
@@ -4647,13 +4780,11 @@ printf "%s\n" "$am_cv_python_pyexecdir" >&6; }
   pyexecdir=$am_cv_python_pyexecdir
 
 
-
-  pkgpyexecdir=\${pyexecdir}/$PACKAGE
+      pkgpyexecdir=\${pyexecdir}/$PACKAGE
 
 
 
   fi
-
 
 pyplat=`$PYTHON -c "import sys, platform; sys.stdout.write(platform.python_implementation())"`
    if test "x$pyplat" = "xPyPy"
@@ -5367,6 +5498,7 @@ case "$host" in
   alpha*)   proc_name="AlphaProcessor";   proc_def="__alpha__";;
   m68k-*)   proc_name="m68kProcessor";    proc_def="__m68k__";;
   mips*)    proc_name="IndigoProcessor";  proc_def="__mips__";;
+  arm64-*)  proc_name="Arm64Processor";   proc_def="__arm64__";;
   arm-*)    proc_name="ArmProcessor";     proc_def="__arm__";;
   s390-*)   proc_name="s390Processor";    proc_def="__s390__";;
   ia64-*)   proc_name="ia64Processor";    proc_def="__ia64__";;
