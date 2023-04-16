@@ -1,3 +1,12 @@
+Sun 16 Apr 15:23:10 BST 2023
+============================
+
+- No need to undefine PACKAGE defines because they are now prefixed
+  with OMNI.
+
+include/omniconfig.h.in
+
+
 Sun 16 Apr 15:20:35 BST 2023
 ============================
 
